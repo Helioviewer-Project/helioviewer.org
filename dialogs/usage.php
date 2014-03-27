@@ -16,6 +16,10 @@
         <td>Toggle fullscreen display.</td>
     </tr>
     <tr>
+        <td><strong>s</strong></td>
+        <td>Toggle Right-Hand Sidebar.</td>
+    </tr>
+    <tr>
         <td><strong>m</strong></td>
         <td>Toggle mouse coordinates display.</td>
     </tr>

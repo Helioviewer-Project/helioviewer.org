@@ -25,7 +25,7 @@ require_once 'src/Image/Composite/HelioviewerCompositeImage.php';
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class Image_Composite_HelioviewerScreenshot 
+class Image_Composite_HelioviewerScreenshot
     extends Image_Composite_HelioviewerCompositeImage {
 
     public $id;
@@ -39,7 +39,17 @@ class Image_Composite_HelioviewerScreenshot
         parent::__construct($layers, $events, $eventLabels, $scale,
             $scaleType, $scaleX, $scaleY, $obsDate, $roi, $options);
 
-        $this->id = $this->_getScreenshotId();
+        if ( array_key_exists('action', $options) &&
+             $options['action'] == 'downloadScreenshot' ) {
+
+            $this->id = $options['id'];
+            $this->timestamp = $options['timestamp'];
+            $this->date = $options['observationDate'];
+        }
+        else {
+            $this->id = $this->_getScreenshotId();
+            $this->timestamp = date('Y-m-d');
+        }
         $this->build($this->_buildFilepath());
 
         //TODO: Either include a status field in db, or remove entry if
@@ -52,14 +62,15 @@ class Image_Composite_HelioviewerScreenshot
      * @return string Filename
      */
     private function _buildFilepath() {
+        $created = new DateTime($this->timestamp);
         return sprintf(
             '%s/screenshots/%s/%s/%s_%s.png',
             HV_CACHE_DIR,
-            date('Y/m/d'),
+            date('Y/m/d', $created->getTimestamp()),
             $this->id,
             substr(
                 str_replace(
-                    array(':', '-', 'T', 'Z'),
+                    array(':', '-', 'T', 'Z', ' '),
                     '_',
                     $this->date),
                 0, 19),

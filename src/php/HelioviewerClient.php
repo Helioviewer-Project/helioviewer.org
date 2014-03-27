@@ -109,11 +109,6 @@ abstract class HelioviewerClient {
         if ($this->config['google_analytics_id']) {
             $this->loadGoogleAnalytics();
         }
-
-        // AddThis
-        if ($this->config['addthis_analytics_id']) {
-            $this->loadAddThis();
-        }
     }
 
     /**
@@ -244,7 +239,7 @@ abstract class HelioviewerClient {
         if ($this->config["compress_js"]) {
             if (!file_exists("build/" . $this->compressedJSFile)) {
                $error = "<div style='position: absolute; width: 100%; text-align: center; top: 40%; font-size: 14px;'>
-                         <img src='resources/images/logos/about.png' alt='helioviewer logo'></img><br>
+                         <img src='".HV_API_URL."/resources/images/logos/about.png' alt='helioviewer logo'></img><br/>
                          <b>Configuration:</b> Unable to find compressed JavaScript files.
                          If you haven't already, use Apache Ant with the included build.xml file to generate
                          compressed files.</div></body></html>";
@@ -291,24 +286,6 @@ abstract class HelioviewerClient {
         }) ();
     </script>
 
-<?php
-    }
-
-    /**
-     * Loads AddThis support
-     */
-    protected function loadAddThis() {
-?>
-
-    <!-- AddThis -->
-    <script type="text/javascript">
-        var addthis_config = {
-            data_track_clickback: true,
-            pubid: "<?php echo $this->config['addthis_analytics_id'];?>",
-            data_ga_property: "<?php echo $this->config['google_analytics_id'];?>"
-        };
-    </script>
-    <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#async=1"></script>
 <?php
     }
 

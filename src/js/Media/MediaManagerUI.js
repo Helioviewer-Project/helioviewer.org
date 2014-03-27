@@ -84,11 +84,6 @@ var MediaManagerUI = Class.extend(
     _addItem: function (item) {
         var htmlId, html, last, url, name = item.name;
 
-        // Shorten names to fit inside the history dialog
-        if (name.length > 16) {
-            name = name.slice(0, 16) + "...";
-        }
-
         // HTML for a single row in the history dialog
         htmlId = this._type + "-" + item.id;
 

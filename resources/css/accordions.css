@@ -76,6 +76,9 @@ span.tile-accordion-header-left, span.event-accordion-header-left {
     width:37%;
     float: left;
     margin-top:2px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 span.tile-accordion-header-right, span.event-accordion-header-right {
     display: block;

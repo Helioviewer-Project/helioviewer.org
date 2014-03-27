@@ -8,7 +8,7 @@
 /*global document, window, $, HelioviewerClient, ImageSelectTool, MovieBuilder,
   TooltipHelper, HelioviewerViewport, ScreenshotBuilder, ScreenshotHistory,
   MovieHistory, UserVideoGallery, MessageConsole, Helioviewer,
-  KeyboardManager, SettingsLoader, TimeControls, FullscreenControl, addthis,
+  KeyboardManager, SettingsLoader, TimeControls, FullscreenControl,
   ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers,
   TileLayerAccordion, VisualGlossary, _gaq */
 "use strict";
@@ -59,6 +59,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.earthScale     = new ImageScale();
 
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
+        this.moreScreenMode = new MorescreenControl("#morescreen-btn", 500);
 
         this.displayBlogFeed(3, false);
 
@@ -76,11 +77,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this._setupSettingsUI();
 
         this._displayGreeting();
-
-        // Initialize AddThis
-        if (typeof(addthis) !== "undefined") {
-            addthis.init();
-        }
     },
 
     /**
@@ -224,7 +220,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             autoOpen  : true,
             draggable : true,
             width     : 480,
-            height    : 480
+            height    : 400
         };
 
         // Button click handler
@@ -312,7 +308,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      */
     _initEventHandlers: function () {
         var self = this,
-            msg  = "Use the following link to refer to current page:";
+            msg  = "Use the following link to refer to current page:",
+            btns;
 
         $('#link-button').click(function (e) {
             // Google analytics event
@@ -327,15 +324,20 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         //$('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
 
         // Highlight both text and icons for text buttons
-        $("#social-buttons .text-btn, #movie-manager-container .text-btn, #image-area-select-buttons > .text-btn, " +
-          "#screenshot-manager-container .text-btn").hover(
+
+        btns = $("#social-buttons .text-btn, " +
+                 "#movie-manager-container .text-btn, " +
+                 "#image-area-select-buttons > .text-btn, " +
+                 "#screenshot-manager-container .text-btn, " +
+                 "#event-container .text-btn");
+        btns.live("mouseover",
             function () {
                 $(this).find(".ui-icon").addClass("ui-icon-hover");
-            },
+            });
+        btns.live("mouseout",
             function () {
                 $(this).find(".ui-icon").removeClass("ui-icon-hover");
-            }
-        );
+            });
 
         // Fix drag and drop for mobile browsers
         $("#helioviewer-viewport, .ui-slider-handle").each(function () {
@@ -489,7 +491,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 });
 
                 more = "<div id='more-articles'><a href='" + url +
-                       "' alt='The Helioviewer Project Blog'>More...</a></div>";
+                       "' title='The Helioviewer Project Blog'>Visit Blog...</a></div>";
 
                 $("#social-panel").append(html + more);
             }

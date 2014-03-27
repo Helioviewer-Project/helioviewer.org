@@ -224,7 +224,9 @@ class Image_Composite_HelioviewerCompositeImage {
             $image = $this->_imageLayers[0]->getIMagickImage();
         }
 
-        if ( count($this->events) > 0 ) {
+        if ( count($this->events) > 0 &&
+             $this->date != '2999-01-01T00:00:00.000Z') {
+
             $this->_addEventLayer($image);
         }
 

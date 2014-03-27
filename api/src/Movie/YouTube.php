@@ -130,7 +130,7 @@ class Movie_YouTube {
     public function getYouTubeAuth($id) {
 
         // Post-auth upload URL
-        $uploadURL = HV_API_ROOT_URL
+        $uploadURL = HV_API_URL
                    . '?action=uploadMovieToYouTube&id='.$id.'&html=true';
 
         // Get URL for authorization

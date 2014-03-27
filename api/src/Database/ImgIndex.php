@@ -723,7 +723,7 @@ class Database_ImgIndex {
     public function getDataSources($verbose, $enabled) {
 
         if ( HV_DISABLE_CACHE !== true ) {
-            include_once 'src/Helper/Serialize.php';
+            include_once HV_API_DIR.'/src/Helper/Serialize.php';
 
             $cache = new Helper_Serialize('api/Database/ImgIndex',
                 'getDataSources_'.json_encode($verbose, true).'_'.

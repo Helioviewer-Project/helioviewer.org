@@ -7,7 +7,7 @@
 eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
 newcap: true, immed: true, maxlen: 80, sub: true */
 /*global $, window, MovieManager, MediaManagerUI, Helioviewer, helioviewer,
-  layerStringToLayerArray, humanReadableNumSeconds, addthis */
+  layerStringToLayerArray, humanReadableNumSeconds */
 "use strict";
 var MovieManagerUI = MediaManagerUI.extend(
     /** @lends MovieManagerUI */
@@ -474,7 +474,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         // beforehand results in the browser attempting to download it.
         dialog.dialog({
             title     : "Movie Player: " + title,
-            width     : ((dimensions.width < 475)?500:dimensions.width+25),
+            width     : ((dimensions.width < 575)?600:dimensions.width+25),
             height    : dimensions.height + 80,
             resizable : $.support.h264 || $.support.vp8,
             close     : function () {
@@ -514,36 +514,6 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) +
                      "full.png";
-
-        // If AddThis is not supported, skip toolbox initialization
-        if (typeof(addthis) == "undefined") {
-            return;
-        }
-
-        // First get a shortened version of the movie URL
-        callback = function (response) {
-            // Then initialize AddThis toolbox
-            addthis.toolbox('#add-this-' + movie.id, {}, {
-                url: response.data.url,
-                title: "Helioviewer.org",
-                description: title,
-                screenshot: screenshot,
-                swfurl: swfURL,
-                width: movie.width,
-                height: movie.height
-            });
-        };
-
-        // Initialize AddThis toolbox once a shortened URL has been requested
-        $.ajax({
-            url: Helioviewer.api,
-            dataType: Helioviewer.dataType,
-            data: {
-                "action": "shortenURL",
-                "queryString": "movieId=" + movie.id
-            },
-            success: callback
-        });
     },
 
     /**
@@ -783,43 +753,37 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     getVideoPlayerHTML: function (movie, width, height) {
         var downloadURL, downloadLink, youtubeBtn,
-            addthisBtn, linkBtn, linkURL;
+            linkBtn, linkURL, tweetBtn, facebookBtn;
 
         // Download
         downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
                       "&format=mp4&hq=true";
 
-        downloadLink = "<a target='_parent' href='" + downloadURL +
+        downloadLink = "<div style='float:left;'><a target='_parent' href='" + downloadURL +
             "' title='Download high-quality video'>" +
-            "<img class='video-download-icon' " +
-            "src='resources/images/Tango/1321375855_go-bottom.png' /></a>";
+            "<img style='width:93px; height:32px;' class='video-download-icon' " +
+            "src='resources/images/download_93x32.png' /></a></div>";
 
         // Upload to YouTube
-        youtubeBtn = "<a id='youtube-upload-" + movie.id + "' href='#' " +
-            "target='_blank'><img class='youtube-icon' " +
-            "title='Upload video to YouTube' " +
-            "src='resources/images/Social.me/48 " +
-            "by 48 pixels/youtube.png' /></a>";
+        youtubeBtn = '<div style="float:left;"><a id="youtube-upload-' + movie.id + '" href="#" ' +
+            'target="_blank"><img class="youtube-icon" ' +
+            'title="Upload video to YouTube" style="width:79px;height:32px;" ' +
+            'src="resources/images/youtube_79x32.png" /></a></div>';
 
         // Link
         linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
 
-        linkBtn = "<a id='video-link-" + movie.id + "' href='" + linkURL +
+        linkBtn = "<div style='float:left;'><a id='video-link-" + movie.id + "' href='" + linkURL +
             "' title='Get a link to the movie' " +
             "target='_blank'><img class='video-link-icon' " +
-            "style='margin-left: 3px' " +
-            "src='resources/images/berlin/32x32/link.png' /></a>";
+            "style='width:79px; height:32px;' " +
+            "src='resources/images/link_79x32.png' /></a></div>";
 
-        // AddThis
-        addthisBtn = "<div style='display:inline; " +
-            "float: right;' id='add-this-" + movie.id +
-            "' class='addthis_default_style addthis_32x32_style'>" +
-            "<a class='addthis_button_facebook addthis_32x32_style'></a>" +
-            "<a class='addthis_button_twitter addthis_32x32_style'></a>" +
-            "<a class='addthis_button_email addthis_32x32_style'></a>" +
-            "<a class='addthis_button_google addthis_32x32_style'></a>" +
-            "<a class='addthis_button_compact addthis_32x32_style'></a>" +
-            "</div>";
+        // Tweet Movie Button
+        tweetBtn = '<div style="float:right;"><a href="https://twitter.com/share" class="twitter-share-button" data-related="helioviewer" data-lang="en" data-size="medium" data-count="horizontal" data-url="http://'+document.domain+'/?movieId='+movie.id+'" data-text="Movie of the Sun created on Helioviewer.org:" data-hashtags="helioviewer" data-related="helioviewer">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>';
+
+        // Like Movie on Facebook Button
+        facebookBtn = '<div style="float:right;"><iframe src="//www.facebook.com/plugins/like.php?href='+encodeURIComponent('http://'+document.domain+'/?movieId='+movie.id)+'&amp;width=90&amp;height=21&amp;colorscheme=dark&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;send=false&amp;appId=6899099925" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px; width:90px;" allowTransparency="false"></iframe></div>';
 
         // HTML5 Video (H.264 or WebM)
         if ($.support.vp8 || $.support.h264) {
@@ -827,11 +791,13 @@ var MovieManagerUI = MediaManagerUI.extend(
             url = movie.url.substr(movie.url.search("cache"));
 
             // IE9 only supports relative dimensions specified using CSS
-            return "<video id='movie-player-" + movie.id + "' src='" + url +
-                   "' controls preload autoplay" +
-                   " style='width:100%; height: 90%;'></video>" +
-                   "<span class='video-links'>" + downloadLink + youtubeBtn +
-                   linkBtn + addthisBtn + "</span>";
+            return '<div><video id="movie-player-' + movie.id + '" src="' + url +
+                   '" controls preload autoplay' +
+                   ' style="width:100%; height: 90%;"></video></div>' +
+                   '<div style="width:100%"><div style="float:left;" class="video-links">' +
+                   youtubeBtn + linkBtn + downloadLink +
+                   '</div> <div style="float:right;">' + facebookBtn +
+                   tweetBtn + '</div></div>';
         }
 
         // Fallback (flash player)
@@ -840,13 +806,17 @@ var MovieManagerUI = MediaManagerUI.extend(
                   '&width=' + width + "&height=" + height +
                   '&format=flv';
 
-            return "<div id='movie-player-" + movie.id + "'>" +
-                   "<iframe src=" + url + " width='" + width +
-                   "' height='" + height + "' marginheight=0 marginwidth=0 " +
-                   "scrolling=no frameborder=0 style='margin-bottom: 2px;' />" +
-                   "<br />" +
-                   "<span class='video-links'>" + downloadLink + youtubeBtn +
-                   linkBtn + addthisBtn + "</span></div>";
+            return '<div id="movie-player-' + movie.id + '">' +
+                       '<iframe src="' + url + '" width="' + width +
+                       '" height="' + height + '" marginheight="0" marginwidth="0" ' +
+                       'scrolling="no" frameborder="0" style="margin-bottom: 2px;" />' +
+                   '</div>' +
+                   '<div style="width:100%;">' +
+                       '<div style="float:left;" class="video-links">' +
+                        youtubeBtn + linkBtn + downloadLink +
+                   '</div>' +
+                   '<div style="float:right;">' + facebookBtn + tweetBtn +
+                   '</div>';
         }
     },
 

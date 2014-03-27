@@ -33,6 +33,10 @@ class HelioviewerWebClient extends HelioviewerClient {
      * Initializes a Helioviewer.org instance
      */
     public function __construct($urlSettings) {
+
+        include_once 'api/src/Config.php';
+        $this->configObj = new Config('settings/Config.ini');
+
         $this->compressedJSFile  = 'helioviewer.min.js';
         $this->compressedCSSFile = 'helioviewer.min.css';
 
@@ -94,18 +98,17 @@ class HelioviewerWebClient extends HelioviewerClient {
      * Loads Helioviewer-specific JavaScript
      */
     protected function loadCustomJS($signature, $includes=array()) {
-
-        $js = array("UI/TreeSelect.js", "UI/ImageSelectTool.js",
-                    "Media/MediaManagerUI.js", "Media/MediaManager.js",
-                    "Media/MovieManager.js", "Media/MovieManagerUI.js",
-                    "Media/ScreenshotManager.js",
-                    "Media/ScreenshotManagerUI.js",
-                    "UI/TileLayerAccordion.js",
-                    "UI/EventLayerAccordion.js", "UI/MessageConsole.js",
-                    "UI/TimeControls.js", "Utility/FullscreenControl.js",
-                    "HelioviewerWebClient.js", "UI/UserVideoGallery.js",
-                    "UI/Glossary.js", "UI/jquery.ui.dynaccordion.js");
-
+        $js = array('UI/TreeSelect.js', 'UI/ImageSelectTool.js',
+                    'Media/MediaManagerUI.js', 'Media/MediaManager.js',
+                    'Media/MovieManager.js', 'Media/MovieManagerUI.js',
+                    'Media/ScreenshotManager.js',
+                    'Media/ScreenshotManagerUI.js',
+                    'UI/TileLayerAccordion.js',
+                    'UI/EventLayerAccordion.js', 'UI/MessageConsole.js',
+                    'UI/TimeControls.js', 'Utility/FullscreenControl.js',
+                    'Utility/MorescreenControl.js', 'HelioviewerWebClient.js',
+                    'UI/UserVideoGallery.js', 'UI/Glossary.js',
+                    'UI/jquery.ui.dynaccordion.js');
         parent::loadCustomJS($signature, $js);
     }
 
@@ -145,10 +148,6 @@ class HelioviewerWebClient extends HelioviewerClient {
      */
     private function _addOpenGraphTagsForMovie($id) {
 
-        include_once 'api/src/Config.php';
-
-        $configObj = new Config('settings/Config.ini');
-
         // Forward remote requests
         if ( HV_BACK_END !== 'api/index.php' ) {
             $params = array(
@@ -179,7 +178,7 @@ class HelioviewerWebClient extends HelioviewerClient {
                 'height'     => $movie->height
             );
 
-            $flvURL = HV_API_ROOT_URL . '?action=downloadMovie&format=flv&id='
+            $flvURL = HV_API_URL.'?action=downloadMovie&format=flv&id='
                     . $id;
             $swfURL = HV_WEB_ROOT_URL
                     . '/lib/flowplayer/flowplayer-3.2.8.swf?config='
@@ -201,8 +200,6 @@ class HelioviewerWebClient extends HelioviewerClient {
     private function _addOpenGraphForSharedURL() {
 
         // When opening shared link, include thumbnail metatags for Facebook, etc to use
-        include_once 'api/src/Config.php';
-        $configObj = new Config('settings/Config.ini');
 
         include_once 'api/src/Helper/HelioviewerLayers.php';
         include_once 'api/src/Helper/DateTimeConversions.php';
@@ -221,7 +218,7 @@ class HelioviewerWebClient extends HelioviewerClient {
             'height'      => 128
         );
 
-        $ogImage = HV_API_ROOT_URL.'?'.http_build_query($screenshotParams);
+        $ogImage = HV_API_URL.'?'.http_build_query($screenshotParams);
         $ogDescription = $layers->toHumanReadableString().' ('
                        . toReadableISOString($this->urlSettings['date'])
                        . ' UTC)';
@@ -323,8 +320,11 @@ class HelioviewerWebClient extends HelioviewerClient {
                             </div>
 
                             <!-- Fullscreen toggle -->
-                            <div id='fullscreen-btn' class='qtip-topleft' title="Toggle fullscreen display.">
-                                <span class='ui-icon ui-icon-arrow-4-diag'></span>
+                            <div id='fullscreen-btn' class='qtip-topleft' title="Toggle fullscreen mode.">
+                            </div>
+
+                            <!-- Morescreen toggle -->
+                            <div id='morescreen-btn' class='qtip-topleft' title="Toggle right sidebar.">
                             </div>
 
                             <!-- Mouse coordinates display -->
@@ -477,8 +477,8 @@ class HelioviewerWebClient extends HelioviewerClient {
                     <img src="<?php echo $this->config['main_logo'];?>" id="helioviewer-logo-main" alt="Helioviewer.org Logo">
                 </a>
             </div>
-            <br><br>
-            <div class="section-header" style="margin-left:5px; margin-top: 15px;">Time</div>
+            <br/>
+            <div class="section-header" style="margin-left:5px;">Time</div>
             <div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all shadow">
                 <!--  Observation Date -->
                 <div id="observation-date-container">
@@ -503,28 +503,27 @@ class HelioviewerWebClient extends HelioviewerClient {
                 </div>
             </div>
 
-            <br><br>
+            <br/>
             <div id="tileLayerAccordion"></div>
-            <br><br>
+            <br/>
             <div id="eventLayerAccordion"></div>
-            <br><br>
 
         </div>
 
         <!-- Right Column -->
         <div id="col3">
             <div id="right-col-header" style='height: 11px'></div>
-
             <!-- Recent Blog Entries -->
-            <div style="margin-left: 5px; margin-top: 15px;" class="section-header">News</div>
+            <div style="margin: 0 0 4px 5px;" class="section-header">
+                <a href="<?php echo HV_NEWS_URL; ?>" target="_blank">Helioviewer Project News</a></div>
             <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all shadow"></div>
 
             <!-- User-Submitted Videos -->
             <div id="user-video-gallery-header" class="section-header">
                 <a href="http://www.youtube.com/user/HelioviewerScience" target="_blank" style='text-decoration: none;'>
-                    <img id='youtube-logo' src='resources/images/Social.me/48 by 48 pixels/youtube.png' alt='YouTube Logo' />
+                    <img id='youtube-logo' src='resources/images/youtube_79x32.png' alt='YouTube Logo' />
                 </a>
-                <span style='position: absolute; bottom: 5px;'>Recently Shared</span>
+                <span style='position: relative;'>User-Generated Movies</span>
             </div>
             <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all shadow">
                 <a id="user-video-gallery-next" class="qtip-left" href="#" title="Go to next page.">
@@ -556,7 +555,8 @@ class HelioviewerWebClient extends HelioviewerClient {
                 <a href="http://wiki.helioviewer.org/wiki/Main_Page" class="light" target="_blank">Wiki</a>
                 <a href="http://blog.helioviewer.org/" class="light" target="_blank">Blog</a>
                 <a href="http://jhelioviewer.org" class="light" target="_blank">JHelioviewer</a>
-                <a href="api/" class="light" target="_blank">API</a>
+                <a href="api/docs/" class="light" target="_blank">Public API</a>
+                <a href="https://twitter.com/Helioviewer" class="light" title="Follow @helioviewer on Twitter" target="_blank">@helioviewer</a>
                 <a href="mailto:<?php echo $this->config['contact_email']; ?>" class="light">Contact</a>
                 <a href="https://bugs.launchpad.net/helioviewer.org/" class="light" style="margin-right:2px;" target="_blank">Report Problem</a>
             </div>

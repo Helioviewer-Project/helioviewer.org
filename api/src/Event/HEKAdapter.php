@@ -44,6 +44,7 @@ $GLOBALS['HEK_COLORS'] = Array(
  *
  * @category Event
  * @package  Helioviewer
+ * @author   Jeff Stys <jeff.stys@nasa.gov>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
@@ -81,10 +82,10 @@ class Event_HEKAdapter {
                         . '&event_coordsys=helioprojective&x1=-30000&x2=30000'
                         . '&y1=-30000&y2=30000&requestfrom=Helioviewer'
                         . '&requestinghost='.$this->_hostname.'&';
-        $this->_defaultEventTypesJSONPath = HV_API_ROOT_DIR
+        $this->_defaultEventTypesJSONPath = HV_API_DIR
             . '/resources/JSON/defaultEventTypes.json';
 
-        include_once HV_API_ROOT_DIR . '/src/Net/Proxy.php';
+        include_once HV_API_DIR.'/src/Net/Proxy.php';
 
         $this->_proxy = new Net_Proxy($this->_baseURL);
     }
@@ -168,7 +169,7 @@ class Event_HEKAdapter {
      * @return JSON string
      */
     public function getEventGlossary() {
-        $file_path = HV_API_ROOT_DIR.'/resources/JSON/eventGlossary.json';
+        $file_path = HV_API_DIR.'/resources/JSON/eventGlossary.json';
         $fh    = @fopen($file_path, 'r');
         $json  = @fread($fh, @filesize($file_path));
         @fclose($fh);
@@ -235,7 +236,7 @@ class Event_HEKAdapter {
      * @return JSON string
      */
     public function getEvents($startTime, $options) {
-        include_once HV_API_ROOT_DIR.'/src/Helper/DateTimeConversions.php';
+        include_once HV_API_DIR.'/src/Helper/DateTimeConversions.php';
 
         $events = Array();
 
@@ -279,7 +280,7 @@ class Event_HEKAdapter {
             '0', STR_PAD_LEFT) . ':59:59.999Z.json';
 
 
-        include_once HV_API_ROOT_DIR.'/scripts/rot_hpc.php';
+        include_once HV_API_DIR.'/scripts/rot_hpc.php';
 
         // Scalar for normalizing HEK hpc_x and hpc_y coordinates based on the
         // apparent size of the Sun as seen from Earth at the specified
@@ -655,7 +656,7 @@ class Event_HEKAdapter {
                         $ar_mtwilsoncls);
                 }
                 else {
-                    $ar_mtwilsoncl = $event['ar_mtwilsoncls'];
+                    $ar_mtwilsoncls = $event['ar_mtwilsoncls'];
                 }
                 $labelArray['Mt. Wilson Class.'] = $ar_mtwilsoncls;
             }

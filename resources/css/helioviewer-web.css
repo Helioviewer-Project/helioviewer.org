@@ -11,7 +11,7 @@ html, body {
     -webkit-background-size: 40px 100%;*/
 }
 #col2 input, #col2 select {background-color:#F4F4F4;}
-#left-col-header, #right-col-header {height: 50px; margin-top: -24px;}
+#left-col-header, #right-col-header {height: 50px; margin-top: -12px;}
 
 /* Viewport */
 #helioviewer-viewport-container-inner {
@@ -34,7 +34,7 @@ html, body {
 
 #helioviewer-viewport-container-shadow {
     position: absolute;
-    top: 24px;
+    top: 12px;
     left: 284px;
     display: none;
     border-radius: 25px;
@@ -46,18 +46,18 @@ html, body {
 /* CSS effects */
 .shadow {
 box-shadow: 0 0 5px rgba(0, 0, 0, 1);
-    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 1); 
+    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 1);
     -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 1);
 }
 .glow {
     box-shadow: 0 0 5px rgba(255, 255, 255, 1);
-    -webkit-box-shadow: 0 0 5px rgba(255, 255, 255, 1); 
+    -webkit-box-shadow: 0 0 5px rgba(255, 255, 255, 1);
     -moz-box-shadow: 0 0 5px rgba(255, 255, 255, 1);
 }
 
 /* Logo */
 #helioviewer-logo-main {
-    margin-top:24px;
+    margin-top:12px;
     margin-left: 9px;
 }
 
@@ -89,7 +89,7 @@ box-shadow: 0 0 5px rgba(0, 0, 0, 1);
     cursor: pointer;
     height:19px;
     width: 10px;
-    top:-6px;   
+    top:-6px;
 }
 
 /* Message Console */
@@ -125,10 +125,17 @@ span.ui-icon-hover, div.ui-icon-hover {
 .section-header {
     font-weight: bold;
 }
+.section-header a {
+    text-decoration: none;
+    color: inherit;
+}
+.section-header a:hover {
+    color: #d18f61;
+}
 
 /** Meta links **/
 #footer-container-outer {
-    position: relative;    
+    position: relative;
 }
 
 #footer-container-inner {
@@ -143,17 +150,18 @@ span.ui-icon-hover, div.ui-icon-hover {
 
 #footer-links {
     text-align: center;
-    width: 25%;
-    min-width: 732px;
     margin-left: auto;
-    margin-right: auto;        
+    margin-right: auto;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 #footer-links > a {
     vertical-align: middle;
     color: #DCDCDC;
     font-size: 11px;
-    margin-right: 20px;
+    margin: 0 10px;
 }
 
 #footer-links > a:hover {
@@ -204,6 +212,10 @@ span.ui-icon-hover, div.ui-icon-hover {
     top:0px;
     right: 0px;
     cursor: pointer;
+}
+
+#morescreen-btn {
+    float: right;
 }
 
 /* Blog entries */
@@ -274,7 +286,7 @@ span.ui-icon-hover, div.ui-icon-hover {
 }
 
 /** Settings dialog */
-    
+
 #settings-dialog {
     display:none;
     margin: 15px 15px 0 15px;

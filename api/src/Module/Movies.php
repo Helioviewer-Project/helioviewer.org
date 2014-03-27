@@ -89,10 +89,14 @@ class Module_Movies implements Module {
         // Default options
         $defaults = array(
             "format"      => 'mp4',
-            "frameRate"   => NULL,
-            "movieLength" => NULL,
+            "frameRate"   => null,
+            "movieLength" => null,
             "maxFrames"   => HV_MAX_MOVIE_FRAMES,
-            "watermark"   => TRUE
+            "watermark"   => true,
+            "scale"       => false,
+            "scaleType"   => 'earth',
+            "scaleX"      => 0,
+            "scaleY"      => 0
         );
         $options = array_replace($defaults, $this->_options);
 
@@ -173,10 +177,10 @@ class Module_Movies implements Module {
             $bitmask,
             $this->_params['events'],
             $this->_params['eventsLabels'],
-            $this->_params['scale'],
-            $this->_params['scaleType'],
-            $this->_params['scaleX'],
-            $this->_params['scaleY'],
+            $options['scale'],
+            $options['scaleType'],
+            $options['scaleX'],
+            $options['scaleY'],
             $layers->length(),
             $queueSize,
             $options['frameRate'],
@@ -740,7 +744,7 @@ class Module_Movies implements Module {
 <html>
 <head>
     <title>Helioviewer.org - <?php echo $filename?></title>
-    <script src="../lib/flowplayer/flowplayer-3.2.8.min.js"></script>
+    <script src="<?php echo HV_WEB_ROOT_URL; ?>/lib/flowplayer/flowplayer-3.2.8.min.js"></script>
 </head>
 <body>
     <!-- Movie player -->
@@ -750,7 +754,7 @@ class Module_Movies implements Module {
     </div>
     <br>
     <script language="javascript">
-        flowplayer("movie-player", "../lib/flowplayer/flowplayer-3.2.8.swf", {
+        flowplayer("movie-player", "<?php echo HV_WEB_ROOT_URL; ?>/lib/flowplayer/flowplayer-3.2.8.swf", {
             clip: {
                 autoBuffering: true,
                 scaling: "fit"
@@ -893,273 +897,6 @@ class Module_Movies implements Module {
         }
 
         return true;
-    }
-
-    /**
-     * Prints the Movies module's documentation header
-     *
-     * @return void
-     */
-    public static function printDocHeader() {
-?>
-            <li>
-                <a href="index.php#MovieAPI">Movies</a>
-                <ul>
-                    <li><a href="index.php#queueMovie">Creating a Movie</a></li>
-                </ul>
-                <ul>
-                    <li><a href="index.php#queueMovie">Check a Movie's Status</a></li>
-                </ul>
-                <ul>
-                    <li><a href="index.php#queueMovie">Retrieving a Movie</a></li>
-                </ul>
-            </li>
-<?php
-    }
-
-    /**
-     * printDoc
-     *
-     * @return void
-     */
-    public static function printDoc() {
-?>
-        <!-- Movie API -->
-        <div id="MovieAPI">
-            <h1>Movies:</h1>
-            <p>The movie API allows users to create time-lapse videos of what
-            they are viewing on the website. There are two steps involved in
-            Helioviewer.org movie requests:
-               1) queueing the movie, and 2) retrieving the movie once it has
-               been processed.</p>
-            <ol style="list-style-type: upper-latin;">
-                <!-- Movie -->
-                <li>
-                <div id="queueMovie">Queueing a Movie
-                <p>Because of the high-demands of creating movies on the fly,
-                requests for movies from Helioviewer.org must be added to a
-                queue before being processed. Only when all of the movies
-                ahead of the requested one have been processed will the
-                request be handled and the movie generated.</p>
-
-                <p>Upon queueing a movie, some basic information about the
-                movie request will be returned including an identifier to
-                reference that movie in the future and an estimated time until
-                the movie has been processsed. This information can be used to
-                check on the movie status using the getMovieStatus API call,
-                and then eventually to either download or play the movie once
-                it is ready.</p>
-
-                <p>Movies may contain between 10 and 300 frames. The movie
-                frames are chosen by matching the closest image available at
-                each step within the specified range of dates, and are
-                automatically generated using the Screenshot API calls. The
-                region to be included in the movie may be specified using
-                either the top-left and bottom-right coordinates in
-                arc-seconds, or a center point in arc-seconds and a width and
-                height in pixels. See the <a style="color:#3366FF"
-                href="#Coordinates">Coordinates Appendix</a> for more
-                infomration about working with coordinates in Helioviewer.org.
-                </p>
-
-                <br />
-
-                <div class="summary-box"><span
-                    style="text-decoration: underline;">Usage:</span><br />
-                <br />
-
-                <?php echo HV_API_ROOT_URL; ?>?action=queueMovie<br />
-                <br />
-
-                Supported Parameters:<br />
-                <br />
-
-                <table class="param-list" cellspacing="10">
-                    <tbody valign="top">
-                        <tr>
-                            <td width="20%"><b>startTime</b></td>
-                            <td width="20%"><i>ISO 8601 UTC Date</i></td>
-                            <td>Desired starting timestamp of the movie. The
-                            timestamps for the subsequent frames are
-                            incremented by a certain timestep.</td>
-                        </tr>
-                        <tr>
-                            <td><b>endTime</b></td>
-                            <td><i>ISO 8601 UTC Date</i></td>
-                            <td>Desired ending timestamp of the movie. Time
-                            step and number of frames will be figured out from
-                            the range between startTime and endTime.</td>
-                        </tr>
-                        <tr>
-                            <td><b>imageScale</b></td>
-                            <td><i>Float</i></td>
-                            <td>The zoom scale of the images. Default scales
-                            that can be used are 0.6, 1.2, 2.4, and so on,
-                            increasing or decreasing by a factor of 2. The
-                            full-res scale of an AIA image is 0.6.</td>
-                        </tr>
-                        <tr>
-                            <td><b>layers</b></td>
-                            <td><i>String</i></td>
-                            <td>A string of layer information in the following
-                            format:<br />
-                                Each layer is comma-separated with these
-                                values: [<i>sourceId,visible,opacity</i>].
-                                <br />
-                                If you do not know the sourceId, you can
-                                alternately send this layer string:
-                                [<i>obs,inst,det,meas,opacity]</i>.
-                                Layer strings are separated by commas:
-                                [layer1],[layer2],[layer3].</td>
-                        </tr>
-                        <tr>
-                            <td><b>y1</b></td>
-                            <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The offset of the image's
-                            top boundary from the center of the sun, in
-                            arcseconds.</td>
-                        </tr>
-                        <tr>
-                            <td><b>x1</b></td>
-                            <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The offset of the image's
-                            left boundary from the center of the sun, in
-                            arcseconds.</td>
-                        </tr>
-                        <tr>
-                            <td><b>y2</b></td>
-                            <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The offset of the image's
-                            bottom boundary from the center of the sun, in
-                            arcseconds.</td>
-                        </tr>
-                        <tr>
-                            <td><b>x2</b></td>
-                            <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The offset of the image's
-                            right boundary from the center of the sun, in
-                            arcseconds.</td>
-                        </tr>
-                        <tr>
-                            <td><b>x0</b></td>
-                            <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The horizontal offset from
-                            the center of the Sun.</td>
-                        </tr>
-                        <tr>
-                            <td><b>y0</b></td>
-                            <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The vertical offset from the
-                            center of the Sun.</td>
-                        </tr>
-                        <tr>
-                            <td><b>width</b></td>
-                            <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> Width of the movie in pixels
-                            (Maximum: 1920).</td>
-                        </tr>
-                        <tr>
-                            <td><b>height</b></td>
-                            <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> Height of the movie in
-                            pixels (Maximum: 1200).</td>
-                        </tr>
-                        <tr>
-                            <td><b>numFrames</b></td>
-                            <td><i>Integer</i></td>
-                            <td><i>[Optional]</i>The maximum number of frames
-                            that will be used during movie creation. You may
-                            have between 10 and 300 frames. The default value
-                            is 300.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><b>frameRate</b></td>
-                            <td><i>Float</i></td>
-                            <td><i>[Optional]</i>The number of frames per
-                            second. The default value is 15.</td>
-                        </tr>
-                        <tr>
-                            <td><b>movieLength</b></td>
-                            <td><i>Float</i></td>
-                            <td><i>[Optional]</i>The length in seconds of the
-                            video to be produced.</td>
-                        </tr>
-                        <tr>
-                            <td><b>watermark</b></td>
-                            <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Enables turning watermarking
-                            on or off. If watermark is set to false, the
-                            images will not be watermarked, which will speed
-                            up movie generation time but you will have no
-                            timestamps on the movie. If left blank, it
-                            defaults to true and images will be watermarked.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><b>display</b></td>
-                            <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> If display is true, the
-                            movie will display on the page when it is ready.
-                            If display is false, the filepath to the movie's
-                            flash-format file will be returned as JSON. If
-                            display is not specified, it will default to true.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <br />
-                Result:
-                <br /><br />
-                The result includes an identifier for the movie request and an
-                estimated time before the movie is ready to be downloaded.
-                <br /><br />
-
-                <table class="param-list" cellspacing="10">
-                    <tbody valign="top">
-                        <tr>
-                            <td width="20%"><b>id</b></td>
-                            <td width="25%"><i>String</i></td>
-                            <td width="55%">Movie identifier</td>
-                        </tr>
-                        <tr>
-                            <td><b>eta</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The estimated time in seconds until the movie
-                            has been processed.</td>
-                        </tr>
-
-                    </tbody>
-                </table>
-                <br />
-
-                <span class="example-header">Examples:</span>
-                <span class="example-url">
-                <a href="<?php echo HV_API_ROOT_URL; ?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                    <?php echo HV_API_ROOT_URL; ?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
-                </a>
-                </span><br />
-                <span class="example-url">
-                <a href="<?php echo HV_API_ROOT_URL; ?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                    <?php echo HV_API_ROOT_URL; ?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
-                </a>
-                </span><br />
-                <!--
-                <span class="example-url">
-                <i>iPod Video:</i><br /><br />
-                <a href="<?php echo HV_API_ROOT_URL; ?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermark=false">
-                    <?php echo HV_API_ROOT_URL; ?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermark=false
-                </a>
-                </span>
-                 -->
-                </div>
-            </div>
-
-            <br />
-            <br />
-        </div>
-<?php
     }
 }
 ?>
