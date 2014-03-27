@@ -707,7 +707,7 @@ var EventMarker = Class.extend(
             });
         }
 
-        content     += '<div class="btn-container">'+"\n"
+        content     += '<div class="btn-container text-btn">'+"\n"
                     +       "\t"+'<div class="ui-icon ui-icon-info btn event-info"></div><div class="btn-label btn event-info">View HEK data</div>'+"\n"
 //                    +       "\t"+'<div class="ui-icon ui-icon-video btn event-movie"></div><div class="btn-label btn event-movie">Generate Movie</div>'+"\n"
                     +  '</div>'+"\n";

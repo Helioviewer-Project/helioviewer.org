@@ -63,10 +63,10 @@ class Validation_InputValidator
         if (isset($expected["optional"])) {
             Validation_InputValidator::checkOptionalParams($expected["optional"], $input, $optional);
         }
-        
+
         // Check for unknown parameters
         $allowed = array("action", "_", "XDEBUG_PROFILE");
-        
+
         if(isset($expected["required"])) {
             $allowed = array_merge($allowed, array_values($expected["required"]));
         }
@@ -74,10 +74,17 @@ class Validation_InputValidator
             $allowed = array_merge($allowed, array_values($expected["optional"]));
         }
 
+        // Unset any unexpected request parameters
         foreach(array_keys($_REQUEST) as $param) {
             if (!in_array($param, $allowed)) {
-                throw new InvalidArgumentException("Unrecognized parameter <b>$param</b>.", 27);
-            } 
+                /*
+                throw new InvalidArgumentException(
+                    'Unrecognized parameter <b>'.$param.'</b>.', 27);
+                */
+                unset($_REQUEST[$param]);
+                unset($_GET[$param]);
+                unset($_POST[$param]);
+            }
         }
     }
 
@@ -118,13 +125,13 @@ class Validation_InputValidator
             }
         }
     }
-    
+
     /**
      * Checks alphanumeric entries to make sure they do not include invalid characters
-     * 
+     *
      * @param array $strings A list of alphanumeric parameters which are used by an action.
      * @param array &$params The parameters that were passed in
-     * 
+     *
      * @return void
      */
     public static function checkAlphaNumericStrings($strings, &$params)
@@ -162,13 +169,13 @@ class Validation_InputValidator
             }
         }
     }
-    
+
     /**
      * Checks filepaths to check for attempts to access parent directories
-     * 
+     *
      * @param array $files   Filepaths that should be validated
      * @param array &$params The parameters that were passed in
-     * 
+     *
      * @return void
      */
     public static function checkFilePaths($files, &$params)
@@ -228,7 +235,7 @@ class Validation_InputValidator
             }
         }
     }
-    
+
     /**
      * Validates UUIDs
      *
@@ -269,11 +276,11 @@ class Validation_InputValidator
             }
         }
     }
-    
+
     /**
      * Typecasts validates URL-encoded parameters
      *
-     * @param array $urls    A list of URL-encoded strings which are used by 
+     * @param array $urls    A list of URL-encoded strings which are used by
      *                       an action.
      * @param array &$params The parameters that were passed in
      *

@@ -281,6 +281,9 @@ var EventManager = Class.extend({
         }
 
         self._eventTree.reload(this._jsTreeData);
+        
+        // Update viewport shadow
+        $(document).trigger('viewport-resized');
     },
 
     /**

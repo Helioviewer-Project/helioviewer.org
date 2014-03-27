@@ -16,6 +16,7 @@ from random import shuffle
 from helioviewer.jp2 import process_jp2_images, BadImage
 from helioviewer.db  import get_db_cursor, mark_as_corrupt
 from helioviewer.hvpull.browser.basebrowser import NetworkError
+from sunpy.time import is_time
 
 class ImageRetrievalDaemon:
     """Retrieves images from the server as specified"""
@@ -320,6 +321,7 @@ class ImageRetrievalDaemon:
                 continue
 
             # If everything looks good, move to archive and add to database
+            print image_params['date']
             date_str = image_params['date'].strftime('%Y/%m/%d')
 
             # Transcode
@@ -519,6 +521,10 @@ class ImageRetrievalDaemon:
     def _validate(self, params):
         """Filters out images that are known to have problems using information
         in their metadata"""
+
+        # Make sure the time can be understood
+        if not is_time(params['date']):
+            raise BadImage("DATE")
 
         # AIA
         if params['detector'] == "AIA":

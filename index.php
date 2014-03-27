@@ -19,12 +19,12 @@
             $urlSettings[$float] = (float) $_GET[$float];
     }
     foreach($params['bools'] as $bool) {
-        if ( isset($_GET[$bool]) && 
+        if ( isset($_GET[$bool]) &&
             (strtolower($_GET[$bool]) == 'true' || $_GET[$bool] == 1) ) {
 
             $urlSettings[$bool] = true;
         }
-        else if ( isset($_GET[$bool]) && 
+        else if ( isset($_GET[$bool]) &&
                  (strtolower($_GET[$bool]) == 'false' || $_GET[$bool] == 0) ) {
 
             $urlSettings[$bool] = false;
@@ -35,7 +35,9 @@
     }
 
     // Process imageLayers separately if set
-    if (isset($_GET['imageLayers'])) {
+    if ( array_key_exists('imageLayers', $_GET) &&
+         is_array($_GET['imageLayers']) ) {
+
         if ($_GET['imageLayers'][0] == '[') {
             $imageLayersString = substr($_GET['imageLayers'],1,-1);
         } else {

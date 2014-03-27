@@ -17,11 +17,13 @@
 }
 
 #screenshot-manager-container {
-    right: 15px;
+    right: 60px;
+    width: 260px;
 }
 
 #movie-manager-container, #movie-settings-container {
-    right: 75px;
+    right: 140px;
+    width: 260px;
 }
 
 #movie-settings-container {
@@ -64,6 +66,12 @@
     height: 14px;
     padding: 4px 0px;
 }
+.history-entry .text-btn {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 180px;
+}
 
 .media-manager-build-btns {
     height: 18px;
@@ -91,6 +99,8 @@
     float:right;
     font-size: 8pt;
     font-style: italic;
+    text-align: right;
+    width: 70px;
 }
 
 .processing {
@@ -117,7 +127,7 @@
 }
 
 #movie-button.selected, #screenshot-button.selected {
-    
+
 }
 
 #youtube-auth-loading-indicator {

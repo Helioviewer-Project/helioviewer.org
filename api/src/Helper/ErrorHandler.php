@@ -1,10 +1,10 @@
 <?php
 /**
  * Handles errors encountered during request processing.
- * 
+ *
  * @param string $msg       The error message to display
  * @param int    $errorCode Error code number
- * 
+ *
  * Error Codes:
  *    1 DATABASE    Unable to connect
  *    2 DATABASE    Query error
@@ -40,63 +40,64 @@
  *   61 JHV         JPX creation taking too long
  *   62 JHV         JPX summary file not found
  *  255 GENERAL     Unexpected error
- * 
- * 
- * Note: If multiple levels of verbosity are needed, one option would be to 
- *       split up the complete error message into it's separate parts, add 
- *       a "details" field with the full message, and display only the 
- *       top-level error message in "error" 
- * 
+ *
+ *
+ * Note: If multiple levels of verbosity are needed, one option would be to
+ *       split up the complete error message into it's separate parts, add
+ *       a "details" field with the full message, and display only the
+ *       top-level error message in "error"
+ *
  * @see http://www.firephp.org/
  */
-function handleError($msg, $errorCode=255)
-{
-    //error_log('Error Code '.$errorCode.': '.$msg);
+function handleError($msg, $errorCode=255) {
+
+    // error_log('Error Code '.$errorCode.': '.$msg);
     header('Content-type: application/json;charset=UTF-8');
-    
+
     // JSON
     echo json_encode(array(
-        "error" =>$msg,
-        "errno" =>$errorCode
+        'error' => $msg,
+        'errno' => $errorCode
     ));
 
     // Fire PHP
-    include_once HV_API_ROOT_DIR ."/lib/FirePHPCore/fb.php";
+    include_once HV_API_DIR.'/lib/FirePHPCore/fb.php';
     FB::error($msg);
-    
+
     // Don't log non-harmful errors
     $dontLog = array(12, 16, 23, 25, 26, 40, 44, 46);
 
-    if (!in_array($errorCode, $dontLog)) {
+    if ( !in_array($errorCode, $dontLog) ) {
         logErrorMsg($msg);
     }
 }
 
 /**
  * Logs an error message to the log whose location is specified in Config.ini
- * 
+ *
  * @param string $error The body of the error message to be logged.
- * 
- * @return void 
+ *
+ * @return void
  */
-function logErrorMsg($error, $prefix="")
-{
+function logErrorMsg($error, $prefix='') {
     // API request errors
-    if (isset($_SERVER['HTTP_HOST']) && isset($_SERVER['REQUEST_URI'])) {
+    if ( isset($_SERVER['HTTP_HOST']) && isset($_SERVER['REQUEST_URI']) ) {
         $source = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    } else {
-        // Resque worker errors
-        $source = "Resque: " . $_SERVER['QUEUE'];
     }
-    
-    $log = HV_LOG_DIR . "/$prefix" . date("Ymd_His") . ".log";
-    
-    $template = "====[DATE]====================\n\n%s\n\n====[SOURCE]===================\n\n%s\n\n"
+    else {
+        // Resque worker errors
+        $source = 'Resque: ' . $_SERVER['QUEUE'];
+    }
+
+    $log = HV_LOG_DIR.'/'.$prefix.date('Ymd_His').'.log';
+
+    $template = "====[DATE]====================\n\n%s\n\n"
+              . "====[SOURCE]==================\n\n%s\n\n"
               . "====[MESSAGE]=================\n\n%s";
-    
-    $msg = sprintf($template, date("Y/m/d H:i:s"), $source, $error);
-    
-    if (!empty($_REQUEST)) {
+
+    $msg = sprintf($template, date('Y/m/d H:i:s'), $source, $error);
+
+    if ( !empty($_REQUEST) ) {
         $msg .= "\n\n====[POST]=================\n\n";
         foreach ($_REQUEST as $key => $value) {
            $msg .= "'$key' => $value\n";

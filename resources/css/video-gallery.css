@@ -1,7 +1,6 @@
 #user-video-gallery-header {
     position: relative;
-    margin: 5px 0px 2px 5px;
-    height: 48px;
+    margin: 15px 0px 3px 3px;
 }
 
 #user-video-gallery {
@@ -33,7 +32,7 @@
 #user-video-gallery a {
     font-size: 13px;
     font-weight: 700;
-    text-decoration: none;  
+    text-decoration: none;
 }
 
 #user-video-gallery img {
@@ -64,7 +63,7 @@
 @-moz-keyframes glow {
     from {
         -moz-box-shadow: 0 0 5px #8fcccc;
-    }    
+    }
     50% {
         -moz-box-shadow: 0 0 15px #7ccc66;
     }
@@ -87,7 +86,7 @@
 
 #youtube-logo {
     text-decoration: none;
-    margin-right: 5px;
+    margin: 0 0 -2px 0;
 }
 
 .user-video-thumbnail-container {
@@ -97,6 +96,6 @@
 
 #user-video-thumbnail-container{
     box-shadow: 0 0 10px #8fcccc;
-    -webkit-box-shadow: 0 0 10px #8fcccc; 
+    -webkit-box-shadow: 0 0 10px #8fcccc;
     -moz-box-shadow: 0 0 10px #8fcccc;
 }
