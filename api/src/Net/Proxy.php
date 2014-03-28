@@ -68,7 +68,7 @@ class Net_Proxy {
             return $results;
         }
         else {
-            return file_get_contents($url);
+            return @file_get_contents($url);
         }
     }
 
@@ -97,7 +97,7 @@ class Net_Proxy {
             return $results;
         }
         else {
-            return file_get_contents($url);
+            return @file_get_contents($url);
         }
     }
 }

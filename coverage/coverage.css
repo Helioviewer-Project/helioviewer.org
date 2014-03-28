@@ -1,0 +1,101 @@
+body, select {
+    font-family: "HelveticaNeue-Light",
+                 "Helvetica Neue Light",
+                 "Helvetica Neue",
+                 Helvetica,
+                 Arial,
+                 "Lucida Grande",
+                 sans-serif;
+    font-weight: 300;
+}
+select {
+    font-size: 1.0em;
+    text-align: center;
+
+       border-radius: 0.2em;
+             padding: 0.2em;
+              margin: 0.5em;
+     text-decoration: none;
+         font-family: sans-serif;
+           font-size: 0.8em;
+               color: #3288bd;
+    background-color: white;
+              border: 1px solid #3288bd;
+      vertical-align: middle;
+}
+#main {
+    text-align: center;
+        margin: 0em auto;
+         width: 100%;
+}
+#header {
+         font-size: 1.3em;
+    vertical-align: middle;
+        margin-top: 0.5em;
+     margin-bottom: 1em;
+}
+#headerText {
+           display: inline-block;
+         font-size: 1.3em;
+    vertical-align: top;
+       padding-top: 0.6em;
+            margin: 0 0.35em;
+}
+#footer {
+    font-size: 0.75em;
+}
+#visualizations {
+        margin: 0.5em 0;
+    text-align: center;
+}
+#barCharts {
+           display: block;
+          overflow: hidden;
+    vertical-align: top;
+}
+.columnChart {
+         width: 100%;
+        margin: 0 auto;
+    text-align: center;
+    display: inline-block;
+}
+.resolutions a {
+       border-radius: 0.2em;
+             padding: 0.2em 0.4em;
+     text-decoration: none;
+         font-family: sans-serif;
+           font-size: 0.8em;
+               color: #3288bd;
+    background-color: white;
+              border: 1px solid #3288bd;
+}
+.resolutions a:hover {
+               color: white;
+    background-color: #66c2a5;
+              border: 1px solid #66c2a5;
+}
+.resolutions a.selected {
+               color: white;
+    background-color: #3288bd;
+              border: 1px solid #3288bd;
+}
+
+#datePicker {
+    display: none;
+}
+#timePicker {
+    display: none;
+}
+
+a.button {
+       border-radius: 0.2em;
+             padding: 0.2em;
+             display: inline-block;
+             padding: 0 1em;
+               color: #3288bd;
+    background-color: white;
+              border: 1px solid #3288bd;
+              margin: 0.5em;
+      vertical-align: middle;
+              cursor: pointer;
+}

@@ -44,7 +44,7 @@ class Database_ImgIndex {
      */
     private function _dbConnect() {
         if ( $this->_dbConnection === false ) {
-            include_once 'DbConnection.php';
+            include_once HV_API_DIR.'/src/Database/DbConnection.php';
             $this->_dbConnection = new Database_DbConnection();
         }
     }
@@ -58,7 +58,7 @@ class Database_ImgIndex {
         $layers, $bitmask, $events, $eventsLabels, $scale, $scaleType,
         $scaleX, $scaleY, $numLayers) {
 
-        include_once 'src/Helper/DateTimeConversions.php';
+        include_once HV_API_DIR.'/src/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
 
@@ -96,9 +96,13 @@ class Database_ImgIndex {
     public function getMovieInformation($movieId) {
         $this->_dbConnect();
 
+        // LEFT JOIN ensures that we get a movie result even if there are no
+        // corresponding records in the `movieFormats` table.  Just make sure
+        // that the WHERE clause doesn't filter based on an `movieFormats`
+        // columns.
         $sql = 'SELECT *, AsText(regionOfInterest) as roi FROM movies ' .
                'LEFT JOIN movieFormats ON movies.id = movieFormats.movieId ' .
-               'WHERE movies.id='.$movieId.' AND movieFormats.format="mp4"';
+               'WHERE movies.id='.$movieId.' LIMIT 1';
 
         return mysqli_fetch_array($this->_dbConnection->query($sql),
             MYSQLI_ASSOC);
@@ -158,11 +162,13 @@ class Database_ImgIndex {
      *
      * @return void
      */
-    public function markMovieAsProcessing($movieId, $format) {
+    public function markMovieAsProcessing($movieId, $format=null) {
         $this->_dbConnect();
 
-        $sql = 'UPDATE movieFormats SET status=1 WHERE movieId='.$movieId.' ' .
-               'AND format="'.$format.'"';
+        $sql = 'UPDATE movieFormats SET status=1 WHERE movieId='.$movieId;
+        if ( $format !== null ) {
+           $sql .= ' AND format="'.$format.'"';
+        }
         $this->_dbConnection->query($sql);
     }
 
@@ -276,7 +282,7 @@ class Database_ImgIndex {
      *               the `datasources` table.
      */
     public function getImageFromDatabase($date, $sourceId) {
-        include_once 'src/Helper/DateTimeConversions.php';
+        include_once HV_API_DIR.'/src/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
 
@@ -330,7 +336,7 @@ class Database_ImgIndex {
      * @return array Array containing one row from the `images` table
      */
     public function getClosestImageBeforeDate($date, $sourceId) {
-        include_once 'src/Helper/DateTimeConversions.php';
+        include_once HV_API_DIR.'/src/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
 
@@ -368,7 +374,7 @@ class Database_ImgIndex {
      * @return array Array containing one row from the `images` table
      */
     public function getClosestImageAfterDate($date, $sourceId) {
-        include_once 'src/Helper/DateTimeConversions.php';
+        include_once HV_API_DIR.'/src/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
 
@@ -420,7 +426,7 @@ class Database_ImgIndex {
      * @return int The number of `images` rows matching a source and time range
      */
     public function getImageCount($start, $end, $sourceId) {
-        include_once 'src/Helper/DateTimeConversions.php';
+        include_once HV_API_DIR.'/src/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
 
@@ -481,7 +487,7 @@ class Database_ImgIndex {
      * @return array A subset of the information stored in the jp2 header
      */
     public function extractJP2MetaInfo($image_filepath) {
-        include_once 'src/Image/JPEG2000/JP2ImageXMLBox.php';
+        include_once HV_API_DIR.'/src/Image/JPEG2000/JP2ImageXMLBox.php';
 
         try {
             $xmlBox = new Image_JPEG2000_JP2ImageXMLBox($image_filepath);
@@ -911,6 +917,32 @@ class Database_ImgIndex {
         }
 
         return $tree;
+    }
+
+    /**
+     *
+     *
+     * @return array A tree representation of the known data sources
+     */
+    public function getDataSourceList() {
+
+        $this->_dbConnect();
+
+        $sql = 'SELECT id, name, description FROM datasources WHERE enabled=1 ORDER BY description';
+
+        // Use UTF-8 for responses
+        $this->_dbConnection->setEncoding('utf8');
+
+        // Fetch available data-sources
+        $result = $this->_dbConnection->query($sql);
+
+        $sources = array();
+
+        while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
+            array_push($sources, $row);
+        }
+
+        return $sources;
     }
 
     /**
