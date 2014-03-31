@@ -90,10 +90,16 @@ class Module_WebClient implements Module {
 
         $filepath = $dir . $filename;
 
-        // Make sure file exists
+        // If screenshot is no longer cached, regenerate it.
         if ( !@file_exists($filepath) ) {
-            throw new Exception(
-                'Unable to locate the requested file: '.$filepath, 24);
+
+            $this->reTakeScreenshot($this->_params['id']);
+
+            if ( !@file_exists($filepath) ) {
+                $filepath = str_replace(HV_CACHE_DIR, '', $filepath);
+                throw new Exception(
+                    'Unable to locate the requested file: '.$filepath, 24);
+            }
         }
 
         // Set HTTP headers
@@ -359,6 +365,90 @@ class Module_WebClient implements Module {
             // Print JSON
             $this->_printJSON(json_encode(array('id' => $screenshot->id)));
         }
+    }
+
+    /**
+     * Re-generate a screenshot using the metadata stored in the 
+     * `screenshots` database table.
+     *
+     * @return
+     */
+    public function reTakeScreenshot($screenshotId) {
+        include_once 'src/Database/ImgIndex.php';
+        include_once 'src/Image/Composite/HelioviewerScreenshot.php';
+        include_once 'src/Helper/HelioviewerLayers.php';
+        include_once 'src/Helper/HelioviewerEvents.php';
+        include_once 'src/Helper/RegionOfInterest.php';
+
+        // Default options
+        $defaults = array(
+            'force' => false,
+            'display' => false
+        );
+        $options = array_replace($defaults, $this->_params);
+
+        $screenshotId = intval($screenshotId);
+
+        if ( $screenshotId <= 0 ) {
+            throw new Exception(
+                'Value of screenshot "id" parameter is invalid.', 25);
+        }
+
+        $imgIndex = new Database_ImgIndex();
+        $metaData = $imgIndex->getScreenshotMetadata($screenshotId);
+
+        $options['timestamp'] = $metaData['timestamp'];
+        $options['observationDate'] = $metaData['observationDate'];
+
+        $roiArr = explode(',', str_replace(array('POLYGON((', '))'), '',
+            $metaData['roi']));
+
+        $roi = array();
+        foreach ( $roiArr as $index => $coordStr ) {
+            $coordArr = explode(' ', $coordStr);
+            if ( $index === 0 ) {
+                $x1 = $coordArr[0];
+                $y1 = $coordArr[1];
+                $x2 = $coordArr[0];
+                $y2 = $coordArr[1];
+            }
+            else if ($coordArr[0] <= $x1 &&
+                     $coordArr[1] <= $y1) {
+                $x1 = $coordArr[0];
+                $y1 = $coordArr[1];
+            }
+            else if ($coordArr[0] >= $x2 &&
+                     $coordArr[1] >= $y2) {
+                $x2 = $coordArr[0];
+                $y2 = $coordArr[1];
+            }
+        }
+
+        $roi = new Helper_RegionOfInterest($x1, $y1, $x2, $y2,
+            $metaData['imageScale']);
+
+        // Data Layers
+        $layers = new Helper_HelioviewerLayers(
+            $metaData['dataSourceString']);
+
+        // Limit screenshot to five layers
+        if ( $layers->length() < 1 || $layers->length() > 5 ) {
+            throw new Exception(
+                'Invalid layer choices! You must specify 1-5 comma-separated '.
+                'layer names.', 22);
+        }
+
+        // Event Layers
+        $events = new Helper_HelioviewerEvents(
+            $metaData['eventSourceString']);
+
+        // Create the screenshot
+        $screenshot = new Image_Composite_HelioviewerScreenshot(
+            $layers, $events, (bool)$metaData['eventsLabels'],
+            (bool)$metaData['scale'], $metaData['scaleType'],
+            $metaData['scaleX'], $metaData['scaleY'],
+            $metaData['observationDate'], $roi, $options
+        );
     }
 
     /**
@@ -931,7 +1021,9 @@ class Module_WebClient implements Module {
         case 'downloadScreenshot':
             $expected = array(
                'required' => array('id'),
-               'ints'     => array('id')
+               'optional' => array('force'),
+               'ints'     => array('id'),
+               'bools'    => array('force')
             );
             break;
         case 'getClosestImage':
