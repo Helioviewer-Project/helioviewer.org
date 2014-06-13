@@ -644,7 +644,7 @@ class Event_HEKAdapter {
                     ) . ' ' . str_replace('2','²',$event['area_unit']);
             }
             else if ( $event['frm_name'] == 'NOAA SWPC Observer' ) {
-                $labelArray['NOAA Number'] = $event['ar_noaanum'];
+                $labelArray['NOAA Number'] = 'NOAA '.$event['ar_noaanum'];
 
                 if ( preg_match_all('/(ALPHA|BETA|GAMMA)/',
                      $event['ar_mtwilsoncls'], $matches) > 0 ) {
@@ -661,14 +661,9 @@ class Event_HEKAdapter {
                 $labelArray['Mt. Wilson Class.'] = $ar_mtwilsoncls;
             }
             else if ( $event['frm_name'] == 'SPoCA' ) {
-                $labelArray['Area at Disk Center'] =
-                    str_replace('+', '',
-                      sprintf('%.1e', (float)$event['area_atdiskcenter'])
-                    ) . ' ± ' .
-                    str_replace('+', '',
-                      sprintf('%.1e', (float)$event['area_atdiskcenteruncert'])
-                    ) . ' ' .
-                    str_replace('2', '²', $event['area_unit']);
+                $tmpArr = explode('_', $event['frm_specificid']);
+                $labelArray['SPoCA Identifier'] =
+                    'SPoCA ' . ltrim(array_pop($tmpArr), '0');
             }
         }
         else if ( $event['event_type'] == 'CE') {
