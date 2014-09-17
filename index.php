@@ -34,16 +34,19 @@
         }
     }
 
-    // Process imageLayers separately if set
-    if ( array_key_exists('imageLayers', $_GET) &&
-         is_array($_GET['imageLayers']) ) {
 
+
+    // Process imageLayers separately if set
+    if (isset($_GET['imageLayers']) && $_GET['imageLayers'] != '') {
         if ($_GET['imageLayers'][0] == '[') {
             $imageLayersString = substr($_GET['imageLayers'],1,-1);
         } else {
             $imageLayersString = $_GET['imageLayers'];
         }
         $urlSettings['imageLayers'] = preg_split("/\],\[/", $imageLayersString);
+    }
+    else {
+        $urlSettings['imageLayers'] = '';
     }
 
     // Process eventLayers separately if set
