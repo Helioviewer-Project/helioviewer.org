@@ -598,7 +598,8 @@ class Event_HEKAdapter {
                     }
 
                     foreach ( $events as $i => $event ) {
-                        if ( !isset($event['ar_noaanum']) ||
+                        if ( $event['event_type'] != 'AR' ||
+                             !isset($event['ar_noaanum']) ||
                              $event['ar_noaanum'] == '' ) {
 
                            continue;
@@ -758,6 +759,9 @@ class Event_HEKAdapter {
                 $labelArray['Peak Flux'] =
                     round( (float)$event['fl_peakflux'], 1)
                     . ' ' . $event['fl_peakfluxunit'];
+            }
+            elseif ( $event['frm_name']=='SWPC' ) {
+                $labelArray['GOES Class'] = $event['fl_goescls'];
             }
         }
         else if ( $event['event_type'] == 'SG') {
