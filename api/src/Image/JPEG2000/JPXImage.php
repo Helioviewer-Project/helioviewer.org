@@ -62,7 +62,12 @@ class Image_JPEG2000_JPXImage
         $cmd =  "$kduMerge -i ";
 
         foreach ($frames as $jp2) {
-            $cmd .= "$jp2,";
+            if ( @filesize($jp2) === false ) {
+                error_log('File is missing:  '.$jp2);
+            }
+            else {
+                $cmd .= "$jp2,";
+            }
         }
 
         // Drop trailing comma

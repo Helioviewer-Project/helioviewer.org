@@ -26,8 +26,6 @@
             <a href="<?php echo $now; ?>"><img src="../resources/images/logos/hvlogo1s_transparent_logo.png" alt="Helioviewer logo" /></a>
             <div id='headerText'>The Helioviewer Project - Data Coverage</div>
             <div class="resolutions">
-                <a href="?resolution=5m<?php if ( isset($_GET['endDate']) ) { echo '&endDate='.$_GET['endDate']; } ?>"<?php if ($_GET['resolution']=='5m') { echo ' class="selected"'; } ?>>5 min</a>
-                <a href="?resolution=15m<?php if ( isset($_GET['endDate']) ) { echo '&endDate='.$_GET['endDate']; } ?>"<?php if ($_GET['resolution']=='15m') { echo ' class="selected"'; } ?>>15 min</a>
                 <a href="?resolution=30m<?php if ( isset($_GET['endDate']) ) { echo '&endDate='.$_GET['endDate']; } ?>"<?php if ($_GET['resolution']=='30m') { echo ' class="selected"'; } ?>>30 min</a>
                 <a href="?resolution=1h<?php if ( isset($_GET['endDate']) ) { echo '&endDate='.$_GET['endDate']; } ?>"<?php if ($_GET['resolution']=='1h') { echo ' class="selected"'; } ?>>1 hour</a>
                 <a href="?resolution=1D<?php if ( isset($_GET['endDate']) ) { echo '&endDate='.$_GET['endDate']; } ?>"<?php if ($_GET['resolution']=='1D') { echo ' class="selected"'; } ?>>1 day</a>

@@ -289,7 +289,7 @@ class Movie_YouTube {
      *
      * @return Zend_Gdata_YouTube_VideoEntry
      */
-    private function _uploadVideoToYouTube ($videoEntry, $id, $title,
+    private function _uploadVideoToYouTube($videoEntry, $id, $title,
         $description, $tags, $share, $html) {
 
         include_once 'src/Database/MovieDatabase.php';

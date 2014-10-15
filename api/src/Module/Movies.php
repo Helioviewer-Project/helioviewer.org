@@ -217,6 +217,176 @@ class Module_Movies implements Module {
     }
 
     /**
+     * Queues a request for a Helioviewer.org movie
+     */
+    public function reQueueMovie($silent=false) {
+        include_once 'lib/alphaID/alphaID.php';
+        include_once 'lib/Resque.php';
+        include_once 'lib/Redisent/Redisent.php';
+        include_once 'src/Helper/HelioviewerLayers.php';
+        include_once 'src/Helper/HelioviewerEvents.php';
+        include_once 'src/Database/MovieDatabase.php';
+        include_once 'src/Database/ImgIndex.php';
+        include_once 'src/Movie/HelioviewerMovie.php';
+
+        // Connect to redis
+        $redis = new Redisent('localhost');
+
+        // If the queue is currently full, don't process the request
+        $queueSize = Resque::size('on_demand_movie');
+        if ( $queueSize >= MOVIE_QUEUE_MAX_SIZE ) {
+            throw new Exception(
+                'Sorry, due to current high demand, we are currently unable ' .
+                'to process your request. Please try again later.', 40);
+        }
+
+        // Get current number of on_demand_movie workers
+        $workers = Resque::redis()->smembers('workers');
+        $movieWorkers = array_filter($workers, function ($elem) {
+            return strpos($elem, 'on_demand_movie') !== false;
+        });
+
+        // Default options
+        $defaults = array(
+            "format"      => 'mp4',
+            "force"       => false
+        );
+        $options = array_replace($defaults, $this->_params);
+
+        // Convert public alpha-numeric id to integer
+        $movieId = alphaId($this->_params['id'], true, 5, HV_MOVIE_ID_PASS);
+        $movieId = intval($movieId);
+
+        if ( $movieId <= 0 ) {
+            throw new Exception(
+                'Value of movie "id" parameter is invalid.', 25);
+        }
+
+        // Check if movie exists on disk before re-queueing
+        if ( $options['force'] === false ) {
+            $helioviewerMovie = new Movie_HelioviewerMovie(
+                $this->_params['id'], $options['format']);
+            $filepath = $helioviewerMovie->getFilepath();
+
+            $path_parts = pathinfo($filepath);
+            $extension = '.' . $path_parts['extension'];
+
+            foreach ( array('.mp4', '.flv', '.webm') as $ext ) {
+                $path = str_replace($extension, $ext, $filepath);
+                if ( @file_exists($path) ) {
+                    $url = str_replace(HV_CACHE_DIR, HV_CACHE_URL, $path);
+                    throw new Exception(
+                        'Movie file already exists: '.$url, 44);
+                }
+            }
+        }
+
+        // Get movie metadata from database
+        $movieDatabase = new Database_MovieDatabase();
+        $movie = $movieDatabase->getMovieMetadata($movieId);
+
+
+        // Check if movie is already in the queue (status=0)
+        // or is already being processed (status=1) before re-queueing.
+        // This prevents a spider, bot, or other automated user-agent
+        // from stuffing the queue with redundant regeneration requests.
+        // As such, the optional 'force' parameter will NOT override
+        // this check.
+        // However, if the movie status is considered stale, then
+        // a Queued or Processing status is ignored and re-queueing
+        // is allowed to proceed.
+        $movieFormats = $movieDatabase->getMovieFormats($movieId);
+        foreach ( $movieFormats as $movieFormat ) {
+            $seconds_ago = time() - strtotime($movieFormat['modified']);
+            $stale = 60 * 60 * 2;  // 2 hours
+
+            if ( $movieFormat['status'] == 0
+                && $seconds_ago < $stale ) {
+
+                return;
+            }
+            else if ( $movieFormat['status'] == 1
+                &&  $seconds_ago < $stale ) {
+
+                return;
+            }
+        }
+
+        $numPixels = $movie['width'] * $movie['height'];
+        $maxFrames = min($this->_getMaxFrames($queueSize),
+            $movie['maxFrames']);
+
+
+        // Create a connection to the database
+        $db = new Database_ImgIndex();
+
+        // Limit movies to three layers
+        $layers = new Helper_HelioviewerLayers($movie['dataSourceString']);
+        if ( $layers->length() < 1 || $layers->length() > 3 ) {
+            throw new Exception(
+                'Invalid layer choices! You must specify 1-3 comma-separated '.
+                'layer names.', 22);
+        }
+
+        // Estimate the number of frames
+        $numFrames = $this->_estimateNumFrames($db, $layers,
+            $movie['startDate'], $movie['endDate']);
+        $numFrames = min($numFrames, $maxFrames);
+
+        // Estimate the time to create movie frames
+        // @TODO 06/2012: Factor in total number of workers and number of
+        //                workers that are currently available?
+        $estBuildTime = $this->_estimateMovieBuildTime($movieDatabase,
+            $numFrames, $numPixels, $options['format']);
+
+        // If all workers are in use, increment and use estimated wait counter
+        if ( $queueSize +1 >= sizeOf($movieWorkers) ) {
+            $eta = $redis->incrby('helioviewer:movie_queue_wait',
+                $estBuildTime);
+            $updateCounter = true;
+        }
+        else {
+            // Otherwise simply use the time estimated for the single movie
+            $eta = $estBuildTime;
+            $updateCounter = false;
+        }
+
+        // Get datasource bitmask
+        $bitmask = bindec($layers->getBitMask());
+
+        $publicId = $this->_params['id'];
+
+        // Queue movie request
+        $args = array(
+            'movieId' => $publicId,
+            'eta'     => $estBuildTime,
+            'format'  => $options['format'],
+            'counter' => $updateCounter
+        );
+        $token = Resque::enqueue('on_demand_movie', 'Job_MovieBuilder',
+            $args, true);
+
+        // Create entries for each version of the movie in the movieFormats
+        // table
+        $movieDatabase->deleteMovieFormats($movieId);
+        foreach(array('mp4', 'webm') as $format) {
+            $movieDatabase->insertMovieFormat($movieId, $format);
+        }
+
+        // Print response
+        $response = array(
+            'id'    => $publicId,
+            'eta'   => $eta,
+            'queue' => max(0, $queueSize + 1 - sizeOf($movieWorkers)),
+            'token' => $token
+        );
+
+        if ( !$silent ) {
+            $this->_printJSON(json_encode($response));
+        }
+    }
+
+    /**
      * Estimates the amount of time (in seconds) it will take to build the
      * requested movie using information about the most recent n movies
      * created.
@@ -412,15 +582,13 @@ class Module_Movies implements Module {
         $movie = new Movie_HelioviewerMovie($this->_params['id'],
                                             $this->_params['format']);
 
-        // Default options
-        $defaults = array(
-            "hq" => false
-        );
-        $options = array_replace($defaults, $this->_options);
+        if ( $this->_verifyMediaExists($movie, $allowRegeneration=true) ) {
+            // Default options
+            $defaults = array(
+                "hq" => false
+            );
+            $options = array_replace($defaults, $this->_options);
 
-
-        // If the movie is finished return the file as an attachment
-        if ( $movie->status == 2 ) {
             // Get filepath
             $filepath = $movie->getFilepath($options['hq']);
             $filename = basename($filepath);
@@ -439,15 +607,67 @@ class Module_Movies implements Module {
 
             // Return movie data
             echo @file_get_contents($filepath);
-
         }
-        // Otherwise return an error
         else {
-            header('Content-type: application/json');
-            $response = array('error' => 'The movie you requested is either '.
-                'being processed or does not exist.');
-            print json_encode($response);
+            switch ($movie->status) {
+            case 0:
+                header('Content-type: application/json');
+                $response = array(
+                    'error' => 'Movie '.$movie->publicId.' ('.$movie->id.') '
+                             . 'is queued for processing. '
+                             . 'Please wait for it to complete.');
+                print json_encode($response);
+                break;
+            case 1:
+                header('Content-type: application/json');
+                $response = array(
+                    'error' => 'Movie '.$movie->publicId.' ('.$movie->id.') '
+                             . 'is currently being processed. '
+                             . 'Please wait for it to complete.');
+                print json_encode($response);
+                break;
+            case 3:
+                header('Content-type: application/json');
+                $response = array(
+                    'error' => 'Movie '.$movie->publicId.' ('.$movie->id.') '
+                             . 'was not generated successfully.');
+                print json_encode($response);
+                break;
+            default:
+                header('Content-type: application/json');
+                $response = array(
+                    'error' => 'Movie '.$movie->publicId.' ('.$movie->id.') '
+                             . 'has an unknown status.');
+                print json_encode($response);
+                break;
+            }
         }
+    }
+
+    /**
+     * Grab the textual equivalent of a movie status code.
+     *
+     * @return string
+     */
+    public function getStatusLabel($statusCode) {
+        switch ($statusCode) {
+        case 0:
+            $statusLabel = 'Queued';
+            break;
+        case 1:
+            $statusLabel = 'Processing';
+            break;
+        case 2:
+            $statusLabel = 'Completed';
+            break;
+        case 3:
+            $statusLabel = 'Invalid';
+            break;
+        default:
+            $statusLabel = 'Unknown';
+        }
+
+        return $statusLabel;
     }
 
     /**
@@ -458,6 +678,9 @@ class Module_Movies implements Module {
      */
     public function getMovieStatus() {
         include_once 'src/Movie/HelioviewerMovie.php';
+        require_once 'lib/Resque.php';
+        $queueNum = $this->_getQueueNum('on_demand_movie',
+            $this->_params['id']) + 1;
 
         // Process request
         $movie = new Movie_HelioviewerMovie($this->_params['id'],
@@ -465,50 +688,50 @@ class Module_Movies implements Module {
         $verbose = isset($this->_options['verbose']) ?
             $this->_options['verbose'] : false;
 
-        // FINISHED
-        if ($movie->status == 2) {
+
+        if ($movie->status == 0) {
+            // QUEUED
+            $response = array(
+                'status'   => $movie->status,
+                'statusLabel' => $this->getStatusLabel($movie->status),
+                'queuePosition' => $queueNum,
+                'currentFrame' => 0
+            );
+        }
+        else if ($movie->status == 1) {
+            $current_frame = $movie->getCurrentFrame();
+            $progress = $current_frame / $movie->numFrames;
+            $progress = (float)number_format($progress, 3);
+
+            $response = array(
+                'status' => $movie->status,
+                'statusLabel' => $this->getStatusLabel($movie->status),
+                'currentFrame' => $current_frame,
+                'numFrames' => $movie->numFrames,
+                'progress' => $progress,
+                'queuePosition' => $queueNum
+            );
+        }
+        else if ($movie->status == 2) {
+            // FINISHED
             $response = $movie->getCompletedMovieInformation($verbose);
+            $response['statusLabel'] =
+                $this->getStatusLabel($response['status']);
         }
         else if ($movie->status == 3) {
             // ERROR
             $response = array(
-                'status' => 3,
+                'status' => $movie->status,
+                'statusLabel' => $this->getStatusLabel($movie->status),
                 'error'  => 'Sorry, we are unable to create your movie at '.
                     'this time. Please try again later.'
             );
         }
-        else if ($movie->status == 0) {
-            // QUEUED
-            if ( isset($this->_options['token']) ) {
-                require_once 'lib/Resque.php';
-
-                // with token
-
-                // NOTE: since resque token is only useful for determining
-                //       the general status of a job (e.g. QUEUED) and queue
-                //       position can be found using the movie id, the tokenId
-                //       can probably be removed.
-                //$queueNum  = $this->_getQueueNum("on_demand_movie",
-                //    $this->_options['token']);
-                $queueNum  = $this->_getQueueNum('on_demand_movie',
-                    $this->_params['id']);
-                $queueSize = Resque::size('on_demand_movie');
-
-                $response = array(
-                    'status'   => 0,
-                    'position' => $queueNum,
-                    'total'    => $queueSize
-                );
-            }
-            else {
-                // without token
-                $response = array('status' => 0);
-            }
-        }
         else {
-            // PROCESSING
             $response = array(
-                'status' => 1
+                'status' => $movie->status,
+                'statusLabel' => $this->getStatusLabel($movie->status),
+                'queuePosition' => $queueNum
             );
         }
 
@@ -692,6 +915,46 @@ class Module_Movies implements Module {
     }
 
     /**
+     *
+     *
+     */
+    public function _verifyMediaExists($movie, $allowRegeneration=true) {
+
+        // Check for missing movie or preview images
+        $media_exists = true;
+        $info = $movie->getCompletedMovieInformation(true);
+        $url_array = $info['thumbnails'];
+        array_push($url_array, $info['url']);
+        foreach ($url_array as $key => $url) {
+            $path = str_replace(HV_CACHE_URL, HV_CACHE_DIR, $url);
+            if ( !@file_exists($path) ) {
+                $media_exists = false;
+            }
+        }
+        if ( !$media_exists && $allowRegeneration ) {
+            try {
+                // Attempt to re-generate the movie because one or more
+                // of the thumbnail images or movie files is missing.
+                // Use the 'force' option to overwrite any of
+                // the associated movie files that may still exist
+                // in the cache
+                $id = $this->_params['id'];
+                $this->_params = array();
+                $this->_params['action'] = 'reQueueMovie';
+                $this->_params['id'] = $id;
+                $this->_params['force'] = true;
+$this->_params['force'] = false;
+                $this->reQueueMovie($silent=true);
+            }
+            catch (Exception $e) {
+                error_log(json_encode($e->getMessage()));
+            }
+        }
+
+        return $media_exists;
+    }
+
+    /**
      * Generates HTML for a video player with the specified movie loaded
      *
      * 2011/05/25
@@ -710,6 +973,11 @@ class Module_Movies implements Module {
         $movie = new Movie_HelioviewerMovie($this->_params['id'],
                                             $this->_params['format']);
 
+        // Check that the movie (in the requested format) as well as
+        // its thumbnail images exist on disk.  If not, silently
+        // queue the movie for re-generation.
+        $this->_verifyMediaExists($movie, $allowRegeneration=true);
+
         // Default options
         $defaults = array(
             'hq'     => false,
@@ -718,24 +986,25 @@ class Module_Movies implements Module {
         );
         $options = array_replace($defaults, $this->_options);
 
-        // Return an error if movie is not available
-        if ($movie->status != 2) {
-            header('Content-type: application/json');
-            $response = array(
-                'error' => 'The movie you requested is either being ' .
-                    'processed or does not exist.'
-            );
-
-            print json_encode($response);
-            return;
-        }
-
         $dimensions = sprintf('width: %dpx; height: %dpx;',
                               $options['width'], $options['height']);
 
         // Get filepath
         $filepath = $movie->getFilepath($options['hq']);
         $filename = basename($filepath);
+
+        // Return an error if movie is not available
+        if ( !@file_exists($filepath) ) {
+            header('Content-type: application/json');
+            $response = array(
+                'error' => 'Movie '.$movie->publicId.' ('.$movie->id.') '
+                         . 'is not currently available. '
+                         . 'Please check back later.'
+            );
+
+            print json_encode($response);
+            return;
+        }
 
         // Movie URL
         $url = str_replace(HV_CACHE_DIR, HV_CACHE_URL, $filepath);
@@ -744,23 +1013,22 @@ class Module_Movies implements Module {
 <html>
 <head>
     <title>Helioviewer.org - <?php echo $filename?></title>
-    <script src="<?php echo HV_WEB_ROOT_URL; ?>/lib/flowplayer/flowplayer-3.2.8.min.js"></script>
+    <!-- player skin -->
+    <link rel="stylesheet" type="text/css" href="<?php echo HV_WEB_ROOT_URL; ?>/lib/flowplayer-5.4.6/skin/minimalist.css">
+    <!-- flowplayer depends on jQuery 1.7.1+ (for now) -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <!-- include flowplayer -->
+    <script type="text/javascript" src="<?php echo HV_WEB_ROOT_URL; ?>/lib/flowplayer-5.4.6/flowplayer.min.js"></script>
 </head>
 <body>
-    <!-- Movie player -->
-    <div href="<?php echo $url; ?>"
-       style="display:block; <?php print $dimensions; ?>"
-       id="movie-player">
-    </div>
-    <br>
-    <script language="javascript">
-        flowplayer("movie-player", "<?php echo HV_WEB_ROOT_URL; ?>/lib/flowplayer/flowplayer-3.2.8.swf", {
-            clip: {
-                autoBuffering: true,
-                scaling: "fit"
-            }
-        });
-    </script>
+
+
+   <!-- the player -->
+   <div class="flowplayer" data-swf="<?php echo HV_WEB_ROOT_URL; ?>/lib/flowplayer-5.4.6/flowplayer.swf" style="display:block; <?php print $dimensions; ?>;" id="movie-player">
+      <video>
+         <source src="<?php echo $url; ?>">
+      </video>
+   </div>
 </body>
 </html>
 <?php
@@ -853,6 +1121,14 @@ class Module_Movies implements Module {
                                     'x0', 'y0', 'x1', 'x2', 'y1', 'y2',
                                     'scaleX', 'scaleY'),
                 'ints'     => array('maxFrames', 'width', 'height')
+            );
+            break;
+        case 'reQueueMovie':
+            $expected = array(
+                'required' => array('id'),
+                'optional' => array('force', 'callback'),
+                'alphanum' => array('id', 'callback'),
+                'bools'    => array('force')
             );
             break;
         case 'uploadMovieToYouTube':

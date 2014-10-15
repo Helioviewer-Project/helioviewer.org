@@ -118,6 +118,92 @@ class Database_Statistics
     /**
      * Gets latest datasource coverage and return as JSON
      */
+    public function getDataCoverageTimeline($resolution, $endDate, $interval,
+        $stepSize, $steps) {
+
+        require_once 'src/Helper/DateTimeConversions.php';
+
+        $sql = 'SELECT id, name, description FROM datasources ORDER BY description';
+        $result = $this->_dbConnection->query($sql);
+
+        $output = array();
+
+        while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+            $sourceId = $row['id'];
+
+            $output['sourceId'.$sourceId] = new stdClass;
+            $output['sourceId'.$sourceId]->sourceId = $sourceId;
+            $output['sourceId'.$sourceId]->label = $row['description'];
+            $output['sourceId'.$sourceId]->data = array();
+        }
+
+        // Format to use for displaying dates
+        switch($resolution) {
+        case "5m":
+        case "15m":
+        case "30m":
+            $dateFormat = "Y-m-d H:i";
+            break;
+        case "1h":
+            $dateFormat = "Y-m-d H:i";
+            break;
+        case "1D":
+            $dateFormat = "Y-m-d";
+            break;
+        case "14D":
+        case "1W":
+            $dateFormat = "Y-m-d";
+            break;
+        case "30D":
+        case "1M":
+        case "3M":
+        case "6M":
+            $dateFormat = "M Y";
+            break;
+        case "1Y":
+            $dateFormat = "Y";
+            break;
+        default:
+            $dateFormat = "Y-m-d H:i e";
+        }
+
+
+        // Start date
+        $date = $endDate->sub($interval);
+
+        // Query each time interval
+        for ($i = 0; $i < $steps; $i++) {
+            $dateIndex = $date->format($dateFormat); // Format date for array index
+            $dateStart = toMySQLDateString($date);   // MySQL-formatted date string
+
+            // Move to end date for the current interval
+            $date->add($stepSize);
+
+            // Fill with zeros to begin with
+            foreach ($output as $sourceId => $arr) {
+                array_push($output[$sourceId]->data, array($dateIndex => 0));
+            }
+            $dateEnd = toMySQLDateString($date);
+
+            $sql = "SELECT sourceId, SUM(count) as count FROM data_coverage_30_min " .
+                   "WHERE date BETWEEN '$dateStart' AND '$dateEnd' GROUP BY sourceId;";
+            //echo "\n<br />";
+
+            $result = $this->_dbConnection->query($sql);
+
+            // And append counts for each sourceId during that interval to the relevant array
+            while ($count = $result->fetch_array(MYSQLI_ASSOC)) {
+                $num = (int) $count['count'];
+                $output['sourceId'.$count['sourceId']]->data[$i][$dateIndex] = $num;
+            }
+        }
+
+        return json_encode($output);
+    }
+
+    /**
+     * Gets latest datasource coverage and return as JSON
+     */
     public function getDataCoverage($resolution, $endDate, $interval,
         $stepSize, $steps) {
 
@@ -185,7 +271,7 @@ class Database_Statistics
             }
             $dateEnd = toMySQLDateString($date);
 
-            $sql = "SELECT sourceId, SUM(count) as count FROM data_coverage_5_min " .
+            $sql = "SELECT sourceId, SUM(count) as count FROM data_coverage_30_min " .
                    "WHERE date BETWEEN '$dateStart' AND '$dateEnd' GROUP BY sourceId;";
             //echo "\n<br />";
 
@@ -239,13 +325,13 @@ class Database_Statistics
         }
 
         $sql = 'REPLACE INTO ' .
-                    'data_coverage_5_min ' .
+                    'data_coverage_30_min ' .
                 '(date, sourceId, count) ' .
                 'SELECT ' .
                     'SQL_BIG_RESULT SQL_BUFFER_RESULT SQL_NO_CACHE ' .
                     'CONCAT( ' .
                         'DATE_FORMAT(date, "%Y-%m-%d %H:"), '    .
-                        'LPAD((MINUTE(date) DIV 5)*5, 2, "0"), ' .
+                        'LPAD((MINUTE(date) DIV 30)*30, 2, "0"), ' .
                         '":00") AS "bin", ' .
                     'sourceId, ' .
                     'COUNT(id) ' .
