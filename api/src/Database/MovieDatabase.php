@@ -354,4 +354,82 @@ class Database_MovieDatabase {
 
         return $videos;
     }
+
+    /**
+     * Get a movie's information from the database.
+     *
+     * @param str  $movieId  Movie identifier
+     *
+     * @return arr Associative array
+     */
+    public function getMovieMetadata($movieId) {
+        $this->_dbConnect();
+
+        $sql = sprintf('SELECT *, AsText(regionOfInterest) as roi '
+             . 'FROM movies WHERE movies.id=%d LIMIT 1;',
+             (int)$movieId
+        );
+        try {
+            $result = $this->_dbConnection->query($sql);
+        }
+        catch (Exception $e) {
+            return false;
+        }
+
+        return $result->fetch_array(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Get information about a movie's format(s) from the database.
+     *
+     * @param str  $movieId  Movie identifier
+     *
+     * @return arr Multi-dimensional associative array
+     */
+    public function getMovieFormats($movieId) {
+        $this->_dbConnect();
+
+        $sql = sprintf('SELECT * '
+             . 'FROM movieFormats WHERE movieId=%d;',
+             (int)$movieId
+        );
+        try {
+            $result = $this->_dbConnection->query($sql);
+        }
+        catch (Exception $e) {
+            return false;
+        }
+
+        $movieFormats = array();
+
+        while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
+            array_push($movieFormats, $row);
+        }
+
+        return $movieFormats;
+    }
+
+    /**
+     * Delete a movie's format entrie(s) from the database.
+     *
+     * @param str  $movieId  Movie identifier
+     *
+     * @return bool Boolean True or False (for DELETE queries)
+     */
+    public function deleteMovieFormats($movieId) {
+        $this->_dbConnect();
+
+        $sql = sprintf('DELETE FROM movieFormats WHERE movieId=%d;',
+             (int)$movieId
+        );
+
+        try {
+            $result = $this->_dbConnection->query($sql);
+        }
+        catch (Exception $e) {
+            return false;
+        }
+
+        return $result;
+    }
 }

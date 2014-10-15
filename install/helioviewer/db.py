@@ -29,6 +29,7 @@ def setup_database_schema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
     create_movie_formats_table(cursor)
     create_youtube_table(cursor)
     create_statistics_table(cursor)
+    create_data_coverage_table(cursor)
     update_image_table_index(cursor)
 
     return cursor
@@ -422,6 +423,23 @@ def create_statistics_table(cursor):
       `action`      VARCHAR(32)  NOT NULL,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
+
+def create_data_coverage_table(cursor):
+    """Creates a table to keep data coverage statistics
+
+    Creates a simple table for storing data coverage statistics
+    """
+    cursor.execute("""
+    CREATE TABLE `data_coverage_30_min` (
+      `date` datetime NOT NULL,
+      `sourceId` int(10) unsigned NOT NULL,
+      `count` int(10) unsigned NOT NULL DEFAULT '0',
+      PRIMARY KEY (`date`,`sourceId`),
+      KEY `index1` (`date`),
+      KEY `index2` (`sourceId`),
+      KEY `index3` (`sourceId`,`date`),
+      KEY `index4` (`date`,`sourceId`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;""")
 
 
 def enable_datasource(cursor, sourceId):

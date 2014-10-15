@@ -34,8 +34,6 @@
         }
     }
 
-
-
     // Process imageLayers separately if set
     if (isset($_GET['imageLayers']) && $_GET['imageLayers'] != '') {
         if ($_GET['imageLayers'][0] == '[') {

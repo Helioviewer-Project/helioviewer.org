@@ -64,6 +64,7 @@ class Movie_HelioviewerMovie {
     public $format;
     public $status;
     public $timestamp;
+    public $modified;
     public $watermark;
     public $eventsLabels;
     public $scale;
@@ -98,8 +99,8 @@ class Movie_HelioviewerMovie {
 
         if ( HV_DISABLE_CACHE !== true ) {
             $cache = new Helper_Serialize($this->_cachedir,
-                $this->_filename, 30);
-            $info = $cache->readCache();
+                $this->_filename, 60);
+            $info = $cache->readCache($verifyAge=true);
             if ( $info !== false ) {
                 $this->_cached = true;
             }
@@ -121,6 +122,7 @@ class Movie_HelioviewerMovie {
         $this->startDate    = $info['startDate'];
         $this->endDate      = $info['endDate'];
         $this->timestamp    = $info['timestamp'];
+        $this->modified     = $info['modified'];
         $this->imageScale   = (float)$info['imageScale'];
         $this->frameRate    = (float)$info['frameRate'];
         $this->movieLength  = (float)$info['movieLength'];
@@ -177,13 +179,11 @@ class Movie_HelioviewerMovie {
 
         date_default_timezone_set('UTC');
 
-        // Check to make sure we have not already started processing the movie
-        if ( $this->status !== 0 ) {
-            throw new Exception('The requested movie is either currently ' .
-                'being built or has already been built', 44);
+        if ( $this->status == 2 ) {
+            return;
         }
 
-        $this->_db->markMovieAsProcessing($this->id, $this->format);
+        $this->_db->markMovieAsProcessing($this->id);
 
         try {
             $this->directory = $this->_buildDir();
@@ -310,6 +310,39 @@ class Movie_HelioviewerMovie {
     public function getURL() {
         return str_replace(HV_CACHE_DIR, HV_CACHE_URL, $this->_buildDir()) .
             $this->_buildFilename();
+    }
+
+    public function getCurrentFrame() {
+        $dir = dirname($this->getFilepath()) . '/frames/';
+        $pattern = '/^frame([0-9]{1,4})\.bmp$/';
+        $newest_timestamp = 0;
+        $newest_file = '';
+        $newest_frame = '';
+
+        if ($handle = @opendir($dir)) {
+            while ( ($fname = readdir($handle)) !== false )  {
+                // Skip current and parent directories ('.', '..')
+                if ( preg_match('/^\.{1,2}$/', $fname) ) {
+                    continue;
+                }
+
+                // Skip non-matching file patterns
+                if ( !preg_match($pattern, $fname, $matches) ) {
+                    continue;
+                }
+
+                $timedat = @filemtime($dir.'/'.$fname);
+
+                if ($timedat > $newest_timestamp) {
+                    $newest_timestamp = $timedat;
+                    $newest_file = $fname;
+                    $newest_frame = $matches[1];
+                }
+            }
+        }
+        @closedir($handle);
+
+        return ($newest_frame>0) ? (int)$newest_frame : null;
     }
 
     /**
@@ -529,33 +562,28 @@ class Movie_HelioviewerMovie {
             $this->height, $title, $description, $comment
         );
 
-        // Keep track of processing time for webm/mp4 encoding
-        $t1 = time();
-
-
         $this->_dbSetup();
 
-        // Create H.264 videos if they do not already exist
-        if ( !@file_exists(realpath($this->directory.$filename)) ) {
-            $ffmpeg->createVideo();
-            $ffmpeg->createHQVideo();
-            $ffmpeg->createFlashVideo();
 
-            $t2 = time();
+        // Create H.264 videos
+        $t1 = time();
+        $ffmpeg->setFormat('mp4');
+        $ffmpeg->createVideo();
+        $ffmpeg->createHQVideo();
+        $ffmpeg->createFlashVideo();
 
-            // Mark movie as completed
-            $this->_db->markMovieAsFinished($this->id, 'mp4', $t2 - $t1);
-        }
+        // Mark mp4 movie as completed
+        $t2 = time();
+        $this->_db->markMovieAsFinished($this->id, 'mp4', $t2 - $t1);
 
+
+        // Create a low-quality webm movie for in-browser use if requested
         $t3 = time();
-
-        //Create a Low-quality webm movie for in-browser use if requested
         $ffmpeg->setFormat('webm');
         $ffmpeg->createVideo();
 
-        $t4 = time();
-
         // Mark movie as completed
+        $t4 = time();
         $this->_db->markMovieAsFinished($this->id, 'webm', $t4 - $t3);
     }
 

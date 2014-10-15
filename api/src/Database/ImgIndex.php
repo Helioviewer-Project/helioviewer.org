@@ -167,8 +167,9 @@ class Database_ImgIndex {
 
         $sql = 'UPDATE movieFormats SET status=1 WHERE movieId='.$movieId;
         if ( $format !== null ) {
-           $sql .= ' AND format="'.$format.'"';
+            $sql .= ' AND format="'.$format.'"';
         }
+
         $this->_dbConnection->query($sql);
     }
 
@@ -185,7 +186,11 @@ class Database_ImgIndex {
         $this->_dbConnect();
 
         $sql = 'UPDATE movieFormats SET status=2, procTime='.$procTime.' ' .
-               'WHERE movieId='.$movieId.' AND format="'.$format.'"';
+               'WHERE movieId='.$movieId;
+        if ( $format !== null ) {
+            $sql .= ' AND format="'.$format.'"';
+        }
+
         $this->_dbConnection->query($sql);
     }
 

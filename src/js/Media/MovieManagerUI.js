@@ -809,7 +809,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             return '<div id="movie-player-' + movie.id + '">' +
                        '<iframe src="' + url + '" width="' + width +
                        '" height="' + height + '" marginheight="0" marginwidth="0" ' +
-                       'scrolling="no" frameborder="0" style="margin-bottom: 2px;" />' +
+                       'scrolling="no" frameborder="0" style="width: 100%; margin-bottom: 2px;" />' +
                    '</div>' +
                    '<div style="width:100%;">' +
                        '<div style="float:left;" class="video-links">' +
