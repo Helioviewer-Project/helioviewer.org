@@ -269,12 +269,11 @@ function getDataCoverage(timeInterval, endDate) {
 
 function redraw(resolution, dateTime) {
     "use strict";
-    var endDate, url = 'http://helioviewer.org/coverage/?';
+    var endDate, url = 'http://'+location.hostname+'/coverage/?';
 
-    if (resolution === undefined) {
+    if (resolution === undefined || typeof resolution == 'object') {
         resolution = qs('resolution');
     }
-
 
     if (dateTime !== undefined) {
         endDate = dateTime;
