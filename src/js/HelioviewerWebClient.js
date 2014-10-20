@@ -610,7 +610,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     toURL: function (shorten) {
         // URL parameters
         var params = {
-            "date"        : this.viewport.getMiddleObservationTime().toISOString(),
+            "date"        : this.viewport._tileLayerManager.getRequestDateAsISOString(),
             "imageScale"  : this.viewport.getImageScale(),
             "centerX"     : Helioviewer.userSettings.get("state.centerX"),
             "centerY"     : Helioviewer.userSettings.get("state.centerY"),

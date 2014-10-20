@@ -314,40 +314,6 @@ var HelioviewerViewport = Class.extend(
     },
 
     /**
-     * Returns the middle time of all of the layers currently loaded
-     */
-    getMiddleObservationTime: function () {
-        var startDate, endDate, difference, dates = [];
-
-        // Get the observation dates associated with each later
-        $.each(this._tileLayerManager._layers, function (i, layer) {
-            dates.push(layer.image.date);
-        });
-
-        // If there are no image layers loaded then use the requestDate
-        if (dates.length === 0) {
-            return Date.parseUTCDate(this.requestDate.toISOString());
-        }
-        // If there is only one layer loaded then use its date
-        else if (dates.length === 1) {
-            return Date.parseUTCDate(dates[0]);
-        }
-
-        // Otherwise, sort the list
-        dates.sort();
-
-        // Add half the difference in seconds to the start date and return it
-        startDate = Date.parseUTCDate(dates[0]);
-        endDate   = Date.parseUTCDate(dates[dates.length - 1]);
-
-        difference = (endDate.getTime() - startDate.getTime()) / 1000 / 2;
-
-        startDate.addSeconds(difference);
-
-        return startDate;
-    },
-
-    /**
      * Returns the coordinates for the top-left and bottom-right corners of the current
      * region of interest displayed in the viewport
      */
