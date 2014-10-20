@@ -55,7 +55,7 @@ var EventMarker = Class.extend(
             x: ( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) -12,
             y: (-this.hv_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale) -38
         };
-        markerURL = 'http://static2.helioviewer.org/resources/images/eventMarkers/'+this.event_type.toUpperCase()+'@2x'+'.png';
+        markerURL = serverSettings['staticAssetUrl']+'/resources/images/eventMarkers/'+this.event_type.toUpperCase()+'@2x'+'.png';
         this.eventMarkerDomNode.css({
                          'left' :  this.pos.x + 'px',
                           'top' :  this.pos.y + 'px',
@@ -106,7 +106,8 @@ var EventMarker = Class.extend(
                              'left' :  this.region_pos.x + 'px',
                               'top' :  this.region_pos.y + 'px',
                           'z-index' :  zIndex,
-                 'background-image' : "url('http://static1.helioviewer.org/" + this.hv_poly_url + "')",
+                 'background-image' : "url('"+serverSettings['staticAssetUrl']
+                                          + "/" + this.hv_poly_url + "')",
                   'background-size' :  this.region_scaled.width  + 'px ' + this.region_scaled.height + 'px',
                             'width' :  this.region_scaled.width  + 'px',
                            'height' :  this.region_scaled.height + 'px'
