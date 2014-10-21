@@ -1,5 +1,5 @@
 /**
- * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
+ * @author Jeff Stys <jeff.stys@nasa.gov>
  * @author Jonathan Harper
  * @fileOverview TO BE ADDED
  *
@@ -103,8 +103,8 @@ var EventTree = Class.extend({
             }
 
             $.each(event_type['children'], function(j, frm) {
-                $('#'+frm['attr'].id+' a').hover($.proxy(self.hoverOnFRM,this), $.proxy(self.hoverOffFRM,this));
-            })
+                $('#'+self._escapeInvalidJQueryChars(frm['attr'].id)+' a').hover($.proxy(self.hoverOnFRM,this), $.proxy(self.hoverOffFRM,this));
+            });
         });
 
 
@@ -134,6 +134,16 @@ var EventTree = Class.extend({
         // Re-bind event handler that triggers whenever checkboxes are checked/unchecked
         this._container.bind("change_state.jstree", $.proxy(this._treeChangedState, this));
         $(document).trigger("change_state.jstree", this);
+    },
+
+    _escapeInvalidJQueryChars: function (selector) {
+        // Plus Sign '+', Period/Dot '.', Parentheses '(', ')'
+        selector = selector.replace(/(\+)/g, '\\\\$1');
+        selector = selector.replace(/(\.)/g, '\\\\$1');
+        selector = selector.replace(/(\()/g, '\\\\$1');
+        selector = selector.replace(/(\))/g, '\\\\$1');
+
+        return selector;
     },
 
 

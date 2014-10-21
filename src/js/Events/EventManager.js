@@ -258,11 +258,17 @@ var EventManager = Class.extend({
                 if ( frm_obj['count'] > 0 ) {
                     count_str = " ("+frm_obj['count']+")";
                 }
-                self._jsTreeData[index].children.push( { 'data' : frm_name+count_str,
-                                                         'attr' : { 'id' : event_type_arr[1]+'--'+frm_name.replace(/ /g,"_"),
-                                                                    //'data-event-type' : event_type_arr[1]
-                                                                  }
-                                                       } );
+                self._jsTreeData[index].children.push(
+                    {
+                        'data': frm_name+count_str,
+                        'attr':
+                            {
+                                'id': event_type_arr[1]
+                                    + '--'
+                                    + self._escapeInvalidCssChars(frm_name)
+                            }
+                    }
+                );
             });
 
             count_str = '';
@@ -281,9 +287,16 @@ var EventManager = Class.extend({
         }
 
         self._eventTree.reload(this._jsTreeData);
-        
+
         // Update viewport shadow
         $(document).trigger('viewport-resized');
+    },
+
+    _escapeInvalidCssChars: function (selector) {
+        selector = selector.replace(/ /g, "_");
+        selector = selector.replace(/([\+\.\(\)])/g, '\\$1');
+
+        return selector;
     },
 
     /**

@@ -415,10 +415,6 @@ class Event_HEKAdapter {
                 continue;
             }
 
-            // Remove problematic characters from frm_name (used as selectors)
-            $event['frm_name'] = str_replace(Array('(',')'), Array('',''),
-                $event['frm_name']);
-
             // Retain any remaining events whose duration spans (or matches)
             // obs_time
             if ($event_endtime >= $obs_time && $event_starttime <= $obs_time) {
