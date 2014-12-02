@@ -121,7 +121,7 @@ var HelioviewerClient = Class.extend(
                 closestScale = scale;
             }
         });
-s
+
         // Store closest matched image scale
         Helioviewer.userSettings.set('state.imageScale', closestScale);
 
