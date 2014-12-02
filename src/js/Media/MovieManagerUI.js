@@ -537,8 +537,9 @@ alert('MovieManagerUI.showYouTubeUploadDialog() assumes 4-level hierarchy in lay
         });
 
         // URLs
-        url1 = Helioviewer.root + "/?movieId=" + movie.id;
-        url2 = Helioviewer.root + "/api/?action=downloadMovie&id=" + movie.id +
+        url1 = Helioviewer.api + "/?action=playMovie&id=" + movie.id +
+               "&format=mp4&hq=true";
+        url2 = Helioviewer.api + "/?action=downloadMovie&id=" + movie.id +
                "&format=mp4&hq=true";
 
         // Suggested Description
