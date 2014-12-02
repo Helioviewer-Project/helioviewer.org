@@ -6,7 +6,8 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, window, $, Class, TooltipHelper, HelioviewerViewport,
-  KeyboardManager, SettingsLoader, ZoomControls, assignTouchHandlers */
+  KeyboardManager, SettingsLoader, ZoomControls, assignTouchHandlers
+ */
 "use strict";
 
 var Helioviewer = {}; // Helioviewer global namespace
@@ -28,17 +29,10 @@ var HelioviewerClient = Class.extend(
         this.serverSettings = serverSettings;
 
         Helioviewer.api          = serverSettings['backEnd'];
-        Helioviewer.dataType     = serverSettings['backEnd'] === "api/index.php" ? "json" : "jsonp";
+        Helioviewer.dataType     = "json";
         Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
 
-        if (serverSettings['backEnd'] === "api/index.php") {
-            Helioviewer.root = serverSettings['rootURL'];
-        } else {
-            Helioviewer.root = Helioviewer.api.substr(0, Helioviewer.api.search("/api"));
-        }
-
-
-
+        Helioviewer.root = serverSettings['rootURL'];
     },
 
     /**
@@ -102,7 +96,8 @@ var HelioviewerClient = Class.extend(
             centerY        : Helioviewer.userSettings.get('state.centerY'),
             marginTop      : marginTop,
             marginBottom   : marginBottom,
-            warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates')
+            warnMouseCoords: Helioviewer.userSettings.get(
+                                'notifications.coordinates')
         });
     },
 
@@ -126,7 +121,7 @@ var HelioviewerClient = Class.extend(
                 closestScale = scale;
             }
         });
-
+s
         // Store closest matched image scale
         Helioviewer.userSettings.set('state.imageScale', closestScale);
 

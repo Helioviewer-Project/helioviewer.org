@@ -322,14 +322,18 @@ var extractLayerName = function (layer) {
  * @returns {Object} A simple JavaScript object representing the layer parameters
  */
 var parseLayerString = function (str) {
-    var params = str.split(",");
+    var params = str.split(","),
+        uiLabels=Array();
+
+    for (var i=0; i<params.length-2; i++) {
+        uiLabels[i] = { 'label' : '',
+                        'name'  : params[i] };
+    }
+
     return {
-        observatory : params[0],
-        instrument  : params[1],
-        detector    : params[2],
-        measurement : params[3],
-        visible     : Boolean(parseInt(params[4], 10)),
-        opacity     : parseInt(params[5], 10)
+        uiLabels    : uiLabels,
+        visible     : params[params.length-2],
+        opacity     : params[params.length-1]
     };
 };
 

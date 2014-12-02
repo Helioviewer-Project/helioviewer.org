@@ -20,8 +20,9 @@ var TileLayerManager = LayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
-                    savedLayers, urlLayers) {
+    init: function (observationDate, dataSources, tileSize, viewportScale,
+        maxTileLayers, savedLayers, urlLayers) {
+
         this._super();
 
         this.dataSources   = dataSources;
@@ -33,11 +34,16 @@ var TileLayerManager = LayerManager.extend(
 
         this._observationDate = observationDate;
 
-        $(document).bind("tile-layer-finished-loading", $.proxy(this.updateMaxDimensions, this))
-                   .bind("save-tile-layers",            $.proxy(this.save, this))
-                   .bind("add-new-tile-layer",          $.proxy(this.addNewLayer, this))
-                   .bind("remove-tile-layer",           $.proxy(this._onLayerRemove, this))
-                   .bind("observation-time-changed",    $.proxy(this.updateRequestTime, this));
+        $(document).bind("tile-layer-finished-loading",
+                        $.proxy(this.updateMaxDimensions, this))
+                   .bind("save-tile-layers",
+                        $.proxy(this.save, this))
+                   .bind("add-new-tile-layer",
+                        $.proxy(this.addNewLayer, this))
+                   .bind("remove-tile-layer",
+                        $.proxy(this._onLayerRemove, this))
+                   .bind("observation-time-changed",
+                        $.proxy(this.updateRequestTime, this));
     },
 
     /**

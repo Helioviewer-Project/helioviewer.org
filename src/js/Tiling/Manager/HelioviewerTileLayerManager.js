@@ -1,6 +1,5 @@
 /**
  * @fileOverview Contains the class definition for a HelioviewerTileLayerManager class.
- * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @see LayerManager, TileLayer
  * @requires TileLayerManager
@@ -20,15 +19,17 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
-                    startingLayers, urlLayers) {
-        this._super(observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
-                    startingLayers, urlLayers);
+    init: function (observationDate, dataSources, tileSize, viewportScale,
+      maxTileLayers, startingLayers, urlLayers) {
+
+        this._super(observationDate, dataSources, tileSize, viewportScale, maxTileLayers, startingLayers, urlLayers);
 
         // The order in which new layers are added
-        this._queue = [ "SDO,AIA,AIA,304", "SOHO,LASCO,C2,white-light",
-                        "SOHO,LASCO,C3,white-light", "SOHO,MDI,MDI,magnetogram",
-                        "SOHO,MDI,MDI,continuum" ];
+        this._queue = [ "SDO,AIA,304",
+                        "SOHO,LASCO,C2,white-light",
+                        "SOHO,LASCO,C3,white-light",
+                        "SOHO,MDI,magnetogram",
+                        "SOHO,MDI,continuum" ];
 
         // Handle STEREO separately
         this._stereoAQueue = [ "STEREO_A,SECCHI,EUVI,304",
@@ -48,8 +49,10 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         this._layersLoaded = 0;
         this._finishedLoading = false;
 
-        $(document).bind("viewport-max-dimensions-updated", $.proxy(this._onViewportUpdated, this))
-                   .bind('tile-layer-data-source-changed', $.proxy(this._updateDataSource, this));
+        $(document).bind("viewport-max-dimensions-updated",
+                        $.proxy(this._onViewportUpdated, this))
+                   .bind("tile-layer-data-source-changed",
+                        $.proxy(this._updateDataSource, this));
     },
 
     /**
@@ -57,7 +60,8 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      */
     addNewLayer: function () {
         var currentLayers, next, params, opacity, queue, ds,
-            queueChoiceIsValid = false, i = 0, defaultLayer = "SDO,AIA,AIA,171";
+            queueChoiceIsValid=false, i=0, defaultLayer="SDO,AIA,171",
+            self=this;
 
         // If new layer exceeds the maximum number of layers allowed,
         // display a message to the user
@@ -70,9 +74,10 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         }
 
         // current layers in above form
-        currentLayers = [];
-        $.each(this._layers, function () {
-            currentLayers.push(this.image.getLayerName());
+        currentLayers = new Array();
+
+        $.each(this._layers, function (i,layer) {
+            currentLayers.push(layer.image.getLayerName());
         });
 
         // Remove existing layers from queue
@@ -102,51 +107,62 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             next = queue[i] || defaultLayer;
             params = parseLayerString(next + ",1,100");
 
-            if (this.checkDataSource(params.observatory, params.instrument, params.detector, params.measurement)) {
+            if (this.checkDataSource(params.uiLabels)) {
                 queueChoiceIsValid = true;
             }
             i += 1;
         }
 
-        ds = this.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
+        ds = this.dataSources;
+
+        $.each( params.uiLabels, function (uiOrder, obj) {
+            ds = ds[obj['name']];
+        });
+
         $.extend(params, ds);
 
-        opacity = this._computeLayerStartingOpacity(params.layeringOrder, false);
+        opacity = this._computeLayerStartingOpacity(
+                    params.layeringOrder, false);
 
         // Add the layer
         this.addLayer(
-            new HelioviewerTileLayer(this._layers.length, this._observationDate, this.tileSize, this.viewportScale,
-                          this.tileVisibilityRange, params.observatory,
-                          params.instrument, params.detector, params.measurement, params.sourceId, params.nickname,
-                          params.visible, opacity, params.layeringOrder)
+            new HelioviewerTileLayer(this._layers.length,
+                    this._observationDate, this.tileSize, this.viewportScale,
+                    this.tileVisibilityRange, params.uiLabels,
+                    params.sourceId, params.nickname, params.visible,
+                    opacity, params.layeringOrder)
         );
 
         this.save();
     },
 
     /**
-     * Loads initial layers either from URL parameters, saved user settings, or the defaults.
+     * Loads initial layers either from URL parameters, saved user settings,
+     * or the defaults.
      */
     _loadStartingLayers: function (layers) {
         var layer, basicParams, self = this;
 
         $.each(layers, function (index, params) {
-            basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
+
+            basicParams = self.dataSources;
+            $.each(params.uiLabels, function (uiOrder, obj) {
+                basicParams = basicParams[obj['name']];
+            });
             $.extend(params, basicParams);
 
-            layer = new HelioviewerTileLayer(index, self._observationDate, self.tileSize, self.viewportScale,
-                                  self.tileVisibilityRange,
-                                  params.observatory, params.instrument, params.detector, params.measurement,
-                                  params.sourceId, params.nickname, params.visible, params.opacity,
-                                  params.layeringOrder);
+            layer = new HelioviewerTileLayer(index, self._observationDate,
+                self.tileSize, self.viewportScale, self.tileVisibilityRange,
+                params.uiLabels, params.sourceId, params.nickname,
+                params.visible, params.opacity, params.layeringOrder);
 
             self.addLayer(layer);
         });
     },
 
     /**
-     * Checks to see if all of the layers have finished loading for the first time,
-     * and if so, loads centering information from previous session
+     * Checks to see if all of the layers have finished loading for the first
+     * time, and if so, loads centering information from previous session
      */
     _onViewportUpdated: function () {
         var numLayers = Helioviewer.userSettings.get("state.tileLayers").length;
@@ -164,9 +180,9 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
     /**
      * Changes data source and fetches image for new source
      */
-    _updateDataSource: function (
-        event, id, observatory, instrument, detector, measurement, sourceId, name, layeringOrder
-    ) {
+    _updateDataSource: function (event, id, hierarchySelected, sourceId, name,
+        layeringOrder) {
+
         var opacity, layer;
 
         // Find layer that is being acted on
@@ -184,7 +200,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         layer.domNode.css("z-index", parseInt(layer.layeringOrder, 10) - 10);
 
         // Update associated JPEG 2000 image
-        layer.image.updateDataSource(observatory, instrument, detector, measurement, sourceId );
+        layer.image.updateDataSource(hierarchySelected, sourceId );
 
         // Update opacity (also triggers save-tile-layers event)
         opacity = this._computeLayerStartingOpacity(layer.layeringOrder, true);
@@ -194,21 +210,20 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
     /**
      * Checks to make sure requested data source exists
      *
-     * Note: Once defaults provided by getDataSource are used, this function will
-     * no longer be necessary.
+     * Note: Once defaults provided by getDataSource are used,
+     * this function will no longer be necessary.
      */
-    checkDataSource: function (obs, inst, det, meas) {
-        if (this.dataSources[obs] !== undefined) {
-            if (this.dataSources[obs][inst] !== undefined) {
-                if (this.dataSources[obs][inst][det] !== undefined) {
-                    if (this.dataSources[obs][inst][det][meas] !== undefined) {
-                        return true;
-                    }
-                }
-            }
-        }
+    checkDataSource: function (hierarchy) {
+        var r = this.dataSources;
 
-        return false;
+        $.each( hierarchy, function (uiOrder, obj) {
+            if ( r[obj['name']] == undefined ) {
+                return false;
+            }
+            r = r[obj['name']];
+        });
+
+        return true;
     },
 
     /**

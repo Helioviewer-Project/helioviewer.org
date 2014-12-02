@@ -7,7 +7,8 @@
 eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
 newcap: true, immed: true, maxlen: 80, sub: true */
 /*global $, window, MovieManager, MediaManagerUI, Helioviewer, helioviewer,
-  layerStringToLayerArray, humanReadableNumSeconds */
+  layerStringToLayerArray, humanReadableNumSeconds
+ */
 "use strict";
 var MovieManagerUI = MediaManagerUI.extend(
     /** @lends MovieManagerUI */
@@ -406,14 +407,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         var width, height, thumbnail, html = "";
 
         if (movie.status === 2) {
-            // Use relative paths for thumbnails (helps with debugging in VM)
-            if (Helioviewer.api === "api/index.php") {
-                thumbnail = movie.thumbnail.substr(
-                                movie.thumbnail.search("cache")
-                            );
-            } else {
-                thumbnail = movie.thumbnail;
-            }
+            thumbnail = movie.thumbnail;
 
             html += "<div style='text-align: center;'>" +
                 "<img src='" + thumbnail +
@@ -530,6 +524,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         tags = [];
 
         $.each(movie.layers.split("],["), function (i, layerStr) {
+alert('MovieManagerUI.showYouTubeUploadDialog() assumes 4-level hierarchy in layerStr');
             var parts = layerStr.replace(']', "").replace('[', "")
                         .split(",").slice(0, 4);
 

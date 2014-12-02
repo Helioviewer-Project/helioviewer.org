@@ -141,7 +141,7 @@ var EventLayerAccordion = Layer.extend(
         var params = {
             "action"     : "getEventGlossary"
         };
-        $.get("api/index.php", params, $.proxy(this._setEventGlossary, this), "json");
+        $.get(Helioviewer.api, params, $.proxy(this._setEventGlossary, this), "json");
     },
 
 

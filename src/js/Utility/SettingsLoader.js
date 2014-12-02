@@ -70,17 +70,19 @@ var SettingsLoader = (
                 eventLayers: [],
                 eventLabels: true,
                 scale      : true,
-                scaleType  : 'earth',
+                scaleType  :'earth',
                 scaleX     : 0,
                 scaleY     : 0,
                 imageScale : serverSettings.defaultImageScale,
                 tileLayers : [{
-                    observatory: 'SDO',
-                    instrument : 'AIA',
-                    detector   : 'AIA',
-                    measurement: '304',
                     visible    : true,
-                    opacity    : 100
+                    opacity    : 100,
+                    uiLabels   : [ {'label':'Observatory',
+                                    'name' :'SDO'},
+                                   {'label':'Instrument',
+                                    'name' :'AIA'},
+                                   {'label':'Measurement',
+                                    'name' :'304'} ]
                 }],
                 timeStep   : 86400
             },
