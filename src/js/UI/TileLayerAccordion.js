@@ -26,7 +26,7 @@ var TileLayerAccordion = Layer.extend(
         this.container        = $(containerId);
         this._dataSources     = dataSources;
         this._observationDate = observationDate;
-        this._maximumTimeDiff = 12 * 60 * 60 * 1000; // 12 hours in miliseconds
+        this._maximumTimeDiff = 12 * 60 * 60 * 1000; // 12 hours (milliseconds)
 
         this.options = {};
 
@@ -39,9 +39,12 @@ var TileLayerAccordion = Layer.extend(
 
 
         // Event-handlers
-        $(document).bind("create-tile-layer-accordion-entry", $.proxy(this.addLayer, this))
-                   .bind("update-tile-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this))
-                   .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this));
+        $(document).bind("create-tile-layer-accordion-entry",
+                        $.proxy(this.addLayer, this))
+                   .bind("update-tile-layer-accordion-entry",
+                        $.proxy(this._updateAccordionEntry, this))
+                   .bind("observation-time-changed",
+                        $.proxy(this._onObservationTimeChange, this));
 
         // Tooltips
         this.container.delegate("span[title]", 'mouseover', function (event) {
@@ -64,14 +67,16 @@ var TileLayerAccordion = Layer.extend(
      *
      * @param {Object} layer The new layer to add
      */
-    addLayer: function (event, index, id, name, observatory, instrument, detector, measurement, date,
-                        startOpened, opacity, visible, onOpacityChange) {
+    addLayer: function (event, index, id, name, hierarchy, date, startOpened,
+        opacity, visible, onOpacityChange) {
+
         if (typeof(index) === "undefined") {
             index = 1000;
         }
 
         this._createAccordionEntry(index, id, name, visible, startOpened);
-        this._initTreeSelect(id, observatory, instrument, detector, measurement);
+
+        this._initTreeSelect(id, hierarchy);
         this._initOpacitySlider(id, opacity, onOpacityChange);
         this._setupEventHandlers(id);
         this._updateTimeStamp(id, date);
@@ -81,6 +86,7 @@ var TileLayerAccordion = Layer.extend(
      *
      */
     _createAccordionEntry: function (index, id, name, visible, startOpened) {
+
         var visibilityBtn, removeBtn, hidden, head, body;
 
         // initial visibility
@@ -91,7 +97,7 @@ var TileLayerAccordion = Layer.extend(
         removeBtn = "<span class='ui-icon ui-icon-closethick removeBtn' id='removeBtn-" + id +
                     "' title='Remove layer'></span>";
         head = "<div class='layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all shadow'>" +
-               "<span class=tile-accordion-header-left>" + name +
+               "<span class='tile-accordion-header-left' title='" + name + "'>" + name +
                "</span><span class=tile-accordion-header-right><span class=timestamp></span>" +
                "<span class=accordion-header-divider>|</span>" + visibilityBtn + removeBtn + "</span></div>";
 
@@ -111,24 +117,36 @@ var TileLayerAccordion = Layer.extend(
     /**
      *
      */
-    _initTreeSelect: function (id, observatory, instrument, detector, measurement) {
-        var ids, selected, obs, inst, det, meas;
+    _initTreeSelect: function (id, hierarchy) {
+        var ids      = new Array(),
+            selected = new Array(),
+            letters  = ['a','b','c','d','e'],
+            self     = this;
 
-        // SELECT id's
-        obs  = "#observatory-select-" + id;
-        inst = "#instrument-select-"  + id;
-        det  = "#detector-select-"    + id;
-        meas = "#measurement-select-" + id;
-
-        ids       = [obs, inst, det, meas];
-        selected  = [observatory, instrument, detector, measurement];
-
-        this.selectMenus = new TreeSelect(ids, this._dataSources, selected, function (leaf) {
-            $(document).trigger("tile-layer-data-source-changed",
-                [id, $(obs).prop("value"), $(inst).prop("value"), $(det).prop("value"), $(meas).prop("value"),
-                leaf.sourceId, leaf.nickname, leaf.layeringOrder]
-             );
+        $.each( letters, function (i, letter) {
+            ids.push('#'+letter+'-select-'+id);
+            if (typeof hierarchy[i] != 'undefined') {
+                selected[i] = hierarchy[i]['name'];
+            }
+            else {
+                selected[i] = null;
+            }
         });
+
+        this.selectMenus = new TreeSelect(ids, this._dataSources, selected,
+            function (leaf) {
+                var hierarchySelected = Array();
+                $.each(leaf['uiLabels'], function (i, obj) {
+                    hierarchySelected[i] = {
+                        'label': obj['label'],
+                        'name' : obj['name'] };
+                });
+
+                $(document).trigger("tile-layer-data-source-changed",
+                    [id, hierarchySelected, leaf.sourceId, leaf.nickname,
+                     leaf.layeringOrder]);
+            }
+        );
     },
 
     /**
@@ -159,40 +177,48 @@ var TileLayerAccordion = Layer.extend(
      * This discussion thread</a> for explanation.
      */
     _buildEntryBody: function (id) {
-        var opacitySlide, obs, inst, det, meas, jp2, info;
+        var hierarchy, display, info, jp2, label, letters, opacitySlide,
+            popups='';
 
         // Opacity slider placeholder
-        opacitySlide = "<div class='layer-select-label'>Opacity: </div>";
-        opacitySlide += "<div class='opacity-slider-track' id='opacity-slider-track-" + id;
+        opacitySlide  = "<div class='layer-select-label'>Opacity: </div>";
+        opacitySlide += "<div class='opacity-slider-track' "
+                     +      "id='opacity-slider-track-" + id;
         opacitySlide += "' style='width: 120px; height: 8px;'>";
         opacitySlide += "</div>";
 
-        // Populate list of available observatories
-        obs = "<div class=layer-select-label>Observatory: </div> ";
-        obs += "<select name=observatory class=layer-select id='observatory-select-" + id + "'></select>";
+        // Default labels
+        letters = ['a','b','c','d','e'];
+        hierarchy = Helioviewer.userSettings._defaults.state.tileLayers[0]['uiLabels'];
+        $.each(letters, function (i, letter) {
+            if ( typeof hierarchy[i]          != 'undefined' &&
+                 typeof hierarchy[i]['label'] != 'undefined' ) {
 
-        // Populate list of available instruments
-        inst = "<div class=layer-select-label>Instrument: </div> ";
-        inst += "<select name=instrument class=layer-select id='instrument-select-" + id + "'></select>";
+                display = '';
+                label = hierarchy[i]['label']+': ';
+            }
+            else {
+                display = 'display: none;';
+                label = '';
+            }
+            popups += '<div style="' + display
+                   +  '" class=layer-select-label id="' + letter
+                   +  '-label-' + id +'">' + label + '</div> '
+                   +  '<select style="' + display
+                   +  '" name="' + letter
+                   +  '" class="layer-select" id="' + letter
+                   +  '-select-' + id + '"></select>';
+        });
 
-        // Populate list of available Detectors
-        det = "<div class=layer-select-label>Detector: </div> ";
-        det += "<select name=detector class=layer-select id='detector-select-" + id + "'></select>";
+        jp2 = "<span id='image-" + id + "-download-btn'"
+            + " class='image-download-btn ui-icon ui-icon-image'"
+            + " title='Download original grayscale JPEG 2000 image'></span>";
 
-        // Populate list of available Detectors
-        meas = "<div class=layer-select-label>Measurement: </div> ";
-        meas += "<select name=measurement class=layer-select id='measurement-select-" + id + "'>";
-        meas += "</select><br><br>";
+        info = "<span id='image-" + id + "-info-btn'"
+             + " class='image-info-dialog-btn ui-icon ui-icon-info'"
+             + " title='Display image header'></span>";
 
-        jp2 = "<span id='image-" + id + "-download-btn'" +
-               " class='image-download-btn ui-icon ui-icon-image'" +
-               " title='Download original grayscale JPEG 2000 image'></span>";
-
-        info = "<span id='image-" + id + "-info-btn'" +
-               " class='image-info-dialog-btn ui-icon ui-icon-info'" +
-               " title='Display image header'></span>";
-
-        return (opacitySlide + obs + inst + det + meas + jp2 + info);
+        return (opacitySlide + popups + jp2 + info);
     },
 
     /**
@@ -430,19 +456,36 @@ var TileLayerAccordion = Layer.extend(
     /**
      *
      */
-    _updateAccordionEntry: function (event, id, name, opacity, date, imageId) {
-        var entry = $("#" + id), self = this;
+    _updateAccordionEntry: function (event, id, name, opacity, date, imageId,
+        hierarchy) {
+
+        var entry=$("#"+id), self=this, letters=['a','b','c','d','e'],
+            label, select;
 
         this._updateTimeStamp(id, date);
 
         entry.find(".tile-accordion-header-left").html(name);
 
+        $.each( letters, function(i, letter) {
+            label  = entry.find("#"+letters[i]+"-label-"+id);
+            select = entry.find("#"+letters[i]+"-select-"+id);
+            if ( typeof hierarchy[i] != 'undefined' ) {
+                label.html(hierarchy[i]['label']+':').show();
+                select.show();
+            }
+            else {
+                label.empty().hide();
+                select.empty().hide();
+            }
+        });
+
         // Refresh Image header event listeners
         $("#image-info-dialog-" + id).remove();
 
-        entry.find("#image-" + id + "-info-btn").unbind().bind('click', function () {
-            self._showImageInfoDialog(id, name, imageId);
-        });
+        entry.find("#image-" + id + "-info-btn").unbind().bind('click',
+            function () {
+                self._showImageInfoDialog(id, name, imageId);
+            });
 
         // JPEG 2000 download button
         $("#image-" + id + "-download-btn").unbind().bind('click', function () {

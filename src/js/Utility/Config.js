@@ -71,7 +71,8 @@ var Config = Class.extend(
             'rootURL'             : this.params["web_root_url"],
             'videoFeed'           : this.params["user_video_feed"],
             'contactEmail'        : this.params["contact_email"],
-            'staticAssetUrl'      : this.params["static_asset_url"]
+            'staticAssetUrl'      : this.params["static_asset_url"],
+            'apiURL'              : this.params["back_end"]
         };
     }
 });

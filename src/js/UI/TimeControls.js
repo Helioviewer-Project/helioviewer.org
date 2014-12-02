@@ -89,35 +89,48 @@ var TimeControls = Class.extend(
      * @return void
      */
     goToPresent: function () {
-        var dataType, callback, layers, date, mostRecent = new Date(0, 0, 0), self = this;
+        var dataType, callback, layers, date, mostRecent = new Date(0, 0, 0),
+            self = this, letters=Array('a','b','c','d','e'),
+            layerHierarchy = [];
 
         callback = function (dataSources) {
 
-            // Let's cheat a bit
-            layers = [];
-            $(".tile-accordion-header-left").each(function () {
-                layers.push($(this).html());
+            // Get hierarchy of label:name for each layer accordion
+            $.each( $("#TileLayerAccordion-Container .dynaccordion-section"),
+                function (i, accordion) {
+                    var idBase = $(accordion).attr('id'), label, name;
+
+                    layerHierarchy[i] = [];
+                    $.each( letters, function (j, letter) {
+                        if ( $('#'+letters[j]+'-select-'+idBase).is(":visible") ) {
+                            label = $('#'+letters[j]+'-label-'+idBase).html()
+                                    .slice(0,-1);
+                            name  = $('#'+letters[j]+'-select-'+idBase
+                                         +' option:selected').val();
+
+                            layerHierarchy[i][j] = { 'label':label,
+                                                     'name' :name }
+                        }
+                    });
+                }
+            );
+
+            // For each data tile-layer accordion, get the data source "end"
+            // date (which is the date/time of the most current piece of data
+            // for that source).  Keep the overall most current "end" date.
+            $.each( layerHierarchy, function (i, hierarchy) {
+                var leaf = dataSources;
+                $.each( hierarchy, function (j, property) {
+                    leaf = leaf[property['name']];
+                });
+
+                date = Date.parseUTCDate(leaf['end']);
+                if (date > mostRecent) {
+                    mostRecent = date;
+                }
             });
 
-            // Check each datasource
-            $.each(dataSources, function (observatory, instruments) {
-                $.each(instruments, function (inst, detectors) {
-                    $.each(detectors, function (det, measurements) {
-                        $.each(measurements, function (meas, properties) {
-                            // Ignore datasources that are not being used
-                            if ($.inArray(this.nickname, layers) === -1) {
-                                return true; //continue
-                            }
-                            // Find the date of the most recently available
-                            // image from the layers that are loaded
-                            date = Date.parseUTCDate(this.end);
-                            if (date > mostRecent) {
-                                mostRecent = date;
-                            }
-                        });
-                    });
-                });
-            });
+            // Set the date/time of the Viewport
             self.setDate(mostRecent);
         };
         $.get(Helioviewer.api, {action: "getDataSources"}, callback, Helioviewer.dataType);

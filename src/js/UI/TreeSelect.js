@@ -1,4 +1,5 @@
 /**
+ * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a> 
  * @fileOverview Contains the definition for a Hierarchical or "Tree Select" class which links
  * several select form elements together based off a given tree structure such changes at any level automatically
@@ -17,12 +18,11 @@ var TreeSelect = Class.extend(
      * @constructs 
      */ 
     init: function (selectIds, tree, initialChoices, callback) {
-        this.selectIds  = selectIds;
-        this.tree       = tree;
-        this.height     = selectIds.length;
-        this.callback   = callback;
-        this.selected   = initialChoices;
-        
+        this.selectIds     = selectIds;
+        this.tree          = tree;
+        this.callback      = callback;
+        this.selected      = initialChoices;
+
         this._initSelectMenus();
         
         this._setupEventHandlers();
@@ -41,12 +41,12 @@ var TreeSelect = Class.extend(
         $.each(this.selectIds, function (depth, id) {
             $(id + " > option").each(function (index, option) {
                 if (option.value === self.selected[depth]) {
-                    $(id).prop("selectedIndex", index);     
+                    $(id).attr("selectedIndex", index);
                 }
             });
         });
     },
-    
+
     /**
      * @description Update the list of selected options
      * @param {Object} depth
@@ -54,91 +54,161 @@ var TreeSelect = Class.extend(
      */
     _updateSelected: function (depth, newChoice) {
         var nav, selectField, i;
-        
+
         this.selected[depth] = newChoice;
-        
+
         // Function to determine which field should be selected
-        selectField = function (original, arr) {
-            if (original in arr) {
+        selectField = function (original, arr, depth) {
+            if (original == null) {
+                for (var item in arr) {
+                    if (item == 'sourceId') {
+                        item = null;
+                    }
+                    return item;
+                }
+            }
+            else if (typeof arr == 'undefined' ||
+                     typeof arr == 'number') {
+
+                return null;
+            }
+            else if (original in arr) {
                 return original;
             }
             for (var item in arr) {
                 return item;
             }
         };
-        
+
         // For each item below the selected parameter, preserve the value if
         // possible, otherwise use first available value
         nav = "this.tree";
-        for (i = 0; i < this.height; i += 1) {
+
+        for (i = 0; i < this.selectIds.length; i += 1) {
             if (i > depth) {
-                this.selected[i] = selectField(this.selected[i], eval(nav));
+                this.selected[i] = selectField(this.selected[i], eval(nav),
+                                               depth);
             }
-            nav += '["' + this.selected[i] + '"]';
+            if ( typeof this.selected[i] != 'undefined' ) {
+                nav += '["' + this.selected[i] + '"]';
+            }
         }
-        
+
         this._updateSelectMenus(depth + 1);
     },
 
     /**
-     * @description Updates the SELECT menus to show valid choices at
+     * @description Updates the <SELECT> menus to show valid choices at
      *              each level based on chosen values from above levels.
      * @param {Object} startDepth
      */
     _updateSelectMenus: function (startDepth) {
-        var select, choice, i, nav, opt, self = this;
-        
+        var select, name, label, uiLabels, maxIndex, i, nav, opt, self = this;
+
+        maxIndex = this.selectIds.length;
+
         $.each(this.selectIds, function (depth, id) {
+
             if (depth >= startDepth) {
                 select = $(id);
-                
+
                 // remove old choices
                 select.empty();
-                
+
                 // navigate to current depth
                 nav = "self.tree";
                 for (i = 0; i < depth; i += 1) {
+                    if ( self.selected[i] === null ) {
+                        break;
+                    }
                     nav += '["' + self.selected[i] + '"]';
                 }
-                
-                // get choices
-                for (var choice in eval(nav)) {
-                    opt = $("<option value='" + choice + "'>" + 
-                          choice.replace(/_/, "-") + "</option>");
-                    select.append(opt);
+
+                label = $(id.replace('-select-','-label-'));
+
+                if ( depth > maxIndex ) {
+                    select.hide();
+                    select.removeAttr('selectedIndex');
+                    label.hide();
+                    label.empty();
                 }
-                
-                // set selected value
-                choice = self.selected[depth];
-                // escape any periods ('.') before using in a JQuery selector
-                choice = choice.replace('.','\\.');
-                select.find("option[value=" + choice + "]").prop("selected", true);
+                else if ( 'sourceId' in eval(nav) ) {
+                    // Reached the end of the hierarchy
+                    // Clear extra popup-menus
+                    select.hide();
+                    select.removeAttr('selectedIndex');
+                    label.hide();
+                    label.empty();
+
+                    // Refresh non-hidden labels
+                    uiLabels = eval(nav+"['uiLabels']");
+                    $.each( uiLabels, function (i, obj) {
+                        label = $(self.selectIds[i]
+                                      .replace('-select-','-label-'));
+                        label.html(obj['label']+':');
+                    });
+
+                    maxIndex = depth;
+                }
+                else {
+                    // get choices
+                    for (var choice in eval(nav)) {
+                        opt = $("<option value='" + choice + "'>" +
+                              choice.replace(/_/, "-") + "</option>");
+                        select.append(opt);
+
+                    }
+
+                    // set selected value
+                    name  = self.selected[depth];
+                    if ( name !== null ) {
+                        // escape any periods ('.') before using in a
+                        // JQuery selector
+                        name = name.replace('.','\\.');
+                        select.find("option[value="+name+"]")
+                              .attr("selected", true);
+                    }
+                    else {
+                        select.find('option:first-child')
+                              .attr("selected", true);
+                        select.attr('selectedIndex',0);
+                    }
+
+                    label.show();
+                    select.show();
+                }
             }
         });
     },
-    
+
     /**
-     * @description Returns the value associated with the currently selected leaf-node
+     * @description Returns the value associated with the currently
+     * selected leaf-node
      */
     _value: function () {
         var nav = "this.tree";
+
         $.each(this.selected, function (i, choice) {
+            if ( choice === null || choice == 'sourceId' ) {
+                return false;  // break out of $.each loop early
+            }
             nav += '["' + choice + '"]';
         });
-        
         return eval(nav);
     },
-    
+
     /**
      * @description Sets up event-handlers for each form field
      */
     _setupEventHandlers: function () {
         var self = this;
-        
+
         $.each(this.selectIds, function (i, id) {
             $(id).change(function (e) {
-                self._updateSelected(i, this.value);
-                self.callback(self._value());
+                if ( $(this).attr('value') != '' ) {
+                    self._updateSelected(i, $(this).attr('value'));
+                    self.callback(self._value());
+                }
             });
         });
     }

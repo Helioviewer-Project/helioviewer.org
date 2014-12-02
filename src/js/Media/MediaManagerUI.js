@@ -89,8 +89,9 @@ var MediaManagerUI = Class.extend(
 
         // Link
         if (this._type === "movie") {
-            url = Helioviewer.api.replace("api/index.php", "") + "?movieId=" + item.id;
-        } else {
+            url = "?movieId=" + item.id;
+        }
+        else {
             url = Helioviewer.api + "?action=downloadScreenshot&id=" + item.id;
         }
 

@@ -2,7 +2,7 @@
  * @fileOverview JP2 Image class
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $ */
 "use strict";
@@ -13,24 +13,21 @@ var JP2Image = Class.extend(
     /**
      * @constructs
      */
-    init: function (observatory, instrument, detector, measurement, sourceId, date, onChange) {
-        this.observatory = observatory;
-        this.instrument  = instrument;
-        this.detector    = detector;
-        this.measurement = measurement;
+    init: function (hierarchy, sourceId, date, onChange) {
+        this.hierarchy   = hierarchy;
         this.sourceId    = sourceId;
         this.requestDate = date;
         this._onChange   = onChange;
-        
+
         this._requestImage();
     },
-    
+
     /**
      * Loads the closest image in time to that requested
      */
     _requestImage: function () {
         var params, dataType;
-        
+
         params = {
             action:   'getClosestImage',
             sourceId: this.sourceId,
@@ -38,20 +35,17 @@ var JP2Image = Class.extend(
         };
         $.get(Helioviewer.api, params, $.proxy(this._onImageLoad, this), Helioviewer.dataType);
     },
-    
+
     /**
      * Changes image data source
      */
-    updateDataSource: function (observatory, instrument, detector, measurement, sourceId) {
-        this.observatory = observatory;
-        this.instrument  = instrument;
-        this.detector    = detector;
-        this.measurement = measurement;
-        this.sourceId    = sourceId;
-        
+    updateDataSource: function (hierarchy, sourceId) {
+        this.hierarchy = hierarchy;
+        this.sourceId  = sourceId;
+
         this._requestImage();
-    },        
-    
+    },
+
     /**
      * Updates time and loads closest match
      */
@@ -59,11 +53,11 @@ var JP2Image = Class.extend(
         this.requestDate = requestDate;
         this._requestImage();
     },
-    
+
     /**
      * Checks to see if image has been changed and calls event-handler passed in during initialization
      * if a new image should be displayed.
-     * 
+     *
      * The values for offsetX and offsetY reflect the x and y coordinates with the origin
      * at the bottom-left corner of the image, not the top-left corner.
      */
@@ -76,16 +70,19 @@ var JP2Image = Class.extend(
 
         // Reference pixel offset at the original JP2 image scale (with respect to top-left origin)
         this.offsetX =   parseFloat((this.refPixelX - (this.width  / 2)).toPrecision(8));
-        this.offsetY = - parseFloat((this.refPixelY - (this.height / 2)).toPrecision(8));        
-        
+        this.offsetY = - parseFloat((this.refPixelY - (this.height / 2)).toPrecision(8));
+
         this._onChange();
     },
-    
+
     getLayerName: function () {
-        return this.observatory + "," + this.instrument + "," +  
-               this.detector + "," + this.measurement;
+        var layerName = '';
+        $.each( this.hierarchy, function (uiOrder, obj) {
+            layerName += obj['name'] + ',';
+        });
+        return layerName.substring(0, layerName.length-1);
     },
-    
+
     getSourceId: function () {
         return this.sourceId;
     }

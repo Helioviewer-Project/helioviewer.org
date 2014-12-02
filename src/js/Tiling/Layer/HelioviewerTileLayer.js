@@ -29,9 +29,11 @@ var HelioviewerTileLayer = TileLayer.extend(
      *      <b>opacity</b>     - Default opacity<br>
      * </div>
      */
-    init: function (index, date, tileSize, viewportScale, tileVisibilityRange, observatory, instrument,
-                    detector, measurement, sourceId, name, visible, opacity) {
-        this._super(index, date, tileSize, viewportScale, tileVisibilityRange, name, visible, opacity);
+    init: function (index, date, tileSize, viewportScale, tileVisibilityRange,
+        hierarchy, sourceId, name, visible, opacity) {
+
+        this._super(index, date, tileSize, viewportScale, tileVisibilityRange,
+            name, visible, opacity);
 
         // Create a random id which can be used to link tile layer with its corresponding tile layer accordion entry
         this.id = "tile-layer-" + new Date().getTime();
@@ -39,14 +41,15 @@ var HelioviewerTileLayer = TileLayer.extend(
         this._setupEventHandlers();
 
         $(document).trigger("create-tile-layer-accordion-entry",
-            [index, this.id, name, observatory, instrument, detector, measurement, date, false, opacity, visible,
+            [index, this.id, name, hierarchy, date, true, opacity, visible,
              $.proxy(this.setOpacity, this)
             ]
         );
 
         this.tileLoader = new TileLoader(this.domNode, tileSize, tileVisibilityRange);
-        this.image = new JP2Image(observatory, instrument, detector, measurement, sourceId,
-                                  date, $.proxy(this.onLoadImage, this));
+
+        this.image = new JP2Image(hierarchy, sourceId, date,
+            $.proxy(this.onLoadImage, this));
     },
 
     /**
@@ -54,11 +57,9 @@ var HelioviewerTileLayer = TileLayer.extend(
      */
     onLoadImage: function () {
         this.loaded = true;
-
         this.layeringOrder = this.image.layeringOrder;
 
         this._loadStaticProperties();
-
         this._updateDimensions();
 
         if (this.visible) {
@@ -67,9 +68,11 @@ var HelioviewerTileLayer = TileLayer.extend(
             // Update viewport sandbox if necessary
             $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
         }
+
         $(document).trigger("update-tile-layer-accordion-entry",
-                            [this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)),
-                                this.image.id]);
+                            [this.id, this.name, this.opacity,
+                             new Date(getUTCTimestamp(this.image.date)),
+                             this.image.id, this.image.hierarchy]);
     },
 
     /**
@@ -92,14 +95,19 @@ var HelioviewerTileLayer = TileLayer.extend(
      * @return JSON A JSON representation of the tile layer
      */
     toJSON: function () {
-        return {
-            "observatory": this.image.observatory,
-            "instrument" : this.image.instrument,
-            "detector"   : this.image.detector,
-            "measurement": this.image.measurement,
-            "visible"    : this.visible,
-            "opacity"    : this.opacity
-        };
+        var return_array = {};
+
+        return_array['uiLabels'] = Array();
+        $.each( this.image.hierarchy, function(uiOrder, obj) {
+            return_array['uiLabels'][uiOrder] = { 'label': obj['label'],
+                                                  'name' : obj['name'] };
+            return_array[obj['label']] = obj['name'];
+        });
+
+        return_array['visible']  = this.visible;
+        return_array['opacity']  = this.opacity;
+
+        return return_array;
     },
 
     /**

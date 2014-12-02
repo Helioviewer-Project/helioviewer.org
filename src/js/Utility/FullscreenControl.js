@@ -78,7 +78,7 @@ var FullscreenControl = Class.extend(
     /**
      * Enable fullscreen mode
      */
-    enableFullscreenMode: function (animated) {        
+    enableFullscreenMode: function (animated) {
         // hide overflow and reduce min-width
         this.body.css({
             'overflow' :'hidden',

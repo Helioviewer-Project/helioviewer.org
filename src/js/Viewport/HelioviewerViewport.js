@@ -32,13 +32,15 @@ var HelioviewerViewport = Class.extend(
         $.extend(this, this.defaultOptions);
         $.extend(this, options);
 
-        this._rsunInArcseconds = 959.705; // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
+        this._rsunInArcseconds = 959.705; // Solar radius in arcseconds,
+                                          // source: Djafer, Thuillier
+                                          // and Sofia (2008)
 
         this.domNode   = $(this.id);
         this.outerNode = $(this.container);
 
-        this.mouseCoords = new HelioviewerMouseCoordinates(this.imageScale, this._rsunInArcseconds,
-                                                           this.warnMouseCoords);
+        this.mouseCoords = new HelioviewerMouseCoordinates(this.imageScale,
+            this._rsunInArcseconds, this.warnMouseCoords);
 
         // Viewport must be resized before movement helper and sandbox are initialized.
         this.resize();
@@ -64,12 +66,12 @@ var HelioviewerViewport = Class.extend(
 
         callback = function (dataSources) {
             self.dataSources = dataSources;
-
             $(document).trigger("datasources-initialized", [dataSources]);
 
             // Initialize tile layers
-            self._tileLayerManager = new HelioviewerTileLayerManager(self.requestDate, self.dataSources,
-                                  self.tileSize, self.imageScale, self.maxTileLayers, self.tileLayers);
+            self._tileLayerManager = new HelioviewerTileLayerManager(
+                self.requestDate, self.dataSources, self.tileSize,
+                self.imageScale, self.maxTileLayers, self.tileLayers);
 
             $(document).trigger("update-viewport");
         };
@@ -373,6 +375,7 @@ var HelioviewerViewport = Class.extend(
             coordinates : this.movementHelper.getViewportCoords(),
             imageScale  : this.imageScale,
             layers      : this.serialize(),
+            events      : this.serializeEvents(),
             time        : this._tileLayerManager.getRequestDateAsISOString()
         };
     },

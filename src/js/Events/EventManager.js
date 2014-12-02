@@ -107,7 +107,7 @@ var EventManager = Class.extend({
         var params = {
             "action"     : "getDefaultEventTypes"
         };
-        $.get("api/index.php", params, $.proxy(this._parseEventFRMs, this), "json");
+        $.get(Helioviewer.api, params, $.proxy(this._parseEventFRMs, this), "json");
     },
 
     /**
@@ -122,7 +122,7 @@ var EventManager = Class.extend({
                 "startTime"  : new Date(this._date.getTime()).toISOString(),
                 "ar_filter"  : true
             };
-            $.get("api/index.php", params, $.proxy(this._parseEventFRMs, this), "json");
+            $.get(Helioviewer.api, params, $.proxy(this._parseEventFRMs, this), "json");
         }
     },
 
@@ -176,7 +176,7 @@ var EventManager = Class.extend({
             "startTime"  : new Date(this._date.getTime()).toISOString(),
             "eventType"  : '**'
         };
-        $.get("api/index.php", params, $.proxy(this._parseEvents, this), "json");
+        $.get(Helioviewer.api, params, $.proxy(this._parseEvents, this), "json");
     },
 
     /**
