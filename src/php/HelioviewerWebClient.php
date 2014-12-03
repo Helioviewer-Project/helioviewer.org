@@ -237,16 +237,7 @@ class HelioviewerWebClient extends HelioviewerClient {
 <!-- Header -->
 <div id="header"></div>
 
-<!-- Body -->
-<div id="colmask">
-    <div id="colmid">
-        <div id="colright">
-
-        <!-- Middle Column -->
-        <div id="col1wrap">
-            <div id="col1pad">
-                <div id="col1">
-                    <!-- Viewport -->
+<!-- Viewport -->
                     <div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
                         <div id="helioviewer-viewport-container-inner">
                             <div id="helioviewer-viewport">
@@ -466,6 +457,17 @@ class HelioviewerWebClient extends HelioviewerClient {
 
 
                     </div>
+
+<!-- Body -->
+<div id="colmask">
+    <div id="colmid">
+        <div id="colright">
+
+        <!-- Middle Column -->
+        <div id="col1wrap">
+            <div id="col1pad">
+                <div id="col1">
+
                 </div>
             </div>
         </div>
@@ -570,9 +572,6 @@ class HelioviewerWebClient extends HelioviewerClient {
     <span style='vertical-align: top; margin-right: 3px;'>Loading</span>
     <img src="resources/images/ajax-loader.gif" alt="Loading" />
 </div>
-
-<!-- Viewport shadow -->
-<div id='helioviewer-viewport-container-shadow' class='shadow'></div>
 
 <!-- Glossary dialog -->
 <div id='glossary-dialog'></div>

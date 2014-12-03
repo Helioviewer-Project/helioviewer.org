@@ -123,8 +123,6 @@ var HelioviewerViewport = Class.extend(
             height: this.domNode.height() + this.prefetch
         };
 
-        $(document).trigger("viewport-resized");
-
         // For initial resize do not attempt to update layers
         if (oldDimensions.width === 0 &&  oldDimensions.height === 0) {
             return;
