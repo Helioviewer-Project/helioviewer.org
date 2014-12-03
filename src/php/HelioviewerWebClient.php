@@ -65,7 +65,7 @@ class HelioviewerWebClient extends HelioviewerClient {
     protected function loadCustomCSS($signature, $includes=array()) {
         $css = array("helioviewer-web", "layout", "accordions", "dialogs",
                      "events", "media-manager", "timenav", "video-gallery",
-                     "youtube");
+                     "youtube", "font-awesome.min");
         parent::loadCustomCSS($signature, $css);
     }
 
@@ -237,226 +237,251 @@ class HelioviewerWebClient extends HelioviewerClient {
 <!-- Header -->
 <div id="header"></div>
 
+<div id="helioviewer-header">
+    <div class="logo">
+        <h1>
+            <a href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a>
+        </h1>
+    </div>
+    <div class="menus">
+
+        <div class="left">
+            <a class="fa fa-link-3" href="" title="Copy Link to the Current View."></a>
+            <a class="fa fa-twitter-square" href="" title="Tweet Short Link to the Current View."></a>
+            <a class="fa fa-facebook-square" href="" title="Post Link and Preview Image of Current View to Facebook."></a>
+            <a class="fa fa-pinterest-square" href="" title="Pin Image of Current View to Pinterest."></a>
+            <a class="fa fa-youtube-square" href="http://www.youtube.com/user/HelioviewerScience" target="_blank" title="Visit the HelioviewerScience YouTube Channel."></a>
+        </div>
+
+        <div class="right" style="margin-right: 0.5em;">
+            <a class="fa fa-question-1" href="" style="margin-left: 0.5em;"title="Get Help with Helioviewer."></a>
+            <a class="fa fa-settings-streamline" href="" title="Edit Settings &amp; Defaults."></a>
+        </div>
+    </div>
+</div>
+
+
+
 <!-- Viewport -->
-                    <div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
-                        <div id="helioviewer-viewport-container-inner">
-                            <div id="helioviewer-viewport">
-                                <!-- Movement sandbox -->
-                                <div id="sandbox" style="position: absolute;">
-                                    <div id="moving-container"></div>
-                                </div>
+<div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
+    <div id="helioviewer-viewport-container-inner">
+        <div id="helioviewer-viewport">
+            <!-- Movement sandbox -->
+            <div id="sandbox" style="position: absolute;">
+                <div id="moving-container"></div>
+            </div>
 
-                                <!-- Message console -->
-                                <div id="message-console"></div>
+            <!-- Message console -->
+            <div id="message-console"></div>
 
-                                <!-- Image area select boundary container -->
-                                <div id="image-area-select-container"></div>
+            <!-- Image area select boundary container -->
+            <div id="image-area-select-container"></div>
 
-                            </div>
+        </div>
 
-                            <!-- UI COMPONENTS -->
+        <!-- UI COMPONENTS -->
 
-                            <!--  Zoom Controls -->
-                            <div id="zoomControls">
-                                <div id="zoomControlZoomIn" title="Zoom in.">+</div>
-                                <div id="zoomSliderContainer">
-                                    <div id="zoomControlSlider"></div>
-                                </div>
-                                <div id="zoomControlZoomOut" title="Zoom out.">-</div>
-                            </div>
+        <!--  Zoom Controls -->
+        <div id="zoomControls">
+            <div id="zoomControlZoomIn" title="Zoom in.">+</div>
+            <div id="zoomSliderContainer">
+                <div id="zoomControlSlider"></div>
+            </div>
+            <div id="zoomControlZoomOut" title="Zoom out.">-</div>
+        </div>
 
-                            <!-- Center button -->
-                            <div id="center-button" title="Center the image on the screen.">
-                               <span>center</span>
-                            </div>
+        <!-- Center button -->
+        <div id="center-button" title="Center the image on the screen.">
+           <span>center</span>
+        </div>
 
-                            <!--Social buttons -->
-                            <div id="social-buttons">
-                                <!-- Link button -->
-                                <div id="link-button" class="text-btn qtip-topleft" title="Generate a direct link to the current view.">
-                                    <span class="ui-icon ui-icon-link" style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Link</span>
-                                </div>
+        <!--Social buttons -->
+        <div id="social-buttons">
+            <!-- Link button -->
+            <div id="link-button" class="text-btn qtip-topleft" title="Generate a direct link to the current view.">
+                <span class="ui-icon ui-icon-link" style="float: left;"></span>
+                <span style="line-height: 1.6em">Link</span>
+            </div>
 
-                                <!-- Email button -->
-                                <!--<div id="email-button" class="text-btn">
-                                    <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Email</span>
-                                </div>-->
+            <!-- Email button -->
+            <!--<div id="email-button" class="text-btn">
+                <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
+                <span style="line-height: 1.6em">Email</span>
+            </div>-->
 
-                                <!-- Movie button -->
-                                <div id="movie-button" class="text-btn qtip-topleft" title="Generate a movie based on the current view.">
-                                    <span class="ui-icon ui-icon-video" style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Movie</span>
-                                </div>
+            <!-- Movie button -->
+            <div id="movie-button" class="text-btn qtip-topleft" title="Generate a movie based on the current view.">
+                <span class="ui-icon ui-icon-video" style="float: left;"></span>
+                <span style="line-height: 1.6em">Movie</span>
+            </div>
 
-                                <!-- Screenshot button -->
-                                <div id="screenshot-button" class="text-btn qtip-topleft" title="Save a screenshot of the current view.">
-                                    <span class="ui-icon ui-icon-image" style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Screenshot</span>
-                                </div>
+            <!-- Screenshot button -->
+            <div id="screenshot-button" class="text-btn qtip-topleft" title="Save a screenshot of the current view.">
+                <span class="ui-icon ui-icon-image" style="float: left;"></span>
+                <span style="line-height: 1.6em">Screenshot</span>
+            </div>
 
-                                <!-- Settings button -->
-                                <div id="settings-button" class="text-btn qtip-topleft" title="Configure Helioviewer.org user preferences.">
-                                    <span class="ui-icon ui-icon-gear" style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Settings</span>
-                                </div>
+            <!-- Settings button -->
+            <div id="settings-button" class="text-btn qtip-topleft" title="Configure Helioviewer.org user preferences.">
+                <span class="ui-icon ui-icon-gear" style="float: left;"></span>
+                <span style="line-height: 1.6em">Settings</span>
+            </div>
 
-                                <!-- JHelioviewer -->
-                                <!-- 2010/12/28: Disabling until JNLP launching is fixed -->
-                                <!-- <div id="jhelioviewer-button" class="text-btn">
-                                    <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
-                                    <span style="line-height: 1.6em">JHelioviewer</span>
-                                </div> -->
-                            </div>
+            <!-- JHelioviewer -->
+            <!-- 2010/12/28: Disabling until JNLP launching is fixed -->
+            <!-- <div id="jhelioviewer-button" class="text-btn">
+                <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
+                <span style="line-height: 1.6em">JHelioviewer</span>
+            </div> -->
+        </div>
 
-                            <!-- Fullscreen toggle -->
-                            <div id='fullscreen-btn' class='qtip-topleft' title="Toggle fullscreen mode.">
-                            </div>
+        <!-- Fullscreen toggle -->
+        <div id='fullscreen-btn' class='qtip-topleft' title="Toggle fullscreen mode.">
+        </div>
 
-                            <!-- Morescreen toggle -->
-                            <div id='morescreen-btn' class='qtip-topleft' title="Toggle right sidebar.">
-                            </div>
+        <!-- Morescreen toggle -->
+        <div id='morescreen-btn' class='qtip-topleft' title="Toggle right sidebar.">
+        </div>
 
-                            <!-- Mouse coordinates display -->
-                            <div id="mouse-coords" style="display: none;">
-                                <div id="mouse-coords-x"></div>
-                                <div id="mouse-coords-y"></div>
-                            </div>
+        <!-- Mouse coordinates display -->
+        <div id="mouse-coords" style="display: none;">
+            <div id="mouse-coords-x"></div>
+            <div id="mouse-coords-y"></div>
+        </div>
 
-                            <!-- Screenshot Manager -->
-                            <div id='screenshot-manager-container' class='media-manager-container glow'>
-                                <div id='screenshot-manager-build-btns' class='media-manager-build-btns'>
-                                    <div id='screenshot-manager-full-viewport' class='text-btn' title='Create a screenshot using the entire viewport.'>
-                                        <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
-                                        <span style='line-height: 1.6em'>Full Viewport</span>
-                                    </div>
-                                    <div id='screenshot-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a screenshot of a sub-region of the viewport.'>
-                                        <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
-                                        <span style='line-height: 1.6em'>Select Area</span>
-                                    </div>
-                                </div>
-                                <div id='screenshot-history-title' class='media-history-title'>
-                                    Screenshot History
-                                    <div id='screenshot-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all screenshots from the history.'>
-                                        <span class='ui-icon ui-icon-trash' style='float:left;'></span>
-                                        <span style='font-weight:normal'><i>Clear</i></span>
-                                    </div>
-                                </div>
-                                <div id='screenshot-history'></div>
-                            </div>
-                            <!-- Movie Manager -->
-                            <div id='movie-manager-container' class='media-manager-container glow'>
-                                <div id='movie-manager-build-btns' class='media-manager-build-btns'>
-                                    <div id='movie-manager-full-viewport' class='text-btn qtip-left' title='Create a movie using the entire viewport.'>
-                                        <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
-                                        <span style='line-height: 1.6em'>Full Viewport</span>
-                                    </div>
-                                    <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a movie of a sub-region of the viewport.'>
-                                        <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
-                                        <span style='line-height: 1.6em'>Select Area</span>
-                                    </div>
-                                </div>
-                                <div id='movie-history-title' class='media-history-title'>
-                                    Movie History
-                                    <div id='movie-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all movies from the history.'>
-                                        <span class='ui-icon ui-icon-trash' style='float:left;'></span>
-                                        <span style='font-weight:normal'><i>Clear</i></span>
-                                    </div>
-                                </div>
-                                <div id='movie-history'></div>
-                            </div>
+        <!-- Screenshot Manager -->
+        <div id='screenshot-manager-container' class='media-manager-container glow'>
+            <div id='screenshot-manager-build-btns' class='media-manager-build-btns'>
+                <div id='screenshot-manager-full-viewport' class='text-btn' title='Create a screenshot using the entire viewport.'>
+                    <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
+                    <span style='line-height: 1.6em'>Full Viewport</span>
+                </div>
+                <div id='screenshot-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a screenshot of a sub-region of the viewport.'>
+                    <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
+                    <span style='line-height: 1.6em'>Select Area</span>
+                </div>
+            </div>
+            <div id='screenshot-history-title' class='media-history-title'>
+                Screenshot History
+                <div id='screenshot-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all screenshots from the history.'>
+                    <span class='ui-icon ui-icon-trash' style='float:left;'></span>
+                    <span style='font-weight:normal'><i>Clear</i></span>
+                </div>
+            </div>
+            <div id='screenshot-history'></div>
+        </div>
+        <!-- Movie Manager -->
+        <div id='movie-manager-container' class='media-manager-container glow'>
+            <div id='movie-manager-build-btns' class='media-manager-build-btns'>
+                <div id='movie-manager-full-viewport' class='text-btn qtip-left' title='Create a movie using the entire viewport.'>
+                    <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
+                    <span style='line-height: 1.6em'>Full Viewport</span>
+                </div>
+                <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a movie of a sub-region of the viewport.'>
+                    <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
+                    <span style='line-height: 1.6em'>Select Area</span>
+                </div>
+            </div>
+            <div id='movie-history-title' class='media-history-title'>
+                Movie History
+                <div id='movie-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all movies from the history.'>
+                    <span class='ui-icon ui-icon-trash' style='float:left;'></span>
+                    <span style='font-weight:normal'><i>Clear</i></span>
+                </div>
+            </div>
+            <div id='movie-history'></div>
+        </div>
 
-                            <!-- Movie Settings -->
-                            <div id='movie-settings-container' class='media-manager-container glow'>
-                                <div style='margin-bottom: 10px; border-bottom: 1px solid; padding-bottom: 10px;'>
-                                    <b>Movie Settings:</b>
+        <!-- Movie Settings -->
+        <div id='movie-settings-container' class='media-manager-container glow'>
+            <div style='margin-bottom: 10px; border-bottom: 1px solid; padding-bottom: 10px;'>
+                <b>Movie Settings:</b>
 
-                                    <div id='movie-settings-btns' style='float:right;'>
-                                        <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='ui-icon ui-icon-gear qtip-left' title='Advanced movie settings'></span>
-                                        <span id='movie-settings-toggle-help' style='display:inline-block;' class='ui-icon ui-icon-help qtip-left' title='Movie settings help'></span>
-                                    </div>
-                                </div>
+                <div id='movie-settings-btns' style='float:right;'>
+                    <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='ui-icon ui-icon-gear qtip-left' title='Advanced movie settings'></span>
+                    <span id='movie-settings-toggle-help' style='display:inline-block;' class='ui-icon ui-icon-help qtip-left' title='Movie settings help'></span>
+                </div>
+            </div>
 
-                                <!-- Begin movie settings -->
-                                <div id='movie-settings-form-container'>
-                                <form id='movie-settings-form'>
+            <!-- Begin movie settings -->
+            <div id='movie-settings-form-container'>
+            <form id='movie-settings-form'>
 
-                                <!-- Movie duration -->
-                                <fieldset style='padding: 0px; margin: 5px 0px 8px'>
-                                    <label for='movie-duration' style='margin-right: 5px; font-style: italic;'>Duration</label>
-                                    <select id='movie-duration' name='movie-duration'>
-                                        <option value='3600'>1 hour</option>
-                                        <option value='10800'>3 hours</option>
-                                        <option value='21600'>6 hours</option>
-                                        <option value='43200'>12 hours</option>
-                                        <option value='86400'>1 day</option>
-                                        <option value='172800'>2 days</option>
-                                        <option value='604800'>1 week</option>
-                                        <option value='2419200'>28 days</option>
-                                    </select>
-                                </fieldset>
+            <!-- Movie duration -->
+            <fieldset style='padding: 0px; margin: 5px 0px 8px'>
+                <label for='movie-duration' style='margin-right: 5px; font-style: italic;'>Duration</label>
+                <select id='movie-duration' name='movie-duration'>
+                    <option value='3600'>1 hour</option>
+                    <option value='10800'>3 hours</option>
+                    <option value='21600'>6 hours</option>
+                    <option value='43200'>12 hours</option>
+                    <option value='86400'>1 day</option>
+                    <option value='172800'>2 days</option>
+                    <option value='604800'>1 week</option>
+                    <option value='2419200'>28 days</option>
+                </select>
+            </fieldset>
 
-                                <!-- Advanced movie settings -->
-                                <div id='movie-settings-advanced'>
+            <!-- Advanced movie settings -->
+            <div id='movie-settings-advanced'>
 
-                                    <!-- Movie Speed -->
-                                    <fieldset id='movie-settings-speed'>
-                                        <legend>Speed</legend>
-                                        <div style='padding:10px;'>
-                                            <input type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
-                                            <label for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
-                                            <input id='frame-rate' maxlength='2' size='3' type="text" name="framerate" min="1" max="30" value="15" pattern='^(0?[1-9]|[1-2][0-9]|30)$' />(1-30)<br />
+                <!-- Movie Speed -->
+                <fieldset id='movie-settings-speed'>
+                    <legend>Speed</legend>
+                    <div style='padding:10px;'>
+                        <input type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
+                        <label for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
+                        <input id='frame-rate' maxlength='2' size='3' type="text" name="framerate" min="1" max="30" value="15" pattern='^(0?[1-9]|[1-2][0-9]|30)$' />(1-30)<br />
 
-                                            <input type="radio" name="speed-method" id="speed-method-l" value="length" />
-                                            <label for="speed-method-l" style='width: 62px;'>Length (s)</label>
-                                            <input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
-                                        </div>
-                                    </fieldset>
-                                </div>
-
-                                <!-- Movie request submit button -->
-                                <div id='movie-settings-submit'>
-                                    <input type="button" id='movie-settings-cancel-btn' value="Cancel" />
-                                    <input type="submit" id='movie-settings-submit-btn' value="Ok" />
-                                </div>
-
-                                </form>
-                                </div>
-
-                                <!-- Movie settings help -->
-                                <div id='movie-settings-help' style='display:none'>
-                                    <b>Duration</b><br /><br />
-                                    <p>The duration of time that the movie should span, centered about your current observation time.</p><br />
-
-                                    <b>Speed</b><br /><br />
-                                    <p>Movie speed can be controlled either by specifying a desired frame-rate (the number of frames displayed each second) or a length in seconds.</p><br />
-                                </div>
-
-                                <!-- Movie settings validation console -->
-                                <div id='movie-settings-validation-console' style='display:none; text-align: center; margin: 7px 1px 0px; padding: 0.5em; border: 1px solid #fa5f4d; color: #333; background: #fa8072;' class='ui-corner-all'>
-
-                                </div>
-                            </div>
-
-                            <!-- Image area select tool -->
-                            <div id='image-area-select-buttons'>
-                                <div id='done-selecting-image' class='text-btn'>
-                                    <span class='ui-icon ui-icon-circle-check'></span>
-                                    <span>OK</span>
-                                </div>
-                                <div id='cancel-selecting-image' class='text-btn'>
-                                    <span class='ui-icon ui-icon-circle-close'></span>
-                                    <span>Cancel</span>
-                                </div>
-                                <div id='help-selecting-image' class='text-btn' style='float:right;'>
-                                    <span class='ui-icon ui-icon-info'></span>
-                                </div>
-                            </div>
-                        </div>
-
-
+                        <input type="radio" name="speed-method" id="speed-method-l" value="length" />
+                        <label for="speed-method-l" style='width: 62px;'>Length (s)</label>
+                        <input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
                     </div>
+                </fieldset>
+            </div>
+
+            <!-- Movie request submit button -->
+            <div id='movie-settings-submit'>
+                <input type="button" id='movie-settings-cancel-btn' value="Cancel" />
+                <input type="submit" id='movie-settings-submit-btn' value="Ok" />
+            </div>
+
+            </form>
+            </div>
+
+            <!-- Movie settings help -->
+            <div id='movie-settings-help' style='display:none'>
+                <b>Duration</b><br /><br />
+                <p>The duration of time that the movie should span, centered about your current observation time.</p><br />
+
+                <b>Speed</b><br /><br />
+                <p>Movie speed can be controlled either by specifying a desired frame-rate (the number of frames displayed each second) or a length in seconds.</p><br />
+            </div>
+
+            <!-- Movie settings validation console -->
+            <div id='movie-settings-validation-console' style='display:none; text-align: center; margin: 7px 1px 0px; padding: 0.5em; border: 1px solid #fa5f4d; color: #333; background: #fa8072;' class='ui-corner-all'>
+
+            </div>
+        </div>
+
+        <!-- Image area select tool -->
+        <div id='image-area-select-buttons'>
+            <div id='done-selecting-image' class='text-btn'>
+                <span class='ui-icon ui-icon-circle-check'></span>
+                <span>OK</span>
+            </div>
+            <div id='cancel-selecting-image' class='text-btn'>
+                <span class='ui-icon ui-icon-circle-close'></span>
+                <span>Cancel</span>
+            </div>
+            <div id='help-selecting-image' class='text-btn' style='float:right;'>
+                <span class='ui-icon ui-icon-info'></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- Body -->
 <div id="colmask">
