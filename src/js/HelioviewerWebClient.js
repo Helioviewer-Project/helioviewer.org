@@ -24,7 +24,20 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
     init: function (urlSettings, serverSettings, zoomLevels) {
-        var urlDate, imageScale, paddingHeight;
+        var urlDate, imageScale, paddingHeight, accordionsToOpen, self=this;
+
+        this.header                  = $('#helioviewer-header');
+        this.viewport                = $('#helioviewer-viewport');
+        this.drawerLeft              = $('#helioviewer-drawer-left');
+        this.drawerLeftOpened        = false;
+        this.drawerLeftOpenedWidth   = '25em';
+        this.drawerRight             = $('#helioviewer-drawer-right');
+        this.drawerRightOpened       = false;
+        this.drawerRightOpenedWidth  = '25em';
+        this.drawerBottom            = $('#helioviewer-drawer-bottom');
+        this.drawerBottomOpened      = false;
+        this.drawerBottomOpenedHeight= '25em';
+        this.drawerSpeed             = 200;
 
         this._super(urlSettings, serverSettings, zoomLevels);
 
@@ -77,6 +90,21 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this._setupSettingsUI();
 
         this._displayGreeting();
+
+
+        /* Open Left and Right Sidebars */
+        setTimeout(
+            function () {
+                self.drawerLeftClick();
+                setTimeout(
+                    function () {
+                        self.drawerRightClick();
+                    },
+                    250
+                );
+            },
+            500
+        );
     },
 
     /**
@@ -290,6 +318,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             msg  = "Use the following link to refer to current page:",
             btns;
 
+        $('.drawer-tab', this.drawerLeft).bind('click', $.proxy(this.drawerLeftClick, this));
+        this.drawerLeft.bind('mouseover', function (event) { event.stopPropagation(); });
+        $('.drawer-tab', this.drawerRight).bind('click', $.proxy(this.drawerRightClick, this));
+        this.drawerBottom.bind('click', $.proxy(this.drawerBottomClick, this));
+        $('.accordion .header .disclosure-triangle').bind('click', $.proxy(this.accordionHeaderClick, this));
+        $('.contextual-help').bind('click', $.proxy(this.displayContextualHelp, this));
+
+
         $('#link-button').click(function (e) {
             // Google analytics event
             if (typeof(_gaq) !== "undefined") {
@@ -390,35 +426,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             _gaq.push(['_trackEvent', 'Shares', 'Movie - URL']);
         }
         this.displayURL(url, msg);
-    },
-
-    /**
-     * @description Displays a form to allow the user to mail the current view to someone
-     *
-     * http://www.w3schools.com/php/php_secure_mail.asp
-     * http://www.datahelper.com/mailform_demo.phtml
-     */
-    displayMailForm: function () {
-        // Get URL
-        var html, url = this.toURL();
-
-        html = '<div id="helioviewer-url-box">' +
-               'Who would you like to send this page to?<br>' +
-               '<form style="margin-top:15px;">' +
-               '<label>From:</label>' +
-               '<input type="email" placeholder="from@example.com" class="email-input-field" ' +
-               'id="email-from" value="Your Email Address"></input><br>' +
-               '<label>To:</label>' +
-               '<input type="email" placeholder="to@example.com" class="email-input-field" id="email-from" ' +
-               'value="Recipient\'s Email Address"></input>' +
-               '<label style="float:none; margin-top: 10px;">Message: </label>' +
-               '<textarea style="width: 370px; height: 270px; margin-top: 8px;">Check this out:\n\n' + url +
-               '</textarea>' +
-               '<span style="float: right; margin-top:8px;">' +
-               '<input type="submit" value="Send"></input>' +
-               '</span></form>' +
-               '</div>';
-
     },
 
     /**
@@ -600,6 +607,118 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         return this.serverSettings.rootURL + "/?" + decodeURIComponent($.param(params));
     },
+
+
+    drawerLeftClick: function() {
+        if ( this.drawerLeftOpened ) {
+            this.drawerLeft.css('width', 0);
+            $('.drawer-tab-left', this.drawerLeft.parent()).css('left', 0);
+            $('.drawer-contents', this.drawerLeft).hide();
+            this.drawerLeft.css('padding', 0);
+        }
+        else {
+            this.drawerLeft.css('width', this.drawerLeftOpenedWidth);
+            $('.drawer-tab-left', this.drawerLeft.parent()).css('left', this.drawerLeftOpenedWidth);
+            setTimeout(function () {
+                $('.drawer-contents', this.drawerLeft).show()
+            }, this.drawerSpeed);
+        }
+
+        this.drawerLeftOpened = !this.drawerLeftOpened;
+        return;
+    },
+
+    drawerRightClick: function() {
+        if ( this.drawerRightOpened ) {
+            this.drawerRight.css('width', 0);
+            $('.drawer-tab-right', this.drawerRight.parent()).css('right', 0);
+            $('.drawer-contents', this.drawerRight).hide();
+            this.drawerRight.css('padding', 0);
+        }
+        else {
+            this.drawerRight.css('width', this.drawerRightOpenedWidth);
+            $('.drawer-tab-right', this.drawerRight.parent()).css('right', this.drawerRightOpenedWidth);
+            setTimeout(function () {
+                $('.drawer-contents', this.drawerRight).show()
+            }, this.drawerSpeed);
+        }
+
+        this.drawerRightOpened = !this.drawerRightOpened;
+        return;
+    },
+
+    drawerBottomClick: function() {
+        if ( this.drawerBottomOpened ) {
+            this.drawerBottom.css('height', 0);
+            $('.drawer-contents', this.drawerBottom).hide();
+            this.drawerBottom.css('padding', 0);
+            for (var i=1; i<=this.drawerSpeed; i=i+10) {
+                setTimeout(this.updateHeightsInsideViewportContainer, i);
+            }
+            setTimeout(this.updateHeightsInsideViewportContainer, this.drawerSpeed*2);
+        }
+        else {
+            this.drawerBottom.css('height', this.drawerBottomOpenedHeight);
+            for (var i=1; i<=this.drawerSpeed; i=i+10) {
+                setTimeout(this.updateHeightsInsideViewportContainer, i);
+            }
+            setTimeout(this.updateHeightsInsideViewportContainer, this.drawerSpeed*2);
+            setTimeout(function () {
+                $('.drawer-contents', this.drawerBottom).show()
+            }, this.drawerSpeed);
+        }
+
+        this.drawerBottomOpened = !this.drawerBottomOpened;
+        return;
+    },
+
+    updateHeightsInsideViewportContainer: function() {
+        var newHeight, sidebars, windowHeight = parseInt($(window).height()),
+            header, viewport, drawerBottom, drawerLeft, drawerRight;
+
+        header       = $('#helioviewer-header');
+        viewport     = $('#helioviewer-viewport');
+        drawerLeft   = $('#helioviewer-drawer-left');
+        drawerRight  = $('#helioviewer-drawer-right');
+        drawerBottom = $('#helioviewer-drawer-bottom');
+
+        sidebars = [drawerLeft, drawerRight];
+
+        $.each(sidebars, function(i, sidebar) {
+            newHeight = windowHeight
+                      - parseInt(header.css('border-top-width'))
+                      - parseInt(header.css('margin-top'))
+                      - parseInt(header.css('padding-top'))
+                      - parseInt(header.css('height'))
+                      - parseInt(header.css('padding-bottom'))
+                      - parseInt(header.css('margin-bottom'))
+                      - parseInt(header.css('border-bottom-width'))
+                      - parseInt(sidebar.css('border-top-width'))
+                      - parseInt(sidebar.css('margin-top'))
+                      - parseInt(sidebar.css('padding-top'))
+                      - parseInt(sidebar.css('padding-bottom'))
+                      - parseInt(sidebar.css('margin-bottom'))
+                      - parseInt(sidebar.css('border-bottom-width'))
+                      - parseInt(drawerBottom.css('border-top-width'))
+                      - parseInt(drawerBottom.css('margin-top'))
+                      - parseInt(drawerBottom.css('padding-top'))
+                      - parseInt(drawerBottom.css('height'))
+                      - parseInt(drawerBottom.css('padding-bottom'))
+                      - parseInt(drawerBottom.css('margin-bottom'))
+                      - parseInt(drawerBottom.css('border-bottom-width'));
+            sidebar.css('height', newHeight);
+        });
+
+        newHeight = windowHeight
+                  - parseInt(viewport.css('padding-top'))
+                  - parseInt(viewport.css('padding-bottom'));
+        $('#helioviewer-viewport').css('height', newHeight);
+
+        newHeight = windowHeight
+                  - parseInt($('#helioviewer-header').css('height'));
+        $('#helioviewer-viewport-container').css('height', newHeight);
+    },
+
 
     /**
      * Sun-related Constants

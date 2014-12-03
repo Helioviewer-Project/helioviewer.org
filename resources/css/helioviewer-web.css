@@ -14,11 +14,11 @@ html, body {
     float: right;
 }
 
-.ui-icon {
+.fa  {
     font-family: 'untitled-font-1';
     vertical-align: middle;
 }
-.ui-icon-label {
+.fa-label {
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-weight: 200;
     vertical-align: middle;
@@ -38,7 +38,8 @@ html, body {
 }
 #helioviewer-header .logo {
     position: relative;
-    width: 336px;
+    float: left;
+    width: 24.75em;
     text-align: center;
     margin: 0.2em 0 0.3em 0;
 }
@@ -51,9 +52,9 @@ html, body {
     position: absolute;
     top: 0;
     right: 0;
-    width: 336px;
+    width: 12.5em;
     font-size: 2em;
-    margin: 0.1em 0 0 0;
+    margin: 0.05em 0 0 0;
     text-align: center;
 }
 .menus .ui-icon {
@@ -75,10 +76,11 @@ html, body {
 /* Drawers */
 
 #helioviewer-drawer-left {
-    position: relative;
-    float: left;
+    position: absolute;
+    top: 3em;
+    left: 0;
     height: 100%;
-    width: 25em;
+    width: 0; /* opened via JavaScript */
     background-color: rgba(255,255,255,0.1);
     color: rgba(255,255,255,0.85);
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
@@ -91,10 +93,11 @@ html, body {
     z-index: 1;
 }
 #helioviewer-drawer-right {
-    position: relative;
-    float: right;
+    position: absolute;
+    top: 3em;
+    right: 0;
     height: 100%;
-    width: 25em;
+    width: 0; /* opened via JavaScript */
     background-color: rgba(255,255,255,0.1);
     color: rgba(255,255,255,0.8);
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
@@ -111,7 +114,7 @@ html, body {
     bottom: 0;
     clear: both;
     width: 100%;
-    height: 0;
+    height: 0; /* opened via JavaScript */
     background-color: rgba(255,255,255,0.1);
     color: rgba(255,255,255,0.8);
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
@@ -125,6 +128,7 @@ html, body {
     z-index: 1;
 }
 .drawer-contents {
+    position: relative;
     margin: 0;
     padding: 0;
     display: none;
@@ -158,18 +162,18 @@ html, body {
     transform: rotate(90deg);
     position: absolute;
     top: 7em;
-    left: 31em;
+    right: -5em;
 }
 .drawer-tab-right {
     -webkit-transform: rotate(-90deg);
     transform: rotate(-90deg);
     position: absolute;
     top: 7em;
-    right: 31em;
+    left: -5em;
 }
 .drawer-tab-bottom {
     position: relative;
-    margin: -2.25em auto 0 auto;
+    margin: -2.2em auto 0 auto;
 }
 
 
@@ -446,6 +450,7 @@ span.ui-icon-hover, div.ui-icon-hover {
 }
 
 #footer-container-inner {
+    background-image: url(../../resources/images/backgrounds/ui-bg_gloss-wave_20_111111_500x100_transparent_15.png);
     position: absolute;
     width: 100%;
     height: 18px;
