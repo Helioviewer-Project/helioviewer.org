@@ -34,7 +34,7 @@ class HelioviewerWebClient extends HelioviewerClient {
      */
     public function __construct($urlSettings) {
 
-        include_once 'api/src/Config.php';
+        include_once 'src/php/Config.php';
         $this->configObj = new Config('settings/Config.ini');
 
         $this->compressedJSFile  = 'helioviewer.min.js';
@@ -156,19 +156,19 @@ class HelioviewerWebClient extends HelioviewerClient {
                 'id'     => $id
             );
 
-            include_once 'api/src/Net/Proxy.php';
+            include_once 'src/php/Net/Proxy.php';
 
             $proxy = new Net_Proxy(HV_BACK_END.'?');
             $info = json_decode($proxy->post($params, true), true);
 
             $flvURL = HV_BACK_END.'?action=downloadMovie&format=flv&id='.$id;
             $swfURL = substr(HV_BACK_END, 0, -14)
-                    . '/lib/flowplayer/flowplayer-3.2.8.swf?config="'
+                    . '/lib/flowplayer/flowplayer-5.4.6.swf?config="'
                     . urlencode("{'clip':{'url':'$flvURL'}}");
         }
         else {
             // Otherwise process locally
-            include_once 'api/src/Movie/HelioviewerMovie.php';
+            include_once 'src/php/Movie/HelioviewerMovie.php';
 
             $movie = new Movie_HelioviewerMovie($id, 'mp4');
             $info = array(
@@ -178,7 +178,7 @@ class HelioviewerWebClient extends HelioviewerClient {
                 'height'     => $movie->height
             );
 
-            $flvURL = HV_API_URL.'?action=downloadMovie&format=flv&id='
+            $flvURL = HV_BACK_END.'?action=downloadMovie&format=flv&id='
                     . $id;
             $swfURL = HV_WEB_ROOT_URL
                     . '/lib/flowplayer/flowplayer-3.2.8.swf?config='
@@ -201,8 +201,8 @@ class HelioviewerWebClient extends HelioviewerClient {
 
         // When opening shared link, include thumbnail metatags for Facebook, etc to use
 
-        include_once 'api/src/Helper/HelioviewerLayers.php';
-        include_once 'api/src/Helper/DateTimeConversions.php';
+        include_once 'src/php/Helper/HelioviewerLayers.php';
+        include_once 'src/php/Helper/DateTimeConversions.php';
 
         $layers = new Helper_HelioviewerLayers($_GET['imageLayers']);
 
@@ -218,7 +218,7 @@ class HelioviewerWebClient extends HelioviewerClient {
             'height'      => 128
         );
 
-        $ogImage = HV_API_URL.'?'.http_build_query($screenshotParams);
+        $ogImage = HV_BACK_END.'?'.http_build_query($screenshotParams);
         $ogDescription = $layers->toHumanReadableString().' ('
                        . toReadableISOString($this->urlSettings['date'])
                        . ' UTC)';
@@ -555,7 +555,7 @@ class HelioviewerWebClient extends HelioviewerClient {
                 <a href="http://wiki.helioviewer.org/wiki/Main_Page" class="light" target="_blank">Wiki</a>
                 <a href="http://blog.helioviewer.org/" class="light" target="_blank">Blog</a>
                 <a href="http://jhelioviewer.org" class="light" target="_blank">JHelioviewer</a>
-                <a href="api/docs/" class="light" target="_blank">Public API</a>
+                <a href="http://api.helioviewer.org/docs/v2/" class="light" target="_blank">Public API</a>
                 <a href="https://twitter.com/Helioviewer" class="light" title="Follow @helioviewer on Twitter" target="_blank">@helioviewer</a>
                 <a href="mailto:<?php echo $this->config['contact_email']; ?>" class="light">Contact</a>
                 <a href="https://bugs.launchpad.net/helioviewer.org/" class="light" style="margin-right:2px;" target="_blank">Report Problem</a>
@@ -633,10 +633,10 @@ class HelioviewerWebClient extends HelioviewerClient {
 
     <!-- Upload Form -->
     <div id='upload-form'>
-        <img id='youtube-logo-large' src='resources/images/Social.me/60 by 60 pixels/youtube.png' alt='YouTube logo' />
+        <img id='youtube-logo-large' src="resources/images/youtube_79x32.png" alt='YouTube logo' />
         <h1>Upload Video</h1>
         <br />
-        <form id="youtube-video-info" action="api/index.php" method="post">
+        <form id="youtube-video-info" action="<?php echo HV_BACK_END; ?>/index.php" method="post">
             <!-- Title -->
             <label for="youtube-title">Title:</label>
             <input id="youtube-title" type="text" name="title" maxlength="100" />
