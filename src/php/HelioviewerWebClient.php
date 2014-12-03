@@ -240,22 +240,23 @@ class HelioviewerWebClient extends HelioviewerClient {
 <div id="helioviewer-header">
     <div class="logo">
         <h1>
+            <a class="fa fa-sun-o fa-fw" href="" title="Copy Link to the Current View."></a>
             <a href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a>
         </h1>
     </div>
     <div class="menus">
 
         <div class="left">
-            <a class="fa fa-link-3" href="" title="Copy Link to the Current View."></a>
-            <a class="fa fa-twitter-square" href="" title="Tweet Short Link to the Current View."></a>
-            <a class="fa fa-facebook-square" href="" title="Post Link and Preview Image of Current View to Facebook."></a>
-            <a class="fa fa-pinterest-square" href="" title="Pin Image of Current View to Pinterest."></a>
-            <a class="fa fa-youtube-square" href="http://www.youtube.com/user/HelioviewerScience" target="_blank" title="Visit the HelioviewerScience YouTube Channel."></a>
+            <a class="fa fa-link fa-fw" href="" title="Copy Link to the Current View."></a>
+            <a class="fa fa-twitter-square fa-fw" href="" title="Tweet Short Link to the Current View."></a>
+            <a class="fa fa-facebook-square fa-fw" href="" title="Post Link and Preview Image of Current View to Facebook."></a>
+            <a class="fa fa-pinterest-square fa-fw" href="" title="Pin Image of Current View to Pinterest."></a>
+            <a class="fa fa-youtube-square fa-fw" href="http://www.youtube.com/user/HelioviewerScience" target="_blank" title="Visit the HelioviewerScience YouTube Channel."></a>
         </div>
 
         <div class="right" style="margin-right: 0.5em;">
-            <a class="fa fa-question-1" href="" style="margin-left: 0.5em;"title="Get Help with Helioviewer."></a>
-            <a class="fa fa-settings-streamline" href="" title="Edit Settings &amp; Defaults."></a>
+            <a class="fa fa-question fa-fw" href="" style="margin-left: 0.5em;"title="Get Help with Helioviewer."></a>
+            <a class="fa fa-cog fa-fw" href="" title="Edit Settings &amp; Defaults."></a>
         </div>
     </div>
 </div>

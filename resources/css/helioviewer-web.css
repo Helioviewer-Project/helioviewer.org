@@ -26,29 +26,32 @@ html, body {
 }
 
 #helioviewer-header {
-    height: 44px;
-    position: relative;
+    position: absolute;
     color: rgba(255,255,255,0.8);
     background-color: rgba(24,24,24,0.8);
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
     font-weight: 200;
     z-index: 1;
+    width: 100%;
+}
+#helioviewer-header .logo {
+    position: relative;
+    width: 336px;
+    text-align: center;
+    margin: 0.2em 0 0.3em 0;
 }
 #helioviewer-header .logo h1 {
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
-    font-weight: 100;
+    font-weight: 200;
     font-size: 2em;
-    margin: auto;
-    width: 336px;
-    text-align: center;
-    float: left;
 }
 #helioviewer-header .menus {
-    font-size: 2em;
-    width: 336px;
     position: absolute;
     top: 0;
     right: 0;
+    width: 336px;
+    font-size: 2em;
+    margin: 0.1em 0 0 0;
     text-align: center;
 }
 .menus .ui-icon {
