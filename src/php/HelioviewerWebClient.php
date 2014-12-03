@@ -237,28 +237,179 @@ class HelioviewerWebClient extends HelioviewerClient {
 <!-- Header -->
 <div id="header"></div>
 
-<div id="helioviewer-header">
-    <div class="logo">
-        <h1>
-            <a class="fa fa-sun-o fa-fw" href="" title="Copy Link to the Current View."></a>
-            <a href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a>
-        </h1>
-    </div>
-    <div class="menus">
 
-        <div class="left">
-            <a class="fa fa-link fa-fw" href="" title="Copy Link to the Current View."></a>
-            <a class="fa fa-twitter-square fa-fw" href="" title="Tweet Short Link to the Current View."></a>
-            <a class="fa fa-facebook-square fa-fw" href="" title="Post Link and Preview Image of Current View to Facebook."></a>
-            <a class="fa fa-pinterest-square fa-fw" href="" title="Pin Image of Current View to Pinterest."></a>
-            <a class="fa fa-youtube-square fa-fw" href="http://www.youtube.com/user/HelioviewerScience" target="_blank" title="Visit the HelioviewerScience YouTube Channel."></a>
+<div style="width: 100%; height: 100%; margin: 0; padding: 0;">
+    <div id="helioviewer-header">
+        <div class="logo">
+            <h1>
+                <a class="fa fa-sun-o fa-fw" href="" title="Copy Link to the Current View."></a>
+                <a href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a>
+            </h1>
         </div>
+        <div class="menus">
 
-        <div class="right" style="margin-right: 0.5em;">
-            <a class="fa fa-question fa-fw" href="" style="margin-left: 0.5em;"title="Get Help with Helioviewer."></a>
-            <a class="fa fa-cog fa-fw" href="" title="Edit Settings &amp; Defaults."></a>
+            <div class="left">
+                <a class="fa fa-link fa-fw" href="" title="Copy Link to the Current View."></a>
+                <a class="fa fa-twitter-square fa-fw" href="" title="Tweet Short Link to the Current View."></a>
+                <a class="fa fa-facebook-square fa-fw" href="" title="Post Link and Preview Image of Current View to Facebook."></a>
+                <a class="fa fa-pinterest-square fa-fw" href="" title="Pin Image of Current View to Pinterest."></a>
+                <a class="fa fa-youtube-square fa-fw" href="http://www.youtube.com/user/HelioviewerScience" target="_blank" title="Visit the HelioviewerScience YouTube Channel."></a>
+            </div>
+
+            <div class="right" style="margin-right: 0.5em;">
+                <a class="fa fa-question fa-fw" href="" style="margin-left: 0.5em;"title="Get Help with Helioviewer."></a>
+                <a class="fa fa-cog fa-fw" href="" title="Edit Settings &amp; Defaults."></a>
+            </div>
         </div>
     </div>
+
+
+            <div id="helioviewer-drawer-left">
+                <div class="drawer-tab drawer-tab-left">Data Sources</div>
+                <div class="drawer-contents">
+
+                    <div id="accordion-date" class="accordion">
+
+                        <div class="header">
+                            <div class="disclosure-triangle closed">►</div>
+                            <h1>Observation Date</h1>
+                            <div class="right ui-icon icon-question contextual-help" title="Changing the Observation Date will update the Viewport with image(s) matching the new date and time.
+
+Use the 'Jump' controls to browse forward and backward in time by a regular interval.
+
+Note that when an image is not available for the exact date and time you selected, the closest available match will be displayed instead."></div>
+                        </div>
+
+                        <div class="content">
+
+                            <div class="row">
+                                <div class="label">Date:</div>
+                                <div class="field">
+                                    <input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker">
+
+                                    <input id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}">
+
+                                    <div class="suffix">UTC</div>
+                                </div>
+                                <div id="ui-datepicker-trigger" class="ui-icon icon-calendar-1 ui-datepicker-trigger" title="Calendar-Style Date Picker"></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="label">Jump:</div>
+                                <div class="field">
+
+                                    <select id="timestep-select" name="time-step">
+                                        <option value="1">1 Sec</option>
+                                        <option value="60">1 Min</option>
+                                        <option value="300">5 Mins</option>
+                                        <option value="900">15 Mins</option>
+                                        <option value="3600">1 Hour</option>
+                                        <option value="21600">6 Hours</option>
+                                        <option value="43200">12 Hours</option>
+                                        <option value="86400" selected>1 Day</option>
+                                        <option value="604800">1 Week</option>
+                                        <option value="2419200">28 Days</option>
+                                        <option value="31556926">1 Year</option>
+                                    </select>
+
+                                    <div class="inline ui-icon icon-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
+                                    <div class="inline ui-icon icon-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
+                                </div>
+                                <div class="ui-icon icon-clock-1 right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the Current Date and Time."><span class="ui-icon-label">Now</span></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div id="accordion-images" class="accordion">
+                        <div class="header">
+                            <div class="disclosure-triangle closed">►</div>
+                            <h1>Image Data Layers</h1>
+                        </div>
+                        <div class="content">zzz</div>
+                    </div>
+
+                    <div id="accordion-sfe" class="accordion">
+                        <div class="header">
+                            <div class="disclosure-triangle closed">►</div>
+                            <h1>Solar Features &amp; Events</h1>
+                        </div>
+                        <div class="content">zzz</div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div id="helioviewer-drawer-right">
+                <div class="drawer-tab drawer-tab-right">Data Export</div>
+                <div class="drawer-contents">
+
+                    <div id="accordion-news" class="accordion">
+                        <div class="header">
+                            <div class="disclosure-triangle closed">►</div>
+                            <h1>Helioviewer Project News</h1>
+                        </div>
+                        <div class="content">
+                            <div class="blog">
+                                <a class="left ui-icon icon-comment-1" style="font-size: 2em;" href="http://blog.helioviewer.org/" target="_blank" title="Go to the Helioviewer Project Blog."></a>
+                                <div class="text"><a href="http://blog.helioviewer.org/2014/03/04/helioviewer-api-tools-for-multiple-platforms-now-available/" target="_blank">Helioviewer API tools for multiple platforms now available...</a></div>
+                            </div>
+                            <div class="tweet">
+                                <a class="left ui-icon icon-twitter-alt" style="font-size: 2em;" href="http://twitter.com/helioviewer" target="_blank" title="Go to the Helioviewer Project Twitter Account."></a>
+                                <div class="text">Slinky, snaky reversing eruption <a href="http://www.youtube.com/watch?v=11GADUVSCUY" target="_blank" rel="nofollow">youtube.com/watch?v=11GADUVSCUY</a> shared by goggog67</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="accordion-youtube" class="accordion">
+                        <div class="header">
+                            <div class="disclosure-triangle closed">►</div>
+                            <h1>Movies Shared to YouTube</h1>
+                        </div>
+                        <div class="content">zzz</div>
+                    </div>
+
+                    <div id="accordion-generate" class="accordion">
+                        <div class="header">
+                            <div class="disclosure-triangle closed">►</div>
+                            <h1>Generate Movies or Screenshots</h1>
+                        </div>
+                        <div class="content">zzz</div>
+                    </div>
+
+                    <div id="accordion-vso" class="accordion">
+                        <div class="header">
+                            <div class="disclosure-triangle closed">►</div>
+                            <h1>Virtual Solar Observatory</h1>
+                        </div>
+                        <div class="content">zzz</div>
+                    </div>
+
+                    <div id="accordion-sdo" class="accordion">
+                        <div class="header">
+                            <div class="disclosure-triangle closed">►</div>
+                            <h1>SDO AIA/HMI Cut-out Service</h1>
+                        </div>
+                        <div class="content">zzz</div>
+                    </div>
+
+                    <div id="accordion-hek" class="accordion">
+                        <div class="header">
+                            <div class="disclosure-triangle closed">►</div>
+                            <h1>Heliophysics Event Knowledgebase</h1>
+                        </div>
+                        <div class="content">zzz</div>
+                    </div>
+
+                </div>
+            </div>
+            <div id="helioviewer-drawer-bottom">
+                <div class="drawer-tab drawer-tab-bottom">Data Timeline</div>
+                <div class="drawer-contents"></div>
+            </div>
+        </div>
 </div>
 
 
@@ -277,7 +428,6 @@ class HelioviewerWebClient extends HelioviewerClient {
 
             <!-- Image area select boundary container -->
             <div id="image-area-select-container"></div>
-
         </div>
 
         <!-- UI COMPONENTS -->
@@ -304,12 +454,6 @@ class HelioviewerWebClient extends HelioviewerClient {
                 <span style="line-height: 1.6em">Link</span>
             </div>
 
-            <!-- Email button -->
-            <!--<div id="email-button" class="text-btn">
-                <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
-                <span style="line-height: 1.6em">Email</span>
-            </div>-->
-
             <!-- Movie button -->
             <div id="movie-button" class="text-btn qtip-topleft" title="Generate a movie based on the current view.">
                 <span class="ui-icon ui-icon-video" style="float: left;"></span>
@@ -328,20 +472,6 @@ class HelioviewerWebClient extends HelioviewerClient {
                 <span style="line-height: 1.6em">Settings</span>
             </div>
 
-            <!-- JHelioviewer -->
-            <!-- 2010/12/28: Disabling until JNLP launching is fixed -->
-            <!-- <div id="jhelioviewer-button" class="text-btn">
-                <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
-                <span style="line-height: 1.6em">JHelioviewer</span>
-            </div> -->
-        </div>
-
-        <!-- Fullscreen toggle -->
-        <div id='fullscreen-btn' class='qtip-topleft' title="Toggle fullscreen mode.">
-        </div>
-
-        <!-- Morescreen toggle -->
-        <div id='morescreen-btn' class='qtip-topleft' title="Toggle right sidebar.">
         </div>
 
         <!-- Mouse coordinates display -->
@@ -479,6 +609,11 @@ class HelioviewerWebClient extends HelioviewerClient {
                 <span class='ui-icon ui-icon-info'></span>
             </div>
         </div>
+
+
+
+
+
     </div>
 </div>
 
