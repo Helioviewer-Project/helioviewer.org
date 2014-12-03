@@ -15,40 +15,31 @@ html, body {
 
 /* Viewport */
 #helioviewer-viewport-container-inner {
-    position: relative;
+    position: absolute;
+    top:0;
+    left: 0;
     display: block;
-    top:3%;
-    width:97%;
-    height:94%;
+    /*top:3%;*/
+    width:100%;
+    height:100%;/*
     margin-left:auto;
-    margin-right: auto;
-    border: 1px solid #262424;
+    margin-right: auto;*/
+    /*border: 1px solid #262424;*/
 }
 #helioviewer-viewport-container-outer {
-    height: 520px;
-    border:1px solid black;
+    /*height: 520px;*/
+    /*border:1px solid black;
     border-radius: 25px;
     -moz-border-radius: 25px;
-    -webkit-border-radius: 25px;
-}
-
-#helioviewer-viewport-container-shadow {
-    position: absolute;
-    top: 12px;
-    left: 284px;
-    display: none;
-    border-radius: 25px;
-    -moz-border-radius: 25px;
-    -webkit-border-radius: 25px;
-    z-index: -1;
+    -webkit-border-radius: 25px;*/
 }
 
 /* CSS effects */
-.shadow {
+/*.shadow {
 box-shadow: 0 0 5px rgba(0, 0, 0, 1);
     -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 1);
     -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 1);
-}
+}*/
 .glow {
     box-shadow: 0 0 5px rgba(255, 255, 255, 1);
     -webkit-box-shadow: 0 0 5px rgba(255, 255, 255, 1);
