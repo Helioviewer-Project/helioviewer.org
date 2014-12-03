@@ -1,7 +1,7 @@
-<?php 
+<?php
 /**
  * HelioviewerEmbeddedClient class definition
- * 
+ *
  * Helioviewer.org HTML web client
  *
  * PHP version 5
@@ -15,7 +15,7 @@
 require_once "HelioviewerClient.php";
 /**
  * HelioviewerEmbeddedClient class definition
- * 
+ *
  * Helioviewer.org HTML web client
  *
  * PHP version 5
@@ -31,36 +31,36 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
     /**
      * Initializes a Helioviewer.org embedded instance
      */
-    public function __construct($ini)        
+    public function __construct($ini)
     {
         $this->compressedJSFile  = "helioviewer-embed.min.js";
         $this->compressedCSSFile = "helioviewer-embed.min.css";
-        
+
         parent::__construct($ini);
-        
+
         # Log embed API call if stats are enabled
         if ($this->config['enable_statistics_collection']) {
             date_default_timezone_set('UTC');
-            
+
             # load config
-            require_once "api/src/Config.php";
+            require_once "src/php/Config.php";
             $config = new Config("settings/Config.ini");
-            
+
             # record in statistics table
-            require_once 'api/src/Database/Statistics.php';
+            require_once 'src/php/Database/Statistics.php';
             $statistics = new Database_Statistics();
-            $statistics->log("embed");            
+            $statistics->log("embed");
         }
     }
-    
+
     /**
      * Loads Helioviewer-specific JavaScript
      */
     protected function loadCustomJS($signature, $includes=array())
     {
-        parent::loadCustomJS($signature, array("HelioviewerEmbeddedClient.js"));  
+        parent::loadCustomJS($signature, array("HelioviewerEmbeddedClient.js"));
     }
-    
+
     /**
      * Loads Helioviewer-specific CSS
      */
@@ -83,10 +83,10 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
     <div id="sandbox" style="position: absolute;">
         <div id="moving-container"></div>
     </div>
-    
+
     <!-- Message console -->
     <div id="message-console"></div>
-    
+
     <!-- Image area select boundary container -->
     <div id="image-area-select-container"></div>
 </div>
@@ -114,13 +114,13 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
     <?php
     parent::printBody($signature);
     }
-    
+
     /**
      * Prints the end of the script block
      */
     protected function printScript() {
         parent::printScript();
-        $link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("&hideWatermark=false", "", 
+        $link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("&hideWatermark=false", "",
                                                               str_replace("output=embed", "", $_SERVER['REQUEST_URI'])));
 ?>
     // Initialize Helioviewer.org
