@@ -2,8 +2,8 @@
  * @fileOverview Contains the "MessageConsole" class definition.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */ 
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
+bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, $, Class, window */
 "use strict";
 var MessageConsole = Class.extend(
@@ -24,7 +24,7 @@ var MessageConsole = Class.extend(
             "life": 15000
         }
     },
-    
+
     /**
      * @description Logs a message to the message-console
      * @param {String} msg Message to display
@@ -33,7 +33,7 @@ var MessageConsole = Class.extend(
         options = $.extend(this._defaults, options);
         $("#message-console").jGrowl(msg, options);
     },
-    
+
     /**
      * @description Makes a jGrowl notification and allows options to modify the notification
      * @param {Object} msg
@@ -43,7 +43,7 @@ var MessageConsole = Class.extend(
         options = $.extend(this._defaults, options);
         $("#message-console").jGrowl(msg, options);
     },
-    
+
     /**
      * @description Displays a warning message in the message console
      * @param {String} msg Message to display
@@ -52,7 +52,7 @@ var MessageConsole = Class.extend(
         options = $.extend(this._defaults, options);
         $("#message-console").jGrowl(msg, options);
     },
-    
+
     /**
      * @description Displays an error message in the message console
      * @param {String} msg Message to display
@@ -60,17 +60,16 @@ var MessageConsole = Class.extend(
     error: function (msg, options) {
         options = $.extend(this._defaults, options);
         $("#message-console").jGrowl(msg, options);
-        //$("#helioviewer-viewport-container-outer").effect("shake", { times: 1 });
     },
-    
+
     /**
      * Sets up event-handlers
      */
     _setupEventHandlers: function () {
         var events, self = this;
-        
+
         events = "message-console-log message-console-info message-console-warn message-console-error";
-        
+
         $(document).bind(events, function (event, msg, options, showElapsedTime, easyClose) {
             // Default options
             if (typeof options === "undefined") {
@@ -101,11 +100,11 @@ var MessageConsole = Class.extend(
                             } else {
                                 headerText = "A long time ago...";
                             }
-                            
+
                             header.text(headerText);
                             i += 1;
                         }, 60000);
-                        
+
                         // keep track of timer id so it can be disabled later
                         elem.data("timerId", id);
                     },
@@ -134,7 +133,7 @@ var MessageConsole = Class.extend(
                 self.warn(msg, options);
             } else if (event.type === "message-console-error") {
                 self.error(msg, options);
-            }            
+            }
         });
     }
 });

@@ -1,19 +1,88 @@
+html, body {
+    height: 100%;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight: 200;
+    min-width: 1024px;
+    min-height: 768px;
+    background-color: #000;
+}
+
+.left {
+    float: left;
+}
+.right {
+    float: right;
+}
+
+.ui-icon {
+    font-family: 'untitled-font-1';
+    vertical-align: middle;
+}
+.ui-icon-label {
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight: 200;
+    vertical-align: middle;
+    padding-left: 0.4em;
+}
+
+#helioviewer-header {
+    height: 44px;
+    position: relative;
+    color: rgba(255,255,255,0.8);
+    background-color: rgba(24,24,24,0.8);
+    font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
+    font-weight: 200;
+    z-index: 1;
+}
+#helioviewer-header .logo h1 {
+    font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
+    font-weight: 100;
+    font-size: 2em;
+    margin: auto;
+    width: 336px;
+    text-align: center;
+    float: left;
+}
+#helioviewer-header .menus {
+    font-size: 2em;
+    width: 336px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: center;
+}
+.menus .ui-icon {
+    vertical-align: text-bottom;
+}
+.menus .ui-icon:hover {
+    color: rgba(255,255,255,1);
+}
+#helioviewer-header a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+}
+#helioviewer-header a:hover {
+    color: rgba(255,255,255,1);
+    text-decoration: none;
+}
+
+
+
+
+
 /**
  * Helioviewer.org Custom Styles
 */
 
 /* HTML elements */
-html, body {
-    background-image: url('../../resources/images/backgrounds/gradient_v5-optimized.png');
-    background-color: #20242F;
-    background-repeat: repeat-x;
-    /*background-size: 40px 100%;
-    -webkit-background-size: 40px 100%;*/
-}
+
 #col2 input, #col2 select {background-color:#F4F4F4;}
 #left-col-header, #right-col-header {height: 50px; margin-top: -12px;}
 
 /* Viewport */
+
+
+
 #helioviewer-viewport-container-inner {
     position: absolute;
     top:0;
@@ -311,3 +380,8 @@ span.ui-icon-hover, div.ui-icon-hover {
     right: 5px;
     color: white;
 }
+
+
+
+
+
