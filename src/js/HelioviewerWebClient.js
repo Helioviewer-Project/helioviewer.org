@@ -730,6 +730,28 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
 
+    accordionHeaderClick: function(event) {
+        var obj = $(event.target);
+
+        if ( obj.attr('class').indexOf('closed') != -1 ) {
+            obj.html('▼');
+            obj.addClass('opened');
+            obj.removeClass('closed');
+            $('.content', obj.parent().parent()).show();
+            $('.contextual-help', obj.parent().parent()).show();
+        }
+        else {
+            obj.html('►');
+            obj.addClass('closed');
+            obj.removeClass('opened');
+            $('.content', obj.parent().parent()).hide();
+            $('.contextual-help', obj.parent().parent()).hide();
+        }
+
+        event.stopPropagation();
+    },
+
+
     /**
      * Sun-related Constants
      */
