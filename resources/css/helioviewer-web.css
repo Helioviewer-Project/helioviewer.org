@@ -48,6 +48,19 @@ html, body {
     font-weight: 200;
     font-size: 2em;
 }
+#helioviewer-header #loading {
+    z-index:999;
+    width: 20em;
+    text-align: center;
+    margin: 0 auto;
+    position: relative;
+    color: rgba(255,255,255,0.8);
+    font-size: 1.2em;
+    font-weight: 200;
+    height: 3em;
+    padding: 0.65em 0;
+    vertical-align: bottom;
+}
 #helioviewer-header .menus {
     position: absolute;
     top: 0;
@@ -133,6 +146,7 @@ html, body {
     margin: 0;
     padding: 0;
     display: none;
+    overflow: hidden;
     z-index: 1;
 }
 
@@ -153,6 +167,7 @@ html, body {
     border-top: 1px solid rgba(255,255,255,0.25);
     border-left: 1px solid rgba(255,255,255,0.25);
     border-right: 1px solid rgba(255,255,255,0.25);
+    z-index: 2;
 }
 .drawer-tab:hover {
     color: rgba(255,255,255,1);
@@ -338,35 +353,23 @@ html, body {
 #left-col-header, #right-col-header {height: 50px; margin-top: -12px;}
 
 /* Viewport */
-
-
-
 #helioviewer-viewport-container-inner {
     position: absolute;
     top:0;
     left: 0;
     display: block;
-    /*top:3%;*/
     width:100%;
-    height:100%;/*
-    margin-left:auto;
-    margin-right: auto;*/
-    /*border: 1px solid #262424;*/
+    height:100%;
 }
 #helioviewer-viewport-container-outer {
-    /*height: 520px;*/
-    /*border:1px solid black;
-    border-radius: 25px;
-    -moz-border-radius: 25px;
-    -webkit-border-radius: 25px;*/
+    position: absolute;
+    top:0;
+    left: 0;
+    display: block;
+    width:100%;
+    height:100%;
 }
 
-/* CSS effects */
-/*.shadow {
-box-shadow: 0 0 5px rgba(0, 0, 0, 1);
-    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 1);
-    -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 1);
-}*/
 .glow {
     box-shadow: 0 0 5px rgba(255, 255, 255, 1);
     -webkit-box-shadow: 0 0 5px rgba(255, 255, 255, 1);
@@ -379,14 +382,6 @@ box-shadow: 0 0 5px rgba(0, 0, 0, 1);
     margin-left: 9px;
 }
 
-/* Loading Indicator */
-#loading {
-    position: absolute;
-    right: 7px;
-    padding: 7px;
-    font-size: 13px;
-    color: #606364;
-}
 
 /* Opacity Slider */
 .opacity-slider-track {
@@ -457,7 +452,6 @@ span.ui-icon-hover, div.ui-icon-hover {
 }
 
 #footer-container-inner {
-    background-image: url(../../resources/images/backgrounds/ui-bg_gloss-wave_20_111111_500x100_transparent_15.png);
     position: absolute;
     width: 100%;
     height: 18px;

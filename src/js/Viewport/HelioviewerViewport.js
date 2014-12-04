@@ -130,6 +130,7 @@ var HelioviewerViewport = Class.extend(
 
         // Otherwise if dimensions have changed update layers
         if (!this._hasSameDimensions(this.dimensions, oldDimensions)) {
+            $(document).trigger("updateHeightsInsideViewportContainer");
             this.updateViewport();
         }
     },

@@ -246,6 +246,11 @@ class HelioviewerWebClient extends HelioviewerClient {
             </h1>
         </div>
 
+        <div id="loading">
+            <span>Loading Data</span>
+            <span class="fa fa-circle-o-notch fa-spin"></span>
+        </div>
+
         <div class="menus">
 
             <div class="left">
@@ -296,11 +301,14 @@ class HelioviewerWebClient extends HelioviewerClient {
 
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Observation Date</h1>
-                    <div class="right fa fa-question contextual-help" title="Changing the Observation Date will update the Viewport with image(s) matching the new date and time.
+                    <div class="right fa fa-question contextual-help" title="Changing the Observation Date will update the Viewport with data matching the new date and time.
+                    <br /><br />
 
 Use the 'Jump' controls to browse forward and backward in time by a regular interval.
+<br /><br />
 
-Note that when an image is not available for the exact date and time you selected, the closest available match will be displayed instead.">
+Note that when an image is not available for the exact date and time you selected, the closest available match will be displayed instead.
+<br />">
                     </div>
                 </div>
 
@@ -331,32 +339,6 @@ Note that when an image is not available for the exact date and time you selecte
                         </div>
                     </div>
 
-<!--                     <br/>
-                    <div class="section-header" style="margin-left:5px;">Time</div>
-                    <div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all shadow"> -->
-                        <!--  Observation Date -->
-<!--                         <div id="observation-date-container">
-                            <div id="observation-date-label">Date:</div>
-                            <input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength='10'>
-                            <span id="timeNowBtn" title="Go to the time of the most recent available image for the currently loaded layers.">latest</span>
-                        </div> -->
-
-                        <!-- Observation Time -->
-<!--                         <div id="observation-time-container">
-                            <div id="observation-time-label">Time:</div>
-                            <input id="time" name="time" value="" style="width:80px" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}">
-                            <span style='font-size: 11px; font-weight: 700; margin-left: 2px;'>UTC</span>
-                        </div> -->
-
-                        <!-- Time Navigation Buttons & Time Increment selector -->
-<!--                         <div>
-                            <div id="time-navigation-buttons">Time-step:</div>
-                            <select id="timestep-select" name="time-step"></select>
-                            <span id="timeBackBtn" class="ui-icon icon-circle-arrow-w" title="Move the Observation Date/Time backward one time-step"></span>
-                            <span id="timeForwardBtn" class="ui-icon icon-circle-arrow-e" title="Move the Observation Date/Time forward one time-step"></span>
-                        </div>
-                    </div> -->
-
                 </div>
 
             </div>
@@ -366,15 +348,19 @@ Note that when an image is not available for the exact date and time you selecte
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Image Data Layers</h1>
                 </div>
-                <div class="content">zzz</div>
+                <div class="content">
+                    <div id="tileLayerAccordion"></div>
+                </div>
             </div>
 
             <div id="accordion-sfe" class="accordion">
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
-                    <h1>Solar Features &amp; Events</h1>
+                    <h1>Solar Features &amp; Event Annotations</h1>
                 </div>
-                <div class="content">zzz</div>
+                <div class="content">
+                    <div id="eventLayerAccordion"></div>
+                </div>
             </div>
 
         </div>
@@ -399,6 +385,11 @@ Note that when an image is not available for the exact date and time you selecte
                         <a class="left fa fa-twitter" style="font-size: 2em;" href="http://twitter.com/helioviewer" target="_blank" title="Go to the Helioviewer Project Twitter Account."></a>
                         <div class="text">Slinky, snaky reversing eruption <a href="http://www.youtube.com/watch?v=11GADUVSCUY" target="_blank" rel="nofollow">youtube.com/watch?v=11GADUVSCUY</a> shared by goggog67</div>
                     </div>
+
+                    <!-- Recent Blog Entries -->
+                    <div style="margin: 0 0 4px 5px;" class="section-header">
+                        <a href="<?php echo HV_NEWS_URL; ?>" target="_blank">Helioviewer Project News</a></div>
+                    <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all shadow"></div>
                 </div>
             </div>
 
@@ -407,7 +398,26 @@ Note that when an image is not available for the exact date and time you selecte
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Movies Shared to YouTube</h1>
                 </div>
-                <div class="content">zzz</div>
+                <div class="content">
+                    <!-- User-Submitted Videos -->
+                    <div id="user-video-gallery-header" class="section-header">
+                        <a href="http://www.youtube.com/user/HelioviewerScience" target="_blank" style='text-decoration: none;'>
+                            <img id='youtube-logo' src='resources/images/youtube_79x32.png' alt='YouTube Logo' />
+                        </a>
+                        <span style='position: relative;'>User-Generated Movies</span>
+                    </div>
+                    <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all shadow">
+                        <a id="user-video-gallery-next" class="qtip-left" href="#" title="Go to next page.">
+                            <div class='fa fa-triangle-1-n'></div>
+                        </a>
+                        <div id="user-video-gallery-main">
+                            <div id="user-video-gallery-spinner"></div>
+                        </div>
+                        <a id="user-video-gallery-prev" class="qtip-left" href="#" title="Go to previous page.">
+                            <div class='fa fa-triangle-1-s'></div>
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <div id="accordion-generate" class="accordion">
@@ -444,15 +454,111 @@ Note that when an image is not available for the exact date and time you selecte
 
         </div>
     </div>
+
+
     <div id="helioviewer-drawer-bottom">
         <div class="drawer-tab drawer-tab-bottom">Data Timeline</div>
         <div class="drawer-contents"></div>
+    </div>
+
+    <!-- Glossary dialog -->
+    <div id='glossary-dialog'></div>
+
+    <!-- About dialog -->
+    <div id='about-dialog'></div>
+
+    <!-- Layer choice dialog -->
+    <div id='layer-choice-dialog'></div>
+
+    <!-- Settings dialog -->
+    <div id='settings-dialog'>
+        <form id='helioviewer-settings'>
+            <!-- Initial observation date -->
+            <fieldset id='helioviewer-settings-date'>
+            <legend>When starting Helioviewer.org:</legend>
+                <div style='padding: 10px;'>
+                    <input id="settings-date-latest" type="radio" name="date" value="latest" /><label for="settings-date-latest">Display most recent images available</label><br />
+                    <input id="settings-date-previous" type="radio" name="date" value="last-used" /><label for="settings-date-previous">Display images from previous visit</label><br />
+                </div>
+            </fieldset>
+
+            <!-- Other -->
+            <fieldset id='helioviewer-settings-other'>
+            <legend>When using Helioviewer.org:</legend>
+            <div style='padding:10px;'>
+                <input type="checkbox" name="latest-image-option" id="settings-latest-image" value="true" />
+                <label for="settings-latest-image">Update viewport every 5 minutes</label><br />
+            </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <!-- Usage Dialog -->
+    <div id='usage-dialog'></div>
+
+    <!-- URL Dialog -->
+    <div id='url-dialog' style="display:none;">
+        <div id="helioviewer-url-box">
+            <span id="helioviewer-url-box-msg">Use the following link to refer to current page:</span>
+            <form style="margin-top: 5px;">
+                <input type="text" id="helioviewer-url-input-box" style="width:98%;" value="http://helioviewer.org" />
+                <label for="helioviewer-url-shorten">Shorten with bit.ly?</label>
+                <input type="checkbox" id="helioviewer-url-shorten" />
+                <input type="hidden" id="helioviewer-short-url" value="" />
+                <input type="hidden" id="helioviewer-long-url" value="" />
+            </form>
+        </div>
+    </div>
+
+    <!-- Video Upload Dialog -->
+    <div id='upload-dialog' style="display: none">
+        <!-- Loading indicator -->
+        <div id='youtube-auth-loading-indicator' style='display: none;'>
+            <div id='youtube-auth-spinner'></div>
+            <span style='font-size: 28px;'>Processing</span>
+        </div>
+
+        <!-- Upload Form -->
+        <div id='upload-form'>
+            <img id='youtube-logo-large' src="resources/images/youtube_79x32.png" alt='YouTube logo' />
+            <h1>Upload Video</h1>
+            <br />
+            <form id="youtube-video-info" action="<?php echo HV_BACK_END; ?>/index.php" method="post">
+                <!-- Title -->
+                <label for="youtube-title">Title:</label>
+                <input id="youtube-title" type="text" name="title" maxlength="100" />
+                <br />
+
+                <!-- Description -->
+                <label for="youtube-desc">Description:</label>
+                <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="5000"></textarea>
+                <br />
+
+                <!-- Tags -->
+                <label for="youtube-tags">Tags:</label>
+                <input id="youtube-tags" type="text" name="tags" maxlength="500" value="" />
+                <br /><br />
+
+                <!-- Sharing -->
+                <div style='float: right; margin-right: 30px;'>
+                <label style='width: 100%; margin: 0px;'>
+                    <input type="checkbox" name="share" value="true" checked="checked" style='width: 15px; float: right; margin: 2px 2px 0 4px;'/>Share my video with other Helioviewer.org users:
+                </label>
+                <br />
+                <input id='youtube-submit-btn' type="submit" value="Submit" />
+                </div>
+
+                <!-- Hidden fields -->
+                <input id="youtube-movie-id" type="hidden" name="id" value="" />
+            </form>
+            <div id='upload-error-console-container'><div id='upload-error-console'>...</div></div>
+        </div>
     </div>
 </div>
 
 
 <!-- Viewport -->
-<div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
+<div id="helioviewer-viewport-container-outer">
     <div id="helioviewer-viewport-container-inner">
         <div id="helioviewer-viewport">
             <!-- Movement sandbox -->
@@ -637,75 +743,12 @@ Note that when an image is not available for the exact date and time you selecte
 </div>
 
 
-
-<!-- Body -->
-<div id="colmask">
-    <div id="colmid">
-        <div id="colright">
-
-        <!-- Middle Column -->
-        <div id="col1wrap">
-            <div id="col1pad">
-                <div id="col1">
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Left Column -->
-        <div id="col2">
-            <div id="left-col-header">
-                <a href='<?php echo $this->config['web_root_url'];?>'>
-                    <img src="<?php echo $this->config['main_logo'];?>" id="helioviewer-logo-main" alt="Helioviewer.org Logo">
-                </a>
-            </div>
-
-
-            <br/>
-            <div id="tileLayerAccordion"></div>
-            <br/>
-            <div id="eventLayerAccordion"></div>
-
-        </div>
-
-        <!-- Right Column -->
-        <div id="col3">
-            <div id="right-col-header" style='height: 11px'></div>
-            <!-- Recent Blog Entries -->
-            <div style="margin: 0 0 4px 5px;" class="section-header">
-                <a href="<?php echo HV_NEWS_URL; ?>" target="_blank">Helioviewer Project News</a></div>
-            <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all shadow"></div>
-
-            <!-- User-Submitted Videos -->
-            <div id="user-video-gallery-header" class="section-header">
-                <a href="http://www.youtube.com/user/HelioviewerScience" target="_blank" style='text-decoration: none;'>
-                    <img id='youtube-logo' src='resources/images/youtube_79x32.png' alt='YouTube Logo' />
-                </a>
-                <span style='position: relative;'>User-Generated Movies</span>
-            </div>
-            <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all shadow">
-                <a id="user-video-gallery-next" class="qtip-left" href="#" title="Go to next page.">
-                    <div class='fa fa-triangle-1-n'></div>
-                </a>
-                <div id="user-video-gallery-main">
-                    <div id="user-video-gallery-spinner"></div>
-                </div>
-                <a id="user-video-gallery-prev" class="qtip-left" href="#" title="Go to previous page.">
-                    <div class='fa fa-triangle-1-s'></div>
-                </a>
-            </div>
-        </div>
-        </div>
-    </div>
-</div>
-<!-- end Body -->
-
 <!-- Footer -->
-<div id="footer">
+<!-- <div id="footer">
     <div id="footer-container-outer">
-        <div id="footer-container-inner">
+        <div id="footer-container-inner"> -->
             <!-- Meta links -->
-            <div id="footer-links">
+<!--             <div id="footer-links">
                 <a href="http://helioviewer.org/wiki/Helioviewer.org_User_Guide_2.4.0" class="light" target="_blank">Help</a>
                 <a id="helioviewer-glossary" class="light" href="dialogs/glossary.html">Glossary</a>
                 <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
@@ -720,108 +763,10 @@ Note that when an image is not available for the exact date and time you selecte
             </div>
         </div>
     </div>
-</div>
+</div> -->
 <!-- end Footer -->
 
-<!-- Loading Indicator -->
-<div id="loading" style="display: none">
-    <span style='vertical-align: top; margin-right: 3px;'>Loading</span>
-    <img src="resources/images/ajax-loader.gif" alt="Loading" />
-</div>
 
-<!-- Glossary dialog -->
-<div id='glossary-dialog'></div>
-
-<!-- About dialog -->
-<div id='about-dialog'></div>
-
-<!-- Layer choice dialog -->
-<div id='layer-choice-dialog'></div>
-
-<!-- Settings dialog -->
-<div id='settings-dialog'>
-    <form id='helioviewer-settings'>
-        <!-- Initial observation date -->
-        <fieldset id='helioviewer-settings-date'>
-        <legend>When starting Helioviewer.org:</legend>
-            <div style='padding: 10px;'>
-                <input id="settings-date-latest" type="radio" name="date" value="latest" /><label for="settings-date-latest">Display most recent images available</label><br />
-                <input id="settings-date-previous" type="radio" name="date" value="last-used" /><label for="settings-date-previous">Display images from previous visit</label><br />
-            </div>
-        </fieldset>
-
-        <!-- Other -->
-        <fieldset id='helioviewer-settings-other'>
-        <legend>When using Helioviewer.org:</legend>
-        <div style='padding:10px;'>
-            <input type="checkbox" name="latest-image-option" id="settings-latest-image" value="true" />
-            <label for="settings-latest-image">Update viewport every 5 minutes</label><br />
-        </div>
-        </fieldset>
-    </form>
-</div>
-
-<!-- Usage Dialog -->
-<div id='usage-dialog'></div>
-
-<!-- URL Dialog -->
-<div id='url-dialog' style="display:none;">
-    <div id="helioviewer-url-box">
-        <span id="helioviewer-url-box-msg">Use the following link to refer to current page:</span>
-        <form style="margin-top: 5px;">
-            <input type="text" id="helioviewer-url-input-box" style="width:98%;" value="http://helioviewer.org" />
-            <label for="helioviewer-url-shorten">Shorten with bit.ly?</label>
-            <input type="checkbox" id="helioviewer-url-shorten" />
-            <input type="hidden" id="helioviewer-short-url" value="" />
-            <input type="hidden" id="helioviewer-long-url" value="" />
-        </form>
-    </div>
-</div>
-
-<!-- Video Upload Dialog -->
-<div id='upload-dialog' style="display: none">
-    <!-- Loading indicator -->
-    <div id='youtube-auth-loading-indicator' style='display: none;'>
-        <div id='youtube-auth-spinner'></div>
-        <span style='font-size: 28px;'>Processing</span>
-    </div>
-
-    <!-- Upload Form -->
-    <div id='upload-form'>
-        <img id='youtube-logo-large' src="resources/images/youtube_79x32.png" alt='YouTube logo' />
-        <h1>Upload Video</h1>
-        <br />
-        <form id="youtube-video-info" action="<?php echo HV_BACK_END; ?>/index.php" method="post">
-            <!-- Title -->
-            <label for="youtube-title">Title:</label>
-            <input id="youtube-title" type="text" name="title" maxlength="100" />
-            <br />
-
-            <!-- Description -->
-            <label for="youtube-desc">Description:</label>
-            <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="5000"></textarea>
-            <br />
-
-            <!-- Tags -->
-            <label for="youtube-tags">Tags:</label>
-            <input id="youtube-tags" type="text" name="tags" maxlength="500" value="" />
-            <br /><br />
-
-            <!-- Sharing -->
-            <div style='float: right; margin-right: 30px;'>
-            <label style='width: 100%; margin: 0px;'>
-                <input type="checkbox" name="share" value="true" checked="checked" style='width: 15px; float: right; margin: 2px 2px 0 4px;'/>Share my video with other Helioviewer.org users:
-            </label>
-            <br />
-            <input id='youtube-submit-btn' type="submit" value="Submit" />
-            </div>
-
-            <!-- Hidden fields -->
-            <input id="youtube-movie-id" type="hidden" name="id" value="" />
-        </form>
-        <div id='upload-error-console-container'><div id='upload-error-console'>...</div></div>
-    </div>
-</div>
 <?php
     parent::printBody($signature);
     }
