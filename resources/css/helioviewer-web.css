@@ -162,7 +162,7 @@ html, body {
     -webkit-transform: rotate(90deg);
     transform: rotate(90deg);
     position: absolute;
-    top: 7em;
+    top: 6em;
     right: -5em;
 }
 #drawer-viewport-controls-left {
@@ -175,7 +175,7 @@ html, body {
     -webkit-transform: rotate(-90deg);
     transform: rotate(-90deg);
     position: absolute;
-    top: 7em;
+    top: 6em;
     left: -5em;
 }
 .drawer-tab-bottom {
