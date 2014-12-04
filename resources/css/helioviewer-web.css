@@ -56,6 +56,7 @@ html, body {
     font-size: 2em;
     margin: 0.05em 0 0 0;
     text-align: center;
+    height: 100%;
 }
 .menus .ui-icon {
     vertical-align: text-bottom;
@@ -163,6 +164,12 @@ html, body {
     position: absolute;
     top: 7em;
     right: -5em;
+}
+#drawer-viewport-controls-left {
+    position: absolute;
+    top: 0;
+    right: -0.45em;
+    cursor: pointer;
 }
 .drawer-tab-right {
     -webkit-transform: rotate(-90deg);
@@ -523,10 +530,6 @@ span.ui-icon-hover, div.ui-icon-hover {
     top:0px;
     right: 0px;
     cursor: pointer;
-}
-
-#morescreen-btn {
-    float: right;
 }
 
 /* Blog entries */
