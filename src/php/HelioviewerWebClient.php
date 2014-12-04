@@ -106,7 +106,7 @@ class HelioviewerWebClient extends HelioviewerClient {
                     'UI/TileLayerAccordion.js',
                     'UI/EventLayerAccordion.js', 'UI/MessageConsole.js',
                     'UI/TimeControls.js', 'Utility/FullscreenControl.js',
-                    'Utility/MorescreenControl.js', 'HelioviewerWebClient.js',
+                    'HelioviewerWebClient.js',
                     'UI/UserVideoGallery.js', 'UI/Glossary.js',
                     'UI/jquery.ui.dynaccordion.js');
         parent::loadCustomJS($signature, $js);
@@ -266,6 +266,24 @@ class HelioviewerWebClient extends HelioviewerClient {
 
             <div id="helioviewer-drawer-left">
                 <div class="drawer-tab drawer-tab-left">Data Sources</div>
+
+                <div id="drawer-viewport-controls-left">
+
+                    <!--  Zoom Controls -->
+                    <div id="zoomControls">
+                        <div id="zoomControlZoomIn" title="Zoom in.">+</div>
+                        <div id="zoomSliderContainer">
+                            <div id="zoomControlSlider"></div>
+                        </div>
+                        <div id="zoomControlZoomOut" title="Zoom out.">-</div>
+                    </div>
+
+                    <!-- Center button -->
+                    <div id="center-button" title="Center the image on the screen.">
+                       <span>center</span>
+                    </div>
+                </div>
+
                 <div class="drawer-contents">
 
                     <div id="accordion-date" class="accordion">
@@ -273,7 +291,7 @@ class HelioviewerWebClient extends HelioviewerClient {
                         <div class="header">
                             <div class="disclosure-triangle closed">►</div>
                             <h1>Observation Date</h1>
-                            <div class="right ui-icon icon-question contextual-help" title="Changing the Observation Date will update the Viewport with image(s) matching the new date and time.
+                            <div class="right fa fa-question contextual-help" title="Changing the Observation Date will update the Viewport with image(s) matching the new date and time.
 
 Use the 'Jump' controls to browse forward and backward in time by a regular interval.
 
@@ -291,7 +309,7 @@ Note that when an image is not available for the exact date and time you selecte
 
                                     <div class="suffix">UTC</div>
                                 </div>
-                                <div id="ui-datepicker-trigger" class="ui-icon icon-calendar-1 ui-datepicker-trigger" title="Calendar-Style Date Picker"></div>
+                                <div id="ui-datepicker-trigger" class="fa fa-calendar ui-datepicker-trigger" title="Calendar-Style Date Picker"></div>
                             </div>
 
                             <div class="row">
@@ -312,10 +330,10 @@ Note that when an image is not available for the exact date and time you selecte
                                         <option value="31556926">1 Year</option>
                                     </select>
 
-                                    <div class="inline ui-icon icon-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
-                                    <div class="inline ui-icon icon-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
+                                    <div class="inline fa fa-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
+                                    <div class="inline ui-icon fa fa-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
                                 </div>
-                                <div class="ui-icon icon-clock-1 right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the Current Date and Time."><span class="ui-icon-label">Now</span></div>
+                                <div class="ui-icon fa fa-clock right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the Current Date and Time."><span class="ui-icon-label">Now</span></div>
                             </div>
 
                         </div>
@@ -353,11 +371,11 @@ Note that when an image is not available for the exact date and time you selecte
                         </div>
                         <div class="content">
                             <div class="blog">
-                                <a class="left ui-icon icon-comment-1" style="font-size: 2em;" href="http://blog.helioviewer.org/" target="_blank" title="Go to the Helioviewer Project Blog."></a>
+                                <a class="left fa fa-comment" style="font-size: 2em;" href="http://blog.helioviewer.org/" target="_blank" title="Go to the Helioviewer Project Blog."></a>
                                 <div class="text"><a href="http://blog.helioviewer.org/2014/03/04/helioviewer-api-tools-for-multiple-platforms-now-available/" target="_blank">Helioviewer API tools for multiple platforms now available...</a></div>
                             </div>
                             <div class="tweet">
-                                <a class="left ui-icon icon-twitter-alt" style="font-size: 2em;" href="http://twitter.com/helioviewer" target="_blank" title="Go to the Helioviewer Project Twitter Account."></a>
+                                <a class="left fa fa-twitter" style="font-size: 2em;" href="http://twitter.com/helioviewer" target="_blank" title="Go to the Helioviewer Project Twitter Account."></a>
                                 <div class="text">Slinky, snaky reversing eruption <a href="http://www.youtube.com/watch?v=11GADUVSCUY" target="_blank" rel="nofollow">youtube.com/watch?v=11GADUVSCUY</a> shared by goggog67</div>
                             </div>
                         </div>
@@ -432,43 +450,29 @@ Note that when an image is not available for the exact date and time you selecte
 
         <!-- UI COMPONENTS -->
 
-        <!--  Zoom Controls -->
-        <div id="zoomControls">
-            <div id="zoomControlZoomIn" title="Zoom in.">+</div>
-            <div id="zoomSliderContainer">
-                <div id="zoomControlSlider"></div>
-            </div>
-            <div id="zoomControlZoomOut" title="Zoom out.">-</div>
-        </div>
-
-        <!-- Center button -->
-        <div id="center-button" title="Center the image on the screen.">
-           <span>center</span>
-        </div>
-
         <!--Social buttons -->
         <div id="social-buttons">
             <!-- Link button -->
             <div id="link-button" class="text-btn qtip-topleft" title="Generate a direct link to the current view.">
-                <span class="ui-icon ui-icon-link" style="float: left;"></span>
+                <span class="fa fa-link" style="float: left;"></span>
                 <span style="line-height: 1.6em">Link</span>
             </div>
 
             <!-- Movie button -->
             <div id="movie-button" class="text-btn qtip-topleft" title="Generate a movie based on the current view.">
-                <span class="ui-icon ui-icon-video" style="float: left;"></span>
+                <span class="fa fa-video" style="float: left;"></span>
                 <span style="line-height: 1.6em">Movie</span>
             </div>
 
             <!-- Screenshot button -->
             <div id="screenshot-button" class="text-btn qtip-topleft" title="Save a screenshot of the current view.">
-                <span class="ui-icon ui-icon-image" style="float: left;"></span>
+                <span class="fa fa-image" style="float: left;"></span>
                 <span style="line-height: 1.6em">Screenshot</span>
             </div>
 
             <!-- Settings button -->
             <div id="settings-button" class="text-btn qtip-topleft" title="Configure Helioviewer.org user preferences.">
-                <span class="ui-icon ui-icon-gear" style="float: left;"></span>
+                <span class="fa fa-cog" style="float: left;"></span>
                 <span style="line-height: 1.6em">Settings</span>
             </div>
 
@@ -484,18 +488,18 @@ Note that when an image is not available for the exact date and time you selecte
         <div id='screenshot-manager-container' class='media-manager-container glow'>
             <div id='screenshot-manager-build-btns' class='media-manager-build-btns'>
                 <div id='screenshot-manager-full-viewport' class='text-btn' title='Create a screenshot using the entire viewport.'>
-                    <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
+                    <span class='fa fa-arrowthick-2-se-nw' style='float:left;'></span>
                     <span style='line-height: 1.6em'>Full Viewport</span>
                 </div>
                 <div id='screenshot-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a screenshot of a sub-region of the viewport.'>
-                    <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
+                    <span class='fa fa-scissors' style='float:left;'></span>
                     <span style='line-height: 1.6em'>Select Area</span>
                 </div>
             </div>
             <div id='screenshot-history-title' class='media-history-title'>
                 Screenshot History
                 <div id='screenshot-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all screenshots from the history.'>
-                    <span class='ui-icon ui-icon-trash' style='float:left;'></span>
+                    <span class='fa fa-trash' style='float:left;'></span>
                     <span style='font-weight:normal'><i>Clear</i></span>
                 </div>
             </div>
@@ -505,18 +509,18 @@ Note that when an image is not available for the exact date and time you selecte
         <div id='movie-manager-container' class='media-manager-container glow'>
             <div id='movie-manager-build-btns' class='media-manager-build-btns'>
                 <div id='movie-manager-full-viewport' class='text-btn qtip-left' title='Create a movie using the entire viewport.'>
-                    <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
+                    <span class='fa fa-arrowthick-2-se-nw' style='float:left;'></span>
                     <span style='line-height: 1.6em'>Full Viewport</span>
                 </div>
                 <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a movie of a sub-region of the viewport.'>
-                    <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
+                    <span class='fa fa-scissors' style='float:left;'></span>
                     <span style='line-height: 1.6em'>Select Area</span>
                 </div>
             </div>
             <div id='movie-history-title' class='media-history-title'>
                 Movie History
                 <div id='movie-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all movies from the history.'>
-                    <span class='ui-icon ui-icon-trash' style='float:left;'></span>
+                    <span class='fa fa-trash' style='float:left;'></span>
                     <span style='font-weight:normal'><i>Clear</i></span>
                 </div>
             </div>
@@ -529,8 +533,8 @@ Note that when an image is not available for the exact date and time you selecte
                 <b>Movie Settings:</b>
 
                 <div id='movie-settings-btns' style='float:right;'>
-                    <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='ui-icon ui-icon-gear qtip-left' title='Advanced movie settings'></span>
-                    <span id='movie-settings-toggle-help' style='display:inline-block;' class='ui-icon ui-icon-help qtip-left' title='Movie settings help'></span>
+                    <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='fa fa-gear qtip-left' title='Advanced movie settings'></span>
+                    <span id='movie-settings-toggle-help' style='display:inline-block;' class='fa fa-help qtip-left' title='Movie settings help'></span>
                 </div>
             </div>
 
@@ -598,15 +602,15 @@ Note that when an image is not available for the exact date and time you selecte
         <!-- Image area select tool -->
         <div id='image-area-select-buttons'>
             <div id='done-selecting-image' class='text-btn'>
-                <span class='ui-icon ui-icon-circle-check'></span>
+                <span class='fa fa-circle-check'></span>
                 <span>OK</span>
             </div>
             <div id='cancel-selecting-image' class='text-btn'>
-                <span class='ui-icon ui-icon-circle-close'></span>
+                <span class='fa fa-circle-close'></span>
                 <span>Cancel</span>
             </div>
             <div id='help-selecting-image' class='text-btn' style='float:right;'>
-                <span class='ui-icon ui-icon-info'></span>
+                <span class='fa fa-info'></span>
             </div>
         </div>
 
@@ -661,8 +665,8 @@ Note that when an image is not available for the exact date and time you selecte
                 <div>
                     <div id="time-navigation-buttons">Time-step:</div>
                     <select id="timestep-select" name="time-step"></select>
-                    <span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" title="Move the Observation Date/Time backward one time-step"></span>
-                    <span id="timeForwardBtn" class="ui-icon ui-icon-circle-arrow-e" title="Move the Observation Date/Time forward one time-step"></span>
+                    <span id="timeBackBtn" class="fa fa-circle-arrow-w" title="Move the Observation Date/Time backward one time-step"></span>
+                    <span id="timeForwardBtn" class="fa fa-circle-arrow-e" title="Move the Observation Date/Time forward one time-step"></span>
                 </div>
             </div>
 
@@ -690,13 +694,13 @@ Note that when an image is not available for the exact date and time you selecte
             </div>
             <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all shadow">
                 <a id="user-video-gallery-next" class="qtip-left" href="#" title="Go to next page.">
-                    <div class='ui-icon ui-icon-triangle-1-n'></div>
+                    <div class='fa fa-triangle-1-n'></div>
                 </a>
                 <div id="user-video-gallery-main">
                     <div id="user-video-gallery-spinner"></div>
                 </div>
                 <a id="user-video-gallery-prev" class="qtip-left" href="#" title="Go to previous page.">
-                    <div class='ui-icon ui-icon-triangle-1-s'></div>
+                    <div class='fa fa-triangle-1-s'></div>
                 </a>
             </div>
         </div>

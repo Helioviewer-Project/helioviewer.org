@@ -8,7 +8,7 @@
 /*global document, window, $, HelioviewerClient, ImageSelectTool, MovieBuilder,
   TooltipHelper, HelioviewerViewport, ScreenshotBuilder, ScreenshotHistory,
   MovieHistory, UserVideoGallery, MessageConsole, Helioviewer,
-  KeyboardManager, SettingsLoader, TimeControls, FullscreenControl,
+  KeyboardManager, SettingsLoader, TimeControls,
   ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers,
   TileLayerAccordion, VisualGlossary, _gaq */
 "use strict";
@@ -71,9 +71,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this.earthScale     = new ImageScale();
 
-        this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
-        this.moreScreenMode = new MorescreenControl("#morescreen-btn", 500);
-
         this.displayBlogFeed(3, false);
 
         this._userVideos = new UserVideoGallery(this.serverSettings.videoFeed);
@@ -91,6 +88,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this._displayGreeting();
 
+        this.updateHeightsInsideViewportContainer();
 
         /* Open Left and Right Sidebars */
         setTimeout(
@@ -105,6 +103,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             },
             500
         );
+
     },
 
     /**
@@ -610,17 +609,21 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 
     drawerLeftClick: function() {
+        var self = this;
+
         if ( this.drawerLeftOpened ) {
             this.drawerLeft.css('width', 0);
             $('.drawer-tab-left', this.drawerLeft.parent()).css('left', 0);
             $('.drawer-contents', this.drawerLeft).hide();
             this.drawerLeft.css('padding', 0);
+            this.updateHeightsInsideViewportContainer();
         }
         else {
             this.drawerLeft.css('width', this.drawerLeftOpenedWidth);
             $('.drawer-tab-left', this.drawerLeft.parent()).css('left', this.drawerLeftOpenedWidth);
             setTimeout(function () {
-                $('.drawer-contents', this.drawerLeft).show()
+                $('.drawer-contents', this.drawerLeft).show();
+                self.updateHeightsInsideViewportContainer();
             }, this.drawerSpeed);
         }
 
@@ -629,17 +632,21 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
     drawerRightClick: function() {
+        var self = this;
+
         if ( this.drawerRightOpened ) {
             this.drawerRight.css('width', 0);
             $('.drawer-tab-right', this.drawerRight.parent()).css('right', 0);
             $('.drawer-contents', this.drawerRight).hide();
             this.drawerRight.css('padding', 0);
+            this.updateHeightsInsideViewportContainer();
         }
         else {
             this.drawerRight.css('width', this.drawerRightOpenedWidth);
             $('.drawer-tab-right', this.drawerRight.parent()).css('right', this.drawerRightOpenedWidth);
             setTimeout(function () {
-                $('.drawer-contents', this.drawerRight).show()
+                $('.drawer-contents', this.drawerRight).show();
+                self.updateHeightsInsideViewportContainer();
             }, this.drawerSpeed);
         }
 
@@ -655,16 +662,19 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             for (var i=1; i<=this.drawerSpeed; i=i+10) {
                 setTimeout(this.updateHeightsInsideViewportContainer, i);
             }
-            setTimeout(this.updateHeightsInsideViewportContainer, this.drawerSpeed*2);
+            setTimeout(
+                this.updateHeightsInsideViewportContainer,
+                this.drawerSpeed*2
+            );
         }
         else {
             this.drawerBottom.css('height', this.drawerBottomOpenedHeight);
             for (var i=1; i<=this.drawerSpeed; i=i+10) {
                 setTimeout(this.updateHeightsInsideViewportContainer, i);
             }
-            setTimeout(this.updateHeightsInsideViewportContainer, this.drawerSpeed*2);
             setTimeout(function () {
-                $('.drawer-contents', this.drawerBottom).show()
+                $('.drawer-contents', this.drawerBottom).show();
+                self.updateHeightsInsideViewportContainer();
             }, this.drawerSpeed);
         }
 
