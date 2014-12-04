@@ -214,7 +214,7 @@ html, body {
     width: 1em;
 }
 .disclosure-triangle:hover {
-    color: rgba(255,255,255,1.0);
+    color: yellow;
 }
 .disclosure-triangle .closed {
 }
@@ -635,7 +635,8 @@ span.ui-icon-hover, div.ui-icon-hover {
     color: white;
 }
 
-
-
+.fa:hover {
+    color: yellow;
+}
 
 
