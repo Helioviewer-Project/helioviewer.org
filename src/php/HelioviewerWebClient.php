@@ -234,18 +234,18 @@ class HelioviewerWebClient extends HelioviewerClient {
     protected function printBody($signature) {
 ?>
 
-<!-- Header -->
-<div id="header"></div>
-
 
 <div style="width: 100%; height: 100%; margin: 0; padding: 0;">
+
     <div id="helioviewer-header">
+
         <div class="logo">
             <h1>
                 <a class="fa fa-sun-o fa-fw" href="" title="Copy Link to the Current View."></a>
                 <a href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a>
             </h1>
         </div>
+
         <div class="menus">
 
             <div class="left">
@@ -260,176 +260,180 @@ class HelioviewerWebClient extends HelioviewerClient {
                 <a class="fa fa-question fa-fw" href="" style="margin-left: 0.5em;"title="Get Help with Helioviewer."></a>
                 <a class="fa fa-cog fa-fw" href="" title="Edit Settings &amp; Defaults."></a>
             </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="helioviewer-drawer-left">
+
+        <div class="drawer-tab drawer-tab-left">Data Sources</div>
+
+        <div id="drawer-viewport-controls-left">
+
+            <!--  Zoom Controls -->
+            <div id="zoomControls">
+                <div id="zoomControlZoomIn" title="Zoom in.">+</div>
+                <div id="zoomSliderContainer">
+                    <div id="zoomControlSlider"></div>
+                </div>
+                <div id="zoomControlZoomOut" title="Zoom out.">-</div>
+            </div>
+
+            <!-- Center button -->
+            <div id="center-button" title="Center the image on the screen.">
+               <span>center</span>
+            </div>
+
+        </div>
+
+        <div class="drawer-contents">
+
+            <div id="accordion-date" class="accordion">
+
+                <div class="header">
+
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>Observation Date</h1>
+                    <div class="right fa fa-question contextual-help" title="Changing the Observation Date will update the Viewport with image(s) matching the new date and time.
+
+Use the 'Jump' controls to browse forward and backward in time by a regular interval.
+
+Note that when an image is not available for the exact date and time you selected, the closest available match will be displayed instead.">
+                    </div>
+                </div>
+
+                <div class="content">
+
+                    <div class="row">
+                        <div class="label">Date:</div>
+                        <div class="field">
+                            <input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+
+                            <input id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+
+                            <div class="suffix">UTC</div>
+                        </div>
+                        <div id="ui-datepicker-trigger" class="fa fa-calendar ui-datepicker-trigger" title="Calendar-Style Date Picker"/></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="label">Jump:</div>
+                        <div class="field">
+
+                            <select id="timestep-select" name="time-step">
+                                <option value="1">1 Sec</option>
+                                <option value="60">1 Min</option>
+                                <option value="300">5 Mins</option>
+                                <option value="900">15 Mins</option>
+                                <option value="3600">1 Hour</option>
+                                <option value="21600">6 Hours</option>
+                                <option value="43200">12 Hours</option>
+                                <option value="86400" selected>1 Day</option>
+                                <option value="604800">1 Week</option>
+                                <option value="2419200">28 Days</option>
+                                <option value="31556926">1 Year</option>
+                            </select>
+
+                            <div class="inline fa fa-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
+                            <div class="inline ui-icon fa fa-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
+                        </div>
+                        <div class="ui-icon fa fa-clock right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the Current Date and Time."><span class="ui-icon-label">Now</span></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="accordion-images" class="accordion">
+                <div class="header">
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>Image Data Layers</h1>
+                </div>
+                <div class="content">zzz</div>
+            </div>
+
+            <div id="accordion-sfe" class="accordion">
+                <div class="header">
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>Solar Features &amp; Events</h1>
+                </div>
+                <div class="content">zzz</div>
+            </div>
+
         </div>
     </div>
 
 
-            <div id="helioviewer-drawer-left">
-                <div class="drawer-tab drawer-tab-left">Data Sources</div>
+    <div id="helioviewer-drawer-right">
+        <div class="drawer-tab drawer-tab-right">Data Export</div>
+        <div class="drawer-contents">
 
-                <div id="drawer-viewport-controls-left">
-
-                    <!--  Zoom Controls -->
-                    <div id="zoomControls">
-                        <div id="zoomControlZoomIn" title="Zoom in.">+</div>
-                        <div id="zoomSliderContainer">
-                            <div id="zoomControlSlider"></div>
-                        </div>
-                        <div id="zoomControlZoomOut" title="Zoom out.">-</div>
-                    </div>
-
-                    <!-- Center button -->
-                    <div id="center-button" title="Center the image on the screen.">
-                       <span>center</span>
-                    </div>
+            <div id="accordion-news" class="accordion">
+                <div class="header">
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>Helioviewer Project News</h1>
                 </div>
-
-                <div class="drawer-contents">
-
-                    <div id="accordion-date" class="accordion">
-
-                        <div class="header">
-                            <div class="disclosure-triangle closed">►</div>
-                            <h1>Observation Date</h1>
-                            <div class="right fa fa-question contextual-help" title="Changing the Observation Date will update the Viewport with image(s) matching the new date and time.
-
-Use the 'Jump' controls to browse forward and backward in time by a regular interval.
-
-Note that when an image is not available for the exact date and time you selected, the closest available match will be displayed instead."></div>
-                        </div>
-
-                        <div class="content">
-
-                            <div class="row">
-                                <div class="label">Date:</div>
-                                <div class="field">
-                                    <input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker">
-
-                                    <input id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}">
-
-                                    <div class="suffix">UTC</div>
-                                </div>
-                                <div id="ui-datepicker-trigger" class="fa fa-calendar ui-datepicker-trigger" title="Calendar-Style Date Picker"></div>
-                            </div>
-
-                            <div class="row">
-                                <div class="label">Jump:</div>
-                                <div class="field">
-
-                                    <select id="timestep-select" name="time-step">
-                                        <option value="1">1 Sec</option>
-                                        <option value="60">1 Min</option>
-                                        <option value="300">5 Mins</option>
-                                        <option value="900">15 Mins</option>
-                                        <option value="3600">1 Hour</option>
-                                        <option value="21600">6 Hours</option>
-                                        <option value="43200">12 Hours</option>
-                                        <option value="86400" selected>1 Day</option>
-                                        <option value="604800">1 Week</option>
-                                        <option value="2419200">28 Days</option>
-                                        <option value="31556926">1 Year</option>
-                                    </select>
-
-                                    <div class="inline fa fa-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
-                                    <div class="inline ui-icon fa fa-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
-                                </div>
-                                <div class="ui-icon fa fa-clock right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the Current Date and Time."><span class="ui-icon-label">Now</span></div>
-                            </div>
-
-                        </div>
-
+                <div class="content">
+                    <div class="blog">
+                        <a class="left fa fa-comment" style="font-size: 2em;" href="http://blog.helioviewer.org/" target="_blank" title="Go to the Helioviewer Project Blog."></a>
+                        <div class="text"><a href="http://blog.helioviewer.org/2014/03/04/helioviewer-api-tools-for-multiple-platforms-now-available/" target="_blank">Helioviewer API tools for multiple platforms now available...</a></div>
                     </div>
-
-                    <div id="accordion-images" class="accordion">
-                        <div class="header">
-                            <div class="disclosure-triangle closed">►</div>
-                            <h1>Image Data Layers</h1>
-                        </div>
-                        <div class="content">zzz</div>
+                    <div class="tweet">
+                        <a class="left fa fa-twitter" style="font-size: 2em;" href="http://twitter.com/helioviewer" target="_blank" title="Go to the Helioviewer Project Twitter Account."></a>
+                        <div class="text">Slinky, snaky reversing eruption <a href="http://www.youtube.com/watch?v=11GADUVSCUY" target="_blank" rel="nofollow">youtube.com/watch?v=11GADUVSCUY</a> shared by goggog67</div>
                     </div>
-
-                    <div id="accordion-sfe" class="accordion">
-                        <div class="header">
-                            <div class="disclosure-triangle closed">►</div>
-                            <h1>Solar Features &amp; Events</h1>
-                        </div>
-                        <div class="content">zzz</div>
-                    </div>
-
                 </div>
             </div>
 
-
-            <div id="helioviewer-drawer-right">
-                <div class="drawer-tab drawer-tab-right">Data Export</div>
-                <div class="drawer-contents">
-
-                    <div id="accordion-news" class="accordion">
-                        <div class="header">
-                            <div class="disclosure-triangle closed">►</div>
-                            <h1>Helioviewer Project News</h1>
-                        </div>
-                        <div class="content">
-                            <div class="blog">
-                                <a class="left fa fa-comment" style="font-size: 2em;" href="http://blog.helioviewer.org/" target="_blank" title="Go to the Helioviewer Project Blog."></a>
-                                <div class="text"><a href="http://blog.helioviewer.org/2014/03/04/helioviewer-api-tools-for-multiple-platforms-now-available/" target="_blank">Helioviewer API tools for multiple platforms now available...</a></div>
-                            </div>
-                            <div class="tweet">
-                                <a class="left fa fa-twitter" style="font-size: 2em;" href="http://twitter.com/helioviewer" target="_blank" title="Go to the Helioviewer Project Twitter Account."></a>
-                                <div class="text">Slinky, snaky reversing eruption <a href="http://www.youtube.com/watch?v=11GADUVSCUY" target="_blank" rel="nofollow">youtube.com/watch?v=11GADUVSCUY</a> shared by goggog67</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="accordion-youtube" class="accordion">
-                        <div class="header">
-                            <div class="disclosure-triangle closed">►</div>
-                            <h1>Movies Shared to YouTube</h1>
-                        </div>
-                        <div class="content">zzz</div>
-                    </div>
-
-                    <div id="accordion-generate" class="accordion">
-                        <div class="header">
-                            <div class="disclosure-triangle closed">►</div>
-                            <h1>Generate Movies or Screenshots</h1>
-                        </div>
-                        <div class="content">zzz</div>
-                    </div>
-
-                    <div id="accordion-vso" class="accordion">
-                        <div class="header">
-                            <div class="disclosure-triangle closed">►</div>
-                            <h1>Virtual Solar Observatory</h1>
-                        </div>
-                        <div class="content">zzz</div>
-                    </div>
-
-                    <div id="accordion-sdo" class="accordion">
-                        <div class="header">
-                            <div class="disclosure-triangle closed">►</div>
-                            <h1>SDO AIA/HMI Cut-out Service</h1>
-                        </div>
-                        <div class="content">zzz</div>
-                    </div>
-
-                    <div id="accordion-hek" class="accordion">
-                        <div class="header">
-                            <div class="disclosure-triangle closed">►</div>
-                            <h1>Heliophysics Event Knowledgebase</h1>
-                        </div>
-                        <div class="content">zzz</div>
-                    </div>
-
+            <div id="accordion-youtube" class="accordion">
+                <div class="header">
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>Movies Shared to YouTube</h1>
                 </div>
+                <div class="content">zzz</div>
             </div>
-            <div id="helioviewer-drawer-bottom">
-                <div class="drawer-tab drawer-tab-bottom">Data Timeline</div>
-                <div class="drawer-contents"></div>
+
+            <div id="accordion-generate" class="accordion">
+                <div class="header">
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>Generate Movies or Screenshots</h1>
+                </div>
+                <div class="content">zzz</div>
             </div>
+
+            <div id="accordion-vso" class="accordion">
+                <div class="header">
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>Virtual Solar Observatory</h1>
+                </div>
+                <div class="content">zzz</div>
+            </div>
+
+            <div id="accordion-sdo" class="accordion">
+                <div class="header">
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>SDO AIA/HMI Cut-out Service</h1>
+                </div>
+                <div class="content">zzz</div>
+            </div>
+
+            <div id="accordion-hek" class="accordion">
+                <div class="header">
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>Heliophysics Event Knowledgebase</h1>
+                </div>
+                <div class="content">zzz</div>
+            </div>
+
         </div>
+    </div>
+    <div id="helioviewer-drawer-bottom">
+        <div class="drawer-tab drawer-tab-bottom">Data Timeline</div>
+        <div class="drawer-contents"></div>
+    </div>
 </div>
-
 
 
 <!-- Viewport -->
@@ -613,10 +617,6 @@ Note that when an image is not available for the exact date and time you selecte
                 <span class='fa fa-info'></span>
             </div>
         </div>
-
-
-
-
 
     </div>
 </div>
