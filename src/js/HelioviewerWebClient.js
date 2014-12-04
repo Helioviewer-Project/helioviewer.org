@@ -323,6 +323,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.drawerBottom.bind('click', $.proxy(this.drawerBottomClick, this));
         $('.accordion .header .disclosure-triangle').bind('click', $.proxy(this.accordionHeaderClick, this));
         $('.contextual-help').bind('click', $.proxy(this.displayContextualHelp, this));
+        $(document).bind("updateHeightsInsideViewportContainer", $.proxy(this.updateHeightsInsideViewportContainer, this));
 
 
         $('#link-button').click(function (e) {
