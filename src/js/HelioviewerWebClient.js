@@ -613,14 +613,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         if ( this.drawerLeftOpened ) {
             this.drawerLeft.css('width', 0);
-            $('.drawer-tab-left', this.drawerLeft.parent()).css('left', 0);
+            // $('.drawer-tab-left', this.drawerLeft.parent()).css('left', 0);
             $('.drawer-contents', this.drawerLeft).hide();
             this.drawerLeft.css('padding', 0);
             this.updateHeightsInsideViewportContainer();
         }
         else {
             this.drawerLeft.css('width', this.drawerLeftOpenedWidth);
-            $('.drawer-tab-left', this.drawerLeft.parent()).css('left', this.drawerLeftOpenedWidth);
+            $(this.drawerLeft.parent()).css('left', this.drawerLeftOpenedWidth);
             setTimeout(function () {
                 $('.drawer-contents', this.drawerLeft).show();
                 self.updateHeightsInsideViewportContainer();
