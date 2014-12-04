@@ -1,78 +1,68 @@
 /* Observation controls */
 #observation-controls {
-    padding: 2px 2px 8px 2px;
+/*    padding: 2px 2px 8px 2px;
     margin: 0px 5px 0px 5px;
     border: 1px solid black;
     color: white;
-    font-size: 12.35px;
+    font-size: 12.35px;*/
 }
 
 #observation-controls input, #observation-controls select {
-    border: 1px solid #5c5c5c;
+    /*border: 1px solid #5c5c5c;*/
 }
 
 #observation-date-container {
-    position: relative;
-    margin-bottom: 4px;
+/*    position: relative;
+    margin-bottom: 4px;*/
 }
 
 #observation-date-label {
-    float: left;
+/*    float: left;
     width: 78px;
     margin-top:3px;
-    font-weight: 600;
+    font-weight: 600;*/
 }
 
 #observation-time-label {
-    float: left;
+/*    float: left;
     width: 78px;
-    font-weight: 600;
+    font-weight: 600;*/
 }
 
 #observation-time-container {
-    margin-bottom: 8px;
+/*    margin-bottom: 8px;*/
 }
 
 #time-navigation-buttons {
-    float: left;
+/*    float: left;
     width: 78px;
-    font-weight: 600;    
+    font-weight: 600;  */
 }
 
-#timeBackBtn, #timeForwardBtn {
+#timeBackBtn, #timeForwardBtn, #timeNowBtn {
     cursor: pointer;
 }
 
-#timeBackBtn {
-    float: left;
-}
-
-#timeNowBtn {
-    position: absolute;
-    top: 7px;
-    right: 50px;
-    font-size: 11px;
-    font-style: italic;
-    cursor: pointer;
-    font-weight: 700;
-}
-#timeNowBtn:hover {
-    color: #D18F61;
+#timeBackBtn:hover, #timeForwardBtn:hover, #timeNowBtn:hover {
+    color: yellow;
 }
 
 #timestep-select {
-    width:85px;
+    width: 8.25em;
+    margin-right: 0.5em;
     border: none;
-    margin-right: 1px;
     float: left;
 }
 
 /* Calendar */
 #date {
-    width:80px;
-    vertical-align: top;
-    margin-right: 2px;
-    margin-top: 1px;
+    width: 7em;
+    vertical-align: middle;
+    margin-right: 0.25em
+}
+#time {
+    width: 6em;
+    vertical-align: middle;
 }
 
 /* Layer timestamps */

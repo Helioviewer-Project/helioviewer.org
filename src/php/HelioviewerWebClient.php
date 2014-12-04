@@ -241,7 +241,7 @@ class HelioviewerWebClient extends HelioviewerClient {
 
         <div class="logo">
             <h1>
-                <a class="fa fa-sun-o fa-fw" href="" title="Copy Link to the Current View."></a>
+                <a class="fa fa-sun-o fa-fw" href="" title="The Open-Source Solar and Heliospheric Data Browser"></a>
                 <a href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a>
             </h1>
         </div>
@@ -306,7 +306,7 @@ Note that when an image is not available for the exact date and time you selecte
 
                 <div class="content">
 
-                    <div class="row">
+                    <div id="observation-controls" class="row">
                         <div class="label">Date:</div>
                         <div class="field">
                             <input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
@@ -315,32 +315,47 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div class="suffix">UTC</div>
                         </div>
-                        <div id="ui-datepicker-trigger" class="fa fa-calendar ui-datepicker-trigger" title="Calendar-Style Date Picker"/></div>
+                        <div id="timeNowBtn" class="fa fa-clock-o right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the Current Date and Time and view the most recent available image for the currently loaded layers.">
+                            <span class="ui-icon-label">NOW</span>
+                        </div>
                     </div>
 
                     <div class="row">
                         <div class="label">Jump:</div>
                         <div class="field">
 
-                            <select id="timestep-select" name="time-step">
-                                <option value="1">1 Sec</option>
-                                <option value="60">1 Min</option>
-                                <option value="300">5 Mins</option>
-                                <option value="900">15 Mins</option>
-                                <option value="3600">1 Hour</option>
-                                <option value="21600">6 Hours</option>
-                                <option value="43200">12 Hours</option>
-                                <option value="86400" selected>1 Day</option>
-                                <option value="604800">1 Week</option>
-                                <option value="2419200">28 Days</option>
-                                <option value="31556926">1 Year</option>
-                            </select>
+                            <select id="timestep-select" name="time-step"></select>
 
-                            <div class="inline fa fa-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
-                            <div class="inline ui-icon fa fa-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
+                            <div id="timeBackBtn" class="inline fa fa-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
+                            <div id="timeForwardBtn" class="inline fa fa-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
                         </div>
-                        <div class="ui-icon fa fa-clock right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the Current Date and Time."><span class="ui-icon-label">Now</span></div>
                     </div>
+
+<!--                     <br/>
+                    <div class="section-header" style="margin-left:5px;">Time</div>
+                    <div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all shadow"> -->
+                        <!--  Observation Date -->
+<!--                         <div id="observation-date-container">
+                            <div id="observation-date-label">Date:</div>
+                            <input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength='10'>
+                            <span id="timeNowBtn" title="Go to the time of the most recent available image for the currently loaded layers.">latest</span>
+                        </div> -->
+
+                        <!-- Observation Time -->
+<!--                         <div id="observation-time-container">
+                            <div id="observation-time-label">Time:</div>
+                            <input id="time" name="time" value="" style="width:80px" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}">
+                            <span style='font-size: 11px; font-weight: 700; margin-left: 2px;'>UTC</span>
+                        </div> -->
+
+                        <!-- Time Navigation Buttons & Time Increment selector -->
+<!--                         <div>
+                            <div id="time-navigation-buttons">Time-step:</div>
+                            <select id="timestep-select" name="time-step"></select>
+                            <span id="timeBackBtn" class="ui-icon icon-circle-arrow-w" title="Move the Observation Date/Time backward one time-step"></span>
+                            <span id="timeForwardBtn" class="ui-icon icon-circle-arrow-e" title="Move the Observation Date/Time forward one time-step"></span>
+                        </div>
+                    </div> -->
 
                 </div>
 
@@ -644,31 +659,7 @@ Note that when an image is not available for the exact date and time you selecte
                     <img src="<?php echo $this->config['main_logo'];?>" id="helioviewer-logo-main" alt="Helioviewer.org Logo">
                 </a>
             </div>
-            <br/>
-            <div class="section-header" style="margin-left:5px;">Time</div>
-            <div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all shadow">
-                <!--  Observation Date -->
-                <div id="observation-date-container">
-                    <div id="observation-date-label">Date:</div>
-                    <input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength='10'>
-                    <span id="timeNowBtn" title="Go to the time of the most recent available image for the currently loaded layers.">latest</span>
-                </div>
 
-                <!-- Observation Time -->
-                <div id="observation-time-container">
-                    <div id="observation-time-label">Time:</div>
-                    <input id="time" name="time" value="" style="width:80px" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}">
-                    <span style='font-size: 11px; font-weight: 700; margin-left: 2px;'>UTC</span>
-                </div>
-
-                <!-- Time Navigation Buttons & Time Increment selector -->
-                <div>
-                    <div id="time-navigation-buttons">Time-step:</div>
-                    <select id="timestep-select" name="time-step"></select>
-                    <span id="timeBackBtn" class="fa fa-circle-arrow-w" title="Move the Observation Date/Time backward one time-step"></span>
-                    <span id="timeForwardBtn" class="fa fa-circle-arrow-e" title="Move the Observation Date/Time forward one time-step"></span>
-                </div>
-            </div>
 
             <br/>
             <div id="tileLayerAccordion"></div>
