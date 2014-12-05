@@ -194,11 +194,28 @@ select.layer-select {
     width:  9em;
     height: 4px;
 }
+#TileLayerAccordion-Container .opacity-slider-track > .ui-slider-handle {
+    top:         -8px;
+    margin-left: -6px;
+    height:      16px;
+    width:       8px;
+    background-image: none;
+    background-color: rgba(230,230,230,1);
+    border: 2px solid rgba(0,0,0,1);
+    border-radius: 0.2em;
+    -moz-border-radius-bottomleft: 0.2em;
+    -webkit-border-bottom-left-radius: 0.2em;
+    cursor: pointer;
+    z-index: 2;
+}
 
 .content .layer-select-label {
     text-align: right;
     line-height: 0.8em;
     padding-right: 0.5em;
+    font-weight: 500;
+    font-size: 0.9em;
+    color: rgba(255,255,255,0.8);
 }
 
 select.layer-select {
