@@ -33,8 +33,8 @@ html, body {
 
 #helioviewer-header {
     position: absolute;
-    color: rgba(255,255,255,0.8);
-    background-color: rgba(24,24,24,1);
+    color: rgba(255,255,255,0.9);
+    background-color: rgba(24,24,24,0.8);
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
     font-weight: 200;
     z-index: 2;
@@ -173,6 +173,8 @@ html, body {
     width: 6em;
     text-align: center;
     border-radius: 3px 3px 0 0;
+    -moz-border-radius: 3px 3px 0 0;
+    -webkit-border-radius: 3px 3px 0 0;
     padding: 0.15em 0.5em;
     border-top: 1px solid rgba(255,255,255,0.25);
     border-left: 1px solid rgba(255,255,255,0.25);
@@ -267,7 +269,6 @@ html, body {
 .accordion .content a:hover {
     text-decoration: none;
     color: rgba(255,255,255,1);
-    border-bottom: 1px dashed rgba(255,255,255,0.8);
 }
 .accordion .content .text {
     padding-left: 2.5em;
@@ -301,6 +302,8 @@ html, body {
     background-color: rgba(255,255,255,0.2);
     border: 1px solid rgba(255,255,255,0.6);
     border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
     color: rgba(255,255,255,1);
     font-family: 'Courier New', Courier, monospace;
     font-weight: 200;
@@ -312,6 +315,8 @@ html, body {
     background-color: rgba(255,255,255,0.2);
     border: 1px solid rgba(255,255,255,0.6);
     border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
     color: rgba(255,255,255,1);
     font-family: 'Courier New', Courier, monospace;
     font-weight: 200;
@@ -342,7 +347,7 @@ html, body {
 
 .contextual-help {
     color: rgba(255,255,255,0.5);
-    font-size: 0.9em;
+    font-size: 1em;
     padding: 0.33em;
 }
 .contextual-help:hover {
@@ -583,6 +588,7 @@ span.ui-icon-hover, div.ui-icon-hover {
     background: #2A2A2A;
     font-size: 13px;
     padding: 8px;
+    border-radius: 0 0 0px 5px;
     -moz-border-radius: 0 0 0px 5px;
     -webkit-border-radius: 0 0 0px 5px;
     color: white;
@@ -643,4 +649,31 @@ span.ui-icon-hover, div.ui-icon-hover {
     color: yellow;
 }
 
+.text-button {
+    color: rgba(255,255,255,0.8);
+    background-color: transparent;
+    border: 1px solid rgba(255,255,255,0);
+    border-radius: 1em;
+    -moz-border-radius: 1em;
+    -webkit-border-radius: 1em;
+    padding: 0.1em 0.4em;
+    font-weight: 200;
+}
+.text-button:hover {
+    color: white;
+    background-color: transparent;
+    border: 1px solid rgba(255,255,255,1);
+}
+.text-button a:hover {
+    text-decoration: none;
+    background-color: transparent;
+}
+.text-button:active {
+    color: yellow;
+    border: 1px solid yellow;
+}
+.text-button a:active {
+    text-decoration: none;
+    color: yellow;
+}
 

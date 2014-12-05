@@ -1,8 +1,11 @@
 /* Tile layer accordions */
-#tileLayerAccordion, #eventLayerAccordion {
-    margin:0 5px 0 5px;
+#tileLayerAccordion,
+#eventLayerAccordion {
+    margin: 0;
 }
-#TileLayerAccordion-Container, #EventLayerAccordion-Container {
+
+#TileLayerAccordion-Container,
+#EventLayerAccordion-Container {
     margin-top: 2px;
     font-size: 10.5px;
 }
@@ -71,7 +74,8 @@ div.accordion-arrow {
     border:none;
 }
 
-span.tile-accordion-header-left, span.event-accordion-header-left {
+span.tile-accordion-header-left,
+span.event-accordion-header-left {
     display: block;
     width:37%;
     float: left;
@@ -80,7 +84,8 @@ span.tile-accordion-header-left, span.event-accordion-header-left {
     white-space: nowrap;
     overflow: hidden;
 }
-span.tile-accordion-header-right, span.event-accordion-header-right {
+span.tile-accordion-header-right,
+span.event-accordion-header-right {
     display: block;
     text-align: right;
     height: 16px;
@@ -114,4 +119,88 @@ select.layer-select {
 }
 .checkboxBtn:hover {
     color: #d18f61;
+}
+
+
+#TileLayerAccordion-Container .ui-widget-content,
+#EventLayerAccordion-Container .ui-widget-content {
+    background-image: none;
+    background-color: rgba(0,0,0,0);
+}
+
+
+.drawer-contents .content {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#accordion-date .section {
+    margin: 0;
+    padding: 0.55em 1em;
+    background-color: rgba(0,0,0,0.25);
+}
+
+#TileLayerAccordion-Container .dynaccordion-section,
+#EventLayerAccordion-Container .dynaccordion-section {
+    margin: 0;
+    padding: 0.55em 1em;
+    background-color: rgba(0,0,0,0.25);
+}
+
+.dynaccordion-tab {
+    margin-bottom: 1em;
+}
+
+#TileLayerAccordion-Container .dynaccordion-cell,
+#EventLayerAccordion-Container .dynaccordion-cell {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+#TileLayerAccordion-Container .ui-accordion-header,
+#EventLayerAccordion-Container .ui-accordion-header {
+    background-image: none;
+    background-color: rgba(0,0,0,0);
+    border: none;
+    padding: 0;
+    margin: 0;
+    border-radius: none;
+}
+
+.accordion-header {
+    float: right;
+    text-align: right;
+    font-size: 0.75em;
+}
+
+#accordion-images .accordion-header {
+    margin: 0.5em;
+}
+
+.accordion-header a {
+    text-decoration: none;
+}
+
+#TileLayerAccordion-Container .opacity-slider-track.ui-widget-content {
+    background-image: none;
+    background-color: rgba(255,255,255,0.5);
+    border: 2px solid rgba(0,0,0,1);
+}
+#TileLayerAccordion-Container .opacity-slider-track {
+    width:  9em;
+    height: 4px;
+}
+
+.content .layer-select-label {
+    text-align: right;
+    line-height: 0.8em;
+    padding-right: 0.5em;
+}
+
+select.layer-select {
+    width:  12em;
 }

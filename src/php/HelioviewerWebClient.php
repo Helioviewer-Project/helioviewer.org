@@ -301,44 +301,42 @@ class HelioviewerWebClient extends HelioviewerClient {
 
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Observation Date</h1>
-                    <div class="right fa fa-question contextual-help" title="Changing the Observation Date will update the Viewport with data matching the new date and time.
-                    <br /><br />
+                    <div class="right fa fa-question contextual-help" title="
+Changing the 'Observation Date' will update the Viewport with data matching the new date and time.<br /><br />
 
-Use the 'Jump' controls to browse forward and backward in time by a regular interval.
-<br /><br />
+Use the 'Jump' controls to browse forward and backward in time by a regular interval.<br /><br />
 
-Note that when an image is not available for the exact date and time you selected, the closest available match will be displayed instead.
-<br />">
+Note that when an image is not available for the exact date and time you selected, the closest available match will be displayed instead.<br />
+                    ">
                     </div>
                 </div>
 
                 <div class="content">
+                    <div class="section">
+                        <div id="observation-controls" class="row">
+                            <div class="label">Date:</div>
+                            <div class="field">
+                                <input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
 
-                    <div id="observation-controls" class="row">
-                        <div class="label">Date:</div>
-                        <div class="field">
-                            <input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+                                <input id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
 
-                            <input id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
-
-                            <div class="suffix">UTC</div>
+                                <div class="suffix">UTC</div>
+                            </div>
+                            <div id="timeNowBtn" class="fa fa-clock-o right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the Current Date and Time and view the most recent available image for the currently loaded layers.">
+                                <span class="ui-icon-label">NOW</span>
+                            </div>
                         </div>
-                        <div id="timeNowBtn" class="fa fa-clock-o right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the Current Date and Time and view the most recent available image for the currently loaded layers.">
-                            <span class="ui-icon-label">NOW</span>
+                        <div class="row">
+                            <div class="label">Jump:</div>
+                            <div class="field">
+
+                                <select id="timestep-select" name="time-step"></select>
+
+                                <div id="timeBackBtn" class="inline fa fa-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
+                                <div id="timeForwardBtn" class="inline fa fa-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="row">
-                        <div class="label">Jump:</div>
-                        <div class="field">
-
-                            <select id="timestep-select" name="time-step"></select>
-
-                            <div id="timeBackBtn" class="inline fa fa-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
-                            <div id="timeForwardBtn" class="inline fa fa-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
-                        </div>
-                    </div>
-
                 </div>
 
             </div>
@@ -347,19 +345,26 @@ Note that when an image is not available for the exact date and time you selecte
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Image Data Layers</h1>
+                    <div class="accordion-header">
+                        <a href="#" id="add-new-tile-layer-btn" class="text-button" title="Click to add an image data layer to the Viewport."><span class="fa fa-plus-circle"></span> Add Layer</a>
+                    </div>
                 </div>
                 <div class="content">
-                    <div id="tileLayerAccordion"></div>
+                    <div id="tileLayerAccordion">
+                        <div id="TileLayerAccordion-Container"></div>
+                    </div>
                 </div>
             </div>
 
-            <div id="accordion-sfe" class="accordion">
+            <div id="accordion-events" class="accordion">
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Solar Features &amp; Event Annotations</h1>
                 </div>
                 <div class="content">
-                    <div id="eventLayerAccordion"></div>
+                    <div id="eventLayerAccordion">
+                        <div id="EventLayerAccordion-Container"></div>
+                    </div>
                 </div>
             </div>
 
