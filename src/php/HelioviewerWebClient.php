@@ -359,7 +359,7 @@ Note that when an image is not available for the exact date and time you selecte
             <div id="accordion-events" class="accordion">
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
-                    <h1>Solar Features &amp; Event Annotations</h1>
+                    <h1>Feature &amp; Event Annotations</h1>
                 </div>
                 <div class="content">
                     <div id="eventLayerAccordion">

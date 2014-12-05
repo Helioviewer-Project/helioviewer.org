@@ -30,10 +30,10 @@ var TileLayerAccordion = Layer.extend(
 
         this.options = {};
 
-        //Setup menu UI components
+        // Setup menu UI components
         this._setupUI();
 
-        //Initialize accordion
+        // Initialize accordion
         this.domNode = $('#TileLayerAccordion-Container');
         this.domNode.dynaccordion({startClosed: true});
 
@@ -92,14 +92,28 @@ var TileLayerAccordion = Layer.extend(
         // initial visibility
         hidden = (visible ? "" : " hidden");
 
-        visibilityBtn = "<span class='layerManagerBtn visible" + hidden + "' id='visibilityBtn-" + id +
-                        "' title='Toggle layer visibility'></span>";
-        removeBtn = "<span class='ui-icon ui-icon-closethick removeBtn' id='removeBtn-" + id +
-                    "' title='Remove layer'></span>";
-        head = "<div class='layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all shadow'>" +
-               "<span class='tile-accordion-header-left' title='" + name + "'>" + name +
-               "</span><span class=tile-accordion-header-right><span class=timestamp></span>" +
-               "<span class=accordion-header-divider>|</span>" + visibilityBtn + removeBtn + "</span></div>";
+        visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
+                      + hidden + '" '
+                      + 'id="visibilityBtn-' + id + '" '
+                      + 'title="Toggle Image Layer Visibility" '
+                      + '></span>';
+
+        removeBtn = '<span class="fa fa-times-circle fa-fw removeBtn" '
+                  + 'id="removeBtn-' + id + '" '
+                  + 'title="Remove Image Layer" '
+                  + '></span>';
+
+        head = '<div class="layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all">'
+             +     '<div class="left" '
+             +           'title="' + name + '">'
+             +         name
+             +     '</div>'
+             +     '<div class="right">'
+             +         '<span class="timestamp"></span>'
+             +         visibilityBtn
+             +         removeBtn
+             +     '</div>'
+             + '</div>';
 
         // Create accordion entry body
         body = this._buildEntryBody(id);
@@ -181,10 +195,10 @@ var TileLayerAccordion = Layer.extend(
             popups='';
 
         // Opacity slider placeholder
-        opacitySlide  = "<div class='layer-select-label'>Opacity: </div>";
-        opacitySlide += "<div class='opacity-slider-track' "
-                     +      "id='opacity-slider-track-" + id + "'>";
-        opacitySlide += "</div>";
+        opacitySlide  = '<div class="layer-select-label">Opacity: </div>'
+                      + '<div class="opacity-slider-track" '
+                      +      'id="opacity-slider-track-' + id + '">'
+                      + '</div>';
 
         // Default labels
         letters = ['a','b','c','d','e'];
@@ -200,22 +214,27 @@ var TileLayerAccordion = Layer.extend(
                 display = 'display: none;';
                 label = '';
             }
-            popups += '<div style="' + display
-                   +  '" class=layer-select-label id="' + letter
-                   +  '-label-' + id +'">' + label + '</div> '
-                   +  '<select style="' + display
-                   +  '" name="' + letter
-                   +  '" class="layer-select" id="' + letter
-                   +  '-select-' + id + '"></select>';
+            popups += '<div style="' + display + '" '
+                   +       'class="layer-select-label" '
+                   +       'id="' + letter + '-label-' + id +'">'
+                   +     label
+                   +  '</div> '
+                   +  '<select style="' + display + '" '
+                   +          'name="' + letter + '" '
+                   +          'class="layer-select" '
+                   +          'id="' + letter + '-select-' + id + '">'
+                   +  '</select>';
         });
 
-        jp2 = "<span id='image-" + id + "-download-btn'"
-            + " class='image-download-btn ui-icon ui-icon-image'"
-            + " title='Download original grayscale JPEG 2000 image'></span>";
+        jp2 = '<span id="image-' + id + '-download-btn" '
+            +       'class="image-download-btn ui-icon ui-icon-image" '
+            +       'title="Download full JPEG 2000 image (grayscale).">'
+            + '</span>';
 
-        info = "<span id='image-" + id + "-info-btn'"
-             + " class='image-info-dialog-btn ui-icon ui-icon-info'"
-             + " title='Display image header'></span>";
+        info = '<span id="image-' + id + '-info-btn" '
+             +       'class="image-info-dialog-btn ui-icon ui-icon-info" '
+             +       'title="Display image header">'
+             + '</span>';
 
         return (opacitySlide + popups + jp2 + info);
     },
@@ -244,12 +263,15 @@ var TileLayerAccordion = Layer.extend(
     _setupEventHandlers: function (id) {
         var toggleVisibility, opacityHandle, removeLayer, self = this,
             visibilityBtn = $("#visibilityBtn-" + id),
-            removeBtn     = $("#removeBtn-" + id);
+            removeBtn     = $("#removeBtn-" + id),
+            timestamps    = $("#accordion-images .timestamp");
 
         // Function for toggling layer visibility
         toggleVisibility = function (e) {
             $(document).trigger("toggle-layer-visibility", [id]);
             $("#visibilityBtn-" + id).toggleClass('hidden');
+            $("#visibilityBtn-" + id).toggleClass('fa-eye');
+            $("#visibilityBtn-" + id).toggleClass('fa-eye-slash');
             e.stopPropagation();
         };
 
@@ -268,6 +290,9 @@ var TileLayerAccordion = Layer.extend(
 
         visibilityBtn.bind('click', this, toggleVisibility);
         removeBtn.bind('click', removeLayer);
+        timestamps.bind('click', function(e) {
+            e.stopPropagation();
+        });
     },
 
     /**
@@ -444,9 +469,7 @@ var TileLayerAccordion = Layer.extend(
         $("#TileLayerAccordion-Container .timestamp").each(function (i, item) {
             domNode    = $(this);
             actualDate = new Date(getUTCTimestamp(domNode.text()));
-
             weight = self._getScaledTimeDifference(actualDate, requestDate);
-
             domNode.css("color", self._chooseTimeStampColor(weight, 0, 0, 0));
         });
     },

@@ -27,68 +27,31 @@ span.event-accordion-header-right > span.accordion-header-divider {
     padding: 5px;
 }
 
-.layerManagerBtn.visible {
-    background: url(../../resources/images/blackGlass/LayerManagerButton_Visibility_Visible.png) transparent;
-    position: absolute;
-    width: 20px;
-    height: 12px;
-    left: 234px;
-    margin-top:2px;
- }
-.layerManagerBtn.hidden {
-    background: url(../../resources/images/blackGlass/LayerManagerButton_Visibility_Hidden.png) transparent;
-    position: absolute;
-    width: 20px;
-    height: 12px;
-    left: 234px;
-    margin-top:2px;
- }
-
-.dynaccordion-section {
-    margin-bottom:2px;
-}
-
-.removeBtn, .labelsBtn {
-    position: absolute;
-    right: 10px;
-}
-
-.labelsBtn {
-    background: url(../../resources/images/blackGlass/labels_visible_10x10.png) transparent;
-    width: 10px;
-    height: 10px;
-    margin: 3px 3px 0 0;
-}
-.labelsBtn:hover {
-    background: url(../../resources/images/blackGlass/labels_visible_hover_10x10.png) transparent;
-}
-.labelsBtn.hidden {
-    background: url(../../resources/images/blackGlass/labels_hidden_10x10.png) transparent;
-}
-.labelsBtn.hidden:hover {
-    background: url(../../resources/images/blackGlass/labels_hidden_hover_10x10.png) transparent;
-}
-
 div.accordion-arrow {
     float:left;
     border:none;
 }
 
-span.tile-accordion-header-left,
-span.event-accordion-header-left {
+.ui-accordion-header {
+    height: 1.4em;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+.ui-accordion-header .left {
     display: block;
-    width:37%;
+    width: 55%;
     float: left;
     margin-top:2px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
-span.tile-accordion-header-right,
-span.event-accordion-header-right {
+.ui-accordion-header .right {
     display: block;
+    width: 35%;
+    float: right;
     text-align: right;
-    height: 16px;
 }
 
 /* TileLayerAccordion Styles */
@@ -102,6 +65,7 @@ select.layer-select {
     width: 100px;
     border: 1px solid #5c5c5c;
     margin: 2px 0px 0px 1px;
+    padding: 0;
 }
 
 .image-download-btn {
@@ -125,7 +89,7 @@ select.layer-select {
 #TileLayerAccordion-Container .ui-widget-content,
 #EventLayerAccordion-Container .ui-widget-content {
     background-image: none;
-    background-color: rgba(0,0,0,0);
+    background-color: transparent;
 }
 
 
@@ -139,15 +103,21 @@ select.layer-select {
 
 #accordion-date .section {
     margin: 0;
-    padding: 0.55em 1em;
-    background-color: rgba(0,0,0,0.25);
+    padding: 1em 1em 0.25em 1em;
+    background: -webkit-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
+    background: -o-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
+    background: -moz-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
+    background: linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
 }
 
 #TileLayerAccordion-Container .dynaccordion-section,
 #EventLayerAccordion-Container .dynaccordion-section {
     margin: 0;
     padding: 0.55em 1em;
-    background-color: rgba(0,0,0,0.25);
+    background: -webkit-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
+    background: -o-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
+    background: -moz-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
+    background: linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
 }
 
 .dynaccordion-tab {
@@ -164,7 +134,7 @@ select.layer-select {
 #TileLayerAccordion-Container .ui-accordion-header,
 #EventLayerAccordion-Container .ui-accordion-header {
     background-image: none;
-    background-color: rgba(0,0,0,0);
+    background-color: transparent;
     border: none;
     padding: 0;
     margin: 0;
@@ -202,16 +172,15 @@ select.layer-select {
     background-image: none;
     background-color: rgba(230,230,230,1);
     border: 2px solid rgba(0,0,0,1);
+    -moz-border-radius: 0.2em;
+    -webkit-border: 0.2em;
     border-radius: 0.2em;
-    -moz-border-radius-bottomleft: 0.2em;
-    -webkit-border-bottom-left-radius: 0.2em;
     cursor: pointer;
     z-index: 2;
 }
 
 .content .layer-select-label {
     text-align: right;
-    line-height: 0.8em;
     padding-right: 0.5em;
     font-weight: 500;
     font-size: 0.9em;
@@ -220,4 +189,100 @@ select.layer-select {
 
 select.layer-select {
     width:  12em;
+}
+
+
+.drawer-contents .header {
+    cursor: pointer;
+}
+
+
+.drawer-contents .fa.removeBtn {
+    font-size: 1.2em;
+    background: none;
+    color: rgba(255,255,255,0.8);
+}
+.drawer-contents .fa.removeBtn:hover {
+    background: none;
+    color: white;
+}
+
+.drawer-contents .fa.removeBtn:active {
+    background: none;
+    color: yellow;
+}
+
+
+
+.drawer-contents .fa.layerManagerBtn {
+    font-size: 1.2em;
+    background: none;
+    color: rgba(0,255,0,1.0);
+}
+.drawer-contents .fa.layerManagerBtn:hover {
+    color: rgba(0,255,0,0.75);
+}
+.drawer-contents .fa.layerManagerBtn:active {
+    color: rgba(0,255,0,0.50);
+}
+.drawer-contents .fa.layerManagerBtn.hidden {
+    color: rgba(255,0,0,1.0);
+}
+.drawer-contents .fa.layerManagerBtn.hidden:hover {
+    color: rgba(255,0,0,0.75);
+}
+.drawer-contents .fa.layerManagerBtn.hidden:active {
+    color: rgba(255,0,0,0.50);
+}
+
+
+
+/*  F/E Labels Visibility Toggle  */
+.drawer-contents .fa.labelsBtn {
+    font-size: 1.2em;
+    background: none;
+    color: rgba(0,255,0,1.0);
+}
+.drawer-contents .fa.labelsBtn:hover {
+    color: rgba(0,255,0,0.75);
+}
+.drawer-contents .fa.labelsBtn:active {
+    color: rgba(0,255,0,0.50);
+}
+.drawer-contents .fa.labelsBtn.hidden {
+    color: rgba(255,0,0,1.0);
+}
+.drawer-contents .fa.labelsBtn.hidden:hover {
+    color: rgba(255,0,0,0.75);
+}
+.drawer-contents .fa.labelsBtn.hidden:active {
+    color: rgba(255,0,0,0.50);
+}
+
+.drawer-contents .layer-Head .left {
+    float: left;
+    text-align: left;
+    width: 18em;
+}
+.drawer-contents .layer-Head .right {
+    float: right;
+    text-align: right;
+    width: 18em;
+}
+
+.drawer-contents .ui-accordion-header .fa.fa-fw {
+    padding: 0.1em 0.0em 0.1em 0.5em;
+}
+
+
+
+.drawer-contents .layer-Head .left {
+    float: left;
+    text-align: left;
+    width: 42%;
+}
+.drawer-contents .layer-Head .right {
+    float: right;
+    text-align: right;
+    width: 52%;
 }

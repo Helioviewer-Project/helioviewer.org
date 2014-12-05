@@ -4,7 +4,7 @@
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @see TileLayerManager, TileLayer
  * @requires ui.dynaccordion.js
- * addLayer
+ *
  * TODO (2009/08/03) Create a TreeSelect object to handle hierarchical select fields?
  * (can pass in a single tree during init)
  */
@@ -82,19 +82,33 @@ var EventLayerAccordion = Layer.extend(
         markersHidden = (markersVisible ? "" : " hidden");
         labelsHidden  = ( labelsVisible ? "" : " hidden");
 
-        visibilityBtn = "<span class='layerManagerBtn visible" + markersHidden + "' id='visibilityBtn-" + id +
-                        "' title='Toggle visibility of event marker pins'></span>";
+        visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
+                      + markersHidden + '" '
+                      + 'id="visibilityBtn-' + id + '" '
+                      + 'title="Toggle visibility of event marker pins" '
+                      + '></span>';
         /*
         removeBtn = "<span class='ui-icon ui-icon-closethick removeBtn' id='removeBtn-" + id +
                     "' title='Remove layer'></span>";
         */
-        labelsBtn = "<span class='labelsBtn" + labelsHidden + "' id='labelsBtn-" + id +
-                    "' title='Toggle event labels'></span>";
 
-        head = "<div class='layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all shadow'>" +
-               "<span class=tile-accordion-header-left>" + name +
-               "</span><span class=tile-accordion-header-right><span class='timestamp'></span>" +
-               "<span class=accordion-header-divider>|</span>" + visibilityBtn + labelsBtn /*+ removeBtn*/ + "</span></div>";
+        labelsBtn = '<span class="fa fa-tags fa-fw labelsBtn'
+                  + labelsHidden + '" '
+                  + 'id="labelsBtn-' + id + '" '
+                  + 'title="Toggle Visibility of Feature and Event Text Labels" '
+                  + '></span>';
+
+        head = '<div class="layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all">'
+             +     '<div class="left">'
+             +        name
+             +     '</div>'
+             +     '<div class="right">'
+             +        '<span class="timestamp"></span>'
+             +        visibilityBtn
+             +        labelsBtn
+          /* +        removeBtn */
+             +     '</div>'
+             + '</div>';
 
         // Create accordion entry body
         body  = '<div id="eventJSTree" style="margin-bottom: 5px;"></div>';
@@ -129,6 +143,10 @@ var EventLayerAccordion = Layer.extend(
             e.stopPropagation();
         });
 
+        this.domNode.find(".timestamp").click( function(e) {
+            e.stopPropagation();
+        });
+
     },
 
 
@@ -139,7 +157,7 @@ var EventLayerAccordion = Layer.extend(
      */
     getEventGlossary: function () {
         var params = {
-            "action"     : "getEventGlossary"
+            "action": "getEventGlossary"
         };
         $.get(Helioviewer.api, params, $.proxy(this._setEventGlossary, this), "json");
     },
@@ -175,11 +193,15 @@ var EventLayerAccordion = Layer.extend(
                 domNode.show();
                 Helioviewer.userSettings.set("state.eventLayerVisible", true);
                 $("#visibilityBtn-" + id).removeClass('hidden');
+                $("#visibilityBtn-" + id).removeClass('fa-eye-slash');
+                $("#visibilityBtn-" + id).addClass('fa-eye');
             }
             else {
                 domNode.hide();
                 Helioviewer.userSettings.set("state.eventLayerVisible", false);
                 $("#visibilityBtn-" + id).addClass('hidden');
+                $("#visibilityBtn-" + id).removeClass('fa-eye');
+                $("#visibilityBtn-" + id).addClass('fa-eye-slash');
             }
 
             e.stopPropagation();

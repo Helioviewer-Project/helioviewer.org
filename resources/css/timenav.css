@@ -71,6 +71,6 @@
     font-weight: normal;
     margin-left: 0px;
     line-height: 17px;
-    position: absolute;
-    left: 120px;
+    float: left;
+    cursor: text;
 }
