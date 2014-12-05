@@ -172,9 +172,9 @@ html, body {
     background-color: rgba(0,0,0,1);
     width: 6em;
     text-align: center;
-    border-radius: 3px 3px 0 0;
     -moz-border-radius: 3px 3px 0 0;
     -webkit-border-radius: 3px 3px 0 0;
+    border-radius: 3px 3px 0 0;
     padding: 0.15em 0.5em;
     border-top: 1px solid rgba(255,255,255,0.25);
     border-left: 1px solid rgba(255,255,255,0.25);
@@ -301,9 +301,9 @@ html, body {
 .accordion input[type=text] {
     background-color: rgba(255,255,255,0.2);
     border: 1px solid rgba(255,255,255,0.6);
-    border-radius: 0.2em;
-    -moz-border-radius: 0.2em;
     -webkit-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    border-radius: 0.2em;
     color: rgba(255,255,255,1);
     font-family: 'Courier New', Courier, monospace;
     font-weight: 200;
@@ -314,9 +314,9 @@ html, body {
 .accordion select {
     background-color: rgba(255,255,255,0.2);
     border: 1px solid rgba(255,255,255,0.6);
-    border-radius: 0.2em;
     -moz-border-radius: 0.2em;
     -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
     color: rgba(255,255,255,1);
     font-family: 'Courier New', Courier, monospace;
     font-weight: 200;
@@ -410,9 +410,9 @@ html, body {
 
 .opacity-slider-track > .ui-slider-handle {
     background-color: #565656;
-    border-radius: 3px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
+    border-radius: 3px;
     border: 1px solid black;
     cursor: pointer;
     height:19px;
@@ -525,9 +525,9 @@ span.ui-icon-hover, div.ui-icon-hover {
     border-right: 0px;
     font-size: 11px;
     height: 15px;
-    border-bottom-left-radius: 20px;
     -moz-border-radius-bottomleft: 20px;
     -webkit-border-bottom-left-radius: 20px;
+    border-bottom-left-radius: 20px;
 }
 
 #fullscreen-btn {
@@ -588,9 +588,9 @@ span.ui-icon-hover, div.ui-icon-hover {
     background: #2A2A2A;
     font-size: 13px;
     padding: 8px;
-    border-radius: 0 0 0px 5px;
     -moz-border-radius: 0 0 0px 5px;
     -webkit-border-radius: 0 0 0px 5px;
+    border-radius: 0 0 0px 5px;
     color: white;
     z-index: 10;
     display: none;
@@ -653,9 +653,9 @@ span.ui-icon-hover, div.ui-icon-hover {
     color: rgba(255,255,255,0.8);
     background-color: transparent;
     border: 1px solid rgba(255,255,255,0);
-    border-radius: 1em;
     -moz-border-radius: 1em;
     -webkit-border-radius: 1em;
+    border-radius: 1em;
     padding: 0.1em 0.4em;
     font-weight: 200;
 }
