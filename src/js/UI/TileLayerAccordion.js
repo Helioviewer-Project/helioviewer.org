@@ -183,8 +183,7 @@ var TileLayerAccordion = Layer.extend(
         // Opacity slider placeholder
         opacitySlide  = "<div class='layer-select-label'>Opacity: </div>";
         opacitySlide += "<div class='opacity-slider-track' "
-                     +      "id='opacity-slider-track-" + id;
-        opacitySlide += "' style='width: 120px; height: 8px;'>";
+                     +      "id='opacity-slider-track-" + id + "'>";
         opacitySlide += "</div>";
 
         // Default labels
@@ -225,17 +224,16 @@ var TileLayerAccordion = Layer.extend(
      * @description Handles setting up an empty tile layer accordion.
      */
     _setupUI: function () {
-        var title, addLayerBtn;
-
-        // Create a top-level header and an "add layer" button
-        title = $('<span class="section-header">Images</span>').css({'float': 'left'});
-        addLayerBtn = $('<a href=# class=dark>[Add]</a>').css({'margin-right': '14px'});
-        this.container.append($('<div></div>').css('text-align', 'right').append(title).append(addLayerBtn));
-        this.container.append($('<div id="TileLayerAccordion-Container"></div>'));
-
         // Event-handlers
-        addLayerBtn.click(function () {
+        $('#add-new-tile-layer-btn').click(function () {
+            var accordionClosed;
+
             $(document).trigger("add-new-tile-layer");
+
+            accordionClosed = $('#accordion-images .disclosure-triangle').hasClass('closed');
+            if ( accordionClosed ) {
+                $('#accordion-images .disclosure-triangle').click();
+            }
         });
     },
 

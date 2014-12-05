@@ -93,10 +93,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         /* Open Left and Right Sidebars */
         setTimeout(
             function () {
-                self.drawerLeftClick();
+                self.drawerLeftClick(true);
+                $('#accordion-date   .disclosure-triangle').click();
+                $('#accordion-images .disclosure-triangle').click();
+                $('#accordion-events .disclosure-triangle').click();
                 setTimeout(
                     function () {
-                        self.drawerRightClick();
+                        self.drawerRightClick(true);
                     },
                     250
                 );
@@ -321,8 +324,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.drawerLeft.bind('mouseover', function (event) { event.stopPropagation(); });
         $('.drawer-tab', this.drawerRight).bind('click', $.proxy(this.drawerRightClick, this));
         this.drawerBottom.bind('click', $.proxy(this.drawerBottomClick, this));
-        $('.accordion .header .disclosure-triangle').bind('click', $.proxy(this.accordionHeaderClick, this));
-        $('.contextual-help').bind('click', $.proxy(this.displayContextualHelp, this));
+        $('.drawer-contents .header').bind('click', $.proxy(this.accordionHeaderClick, this));
+        $('.contextual-help').bind('click', $.proxy(this.contextualHelpClick, this));
         $(document).bind("updateHeightsInsideViewportContainer", $.proxy(this.updateHeightsInsideViewportContainer, this));
 
 
@@ -609,54 +612,60 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
 
-    drawerLeftClick: function() {
+    drawerLeftClick: function(openNow) {
         var self = this;
 
-        if ( this.drawerLeftOpened ) {
+        if ( this.drawerLeftOpened || openNow === false ) {
             this.drawerLeft.css('width', 0);
             // $('.drawer-tab-left', this.drawerLeft.parent()).css('left', 0);
             $('.drawer-contents', this.drawerLeft).hide();
             this.drawerLeft.css('padding', 0);
             this.updateHeightsInsideViewportContainer();
+
+            this.drawerLeftOpened = false;
         }
-        else {
+        else if ( !this.drawerLeftOpened || openNow === true ) {
             this.drawerLeft.css('width', this.drawerLeftOpenedWidth);
             $(this.drawerLeft.parent()).css('left', this.drawerLeftOpenedWidth);
             setTimeout(function () {
                 $('.drawer-contents', this.drawerLeft).show();
                 self.updateHeightsInsideViewportContainer();
             }, this.drawerSpeed);
+
+            this.drawerLeftOpened = true;
         }
 
-        this.drawerLeftOpened = !this.drawerLeftOpened;
         return;
     },
 
-    drawerRightClick: function() {
+    drawerRightClick: function(openNow) {
         var self = this;
 
-        if ( this.drawerRightOpened ) {
+        if ( this.drawerRightOpened || openNow === false ) {
             this.drawerRight.css('width', 0);
             $('.drawer-tab-right', this.drawerRight.parent()).css('right', 0);
             $('.drawer-contents', this.drawerRight).hide();
             this.drawerRight.css('padding', 0);
             this.updateHeightsInsideViewportContainer();
+
+            this.drawerRightOpened = false;
         }
-        else {
+        else if ( !this.drawerRightOpened || openNow === true ) {
             this.drawerRight.css('width', this.drawerRightOpenedWidth);
             $('.drawer-tab-right', this.drawerRight.parent()).css('right', this.drawerRightOpenedWidth);
             setTimeout(function () {
                 $('.drawer-contents', this.drawerRight).show();
                 self.updateHeightsInsideViewportContainer();
             }, this.drawerSpeed);
+
+            this.drawerRightOpened = true;
         }
 
-        this.drawerRightOpened = !this.drawerRightOpened;
         return;
     },
 
-    drawerBottomClick: function() {
-        if ( this.drawerBottomOpened ) {
+    drawerBottomClick: function(openNow) {
+        if ( this.drawerBottomOpened || openNow === false ) {
             this.drawerBottom.css('height', 0);
             $('.drawer-contents', this.drawerBottom).hide();
             this.drawerBottom.css('padding', 0);
@@ -667,8 +676,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 this.updateHeightsInsideViewportContainer,
                 this.drawerSpeed*2
             );
+
+            this.drawerBottomOpened = false;
         }
-        else {
+        else if ( !this.drawerBottomOpened || openNow === true ) {
             this.drawerBottom.css('height', this.drawerBottomOpenedHeight);
             for (var i=1; i<=this.drawerSpeed; i=i+10) {
                 setTimeout(this.updateHeightsInsideViewportContainer, i);
@@ -677,9 +688,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 $('.drawer-contents', this.drawerBottom).show();
                 self.updateHeightsInsideViewportContainer();
             }, this.drawerSpeed);
+
+            this.drawerBottomOpened = true;
         }
 
-        this.drawerBottomOpened = !this.drawerBottomOpened;
         return;
     },
 
@@ -732,7 +744,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 
     accordionHeaderClick: function(event) {
-        var obj = $(event.target);
+        var obj = $(event.target).parent().find('.disclosure-triangle');
 
         if ( obj.attr('class').indexOf('closed') != -1 ) {
             obj.html('▼');
@@ -749,6 +761,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $('.contextual-help', obj.parent().parent()).hide();
         }
 
+        event.stopPropagation();
+    },
+
+    contextualHelpClick: function (event) {
+        var alertText = $(event.target).attr('title');
+        alertText = alertText.replace(/<\/?[^>]+(>|$)/g, "");
+        alert( alertText );
         event.stopPropagation();
     },
 

@@ -154,13 +154,7 @@ var EventLayerAccordion = Layer.extend(
      * @description Handles setting up an empty tile layer accordion.
      */
     _setupUI: function () {
-        var title, addLayerBtn;
-
-        // Create a top-level header and an "add layer" button
-        title = $('<span class="section-header">Solar Features & Events</span>');
-        //addLayerBtn = $('<a href=# class=dark>[Add]</a>').css({'margin-right': '14px'});
-        this.container.append($('<div></div>').append(title));
-        this.container.append($('<div id="EventLayerAccordion-Container"></div>'));
+        return;
     },
 
     /**
