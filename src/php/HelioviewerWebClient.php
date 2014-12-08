@@ -235,6 +235,26 @@ class HelioviewerWebClient extends HelioviewerClient {
 ?>
 
 
+
+<div style="width: 100%; 4em; margin: 0; padding: 0; text-align: center;">
+    <!-- Image area select tool -->
+    <div id='image-area-select-buttons'>
+
+        <div style="margin: 0 auto; width: 20em;">
+            <div id='cancel-selecting-image' class='text-btn'>
+                <span class='fa fa-times-circle fa-fw'></span>
+                <span>Cancel</span>
+            </div>
+            <div id='done-selecting-image' class='text-btn'>
+                <span class='fa fa-check-circle fa-fw'></span>
+                <span>Take Screenshot</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
 <div style="width: 100%; height: 100%; margin: 0; padding: 0;">
 
     <div id="helioviewer-header">
@@ -254,16 +274,16 @@ class HelioviewerWebClient extends HelioviewerClient {
         <div class="menus">
 
             <div class="left">
-                <a class="fa fa-link fa-fw" href="" title="Copy Link to the Current View."></a>
-                <a class="fa fa-twitter-square fa-fw" href="" title="Tweet Short Link to the Current View."></a>
-                <a class="fa fa-facebook-square fa-fw" href="" title="Post Link and Preview Image of Current View to Facebook."></a>
-                <a class="fa fa-pinterest-square fa-fw" href="" title="Pin Image of Current View to Pinterest."></a>
-                <a class="fa fa-youtube-square fa-fw" href="http://www.youtube.com/user/HelioviewerScience" target="_blank" title="Visit the HelioviewerScience YouTube Channel."></a>
+                <div id="link-button" class="fa fa-link fa-fw qtip-bottomleft" title="Copy Link to the Current View."></div>
+                <div class="fa fa-twitter-square fa-fw qtip-bottomleft" title="Tweet Short Link to the Current View."></div>
+                <div class="fa fa-facebook-square fa-fw qtip-bottomleft" title="Post Link and Preview Image of Current View to Facebook."></div>
+                <div class="fa fa-pinterest-square fa-fw qtip-bottomleft" title="Pin Image of Current View to Pinterest."></div>
+                <a class="fa fa-youtube-square fa-fw qtip-bottomleft" href="http://www.youtube.com/user/HelioviewerScience" target="_blank" title="Visit the HelioviewerScience YouTube Channel."></a>
             </div>
 
             <div class="right" style="margin-right: 0.5em;">
-                <a class="fa fa-question fa-fw" href="" style="margin-left: 0.5em;"title="Get Help with Helioviewer."></a>
-                <a class="fa fa-cog fa-fw" href="" title="Edit Settings &amp; Defaults."></a>
+                <div class="fa fa-question fa-fw qtip-bottomleft" href="" style="margin-left: 0.5em;" title="Get Help with Helioviewer."></div>
+                <div id="settings-button" class="fa fa-cog fa-fw qtip-bottomleft" title="Edit Settings &amp; Defaults."></div>
             </div>
 
         </div>
@@ -374,6 +394,30 @@ Note that when an image is not available for the exact date and time you selecte
 
     <div id="helioviewer-drawer-right">
         <div class="drawer-tab drawer-tab-right">Data Export</div>
+
+        <div id="drawer-viewport-controls-right">
+
+            <!--Social buttons -->
+            <div id="social-buttons" style="width: 200px;">
+
+                <!-- Movie button -->
+                <div id="movie-button" class="text-btn qtip-topleft" title="Generate a movie based on the current view.">
+                    <span class="fa fa-file-video-o" style="float: left;"></span>
+                    <span style="line-height: 1.6em">Movie</span>
+                </div>
+
+            </div>
+
+            <!-- Message console -->
+            <div id="message-console"></div>
+
+            <!-- Mouse coordinates display -->
+            <div id="mouse-coords" style="display: none;">
+                <div id="mouse-coords-x"></div>
+                <div id="mouse-coords-y"></div>
+            </div>
+        </div>
+
         <div class="drawer-contents">
 
             <div id="accordion-news" class="accordion">
@@ -382,19 +426,10 @@ Note that when an image is not available for the exact date and time you selecte
                     <h1>Helioviewer Project News</h1>
                 </div>
                 <div class="content">
-                    <div class="blog">
-                        <a class="left fa fa-comment" style="font-size: 2em;" href="http://blog.helioviewer.org/" target="_blank" title="Go to the Helioviewer Project Blog."></a>
-                        <div class="text"><a href="http://blog.helioviewer.org/2014/03/04/helioviewer-api-tools-for-multiple-platforms-now-available/" target="_blank">Helioviewer API tools for multiple platforms now available...</a></div>
+                    <div class="section">
+                        <!-- Recent Blog Entries -->
+                        <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all shadow"></div>
                     </div>
-                    <div class="tweet">
-                        <a class="left fa fa-twitter" style="font-size: 2em;" href="http://twitter.com/helioviewer" target="_blank" title="Go to the Helioviewer Project Twitter Account."></a>
-                        <div class="text">Slinky, snaky reversing eruption <a href="http://www.youtube.com/watch?v=11GADUVSCUY" target="_blank" rel="nofollow">youtube.com/watch?v=11GADUVSCUY</a> shared by goggog67</div>
-                    </div>
-
-                    <!-- Recent Blog Entries -->
-                    <div style="margin: 0 0 4px 5px;" class="section-header">
-                        <a href="<?php echo HV_NEWS_URL; ?>" target="_blank">Helioviewer Project News</a></div>
-                    <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all shadow"></div>
                 </div>
             </div>
 
@@ -404,33 +439,72 @@ Note that when an image is not available for the exact date and time you selecte
                     <h1>Movies Shared to YouTube</h1>
                 </div>
                 <div class="content">
-                    <!-- User-Submitted Videos -->
-                    <div id="user-video-gallery-header" class="section-header">
-                        <a href="http://www.youtube.com/user/HelioviewerScience" target="_blank" style='text-decoration: none;'>
-                            <img id='youtube-logo' src='resources/images/youtube_79x32.png' alt='YouTube Logo' />
-                        </a>
-                        <span style='position: relative;'>User-Generated Movies</span>
-                    </div>
-                    <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all shadow">
-                        <a id="user-video-gallery-next" class="qtip-left" href="#" title="Go to next page.">
-                            <div class='fa fa-triangle-1-n'></div>
-                        </a>
-                        <div id="user-video-gallery-main">
-                            <div id="user-video-gallery-spinner"></div>
+                    <div class="section">
+                        <!-- User-Submitted Videos -->
+                        <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all shadow">
+                            <a id="user-video-gallery-next" class="qtip-left" href="#" title="Go to next page.">
+                                <div class='fa fa-triangle-1-n'></div>
+                            </a>
+                            <div id="user-video-gallery-main">
+                                <div id="user-video-gallery-spinner"></div>
+                            </div>
+                            <a id="user-video-gallery-prev" class="qtip-left" href="#" title="Go to previous page.">
+                                <div class='fa fa-triangle-1-s'></div>
+                            </a>
                         </div>
-                        <a id="user-video-gallery-prev" class="qtip-left" href="#" title="Go to previous page.">
-                            <div class='fa fa-triangle-1-s'></div>
-                        </a>
                     </div>
                 </div>
             </div>
 
-            <div id="accordion-generate" class="accordion">
+            <div id="accordion-movie" class="accordion">
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
-                    <h1>Generate Movies or Screenshots</h1>
+                    <h1>Generate a Movie</h1>
                 </div>
-                <div class="content">zzz</div>
+                <div class="content">
+                    <div class="section"></div>
+                </div>
+            </div>
+
+            <div id="accordion-screenshot" class="accordion">
+                <div class="header">
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>Generate a Screenshot</h1>
+                </div>
+                <div class="content">
+
+                    <!-- Screenshot Manager -->
+                    <div id='screenshot-manager-container' class='media-manager-container'>
+
+                        <div class="section">
+                            <div id='screenshot-manager-build-btns' class='media-manager-build-btns'>
+                                <div style="width: 70%; margin: 0 auto;">
+                                    <div id='screenshot-manager-full-viewport' class='text-btn' title='Create a screenshot using the entire viewport.'>
+                                        <span class='fa fa-arrows-alt fa-fw'></span>
+                                        <span style='line-height: 1.6em'>Full Viewport</span>
+                                    </div>
+                                    <div id='screenshot-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a screenshot of a sub-region of the viewport.'>
+                                        <span class='fa fa-crop fa-fw'></span>
+                                        <span style='line-height: 1.6em'>Select Area</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div id='screenshot-history-title'>
+                                Screenshot History
+                                <div id='screenshot-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all screenshots from the history.'>
+                                    <span style='font-weight: 200;'>clear</span>
+                                    <span class='fa fa-trash-o'></span>
+                                </div>
+                            </div>
+                            <div id='screenshot-history'></div>
+                        </div>
+
+                    </div>
+
+                </div>
             </div>
 
             <div id="accordion-vso" class="accordion">
@@ -438,7 +512,9 @@ Note that when an image is not available for the exact date and time you selecte
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Virtual Solar Observatory</h1>
                 </div>
-                <div class="content">zzz</div>
+                <div class="content">
+                    <div class="section"></div>
+                </div>
             </div>
 
             <div id="accordion-sdo" class="accordion">
@@ -446,7 +522,9 @@ Note that when an image is not available for the exact date and time you selecte
                     <div class="disclosure-triangle closed">►</div>
                     <h1>SDO AIA/HMI Cut-out Service</h1>
                 </div>
-                <div class="content">zzz</div>
+                <div class="content">
+                    <div class="section"></div>
+                </div>
             </div>
 
             <div id="accordion-hek" class="accordion">
@@ -454,7 +532,9 @@ Note that when an image is not available for the exact date and time you selecte
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Heliophysics Event Knowledgebase</h1>
                 </div>
-                <div class="content">zzz</div>
+                <div class="content">
+                    <div class="section"></div>
+                </div>
             </div>
 
         </div>
@@ -480,19 +560,21 @@ Note that when an image is not available for the exact date and time you selecte
         <form id='helioviewer-settings'>
             <!-- Initial observation date -->
             <fieldset id='helioviewer-settings-date'>
-            <legend>When starting Helioviewer.org:</legend>
+            <legend>When starting Helioviewer:</legend>
                 <div style='padding: 10px;'>
                     <input id="settings-date-latest" type="radio" name="date" value="latest" /><label for="settings-date-latest">Display most recent images available</label><br />
                     <input id="settings-date-previous" type="radio" name="date" value="last-used" /><label for="settings-date-previous">Display images from previous visit</label><br />
                 </div>
             </fieldset>
 
+            <br />
+
             <!-- Other -->
             <fieldset id='helioviewer-settings-other'>
-            <legend>When using Helioviewer.org:</legend>
+            <legend>While using Helioviewer:</legend>
             <div style='padding:10px;'>
                 <input type="checkbox" name="latest-image-option" id="settings-latest-image" value="true" />
-                <label for="settings-latest-image">Update viewport every 5 minutes</label><br />
+                <label for="settings-latest-image">Refresh with the latest data every 5 minutes</label><br />
             </div>
             </fieldset>
         </form>
@@ -504,10 +586,10 @@ Note that when an image is not available for the exact date and time you selecte
     <!-- URL Dialog -->
     <div id='url-dialog' style="display:none;">
         <div id="helioviewer-url-box">
-            <span id="helioviewer-url-box-msg">Use the following link to refer to current page:</span>
+            <span id="helioviewer-url-box-msg"></span>
             <form style="margin-top: 5px;">
                 <input type="text" id="helioviewer-url-input-box" style="width:98%;" value="http://helioviewer.org" />
-                <label for="helioviewer-url-shorten">Shorten with bit.ly?</label>
+                <label for="helioviewer-url-shorten">Shorten with bit.ly? </label>
                 <input type="checkbox" id="helioviewer-url-shorten" />
                 <input type="hidden" id="helioviewer-short-url" value="" />
                 <input type="hidden" id="helioviewer-long-url" value="" />
@@ -571,72 +653,12 @@ Note that when an image is not available for the exact date and time you selecte
                 <div id="moving-container"></div>
             </div>
 
-            <!-- Message console -->
-            <div id="message-console"></div>
-
             <!-- Image area select boundary container -->
             <div id="image-area-select-container"></div>
         </div>
 
-        <!-- UI COMPONENTS -->
-
-        <!--Social buttons -->
-        <div id="social-buttons">
-            <!-- Link button -->
-            <div id="link-button" class="text-btn qtip-topleft" title="Generate a direct link to the current view.">
-                <span class="fa fa-link" style="float: left;"></span>
-                <span style="line-height: 1.6em">Link</span>
-            </div>
-
-            <!-- Movie button -->
-            <div id="movie-button" class="text-btn qtip-topleft" title="Generate a movie based on the current view.">
-                <span class="fa fa-video" style="float: left;"></span>
-                <span style="line-height: 1.6em">Movie</span>
-            </div>
-
-            <!-- Screenshot button -->
-            <div id="screenshot-button" class="text-btn qtip-topleft" title="Save a screenshot of the current view.">
-                <span class="fa fa-image" style="float: left;"></span>
-                <span style="line-height: 1.6em">Screenshot</span>
-            </div>
-
-            <!-- Settings button -->
-            <div id="settings-button" class="text-btn qtip-topleft" title="Configure Helioviewer.org user preferences.">
-                <span class="fa fa-cog" style="float: left;"></span>
-                <span style="line-height: 1.6em">Settings</span>
-            </div>
-
-        </div>
-
-        <!-- Mouse coordinates display -->
-        <div id="mouse-coords" style="display: none;">
-            <div id="mouse-coords-x"></div>
-            <div id="mouse-coords-y"></div>
-        </div>
-
-        <!-- Screenshot Manager -->
-        <div id='screenshot-manager-container' class='media-manager-container glow'>
-            <div id='screenshot-manager-build-btns' class='media-manager-build-btns'>
-                <div id='screenshot-manager-full-viewport' class='text-btn' title='Create a screenshot using the entire viewport.'>
-                    <span class='fa fa-arrowthick-2-se-nw' style='float:left;'></span>
-                    <span style='line-height: 1.6em'>Full Viewport</span>
-                </div>
-                <div id='screenshot-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a screenshot of a sub-region of the viewport.'>
-                    <span class='fa fa-scissors' style='float:left;'></span>
-                    <span style='line-height: 1.6em'>Select Area</span>
-                </div>
-            </div>
-            <div id='screenshot-history-title' class='media-history-title'>
-                Screenshot History
-                <div id='screenshot-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all screenshots from the history.'>
-                    <span class='fa fa-trash' style='float:left;'></span>
-                    <span style='font-weight:normal'><i>Clear</i></span>
-                </div>
-            </div>
-            <div id='screenshot-history'></div>
-        </div>
         <!-- Movie Manager -->
-        <div id='movie-manager-container' class='media-manager-container glow'>
+        <div id='movie-manager-container' class='media-manager-container'>
             <div id='movie-manager-build-btns' class='media-manager-build-btns'>
                 <div id='movie-manager-full-viewport' class='text-btn qtip-left' title='Create a movie using the entire viewport.'>
                     <span class='fa fa-arrowthick-2-se-nw' style='float:left;'></span>
@@ -647,7 +669,7 @@ Note that when an image is not available for the exact date and time you selecte
                     <span style='line-height: 1.6em'>Select Area</span>
                 </div>
             </div>
-            <div id='movie-history-title' class='media-history-title'>
+            <div id='movie-history-title'>
                 Movie History
                 <div id='movie-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all movies from the history.'>
                     <span class='fa fa-trash' style='float:left;'></span>
@@ -658,7 +680,7 @@ Note that when an image is not available for the exact date and time you selecte
         </div>
 
         <!-- Movie Settings -->
-        <div id='movie-settings-container' class='media-manager-container glow'>
+        <div id='movie-settings-container' class='media-manager-container'>
             <div style='margin-bottom: 10px; border-bottom: 1px solid; padding-bottom: 10px;'>
                 <b>Movie Settings:</b>
 
@@ -726,21 +748,6 @@ Note that when an image is not available for the exact date and time you selecte
             <!-- Movie settings validation console -->
             <div id='movie-settings-validation-console' style='display:none; text-align: center; margin: 7px 1px 0px; padding: 0.5em; border: 1px solid #fa5f4d; color: #333; background: #fa8072;' class='ui-corner-all'>
 
-            </div>
-        </div>
-
-        <!-- Image area select tool -->
-        <div id='image-area-select-buttons'>
-            <div id='done-selecting-image' class='text-btn'>
-                <span class='fa fa-circle-check'></span>
-                <span>OK</span>
-            </div>
-            <div id='cancel-selecting-image' class='text-btn'>
-                <span class='fa fa-circle-close'></span>
-                <span>Cancel</span>
-            </div>
-            <div id='help-selecting-image' class='text-btn' style='float:right;'>
-                <span class='fa fa-info'></span>
             </div>
         </div>
 

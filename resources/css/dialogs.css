@@ -1,3 +1,4 @@
+
 /* Usage dialog */
 div#usage-dialog {
     font-size: 14px;
@@ -85,9 +86,9 @@ a.show-tags-btn {
     background-color: #333;
     cursor: pointer;
     padding: 5px 10px;
-    -webkit-border-radius: 5px 5px 0 0;
-    -moz-border-radius: 5px 5px 0 0;
     -o-border-radius: 5px 5px 0 0;
+    -moz-border-radius: 5px 5px 0 0;
+    -webkit-border-radius: 5px 5px 0 0;
     border-radius: 5px 5px 0 0;
     border: 1px solid #333;
     border-bottom: none;
@@ -181,41 +182,29 @@ a.show-tags-btn {
     margin-right: 2px;
 }
 
-.helioviewer-modal-dialog.ui-dialog {
-	background: none;
-	border: none;
-}
-
-.helioviewer-modal-dialog .ui-dialog-titlebar {
-	background: none;
-	border: none;
-	padding: 0 5px;
-}
-
-.helioviewer-modal-dialog .ui-dialog-titlebar-close:hover {
-    background: none;
-	padding: 1px;
-	border: none;
-}
 
 .helioviewer-modal-dialog .ui-widget-header .ui-icon {
 	background-image: url("../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_ffffff_256x240.png")
 }
 
-#url-dialog {
-    background: url("../../resources/images/blackGlass/transparentBG50.png") repeat scroll 0 0 transparent;
-    border: 1px solid #262424;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-border-radius: 10px;
-}
 
 /* URL dialog */
+/*#url-dialog {
+    border: 0.25em solid black;
+    -o-border-radius: 0 0 0.25em 0.25em;
+	-moz-border-radius: 0 0 0.25em 0.25em;
+    -webkit-border-radius: 0 0 0.25em 0.25em;
+    border-radius: 0 0 0.25em 0.25em;
+    background: -o-linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.25));
+    background: -moz-linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.25));
+    background: -webkit-linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.25));
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.25));
+}
 #helioviewer-url-box, #helioviewer-bbcode-box {
     font-size: 13px;
     padding: 5px;
     color: white;
-}
+}*/
 
 /* Email dialog */
 #helioviewer-url-box > form > label {
@@ -270,4 +259,37 @@ a.show-tags-btn {
 
 #glossary-contents .glossary-links a:hover {
     text-decoration: underline;
+}
+
+
+.ui-dialog {
+    border: 1px solid black;
+    -o-border-radius: 0.25em;
+    -moz-border-radius: 0.25em;
+    -webkit-border-radius: 0.25em;
+    border-radius: 0.25em;
+    background: -o-linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0.5));
+    background: -moz-linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0.5));
+    background: -webkit-linear-gradient(rgba(0,0,1), rgba(0,0,0,0.5));
+    background: linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0.5));
+    padding: 0;
+    -moz-box-shadow:    0px 0px 2px 1px red;
+    -webkit-box-shadow: 0px 0px 2px 1px red;
+    box-shadow:         0px 0px 2px 1px red;
+    color: white;
+}
+.ui-dialog-buttonpane {
+    background: none;
+}
+.ui-dialog-titlebar {
+    background: black;
+    border: none;
+    padding: 0.25em;
+    -o-border-radius: 0.25em 0.25em 0 0;
+    -moz-border-radius: 0.25em 0.25em 0 0;
+    -webkit-border-radius: 0.25em 0.25em 0 0;
+    border-radius: 0.25em 0.25em 0 0;
+    -moz-box-shadow:    1px 1px 0px 0px rgba(255,0,0,0.25);
+    -webkit-box-shadow: 1px 1px 0px 0px rgba(255,0,0,0.25);
+    box-shadow:         1px 1px 0px 0px rgba(255,0,0,0.25);
 }

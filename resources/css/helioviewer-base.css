@@ -117,5 +117,7 @@ a.light:hover {
 
 #mouse-coords-x, #mouse-coords-y {
     width: 50%;
-    float: left;
+    position: absolute;
+    bottom: 2em;
+    left: 2em;
 }

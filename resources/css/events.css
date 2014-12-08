@@ -4,6 +4,22 @@
 	text-overflow: ellipsis;
 }
 
+#eventJSTree a {
+    font-family:
+        Courier,
+        monospace;
+    font-weight: 400;
+    overflow: ellipsis;
+    color: white;
+}
+#eventJSTree a:hover {
+    background-color: black;
+    border: 1px solid black;
+}
+#eventJSTree a .checkbox {
+    margin-right: 0.5em;
+}
+
 .event-marker {
     background-repeat: no-repeat;
     background-size: 23px 39px;
