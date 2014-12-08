@@ -101,7 +101,7 @@ html, body {
     left: 0;
     height: 100%;
     width: 0; /* opened via JavaScript */
-    background-color: rgba(255,255,255,0.1);
+    background-color: rgba(255,255,255,0.25);
     color: rgba(255,255,255,0.85);
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
     font-weight: 200;
@@ -119,7 +119,7 @@ html, body {
     right: 0;
     height: 100%;
     width: 0; /* opened via JavaScript */
-    background-color: rgba(255,255,255,0.1);
+    background-color: rgba(255,255,255,0.25);
     color: rgba(255,255,255,0.8);
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
     font-weight: 200;
@@ -137,7 +137,7 @@ html, body {
     clear: both;
     width: 100%;
     height: 0; /* opened via JavaScript */
-    background-color: rgba(255,255,255,0.1);
+    background-color: rgba(255,255,255,0.25);
     color: rgba(255,255,255,0.8);
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
     font-weight: 200;
@@ -198,6 +198,12 @@ html, body {
     right: -0.45em;
     cursor: pointer;
 }
+#drawer-viewport-controls-right {
+    position: absolute;
+    top: 0;
+    left: -2em;
+    cursor: pointer;
+}
 .drawer-tab-right {
     -webkit-transform: rotate(-90deg);
     transform: rotate(-90deg);
@@ -222,6 +228,10 @@ html, body {
 }
 .accordion .header {
     background-color: rgba(0,0,0,0.75);
+}
+.accordion .header:hover {
+    background-color: black;
+    color: white;
 }
 .accordion .header h1 {
     font-size: 1em;
@@ -249,7 +259,7 @@ html, body {
 }
 .accordion .content {
     display: none;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.6);
     padding: 0.75em;
     font-size: 0.75em;
 }
@@ -386,9 +396,9 @@ html, body {
 }
 
 .glow {
-    box-shadow: 0 0 5px rgba(255, 255, 255, 1);
-    -webkit-box-shadow: 0 0 5px rgba(255, 255, 255, 1);
-    -moz-box-shadow: 0 0 5px rgba(255, 255, 255, 1);
+    -moz-box-shadow:    0px 0px 1px 1px yellow;
+    -webkit-box-shadow: 0px 0px 1px 1px yellow;
+    box-shadow:         0px 0px 1px 1px yellow;
 }
 
 /* Logo */
@@ -530,26 +540,17 @@ span.ui-icon-hover, div.ui-icon-hover {
     border-bottom-left-radius: 20px;
 }
 
-#fullscreen-btn {
-    position: absolute;
-    background-color: #2A2A2A;
-    border-bottom: 1px solid #262424;
-    border-left  : 1px solid #2A2A2A;
-    padding-top: 1px;
-    top:0px;
-    right: 0px;
-    cursor: pointer;
-}
-
 /* Blog entries */
 #social-panel {
     height: 100%;
-    min-height: 150px;
     font-size: 11px;
     padding: 4px 2px 6px;
     margin: 0 5px;
 }
-
+#social-panel.ui-widget-content {
+    background: none;
+    border: none;
+}
 #social-panel .blog-entry {
     margin: 4px 4px 14px 4px;
 }
@@ -560,7 +561,7 @@ span.ui-icon-hover, div.ui-icon-hover {
     text-decoration: none;
 }
 #social-panel .blog-entry a:hover {
-    color: #D18F16;
+    color: yellow;
 }
 
 #social-panel .article-date {
@@ -576,24 +577,21 @@ span.ui-icon-hover, div.ui-icon-hover {
 }
 
 #more-articles a:hover {
-    color: #D18F16;
+    color: yellow;
 }
 
 /* Image Area Select */
 #image-area-select-buttons {
-    position: absolute;
-    top:0px;
-    right:0px;
-    width: 150px;
-    background: #2A2A2A;
-    font-size: 13px;
-    padding: 8px;
-    -moz-border-radius: 0 0 0px 5px;
-    -webkit-border-radius: 0 0 0px 5px;
-    border-radius: 0 0 0px 5px;
-    color: white;
-    z-index: 10;
     display: none;
+    position: absolute;
+    width: 100%;
+    height: 3em;
+    background: black;
+    padding: 0;
+    margin: 0;
+    color: yellow;
+    text-align: center;
+    z-index: 9999;
 }
 
 #image-area-select-container {
@@ -605,8 +603,26 @@ span.ui-icon-hover, div.ui-icon-hover {
     display: none;
 }
 
-#image-area-select-buttons .ui-icon {
-    float: left;
+#image-area-select-buttons .text-btn {
+    color: rgba(255,255,255,0.8);
+    background-color: rgba(255,255,255,0.00);
+    border: 1px solid rgba(255,255,255,0.8);
+    -o-border-radius: 1em;
+    -moz-border-radius: 1em;
+    -webkit-border-radius: 1em;
+    border-radius: 1em;
+    padding: 0.35em 0.8em 0.4em 0.4em;
+    font-weight: 400;
+    text-align: center;
+    margin: 0.5em 0.4em;
+}
+#done-selecting-image.text-btn {
+    border-color: #00ff00;
+    color: #00ff00;
+}
+#cancel-selecting-image.text-btn {
+    border-color: red;
+    color: red;
 }
 
 /** Settings dialog */
@@ -628,7 +644,7 @@ span.ui-icon-hover, div.ui-icon-hover {
 
 #helioviewer-settings legend {
     margin-left: -10px;
-    font-style: italic;
+    font-weight: 500;
     color: white;
 }
 
@@ -675,5 +691,11 @@ span.ui-icon-hover, div.ui-icon-hover {
 .text-button a:active {
     text-decoration: none;
     color: yellow;
+}
+
+
+#user-video-gallery.ui-widget-content {
+    background: none;
+    border: none;
 }
 

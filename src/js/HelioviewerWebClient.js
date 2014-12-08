@@ -71,7 +71,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this.earthScale     = new ImageScale();
 
-        this.displayBlogFeed(3, false);
+        this.displayBlogFeed(1, false);
 
         this._userVideos = new UserVideoGallery(this.serverSettings.videoFeed);
 
@@ -100,6 +100,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 setTimeout(
                     function () {
                         self.drawerRightClick(true);
+                        $('#accordion-news .disclosure-triangle').click();
+                        $('#accordion-youtube .disclosure-triangle').click();
+                        $('#accordion-movie .disclosure-triangle').click();
+                        $('#accordion-screenshot .disclosure-triangle').click();
                     },
                     250
                 );
@@ -317,7 +321,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      */
     _initEventHandlers: function () {
         var self = this,
-            msg  = "Use the following link to refer to current page:",
+            msg  = "Link directly to the current state of Helioviewer:",
             btns;
 
         $('.drawer-tab', this.drawerLeft).bind('click', $.proxy(this.drawerLeftClick, this));
@@ -389,11 +393,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $("#helioviewer-url-box-msg").text(msg);
             $("#url-dialog").dialog({
                 dialogClass: 'helioviewer-modal-dialog',
-                height    : 110,
-                width     : $('html').width() * 0.7,
+                height    : 125,
+                maxHeight : 125,
+                width     : $('html').width() * 0.5,
+                minWidth  : 350,
                 modal     : true,
-                resizable : false,
-                title     : "URL",
+                resizable : true,
+                title     : "Helioviewer - Direct Link",
                 open      : function (e) {
                     $("#helioviewer-url-shorten").removeAttr("checked");
                     $('.ui-widget-overlay').hide().fadeIn();

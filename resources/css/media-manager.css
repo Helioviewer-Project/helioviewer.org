@@ -2,23 +2,24 @@
  * Movie and screenshot manager styles
  */
 .media-manager-container {
-    position: absolute;
-    top: 25px;
-    right: 20px;
-    width: 190px;
-    background: #2A2A2A;
-    font-size: 11px;
+    position: relative;
+    width: 100%;
+    background: none;
+    font-size: 12px;
     padding: 10px;
-    -moz-border-radius:5px;
     -webkit-border-radius:5px;
-    /*border: 1px solid #A9A9A9;*/
+    -moz-border-radius:5px;
+    -o-border-radius:5px;
+    border-radius:5px;
     color: white;
     display: none;
+    margin: none;
 }
 
 #screenshot-manager-container {
-    right: 60px;
-    width: 260px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 #movie-manager-container, #movie-settings-container {
@@ -73,26 +74,12 @@
     width: 180px;
 }
 
-.media-manager-build-btns {
-    height: 18px;
-}
-
 #movie-button.active .ui-icon, #screenshot-button.active .ui-icon {
     background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
 #movie-button.active, #screenshot-button.active {
     color: #d18f61;
-}
-
-
-.media-history-title {
-    line-height: 17px;
-    font-weight: bold;
-    border-top: 1px solid;
-    margin-top: 7px;
-    padding: 9px 0px;
-    display: none;
 }
 
 .status {
@@ -145,4 +132,31 @@
 
 .bbcode-btn {
     cursor: pointer;
+}
+
+
+.media-manager-build-btns {
+    min-height: 3em;
+}
+
+.media-manager-build-btns .text-btn {
+    color: rgba(255,255,255,0.8);
+    background-color: transparent;
+    border: 1px solid rgba(255,255,255,0);
+    -o-border-radius: 1em;
+    -moz-border-radius: 1em;
+    -webkit-border-radius: 1em;
+    border-radius: 1em;
+    padding: 0.1em 0.4em;
+    font-weight: 400;
+    font-size: 0.8em;
+}
+.media-manager-build-btns .text-btn:hover {
+    color: white;
+    background-color: transparent;
+    border: 1px solid rgba(255,255,255,1);
+}
+.media-manager-build-btns .text-btn:active {
+    color: yellow;
+    border: 1px solid yellow;
 }

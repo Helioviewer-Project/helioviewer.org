@@ -25,6 +25,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         this._super("screenshot");
 
         this._initEvents();
+        this.show();
     },
 
     /**
@@ -91,12 +92,10 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
 
         // Screenshot ROI selection buttons
         this._fullViewportBtn.click(function () {
-            self.hide();
             self._takeScreenshot();
         });
 
         this._selectAreaBtn.click(function () {
-            self.hide();
             $(document).trigger("enable-select-tool",
                                 $.proxy(self._takeScreenshot, self));
         });

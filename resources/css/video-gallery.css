@@ -31,7 +31,7 @@
 
 #user-video-gallery a {
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 200;
     text-decoration: none;
 }
 
@@ -43,9 +43,9 @@
 }
 
 #user-video-gallery img:hover {
-   box-shadow: 0 0 10px #8fcccc;
-   -moz-box-shadow: 0 0 10px #8fcccc;
-   -webkit-box-shadow: 0 0 10px #8fcccc;
+    -moz-box-shadow:    0px 0px 1px 1px yellow;
+    -webkit-box-shadow: 0px 0px 1px 1px yellow;
+    box-shadow:         0px 0px 2px 1px yellow;
 }
 
 /*
