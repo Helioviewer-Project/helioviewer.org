@@ -25,7 +25,7 @@
  * TODO 11/23/2010: Check to make sure number of valid layers is > 0
  * and stop execution otherwise
  */
-require_once HV_ROOT_DIR.'/../src/Database/ImgIndex.php';
+require_once HV_ROOT_DIR.'/src/php/Database/ImgIndex.php';
 
 class Helper_HelioviewerLayers {
 
