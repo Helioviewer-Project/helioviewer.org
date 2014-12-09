@@ -521,7 +521,7 @@ class Movie_HelioviewerMovie {
      */
     private function _encodeMovie() {
 
-        require_once HV_ROOT_DIR.'/../src/php/Movie/FFMPEGEncoder.php';
+        require_once HV_ROOT_DIR.'/src/php/Movie/FFMPEGEncoder.php';
 
         // Compute movie meta-data
         $layerString = $this->_layers->toHumanReadableString();

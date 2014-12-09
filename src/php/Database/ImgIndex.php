@@ -44,7 +44,7 @@ class Database_ImgIndex {
      */
     private function _dbConnect() {
         if ( $this->_dbConnection === false ) {
-            include_once HV_ROOT_DIR.'/../src/Database/DbConnection.php';
+            include_once HV_ROOT_DIR.'/src/php/Database/DbConnection.php';
             $this->_dbConnection = new Database_DbConnection();
         }
     }
@@ -58,7 +58,7 @@ class Database_ImgIndex {
         $layers, $bitmask, $events, $eventsLabels, $scale, $scaleType,
         $scaleX, $scaleY, $numLayers) {
 
-        include_once HV_ROOT_DIR.'/../src/Helper/DateTimeConversions.php';
+        include_once HV_ROOT_DIR.'/src/php/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
 
@@ -413,7 +413,7 @@ class Database_ImgIndex {
      *               the `datasources` table.
      */
     public function getDataFromDatabase($date, $sourceId) {
-        include_once HV_ROOT_DIR.'/../src/Helper/DateTimeConversions.php';
+        include_once HV_ROOT_DIR.'/src/php/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
 
@@ -476,7 +476,7 @@ class Database_ImgIndex {
      * @return array Array containing 1 row from the `data` table
      */
     public function getClosestDataBeforeDate($date, $sourceId) {
-        include_once HV_ROOT_DIR.'/../src/Helper/DateTimeConversions.php';
+        include_once HV_ROOT_DIR.'/src/php/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
 
@@ -521,7 +521,7 @@ class Database_ImgIndex {
      * @return array Array containing 1 row from the `data` table
      */
     public function getClosestDataAfterDate($date, $sourceId) {
-        include_once HV_ROOT_DIR.'/../src/Helper/DateTimeConversions.php';
+        include_once HV_ROOT_DIR.'/src/php/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
 
@@ -591,7 +591,7 @@ class Database_ImgIndex {
      * @return int The number of `data` rows matching a source and time range
      */
     public function getDataCount($start, $end, $sourceId) {
-        include_once HV_ROOT_DIR.'/../src/Helper/DateTimeConversions.php';
+        include_once HV_ROOT_DIR.'/src/php/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
 
@@ -633,7 +633,7 @@ class Database_ImgIndex {
      * @return array Array containing matched rows from the `data` table
      */
     public function getDataRange($start, $end, $sourceId) {
-        include_once HV_ROOT_DIR.'/../src/Helper/DateTimeConversions.php';
+        include_once HV_ROOT_DIR.'/src/php/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
 
@@ -678,7 +678,7 @@ class Database_ImgIndex {
      */
     public function extractJP2MetaInfo($image_filepath) {
 
-        include_once HV_ROOT_DIR.'/../src/Image/JPEG2000/JP2ImageXMLBox.php';
+        include_once HV_ROOT_DIR.'/src/php/Image/JPEG2000/JP2ImageXMLBox.php';
 
         try {
             $xmlBox = new Image_JPEG2000_JP2ImageXMLBox($image_filepath);
