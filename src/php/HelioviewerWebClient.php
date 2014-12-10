@@ -185,8 +185,8 @@ class HelioviewerWebClient extends HelioviewerClient {
                     . urlencode("{'clip':{'url':'$flvURL'}}");
         }
 ?>
-        <meta property="og:description" content="<?php //echo $info['title'];?>" />
-        <meta property="og:image" content="<?php echo $info['thumbnails']['full'];?>" />
+        <meta id="fb-og-description" property="og:description" content="<?php //echo $info['title'];?>" />
+        <meta id="fb-og-image" property="og:image" content="<?php echo $info['thumbnails']['full'];?>" />
         <meta property="og:video" content="<?php echo $swfURL;?>" />
         <meta property="og:video:width" content="<?php echo $info['width'];?>" />
         <meta property="og:video:height" content="<?php echo $info['height'];?>" />
@@ -214,8 +214,8 @@ class HelioviewerWebClient extends HelioviewerClient {
             'layers'      => $_GET['imageLayers'],
             'x0'          => $this->urlSettings['centerX'],
             'y0'          => $this->urlSettings['centerY'],
-            'width'       => 128,
-            'height'      => 128
+            'width'       => 1920,
+            'height'      => 1920
         );
 
         $ogImage = HV_BACK_END.'?'.http_build_query($screenshotParams);
@@ -223,8 +223,8 @@ class HelioviewerWebClient extends HelioviewerClient {
                        . toReadableISOString($this->urlSettings['date'])
                        . ' UTC)';
         ?>
-        <meta property="og:description" content="<?php echo $ogDescription;?>" />
-        <meta property="og:image" content="<?php echo $ogImage;?>" />
+        <meta id="fb-og-description" property="og:description" content="<?php echo $ogDescription;?>" />
+        <meta id="fb-og-image" property="og:image" content="<?php echo $ogImage;?>" />
         <?php
     }
 
@@ -247,7 +247,7 @@ class HelioviewerWebClient extends HelioviewerClient {
             </div>
             <div id='done-selecting-image' class='text-btn'>
                 <span class='fa fa-check-circle fa-fw'></span>
-                <span>Take Screenshot</span>
+                <span>Confirm Selection</span>
             </div>
         </div>
 
@@ -274,11 +274,15 @@ class HelioviewerWebClient extends HelioviewerClient {
         <div class="menus">
 
             <div class="left">
-                <div id="link-button" class="fa fa-link fa-fw qtip-bottomleft" title="Copy Link to the Current View."></div>
-                <div class="fa fa-twitter-square fa-fw qtip-bottomleft" title="Tweet Short Link to the Current View."></div>
-                <div class="fa fa-facebook-square fa-fw qtip-bottomleft" title="Post Link and Preview Image of Current View to Facebook."></div>
-                <div class="fa fa-pinterest-square fa-fw qtip-bottomleft" title="Pin Image of Current View to Pinterest."></div>
-                <a class="fa fa-youtube-square fa-fw qtip-bottomleft" href="http://www.youtube.com/user/HelioviewerScience" target="_blank" title="Visit the HelioviewerScience YouTube Channel."></a>
+                <div id="link-button" class="fa fa-share-square fa-fw qtip-bottomleft social-button" title="Copy Link to the Current View."></div>
+
+                <a id="twitter-button" class="fa fa-twitter-square fa-fw qtip-bottomleft social-button" title="Tweet Short Link to the Current View." href="https://twitter.com/share" data-counturl="<?php echo HV_WEB_ROOT_URL; ?>" data-via="Helioviewer" target="hv_twitter"></a>
+
+                <a id="facebook-button" class="fa fa-facebook-square fa-fw qtip-bottomleft social-button" href="https://www.facebook.com/sharer/sharer.php?app_id=309437425817038&display=popup&ref=plugin" target="hv_facebook"></a>
+
+                <a id="pinterest-button" class="fa fa-pinterest-square fa-fw qtip-bottomleft social-button" title="Pin Image of Current View to Pinterest." url="<?php echo HV_WEB_ROOT_URL; ?>" data-image="http://helioviewer.org/resources/images/logos/simple.png" data-desc="Custom Helioviewer description..." target="hv_pinterest"></a>
+
+                <a id="youtube-button" class="fa fa-youtube-square fa-fw qtip-bottomleft social-button" href="http://www.youtube.com/user/HelioviewerScience" target="_blank" title="Visit the HelioviewerScience YouTube Channel." target="hv_youtube"></a>
             </div>
 
             <div class="right" style="margin-right: 0.5em;">
@@ -397,17 +401,6 @@ Note that when an image is not available for the exact date and time you selecte
 
         <div id="drawer-viewport-controls-right">
 
-            <!--Social buttons -->
-            <div id="social-buttons" style="width: 200px;">
-
-                <!-- Movie button -->
-                <div id="movie-button" class="text-btn qtip-topleft" title="Generate a movie based on the current view.">
-                    <span class="fa fa-file-video-o" style="float: left;"></span>
-                    <span style="line-height: 1.6em">Movie</span>
-                </div>
-
-            </div>
-
             <!-- Message console -->
             <div id="message-console"></div>
 
@@ -462,7 +455,102 @@ Note that when an image is not available for the exact date and time you selecte
                     <h1>Generate a Movie</h1>
                 </div>
                 <div class="content">
-                    <div class="section"></div>
+                    <div class="section">
+
+                        <!-- Movie Manager -->
+                        <div id='movie-manager-container' class='media-manager-container'>
+                            <div id='movie-manager-build-btns' class='media-manager-build-btns'>
+                                <div style="width: 70%; margin: 0 auto;">
+                                    <div id='movie-manager-full-viewport' class='text-btn qtip-left' title='Create a movie using the entire viewport.'>
+                                        <span class='fa fa-arrows-alt fa-fw'></span>
+                                        <span style='line-height: 1.6em'>Full Viewport</span>
+                                    </div>
+                                    <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a movie of a sub-region of the viewport.'>
+                                        <span class='fa fa-crop fa-fw'></span>
+                                        <span style='line-height: 1.6em'>Select Area</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id='movie-history-title'>
+                                Movie History:
+                                <div id='movie-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all movies from the history.'>
+                                    <span style='font-weight: 200;'>clear history</span>
+                                    <span class='fa fa-trash-o'></span>
+                                </div>
+                            </div>
+                            <div id='movie-history'></div>
+                        </div>
+
+                        <!-- Movie Settings -->
+                        <div id='movie-settings-container' class='media-manager-container'>
+                            <b>Movie Settings:</b>
+
+                            <div id='movie-settings-btns' style='float:right;'>
+                                <span id='movie-settings-toggle-help' style='display:inline-block;' class='fa fa-help qtip-left' title='Movie settings help'></span>
+                            </div>
+
+                            <!-- Begin movie settings -->
+                            <div id='movie-settings-form-container'>
+                            <form id='movie-settings-form'>
+
+                            <!-- Movie duration -->
+                            <fieldset style='padding: 0px; margin: 5px 0px 8px'>
+                                <label for='movie-duration' style='margin-right: 5px; font-style: italic;'>Duration</label>
+                                <select id='movie-duration' name='movie-duration'>
+                                    <option value='3600'>1 hour</option>
+                                    <option value='10800'>3 hours</option>
+                                    <option value='21600'>6 hours</option>
+                                    <option value='43200'>12 hours</option>
+                                    <option value='86400'>1 day</option>
+                                    <option value='172800'>2 days</option>
+                                    <option value='604800'>1 week</option>
+                                    <option value='2419200'>28 days</option>
+                                </select>
+                            </fieldset>
+
+                            <!-- Advanced movie settings -->
+                            <div id='movie-settings-advanced'>
+
+                                <!-- Movie Speed -->
+                                <fieldset id='movie-settings-speed'>
+                                    <legend>Speed</legend>
+                                    <div style='padding:10px;'>
+                                        <input type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
+                                        <label for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
+                                        <input id='frame-rate' maxlength='2' size='3' type="text" name="framerate" min="1" max="30" value="15" pattern='^(0?[1-9]|[1-2][0-9]|30)$' />(1-30)<br />
+
+                                        <input type="radio" name="speed-method" id="speed-method-l" value="length" />
+                                        <label for="speed-method-l" style='width: 62px;'>Length (s)</label>
+                                        <input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
+                                    </div>
+                                </fieldset>
+                            </div>
+
+                            <!-- Movie request submit button -->
+                            <div id='movie-settings-submit'>
+                                <input type="button" id='movie-settings-cancel-btn' value="Cancel" />
+                                <input type="submit" id='movie-settings-submit-btn' value="Ok" />
+                            </div>
+
+                            </form>
+                            </div>
+
+                            <!-- Movie settings help -->
+                            <div id='movie-settings-help' style='display:none'>
+                                <b>Duration</b><br /><br />
+                                <p>The duration of time that the movie should span, centered about your current observation time.</p><br />
+
+                                <b>Speed</b><br /><br />
+                                <p>Movie speed can be controlled either by specifying a desired frame-rate (the number of frames displayed each second) or a length in seconds.</p><br />
+                            </div>
+
+                            <!-- Movie settings validation console -->
+                            <div id='movie-settings-validation-console' style='display:none; text-align: center; margin: 7px 1px 0px; padding: 0.5em; border: 1px solid #fa5f4d; color: #333; background: #fa8072;' class='ui-corner-all'>
+
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
@@ -489,13 +577,11 @@ Note that when an image is not available for the exact date and time you selecte
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="section">
                             <div id='screenshot-history-title'>
-                                Screenshot History
+                                Screenshot History:
                                 <div id='screenshot-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all screenshots from the history.'>
-                                    <span style='font-weight: 200;'>clear</span>
+                                    <span style='font-weight: 200;'>clear history</span>
                                     <span class='fa fa-trash-o'></span>
                                 </div>
                             </div>
@@ -648,6 +734,7 @@ Note that when an image is not available for the exact date and time you selecte
 <div id="helioviewer-viewport-container-outer">
     <div id="helioviewer-viewport-container-inner">
         <div id="helioviewer-viewport">
+
             <!-- Movement sandbox -->
             <div id="sandbox" style="position: absolute;">
                 <div id="moving-container"></div>
@@ -655,100 +742,6 @@ Note that when an image is not available for the exact date and time you selecte
 
             <!-- Image area select boundary container -->
             <div id="image-area-select-container"></div>
-        </div>
-
-        <!-- Movie Manager -->
-        <div id='movie-manager-container' class='media-manager-container'>
-            <div id='movie-manager-build-btns' class='media-manager-build-btns'>
-                <div id='movie-manager-full-viewport' class='text-btn qtip-left' title='Create a movie using the entire viewport.'>
-                    <span class='fa fa-arrowthick-2-se-nw' style='float:left;'></span>
-                    <span style='line-height: 1.6em'>Full Viewport</span>
-                </div>
-                <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a movie of a sub-region of the viewport.'>
-                    <span class='fa fa-scissors' style='float:left;'></span>
-                    <span style='line-height: 1.6em'>Select Area</span>
-                </div>
-            </div>
-            <div id='movie-history-title'>
-                Movie History
-                <div id='movie-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all movies from the history.'>
-                    <span class='fa fa-trash' style='float:left;'></span>
-                    <span style='font-weight:normal'><i>Clear</i></span>
-                </div>
-            </div>
-            <div id='movie-history'></div>
-        </div>
-
-        <!-- Movie Settings -->
-        <div id='movie-settings-container' class='media-manager-container'>
-            <div style='margin-bottom: 10px; border-bottom: 1px solid; padding-bottom: 10px;'>
-                <b>Movie Settings:</b>
-
-                <div id='movie-settings-btns' style='float:right;'>
-                    <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='fa fa-gear qtip-left' title='Advanced movie settings'></span>
-                    <span id='movie-settings-toggle-help' style='display:inline-block;' class='fa fa-help qtip-left' title='Movie settings help'></span>
-                </div>
-            </div>
-
-            <!-- Begin movie settings -->
-            <div id='movie-settings-form-container'>
-            <form id='movie-settings-form'>
-
-            <!-- Movie duration -->
-            <fieldset style='padding: 0px; margin: 5px 0px 8px'>
-                <label for='movie-duration' style='margin-right: 5px; font-style: italic;'>Duration</label>
-                <select id='movie-duration' name='movie-duration'>
-                    <option value='3600'>1 hour</option>
-                    <option value='10800'>3 hours</option>
-                    <option value='21600'>6 hours</option>
-                    <option value='43200'>12 hours</option>
-                    <option value='86400'>1 day</option>
-                    <option value='172800'>2 days</option>
-                    <option value='604800'>1 week</option>
-                    <option value='2419200'>28 days</option>
-                </select>
-            </fieldset>
-
-            <!-- Advanced movie settings -->
-            <div id='movie-settings-advanced'>
-
-                <!-- Movie Speed -->
-                <fieldset id='movie-settings-speed'>
-                    <legend>Speed</legend>
-                    <div style='padding:10px;'>
-                        <input type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
-                        <label for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
-                        <input id='frame-rate' maxlength='2' size='3' type="text" name="framerate" min="1" max="30" value="15" pattern='^(0?[1-9]|[1-2][0-9]|30)$' />(1-30)<br />
-
-                        <input type="radio" name="speed-method" id="speed-method-l" value="length" />
-                        <label for="speed-method-l" style='width: 62px;'>Length (s)</label>
-                        <input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
-                    </div>
-                </fieldset>
-            </div>
-
-            <!-- Movie request submit button -->
-            <div id='movie-settings-submit'>
-                <input type="button" id='movie-settings-cancel-btn' value="Cancel" />
-                <input type="submit" id='movie-settings-submit-btn' value="Ok" />
-            </div>
-
-            </form>
-            </div>
-
-            <!-- Movie settings help -->
-            <div id='movie-settings-help' style='display:none'>
-                <b>Duration</b><br /><br />
-                <p>The duration of time that the movie should span, centered about your current observation time.</p><br />
-
-                <b>Speed</b><br /><br />
-                <p>Movie speed can be controlled either by specifying a desired frame-rate (the number of frames displayed each second) or a length in seconds.</p><br />
-            </div>
-
-            <!-- Movie settings validation console -->
-            <div id='movie-settings-validation-console' style='display:none; text-align: center; margin: 7px 1px 0px; padding: 0.5em; border: 1px solid #fa5f4d; color: #333; background: #fa8072;' class='ui-corner-all'>
-
-            </div>
         </div>
 
     </div>

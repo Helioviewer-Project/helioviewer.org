@@ -35,6 +35,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         this._movieEventsLabels = null;
         this._initEvents();
         this._initSettings();
+
+        this.show();
     },
 
     /**
@@ -116,6 +118,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         this._advancedSettings.hide();
         this._settingsDialog.hide();
 
+        this.show();
+
         //this.hideDialogs();
         this.building = false;
     },
@@ -174,6 +178,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         this.hide();
         this._settingsConsole.hide();
         this._settingsDialog.show();
+        this._advancedSettings.show();
     },
 
     /**
@@ -324,7 +329,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         $("#movie-settings-cancel-btn").button().click(function (e) {
             self._advancedSettings.hide();
             self._settingsDialog.hide();
-            self.show();
+            //self.show();
         });
 
         // Submit button
