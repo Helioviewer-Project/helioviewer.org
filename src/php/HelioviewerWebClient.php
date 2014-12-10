@@ -599,7 +599,48 @@ Note that when an image is not available for the exact date and time you selecte
                     <h1>Virtual Solar Observatory</h1>
                 </div>
                 <div class="content">
-                    <div class="section"></div>
+                    <div class="section">
+                        <h1>Request Viewport Images from VSO</h1>
+                        <div id="vso-links"></div>
+                    </div>
+
+                    <div class="section">
+                        <h1>Request Image Sequence from VSO</h1>
+                        <div>
+                            <div class="row">
+                                <div class="label">Start Date:</div>
+                                <div class="field">
+                                    <input type="text" id="vso-start-date" name="vso-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+
+                                    <input id="vso-start-time" name="vso-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+
+                                    <div class="suffix">UTC</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="label">End Date:</div>
+                                <div class="field">
+                                    <input type="text" id="vso-end-date" name="vso-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+
+                                    <input id="vso-end-time" name="vso-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+
+                                    <div class="suffix">UTC</div></div>
+                            </div>
+
+                            <br />
+
+
+                            <div class="row">
+                                <div class="buttons">
+                                    <div class="text-button fa fa-download" title="Eownload a Python SunPy script that will request from the Virtual Solar Observatory the data set specified above."> SunPy Script</div>
+                                    <div class="text-button fa fa-download" title="Eownload an IDL SolarSoft script that will request from the Virtual Solar Observatory the data set specified above."> SSW Script</div>
+                                    <div class="text-button fa fa-external-link-square" title="Launch a Virtual Solar Observatory web page that will request the data set specified above."> VSO Website</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
 

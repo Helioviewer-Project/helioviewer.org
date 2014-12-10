@@ -104,6 +104,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                         $('#accordion-youtube .disclosure-triangle').click();
                         $('#accordion-movie .disclosure-triangle').click();
                         $('#accordion-screenshot .disclosure-triangle').click();
+                        $('#accordion-vso .disclosure-triangle').click();
                     },
                     250
                 );
@@ -323,6 +324,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var self = this,
             msg  = "Link directly to the current state of Helioviewer:",
             btns;
+
+
+        $(document).bind('update-external-datasource-integration', $.proxy(this.updateExternalDataSourceIntegration, this));
 
         $('.drawer-tab', this.drawerLeft).bind('click', $.proxy(this.drawerLeftClick, this));
         this.drawerLeft.bind('mouseover', function (event) { event.stopPropagation(); });
@@ -813,6 +817,39 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         $('#pinterest-button').bind('click', $.proxy(this.pinterest, this));
         return;
+    },
+
+    updateExternalDataSourceIntegration: function (event) {
+        var params = Array(),
+            vsoLinks = $('#vso-links');
+
+        $('#vso-start-date').val(
+            this.viewport.getEarliestLayerDate().toUTCDateString());
+        $('#vso-start-time').val(
+            this.viewport.getEarliestLayerDate().toUTCTimeString());
+        $('#vso-end-date').val(
+            this.viewport.getLatestLayerDate().toUTCDateString());
+        $('#vso-end-time').val(
+            this.viewport.getLatestLayerDate().toUTCTimeString());
+
+        vsoLinks.html('');
+        $.each( $('#accordion-images .dynaccordion-section'), function(i,accordion) {
+
+            var html, nickname, date;
+
+            nickname = $(accordion).find('.left').html();
+            date     = $(accordion).find('.timestamp').html();
+
+            html = '<div class="row">'
+                 +     '<a href="" target="_blank">'
+                 + nickname
+                 + ' - '
+                 + date
+                 + ' UTC <i class="fa fa-external-link-square fa-fw"></i></a></div>';
+
+            vsoLinks.append(html);
+
+        });
     },
 
 
