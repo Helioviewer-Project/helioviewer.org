@@ -159,8 +159,8 @@ abstract class HelioviewerClient {
      */
     protected function addOpenGraphTags() {
 ?>
-    <meta property="og:description" content="Solar and heliospheric image visualization tool." />
-    <meta property="og:image" content="http://helioviewer.org/resources/images/logos/hvlogo1s_transparent.png" />
+    <meta id="fb-og-image" property="og:description" content="Solar and heliospheric image visualization tool." />
+    <meta id="fb-og-image" property="og:image" content="http://helioviewer.org/resources/images/logos/hvlogo1s_transparent.png" />
 <?php
     }
 
@@ -200,11 +200,11 @@ abstract class HelioviewerClient {
      * Loads JavaScript includes
      */
     protected function loadJS() {
-    if ($this->config["compress_js"]) {
+        if ($this->config["compress_js"]) {
 ?>
 <!-- Library JavaScript -->
-<script src="http://code.jquery.com/jquery-1.7.2.min.js" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>
+<script src="lib/jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+<script src="lib/jquery-ui/jquery-ui.1.8.18.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 <script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.min.js" type="text/javascript"></script>
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
@@ -214,8 +214,8 @@ abstract class HelioviewerClient {
         } else {
 ?>
 <!-- Library JavaScript -->
-<script src="http://code.jquery.com/jquery-1.7.2.js" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.js" type="text/javascript"></script>
+<script src="lib/jquery/jquery-1.7.2.js" type="text/javascript"></script>
+<script src="lib/jquery-ui/jquery-ui.1.8.18.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
 <script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.js" type="text/javascript"></script>
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>

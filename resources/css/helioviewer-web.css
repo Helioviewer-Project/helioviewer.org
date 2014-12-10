@@ -172,6 +172,7 @@ html, body {
     background-color: rgba(0,0,0,1);
     width: 6em;
     text-align: center;
+    -o-border-radius: 3px 3px 0 0;
     -moz-border-radius: 3px 3px 0 0;
     -webkit-border-radius: 3px 3px 0 0;
     border-radius: 3px 3px 0 0;
@@ -227,11 +228,11 @@ html, body {
     margin-top: 0.5em;
 }
 .accordion .header {
+    color: rgba(255,255,255,0.9);
     background-color: rgba(0,0,0,0.75);
 }
 .accordion .header:hover {
     background-color: black;
-    color: white;
 }
 .accordion .header h1 {
     font-size: 1em;
@@ -239,19 +240,22 @@ html, body {
     margin: 0.2em 0;
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
     font-weight: 500;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.9);
+}
+.accordion .header:hover h1 {
+    color: rgba(255,255,255,1);
 }
 .disclosure-triangle {
     cursor: pointer;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.9);
     font-size: 0.8em;
     padding: 0 0.1em 0 0.5em;
     display: inline-block;
     text-align: center;
     width: 1em;
 }
-.disclosure-triangle:hover {
-    color: yellow;
+.accordion .header:hover .disclosure-triangle {
+    color: rgba(255,255,255,1);
 }
 .disclosure-triangle .closed {
 }
@@ -699,3 +703,29 @@ span.ui-icon-hover, div.ui-icon-hover {
     border: none;
 }
 
+#helioviewer-header #link-button:hover {
+    color: blue;
+}
+
+#helioviewer-header #twitter-button:hover {
+    color: #00aced;  /* twitter logo blue */
+}
+#helioviewer-header #facebook-button:hover {
+    color: #3b5998;  /* facebook logo blue */
+}
+#helioviewer-header #pinterest-button:hover {
+    color: #cb2027;  /* pinterest logo red */
+}
+#helioviewer-header #youtube-button:hover {
+    color: #bb0000;  /* youtube logo red */
+}
+
+#helioviewer-header .social-button:hover {
+    background-color: white;
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+    cursor: pointer;
+}

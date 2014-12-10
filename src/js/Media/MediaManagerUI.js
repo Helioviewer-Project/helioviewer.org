@@ -29,8 +29,8 @@ var MediaManagerUI = Class.extend(
         this._historyBody     = $("#" + type + "-history");
         this._clearBtn        = $("#" + type + "-clear-history-button");
         this._tooltips        = $("#social-buttons div");
-        this._allButtons      = $("#movie-button, #screenshot-button");
-        this._allContainers   = $(".media-manager-container");
+        //this._allButtons      = $("#movie-button, #screenshot-button");
+        //this._allContainers   = $(".media-manager-container");
 
         this._loadSavedItems();
     },
@@ -56,8 +56,8 @@ var MediaManagerUI = Class.extend(
      * Shows the media manager
      */
     show: function () {
-        this._allContainers.hide();
-        this._allButtons.removeClass("active");
+        //this._allContainers.hide();
+        //this._allButtons.removeClass("active");
         this._btn.addClass("active");
         $(".jGrowl-notification").trigger("jGrowl.close");
         this._refresh();
@@ -96,8 +96,8 @@ var MediaManagerUI = Class.extend(
         }
 
         html = $("<div id='" + htmlId + "' class='history-entry'>" +
-               "<a class='text-btn' style='float: left' href='" + url +
-               "'>" + name + "</a>" +
+               "<div class='label'><a class='text-btn' style='float: left' href='" + url +
+               "'>" + name + "</a></div>" +
                //"<div class='text-btn' style='float:left'>" + name + "</div>" +
                "<div class='status'></div>" +
                "</div>");
@@ -190,7 +190,7 @@ var MediaManagerUI = Class.extend(
 
             status = $("#" + type + "-" + item.id).find(".status");
             elapsed = Date.parseUTCDate(item.dateRequested).getElapsedTime();
-            status.html(elapsed);
+            status.html(elapsed+' ago');
         });
     },
 

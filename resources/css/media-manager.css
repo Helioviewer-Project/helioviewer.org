@@ -23,8 +23,9 @@
 }
 
 #movie-manager-container, #movie-settings-container {
-    right: 140px;
-    width: 260px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 #movie-settings-container {
@@ -66,6 +67,7 @@
 .history-entry {
     height: 14px;
     padding: 4px 0px;
+    clear: both;
 }
 .history-entry .text-btn {
     text-overflow: ellipsis;
@@ -82,12 +84,20 @@
     color: #d18f61;
 }
 
-.status {
-    float:right;
+
+.history-entry .label {
+    float: left;
+    width: 50%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.history-entry .status {
+    float: right;
     font-size: 8pt;
     font-style: italic;
     text-align: right;
-    width: 70px;
+    width: 30%;
 }
 
 .processing {
@@ -140,9 +150,9 @@
 }
 
 .media-manager-build-btns .text-btn {
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,1);
     background-color: transparent;
-    border: 1px solid rgba(255,255,255,0);
+    border: 1px solid rgba(255,255,255,1);
     -o-border-radius: 1em;
     -moz-border-radius: 1em;
     -webkit-border-radius: 1em;
@@ -152,11 +162,17 @@
     font-size: 0.8em;
 }
 .media-manager-build-btns .text-btn:hover {
-    color: white;
-    background-color: transparent;
-    border: 1px solid rgba(255,255,255,1);
+    color: rgba(255,255,0,1);
+    border: 1px solid rgba(255,255,0,1);
 }
 .media-manager-build-btns .text-btn:active {
     color: yellow;
     border: 1px solid yellow;
+}
+
+
+#screenshot-history-title,
+#movie-history-title {
+    margin-bottom: 1em;
+    font-weight: 400;
 }

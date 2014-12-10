@@ -377,6 +377,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
             $("#helioviewer-url-input-box").attr('value', url).select();
         });
+
+        $('#facebook-button').bind('click', $.proxy(this.facebook, this));
+        $('#pinterest-button').bind('click', $.proxy(this.pinterest, this));
     },
 
     /**
@@ -775,6 +778,41 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         alertText = alertText.replace(/<\/?[^>]+(>|$)/g, "");
         alert( alertText );
         event.stopPropagation();
+    },
+
+    twitter: function() {
+        self = this;
+        $(this).prop('data-url', encodeURIComponent(self.toURL()) );
+        $('#twitter-button').bind('click', $.proxy(this.twitter, this));
+        return;
+    },
+
+    facebook: function(e) {
+
+        var href   = $(e.target).attr('href')
+                   + '&u='
+                   + encodeURIComponent(this.toURL()),
+            target = $(e.target).attr('target');
+        e.stopPropagation();
+
+        window.open(href, target);
+        return false;
+    },
+
+    pinterest: function() {
+        self = this;
+        $('#pinterest-button').unbind('click');
+
+        var url = encodeURIComponent(self.toURL());
+        var media = encodeURIComponent('http://api.helioviewer.org/v2/downloadScreenshot/?id=3240748');
+        var desc = $(this).attr('data-desc')+' '+encodeURIComponent(self.toURL());
+        window.open("//www.pinterest.com/pin/create/button/"+
+        "?url="+url+
+        "&media="+media+
+        "&description="+desc, "hv_pinterest");
+
+        $('#pinterest-button').bind('click', $.proxy(this.pinterest, this));
+        return;
     },
 
 
