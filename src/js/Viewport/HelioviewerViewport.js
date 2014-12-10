@@ -401,6 +401,9 @@ var HelioviewerViewport = Class.extend(
 
         // Get the observation dates associated with each later
         $.each(this._tileLayerManager._layers, function (i, layer) {
+            if ( layer.image.date === undefined ) {
+                return false;
+            }
             dates.push(layer.image.date);
         });
 
@@ -427,6 +430,9 @@ var HelioviewerViewport = Class.extend(
 
         // Get the observation dates associated with each later
         $.each(this._tileLayerManager._layers, function (i, layer) {
+            if ( layer.image.date === undefined ) {
+                return false;
+            }
             dates.push(layer.image.date);
         });
 
