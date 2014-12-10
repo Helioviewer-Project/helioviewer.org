@@ -105,6 +105,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                         $('#accordion-movie .disclosure-triangle').click();
                         $('#accordion-screenshot .disclosure-triangle').click();
                         $('#accordion-vso .disclosure-triangle').click();
+                        $('#accordion-sdo .disclosure-triangle').click();
                     },
                     250
                 );
@@ -822,6 +823,15 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     updateExternalDataSourceIntegration: function (event) {
         var params = Array(),
             vsoLinks = $('#vso-links');
+
+        $('#sdo-start-date').val(
+            this.viewport.getEarliestLayerDate().toUTCDateString());
+        $('#sdo-start-time').val(
+            this.viewport.getEarliestLayerDate().toUTCTimeString());
+        $('#sdo-end-date').val(
+            this.viewport.getLatestLayerDate().toUTCDateString());
+        $('#sdo-end-time').val(
+            this.viewport.getLatestLayerDate().toUTCTimeString());
 
         $('#vso-start-date').val(
             this.viewport.getEarliestLayerDate().toUTCDateString());

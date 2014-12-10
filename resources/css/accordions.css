@@ -298,19 +298,23 @@ select.layer-select {
 }
 
 
-#accordion-vso .row .label {
+#accordion-vso .row .label,
+#accordion-sdo .row .label {
     width: 8em;
     text-align: right;
 }
-#accordion-vso .row .field {
+#accordion-vso .row .field,
+#accordion-sdo .row .field {
     text-align: left;
 }
-#accordion-vso .row {
+#accordion-vso .row,
+#accordion-sdo .row {
     margin: 0.5em 0;
     text-align: center;
     clear: both;
 }
-#accordion-vso .row .buttons {
+#accordion-vso .row .buttons,
+#accordion-sdo .row .buttons {
     margin: 0 auto;
     text-align: center;
     clear: both;
@@ -319,7 +323,8 @@ select.layer-select {
     min-width: 50%;
 }
 
-#accordion-vso .row .buttons .text-button {
+#accordion-vso .row .buttons .text-button,
+#accordion-sdo .row .buttons .text-button {
     color: rgba(255,255,255,0.9);
     background-color: transparent;
     border: 1px solid rgba(255,255,255,0.9);
@@ -332,23 +337,27 @@ select.layer-select {
     font-size: 1em;
     margin: 0 0.25em;
 }
-#accordion-vso .row .buttons .text-button:hover {
+#accordion-vso .row .buttons .text-button:hover,
+#accordion-sdo .row .buttons .text-button:hover {
     color: yellow;
     background-color: transparent;
     border: 1px solid rgba(255,255,0,1);
     cursor: pointer;
 }
-#accordion-vso .row .buttons .text-button a:hover {
+#accordion-vso .row .buttons .text-button a:hover,
+#accordion-sdo .row .buttons .text-button a:hover {
     text-decoration: none;
     background-color: transparent;
     cursor: pointer;
 }
-#accordion-vso .row .buttons .text-button:active {
+#accordion-vso .row .buttons .text-button:active,
+#accordion-sdo .row .buttons .text-button:active {
     color: white;
     border: 1px solid white;
     cursor: pointer;
 }
-#accordion-vso .row .buttons .text-button a:active {
+#accordion-vso .row .buttons .text-button a:active,
+#accordion-sdo .row .buttons .text-button a:active {
     text-decoration: none;
     color: white;
     cursor: pointer;
@@ -363,6 +372,11 @@ select.layer-select {
     cursor: pointer;
 }
 
-#vso-start-date, #vso-end-date {
+#vso-start-date, #vso-end-date,
+#sdo-start-date, #sdo-end-date {
     width: 7em;
+}
+
+#vso-links {
+    margin-bottom: 1em;
 }

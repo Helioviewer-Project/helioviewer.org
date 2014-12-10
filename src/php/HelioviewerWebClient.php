@@ -633,8 +633,8 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div class="row">
                                 <div class="buttons">
-                                    <div class="text-button fa fa-download" title="Eownload a Python SunPy script that will request from the Virtual Solar Observatory the data set specified above."> SunPy Script</div>
-                                    <div class="text-button fa fa-download" title="Eownload an IDL SolarSoft script that will request from the Virtual Solar Observatory the data set specified above."> SSW Script</div>
+                                    <div class="text-button fa fa-download" title="Download a Python SunPy script that will request from the Virtual Solar Observatory the data set specified above."> SunPy Script</div>
+                                    <div class="text-button fa fa-download" title="Download an IDL SolarSoft script that will request from the Virtual Solar Observatory the data set specified above."> SSW Script</div>
                                     <div class="text-button fa fa-external-link-square" title="Launch a Virtual Solar Observatory web page that will request the data set specified above."> VSO Website</div>
                                 </div>
                             </div>
@@ -650,7 +650,42 @@ Note that when an image is not available for the exact date and time you selecte
                     <h1>SDO AIA/HMI Cut-out Service</h1>
                 </div>
                 <div class="content">
-                    <div class="section"></div>
+                    <div class="section">
+                        <h1>Request Image Sequence from Cut-out Service</h1>
+                        <div>
+                            <div class="row">
+                                <div class="label">Start Date:</div>
+                                <div class="field">
+                                    <input type="text" id="sdo-start-date" name="sdo-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+
+                                    <input id="sdo-start-time" name="sdo-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+
+                                    <div class="suffix">UTC</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="label">End Date:</div>
+                                <div class="field">
+                                    <input type="text" id="sdo-end-date" name="sdo-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+
+                                    <input id="sdo-end-time" name="sdo-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+
+                                    <div class="suffix">UTC</div></div>
+                            </div>
+
+                            <br />
+
+
+                            <div class="row">
+                                <div class="buttons">
+                                    <div class="text-button fa fa-download" title="Download an IDL SolarSoft script that will request from the SDO Cut-out Service the data set specified above."> SSW Script</div>
+                                    <div class="text-button fa fa-external-link-square" title="Launch a SDO Cut-out Service web page that will request the data set specified above."> SDO Cut-out Service Website</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
 
