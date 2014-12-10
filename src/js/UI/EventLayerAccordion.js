@@ -111,9 +111,10 @@ var EventLayerAccordion = Layer.extend(
              + '</div>';
 
         // Create accordion entry body
-        body  = '<div id="eventJSTree" style="margin-bottom: 5px;"></div>';
-        body += '<div id="checkboxBtn-On-'+id+'" title="Toggle All Event Checkboxes On" style="display: inline-block; font-size: 10px; margin-right: 10px;"><div class="ui-icon ui-icon-circlesmall-plus" style="display: inline-block; vertical-align: middle; margin-bottom: 2px;"></div>check all</div>';
-        body += '<div id="checkboxBtn-Off-'+id+'" title="Toggle All Event Checkboxes Off" style="display: inline-block; font-size: 10px;"><div class="ui-icon ui-icon-circlesmall-minus" style="display: inline-block; vertical-align: middle; margin-bottom: 2px;"></div>check none</div>';
+        body  = '<div class="row" style="text-align: left;"><div class="buttons"><div id="checkboxBtn-On-'+id+'" title="Toggle All Event Checkboxes On" class="text-button inline-block"><div class="fa fa-check-square fa-fw"></div>check all</div>';
+        body += '<div id="checkboxBtn-Off-'+id+'" title="Toggle All Event Checkboxes Off" class="text-button inline-block"><div class="fa fa-square-o fa-fw"></div>check none</div></div>';
+        body += '<div id="eventJSTree" style="margin-bottom: 5px;"></div></div>';
+
 
         //Add to accordion
         this.domNode.dynaccordion("addSection", {

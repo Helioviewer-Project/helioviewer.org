@@ -35,7 +35,7 @@ var TileLayerAccordion = Layer.extend(
 
         // Initialize accordion
         this.domNode = $('#TileLayerAccordion-Container');
-        this.domNode.dynaccordion({startClosed: true});
+        this.domNode.dynaccordion({startClosed: false});
 
 
         // Event-handlers
@@ -67,14 +67,14 @@ var TileLayerAccordion = Layer.extend(
      *
      * @param {Object} layer The new layer to add
      */
-    addLayer: function (event, index, id, name, hierarchy, date, startOpened,
+    addLayer: function (event, index, id, name, sourceId, hierarchy, date, startOpened,
         opacity, visible, onOpacityChange) {
 
         if (typeof(index) === "undefined") {
             index = 1000;
         }
 
-        this._createAccordionEntry(index, id, name, visible, startOpened);
+        this._createAccordionEntry(index, id, name, sourceId, visible, startOpened);
 
         this._initTreeSelect(id, hierarchy);
         this._initOpacitySlider(id, opacity, onOpacityChange);
@@ -85,8 +85,7 @@ var TileLayerAccordion = Layer.extend(
     /**
      *
      */
-    _createAccordionEntry: function (index, id, name, visible, startOpened) {
-
+    _createAccordionEntry: function (index, id, name, sourceId, visible, startOpened) {
         var visibilityBtn, removeBtn, hidden, head, body;
 
         // initial visibility
@@ -105,7 +104,7 @@ var TileLayerAccordion = Layer.extend(
 
         head = '<div class="layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all">'
              +     '<div class="left" '
-             +           'title="' + name + '">'
+             +           'title="' + name + '" data-sourceid="'+sourceId+'">'
              +         name
              +     '</div>'
              +     '<div class="right">'

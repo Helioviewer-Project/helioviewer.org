@@ -106,18 +106,16 @@ a.light:hover {
 #mouse-coords {
     background: transparent;
     color: white;
-    font-size: 13px;
+    font-size: 1em;
     font-weight: 600;
-    width: 160px;
-    height: 16px;
+    width: 12em;
     position: absolute;
-    bottom: 6px;
-    right: 2px;
+    top: 0;
+    left: -12em;
+    text-align: right;
 }
 
 #mouse-coords-x, #mouse-coords-y {
-    width: 50%;
-    position: absolute;
-    bottom: 2em;
-    left: 2em;
+    width: 40%;
+    display: inline-block;
 }

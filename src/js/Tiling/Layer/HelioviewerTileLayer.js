@@ -41,7 +41,7 @@ var HelioviewerTileLayer = TileLayer.extend(
         this._setupEventHandlers();
 
         $(document).trigger("create-tile-layer-accordion-entry",
-            [index, this.id, name, hierarchy, date, true, opacity, visible,
+            [index, this.id, name, sourceId, hierarchy, date, true, opacity, visible,
              $.proxy(this.setOpacity, this)
             ]
         );

@@ -822,7 +822,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     updateExternalDataSourceIntegration: function (event) {
         var params = Array(),
-            vsoLinks = $('#vso-links');
+            vsoLinks = $('#vso-links'),
+            vsoPreviews = $('#vso-previews');
 
         $('#sdo-start-date').val(
             this.viewport.getEarliestLayerDate().toUTCDateString());
@@ -843,21 +844,59 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.viewport.getLatestLayerDate().toUTCTimeString());
 
         vsoLinks.html('');
+        vsoPreviews.html('');
         $.each( $('#accordion-images .dynaccordion-section'), function(i,accordion) {
+            var html, nickname, date, startDate, endDate, sourceId, imageScale;
 
-            var html, nickname, date;
+            nickname  = $(accordion).find('.left').html();
+            sourceId  = $(accordion).find('.left').attr('data-sourceid');
+            date      = $(accordion).find('.timestamp').html();
+            startDate = $('#vso-start-date').val()
+                      + 'T'
+                      + $('#vso-start-time').val()
+                      + 'Z';
+            endDate   = $('#vso-end-date').val()
+                      + 'T'
+                      + $('#vso-end-time').val()
+                      + 'Z';
 
-            nickname = $(accordion).find('.left').html();
-            date     = $(accordion).find('.timestamp').html();
-
-            html = '<div class="row">'
-                 +     '<a href="" target="_blank">'
+            html = '<a href="" target="_blank">'
                  + nickname
                  + ' - '
                  + date
-                 + ' UTC <i class="fa fa-external-link-square fa-fw"></i></a></div>';
-
+                 + ' UTC <i class="fa fa-external-link-square fa-fw"></i></a>';
             vsoLinks.append(html);
+
+            imageScale = '20';
+            if ( nickname.toUpperCase() == 'LASCO C2' ) {
+                imageScale = '100';
+            }
+            else if ( nickname.toUpperCase() == 'LASCO C3' ) {
+                imageScale = '500';
+            }
+
+            html = '';
+            html = '<div class="header">'
+                 +     '<input type="checkbox" checked /> '
+                 +     nickname
+                 + '</div>'
+                 + '<div class="previews">'
+                 +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?imageScale='
+                 + imageScale
+                 + '&layers=['
+                 + sourceId
+                 + ',1,100]&events=&eventLabels=false&scale=false&scaleType=earth&scaleX=0&scaleY=0&date='
+                 + startDate
+                 + '&x0=0&y0=0&width=128&height=128&display=true&watermark=false" class="preview start" /> '
+                 +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?imageScale='
+                 + imageScale
+                 + '&layers=['
+                 + sourceId
+                 + ',1,100]&events=&eventLabels=false&scale=false&scaleType=earth&scaleX=0&scaleY=0&date='
+                 + endDate
+                 + '&x0=0&y0=0&width=128&height=128&display=true&watermark=false" class="preview end" /> '
+                 + '</div>';
+            vsoPreviews.append(html);
 
         });
     },

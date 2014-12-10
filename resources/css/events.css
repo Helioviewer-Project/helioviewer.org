@@ -5,9 +5,8 @@
 }
 
 #eventJSTree a {
-    font-family:
-        Courier,
-        monospace;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
     font-weight: 400;
     overflow: ellipsis;
     color: white;
@@ -17,7 +16,7 @@
     border: 1px solid black;
 }
 #eventJSTree a .checkbox {
-    margin-right: 0.5em;
+    margin-right: 0.4em;
 }
 
 .event-marker {
