@@ -158,11 +158,14 @@ select.layer-select {
 }
 
 #accordion-images .accordion-header {
-    margin: 0.5em;
+    margin: 0.5em 0 0.5em 0.5em;
 }
 
 .accordion-header a {
     text-decoration: none;
+}
+.accordion-header .fa {
+    padding-bottom: 0.22em;
 }
 
 #TileLayerAccordion-Container .opacity-slider-track.ui-widget-content {
@@ -182,6 +185,7 @@ select.layer-select {
     background-image: none;
     background-color: rgba(230,230,230,1);
     border: 2px solid rgba(0,0,0,1);
+    -o-border-radius: 0.2em;
     -moz-border-radius: 0.2em;
     -webkit-border: 0.2em;
     border-radius: 0.2em;
@@ -298,23 +302,20 @@ select.layer-select {
 }
 
 
-#accordion-vso .row .label,
-#accordion-sdo .row .label {
-    width: 8em;
+.drawer-contents .row .label {
+    width: 30%;
     text-align: right;
 }
-#accordion-vso .row .field,
-#accordion-sdo .row .field {
+.drawer-contents .row .field {
     text-align: left;
+    width: 65%;
 }
-#accordion-vso .row,
-#accordion-sdo .row {
+.drawer-contents .row {
     margin: 0.5em 0;
     text-align: center;
     clear: both;
 }
-#accordion-vso .row .buttons,
-#accordion-sdo .row .buttons {
+.drawer-contents .row .buttons {
     margin: 0 auto;
     text-align: center;
     clear: both;
@@ -323,8 +324,7 @@ select.layer-select {
     min-width: 50%;
 }
 
-#accordion-vso .row .buttons .text-button,
-#accordion-sdo .row .buttons .text-button {
+.drawer-contents .row .buttons .text-button {
     color: rgba(255,255,255,0.9);
     background-color: transparent;
     border: 1px solid rgba(255,255,255,0.9);
@@ -337,37 +337,37 @@ select.layer-select {
     font-size: 1em;
     margin: 0 0.25em;
 }
-#accordion-vso .row .buttons .text-button:hover,
-#accordion-sdo .row .buttons .text-button:hover {
+.drawer-contents .row .buttons .text-button:hover {
     color: yellow;
     background-color: transparent;
     border: 1px solid rgba(255,255,0,1);
     cursor: pointer;
 }
-#accordion-vso .row .buttons .text-button a:hover,
-#accordion-sdo .row .buttons .text-button a:hover {
+.drawer-contents .row .buttons .text-button a:hover {
     text-decoration: none;
     background-color: transparent;
     cursor: pointer;
 }
-#accordion-vso .row .buttons .text-button:active,
-#accordion-sdo .row .buttons .text-button:active {
+.drawer-contents .row .buttons .text-button:active {
     color: white;
     border: 1px solid white;
     cursor: pointer;
 }
-#accordion-vso .row .buttons .text-button a:active,
-#accordion-sdo .row .buttons .text-button a:active {
+.drawer-contents .row .buttons .text-button a:active {
     text-decoration: none;
     color: white;
     cursor: pointer;
 }
 
-#accordion-vso .row a {
-    color: aquamarine;
+#vso-links a {
+    font-family: 'Courier New', Courier, monospace;
+    color: rgba(255,255,0,0.8);
     font-weight: 400;
+    font-size: 1.1em;
+    padding: 0.2em;
+    display: block;
 }
-#accordion-vso .row a:hover {
+#vso-links a:hover {
     color: yellow;
     cursor: pointer;
 }
@@ -378,5 +378,45 @@ select.layer-select {
 }
 
 #vso-links {
+    text-align: center;
     margin-bottom: 1em;
+}
+
+
+#accordion-events .buttons {
+    text-align: center;
+}
+#accordion-events .text-button {
+    font-size: 0.75em;
+    padding: 0.25em 0.5em;
+    font-weight: 400;
+    margin: 0 0.5em;
+}
+
+
+#vso-previews {
+    margin-top: 1.75em;
+}
+#vso-previews .header {
+    width: 100%;
+    font-size: 1.2em;
+    text-align: center;
+    font-weight: 400;
+    padding: 0.25em 0;
+    background: none;
+    margin: 0.75em 0 0.5em 0;
+    cursor: auto;
+}
+#vso-previews .header input[type=checkbox] {
+    margin-right: 0.5em;
+    cursor: pointer;
+}
+
+#vso-previews .preview {
+    width: 128px;
+    height: 128px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+#vso-previews .preview.start {
+    margin-right: 1em;
 }

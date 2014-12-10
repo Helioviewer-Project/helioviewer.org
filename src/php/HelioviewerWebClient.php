@@ -325,7 +325,7 @@ class HelioviewerWebClient extends HelioviewerClient {
 
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Observation Date</h1>
-                    <div class="right fa fa-question contextual-help" title="
+                    <div class="right fa fa-question-circle contextual-help" title="
 Changing the 'Observation Date' will update the Viewport with data matching the new date and time.<br /><br />
 
 Use the 'Jump' controls to browse forward and backward in time by a regular interval.<br /><br />
@@ -369,6 +369,7 @@ Note that when an image is not available for the exact date and time you selecte
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Image Data Layers</h1>
+                    <div class="right fa fa-question-circle contextual-help" title=""></div>
                     <div class="accordion-header">
                         <a href="#" id="add-new-tile-layer-btn" class="text-button" title="Click to add an image data layer to the Viewport."><span class="fa fa-plus-circle"></span> Add Layer</a>
                     </div>
@@ -384,6 +385,7 @@ Note that when an image is not available for the exact date and time you selecte
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Feature &amp; Event Annotations</h1>
+                    <div class="right fa fa-question-circle contextual-help" title=""></div>
                 </div>
                 <div class="content">
                     <div id="eventLayerAccordion">
@@ -417,6 +419,7 @@ Note that when an image is not available for the exact date and time you selecte
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Helioviewer Project News</h1>
+                    <div class="right fa fa-question-circle contextual-help" title=""></div>
                 </div>
                 <div class="content">
                     <div class="section">
@@ -430,6 +433,7 @@ Note that when an image is not available for the exact date and time you selecte
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Movies Shared to YouTube</h1>
+                    <div class="right fa fa-question-circle contextual-help" title=""></div>
                 </div>
                 <div class="content">
                     <div class="section">
@@ -453,6 +457,7 @@ Note that when an image is not available for the exact date and time you selecte
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Generate a Movie</h1>
+                    <div class="right fa fa-question-circle contextual-help" title=""></div>
                 </div>
                 <div class="content">
                     <div class="section">
@@ -558,6 +563,7 @@ Note that when an image is not available for the exact date and time you selecte
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Generate a Screenshot</h1>
+                    <div class="right fa fa-question-circle contextual-help" title=""></div>
                 </div>
                 <div class="content">
 
@@ -597,6 +603,7 @@ Note that when an image is not available for the exact date and time you selecte
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Virtual Solar Observatory</h1>
+                    <div class="right fa fa-question-circle contextual-help" title=""></div>
                 </div>
                 <div class="content">
                     <div class="section">
@@ -628,8 +635,9 @@ Note that when an image is not available for the exact date and time you selecte
                                     <div class="suffix">UTC</div></div>
                             </div>
 
-                            <br />
-
+                            <div class="row">
+                                <div id="vso-previews"></div>
+                            </div>
 
                             <div class="row">
                                 <div class="buttons">
@@ -648,6 +656,7 @@ Note that when an image is not available for the exact date and time you selecte
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>SDO AIA/HMI Cut-out Service</h1>
+                    <div class="right fa fa-question-circle contextual-help" title=""></div>
                 </div>
                 <div class="content">
                     <div class="section">
@@ -676,6 +685,33 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <br />
 
+                            <div class="row">
+                                <div class="label">Center (x,y):</div>
+                                <div class="field">
+                                    <input type="text" id="sdo-center-x" name="sdo-center-x" value="0" maxlength="6" />
+                                    <input id="sdo-center-y" name="sdo-center-y" value="0" type="text" maxlength="6" />
+                                    <div class="suffix">arcsec</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="label">Width:</div>
+                                <div class="field" style="text-align: left;">
+                                    <input type="text" id="sdo-width" name="sdo-width" value="2000" maxlength="6"/>
+                                    <div class="suffix">arcsec</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="label">Height:</div>
+                                <div class="field">
+                                    <input type="text" id="sdo-height" name="sdo-height" value="2000" maxlength="6" />
+                                    <div class="suffix">arcsec</div>
+                                </div>
+                            </div>
+
+                            <br />
+
 
                             <div class="row">
                                 <div class="buttons">
@@ -693,6 +729,7 @@ Note that when an image is not available for the exact date and time you selecte
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Heliophysics Event Knowledgebase</h1>
+                    <div class="right fa fa-question-circle contextual-help" title=""></div>
                 </div>
                 <div class="content">
                     <div class="section"></div>
