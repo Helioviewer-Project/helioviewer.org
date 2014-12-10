@@ -197,12 +197,18 @@ var HelioviewerViewport = Class.extend(
      * Event listeners for interacting with the viewport
      */
     _initEventHandlers: function () {
-        $(document).bind("image-scale-changed",             $.proxy(this.zoomViewport, this))
-                   .bind("update-viewport",                 $.proxy(this.onUpdateViewport, this))
-                   .bind("load-saved-roi-position",         $.proxy(this.loadROIPosition, this))
-                   .bind("move-viewport mousemove mouseup", $.proxy(this.onMouseMove, this))
-                   .bind("layer-max-dimensions-changed",    $.proxy(this.updateMaxLayerDimensions, this))
-                   .bind("center-viewport",                 $.proxy(this.centerViewport, this));
+        $(document).bind("image-scale-changed",
+                         $.proxy(this.zoomViewport, this))
+                   .bind("update-viewport",
+                         $.proxy(this.onUpdateViewport, this))
+                   .bind("load-saved-roi-position",
+                         $.proxy(this.loadROIPosition, this))
+                   .bind("move-viewport mousemove mouseup",
+                         $.proxy(this.onMouseMove, this))
+                   .bind("layer-max-dimensions-changed",
+                         $.proxy(this.updateMaxLayerDimensions, this))
+                   .bind("center-viewport",
+                         $.proxy(this.centerViewport, this));
 
         $(this.domNode).bind("mousedown", $.proxy(this.onMouseMove, this));
         this.domNode.dblclick($.proxy(this.doubleClick, this));
@@ -385,5 +391,58 @@ var HelioviewerViewport = Class.extend(
     getImageScaleInKilometersPerPixel: function () {
         //return parseFloat(this.imageScale.toPrecision(8) *
         //(helioviewer.constants.rsun / (1000 * this._rsunInArcseconds)));
+    },
+
+    /**
+     * Returns the middle time of all of the layers currently loaded
+     */
+    getEarliestLayerDate: function () {
+        var startDate, endDate, difference, dates = [];
+
+        // Get the observation dates associated with each later
+        $.each(this._tileLayerManager._layers, function (i, layer) {
+            dates.push(layer.image.date);
+        });
+
+        // If there are no image layers loaded then use the requestDate
+        if (dates.length === 0) {
+            return Date.parseUTCDate(this.requestDate.toISOString());
+        }
+        // If there is only one layer loaded then use its date
+        else if (dates.length === 1) {
+            return Date.parseUTCDate(dates[0]);
+        }
+
+        dates.sort();
+        startDate = Date.parseUTCDate(dates[0]);
+
+        return startDate;
+    },
+
+    /**
+     * Returns the middle time of all of the layers currently loaded
+     */
+    getLatestLayerDate: function () {
+        var startDate, endDate, difference, dates = [];
+
+        // Get the observation dates associated with each later
+        $.each(this._tileLayerManager._layers, function (i, layer) {
+            dates.push(layer.image.date);
+        });
+
+        // If there are no image layers loaded then use the requestDate
+        if (dates.length === 0) {
+            return Date.parseUTCDate(this.requestDate.toISOString());
+        }
+        // If there is only one layer loaded then use its date
+        else if (dates.length === 1) {
+            return Date.parseUTCDate(dates[0]);
+        }
+
+        dates.sort();
+        endDate   = Date.parseUTCDate(dates[dates.length - 1]);
+
+        return endDate;
     }
+
 });

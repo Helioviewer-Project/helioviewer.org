@@ -95,7 +95,7 @@ Date.parseUTCDate = function (s) {
             s.substring(11, 13), s.substring(14, 16), s.substring(17, 19)
         ));
     } catch (e) {
-        throw "Invalid UTC date string";
+        throw "Invalid UTC date string: "+s;
     }
 };
 

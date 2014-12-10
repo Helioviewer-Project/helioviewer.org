@@ -103,11 +103,21 @@ select.layer-select {
 
 .drawer-contents .content .section {
     margin: 0;
-    padding: 1em 1em 0.25em 1em;
+    padding: 0.75em 1em 0.25em 1em;
     background: -o-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
     background: -moz-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
     background: -webkit-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
     background: linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
+}
+
+.drawer-contents .content .section h1 {
+    width: 100%;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 600;
+    padding: 0 0 0.5em 0;
+    margin: 0 0 1em 0;
+    border-bottom: 1px solid rgba(255,255,255,0.25);
 }
 
 #TileLayerAccordion-Container .dynaccordion-section,
@@ -285,4 +295,74 @@ select.layer-select {
     float: right;
     text-align: right;
     width: 52%;
+}
+
+
+#accordion-vso .row .label {
+    width: 8em;
+    text-align: right;
+}
+#accordion-vso .row .field {
+    text-align: left;
+}
+#accordion-vso .row {
+    margin: 0.5em 0;
+    text-align: center;
+    clear: both;
+}
+#accordion-vso .row .buttons {
+    margin: 0 auto;
+    text-align: center;
+    clear: both;
+    min-height: 2em;
+    padding: 0.25em 0;
+    min-width: 50%;
+}
+
+#accordion-vso .row .buttons .text-button {
+    color: rgba(255,255,255,0.9);
+    background-color: transparent;
+    border: 1px solid rgba(255,255,255,0.9);
+    -o-border-radius: 1em;
+    -moz-border-radius: 1em;
+    -webkit-border-radius: 1em;
+    border-radius: 1em;
+    padding: 0.4em 0.6em ;
+    font-weight: 400;
+    font-size: 1em;
+    margin: 0 0.25em;
+}
+#accordion-vso .row .buttons .text-button:hover {
+    color: yellow;
+    background-color: transparent;
+    border: 1px solid rgba(255,255,0,1);
+    cursor: pointer;
+}
+#accordion-vso .row .buttons .text-button a:hover {
+    text-decoration: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+#accordion-vso .row .buttons .text-button:active {
+    color: white;
+    border: 1px solid white;
+    cursor: pointer;
+}
+#accordion-vso .row .buttons .text-button a:active {
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+}
+
+#accordion-vso .row a {
+    color: aquamarine;
+    font-weight: 400;
+}
+#accordion-vso .row a:hover {
+    color: yellow;
+    cursor: pointer;
+}
+
+#vso-start-date, #vso-end-date {
+    width: 7em;
 }
