@@ -318,6 +318,7 @@ class HelioviewerWebClient extends HelioviewerClient {
         </div>
 
         <div class="drawer-contents">
+            <div class="top-shadow"></div>
 
             <div id="accordion-date" class="accordion">
 
@@ -395,6 +396,10 @@ Note that when an image is not available for the exact date and time you selecte
                 </div>
             </div>
 
+
+            <br />
+
+            <div class="bottom-shadow"></div>
         </div>
     </div>
 
@@ -415,6 +420,7 @@ Note that when an image is not available for the exact date and time you selecte
         </div>
 
         <div class="drawer-contents">
+            <div class="top-shadow"></div>
 
             <div id="accordion-news" class="accordion">
                 <div class="header">
@@ -738,6 +744,9 @@ Note that when an image is not available for the exact date and time you selecte
                 </div>
             </div>
 
+            <br />
+
+            <div class="bottom-shadow"></div>
         </div>
     </div>
 
