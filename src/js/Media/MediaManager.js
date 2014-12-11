@@ -17,7 +17,7 @@ var MediaManager = Class.extend(
         this._history = savedItems;
 
         if ($.support.localStorage) {
-            this._historyLimit = 25;    
+            this._historyLimit = 25;
         } else {
             this._historyLimit = 10;
         }
@@ -30,45 +30,40 @@ var MediaManager = Class.extend(
      * Will crop names that are too long and append ellipses.
      */
     _getName: function (layerString) {
-        var layer, layerArray, observatory, instrument, detector, measurement,
-            currentGroup, name = "";
+        var layer, layerArray, currentGroup, name = "";
 
         layerArray = layerStringToLayerArray(layerString).sort();
 
         $.each(layerArray, function (i, layer) {
             layer = extractLayerName(this);
 
-            observatory = layer[0];
-            instrument  = layer[1];
-            detector    = layer[2];
-            measurement = layer[3];
-
             // Add instrument or detector if its not already present, otherwise
             // add a backslash and move onto the right-hand side
-            if (currentGroup === instrument || currentGroup === detector) {
+            if (currentGroup === layer[1] || currentGroup === layer[2]) {
                 name += "/";
             } else {
                 // For STEREO use detector for the Left-hand side
-                if (instrument === "SECCHI") {
-                    currentGroup = detector;
+                if (layer[1] === "SECCHI") {
+                    currentGroup = layer[2];
                     // Add "A" or "B" to differentiate spacecraft
-                    name += ", " + detector + "-" +
-                            observatory.substr(-1) + " ";
+                    name += ", " + layer[2] + "-" +
+                            layer[0].substr(-1) + " ";
                 } else {
                     // Otherwise use the instrument name
-                    currentGroup = instrument;
-                    name += ", " + instrument + " ";
+                    currentGroup = layer[1];
+                    name += ", " + layer[1] + " ";
                 }
             }
 
             // For LASCO, use the detector for the right-hand side
-            if (instrument === "LASCO") {
-                name += detector;
-            } else if (detector.substr(0, 3) === "COR") {
+            if (layer[1] === "LASCO") {
+                name += layer[2];
+            } else if (layer[2].substr(0, 3) === "COR") {
                 // For COR1 & 2 images
 
             } else {
-                name += measurement;
+                // For AIA
+                name += layer[2];
             }
         });
 
