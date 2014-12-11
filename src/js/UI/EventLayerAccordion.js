@@ -112,7 +112,7 @@ var EventLayerAccordion = Layer.extend(
 
         // Create accordion entry body
         body  = '<div class="row" style="text-align: left;"><div class="buttons"><div id="checkboxBtn-On-'+id+'" title="Toggle All Event Checkboxes On" class="text-button inline-block"><div class="fa fa-check-square fa-fw"></div>check all</div>';
-        body += '<div id="checkboxBtn-Off-'+id+'" title="Toggle All Event Checkboxes Off" class="text-button inline-block"><div class="fa fa-square-o fa-fw"></div>check none</div></div>';
+        body += '<div id="checkboxBtn-Off-'+id+'" title="Toggle All Event Checkboxes Off" class="text-button inline-block"><div class="fa fa-square fa-fw"></div>check none</div></div>';
         body += '<div id="eventJSTree" style="margin-bottom: 5px;"></div></div>';
 
 

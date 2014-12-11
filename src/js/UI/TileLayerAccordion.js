@@ -103,7 +103,7 @@ var TileLayerAccordion = Layer.extend(
                   + '></span>';
 
         head = '<div class="layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all">'
-             +     '<div class="left" '
+             +     '<div class="tile-accordion-header-left" '
              +           'title="' + name + '" data-sourceid="'+sourceId+'">'
              +         name
              +     '</div>'
@@ -477,7 +477,7 @@ var TileLayerAccordion = Layer.extend(
     /**
      *
      */
-    _updateAccordionEntry: function (event, id, name, opacity, date, imageId,
+    _updateAccordionEntry: function (event, id, name, sourceId, opacity, date, imageId,
         hierarchy) {
 
         var entry=$("#"+id), self=this, letters=['a','b','c','d','e'],
@@ -486,6 +486,8 @@ var TileLayerAccordion = Layer.extend(
         this._updateTimeStamp(id, date);
 
         entry.find(".tile-accordion-header-left").html(name);
+        entry.find(".tile-accordion-header-left").attr('title', name);
+        entry.find(".tile-accordion-header-left").attr('data-sourceid', sourceId);
 
         $.each( letters, function(i, letter) {
             label  = entry.find("#"+letters[i]+"-label-"+id);

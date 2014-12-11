@@ -302,6 +302,15 @@ select.layer-select {
 }
 
 
+#accordion-date .row .label {
+    width: 15%;
+    text-align: right;
+}
+#accordion-date .row .field {
+    width: 80%;
+    text-align: left;
+}
+
 .drawer-contents .row .label {
     width: 30%;
     text-align: right;
@@ -394,10 +403,12 @@ select.layer-select {
 }
 
 
-#vso-previews {
+#vso-previews,
+#sdo-previews {
     margin-top: 1.75em;
 }
-#vso-previews .header {
+#vso-previews .header,
+#sdo-previews .header {
     width: 100%;
     font-size: 1.2em;
     text-align: center;
@@ -407,16 +418,23 @@ select.layer-select {
     margin: 0.75em 0 0.5em 0;
     cursor: auto;
 }
-#vso-previews .header input[type=checkbox] {
+#vso-previews .header input[type=checkbox],
+#sdo-previews .header input[type=checkbox] {
     margin-right: 0.5em;
     cursor: pointer;
 }
 
-#vso-previews .preview {
+#vso-previews .preview,
+#sdo-previews .preview {
     width: 128px;
     height: 128px;
     border: 1px solid rgba(255,255,255,0.2);
 }
-#vso-previews .preview.start {
+#vso-previews .preview.start,
+#sdo-previews .preview.start {
     margin-right: 1em;
+}
+
+.drawer-contents .inline-block {
+    display: inline-block;
 }
