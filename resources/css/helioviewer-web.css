@@ -734,7 +734,7 @@ span.ui-icon-hover, div.ui-icon-hover {
     height: 0.75em;
     position: fixed;
     top: 3em;
-    width: 100%;
+    width: 25em;
     z-index: 3;
     background: -o-linear-gradient(rgba(0,0,0, 0.75), rgba(0,0,0, 0));
     background: -moz-linear-gradient(rgba(0,0,0, 0.75), rgba(0,0,0, 0));
@@ -745,7 +745,7 @@ span.ui-icon-hover, div.ui-icon-hover {
     height: 0.75em;
     position: fixed;
     bottom: 0.4em;
-    width: 100%;
+    width: 25em;
     z-index: 3;
     background: -o-linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.75));
     background: -moz-linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.75));
