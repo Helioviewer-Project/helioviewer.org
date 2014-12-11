@@ -823,16 +823,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     updateExternalDataSourceIntegration: function (event) {
         var params = Array(),
             vsoLinks = $('#vso-links'),
-            vsoPreviews = $('#vso-previews');
-
-        $('#sdo-start-date').val(
-            this.viewport.getEarliestLayerDate().toUTCDateString());
-        $('#sdo-start-time').val(
-            this.viewport.getEarliestLayerDate().toUTCTimeString());
-        $('#sdo-end-date').val(
-            this.viewport.getLatestLayerDate().toUTCDateString());
-        $('#sdo-end-time').val(
-            this.viewport.getLatestLayerDate().toUTCTimeString());
+            vsoPreviews = $('#vso-previews'),
+            sdoPreviews = $('#sdo-previews');
 
         $('#vso-start-date').val(
             this.viewport.getEarliestLayerDate().toUTCDateString());
@@ -843,13 +835,26 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $('#vso-end-time').val(
             this.viewport.getLatestLayerDate().toUTCTimeString());
 
+
+        $('#sdo-start-date').val(
+            this.viewport.getEarliestLayerDate().toUTCDateString());
+        $('#sdo-start-time').val(
+            this.viewport.getEarliestLayerDate().toUTCTimeString());
+        $('#sdo-end-date').val(
+            this.viewport.getLatestLayerDate().toUTCDateString());
+        $('#sdo-end-time').val(
+            this.viewport.getLatestLayerDate().toUTCTimeString());
+
+
         vsoLinks.html('');
         vsoPreviews.html('');
+        sdoPreviews.html('');
         $.each( $('#accordion-images .dynaccordion-section'), function(i,accordion) {
+
             var html, nickname, date, startDate, endDate, sourceId, imageScale;
 
-            nickname  = $(accordion).find('.left').html();
-            sourceId  = $(accordion).find('.left').attr('data-sourceid');
+            nickname  = $(accordion).find('.tile-accordion-header-left').html();
+            sourceId  = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
             date      = $(accordion).find('.timestamp').html();
             startDate = $('#vso-start-date').val()
                       + 'T'
@@ -860,19 +865,31 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                       + $('#vso-end-time').val()
                       + 'Z';
 
-            html = '<a href="" target="_blank">'
+            html = '<a href="" target="_blank"><b>'
                  + nickname
-                 + ' - '
+                 + '</b> '
                  + date
                  + ' UTC <i class="fa fa-external-link-square fa-fw"></i></a>';
             vsoLinks.append(html);
 
-            imageScale = '20';
+            imageScale = '23';
             if ( nickname.toUpperCase() == 'LASCO C2' ) {
                 imageScale = '100';
             }
             else if ( nickname.toUpperCase() == 'LASCO C3' ) {
                 imageScale = '500';
+            }
+            else if ( nickname.toUpperCase() == 'COR1-A' ) {
+                imageScale = '70';
+            }
+            else if ( nickname.toUpperCase() == 'COR1-B' ) {
+                imageScale = '70';
+            }
+            else if ( nickname.toUpperCase() == 'COR2-A' ) {
+                imageScale = '265';
+            }
+            else if ( nickname.toUpperCase() == 'COR2-B' ) {
+                imageScale = '265';
             }
 
             html = '';
@@ -898,7 +915,37 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                  + '</div>';
             vsoPreviews.append(html);
 
+
+            if ( nickname.search('AIA ') != -1 ||
+                 nickname.search('HMI ') != -1 ) {
+
+                imageScale = '23';
+                html = '';
+                html = '<div class="header">'
+                     +     '<input type="checkbox" checked /> '
+                     +     nickname
+                     + '</div>'
+                     + '<div class="previews">'
+                     +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?imageScale='
+                     + imageScale
+                     + '&layers=['
+                     + sourceId
+                     + ',1,100]&events=&eventLabels=false&scale=false&scaleType=earth&scaleX=0&scaleY=0&date='
+                     + startDate
+                     + '&x0=0&y0=0&width=128&height=128&display=true&watermark=false" class="preview start" /> '
+                     +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?imageScale='
+                     + imageScale
+                     + '&layers=['
+                     + sourceId
+                     + ',1,100]&events=&eventLabels=false&scale=false&scaleType=earth&scaleX=0&scaleY=0&date='
+                     + endDate
+                     + '&x0=0&y0=0&width=128&height=128&display=true&watermark=false" class="preview end" /> '
+                     + '</div>';
+                sdoPreviews.append(html);
+            }
+
         });
+
     },
 
 
