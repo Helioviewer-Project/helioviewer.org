@@ -329,6 +329,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         $(document).bind('update-external-datasource-integration', $.proxy(this.updateExternalDataSourceIntegration, this));
 
+        $('#vso-start-date, #vso-start-time, #vso-end-date, #vso-end-time').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this));
+
+        $('#sdo-start-date, #sdo-start-time, #sdo-end-date, #sdo-end-time').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this));
+
         $('.drawer-tab', this.drawerLeft).bind('click', $.proxy(this.drawerLeftClick, this));
         this.drawerLeft.bind('mouseover', function (event) { event.stopPropagation(); });
         $('.drawer-tab', this.drawerRight).bind('click', $.proxy(this.drawerRightClick, this));
@@ -826,25 +830,28 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             vsoPreviews = $('#vso-previews'),
             sdoPreviews = $('#sdo-previews');
 
-        $('#vso-start-date').val(
+        // If this method is triggered by a change to the Tile Layer dates,
+        // then update the values in the export tool.
+        // (Otherwise, user updated the export dates themselves)
+        if ( event['type'] == 'update-external-datasource-integration' ) {
+            $('#vso-start-date').val(
             this.viewport.getEarliestLayerDate().toUTCDateString());
-        $('#vso-start-time').val(
-            this.viewport.getEarliestLayerDate().toUTCTimeString());
-        $('#vso-end-date').val(
-            this.viewport.getLatestLayerDate().toUTCDateString());
-        $('#vso-end-time').val(
-            this.viewport.getLatestLayerDate().toUTCTimeString());
+            $('#vso-start-time').val(
+                this.viewport.getEarliestLayerDate().toUTCTimeString());
+            $('#vso-end-date').val(
+                this.viewport.getLatestLayerDate().toUTCDateString());
+            $('#vso-end-time').val(
+                this.viewport.getLatestLayerDate().toUTCTimeString());
 
-
-        $('#sdo-start-date').val(
-            this.viewport.getEarliestLayerDate().toUTCDateString());
-        $('#sdo-start-time').val(
-            this.viewport.getEarliestLayerDate().toUTCTimeString());
-        $('#sdo-end-date').val(
-            this.viewport.getLatestLayerDate().toUTCDateString());
-        $('#sdo-end-time').val(
-            this.viewport.getLatestLayerDate().toUTCTimeString());
-
+            $('#sdo-start-date').val(
+                this.viewport.getEarliestLayerDate().toUTCDateString());
+            $('#sdo-start-time').val(
+                this.viewport.getEarliestLayerDate().toUTCTimeString());
+            $('#sdo-end-date').val(
+                this.viewport.getLatestLayerDate().toUTCDateString());
+            $('#sdo-end-time').val(
+                this.viewport.getLatestLayerDate().toUTCTimeString());
+        }
 
         vsoLinks.html('');
         vsoPreviews.html('');
@@ -857,6 +864,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             nickname  = $(accordion).find('.tile-accordion-header-left').html();
             sourceId  = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
             date      = $(accordion).find('.timestamp').html();
+
+
             startDate = $('#vso-start-date').val()
                       + 'T'
                       + $('#vso-start-time').val()
@@ -936,6 +945,15 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
             if ( nickname.search('AIA ') != -1 ||
                  nickname.search('HMI ') != -1 ) {
+
+                startDate = $('#sdo-start-date').val()
+                          + 'T'
+                          + $('#sdo-start-time').val()
+                          + 'Z';
+                endDate   = $('#sdo-end-date').val()
+                          + 'T'
+                          + $('#sdo-end-time').val()
+                          + 'Z';
 
                 imageScale = '23';
                 html = '';
