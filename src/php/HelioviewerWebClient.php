@@ -647,7 +647,7 @@ Note that when an image is not available for the exact date and time you selecte
                             </div>
 
                             <div class="row">
-                                <div class="buttons">
+                                <div id="vso-buttons"  class="buttons">
                                     <div class="text-button fa fa-download" title="Download a Python SunPy script that will request from the Virtual Solar Observatory the data set specified above."> SunPy Script</div>
                                     <div class="text-button fa fa-download" title="Download an IDL SolarSoft script that will request from the Virtual Solar Observatory the data set specified above."> SSW Script</div>
                                     <div class="text-button fa fa-external-link-square" title="Launch a Virtual Solar Observatory web page that will request the data set specified above."> VSO Website</div>
@@ -670,50 +670,50 @@ Note that when an image is not available for the exact date and time you selecte
                         <h1>Request Image Sequence from Cut-out Service</h1>
                         <div>
                             <div class="row">
-                                <div class="label">Start Date:</div>
+                                <div class="label inactive">Start Date:</div>
                                 <div class="field">
-                                    <input type="text" id="sdo-start-date" name="sdo-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+                                    <input type="text" id="sdo-start-date" name="sdo-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" disabled />
 
-                                    <input id="sdo-start-time" name="sdo-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+                                    <input id="sdo-start-time" name="sdo-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
 
-                                    <div class="suffix">UTC</div>
+                                    <div class="suffix inactive">UTC</div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="label">End Date:</div>
+                                <div class="label inactive">End Date:</div>
                                 <div class="field">
-                                    <input type="text" id="sdo-end-date" name="sdo-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+                                    <input type="text" id="sdo-end-date" name="sdo-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" disabled />
 
-                                    <input id="sdo-end-time" name="sdo-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+                                    <input id="sdo-end-time" name="sdo-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
 
-                                    <div class="suffix">UTC</div></div>
+                                    <div class="suffix inactive">UTC</div></div>
                             </div>
 
                             <br />
 
                             <div class="row">
-                                <div class="label">Center (x,y):</div>
+                                <div class="label inactive">Center (x,y):</div>
                                 <div class="field">
-                                    <input type="text" id="sdo-center-x" name="sdo-center-x" value="0" maxlength="6" />
-                                    <input id="sdo-center-y" name="sdo-center-y" value="0" type="text" maxlength="6" />
-                                    <div class="suffix">arcsec</div>
+                                    <input type="text" id="sdo-center-x" name="sdo-center-x" value="0" maxlength="6" disabled />
+                                    <input id="sdo-center-y" name="sdo-center-y" value="0" type="text" maxlength="6" disabled />
+                                    <div class="suffix inactive">arcsec</div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="label">Width:</div>
+                                <div class="label inactive">Width:</div>
                                 <div class="field" style="text-align: left;">
-                                    <input type="text" id="sdo-width" name="sdo-width" value="2000" maxlength="6"/>
-                                    <div class="suffix">arcsec</div>
+                                    <input type="text" id="sdo-width" name="sdo-width" value="2000" maxlength="6" disabled />
+                                    <div class="suffix inactive">arcsec</div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="label">Height:</div>
+                                <div class="label inactive">Height:</div>
                                 <div class="field">
-                                    <input type="text" id="sdo-height" name="sdo-height" value="2000" maxlength="6" />
-                                    <div class="suffix">arcsec</div>
+                                    <input type="text" id="sdo-height" name="sdo-height" value="2000" maxlength="6" disabled />
+                                    <div class="suffix inactive">arcsec</div>
                                 </div>
                             </div>
 
@@ -722,9 +722,9 @@ Note that when an image is not available for the exact date and time you selecte
                             </div>
 
                             <div class="row">
-                                <div class="buttons">
-                                    <div class="text-button fa fa-download" title="Download an IDL SolarSoft script that will request from the SDO Cut-out Service the data set specified above."> SSW Script</div>
-                                    <div class="text-button fa fa-external-link-square" title="Launch a SDO Cut-out Service web page that will request the data set specified above."> SDO Cut-out Service Website</div>
+                                <div id="sdo-buttons" class="buttons">
+                                    <a id="sdo-ssw" class="text-button fa fa-download inactive" title="Download an IDL SolarSoft script that will request from the SDO Cut-out Service the data set specified above." target="_blank"> SSW Script</a>
+                                    <a id="sdo-www" class="text-button fa fa-external-link-square" title="Launch a SDO Cut-out Service web page that will request the data set specified above." target="_blank"> SDO Cut-out Service Website</a>
                                 </div>
                             </div>
 

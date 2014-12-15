@@ -427,7 +427,7 @@ select.layer-select {
 #vso-previews .preview,
 #sdo-previews .preview {
     width: 128px;
-    height: 128px;
+    height: auto;
     border: 1px solid rgba(255,255,255,0.2);
 }
 #vso-previews .preview.start,
@@ -437,4 +437,14 @@ select.layer-select {
 
 .drawer-contents .inline-block {
     display: inline-block;
+}
+
+.drawer-contents input[disabled] {
+    color: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.drawer-contents .label.inactive,
+.drawer-contents .suffix.inactive {
+    color: rgba(255,255,255,0.2);
 }
