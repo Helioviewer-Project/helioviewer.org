@@ -696,6 +696,12 @@ span.ui-icon-hover, div.ui-icon-hover {
     text-decoration: none;
     color: yellow;
 }
+.drawer-contents .row .buttons .text-button.inactive,
+.drawer-contents .row .buttons .text-button.inactive:hover,
+.drawer-contents .row .buttons .text-button.inactive:active {
+    border: 1px solid rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.25);;
+}
 
 
 #user-video-gallery.ui-widget-content {

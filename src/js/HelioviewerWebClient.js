@@ -828,7 +828,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var params = Array(),
             vsoLinks = $('#vso-links'),
             vsoPreviews = $('#vso-previews'),
-            sdoPreviews = $('#sdo-previews');
+            vsoButtons  = $('#vso-buttons'),
+            sdoPreviews = $('#sdo-previews'),
+            sdoButtons  = $('#sdo-buttons'),
+            wavelengths = Array(),
+            width = 0, height = 0, aspect_ratio = 1,
+            self = this;
 
         // If this method is triggered by a change to the Tile Layer dates,
         // then update the values in the export tool.
@@ -851,11 +856,36 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 this.viewport.getLatestLayerDate().toUTCDateString());
             $('#sdo-end-time').val(
                 this.viewport.getLatestLayerDate().toUTCTimeString());
+
+            $('#sdo-center-x').val(Helioviewer.userSettings.get("state.centerX").toFixed(1));
+            $('#sdo-center-y').val(Helioviewer.userSettings.get("state.centerY").toFixed(1));
+
+            width = Math.round($('#helioviewer-viewport').width()*Helioviewer.userSettings.get("state.imageScale")/2.0);
+            $('#sdo-width').val(width);
+
+            height = Math.round($('#helioviewer-viewport').height()*Helioviewer.userSettings.get("state.imageScale")/2.0);
+            $('#sdo-height').val(height);
         }
 
+        // Remove Old Links
         vsoLinks.html('');
+
+        // Remove Old Previews
         vsoPreviews.html('');
         sdoPreviews.html('');
+
+        // Disable Buttons
+        $.each( vsoButtons.children(), function (i, button) {
+            button = $(button);
+            button.removeAttr('href');
+            button.addClass('inactive');
+        });
+        $.each( sdoButtons.children(), function (i, button) {
+            button = $(button);
+            button.removeAttr('href');
+            button.addClass('inactive');
+        });
+
         $.each( $('#accordion-images .dynaccordion-section'), function(i,accordion) {
 
             var html, url, nickname, date, startDate, endDate,
@@ -955,7 +985,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                           + $('#sdo-end-time').val()
                           + 'Z';
 
-                imageScale = '23';
+                aspect_ratio = $('#helioviewer-viewport').width() / $('#helioviewer-viewport').height();
+                width = 256;
+                height = Math.round(256/aspect_ratio);
+
+                imageScale = self.viewport.getImageScale()*8;
+
+                wavelengths.push(nickname.split(' ')[1]);
+
                 html = '';
                 html = '<div class="header">'
                      +     '<input type="checkbox" checked /> '
@@ -964,23 +1001,52 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                      + '<div class="previews">'
                      +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?imageScale='
                      + imageScale
-                     + '&layers=['
-                     + sourceId
-                     + ',1,100]&events=&eventLabels=false&scale=false&scaleType=earth&scaleX=0&scaleY=0&date='
-                     + startDate
-                     + '&x0=0&y0=0&width=128&height=128&display=true&watermark=false" class="preview start" /> '
-                     +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?imageScale='
-                     + imageScale
-                     + '&layers=['
-                     + sourceId
-                     + ',1,100]&events=&eventLabels=false&scale=false&scaleType=earth&scaleX=0&scaleY=0&date='
-                     + endDate
-                     + '&x0=0&y0=0&width=128&height=128&display=true&watermark=false" class="preview end" /> '
+                     + '&layers=[' + sourceId + ',1,100]'
+                     + '&events=&eventLabels=false'
+                     + '&scale=false&scaleType=earth&scaleX=0&scaleY=0'
+                     + '&date=' + startDate
+                     + '&x0=' + $('#sdo-center-x').val()
+                     + '&y0=' + $('#sdo-center-y').val()
+                     + '&width=' + width
+                     + '&height=' + height
+                     + '&display=true&watermark=false" class="preview start" /> '
+                     +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?'
+                     + 'imageScale=' + imageScale
+                     + '&layers=[' + sourceId + ',1,100]'
+                     + '&events=&eventLabels=false'
+                     + '&scale=false&scaleType=earth&scaleX=0&scaleY=0'
+                     + '&date=' + endDate
+                     + '&x0=' + $('#sdo-center-x').val()
+                     + '&y0=' + $('#sdo-center-y').val()
+                     + '&width=' + width
+                     + '&height=' + height
+                     + '&display=true&watermark=false" class="preview end" /> '
                      + '</div>';
                 sdoPreviews.append(html);
             }
 
         });
+
+        if ( wavelengths.length > 0 ) {
+            $('#sdo-www').removeClass('inactive');
+            $('#sdo-www').attr('href', 'http://www.lmsal.com/get_aia_data/'
+                + '?width='  + Math.round($('#helioviewer-viewport').width()*Helioviewer.userSettings.get("state.imageScale")/2.0)
+                + '&height=' + Math.round($('#helioviewer-viewport').height()*Helioviewer.userSettings.get("state.imageScale")/2.0)
+                + '&xCen='   +  $('#sdo-center-x').val()
+                + '&yCen='   + ($('#sdo-center-y').val()*-1)
+                + '&wavelengths='+wavelengths.join(',')
+                + '&startDate=' + $('#vso-start-date').val().replace(/\//g,'-')
+                + '&startTime=' + $('#vso-start-time').val().slice(0,-3)
+                + '&stopDate='  + $('#vso-end-date').val().replace(/\//g,'-')
+                + '&stopTime='  + $('#vso-end-time').val().slice(0,-3)
+                );
+            $.each( $('#accordion-sdo').find('.label, .suffix'), function (i, text) {
+                $(text).removeClass('inactive');
+            });
+            $.each( $('#accordion-sdo').find('input[disabled]'), function (i, input) {
+                $(input).attr('disabled', false);
+            });
+        }
 
     },
 
