@@ -851,7 +851,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         sdoPreviews.html('');
         $.each( $('#accordion-images .dynaccordion-section'), function(i,accordion) {
 
-            var html, nickname, date, startDate, endDate, sourceId, imageScale;
+            var html, url, nickname, date, startDate, endDate,
+                sourceId, imageScale;
 
             nickname  = $(accordion).find('.tile-accordion-header-left').html();
             sourceId  = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
@@ -865,9 +866,26 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                       + $('#vso-end-time').val()
                       + 'Z';
 
-            html = '<a href="" target="_blank"><b>'
+            url  = 'http://virtualsolar.org/cgi-bin/vsoui.pl'
+                 + '?startyear='   + startDate.split('/')[0]
+                 + '&startmonth='  + startDate.split('/')[1]
+                 + '&startday='    + startDate.split('/')[2]
+                 + '&starthour='   + startDate.split('T')[1].split(':')[0]
+                 + '&startminute=' + startDate.split('T')[1].split(':')[1]
+                 + '&endyear='     + endDate.split('/')[0]
+                 + '&endmonth='    + endDate.split('/')[1]
+                 + '&endday='      + endDate.split('/')[2]
+                 + '&endhour='     + endDate.split('T')[1].split(':')[0]
+                 + '&endminute='   + endDate.split('T')[1].split(':')[1]
+                 + '&instrument='  + nickname.split(' ')[0]
+                 + '&wave='        + 'other'
+                 + '&wavemin='     + nickname.split(' ')[1]
+                 + '&wavemax='     + nickname.split(' ')[1]
+                 + '&waveunit='    + 'Angstrom';
+
+            html = '<a href="' + url + '" target="_blank">'
                  + nickname
-                 + '</b> '
+                 + ' '
                  + date
                  + ' UTC <i class="fa fa-external-link-square fa-fw"></i></a>';
             vsoLinks.append(html);
