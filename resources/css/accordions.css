@@ -371,7 +371,7 @@ select.layer-select {
 #vso-links a {
     font-family: 'Courier New', Courier, monospace;
     color: rgba(255,255,0,0.8);
-    font-weight: 400;
+    font-weight: 600;
     font-size: 1.1em;
     padding: 0.2em;
     display: block;
