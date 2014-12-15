@@ -733,17 +733,6 @@ Note that when an image is not available for the exact date and time you selecte
                 </div>
             </div>
 
-            <div id="accordion-hek" class="accordion">
-                <div class="header">
-                    <div class="disclosure-triangle closed">►</div>
-                    <h1>Heliophysics Event Knowledgebase</h1>
-                    <div class="right fa fa-question-circle contextual-help" title="The Heliophysics Event Knowledgebase (HEK) provides a wealth of data for solar features and events."></div>
-                </div>
-                <div class="content">
-                    <div class="section"></div>
-                </div>
-            </div>
-
             <br />
 
             <div class="bottom-shadow"></div>
