@@ -884,8 +884,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $('#sdo-end-time').val(
                 this.viewport.getLatestLayerDate().toUTCTimeString());
 
-            $('#sdo-center-x').val( x0 );
-            $('#sdo-center-y').val( y0 );
+            $('#sdo-center-x').val( x0.toFixed(2) );
+            $('#sdo-center-y').val( y0.toFixed(2) );
 
             $('#sdo-width').val(width.toFixed(2));
             $('#sdo-height').val(height.toFixed(2));
