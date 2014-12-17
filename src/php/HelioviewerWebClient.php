@@ -236,7 +236,7 @@ class HelioviewerWebClient extends HelioviewerClient {
 
 
 
-<div style="width: 100%; 4em; margin: 0; padding: 0; text-align: center;">
+<div style="width: 100%; margin: 0; padding: 0; text-align: center;">
     <!-- Image area select tool -->
     <div id='image-area-select-buttons'>
 
@@ -348,7 +348,7 @@ Note that when an image is not available for the exact date and time you selecte
                                 <div class="suffix">UTC</div>
 
                                 <div id="timeNowBtn" class="fa fa-clock-o right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the most recent available image)s_ for the currently loaded layer(s).">
-                                    <span class="ui-icon-label">LATEST</span>
+                                    <span class="ui-icon-label">NEWEST</span>
                                 </div>
                             </div>
                         </div>
@@ -396,10 +396,6 @@ Note that when an image is not available for the exact date and time you selecte
                 </div>
             </div>
 
-
-            <br />
-
-            <div class="bottom-shadow"></div>
         </div>
     </div>
 
@@ -648,9 +644,9 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div class="row">
                                 <div id="vso-buttons"  class="buttons">
-                                    <div class="text-button fa fa-download" title="Download a Python SunPy script that will request from the Virtual Solar Observatory the data set specified above."> SunPy Script</div>
-                                    <div class="text-button fa fa-download" title="Download an IDL SolarSoft script that will request from the Virtual Solar Observatory the data set specified above."> SSW Script</div>
-                                    <div class="text-button fa fa-external-link-square" title="Launch a Virtual Solar Observatory web page that will request the data set specified above."> VSO Website</div>
+                                    <a id="vso-sunpy" class="text-button fa fa-download inactive" title="Download a Python SunPy script that will request from the Virtual Solar Observatory the data set specified above."> SunPy Script</a>
+                                    <a id="vso-ssw" class="text-button fa fa-download inactive" title="Download an IDL SolarSoft script that will request from the Virtual Solar Observatory the data set specified above."> SSW Script</a>
+                                    <a id="vso-www" class="text-button fa fa-external-link-square inactive" title="Launch a Virtual Solar Observatory web page that will request the data set specified above." target="_blank"> VSO Website</a>
                                 </div>
                             </div>
 
@@ -723,7 +719,7 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div class="row">
                                 <div id="sdo-buttons" class="buttons">
-                                    <a id="sdo-ssw" class="text-button fa fa-download inactive" title="Download an IDL SolarSoft script that will request from the SDO Cut-out Service the data set specified above." target="_blank"> SSW Script</a>
+                                    <a id="sdo-ssw" class="text-button fa fa-download inactive" title="Download an IDL SolarSoft script that will request from the SDO Cut-out Service the data set specified above."> SSW Script</a>
                                     <a id="sdo-www" class="text-button fa fa-external-link-square" title="Launch a SDO Cut-out Service web page that will request the data set specified above." target="_blank"> SDO Cut-out Service Website</a>
                                 </div>
                             </div>
@@ -732,10 +728,6 @@ Note that when an image is not available for the exact date and time you selecte
                     </div>
                 </div>
             </div>
-
-            <br />
-
-            <div class="bottom-shadow"></div>
         </div>
     </div>
 
