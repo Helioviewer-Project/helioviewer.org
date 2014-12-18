@@ -1015,7 +1015,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
                 sourceIDsSDO.push(sourceId);
 
-                wavelengths.push(nickname.split(' ')[1]);
+                wavelengths.push(nickname.split(' ')[1].padLeft('0',3));
 
                 html = '';
                 html = '<div class="header">'
@@ -1158,7 +1158,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 + '&startTime=' + $('#vso-start-time').val().slice(0,-3)
                 + '&stopDate='  + $('#vso-end-date').val().replace(/\//g,'-')
                 + '&stopTime='  + $('#vso-end-time').val().slice(0,-3)
-                );
+                + '&cadence=12'
+            );
             $.each( $('#accordion-sdo').find('.label, .suffix'), function (i, text) {
                 $(text).removeClass('inactive');
             });
