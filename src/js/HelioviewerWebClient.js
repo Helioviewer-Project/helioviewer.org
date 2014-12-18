@@ -829,7 +829,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             vsoButtons     = $('#vso-buttons'),
             sdoPreviews    = $('#sdo-previews'),
             sdoButtons     = $('#sdo-buttons'),
-            wavelengths    = Array(),
+            instruments    = Array(),
+            wavesAll       = Array(),
+            wavesSDO       = Array(),
             sourceIDsAll   = Array(),
             sourceIDsSDO   = Array(),
             startDate,
@@ -932,6 +934,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
             imageLayer = '['+sourceId+',1,100]';
             sourceIDsAll.push(sourceId);
+            instruments.push(nickname.split(' ')[0]);
+            if ( parseInt(nickname.split(' ')[1], 10) ) {
+                wavesAll.push(parseInt(nickname.split(' ')[1], 10));
+            }
 
             url  = 'http://virtualsolar.org/cgi-bin/vsoui.pl'
                  + '?startyear='   + startDate.split('/')[0]
@@ -1015,7 +1021,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
                 sourceIDsSDO.push(sourceId);
 
-                wavelengths.push(nickname.split(' ')[1].padLeft('0',3));
+                wavesSDO.push(nickname.split(' ')[1].padLeft('0',3));
 
                 html = '';
                 html = '<div class="header">'
@@ -1113,38 +1119,29 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                                 [body, jGrowlOpts, true, true]);
         });
 
-
         // VSO Website Button
         $('#vso-www').attr('href', 'http://virtualsolar.org/cgi-bin/vsoui.pl'
-            + '?startyear=2014'
-            + '&startmonth=11'
-            + '&startday=21'
-            + '&starthour=17'
-            + '&startminute=00'
-            + '&endyear=2014'
-            + '&endmonth=11'
-            + '&endday=21'
-            + '&endhour=20'
-            + '&endminute=59'
-            + '&instrument=AIA'
-            + '&instrument=EIT'
-            + '&instrument=HMI'
-            + '&instrument=LASCO'
-            + '&instrument=MDI'
-            + '&instrument=SECCHI'
-            + '&instrument=SXT'
-            + '&instrument=TRACE'
-            + '&instrument=XRT'
-            + '&wave=other'
-            + '&wavemin=94'
-            + '&wavemax=335'
-            + '&waveunit=Angstrom'
+            + '?startyear='   +   startDate.split('-')[0]
+            + '&startmonth='  +   startDate.split('-')[1]
+            + '&startday='    +   startDate.split('-')[2].split('T')[0]
+            + '&starthour='   +   startDate.split('T')[1].split(':')[0]
+            + '&startminute=' +   startDate.split('T')[1].split(':')[1]
+            + '&endyear='     +     endDate.split('-')[0]
+            + '&endmonth='    +     endDate.split('-')[1]
+            + '&endday='      +     endDate.split('-')[2].split('T')[0]
+            + '&endhour='     +     endDate.split('T')[1].split(':')[0]
+            + '&endminute='   +     endDate.split('T')[1].split(':')[1]
+            + '&instrument='  + instruments.join('&instrument=')
+            + '&wave='        +            'other'
+            + '&wavemin='     +    Math.min.apply(Math,wavesAll)
+            + '&wavemax='     +    Math.max.apply(Math,wavesAll)
+            + '&waveunit='    +            'Angstrom'
         );
         $('#vso-www').removeClass('inactive');
 
 
 
-        if ( wavelengths.length > 0 ) {
+        if ( wavesSDO.length > 0 ) {
 
             // SDO SolarSoft Script Button
             $('#sdo-ssw').removeClass('inactive');
@@ -1177,7 +1174,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 + '&height=' + $('#sdo-height').val()
                 + '&xCen='   +  $('#sdo-center-x').val()
                 + '&yCen='   + ($('#sdo-center-y').val()*-1)
-                + '&wavelengths='+wavelengths.join(',')
+                + '&wavelengths=' + wavesSDO.join(',')
                 + '&startDate=' + $('#vso-start-date').val().replace(/\//g,'-')
                 + '&startTime=' + $('#vso-start-time').val().slice(0,-3)
                 + '&stopDate='  + $('#vso-end-date').val().replace(/\//g,'-')
