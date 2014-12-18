@@ -318,6 +318,7 @@ var HelioviewerViewport = Class.extend(
         }
 
         this.updateViewportRanges(coordinates);
+        $(document).trigger('update-external-datasource-integration');
     },
 
     /**
