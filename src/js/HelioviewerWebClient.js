@@ -987,7 +987,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
             html = '';
             html = '<div class="header">'
-                 +     '<input type="checkbox" checked /> '
+                 // +     '<input type="checkbox" checked /> '
                  +     nickname
                  + '</div>'
                  + '<div class="previews">'
@@ -1027,7 +1027,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
                 html = '';
                 html = '<div class="header">'
-                     +     '<input type="checkbox" checked /> '
+                     // +     '<input type="checkbox" checked /> '
                      +     nickname
                      + '</div>'
                      + '<div class="previews">'

@@ -109,9 +109,6 @@ var MovieManagerUI = MediaManagerUI.extend(
             baseParams['movieLength'] = formParams['movie-length'];
         }
 
-        //console.dir(params);
-        //return false;
-
         // Submit request
         this._queueMovie(params);
 
@@ -120,7 +117,6 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         this.show();
 
-        //this.hideDialogs();
         this.building = false;
     },
 
@@ -240,12 +236,10 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         // ROI selection buttons
         this._fullViewportBtn.click(function () {
-            self.hide();
             self._showMovieSettings();
         });
 
         this._selectAreaBtn.click(function () {
-            self.hide();
             $(document).trigger("enable-select-tool",
                                 $.proxy(self._showMovieSettings, self));
         });
@@ -329,7 +323,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         $("#movie-settings-cancel-btn").button().click(function (e) {
             self._advancedSettings.hide();
             self._settingsDialog.hide();
-            //self.show();
+            self.show();
         });
 
         // Submit button
