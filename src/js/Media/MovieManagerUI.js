@@ -240,6 +240,15 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
 
         this._selectAreaBtn.click(function () {
+            if ( helioviewer.drawerLeftOpened ) {
+                helioviewer.drawerLeftClick();
+            }
+            if ( helioviewer.drawerRightOpened ) {
+                helioviewer.drawerRightClick();
+            }
+            if ( helioviewer.drawerBottomOpened ) {
+                helioviewer.drawerBottomClick();
+            }
             $(document).trigger("enable-select-tool",
                                 $.proxy(self._showMovieSettings, self));
         });
