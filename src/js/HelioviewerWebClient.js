@@ -1099,7 +1099,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 + '&startDate=' + startDate
                 + '&endDate=' + endDate
                 + '&lang=sswidl'
-                + '&provider=vso';
+                + '&provider=vso'
+                + '&x1=' + x1
+                + '&y1=' + y1
+                + '&x2=' + x2
+                + '&y2=' + y2;
             body = '<a href="' + url + '">'
                  +     'Your IDL/SolarSoft script for requesting science data '
                  +     'from the VSO is ready.<br /><br />'
