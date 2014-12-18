@@ -1115,7 +1115,35 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 
         // VSO Website Button
-        $('#vso-www').attr('href', 'http://virtualsolar.org/');
+        $('#vso-www').attr('href', 'http://virtualsolar.org/cgi-bin/vsoui.pl'
+            + '?startyear=2014'
+            + '&startmonth=11'
+            + '&startday=21'
+            + '&starthour=00'
+            + '&startminute=00'
+            + '&endyear=2014'
+            + '&endmonth=11'
+            + '&endday=21'
+            + '&endhour=23'
+            + '&endminute=59'
+            + '&provider=JSOC'
+            + '&instrument=JSOC.SDO.AIA'
+            + '&instrument=JSOC.SDO.HMI'
+            + '&source=SDAC.SDO'
+            + '&instrument=SDAC.SDO.AIA'
+            + '&instrument=SDAC.SOHO.EIT'
+            + '&instrument=SDAC.SOHO.LASCO'
+            + '&instrument=SDAC.SOHO.MDI'
+            + '&source=SDAC.TRACE'
+            + '&instrument=SDAC.TRACE.TRACE'
+            + '&provider=SHA'
+            + '&instrument=SHA.SOHO.MDI'
+            + '&instrument=SSC.STEREO_A.SECCHI'
+            + '&instrument=SSC.STEREO_B.SECCHI'
+            + '&wavemin='
+            + '&wavemax='
+            + '&waveunit=Angstrom'
+        );
         $('#vso-www').removeClass('inactive');
 
 
