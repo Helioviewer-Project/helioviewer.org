@@ -942,19 +942,21 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             url  = 'http://virtualsolar.org/cgi-bin/vsoui.pl'
                  + '?startyear='   + startDate.split('/')[0]
                  + '&startmonth='  + startDate.split('/')[1]
-                 + '&startday='    + startDate.split('/')[2]
+                 + '&startday='    + startDate.split('/')[2].split('T')[0]
                  + '&starthour='   + startDate.split('T')[1].split(':')[0]
                  + '&startminute=' + startDate.split('T')[1].split(':')[1]
                  + '&endyear='     + endDate.split('/')[0]
                  + '&endmonth='    + endDate.split('/')[1]
-                 + '&endday='      + endDate.split('/')[2]
+                 + '&endday='      + endDate.split('/')[2].split('T')[0]
                  + '&endhour='     + endDate.split('T')[1].split(':')[0]
                  + '&endminute='   + endDate.split('T')[1].split(':')[1]
-                 + '&instrument='  + nickname.split(' ')[0]
-                 + '&wave='        + 'other'
-                 + '&wavemin='     + nickname.split(' ')[1]
-                 + '&wavemax='     + nickname.split(' ')[1]
-                 + '&waveunit='    + 'Angstrom';
+                 + '&instrument='  + nickname.split(' ')[0];
+            if ( parseInt(nickname.split(' ')[1], 10) ) {
+                url += '&wave='        + 'other'
+                    +  '&wavemin='     + nickname.split(' ')[1]
+                    + '&wavemax='     + nickname.split(' ')[1]
+                    + '&waveunit='    + 'Angstrom';
+            }
 
             html = '<a href="' + url + '" target="_blank">'
                  + nickname
