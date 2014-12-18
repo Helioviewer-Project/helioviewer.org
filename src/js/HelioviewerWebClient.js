@@ -350,10 +350,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             }
             self.displayURL(self.toURL(), msg);
         });
-        //$('#email-button').click($.proxy(this.displayMailForm, this));
 
-        // 12/08/2010: Disabling JHelioviewer JNLP launching until better support is added
-        //$('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
 
         // Highlight both text and icons for text buttons
 
@@ -842,6 +839,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             x0, y0, width, height,
             x1, y1, x2, y2,
             width, height,
+            jGrowlOpts = {sticky:true, header:'Just now'},
+            url, body,
             self = this;
 
         vport = this.viewport.getViewportInformation();
@@ -902,11 +901,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $.each( vsoButtons.children(), function (i, button) {
             button = $(button);
             button.removeAttr('href');
+            button.unbind('click');
             button.addClass('inactive');
         });
         $.each( sdoButtons.children(), function (i, button) {
             button = $(button);
             button.removeAttr('href');
+            button.unbind('click');
             button.addClass('inactive');
         });
 
@@ -1067,39 +1068,49 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                   + 'Z';
 
 
-
-        $('#vso-sunpy').attr('href', Helioviewer.api+'/'
-            + '?action=getSciDataScript'
-            + '&imageScale=' + imageScale
-            + '&sourceIds=[' + sourceIDsAll.join(',')+']'
-            + '&startDate=' + startDate
-            + '&endDate=' + endDate
-            + '&lang=sunpy'
-            + '&provider=vso'
-            // + '&x1=' + x1
-            // + '&y1=' + y1
-            // + '&x2=' + x2
-            // + '&y2=' + y2
-            );
+        // VSO SunPy Script Button
         $('#vso-sunpy').removeClass('inactive');
+        $('#vso-sunpy').bind('click', function (e) {
+            url = Helioviewer.api + '/'
+                + '?action=getSciDataScript'
+                + '&imageScale=' + imageScale
+                + '&sourceIds=[' + sourceIDsAll.join(',')+']'
+                + '&startDate=' + startDate
+                + '&endDate=' + endDate
+                + '&lang=sunpy'
+                + '&provider=vso';
+            body = '<a href="' + url + '">'
+                 +     'Your Python/SunPy script for requesting science data '
+                 +     'from the VSO is ready.<br /><br />'
+                 +     '<b>Click here to download.</b>'
+                 + '</a>';
+            $(document).trigger("message-console-log",
+                                [body, jGrowlOpts, true, true]);
+        });
 
 
-        $('#vso-ssw').attr('href', Helioviewer.api+'/'
-            + '?action=getSciDataScript'
-            + '&imageScale=' + imageScale
-            + '&sourceIds=[' + sourceIDsAll.join(',')+']'
-            + '&startDate=' + startDate
-            + '&endDate=' + endDate
-            + '&lang=sswidl'
-            + '&provider=vso'
-            // + '&x1=' + x1
-            // + '&y1=' + y1
-            // + '&x2=' + x2
-            // + '&y2=' + y2
-            );
+        // VSO SolarSoft Script Button
         $('#vso-ssw').removeClass('inactive');
+        $('#vso-ssw').bind('click', function (e) {
+            url = Helioviewer.api + '/'
+                + '?action=getSciDataScript'
+                + '&imageScale=' + imageScale
+                + '&sourceIds=[' + sourceIDsAll.join(',')+']'
+                + '&startDate=' + startDate
+                + '&endDate=' + endDate
+                + '&lang=sswidl'
+                + '&provider=vso';
+            body = '<a href="' + url + '">'
+                 +     'Your IDL/SolarSoft script for requesting science data '
+                 +     'from the VSO is ready.<br /><br />'
+                 +     '<b>Click here to download.</b>'
+                 + '</a>';
+            $(document).trigger("message-console-log",
+                                [body, jGrowlOpts, true, true]);
+        });
 
 
+        // VSO Website Button
         $('#vso-www').attr('href', 'http://virtualsolar.org/');
         $('#vso-www').removeClass('inactive');
 
@@ -1107,7 +1118,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         if ( wavelengths.length > 0 ) {
 
-            $('#sdo-ssw').attr('href', Helioviewer.api+'/'
+            // SDO SolarSoft Script Button
+            $('#sdo-ssw').removeClass('inactive');
+            $('#sdo-ssw').bind('click', function (e) {
+                url = Helioviewer.api+'/'
                 + '?action=getSciDataScript'
                 + '&imageScale=' + imageScale
                 + '&sourceIds=[' + sourceIDsSDO.join(',')+']'
@@ -1118,10 +1132,18 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 + '&x1=' + x1
                 + '&y1=' + y1
                 + '&x2=' + x2
-                + '&y2=' + y2
-                );
-            $('#sdo-ssw').removeClass('inactive');
+                + '&y2=' + y2;
+                body = '<a href="' + url + '">'
+                     +     'Your IDL/SolarSoft script for requesting science '
+                     +     'data from the AIA/HMI Cut-out Serivce is ready.'
+                     +     '<br /><br />'
+                     +     '<b>Click here to download.</b>'
+                     + '</a>';
+                $(document).trigger("message-console-log",
+                                    [body, jGrowlOpts, true, true]);
+            });
 
+            // SDO Website Button
             $('#sdo-www').attr('href', 'http://www.lmsal.com/get_aia_data/'
                 + '?width='  + $('#sdo-width').val()
                 + '&height=' + $('#sdo-height').val()

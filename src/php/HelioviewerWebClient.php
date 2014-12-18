@@ -644,8 +644,8 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div class="row">
                                 <div id="vso-buttons"  class="buttons">
-                                    <a id="vso-sunpy" class="text-button fa fa-download inactive" title="Download a Python SunPy script that will request from the Virtual Solar Observatory the data set specified above."> SunPy Script</a>
-                                    <a id="vso-ssw" class="text-button fa fa-download inactive" title="Download an IDL SolarSoft script that will request from the Virtual Solar Observatory the data set specified above."> SSW Script</a>
+                                    <div id="vso-sunpy" class="text-button fa fa-download inactive" title="Download a Python SunPy script that will request from the Virtual Solar Observatory the data set specified above."> SunPy Script</div>
+                                    <div id="vso-ssw" class="text-button fa fa-download inactive" title="Download an IDL SolarSoft script that will request from the Virtual Solar Observatory the data set specified above."> SSW Script</div>
                                     <a id="vso-www" class="text-button fa fa-external-link-square inactive" title="Launch a Virtual Solar Observatory web page that will request the data set specified above." target="_blank"> VSO Website</a>
                                 </div>
                             </div>
@@ -719,7 +719,7 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div class="row">
                                 <div id="sdo-buttons" class="buttons">
-                                    <a id="sdo-ssw" class="text-button fa fa-download inactive" title="Download an IDL SolarSoft script that will request from the SDO Cut-out Service the data set specified above."> SSW Script</a>
+                                    <div id="sdo-ssw" class="text-button fa fa-download inactive" title="Download an IDL SolarSoft script that will request from the SDO Cut-out Service the data set specified above."> SSW Script</div>
                                     <a id="sdo-www" class="text-button fa fa-external-link-square" title="Launch a SDO Cut-out Service web page that will request the data set specified above." target="_blank"> SDO Cut-out Service Website</a>
                                 </div>
                             </div>
