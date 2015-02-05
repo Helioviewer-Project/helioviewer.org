@@ -418,7 +418,7 @@ Note that when an image is not available for the exact date and time you selecte
         <div class="drawer-contents">
             <div class="top-shadow"></div>
 
-            <div id="accordion-news" class="accordion">
+<!--             <div id="accordion-news" class="accordion">
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Helioviewer Project News</h1>
@@ -426,11 +426,11 @@ Note that when an image is not available for the exact date and time you selecte
                 </div>
                 <div class="content">
                     <div class="section">
-                        <!-- Recent Blog Entries -->
                         <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all shadow"></div>
                     </div>
                 </div>
             </div>
+-->
 
             <div id="accordion-youtube" class="accordion">
                 <div class="header">
@@ -732,10 +732,10 @@ Note that when an image is not available for the exact date and time you selecte
     </div>
 
 
-    <div id="helioviewer-drawer-bottom">
+ <!--    <div id="helioviewer-drawer-bottom">
         <div class="drawer-tab drawer-tab-bottom">Data Timeline</div>
         <div class="drawer-contents"></div>
-    </div>
+    </div> -->
 
     <!-- Glossary dialog -->
     <div id='glossary-dialog'></div>

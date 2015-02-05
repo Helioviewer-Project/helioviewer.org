@@ -1,77 +1,211 @@
-/**
- * http://matthewjamestaylor.com/blog/holy-grail-no-quirks-mode.htm
- */
-body {
-    margin:0;
-    padding:0;
-    width:100%;
-    min-width:972px;   /* Minimum width of layout - remove line if not required */
-                       /* The min-width property does not work in old versions of Internet Explorer */
+
+
+
+.drawer-contents .header {
+    cursor: pointer;
 }
 
-#header {
-    float:left;
-    width:100%;
-    padding:0;
-    margin:0;
-    height: 12px;
+
+
+
+.drawer-contents .content {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
 }
 
-#colmask {
-    position:relative;  /* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
-    clear:both;
-    float:left;
-    width:100%;         /* width of whole page */
-    overflow:hidden;        /* This chops off any overhanging divs */
+.drawer-contents .content .section {
+    margin: 0;
+    padding: 0.75em 1em 0.25em 1em;
+    background: -o-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
+    background: -moz-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
+    background: -webkit-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
+    background: linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
 }
-#colmid {
-    float:left;
-    width:200%;
-    position:relative;
-    left: 284px;
+
+.drawer-contents .content .section h1 {
+    width: 100%;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 600;
+    padding: 0 0 0.5em 0;
+    margin: 0 0 1em 0;
+    border-bottom: 1px solid rgba(255,255,255,0.25);
 }
-#colright {
-    float:left;
-    width:100%;
-    position:relative;
-    left:50%;
-    margin-left: -568px; /*-288px;*/
+
+
+
+.drawer-contents .fa.removeBtn {
+    font-size: 1.2em;
+    background: none;
+    color: rgba(255,255,255,0.8);
 }
-#col1wrap {
-    float:right;
-    width:50%;
-    position:relative;
-    right:100%;
+.drawer-contents .fa.removeBtn:hover {
+    background: none;
+    color: white;
 }
-#col1pad {
-    margin-left: 568px; /* margin:0 16px 0 290px; */
-    overflow:hidden;
+
+.drawer-contents .fa.removeBtn:active {
+    background: none;
+    color: yellow;
 }
-#col1 {
-    width:100%;
-    overflow:hidden;
+
+
+
+.drawer-contents .fa.layerManagerBtn {
+    font-size: 1.2em;
+    background: none;
+    color: rgba(0,255,0,1.0);
 }
-#col2 {
-    float:left;
-    width:280px;
-    position:relative;
-    margin-left:-50%;
-    left: 286px; /*left:4px;*/
-    overflow:hidden;
+.drawer-contents .fa.layerManagerBtn:hover {
+    color: rgba(0,255,0,0.75);
 }
-#col3 {
-    float:left;
-    width:280px;
-    position:relative;
-    left:2px;
-    padding-bottom: 5px;
-    overflow:hidden;
+.drawer-contents .fa.layerManagerBtn:active {
+    color: rgba(0,255,0,0.50);
 }
-#footer {
-    clear:both;
-    float:left;
-    width:100%;
-	height: 28px;
-    padding:0;
-    margin:0;
+.drawer-contents .fa.layerManagerBtn.hidden {
+    color: rgba(255,0,0,1.0);
+}
+.drawer-contents .fa.layerManagerBtn.hidden:hover {
+    color: rgba(255,0,0,0.75);
+}
+.drawer-contents .fa.layerManagerBtn.hidden:active {
+    color: rgba(255,0,0,0.50);
+}
+
+
+
+/*  F/E Labels Visibility Toggle  */
+.drawer-contents .fa.labelsBtn {
+    font-size: 1.2em;
+    background: none;
+    color: rgba(0,255,0,1.0);
+}
+.drawer-contents .fa.labelsBtn:hover {
+    color: rgba(0,255,0,0.75);
+}
+.drawer-contents .fa.labelsBtn:active {
+    color: rgba(0,255,0,0.50);
+}
+.drawer-contents .fa.labelsBtn.hidden {
+    color: rgba(255,0,0,1.0);
+}
+.drawer-contents .fa.labelsBtn.hidden:hover {
+    color: rgba(255,0,0,0.75);
+}
+.drawer-contents .fa.labelsBtn.hidden:active {
+    color: rgba(255,0,0,0.50);
+}
+
+.drawer-contents .layer-Head .left {
+    float: left;
+    text-align: left;
+    width: 18em;
+}
+.drawer-contents .layer-Head .right {
+    float: right;
+    text-align: right;
+    width: 18em;
+}
+
+.drawer-contents .ui-accordion-header .fa.fa-fw {
+    padding: 0.1em 0.0em 0.1em 0.5em;
+}
+
+
+
+.drawer-contents .layer-Head .left {
+    float: left;
+    text-align: left;
+    width: 42%;
+}
+.drawer-contents .layer-Head .right {
+    float: right;
+    text-align: right;
+    width: 52%;
+}
+
+
+#accordion-date .row .label {
+    width: 15%;
+    text-align: right;
+}
+#accordion-date .row .field {
+    width: 80%;
+    text-align: left;
+}
+
+.drawer-contents .row .label {
+    width: 30%;
+    text-align: right;
+}
+.drawer-contents .row .field {
+    text-align: left;
+    width: 65%;
+}
+.drawer-contents .row {
+    margin: 0.5em 0;
+    text-align: center;
+    clear: both;
+}
+.drawer-contents .row .buttons {
+    margin: 0 auto;
+    text-align: center;
+    clear: both;
+    min-height: 2em;
+    padding: 0.25em 0;
+    min-width: 50%;
+}
+
+.drawer-contents .row .buttons .text-button {
+    color: rgba(255,255,255,0.9);
+    background-color: transparent;
+    border: 1px solid rgba(255,255,255,0.9);
+    -o-border-radius: 1em;
+    -moz-border-radius: 1em;
+    -webkit-border-radius: 1em;
+    border-radius: 1em;
+    padding: 0.4em 0.6em ;
+    font-weight: 400;
+    font-size: 1em;
+    margin: 0 0.25em;
+}
+.drawer-contents .row .buttons .text-button:hover {
+    color: yellow;
+    background-color: transparent;
+    border: 1px solid rgba(255,255,0,1);
+    cursor: pointer;
+}
+.drawer-contents .row .buttons .text-button a:hover {
+    text-decoration: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+.drawer-contents .row .buttons .text-button:active {
+    color: white;
+    border: 1px solid white;
+    cursor: pointer;
+}
+.drawer-contents .row .buttons .text-button a:active {
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+}
+
+
+
+.drawer-contents .inline-block {
+    display: inline-block;
+}
+
+.drawer-contents input[disabled] {
+    color: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.drawer-contents .label.inactive,
+.drawer-contents .suffix.inactive {
+    color: rgba(255,255,255,0.2);
 }

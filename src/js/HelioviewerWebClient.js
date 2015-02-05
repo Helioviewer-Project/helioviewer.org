@@ -101,12 +101,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 setTimeout(
                     function () {
                         self.drawerRightClick(true);
-                        $('#accordion-news .disclosure-triangle').click();
-                        //$('#accordion-youtube .disclosure-triangle').click();
-                        $('#accordion-movie .disclosure-triangle').click();
-                        $('#accordion-screenshot .disclosure-triangle').click();
-                        $('#accordion-vso .disclosure-triangle').click();
-                        $('#accordion-sdo .disclosure-triangle').click();
+                        // $('#accordion-news .disclosure-triangle').click();
+                        $('#accordion-youtube .disclosure-triangle').click();
+                        // $('#accordion-movie .disclosure-triangle').click();
+                        // $('#accordion-screenshot .disclosure-triangle').click();
+                        // $('#accordion-vso .disclosure-triangle').click();
+                        // $('#accordion-sdo .disclosure-triangle').click();
                     },
                     250
                 );
