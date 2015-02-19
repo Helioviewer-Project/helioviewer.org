@@ -26,18 +26,44 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     init: function (urlSettings, serverSettings, zoomLevels) {
         var urlDate, imageScale, paddingHeight, accordionsToOpen, self=this;
 
-        this.header                  = $('#helioviewer-header');
-        this.viewport                = $('#helioviewer-viewport');
-        this.drawerLeft              = $('#helioviewer-drawer-left');
-        this.drawerLeftOpened        = false;
-        this.drawerLeftOpenedWidth   = '25em';
-        this.drawerRight             = $('#helioviewer-drawer-right');
-        this.drawerRightOpened       = false;
-        this.drawerRightOpenedWidth  = '25em';
-        this.drawerBottom            = $('#helioviewer-drawer-bottom');
-        this.drawerBottomOpened      = false;
-        this.drawerBottomOpenedHeight= '25em';
-        this.drawerSpeed             = 200;
+        this.header                   = $('#helioviewer-header');
+        this.viewport                 = $('#helioviewer-viewport');
+        this.drawerSpeed              = 0;
+        this.drawerLeft               = $('#helioviewer-drawer-left');
+        this.drawerLeftOpened         = false;
+        this.drawerLeftOpenedWidth    = '25em';
+        this.drawerRight              = $('#helioviewer-drawer-right');
+        this.drawerRightOpened        = false;
+        this.drawerRightOpenedWidth   = '25em';
+        this.drawerNews               = $('#hv-drawer-news');
+        this.drawerNewsOpenedHeight   = 'auto';
+        this.drawerNewsOpenedWidth    = '25em';
+        this.drawerMovies             = $('#hv-drawer-movies');
+        this.drawerMoviesOpenedHeight = 'auto';
+        this.drawerMoviesOpenedWidth  = '25em';
+        this.drawerScreenshots             = $('#hv-drawer-screenshots');
+        this.drawerScreenshotsOpenedHeight = 'auto';
+        this.drawerScreenshotsOpenedWidth  = '25em';
+        this.drawerYoutube             = $('#hv-drawer-youtube');
+        this.drawerYoutubeOpenedHeight = '55em';
+        this.drawerYoutubeOpenedWidth  = '25em';
+        this.drawerData                = $('#hv-drawer-data');
+        this.drawerDataOpenedHeight    = 'auto';
+        this.drawerDataOpenedWidth     = '25em';
+        this.drawerShare               = $('#hv-drawer-share');
+        this.drawerShareOpenedHeight   = 'auto';
+        this.drawerShareOpenedWidth    = '25em';
+
+        this.tabbedDrawers = ['#hv-drawer-news', '#hv-drawer-movies',
+                              '#hv-drawer-screenshots', '#hv-drawer-youtube',
+                              '#hv-drawer-data', '#hv-drawer-share'];
+        this.tabbedDrawerButtons = {
+            '#hv-drawer-news'        : '#news-button',
+            '#hv-drawer-youtube'     : '#youtube-button',
+            '#hv-drawer-movies'      : '#movies-button',
+            '#hv-drawer-screenshots' : '#screenshots-button',
+            '#hv-drawer-data'        : '#data-button',
+            '#hv-drawer-share'       : '#share-button'};
 
         this._super(urlSettings, serverSettings, zoomLevels);
 
@@ -72,7 +98,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.earthScale = new ImageScale();
         this.earthScale.earthMinimize();
 
-        this.displayBlogFeed(1, false);
+        this.displayBlogFeed(6, false);
 
         this._userVideos = new UserVideoGallery(this.serverSettings.videoFeed);
 
@@ -95,21 +121,24 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         setTimeout(
             function () {
                 self.drawerLeftClick(true);
+
                 $('#accordion-date   .disclosure-triangle').click();
                 $('#accordion-images .disclosure-triangle').click();
-                $('#accordion-events .disclosure-triangle').click();
+                //$('#accordion-events .disclosure-triangle').click();
+
                 setTimeout(
                     function () {
-                        self.drawerRightClick(true);
-                        // $('#accordion-news .disclosure-triangle').click();
-                        $('#accordion-youtube .disclosure-triangle').click();
-                        // $('#accordion-movie .disclosure-triangle').click();
-                        // $('#accordion-screenshot .disclosure-triangle').click();
-                        // $('#accordion-vso .disclosure-triangle').click();
-                        // $('#accordion-sdo .disclosure-triangle').click();
+                        self.drawerYoutubeClick(true);
                     },
                     250
                 );
+
+                $('#accordion-youtube     .disclosure-triangle').click();
+                $('#accordion-news        .disclosure-triangle').click();
+                $('#accordion-screenshots .disclosure-triangle').click();
+                $('#accordion-movies      .disclosure-triangle').click();
+                $('#accordion-vso         .disclosure-triangle').click();
+                $('#accordion-sdo         .disclosure-triangle').click();
             },
             500
         );
@@ -337,7 +366,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $('.drawer-tab', this.drawerLeft).bind('click', $.proxy(this.drawerLeftClick, this));
         this.drawerLeft.bind('mouseover', function (event) { event.stopPropagation(); });
         $('.drawer-tab', this.drawerRight).bind('click', $.proxy(this.drawerRightClick, this));
-        this.drawerBottom.bind('click', $.proxy(this.drawerBottomClick, this));
+
+        $('#news-button').bind('click', $.proxy(this.drawerNewsClick, this));
+        $('#youtube-button').bind('click', $.proxy(this.drawerYoutubeClick, this));
+        $('#movies-button').bind('click', $.proxy(this.drawerMoviesClick, this));
+        $('#screenshots-button').bind('click', $.proxy(this.drawerScreenshotsClick, this));
+        $('#data-button').bind('click', $.proxy(this.drawerDataClick, this));
+        $('#share-button').bind('click', $.proxy(this.drawerShareClick, this));
+
         $('.drawer-contents .header').bind('click', $.proxy(this.accordionHeaderClick, this));
         $('.contextual-help').bind('click', $.proxy(this.contextualHelpClick, this));
         $(document).bind("updateHeightsInsideViewportContainer", $.proxy(this.updateHeightsInsideViewportContainer, this));
@@ -680,32 +716,163 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         return;
     },
 
-    drawerBottomClick: function(openNow) {
-        if ( this.drawerBottomOpened || openNow === false ) {
-            this.drawerBottom.css('height', 0);
-            $('.drawer-contents', this.drawerBottom).hide();
-            this.drawerBottom.css('padding', 0);
-            for (var i=1; i<=this.drawerSpeed; i=i+10) {
-                setTimeout(this.updateHeightsInsideViewportContainer, i);
-            }
-            setTimeout(
-                this.updateHeightsInsideViewportContainer,
-                this.drawerSpeed*2
-            );
+    drawerNewsClick: function() {
+        var self = this,
+            buttonId = '#news-button';
 
-            this.drawerBottomOpened = false;
+        this.closeTabDrawersExcept(buttonId, '#'+this.drawerNews.attr('id'));
+
+        if ( $(buttonId).hasClass('opened') ) {
+            $('.drawer-contents', self.drawerNews).fadeOut(400);
+            self.drawerNews.css('height', 0);
+            self.drawerNews.css('padding', 0);
+            self.drawerNews.hide();
+            self.updateHeightsInsideViewportContainer();
+            $(buttonId).removeClass('opened');
         }
-        else if ( !this.drawerBottomOpened || openNow === true ) {
-            this.drawerBottom.css('height', this.drawerBottomOpenedHeight);
-            for (var i=1; i<=this.drawerSpeed; i=i+10) {
-                setTimeout(this.updateHeightsInsideViewportContainer, i);
-            }
+        else if ( !$(buttonId).hasClass('opened') ) {
+            self.drawerNews.css('height', self.drawerNewsOpenedHeight);
             setTimeout(function () {
-                $('.drawer-contents', this.drawerBottom).show();
+                self.drawerNews.show();
+                $('.drawer-contents', self.drawerNews).fadeIn(400);
+                self.updateHeightsInsideViewportContainer();
+            }, self.drawerSpeed);
+            $(buttonId).addClass('opened');
+        }
+
+        return;
+    },
+
+    drawerYoutubeClick: function() {
+        var self = this,
+            buttonId = '#youtube-button';
+
+        this.closeTabDrawersExcept(buttonId, '#'+this.drawerYoutube.attr('id'));
+
+        if ( $(buttonId).hasClass('opened') ) {
+            $('.drawer-contents', this.drawerYoutube).fadeOut(400);
+            this.drawerYoutube.css('height', 0);
+            this.drawerYoutube.css('padding', 0);
+            this.drawerYoutube.hide();
+            this.updateHeightsInsideViewportContainer();
+            $(buttonId).removeClass('opened');
+        }
+        else if ( !$(buttonId).hasClass('opened') ) {
+            this.drawerYoutube.css('height', this.drawerYoutubeOpenedHeight);
+            setTimeout(function () {
+                self.drawerYoutube.show();
+                $('.drawer-contents', this.drawerYoutube).fadeIn(400);
                 self.updateHeightsInsideViewportContainer();
             }, this.drawerSpeed);
+            $(buttonId).addClass('opened');
+        }
 
-            this.drawerBottomOpened = true;
+        return;
+    },
+
+    drawerMoviesClick: function() {
+        var self = this,
+            buttonId = '#movies-button';
+
+        this.closeTabDrawersExcept(buttonId, '#'+this.drawerMovies.attr('id'));
+
+        if ( $(buttonId).hasClass('opened') ) {
+            $('.drawer-contents', this.drawerMovies).fadeOut(400);
+            this.drawerMovies.css('height', 0);
+            this.drawerMovies.css('padding', 0);
+            this.drawerMovies.hide();
+            this.updateHeightsInsideViewportContainer();
+            $(buttonId).removeClass('opened');
+        }
+        else if ( !$(buttonId).hasClass('opened') ) {
+            this.drawerMovies.css('height', this.drawerMoviesOpenedHeight);
+            setTimeout(function () {
+                self.drawerMovies.show();
+                $('.drawer-contents', this.drawerMovies).fadeIn(400);
+                self.updateHeightsInsideViewportContainer();
+            }, this.drawerSpeed);
+            $(buttonId).addClass('opened');
+        }
+
+        return;
+    },
+
+    drawerScreenshotsClick: function() {
+        var self = this,
+            buttonId = '#screenshots-button';
+
+        this.closeTabDrawersExcept(buttonId, '#'+this.drawerScreenshots.attr('id'));
+
+        if ( $(buttonId).hasClass('opened') ) {
+            $('.drawer-contents', this.drawerScreenshots).fadeOut(400);
+            this.drawerScreenshots.css('height', 0);
+            this.drawerScreenshots.css('padding', 0);
+            this.drawerScreenshots.hide();
+            this.updateHeightsInsideViewportContainer();
+            $(buttonId).removeClass('opened');
+        }
+        else if ( !$(buttonId).hasClass('opened') ) {
+            this.drawerScreenshots.css('height', this.drawerScreenshotsOpenedHeight);
+            setTimeout(function () {
+                self.drawerScreenshots.show();
+                $('.drawer-contents', this.drawerScreenshots).fadeIn(400);
+                self.updateHeightsInsideViewportContainer();
+            }, this.drawerSpeed);
+            $(buttonId).addClass('opened');
+        }
+
+        return;
+    },
+
+    drawerDataClick: function() {
+        var self = this,
+            buttonId = '#data-button';
+
+        this.closeTabDrawersExcept(buttonId, '#'+this.drawerData.attr('id'));
+
+        if ( $(buttonId).hasClass('opened') ) {
+            $('.drawer-contents', this.drawerData).fadeOut(400);
+            this.drawerData.css('height', 0);
+            this.drawerData.css('padding', 0);
+            this.drawerData.hide();
+            this.updateHeightsInsideViewportContainer();
+            $(buttonId).removeClass('opened');
+        }
+        else if ( !$(buttonId).hasClass('opened') ) {
+            this.drawerData.css('height', this.drawerDataOpenedHeight);
+            setTimeout(function () {
+                self.drawerData.show();
+                $('.drawer-contents', this.drawerData).fadeIn(400);
+                self.updateHeightsInsideViewportContainer();
+            }, this.drawerSpeed);
+            $(buttonId).addClass('opened');
+        }
+
+        return;
+    },
+
+    drawerShareClick: function() {
+        var self = this,
+            buttonId = '#share-button';
+
+        this.closeTabDrawersExcept(buttonId, '#'+this.drawerShare.attr('id'));
+
+        if ( $(buttonId).hasClass('opened') ) {
+            $('.drawer-contents', this.drawerShare).fadeOut(400);
+            this.drawerShare.css('height', 0);
+            this.drawerShare.css('padding', 0);
+            this.drawerShare.hide();
+            this.updateHeightsInsideViewportContainer();
+            $(buttonId).removeClass('opened');
+        }
+        else if ( !$(buttonId).hasClass('opened') ) {
+            this.drawerShare.css('height', this.drawerShareOpenedHeight);
+            setTimeout(function () {
+                self.drawerShare.show();
+                $('.drawer-contents', this.drawerShare).fadeIn(400);
+                self.updateHeightsInsideViewportContainer();
+            }, this.drawerSpeed);
+            $(buttonId).addClass('opened');
         }
 
         return;
@@ -713,13 +880,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     updateHeightsInsideViewportContainer: function() {
         var newHeight, sidebars, windowHeight = parseInt($(window).height()),
-            header, viewport, drawerBottom, drawerLeft, drawerRight;
+            header, viewport, drawerLeft, drawerRight;
 
         header       = $('#helioviewer-header');
         viewport     = $('#helioviewer-viewport');
         drawerLeft   = $('#helioviewer-drawer-left');
         drawerRight  = $('#helioviewer-drawer-right');
-        drawerBottom = $('#helioviewer-drawer-bottom');
 
         sidebars = [drawerLeft, drawerRight];
 
@@ -737,14 +903,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                       - parseInt(sidebar.css('padding-top'))
                       - parseInt(sidebar.css('padding-bottom'))
                       - parseInt(sidebar.css('margin-bottom'))
-                      - parseInt(sidebar.css('border-bottom-width'))
-                      - parseInt(drawerBottom.css('border-top-width'))
-                      - parseInt(drawerBottom.css('margin-top'))
-                      - parseInt(drawerBottom.css('padding-top'))
-                      - parseInt(drawerBottom.css('height'))
-                      - parseInt(drawerBottom.css('padding-bottom'))
-                      - parseInt(drawerBottom.css('margin-bottom'))
-                      - parseInt(drawerBottom.css('border-bottom-width'));
+                      - parseInt(sidebar.css('border-bottom-width'));
             sidebar.css('height', newHeight);
         });
 
@@ -778,6 +937,22 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         }
 
         event.stopPropagation();
+    },
+
+
+    closeTabDrawersExcept: function (buttonId, drawerId) {
+        self = this;
+
+        $.each( this.tabbedDrawers, function (i, drawer) {
+            if ( drawer != drawerId ) {
+
+                $('.drawer-contents', drawer).fadeOut(200);
+                $(drawer).css('height', 0);
+                $(drawer).css('padding', 0);
+                $(self.tabbedDrawerButtons[drawer]).removeClass('opened');
+            }
+        });
+
     },
 
     contextualHelpClick: function (event) {

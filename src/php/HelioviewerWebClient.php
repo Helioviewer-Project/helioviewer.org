@@ -274,15 +274,18 @@ class HelioviewerWebClient extends HelioviewerClient {
         <div class="menus">
 
             <div class="left">
-                <div id="link-button" class="fa fa-share-square fa-fw qtip-bottomleft social-button" title="Copy Link to the Current View."></div>
 
-                <a id="twitter-button" class="fa fa-twitter-square fa-fw qtip-bottomleft social-button" title="Tweet Short Link to the Current View." href="https://twitter.com/share" data-counturl="<?php echo HV_WEB_ROOT_URL; ?>" data-via="Helioviewer" target="hv_twitter"></a>
+                <div id="news-button" class="fa fa-rss fa-fw qtip-bottomleft social-button" title="Helioviewer Project Announcements."></div>
 
-                <a id="facebook-button" class="fa fa-facebook-square fa-fw qtip-bottomleft social-button" href="https://www.facebook.com/sharer/sharer.php?app_id=309437425817038&display=popup&ref=plugin" target="hv_facebook"></a>
+                <a id="youtube-button" class="fa fa-youtube fa-fw qtip-bottomleft social-button header-tab" title="View Helioviewer Movies Shared to YouTube."></a>
 
-                <a id="pinterest-button" class="fa fa-pinterest-square fa-fw qtip-bottomleft social-button" title="Pin Image of Current View to Pinterest." url="<?php echo HV_WEB_ROOT_URL; ?>" data-image="http://helioviewer.org/resources/images/logos/simple.png" data-desc="Custom Helioviewer description..." target="hv_pinterest"></a>
+                <div id="movies-button" class="fa fa-file-video-o fa-fw qtip-bottomleft social-button" title="Create a Helioviewer Movie."></div>
 
-                <a id="youtube-button" class="fa fa-youtube-square fa-fw qtip-bottomleft social-button" href="http://www.youtube.com/user/HelioviewerScience" target="_blank" title="Visit the HelioviewerScience YouTube Channel." target="hv_youtube"></a>
+                <a id="screenshots-button" class="fa fa-file-picture-o fa-fw qtip-bottomleft social-button" title="Download a screenshot of the current Helioviewer Viewport."></a>
+
+                <a id="data-button" class="fa fa-file-code-o fa-fw qtip-bottomleft social-button" title="Request Science Data Download from External Partners."></a>
+
+                <div id="share-button" class="fa fa-share-square-o fa-fw qtip-bottomleft social-button" title=""></div>
             </div>
 
             <div class="right" style="margin-right: 0.5em;">
@@ -400,25 +403,10 @@ Note that when an image is not available for the exact date and time you selecte
     </div>
 
 
-    <div id="helioviewer-drawer-right">
-        <div class="drawer-tab drawer-tab-right">Data Export</div>
-
-        <div id="drawer-viewport-controls-right">
-
-            <!-- Message console -->
-            <div id="message-console"></div>
-
-            <!-- Mouse coordinates display -->
-            <div id="mouse-coords" style="display: none;">
-                <div id="mouse-coords-x"></div>
-                <div id="mouse-coords-y"></div>
-            </div>
-        </div>
-
+    <div id="hv-drawer-news">
         <div class="drawer-contents">
-            <div class="top-shadow"></div>
 
-<!--             <div id="accordion-news" class="accordion">
+            <div id="accordion-news" class="accordion">
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Helioviewer Project News</h1>
@@ -430,7 +418,13 @@ Note that when an image is not available for the exact date and time you selecte
                     </div>
                 </div>
             </div>
--->
+
+        </div>
+    </div>
+
+
+    <div id="hv-drawer-youtube">
+        <div class="drawer-contents">
 
             <div id="accordion-youtube" class="accordion">
                 <div class="header">
@@ -455,8 +449,14 @@ Note that when an image is not available for the exact date and time you selecte
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div id="accordion-movie" class="accordion">
+
+    <div id="hv-drawer-movies">
+        <div class="drawer-contents">
+
+            <div id="accordion-movies" class="accordion">
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Generate a Movie</h1>
@@ -562,7 +562,14 @@ Note that when an image is not available for the exact date and time you selecte
                 </div>
             </div>
 
-            <div id="accordion-screenshot" class="accordion">
+        </div>
+    </div>
+
+
+    <div id="hv-drawer-screenshots">
+        <div class="drawer-contents">
+
+            <div id="accordion-screenshots" class="accordion">
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Generate a Screenshot</h1>
@@ -601,6 +608,13 @@ Note that when an image is not available for the exact date and time you selecte
 
                 </div>
             </div>
+
+        </div>
+    </div>
+
+
+    <div id="hv-drawer-data">
+        <div class="drawer-contents">
 
             <div id="accordion-vso" class="accordion">
                 <div class="header">
@@ -732,10 +746,26 @@ Note that when an image is not available for the exact date and time you selecte
     </div>
 
 
- <!--    <div id="helioviewer-drawer-bottom">
-        <div class="drawer-tab drawer-tab-bottom">Data Timeline</div>
-        <div class="drawer-contents"></div>
-    </div> -->
+
+    <div id="hv-drawer-share">
+        <div class="drawer-contents">
+
+            <div id="accordion-share" class="accordion">
+                <div class="header">
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>Share Link to Current Viewport</h1>
+                    <div class="right fa fa-question-circle contextual-help" title=""></div>
+                </div>
+                <div class="content">
+                    <div class="section">
+                        <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all shadow"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 
     <!-- Glossary dialog -->
     <div id='glossary-dialog'></div>

@@ -141,25 +141,152 @@ html, body {
     overflow-x: visible;
     z-index: 1;
 }
-/*#helioviewer-drawer-bottom {
+#hv-drawer-news {
     position: absolute;
-    bottom: 0;
-    clear: both;
-    width: 100%;
+    top: 3em;
+    right: 0;
     height: 0;
+    max-height: 90%;
+    width: 25em;
     background-color: rgba(255,255,255,0.25);
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.85);
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
     font-weight: 200;
-    text-align: center;
-    border-top: 0.45em solid #000;
+    border-left: 2pt solid #000;
+    border-bottom: 2pt solid #000;
+    -o-border-radius: 0 0 0 4pt;
+    -moz-border-radius: 0 0 0 4pt;
+    -webkit-border-radius: 0 0 0 4pt;
+    border-radius: 0 0 0 4pt;
     transition: height 200ms;
-    -moz-box-shadow:    0px -1px 1px -1px rgba(255,255,255,0.75);
-    -webkit-box-shadow: 0px -1px 1px -1px rgba(255,255,255,0.75);
-    box-shadow:         0px -1px 1px -1px rgba(255,255,255,0.75);
-    overflow-y: visible;
+    -moz-box-shadow:    -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    -webkit-box-shadow: -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    box-shadow:         -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    overflow-x: visible;
     z-index: 1;
-}*/
+}
+#hv-drawer-youtube {
+    position: absolute;
+    top: 3em;
+    right: 0;
+    height: 0;
+    max-height: 90%;
+    width: 25em;
+    background-color: rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.85);
+    font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
+    font-weight: 200;
+    border-left: 2pt solid #000;
+    border-bottom: 2pt solid #000;
+    -o-border-radius: 0 0 0 4pt;
+    -moz-border-radius: 0 0 0 4pt;
+    -webkit-border-radius: 0 0 0 4pt;
+    border-radius: 0 0 0 4pt;
+    transition: height 200ms;
+    -moz-box-shadow:    -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    -webkit-box-shadow: -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    box-shadow:         -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    overflow-x: visible;
+    z-index: 1;
+}
+#hv-drawer-movies {
+    position: absolute;
+    top: 3em;
+    right: 0;
+    height: 0;
+    max-height: 90%;
+    width: 25em;
+    background-color: rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.85);
+    font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
+    font-weight: 200;
+    border-left: 2pt solid #000;
+    border-bottom: 2pt solid #000;
+    -o-border-radius: 0 0 0 4pt;
+    -moz-border-radius: 0 0 0 4pt;
+    -webkit-border-radius: 0 0 0 4pt;
+    border-radius: 0 0 0 4pt;
+    transition: height 200ms;
+    -moz-box-shadow:    -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    -webkit-box-shadow: -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    box-shadow:         -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    overflow-x: visible;
+    z-index: 1;
+}
+#hv-drawer-screenshots {
+    position: absolute;
+    top: 3em;
+    right: 0;
+    height: 0;
+    max-height: 90%;
+    width: 25em;
+    background-color: rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.85);
+    font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
+    font-weight: 200;
+    border-left: 2pt solid #000;
+    border-bottom: 2pt solid #000;
+    -o-border-radius: 0 0 0 4pt;
+    -moz-border-radius: 0 0 0 4pt;
+    -webkit-border-radius: 0 0 0 4pt;
+    border-radius: 0 0 0 4pt;
+    transition: height 200ms;
+    -moz-box-shadow:    -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    -webkit-box-shadow: -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    box-shadow:         -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    overflow-x: visible;
+    z-index: 1;
+}
+#hv-drawer-data {
+    position: absolute;
+    top: 3em;
+    right: 0;
+    height: 0;
+    max-height: 90%;
+    width: 25em;
+    background-color: rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.85);
+    font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
+    font-weight: 200;
+    border-left: 2pt solid #000;
+    border-bottom: 2pt solid #000;
+    -o-border-radius: 0 0 0 4pt;
+    -moz-border-radius: 0 0 0 4pt;
+    -webkit-border-radius: 0 0 0 4pt;
+    border-radius: 0 0 0 4pt;
+    transition: height 200ms;
+    -moz-box-shadow:    -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    -webkit-box-shadow: -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    box-shadow:         -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    overflow-x: visible;
+    z-index: 1;
+}
+#hv-drawer-share {
+    position: absolute;
+    top: 3em;
+    right: 0;
+    height: 0;
+    max-height: 90%;
+    width: 25em;
+    background-color: rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.85);
+    font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
+    font-weight: 200;
+    border-left: 2pt solid #000;
+    border-bottom: 2pt solid #000;
+    -o-border-radius: 0 0 0 4pt;
+    -moz-border-radius: 0 0 0 4pt;
+    -webkit-border-radius: 0 0 0 4pt;
+    border-radius: 0 0 0 4pt;
+    transition: height 200ms;
+    -moz-box-shadow:    -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    -webkit-box-shadow: -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    box-shadow:         -1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
+    overflow-x: visible;
+    z-index: 1;
+}
+
+
 .drawer-contents {
     position: relative;
     margin: 0;
@@ -225,10 +352,6 @@ html, body {
     -webkit-box-shadow: 0pt -2pt 3pt 0pt rgba(255,255,255,0.75);
             box-shadow: 0pt -2pt 3pt 0pt rgba(255,255,255,0.75);
 }
-/*.drawer-tab-bottom {
-    position: relative;
-    margin: -2.2em auto 0 auto;
-}*/
 
 
 
@@ -722,8 +845,8 @@ span.ui-icon-hover, div.ui-icon-hover {
     border: none;
 }
 
-#helioviewer-header #link-button:hover {
-    color: blue;
+#helioviewer-header #news-button:hover {
+    color: #ff6600;
 }
 
 #helioviewer-header #twitter-button:hover {
@@ -735,8 +858,163 @@ span.ui-icon-hover, div.ui-icon-hover {
 #helioviewer-header #pinterest-button:hover {
     color: #cb2027;  /* pinterest logo red */
 }
-#helioviewer-header #youtube-button:hover {
-    color: #bb0000;  /* youtube logo red */
+
+
+/* NEWS */
+#helioviewer-header #news-button:hover,
+#helioviewer-header #news-button.opened {
+    color: rgba(255,102,0,1);
+    background-color: white;
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+}
+#helioviewer-header #news-button.opened:hover {
+    color: rgba(255,102,0,1);
+    background-color: rgba(255,255,255,1);
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+}
+#helioviewer-header #news-button:active {
+    color: rgba(255,102,0,0.75);
+}
+
+
+/* YOUTUBE */
+#helioviewer-header #youtube-button:hover,
+#helioviewer-header #youtube-button.opened {
+    color: rgba(187,0,0,1);  /* youtube logo red */
+    background-color: white;
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+}
+#helioviewer-header #youtube-button.opened:hover {
+    color: rgba(187,0,0,1);
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+}
+#helioviewer-header #youtube-button:active {
+    color: rgba(187,0,0,0.75);
+}
+
+
+/* MOVIES */
+#helioviewer-header #movies-button:hover,
+#helioviewer-header #movies-button.opened {
+    color: rgba(175,0,255,1);
+    background-color: white;
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+}
+#helioviewer-header #movies-button.opened:hover {
+    color: rgba(175,0,255,1);
+    background-color: rgba(255,255,255,1);
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+}
+#helioviewer-header #movies-button:active {
+    color: rgba(175,0,255,0.75);
+}
+
+
+/* SCREENSHOTS */
+#helioviewer-header #screenshots-button:hover,
+#helioviewer-header #screenshots-button.opened {
+    color: rgba(0,191,143,1);
+    background-color: white;
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+}
+#helioviewer-header #screenshots-button.opened:hover {
+    color: rgba(0,191,143,1);
+    background-color: rgba(255,255,255,1);
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+}
+#helioviewer-header #screenshots-button:active {
+    color: rgba(0,191,143,0.75);
+}
+
+
+/* DATA */
+#helioviewer-header #data-button:hover,
+#helioviewer-header #data-button.opened {
+    color: rgba(0,127,238,1);
+    background-color: white;
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+}
+#helioviewer-header #data-button.opened:hover {
+    color: rgba(0,127,238,1);
+    background-color: rgba(255,255,255,1);
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+}
+#helioviewer-header #data-button:active {
+    color: rgba(0,127,238,0.75);
+}
+
+
+/* SHARE */
+#helioviewer-header #share-button:hover,
+#helioviewer-header #share-button.opened {
+    color: rgba(0,0,238,1);
+    background-color: white;
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+}
+#helioviewer-header #share-button.opened:hover {
+    color: rgba(0,0,238,1);
+    background-color: rgba(255,255,255,1);
+    -o-border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    border-color: black;
+}
+#helioviewer-header #share-button:active {
+    color: rgba(0,0,238,0.75);
+}
+
+
+
+
+
+#helioviewer-header .social-button {
+    font-size: 0.75em;
+    padding: 0.15em;
 }
 
 #helioviewer-header .social-button:hover {
