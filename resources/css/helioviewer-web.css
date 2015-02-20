@@ -117,7 +117,9 @@ html, body {
     position: absolute;
     top: 3em;
     left: 0;
-    /*height: 100%;*/
+    height: auto;
+    max-height: 90%;
+    overflow: scroll;
     width: 0; /* opened via JavaScript */
     background-color: rgba(255,255,255,0.25);
     color: rgba(255,255,255,0.85);
@@ -143,6 +145,7 @@ html, body {
     right: 0;
     height: 0;
     max-height: 90%;
+    overflow: scroll;
     width: 25em;
     background-color: rgba(255,255,255,0.25);
     color: rgba(255,255,255,0.85);
@@ -168,6 +171,7 @@ html, body {
     right: 0;
     height: 0;
     max-height: 90%;
+    overflow: scroll;
     width: 25em;
     background-color: rgba(255,255,255,0.25);
     color: rgba(255,255,255,0.85);
@@ -193,6 +197,7 @@ html, body {
     right: 0;
     height: 0;
     max-height: 90%;
+    overflow: scroll;
     width: 25em;
     background-color: rgba(255,255,255,0.25);
     color: rgba(255,255,255,0.85);
@@ -218,6 +223,7 @@ html, body {
     right: 0;
     height: 0;
     max-height: 90%;
+    overflow: scroll;
     width: 25em;
     background-color: rgba(255,255,255,0.25);
     color: rgba(255,255,255,0.85);
@@ -243,6 +249,7 @@ html, body {
     right: 0;
     height: 0;
     max-height: 90%;
+    overflow: scroll;
     width: 25em;
     background-color: rgba(255,255,255,0.25);
     color: rgba(255,255,255,0.85);
@@ -268,6 +275,7 @@ html, body {
     right: 0;
     height: 0;
     max-height: 90%;
+    overflow: scroll;
     width: 25em;
     background-color: rgba(255,255,255,0.25);
     color: rgba(255,255,255,0.85);

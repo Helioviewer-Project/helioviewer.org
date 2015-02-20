@@ -854,27 +854,27 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         header       = $('#helioviewer-header');
         viewport     = $('#helioviewer-viewport');
-        drawerLeft   = $('#helioviewer-drawer-left');
+        // drawerLeft   = $('#helioviewer-drawer-left');
 
-        sidebars = [drawerLeft];
+        // sidebars = [drawerLeft];
 
-        $.each(sidebars, function(i, sidebar) {
-            newHeight = windowHeight
-                      - parseInt(header.css('border-top-width'))
-                      - parseInt(header.css('margin-top'))
-                      - parseInt(header.css('padding-top'))
-                      - parseInt(header.css('height'))
-                      - parseInt(header.css('padding-bottom'))
-                      - parseInt(header.css('margin-bottom'))
-                      - parseInt(header.css('border-bottom-width'))
-                      - parseInt(sidebar.css('border-top-width'))
-                      - parseInt(sidebar.css('margin-top'))
-                      - parseInt(sidebar.css('padding-top'))
-                      - parseInt(sidebar.css('padding-bottom'))
-                      - parseInt(sidebar.css('margin-bottom'))
-                      - parseInt(sidebar.css('border-bottom-width'));
-            sidebar.css('height', newHeight);
-        });
+        // $.each(sidebars, function(i, sidebar) {
+        //     newHeight = windowHeight
+        //               - parseInt(header.css('border-top-width'))
+        //               - parseInt(header.css('margin-top'))
+        //               - parseInt(header.css('padding-top'))
+        //               - parseInt(header.css('height'))
+        //               - parseInt(header.css('padding-bottom'))
+        //               - parseInt(header.css('margin-bottom'))
+        //               - parseInt(header.css('border-bottom-width'))
+        //               - parseInt(sidebar.css('border-top-width'))
+        //               - parseInt(sidebar.css('margin-top'))
+        //               - parseInt(sidebar.css('padding-top'))
+        //               - parseInt(sidebar.css('padding-bottom'))
+        //               - parseInt(sidebar.css('margin-bottom'))
+        //               - parseInt(sidebar.css('border-bottom-width'));
+        //     sidebar.css('height', newHeight);
+        // });
 
         newHeight = windowHeight
                   - parseInt(viewport.css('padding-top'))
