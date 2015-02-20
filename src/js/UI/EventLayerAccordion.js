@@ -103,7 +103,7 @@ var EventLayerAccordion = Layer.extend(
              +        name
              +     '</div>'
              +     '<div class="right">'
-             +        '<span class="timestamp"></span>'
+             +        '<span class="timestamp user-selectable"></span>'
              +        visibilityBtn
              +        labelsBtn
           /* +        removeBtn */

@@ -32,9 +32,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.drawerLeft               = $('#helioviewer-drawer-left');
         this.drawerLeftOpened         = false;
         this.drawerLeftOpenedWidth    = '25em';
-        this.drawerRight              = $('#helioviewer-drawer-right');
-        this.drawerRightOpened        = false;
-        this.drawerRightOpenedWidth   = '25em';
         this.drawerNews               = $('#hv-drawer-news');
         this.drawerNewsOpenedHeight   = 'auto';
         this.drawerNewsOpenedWidth    = '25em';
@@ -117,7 +114,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this.updateHeightsInsideViewportContainer();
 
-        /* Open Left and Right Sidebars */
+        /* Open Left and Right Drawers */
         setTimeout(
             function () {
                 self.drawerLeftClick(true);
@@ -365,7 +362,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         $('.drawer-tab', this.drawerLeft).bind('click', $.proxy(this.drawerLeftClick, this));
         this.drawerLeft.bind('mouseover', function (event) { event.stopPropagation(); });
-        $('.drawer-tab', this.drawerRight).bind('click', $.proxy(this.drawerRightClick, this));
 
         $('#news-button').bind('click', $.proxy(this.drawerNewsClick, this));
         $('#youtube-button').bind('click', $.proxy(this.drawerYoutubeClick, this));
@@ -690,32 +686,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         return;
     },
 
-    drawerRightClick: function(openNow) {
-        var self = this;
-
-        if ( this.drawerRightOpened || openNow === false ) {
-            this.drawerRight.css('width', 0);
-            $('.drawer-tab-right', this.drawerRight.parent()).css('right', 0);
-            $('.drawer-contents', this.drawerRight).hide();
-            this.drawerRight.css('padding', 0);
-            this.updateHeightsInsideViewportContainer();
-
-            this.drawerRightOpened = false;
-        }
-        else if ( !this.drawerRightOpened || openNow === true ) {
-            this.drawerRight.css('width', this.drawerRightOpenedWidth);
-            $('.drawer-tab-right', this.drawerRight.parent()).css('right', this.drawerRightOpenedWidth);
-            setTimeout(function () {
-                $('.drawer-contents', this.drawerRight).show();
-                self.updateHeightsInsideViewportContainer();
-            }, this.drawerSpeed);
-
-            this.drawerRightOpened = true;
-        }
-
-        return;
-    },
-
     drawerNewsClick: function() {
         var self = this,
             buttonId = '#news-button';
@@ -723,7 +693,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerNews.attr('id'));
 
         if ( $(buttonId).hasClass('opened') ) {
-            $('.drawer-contents', self.drawerNews).fadeOut(400);
+            $('.drawer-contents', self.drawerNews).fadeOut(100);
             self.drawerNews.css('height', 0);
             self.drawerNews.css('padding', 0);
             self.drawerNews.hide();
@@ -734,7 +704,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             self.drawerNews.css('height', self.drawerNewsOpenedHeight);
             setTimeout(function () {
                 self.drawerNews.show();
-                $('.drawer-contents', self.drawerNews).fadeIn(400);
+                $('.drawer-contents', self.drawerNews).fadeIn(500);
                 self.updateHeightsInsideViewportContainer();
             }, self.drawerSpeed);
             $(buttonId).addClass('opened');
@@ -750,10 +720,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerYoutube.attr('id'));
 
         if ( $(buttonId).hasClass('opened') ) {
-            $('.drawer-contents', this.drawerYoutube).fadeOut(400);
+            $('.drawer-contents', this.drawerYoutube).fadeOut(100);
             this.drawerYoutube.css('height', 0);
             this.drawerYoutube.css('padding', 0);
-            this.drawerYoutube.hide();
+            this.drawerYoutube.css({'display':'none'});
             this.updateHeightsInsideViewportContainer();
             $(buttonId).removeClass('opened');
         }
@@ -761,7 +731,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerYoutube.css('height', this.drawerYoutubeOpenedHeight);
             setTimeout(function () {
                 self.drawerYoutube.show();
-                $('.drawer-contents', this.drawerYoutube).fadeIn(400);
+                $('.drawer-contents', this.drawerYoutube).fadeIn(500);
                 self.updateHeightsInsideViewportContainer();
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
@@ -777,10 +747,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerMovies.attr('id'));
 
         if ( $(buttonId).hasClass('opened') ) {
-            $('.drawer-contents', this.drawerMovies).fadeOut(400);
+            $('.drawer-contents', this.drawerMovies).fadeOut(100);
             this.drawerMovies.css('height', 0);
             this.drawerMovies.css('padding', 0);
-            this.drawerMovies.hide();
+            this.drawerMovies.css({'display':'none'});
             this.updateHeightsInsideViewportContainer();
             $(buttonId).removeClass('opened');
         }
@@ -788,7 +758,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerMovies.css('height', this.drawerMoviesOpenedHeight);
             setTimeout(function () {
                 self.drawerMovies.show();
-                $('.drawer-contents', this.drawerMovies).fadeIn(400);
+                $('.drawer-contents', this.drawerMovies).fadeIn(500);
                 self.updateHeightsInsideViewportContainer();
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
@@ -804,10 +774,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerScreenshots.attr('id'));
 
         if ( $(buttonId).hasClass('opened') ) {
-            $('.drawer-contents', this.drawerScreenshots).fadeOut(400);
+            $('.drawer-contents', this.drawerScreenshots).fadeOut(100);
             this.drawerScreenshots.css('height', 0);
             this.drawerScreenshots.css('padding', 0);
-            this.drawerScreenshots.hide();
+            this.drawerScreenshots.css({'display':'none'});
             this.updateHeightsInsideViewportContainer();
             $(buttonId).removeClass('opened');
         }
@@ -815,7 +785,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerScreenshots.css('height', this.drawerScreenshotsOpenedHeight);
             setTimeout(function () {
                 self.drawerScreenshots.show();
-                $('.drawer-contents', this.drawerScreenshots).fadeIn(400);
+                $('.drawer-contents', this.drawerScreenshots).fadeIn(500);
                 self.updateHeightsInsideViewportContainer();
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
@@ -831,10 +801,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerData.attr('id'));
 
         if ( $(buttonId).hasClass('opened') ) {
-            $('.drawer-contents', this.drawerData).fadeOut(400);
+            $('.drawer-contents', this.drawerData).fadeOut(100);
             this.drawerData.css('height', 0);
             this.drawerData.css('padding', 0);
-            this.drawerData.hide();
+            this.drawerData.css({'display':'none'});
             this.updateHeightsInsideViewportContainer();
             $(buttonId).removeClass('opened');
         }
@@ -842,7 +812,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerData.css('height', this.drawerDataOpenedHeight);
             setTimeout(function () {
                 self.drawerData.show();
-                $('.drawer-contents', this.drawerData).fadeIn(400);
+                $('.drawer-contents', this.drawerData).fadeIn(500);
                 self.updateHeightsInsideViewportContainer();
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
@@ -858,10 +828,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerShare.attr('id'));
 
         if ( $(buttonId).hasClass('opened') ) {
-            $('.drawer-contents', this.drawerShare).fadeOut(400);
+            $('.drawer-contents', this.drawerShare).fadeOut(100);
             this.drawerShare.css('height', 0);
             this.drawerShare.css('padding', 0);
-            this.drawerShare.hide();
+            this.drawerShare.css({'display':'none'});
             this.updateHeightsInsideViewportContainer();
             $(buttonId).removeClass('opened');
         }
@@ -869,7 +839,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerShare.css('height', this.drawerShareOpenedHeight);
             setTimeout(function () {
                 self.drawerShare.show();
-                $('.drawer-contents', this.drawerShare).fadeIn(400);
+                $('.drawer-contents', this.drawerShare).fadeIn(500);
                 self.updateHeightsInsideViewportContainer();
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
@@ -880,14 +850,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     updateHeightsInsideViewportContainer: function() {
         var newHeight, sidebars, windowHeight = parseInt($(window).height()),
-            header, viewport, drawerLeft, drawerRight;
+            header, viewport, drawerLeft;
 
         header       = $('#helioviewer-header');
         viewport     = $('#helioviewer-viewport');
         drawerLeft   = $('#helioviewer-drawer-left');
-        drawerRight  = $('#helioviewer-drawer-right');
 
-        sidebars = [drawerLeft, drawerRight];
+        sidebars = [drawerLeft];
 
         $.each(sidebars, function(i, sidebar) {
             newHeight = windowHeight
@@ -946,7 +915,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $.each( this.tabbedDrawers, function (i, drawer) {
             if ( drawer != drawerId ) {
 
-                $('.drawer-contents', drawer).fadeOut(200);
+                $('.drawer-contents', drawer).fadeOut(100);
                 $(drawer).css('height', 0);
                 $(drawer).css('padding', 0);
                 $(self.tabbedDrawerButtons[drawer]).removeClass('opened');
