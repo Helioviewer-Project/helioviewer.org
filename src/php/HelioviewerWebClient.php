@@ -257,7 +257,7 @@ class HelioviewerWebClient extends HelioviewerClient {
 
 <div style="width: 100%; height: 100%; margin: 0; padding: 0;">
 
-    <div id="helioviewer-header">
+    <div id="helioviewer-header" class="user-select-none">
 
         <div class="logo">
             <h1>
@@ -298,11 +298,11 @@ class HelioviewerWebClient extends HelioviewerClient {
     </div>
 
 
-    <div id="helioviewer-drawer-left">
+    <div id="helioviewer-drawer-left" class="user-select-none">
 
-        <div class="drawer-tab drawer-tab-left">Data Sources</div>
+        <div class="drawer-tab drawer-tab-left user-select-none">Data Sources</div>
 
-        <div id="drawer-viewport-controls-left">
+        <div id="drawer-viewport-controls-left" class="user-select-none">
 
             <!--  Zoom Controls -->
             <div id="zoomControls">
@@ -403,7 +403,7 @@ Note that when an image is not available for the exact date and time you selecte
     </div>
 
 
-    <div id="hv-drawer-news">
+    <div id="hv-drawer-news" class="user-select-none">
         <div class="drawer-contents">
 
             <div id="accordion-news" class="accordion">
@@ -414,7 +414,7 @@ Note that when an image is not available for the exact date and time you selecte
                 </div>
                 <div class="content">
                     <div class="section">
-                        <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all shadow"></div>
+                        <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all"></div>
                     </div>
                 </div>
             </div>
@@ -423,7 +423,7 @@ Note that when an image is not available for the exact date and time you selecte
     </div>
 
 
-    <div id="hv-drawer-youtube">
+    <div id="hv-drawer-youtube" class="user-select-none">
         <div class="drawer-contents">
 
             <div id="accordion-youtube" class="accordion">
@@ -435,7 +435,7 @@ Note that when an image is not available for the exact date and time you selecte
                 <div class="content">
                     <div class="section">
                         <!-- User-Submitted Videos -->
-                        <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all shadow">
+                        <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all">
                             <a id="user-video-gallery-next" class="qtip-left" href="#" title="Go to next page.">
                                 <div class='fa fa-triangle-1-n'></div>
                             </a>
@@ -453,7 +453,7 @@ Note that when an image is not available for the exact date and time you selecte
     </div>
 
 
-    <div id="hv-drawer-movies">
+    <div id="hv-drawer-movies" class="user-select-none">
         <div class="drawer-contents">
 
             <div id="accordion-movies" class="accordion">
@@ -566,7 +566,7 @@ Note that when an image is not available for the exact date and time you selecte
     </div>
 
 
-    <div id="hv-drawer-screenshots">
+    <div id="hv-drawer-screenshots" class="user-select-none">
         <div class="drawer-contents">
 
             <div id="accordion-screenshots" class="accordion">
@@ -613,7 +613,7 @@ Note that when an image is not available for the exact date and time you selecte
     </div>
 
 
-    <div id="hv-drawer-data">
+    <div id="hv-drawer-data" class="user-select-none">
         <div class="drawer-contents">
 
             <div id="accordion-vso" class="accordion">
@@ -747,7 +747,7 @@ Note that when an image is not available for the exact date and time you selecte
 
 
 
-    <div id="hv-drawer-share">
+    <div id="hv-drawer-share" class="user-select-none">
         <div class="drawer-contents">
 
             <div id="accordion-share" class="accordion">
@@ -758,7 +758,7 @@ Note that when an image is not available for the exact date and time you selecte
                 </div>
                 <div class="content">
                     <div class="section">
-                        <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all shadow"></div>
+                        <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all"></div>
                     </div>
                 </div>
             </div>
@@ -866,7 +866,7 @@ Note that when an image is not available for the exact date and time you selecte
 
 
 <!-- Viewport -->
-<div id="helioviewer-viewport-container-outer">
+<div id="helioviewer-viewport-container-outer" class="user-select-none">
     <div id="helioviewer-viewport-container-inner">
         <div id="helioviewer-viewport">
 
