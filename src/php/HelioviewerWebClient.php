@@ -266,6 +266,25 @@ class HelioviewerWebClient extends HelioviewerClient {
             </h1>
         </div>
 
+        <div id="zoom">
+
+            <!--  Zoom Controls -->
+            <div id="zoomControls" style="display: none;">
+                <div id="zoomControlZoomIn" title="Zoom in.">+</div>
+                <div id="zoomSliderContainer">
+                    <div id="zoomControlSlider"></div>
+                </div>
+                <div id="zoomControlZoomOut" title="Zoom out.">-</div>
+            </div>
+
+            <div id="center-button" class="fa fa-crosshairs" title="Center the image on the screen."> <span>center</span></div>
+
+            <div id="zoom-out-button" class="fa fa-minus-circle" title=""> <span>zoom out</span></div>
+
+            <div id="zoom-in-button" class="fa fa-plus-circle" title=""> <span>zoom in</span></div>
+
+        </div>
+
         <div id="loading">
             <span>Loading Data</span>
             <span class="fa fa-circle-o-notch fa-spin"></span>
@@ -297,108 +316,92 @@ class HelioviewerWebClient extends HelioviewerClient {
 
     </div>
 
-
-    <div id="helioviewer-drawer-left" class="user-select-none">
+    <div id="wrapper-hv-drawer-left">
 
         <div class="drawer-tab drawer-tab-left user-select-none">Data Sources</div>
 
-        <div id="drawer-viewport-controls-left" class="user-select-none">
+        <div id="helioviewer-drawer-left" class="user-select-none">
 
-            <!--  Zoom Controls -->
-            <div id="zoomControls">
-                <div id="zoomControlZoomIn" title="Zoom in.">+</div>
-                <div id="zoomSliderContainer">
-                    <div id="zoomControlSlider"></div>
-                </div>
-                <div id="zoomControlZoomOut" title="Zoom out.">-</div>
-            </div>
+            <div class="drawer-contents">
+                <div class="top-shadow"></div>
 
-            <!-- Center button -->
-            <div id="center-button" title="Center the image on the screen.">
-               <span>center</span>
-            </div>
+                <div id="accordion-date" class="accordion">
 
-        </div>
+                    <div class="header">
 
-        <div class="drawer-contents">
-            <div class="top-shadow"></div>
+                        <div class="disclosure-triangle closed">►</div>
+                        <h1>Observation Date</h1>
+                        <div class="right fa fa-question-circle contextual-help" title="
+    Changing the 'Observation Date' will update the Viewport with data matching the new date and time.<br /><br />
 
-            <div id="accordion-date" class="accordion">
+    Use the 'Jump' controls to browse forward and backward in time by a regular interval.<br /><br />
 
-                <div class="header">
-
-                    <div class="disclosure-triangle closed">►</div>
-                    <h1>Observation Date</h1>
-                    <div class="right fa fa-question-circle contextual-help" title="
-Changing the 'Observation Date' will update the Viewport with data matching the new date and time.<br /><br />
-
-Use the 'Jump' controls to browse forward and backward in time by a regular interval.<br /><br />
-
-Note that when an image is not available for the exact date and time you selected, the closest available match will be displayed instead.<br />
-                    ">
+    Note that when an image is not available for the exact date and time you selected, the closest available match will be displayed instead.<br />
+                        ">
+                        </div>
                     </div>
-                </div>
 
-                <div class="content">
-                    <div class="section">
-                        <div id="observation-controls" class="row">
-                            <div class="label">Date:</div>
-                            <div class="field">
-                                <input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+                    <div class="content">
+                        <div class="section">
+                            <div id="observation-controls" class="row">
+                                <div class="label">Date:</div>
+                                <div class="field">
+                                    <input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
 
-                                <input id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+                                    <input id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
 
-                                <div class="suffix">UTC</div>
+                                    <div class="suffix">UTC</div>
 
-                                <div id="timeNowBtn" class="fa fa-clock-o right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the most recent available image)s_ for the currently loaded layer(s).">
-                                    <span class="ui-icon-label">NEWEST</span>
+                                    <div id="timeNowBtn" class="fa fa-clock-o right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the most recent available image)s_ for the currently loaded layer(s).">
+                                        <span class="ui-icon-label">NEWEST</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="label">Jump:</div>
+                                <div class="field">
+
+                                    <select id="timestep-select" name="time-step"></select>
+
+                                    <div id="timeBackBtn" class="inline fa fa-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
+                                    <div id="timeForwardBtn" class="inline fa fa-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="label">Jump:</div>
-                            <div class="field">
+                    </div>
 
-                                <select id="timestep-select" name="time-step"></select>
+                </div>
 
-                                <div id="timeBackBtn" class="inline fa fa-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
-                                <div id="timeForwardBtn" class="inline fa fa-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
-                            </div>
+                <div id="accordion-images" class="accordion">
+                    <div class="header">
+                        <div class="disclosure-triangle closed">►</div>
+                        <h1>Image Data Layers</h1>
+                        <div class="right fa fa-question-circle contextual-help" title="Up to five (5) independent image layers may be viewed simultaneously."></div>
+                        <div class="accordion-header">
+                            <a href="#" id="add-new-tile-layer-btn" class="text-button" title="Click to add an image data layer to the Viewport."><span class="fa fa-plus-circle"></span> Add Layer</a>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <div id="tileLayerAccordion">
+                            <div id="TileLayerAccordion-Container"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="accordion-events" class="accordion">
+                    <div class="header">
+                        <div class="disclosure-triangle closed">►</div>
+                        <h1>Feature &amp; Event Annotations</h1>
+                        <div class="right fa fa-question-circle contextual-help" title="Solar feature and event annotations such as marker pins, extended region polygons, and metadata."></div>
+                    </div>
+                    <div class="content">
+                        <div id="eventLayerAccordion">
+                            <div id="EventLayerAccordion-Container"></div>
                         </div>
                     </div>
                 </div>
 
             </div>
-
-            <div id="accordion-images" class="accordion">
-                <div class="header">
-                    <div class="disclosure-triangle closed">►</div>
-                    <h1>Image Data Layers</h1>
-                    <div class="right fa fa-question-circle contextual-help" title="Up to five (5) independent image layers may be viewed simultaneously."></div>
-                    <div class="accordion-header">
-                        <a href="#" id="add-new-tile-layer-btn" class="text-button" title="Click to add an image data layer to the Viewport."><span class="fa fa-plus-circle"></span> Add Layer</a>
-                    </div>
-                </div>
-                <div class="content">
-                    <div id="tileLayerAccordion">
-                        <div id="TileLayerAccordion-Container"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="accordion-events" class="accordion">
-                <div class="header">
-                    <div class="disclosure-triangle closed">►</div>
-                    <h1>Feature &amp; Event Annotations</h1>
-                    <div class="right fa fa-question-circle contextual-help" title="Solar feature and event annotations such as marker pins, extended region polygons, and metadata."></div>
-                </div>
-                <div class="content">
-                    <div id="eventLayerAccordion">
-                        <div id="EventLayerAccordion-Container"></div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 

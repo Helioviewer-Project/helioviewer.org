@@ -72,6 +72,85 @@ html, body {
     font-weight: 200;
     font-size: 2em;
 }
+#helioviewer-header #zoom {
+    z-index:999;
+    float: left;
+    width: 25em;
+    text-align: left;
+    margin: 0;
+    position: relative;
+    color: rgba(255,255,255,0.8);
+    font-size: 1.2em;
+    font-weight: 200;
+    height: 3em;
+    padding: 0;
+    margin: 0.6em 2em;
+    vertical-align: middle;
+}
+
+/* Center button */
+#center-button {
+    background-color: rgba(255,255,255,0.8);
+    color: black;
+    border: 1pt solid rgba(0,0,0,1);
+    font-size: 10pt;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    padding: 2pt;
+    vertical-align: middle;
+    -o-border-radius: 4pt;
+    -moz-border-radius: 4pt;
+    -webkit-border-radius: 4pt;
+    border-radius: 4pt;
+    line-height: 1em;
+    width: auto;
+    height: auto;
+}
+#center-button:hover {
+    background-color: rgba(255,255,255,1);
+}
+#center-button:active {
+    background-color: yellow;
+}
+#center-button > span,
+#center-button > span {
+    vertical-align: 0.75pt;
+}
+
+
+#zoom-in-button, #zoom-out-button {
+    background-color: rgba(255,255,255,0.8);
+    color: black;
+    border: 1pt solid rgba(0,0,0,1);
+    font-size: 10pt;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    padding: 2pt;
+    vertical-align: middle;
+    -o-border-radius: 4pt;
+    -moz-border-radius: 4pt;
+    -webkit-border-radius: 4pt;
+    border-radius: 4pt;
+    line-height: 1em;
+}
+#zoom-in-button:hover,
+#zoom-out-button:hover {
+    background-color: rgba(255,255,255,1);
+}
+#zoom-in-button:active,
+#zoom-out-button:active {
+    background-color: yellow;
+}
+#zoom-in-button > span,
+#zoom-out-button > span {
+    vertical-align: 0.75pt;
+}
+
+
 #helioviewer-header #loading {
     z-index:999;
     width: 20em;
@@ -112,20 +191,23 @@ html, body {
 
 
 /* Drawers */
-
-#helioviewer-drawer-left {
+#wrapper-hv-drawer-left {
     position: absolute;
     top: 3em;
     left: 0;
     height: auto;
     max-height: 90%;
-    overflow: scroll;
     width: 0; /* opened via JavaScript */
+}
+#helioviewer-drawer-left {
+    float: left;
+    overflow-y: scroll;
+    z-index: 9999;
     background-color: rgba(255,255,255,0.25);
     color: rgba(255,255,255,0.85);
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
     font-weight: 200;
-    border-right: 2pt solid #000;
+    border-right: 2pt solid yellow;
     border-bottom: 2pt solid #000;
     -o-border-radius: 0 0 4pt 0;
     -moz-border-radius: 0 0 4pt 0;
@@ -135,8 +217,12 @@ html, body {
     -moz-box-shadow:    1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
     -webkit-box-shadow: 1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
     box-shadow:         1pt 1pt 4pt -1pt rgba(255,255,255,0.75);
-    overflow-x: visible;
-    z-index: 1;
+}
+#wrapper-hv-drawer-left .drawer-contents {
+    height: auto;
+    max-height: 100%;
+    -webkit-overflow-y: scroll;
+    overflow-y: scroll;
 }
 #hv-drawer-news {
     display: none;
@@ -341,7 +427,7 @@ html, body {
             box-shadow: 0pt -2pt 3pt 0pt rgba(255,255,255,0.75);
 }
 #drawer-viewport-controls-left {
-    position: absolute;
+    float: left;
     top: 0;
     right: -0.2em;
     cursor: pointer;
