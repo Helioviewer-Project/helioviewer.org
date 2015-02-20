@@ -357,9 +357,9 @@ var HelioviewerViewport = Class.extend(
         this.movementHelper.doubleClick(event);
 
         if (event.shiftKey) {
-            $("#zoomControlZoomOut").click();
+            $("#zoom-out-button").click();
         } else {
-            $("#zoomControlZoomIn").click();
+            $("#zoom-in-button").click();
         }
     },
 

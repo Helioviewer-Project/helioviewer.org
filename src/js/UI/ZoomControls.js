@@ -23,9 +23,9 @@ var ZoomControls = Class.extend(
         this.minImageScale = minImageScale;
         this.maxImageScale = maxImageScale;
 
-        this.zoomInBtn  = $('#zoomControlZoomIn');
+        this.zoomInBtn  = $('#zoom-in-button');
         this.zoomSlider = $('#zoomControlSlider');
-        this.zoomOutBtn = $('#zoomControlZoomOut');
+        this.zoomOutBtn = $('#zoom-out-button');
 
         this._initSlider();
         this._initEventHandlers();
