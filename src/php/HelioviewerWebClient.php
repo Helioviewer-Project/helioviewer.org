@@ -319,7 +319,7 @@ class HelioviewerWebClient extends HelioviewerClient {
 
         <div id="scale">
 
-            <div id="earth" class="viewport-action fa fa-globe" title="Toggle Earth-Scale Indicator"></div>
+            <div id="earth-button" class="viewport-action fa fa-globe" title="Toggle Earth-Scale Indicator"></div>
 
             <div id="rsun" class="viewport-action segmented-left" title="Toggle Mouse Coordinates (solar radii)">R<sub>☉</sub></div><div id="rangle" class="viewport-action segmented-right" style="border-left: 0;"  title="Toggle Mouse Coordinates (arcseconds)">R<sub>∡</sub></div>
 
@@ -880,6 +880,9 @@ Note that when an image is not available for the exact date and time you selecte
             <div id="sandbox" style="position: absolute;">
                 <div id="moving-container"></div>
             </div>
+
+            <!-- Message console -->
+            <div id="message-console"></div>
 
             <!-- Image area select boundary container -->
             <div id="image-area-select-container"></div>

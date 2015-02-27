@@ -55,11 +55,11 @@ var ImageScale = Class.extend(
         });
         this.scale_container.attr('title','Click and drag to re-position scale indicator.');
 
-        $('<div style="position:relative; height:12px;"><div id="earth-button" class="minimize ui-icon ui-icon-arrow-1-sw" style="float: right; cursor:pointer;" title="Hide Scale Indicator"></div><div id="earthLabel" style="color: white; background-color: #333; text-align: center; font-size: 10px; padding: 2px 0 2px 2px;">Earth Scale</div></div>').appendTo("#earth-container");
+        $('<div style="position:relative; height:12px;"><div id="earthLabel" style="color: white; background-color: #333; text-align: center; font-size: 10px; padding: 2px 0 2px 2px;">Earth Scale</div></div>').appendTo("#earth-container");
 
         $('<div style="position:relative; width:72px; height:45px;"><img id="earthScale" src="resources/images/earth.png" style="width: '+this.earthDiameterInPixels+'px;height: '+this.earthDiameterInPixels+'px; position: absolute; left: '+(36-(this.earthDiameterInPixels/2))+'px; top: '+(23-(this.earthDiameterInPixels/2))+'px;" /></div>').appendTo("#earth-container");
 
-        this.scale_button    = this.scale_container.find('#earth-button');
+        this.scale_button    = $(document).find('#earth-button');
         this.scale_image     = this.scale_container.find('#earthScale');
         this.scale_label     = this.scale_container.find('#earthLabel');
 
