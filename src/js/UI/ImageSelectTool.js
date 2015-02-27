@@ -27,7 +27,7 @@ var ImageSelectTool = Class.extend(
         this.cancelButton = $("#cancel-selecting-image");
         this.helpButton   = $("#help-selecting-image");
 
-        this.vpButtons = $("#zoomControls, #center-button, #social-buttons, #fullscreen-btn, #mouse-coords");
+        this.vpButtons = $("#zoomControls, #center-button, #social-buttons, #mouse-coords");
 
         this._setupHelpDialog();
 
@@ -55,12 +55,13 @@ var ImageSelectTool = Class.extend(
         else {
 
             // Disable keyboard shortcuts for fullscreen mode
-            body.addClass('disable-fullscreen-mode');
             this.active = true;
 
             // Get viewport dimensions to make the transparent image with.
             this.width  = this.vpDomNode.width();
             this.height = this.vpDomNode.height();
+
+            $('#message-console').hide();
 
             /*
             * Displays a temporary transparent image that spans the height and width of the viewport.
@@ -223,6 +224,7 @@ var ImageSelectTool = Class.extend(
         this.cancelButton.unbind('click');
         this.helpButton.qtip("hide");
         this.active = false;
+        $('#message-console').show();
 
         if ( typeof callbackCleanup === 'function' ) {
             callbackCleanup();

@@ -223,6 +223,9 @@ html, body {
          text-align: center;
              cursor: context-menu;
 }
+#hv-header #menus:hover {
+   cursor: context-menu;
+}
 #menus .ui-icon {
    vertical-align: middle;
 }
@@ -606,9 +609,12 @@ span.ui-icon-hover, div.ui-icon-hover {
 
 /* jGrowl */
 #message-console {
-   position: absolute;
-   top: 13px;
-   right: 0px;
+   position:absolute;
+   top: 3em;
+   left: 0;
+   right: 0;
+   margin: 0 auto;
+   max-width: 20em;
 }
 
 #message-console .jGrowl-notification, #message-console .jGrowl-closer {
@@ -759,6 +765,10 @@ span.ui-icon-hover, div.ui-icon-hover {
    right: 5px;
    color: white;
 }
+
+/*.fa:hover {
+   color: yellow;
+}*/
 
 .text-button {
    color: rgba(255,255,255,0.8);
