@@ -20,7 +20,6 @@ var ImageSelectTool = Class.extend(
      */
     init: function () {
         this.active = false;
-
         this.vpDomNode    = $("#helioviewer-viewport");
         this.buttons      = $("#image-area-select-buttons");
         this.container    = $("#image-area-select-container");
@@ -44,16 +43,17 @@ var ImageSelectTool = Class.extend(
     /**
      * Activates the plugin or disables it if it is already active
      */
-    enableAreaSelect: function (event, callback) {
+    enableAreaSelect: function (event, callbackSuccess, callbackCleanup) {
         var imgContainer, body = $("body");
 
         // If the user has already pushed the button but not done anything, this will turn the feature off.
         if (this.active) {
-            this.cleanup();
+            this.cleanup(null, callbackCleanup);
         }
 
         // Otherwise, turn it on.
         else {
+
             // Disable keyboard shortcuts for fullscreen mode
             body.addClass('disable-fullscreen-mode');
             this.active = true;
@@ -79,7 +79,7 @@ var ImageSelectTool = Class.extend(
             */
             imgContainer = body.append('<div id="imgContainer"></div>');
 
-            this.selectArea(callback);
+            this.selectArea(callbackSuccess, callbackCleanup);
         }
     },
 
@@ -94,7 +94,7 @@ var ImageSelectTool = Class.extend(
      *
      * See: http://odyniec.net/projects/imgareaselect/
      */
-    selectArea: function (callback) {
+    selectArea: function (callbackSuccess, callbackCleanup) {
         var area, self = this;
 
         // If select tool has already been used this session, compute defaults
@@ -124,23 +124,26 @@ var ImageSelectTool = Class.extend(
         $(window).resize(function () {
             if (self.active) {
                 self.cancelButton.click();
-                self.enableAreaSelect(0, callback);
+                self.enableAreaSelect(0, callbackSuccess, callbackCleanup);
             }
         });
 
         this.doneButton.click(function () {
-            self.submitSelectedArea(area, callback);
+            self.submitSelectedArea(area, callbackSuccess, callbackCleanup);
         });
 
         $(document).keypress(function (e) {
             // Enter key
             if (e.which === 13) {
-                self.submitSelectedArea(area, callback);
+                self.submitSelectedArea(area, callbackSuccess, callbackCleanup);
+            }
+            if (e.which === 27) {
+                self.cancelButton.click();
             }
         });
 
-        this.cancelButton.click(function () {
-            self.cleanup();
+        this.cancelButton.click( function () {
+            self.cleanup(null, callbackCleanup);
         });
     },
 
@@ -149,7 +152,7 @@ var ImageSelectTool = Class.extend(
      * selected area, cleans up divs created by the plugin, and uses the callback
      * function to complete movie/screenshot building.
      */
-    submitSelectedArea: function (area, callback) {
+    submitSelectedArea: function (area, callbackSuccess, callbackCleanup) {
         var selection, visibleCoords, roi;
 
         if (area) {
@@ -172,8 +175,12 @@ var ImageSelectTool = Class.extend(
                 right   : visibleCoords.left + selection.x2
             };
 
-            this.cleanup();
-            callback(roi);
+            this.cleanup(null, callbackCleanup);
+            callbackSuccess(roi);
+        }
+        else {
+            alert('no area');
+            this.cleanup(null, callbackCleanup);
         }
     },
 
@@ -204,7 +211,7 @@ var ImageSelectTool = Class.extend(
      * @param transImg -- temporary transparent image that imgAreaSelect is used on.
      * @TODO: add error checking if the divs are already gone for whatever reason.
      */
-    cleanup: function () {
+    cleanup: function (event, callbackCleanup) {
         this.buttons.hide();
         this.container.imgAreaSelect({remove: true});
 
@@ -217,8 +224,10 @@ var ImageSelectTool = Class.extend(
         this.helpButton.qtip("hide");
         this.active = false;
 
-        helioviewer.drawerLeftClick(true);
-        helioviewer.drawerRightClick(true);
+        if ( typeof callbackCleanup === 'function' ) {
+            callbackCleanup();
+        }
+
         $(document).unbind('keypress').trigger('re-enable-keyboard-shortcuts');
     }
 });

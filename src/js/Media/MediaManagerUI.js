@@ -20,17 +20,16 @@ var MediaManagerUI = Class.extend(
     init: function (type) {
         this._type = type;
 
-        this._btn             = $("#" + type + "-button");
-        this._container       = $("#" + type + "-manager-container");
-        this._buildBtns       = $("#" + type + "-manager-build-btns");
-        this._fullViewportBtn = $("#" + type + "-manager-full-viewport");
-        this._selectAreaBtn   = $("#" + type + "-manager-select-area");
-        this._historyTitle    = $("#" + type + "-history-title");
-        this._historyBody     = $("#" + type + "-history");
-        this._clearBtn        = $("#" + type + "-clear-history-button");
-        this._tooltips        = $("#social-buttons div");
-        //this._allButtons      = $("#movie-button, #screenshot-button");
-        //this._allContainers   = $(".media-manager-container");
+        this._btn              = $("#" + type + "-button");
+        this._container        = $("#" + type + "-manager-container");
+        this._buildBtns        = $("#" + type + "-manager-build-btns");
+        this._fullViewportBtn  = $("#" + type + "-manager-full-viewport");
+        this._selectAreaBtn    = $("#" + type + "-manager-select-area");
+        this._historyTitle     = $("#" + type + "-history-title");
+        this._historyBody      = $("#" + type + "-history");
+        this._clearBtn         = $("#" + type + "-clear-history-button");
+        this._tooltips         = $("#social-buttons div");
+        this._cleanupFunctions = [];
 
         this._loadSavedItems();
     },

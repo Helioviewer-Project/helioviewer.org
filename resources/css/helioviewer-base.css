@@ -71,37 +71,6 @@ a.light:hover {
     -moz-user-select: none;
 }
 
-
-
-/* Center button */
-#center-button {
-    background-color: rgba(255,255,255,0.8);
-    color: black;
-    border: 0 2px 2px 0 solid rgba(0,0,0,1);
-    font-size: 13.5px;
-    width:54px;
-    height:16px;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    border-right: 2px solid black;
-    border-bottom: 2px solid black;
-    text-align:center;
-    cursor: pointer;
-}
-#center-button:hover {
-    background-color: rgba(255,255,255,1);
-}
-#center-button:active {
-    background-color: yellow;
-}
-#center-button > span {
-    color: black;
-    font-weight: 400;
-    vertical-align: top;
-    line-height: 1.0;
-}
-
 /* Mouse coordinates */
 #mouse-coords {
     background: transparent;

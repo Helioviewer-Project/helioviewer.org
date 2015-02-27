@@ -240,17 +240,18 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
 
         this._selectAreaBtn.click(function () {
+            self._cleanupFunctions = [];
+
             if ( helioviewer.drawerLeftOpened ) {
+                self._cleanupFunctions.push('helioviewer.drawerLeftClick()');
                 helioviewer.drawerLeftClick();
             }
-            if ( helioviewer.drawerRightOpened ) {
-                helioviewer.drawerRightClick();
-            }
-            if ( helioviewer.drawerBottomOpened ) {
-                helioviewer.drawerBottomClick();
-            }
+            self._cleanupFunctions.push('helioviewer.drawerMoviesClick()');
+            helioviewer.drawerMoviesClick();
+
             $(document).trigger("enable-select-tool",
-                                $.proxy(self._showMovieSettings, self));
+                                [$.proxy(self._showMovieSettings, self),
+                                 $.proxy(self._cleanup, self)]);
         });
 
         // Setup hover and click handlers for movie history items
@@ -872,5 +873,11 @@ alert('MovieManagerUI.showYouTubeUploadDialog() assumes 4-level hierarchy in lay
             return false;
         }
         return this._super(roi, layerString);
+    },
+
+    _cleanup: function () {
+        $.each(this._cleanupFunctions, function(i, func) {
+            eval(func);
+        });
     }
 });

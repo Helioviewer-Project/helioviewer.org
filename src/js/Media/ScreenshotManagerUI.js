@@ -96,17 +96,18 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         });
 
         this._selectAreaBtn.click(function () {
+            self._cleanupFunctions = [];
+
             if ( helioviewer.drawerLeftOpened ) {
+                self._cleanupFunctions.push('helioviewer.drawerLeftClick()');
                 helioviewer.drawerLeftClick();
             }
-            if ( helioviewer.drawerRightOpened ) {
-                helioviewer.drawerRightClick();
-            }
-            if ( helioviewer.drawerBottomOpened ) {
-                helioviewer.drawerBottomClick();
-            }
+            self._cleanupFunctions.push('helioviewer.drawerScreenshotsClick()');
+            helioviewer.drawerScreenshotsClick();
+
             $(document).trigger("enable-select-tool",
-                                $.proxy(self._takeScreenshot, self));
+                                [$.proxy(self._takeScreenshot, self),
+                                 $.proxy(self._cleanup, self)]);
         });
 
         // Setup click handler for history items
@@ -213,5 +214,12 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             self._addItem(screenshot);
             self._displayDownloadNotification(screenshot);
         }, Helioviewer.dataType);
+    },
+
+    _cleanup: function () {
+        $.each(this._cleanupFunctions, function(i, func) {
+            eval(func);
+        });
     }
+
 });
