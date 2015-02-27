@@ -26,19 +26,22 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     init: function (urlSettings, serverSettings, zoomLevels) {
         var urlDate, imageScale, paddingHeight, accordionsToOpen, self=this;
 
-        this.header                   = $('#helioviewer-header');
-        this.viewport                 = $('#helioviewer-viewport');
-        this.drawerSpeed              = 0;
-        // this.drawerLeft               = $('#helioviewer-drawer-left');
-        this.drawerLeft               = $('#wrapper-hv-drawer-left');
-        this.drawerLeftOpened         = false;
-        this.drawerLeftOpenedWidth    = '25em';
-        this.drawerNews               = $('#hv-drawer-news');
-        this.drawerNewsOpenedHeight   = 'auto';
-        this.drawerNewsOpenedWidth    = '25em';
-        this.drawerMovies             = $('#hv-drawer-movies');
-        this.drawerMoviesOpenedHeight = 'auto';
-        this.drawerMoviesOpenedWidth  = '25em';
+        this.header                    = $('#hv-header');
+        this.viewport                  = $('#helioviewer-viewport');
+        this.drawerSpeed               = 0;
+        this.drawerLeft                = $('#hv-drawer-left');
+        this.drawerLeftOpened          = false;
+        this.drawerLeftOpenedWidth     = 25;    /* em */
+        this.drawerLeftTab             = $('#hv-drawer-tab-left');
+        this.drawerLeftTabLeft         = -2.6; /* em */
+        this.drawerLeftTabBorderRight  = "2pt solid rgba(0,0,0,1)";
+        this.drawerLeftTabBorderBottom = "2pt solid rgba(0,0,0,1)";
+        this.drawerNews                = $('#hv-drawer-news');
+        this.drawerNewsOpenedHeight    = 'auto';
+        this.drawerNewsOpenedWidth     = '25em';
+        this.drawerMovies              = $('#hv-drawer-movies');
+        this.drawerMoviesOpenedHeight  = 'auto';
+        this.drawerMoviesOpenedWidth   = '25em';
         this.drawerScreenshots             = $('#hv-drawer-screenshots');
         this.drawerScreenshotsOpenedHeight = 'auto';
         this.drawerScreenshotsOpenedWidth  = '25em';
@@ -361,7 +364,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         $('#accordion-sdo input[type=text]').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this));
 
-        $('.drawer-tab', this.drawerLeft).bind('click', $.proxy(this.drawerLeftClick, this));
+        $(this.drawerLeftTab).bind('click', $.proxy(this.drawerLeftClick, this));
         this.drawerLeft.bind('mouseover', function (event) { event.stopPropagation(); });
 
         $('#news-button').bind('click', $.proxy(this.drawerNewsClick, this));
@@ -666,16 +669,20 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         if ( this.drawerLeftOpened || openNow === false ) {
             this.drawerLeft.css('width', 0);
-            // $('.drawer-tab-left', this.drawerLeft.parent()).css('left', 0);
             $('.drawer-contents', this.drawerLeft).hide();
+            this.drawerLeftTab.css('left', '-2.7em');
             this.drawerLeft.css('padding', 0);
+            this.drawerLeft.css('border', 'none');
             this.updateHeightsInsideViewportContainer();
 
             this.drawerLeftOpened = false;
         }
         else if ( !this.drawerLeftOpened || openNow === true ) {
-            this.drawerLeft.css('width', this.drawerLeftOpenedWidth);
-            $(this.drawerLeft.parent()).css('left', this.drawerLeftOpenedWidth);
+            this.drawerLeft.css('width', this.drawerLeftOpenedWidth+'em');
+            this.drawerLeft.css('border-right', this.drawerLeftTabBorderRight);
+            this.drawerLeft.css('border-bottom', this.drawerLeftTabBorderBottom);
+            this.drawerLeftTab.css('left', (this.drawerLeftOpenedWidth+this.drawerLeftTabLeft)+'em');
+            $(this.drawerLeft.parent()).css('left', this.drawerLeftOpenedWidth+'em');
             setTimeout(function () {
                 $('.drawer-contents', this.drawerLeft).show();
                 self.updateHeightsInsideViewportContainer();
@@ -694,7 +701,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerNews.attr('id'));
 
         if ( $(buttonId).hasClass('opened') ) {
-            $('.drawer-contents', self.drawerNews).fadeOut(100);
+            self.drawerNews.css('transition', '');
+            $('.drawer-contents', self.drawerNews).fadeOut(10);
             self.drawerNews.css('height', 0);
             self.drawerNews.css('padding', 0);
             self.drawerNews.hide();
@@ -702,6 +710,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $(buttonId).removeClass('opened');
         }
         else if ( !$(buttonId).hasClass('opened') ) {
+            self.drawerNews.css('transition', 'height 500ms');
             self.drawerNews.css('height', self.drawerNewsOpenedHeight);
             setTimeout(function () {
                 self.drawerNews.show();
@@ -721,7 +730,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerYoutube.attr('id'));
 
         if ( $(buttonId).hasClass('opened') ) {
-            $('.drawer-contents', this.drawerYoutube).fadeOut(100);
+            self.drawerNews.css('transition', '');
+            $('.drawer-contents', this.drawerYoutube).fadeOut(10);
             this.drawerYoutube.css('height', 0);
             this.drawerYoutube.css('padding', 0);
             this.drawerYoutube.css({'display':'none'});
@@ -729,6 +739,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $(buttonId).removeClass('opened');
         }
         else if ( !$(buttonId).hasClass('opened') ) {
+            self.drawerNews.css('transition', 'height 500ms');
             this.drawerYoutube.css('height', this.drawerYoutubeOpenedHeight);
             setTimeout(function () {
                 self.drawerYoutube.show();
@@ -748,7 +759,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerMovies.attr('id'));
 
         if ( $(buttonId).hasClass('opened') ) {
-            $('.drawer-contents', this.drawerMovies).fadeOut(100);
+            self.drawerNews.css('transition', '');
+            $('.drawer-contents', this.drawerMovies).fadeOut(10);
             this.drawerMovies.css('height', 0);
             this.drawerMovies.css('padding', 0);
             this.drawerMovies.css({'display':'none'});
@@ -756,6 +768,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $(buttonId).removeClass('opened');
         }
         else if ( !$(buttonId).hasClass('opened') ) {
+            self.drawerNews.css('transition', 'height 500ms');
             this.drawerMovies.css('height', this.drawerMoviesOpenedHeight);
             setTimeout(function () {
                 self.drawerMovies.show();
@@ -775,7 +788,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerScreenshots.attr('id'));
 
         if ( $(buttonId).hasClass('opened') ) {
-            $('.drawer-contents', this.drawerScreenshots).fadeOut(100);
+            self.drawerNews.css('transition', '');
+            $('.drawer-contents', this.drawerScreenshots).fadeOut(10);
             this.drawerScreenshots.css('height', 0);
             this.drawerScreenshots.css('padding', 0);
             this.drawerScreenshots.css({'display':'none'});
@@ -783,6 +797,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $(buttonId).removeClass('opened');
         }
         else if ( !$(buttonId).hasClass('opened') ) {
+            self.drawerNews.css('transition', 'height 500ms');
             this.drawerScreenshots.css('height', this.drawerScreenshotsOpenedHeight);
             setTimeout(function () {
                 self.drawerScreenshots.show();
@@ -802,7 +817,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerData.attr('id'));
 
         if ( $(buttonId).hasClass('opened') ) {
-            $('.drawer-contents', this.drawerData).fadeOut(100);
+            self.drawerNews.css('transition', '');
+            $('.drawer-contents', this.drawerData).fadeOut(10);
             this.drawerData.css('height', 0);
             this.drawerData.css('padding', 0);
             this.drawerData.css({'display':'none'});
@@ -810,6 +826,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $(buttonId).removeClass('opened');
         }
         else if ( !$(buttonId).hasClass('opened') ) {
+            self.drawerNews.css('transition', 'height 500ms');
             this.drawerData.css('height', this.drawerDataOpenedHeight);
             setTimeout(function () {
                 self.drawerData.show();
@@ -829,7 +846,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerShare.attr('id'));
 
         if ( $(buttonId).hasClass('opened') ) {
-            $('.drawer-contents', this.drawerShare).fadeOut(100);
+            self.drawerNews.css('transition', '');
+            $('.drawer-contents', this.drawerShare).fadeOut(10);
             this.drawerShare.css('height', 0);
             this.drawerShare.css('padding', 0);
             this.drawerShare.css({'display':'none'});
@@ -837,6 +855,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $(buttonId).removeClass('opened');
         }
         else if ( !$(buttonId).hasClass('opened') ) {
+            self.drawerNews.css('transition', 'height 500ms');
             this.drawerShare.css('height', this.drawerShareOpenedHeight);
             setTimeout(function () {
                 self.drawerShare.show();
@@ -853,7 +872,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var newHeight, sidebars, windowHeight = parseInt($(window).height()),
             header, viewport, drawerLeft;
 
-        header       = $('#helioviewer-header');
+        header       = $('#hv-header');
         viewport     = $('#helioviewer-viewport');
         // drawerLeft   = $('#helioviewer-drawer-left');
 
@@ -883,7 +902,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $('#helioviewer-viewport').css('height', newHeight);
 
         newHeight = windowHeight
-                  - parseInt($('#helioviewer-header').css('height'));
+                  - parseInt($('#hv-header').css('height'));
         $('#helioviewer-viewport-container').css('height', newHeight);
     },
 
@@ -1060,7 +1079,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         $.each( $('#accordion-images .dynaccordion-section'), function(i,accordion) {
 
-            var html, url, nickname,
+            var html, url, nickname, date,
                 sourceId, hardcodedScale, imageLayer;
 
             nickname  = $(accordion).find('.tile-accordion-header-left').html();
