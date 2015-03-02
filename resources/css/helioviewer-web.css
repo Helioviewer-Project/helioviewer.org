@@ -584,7 +584,7 @@ html, body {
 }
 
 /* Text-icon buttons */
-div.text-btn, a.text-btn {
+div.text-btn, div.text-btn a {
    cursor: pointer;
    text-decoration: none;
    display: inline-block;
@@ -593,8 +593,9 @@ div.text-btn, a.text-btn {
    margin: 0 5px;
 }
 
-div.text-btn:hover {
-   color: #d18f61;
+div.text-btn:hover,
+div.text-btn:hover a:hover {
+   color: yellow;
 }
 
 span.ui-icon-hover, div.ui-icon-hover {
@@ -819,19 +820,50 @@ span.ui-icon-hover, div.ui-icon-hover {
    border: none;
 }
 
-#hv-header #news-button:hover {
-   color: #ff6600;
+
+.social-btns {
+    min-height: 3em;
 }
 
-#hv-header #twitter-button:hover {
-   color: #00aced;  /* twitter logo blue */
+.social-btns .text-btn {
+    color: rgba(255,255,255,1);
+    background-color: transparent;
+    border: 1px solid rgba(255,255,255,1);
+    -o-border-radius: 1em;
+    -moz-border-radius: 1em;
+    -webkit-border-radius: 1em;
+    border-radius: 1em;
+    padding: 0.1em 0.4em;
+    font-weight: 400;
+    font-size: 0.8em;
 }
-#hv-header #facebook-button:hover {
+.social-btns .text-btn:hover {
+    color: rgba(255,255,0,1);
+    border: 1px solid rgba(255,255,0,1);
+     background-color: rgba(0,0,0,1);
+      -moz-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
+   -webkit-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
+           box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
+   background-color: white;
+}
+.social-btns .text-btn:active {
+    color: yellow;
+    border: 1px solid yellow;
+}
+
+#facebook.social-btns .text-btn:hover {
    color: #3b5998;  /* facebook logo blue */
+   border: 3px solid #3b5998;
 }
-#hv-header #pinterest-button:hover {
+#twitter.social-btns .text-btn:hover {
+   color: #00aced;  /* twitter logo blue */
+   border: 3px solid #00aced;
+}
+#pinterest.social-btns .text-btn:hover {
    color: #cb2027;  /* pinterest logo red */
+   border: 3px solid #cb2027;
 }
+
 
 
 /* NEWS */

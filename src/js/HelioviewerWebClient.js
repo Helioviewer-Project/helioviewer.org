@@ -137,6 +137,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 $('#accordion-movies      .disclosure-triangle').click();
                 $('#accordion-vso         .disclosure-triangle').click();
                 $('#accordion-sdo         .disclosure-triangle').click();
+                $('#accordion-link        .disclosure-triangle').click();
+                $('#accordion-social      .disclosure-triangle').click();
             },
             500
         );
