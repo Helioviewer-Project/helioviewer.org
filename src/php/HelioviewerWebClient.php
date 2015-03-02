@@ -319,7 +319,7 @@ class HelioviewerWebClient extends HelioviewerClient {
 
 
         <div id="scale">
-            <div id="mouse-cartesian" class="viewport-action segmented-left fa fa-cubes" title="Toggle Mouse Coordinates (Cartesian)"></div><div id="mouse-polar" class="viewport-action segmented-right fa fa-dot-circle-o" style="border-left: 0;" title="Toggle Mouse Coordinates (Polar)"></div>
+            <div id="mouse-cartesian" class="viewport-action segmented-left fa fa-cube" title="Toggle Mouse Coordinates (Cartesian)"></div><div id="mouse-polar" class="viewport-action segmented-right fa fa-dot-circle-o" style="border-left: 0;" title="Toggle Mouse Coordinates (Polar)"></div>
 
             <div id="earth-button" class="viewport-action fa fa-globe" title="Toggle Earth-Scale Indicator"></div>
 
@@ -714,6 +714,23 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <br />
 
+
+                            <div class="row">
+                                <div id='movie-manager-build-btns' class='media-manager-build-btns' style="font-size: 1.4em;">
+                                    <div style="width: 70%; margin: 0 auto;">
+                                        <div id='movie-manager-full-viewport' class='text-btn qtip-left' title='Create a movie using the entire viewport.'>
+                                            <span class='fa fa-arrows-alt fa-fw'></span>
+                                            <span style='line-height: 1.6em'>Full Viewport</span>
+                                        </div>
+                                        <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a movie of a sub-region of the viewport.'>
+                                            <span class='fa fa-crop fa-fw'></span>
+                                            <span style='line-height: 1.6em'>Select Area</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
                             <div class="row">
                                 <div class="label inactive">Center (x,y):</div>
                                 <div class="field">
@@ -762,7 +779,7 @@ Note that when an image is not available for the exact date and time you selecte
     <div id="hv-drawer-share" class="hv-drawer-right user-select-none">
         <div class="drawer-contents">
 
-            <div id="accordion-share" class="accordion">
+            <div id="accordion-link" class="accordion">
                 <div class="header">
                     <div class="disclosure-triangle closed">►</div>
                     <h1>Share Link to Current Viewport</h1>
@@ -770,7 +787,75 @@ Note that when an image is not available for the exact date and time you selecte
                 </div>
                 <div class="content">
                     <div class="section">
-                        <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all"></div>
+                        <div id="helioviewer-url-box" style="font-size: 1em;">
+                            <span id="helioviewer-url-box-msg"></span>
+                            <form style="margin-top: 5px; text-align: center;">
+                                <input type="text" id="helioviewer-url-input-box" style="width:98%;" value="http://helioviewer.org" />
+                                <label for="helioviewer-url-shorten">Shorten with bit.ly? </label>
+                                <input type="checkbox" id="helioviewer-url-shorten" />
+                                <input type="hidden" id="helioviewer-short-url" value="" />
+                                <input type="hidden" id="helioviewer-long-url" value="" />
+                            </form>
+                        </div>
+
+                        <br />
+
+                        <div id='movie-manager-build-btns' class='media-manager-build-btns'>
+                            <div style="width: 65%; margin: 0 auto; font-size: 1.5em;">
+                                <div id='movie-manager-full-viewport' class='text-btn qtip-left' title=''>
+                                    <span class='fa fa-copy fa-fw'></span>
+                                    <span style='line-height: 1.6em'>Copy Link</span>
+                                </div>
+                                <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title=''>
+                                    <span class='fa fa-envelope fa-fw'></span>
+                                    <span style='line-height: 1.6em'>Email Link</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="accordion-social" class="accordion">
+                <div class="header">
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>Share to Social Networks</h1>
+                    <div class="right fa fa-question-circle contextual-help" title="Share Link to Current Viewport"></div>
+                </div>
+                <div class="content">
+                    <div class="section">
+                        <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all">
+
+                            <div id='twitter' class='social-btns'>
+                                <div style="width: 50%; margin: 0 auto; font-size: 1.5em;">
+                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
+                                        <span class='fa fa-twitter-square fa-fw'></span>
+                                        <span style='line-height: 1.6em'>Tweet Screenshot</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id='facebook' class='social-btns'>
+                                <div style="width: 50%; margin: 0 auto; font-size: 1.5em;">
+                                    <div id='' class='text-btn qtip-left color-facebook' style="width: 100%;" title=''>
+                                        <span class='fa fa-facebook-square fa-fw'></span>
+                                        <span style='line-height: 1.6em'>Share Screenshot</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id='pinterest' class='social-btns'>
+                                <div style="width: 50%; margin: 0 auto; font-size: 1.5em;">
+                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
+                                        <span class='fa fa-pinterest-square fa-fw'></span>
+                                        <span style='line-height: 1.6em'>Pin Screenshot</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -893,7 +978,6 @@ Note that when an image is not available for the exact date and time you selecte
             <!-- Image area select boundary container -->
             <div id="image-area-select-container"></div>
         </div>
-
     </div>
 </div>
 
