@@ -142,13 +142,17 @@ html, body {
                   cursor: pointer;
 }
 #hv-header .viewport-action:hover {
-     background-color: rgba(255,255,255,1);
-      -moz-box-shadow: 0pt 0pt 4pt 0pt rgba(255,255,255,0.75);
-   -webkit-box-shadow: 0pt 0pt 4pt 0pt rgba(255,255,255,0.75);
+                color: #cb2027;
+     background-color: rgba(255,255,255,0);
+      -moz-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
+   -webkit-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
            box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
 }
 #hv-header .viewport-action:active {
    background-color: yellow;
+}#hv-header .viewport-action.active {
+              color: #cb2027;
+   background-color: white;
 }
 #hv-header .viewport-action > span,
 #hv-header .viewport-action > span {
@@ -1024,15 +1028,37 @@ span.ui-icon-hover, div.ui-icon-hover {
 }
 
 
-#rsun, #rangle {
+#mouse-polar, #mouse-cartesian {
    font-size: 10pt;
    font-weight: 400;
 }
-#rsun > sub, #rangle > sub {
-   font-size: 10pt;
-   vertical-align: -0.25em;
-   line-height: 0.5em;
+
+
+
+
+
+/* Mouse coordinates */
+#mouse-coords {
+          z-index: 2;
+         position: relative;
+            float: right;
+            width: auto;
+             left: 0;
+       margin-top: 1em;
+       text-align: center;
+   vertical-align: middle;
+            color: rgba(255,255,255,0.8);
+        font-size: 1em;
+      font-weight: 400;
+    white-space: nowrap;
 }
 
-
-
+#mouse-coords-x, #mouse-coords-y {
+    display: inline-block;
+    text-align: left;
+    white-space: nowrap;
+    width: 5em;
+}
+#mouse-coords-y {
+    text-align: left;
+}
