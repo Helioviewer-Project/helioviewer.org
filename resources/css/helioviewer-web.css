@@ -226,7 +226,7 @@ html, body {
         border-left: 2pt solid black;
           font-size: 2em;
          text-align: center;
-             cursor: context-menu;
+             cursor: pointer;
 }
 #hv-header #menus:hover {
    cursor: context-menu;
@@ -321,7 +321,7 @@ html, body {
 .drawer-tab {
    z-index: 3;
    position: relative;
-   cursor: pointer;
+   cursor: context-menu;
    font-size: 1em;
    font-weight: 400;
    color: rgba(255,255,255,1);
@@ -1015,6 +1015,54 @@ span.ui-icon-hover, div.ui-icon-hover {
 }
 
 
+/* HELP */
+#hv-header #help-button:hover,
+#hv-header #help-button.opened {
+   color: rgba(175,0,255,1);
+   background-color: white;
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+}
+#hv-header #help-button.opened:hover {
+   color: rgba(175,0,255,1);
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+}
+#hv-header #help-button:active {
+   color: rgba(175,0,255,1);
+}
+
+
+/* SETTINGS */
+#hv-header #settings-button:hover,
+#hv-header #settings-button.opened {
+   color: rgba(64,64,64,1);
+   background-color: white;
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+}
+#hv-header #settings-button.opened:hover {
+   color: rgba(64,64,64,1);
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+}
+#hv-header #settings-button:active {
+   color: rgba(64,64,64,1);
+}
+
+
 
 
 
@@ -1030,7 +1078,7 @@ span.ui-icon-hover, div.ui-icon-hover {
    -webkit-border-radius: 0.2em;
    border-radius: 0.2em;
    border-color: black;
-   cursor: pointer;
+   /*cursor: pointer;*/
 }
 
 .drawer-contents .top-shadow {

@@ -54,17 +54,22 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.drawerShare               = $('#hv-drawer-share');
         this.drawerShareOpenedHeight   = 'auto';
         this.drawerShareOpenedWidth    = '25em';
+        this.drawerHelp                = $('#hv-drawer-help');
+        this.drawerHelpOpenedHeight    = 'auto';
+        this.drawerHelpOpenedWidth     = '25em';
 
         this.tabbedDrawers = ['#hv-drawer-news', '#hv-drawer-movies',
                               '#hv-drawer-screenshots', '#hv-drawer-youtube',
-                              '#hv-drawer-data', '#hv-drawer-share'];
+                              '#hv-drawer-data', '#hv-drawer-share',
+                              '#hv-drawer-help'];
         this.tabbedDrawerButtons = {
             '#hv-drawer-news'        : '#news-button',
             '#hv-drawer-youtube'     : '#youtube-button',
             '#hv-drawer-movies'      : '#movies-button',
             '#hv-drawer-screenshots' : '#screenshots-button',
             '#hv-drawer-data'        : '#data-button',
-            '#hv-drawer-share'       : '#share-button'};
+            '#hv-drawer-share'       : '#share-button',
+            '#hv-drawer-help'        : '#help-button'};
 
         this._super(urlSettings, serverSettings, zoomLevels);
 
@@ -139,6 +144,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 $('#accordion-sdo         .disclosure-triangle').click();
                 $('#accordion-link        .disclosure-triangle').click();
                 $('#accordion-social      .disclosure-triangle').click();
+                $('#accordion-help-links  .disclosure-triangle').click();
             },
             500
         );
@@ -372,6 +378,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $('#screenshots-button').bind('click', $.proxy(this.drawerScreenshotsClick, this));
         $('#data-button').bind('click', $.proxy(this.drawerDataClick, this));
         $('#share-button').bind('click', $.proxy(this.drawerShareClick, this));
+        $('#help-button').bind('click', $.proxy(this.drawerHelpClick, this));
 
         $('.drawer-contents .header').bind('click', $.proxy(this.accordionHeaderClick, this));
         $('.contextual-help').bind('click', $.proxy(this.contextualHelpClick, this));
@@ -855,6 +862,45 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 self.drawerShare.show();
                 $('.drawer-contents', this.drawerShare).fadeIn(500);
             }, this.drawerSpeed);
+            $(buttonId).addClass('opened');
+        }
+
+        return;
+    },
+
+    drawerHelpClick: function() {
+        var self = this,
+            buttonId = '#help-button';
+
+        this.closeTabDrawersExcept(buttonId, '#'+this.drawerHelp.attr('id'));
+
+        if ( $(buttonId).hasClass('opened') ) {
+            self.drawerNews.css('transition', '');
+            $('.drawer-contents', this.drawerHelp).fadeOut(10);
+            this.drawerHelp.css('height', 0);
+            this.drawerHelp.css('padding', 0);
+            this.drawerHelp.css({'display':'none'});
+            $(buttonId).removeClass('opened');
+        }
+        else if ( !$(buttonId).hasClass('opened') ) {
+            self.drawerHelp.css('transition', 'height 500ms');
+            this.drawerHelp.css('height', this.drawerHelpOpenedHeight);
+            setTimeout(function () {
+                self.drawerHelp.show();
+                $('.drawer-contents', this.drawerHelp).fadeIn(500);
+            }, this.drawerSpeed);
+            $(buttonId).addClass('opened');
+        }
+
+        return;
+    },
+
+    drawerSettingsClick: function() {
+
+        if ( $(buttonId).hasClass('opened') ) {
+            $(buttonId).removeClass('opened');
+        }
+        else if ( !$(buttonId).hasClass('opened') ) {
             $(buttonId).addClass('opened');
         }
 

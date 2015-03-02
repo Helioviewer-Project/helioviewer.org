@@ -311,7 +311,8 @@ class HelioviewerWebClient extends HelioviewerClient {
             </div>
 
             <div class="right" style="margin-right: 0.5em;">
-                <div class="fa fa-question fa-fw qtip-bottomleft" href="" style="margin-left: 0.5em;" title="Get Help with Helioviewer."></div>
+                <div id="help-button" class="fa fa-question fa-fw qtip-bottomleft" href="" style="margin-left: 0.5em;" title="Get Help with Helioviewer."></div>
+
                 <div id="settings-button" class="fa fa-cog fa-fw qtip-bottomleft" title="Edit Settings &amp; Defaults."></div>
             </div>
 
@@ -836,6 +837,11 @@ Note that when an image is not available for the exact date and time you selecte
                                 </div>
                             </div>
 
+                        </div>
+                    </div>
+                    <div class="section">
+                        <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all">
+
                             <div id='facebook' class='social-btns'>
                                 <div style="width: 50%; margin: 0 auto; font-size: 1.5em;">
                                     <div id='' class='text-btn qtip-left color-facebook' style="width: 100%;" title=''>
@@ -845,6 +851,11 @@ Note that when an image is not available for the exact date and time you selecte
                                 </div>
                             </div>
 
+                        </div>
+                    </div>
+                    <div class="section">
+                        <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all">
+
                             <div id='pinterest' class='social-btns'>
                                 <div style="width: 50%; margin: 0 auto; font-size: 1.5em;">
                                     <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
@@ -853,6 +864,77 @@ Note that when an image is not available for the exact date and time you selecte
                                     </div>
                                 </div>
                             </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <div id="hv-drawer-help" class="hv-drawer-right user-select-none">
+        <div class="drawer-contents">
+
+            <div id="accordion-help-links" class="accordion">
+                <div class="header">
+                    <div class="disclosure-triangle closed">►</div>
+                    <h1>The Helioviewer Project</h1>
+                    <div class="right fa fa-question-circle contextual-help" title="..."></div>
+                </div>
+                <div class="content">
+                    <div class="section">
+                        <div id="help-links-panel" class="">
+
+                            <div id='' class='social-btns'>
+                                <div style="width: 90%; margin: 0 auto; font-size: 1.5em;">
+                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
+                                        <span class='fa fa-bookmark-o fa-fw'></span>
+                                        <span style='line-height: 1.6em'>User's Guide</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id='' class='social-btns'>
+                                <div style="width: 90%; margin: 0 auto; font-size: 1.5em;">
+                                    <div id='' class='text-btn qtip-left color-facebook' style="width: 100%;" title=''>
+                                        <span class='fa fa-key fa-fw'></span>
+                                        <span style='line-height: 1.6em'>Visual Glossary</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id='' class='social-btns'>
+                                <div style="width: 90%; margin: 0 auto; font-size: 1.5em;">
+                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
+                                        <span class='fa fa-keyboard-o fa-fw'></span>
+                                        <span style='line-height: 1.6em'>Keyboard Shortcuts</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id='' class='social-btns'>
+                                <div style="width: 90%; margin: 0 auto; font-size: 1.5em;">
+                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
+                                        <span class='fa fa-book fa-fw'></span>
+                                        <span style='line-height: 1.6em'> Documentation</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id='' class='social-btns'>
+                                <div style="width: 90%; margin: 0 auto; font-size: 1.5em;">
+                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
+                                        <span class='fa fa-code fa-fw'></span>
+                                        <span style='line-height: 1.6em'> Public API Documentation</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
 
 
                         </div>
