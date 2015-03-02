@@ -143,14 +143,15 @@ html, body {
 }
 #hv-header .viewport-action:hover {
                 color: #cb2027;
-     background-color: rgba(255,255,255,0);
+     background-color: rgba(0,0,0,1);
       -moz-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
    -webkit-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
            box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
 }
 #hv-header .viewport-action:active {
    background-color: yellow;
-}#hv-header .viewport-action.active {
+}
+#hv-header .viewport-action.active {
               color: #cb2027;
    background-color: white;
 }

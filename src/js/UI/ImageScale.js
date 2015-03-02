@@ -92,6 +92,7 @@ var ImageScale = Class.extend(
         this.scale_container.hide();
         this.scale_button.unbind();
         this.scale_button.bind('click',  $.proxy(this.earthMaximize,  this));
+        this.scale_button.toggleClass('active', false);
     },
 
     earthMaximize: function() {
@@ -107,6 +108,7 @@ var ImageScale = Class.extend(
         this.scale_container.show();
         this.scale_button.unbind();
         this.scale_button.bind('click',  $.proxy(this.earthMinimize,  this));
+        this.scale_button.toggleClass('active', true);
     },
 
     scaleContainerDragTo: function(containerX, containerY) {
