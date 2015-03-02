@@ -419,6 +419,15 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         $('#facebook-button').bind('click', $.proxy(this.facebook, this));
         $('#pinterest-button').bind('click', $.proxy(this.pinterest, this));
+
+        $('#mouse-cartesian').click( function (event) {
+            $(document).trigger('toggle-mouse-coords');
+            $(this).toggleClass('active');
+        });
+        $('#mouse-polar').click(function () {
+            $(document).trigger('toggle-mouse-coords');
+            $(this).toggleClass('active');
+        });
     },
 
     /**

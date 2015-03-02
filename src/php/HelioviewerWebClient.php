@@ -259,6 +259,14 @@ class HelioviewerWebClient extends HelioviewerClient {
 
     <div id="hv-header" class="user-select-none">
 
+
+        <div id="loading">
+            <span>
+                <span>Loading Data</span>
+                <span class="fa fa-circle-o-notch fa-spin"></span>
+            </span>
+        </div>
+
         <div class="logo">
             <h1>
                 <a class="fa fa-sun-o fa-fw" href="" title="The Open-Source Solar and Heliospheric Data Browser"></a>
@@ -283,13 +291,6 @@ class HelioviewerWebClient extends HelioviewerClient {
 
             <div id="zoom-in-button" class="viewport-action fa fa-search-plus" title="Zoom In"> <span>zoom in</span></div>
 
-        </div>
-
-        <div id="loading">
-            <span>
-                <span>Loading Data</span>
-                <span class="fa fa-circle-o-notch fa-spin"></span>
-            </span>
         </div>
 
         <div id="menus">
@@ -318,11 +319,16 @@ class HelioviewerWebClient extends HelioviewerClient {
 
 
         <div id="scale">
+            <div id="mouse-cartesian" class="viewport-action segmented-left fa fa-cubes" title="Toggle Mouse Coordinates (Cartesian)"></div><div id="mouse-polar" class="viewport-action segmented-right fa fa-dot-circle-o" style="border-left: 0;" title="Toggle Mouse Coordinates (Polar)"></div>
 
             <div id="earth-button" class="viewport-action fa fa-globe" title="Toggle Earth-Scale Indicator"></div>
 
-            <div id="rsun" class="viewport-action segmented-left" title="Toggle Mouse Coordinates (solar radii)">R<sub>☉</sub></div><div id="rangle" class="viewport-action segmented-right" style="border-left: 0;"  title="Toggle Mouse Coordinates (arcseconds)">R<sub>∡</sub></div>
+        </div>
 
+        <!-- Mouse coordinates display -->
+        <div id="mouse-coords" style="display: none;">
+            <div id="mouse-coords-x"></div>
+            <div id="mouse-coords-y"></div>
         </div>
 
     </div>
