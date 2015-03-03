@@ -144,8 +144,8 @@ var ImageScale = Class.extend(
              Helioviewer.userSettings.get("state.containerY") >= this.scale_container.parent().height()-this.scale_container.height()
             ) {
 
-            this.containerX = $('#helioviewer-viewport').width()/2 - this.scale_container.width()/2;
-            this.containerY = $('#helioviewer-viewport').height()/2 - this.scale_container.height()/2;
+            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.scale_container.width()/2;
+            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.scale_container.height();
 
             this.scale_container.css({
                 'position' : 'absolute',
@@ -187,8 +187,8 @@ var ImageScale = Class.extend(
         if ( Helioviewer.userSettings.get("state.scaleX") == 0 ||
              Helioviewer.userSettings.get("state.scaleY") == 0 ) {
 
-            this.containerX = $('#helioviewer-viewport').width()/2 - this.scale_container.width()/2;
-            this.containerY = $('#helioviewer-viewport').height()/2 - this.scale_container.height()/2;
+            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.scale_container.width()/2;
+            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.scale_container.height();
             this.scale = false;
         }
 
