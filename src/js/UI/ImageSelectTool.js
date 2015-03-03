@@ -61,6 +61,7 @@ var ImageSelectTool = Class.extend(
             this.width  = this.vpDomNode.width();
             this.height = this.vpDomNode.height();
 
+            $('#hv-drawer-tab-left').hide();
             $('#message-console').hide();
 
             /*
@@ -225,6 +226,7 @@ var ImageSelectTool = Class.extend(
         this.helpButton.qtip("hide");
         this.active = false;
         $('#message-console').show();
+        $('#hv-drawer-tab-left').show();
 
         if ( typeof callbackCleanup === 'function' ) {
             callbackCleanup();

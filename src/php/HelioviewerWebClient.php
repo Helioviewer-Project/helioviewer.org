@@ -236,7 +236,7 @@ class HelioviewerWebClient extends HelioviewerClient {
 
 
 
-<div style="width: 100%; margin: 0; padding: 0; text-align: center;">
+<div class="user-select-none" style="width: 100%; margin: 0; padding: 0; text-align: center; z-index: 9;">
     <!-- Image area select tool -->
     <div id='image-area-select-buttons'>
 
