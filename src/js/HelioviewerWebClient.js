@@ -419,7 +419,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
             if (e.target.checked) {
                 url = $("#helioviewer-short-url").attr("value");
-            } else {
+            }
+            else {
                 url = $("#helioviewer-long-url").attr("value");
             }
 
@@ -430,12 +431,34 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $('#pinterest-button').bind('click', $.proxy(this.pinterest, this));
 
         $('#mouse-cartesian').click( function (event) {
-            $(document).trigger('toggle-mouse-coords');
-            $(this).toggleClass('active');
+            var buttonPolar     = $('#mouse-polar');
+            var buttonCartesian = $('#mouse-cartesian');
+
+            if ( buttonCartesian.hasClass("active") ) {
+                $('#mouse-coords').hide();
+                buttonCartesian.removeClass("active");
+                buttonPolar.removeClass("active");
+            }
+            else {
+                $(document).trigger('cartesian-mouse-coords');
+                buttonCartesian.addClass("active");
+                buttonPolar.removeClass("active");
+            }
         });
         $('#mouse-polar').click(function () {
-            $(document).trigger('toggle-mouse-coords');
-            $(this).toggleClass('active');
+            var buttonPolar     = $('#mouse-polar');
+            var buttonCartesian = $('#mouse-cartesian');
+
+            if ( buttonPolar.hasClass("active") ) {
+                $('#mouse-coords').hide();
+                buttonPolar.removeClass("active");
+                buttonCartesian.removeClass("active");
+            }
+            else {
+                $(document).trigger('polar-mouse-coords');
+                buttonPolar.addClass("active");
+                buttonCartesian.removeClass("active");
+            }
         });
     },
 
