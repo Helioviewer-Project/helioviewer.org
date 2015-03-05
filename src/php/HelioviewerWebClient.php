@@ -267,10 +267,9 @@ class HelioviewerWebClient extends HelioviewerClient {
             </span>
         </div>
 
-        <div class="logo">
+        <div id="logo">
             <h1>
-                <a class="fa fa-sun-o fa-fw" href="" title="The Open-Source Solar and Heliospheric Data Browser"></a>
-                <a href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a>
+                <span><a class="logo-icon fa fa-sun-o fa-fw" href="" title="The Open-Source Solar and Heliospheric Data Browser"></a><a class="logo-text" href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a></span>
             </h1>
         </div>
 
@@ -289,7 +288,7 @@ class HelioviewerWebClient extends HelioviewerClient {
 
             <div id="zoom-out-button" class="viewport-action fa fa-search-minus" title="Zoom Out"></div>
 
-            <div id="zoom-in-button" class="viewport-action fa fa-search-plus" title="Zoom In"> <span>zoom in</span></div>
+            <div id="zoom-in-button" class="viewport-action fa fa-search-plus" title="Zoom In"></div>
 
         </div>
 

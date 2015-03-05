@@ -85,20 +85,41 @@ html, body {
                       sans-serif;
         font-weight: 200;
 }
-#hv-header .logo {
+
+/* Logo */
+#logo {
      position: relative;
         float: left;
         width: 24.75em;
+       height: 3em;
        margin: 0.2em 0 0.3em 0;
    text-align: center;
 }
-#hv-header .logo h1 {
+#logo h1 {
      font-size: 2em;
    font-family: 'Helvetica Neue',
                 'Helvetica',
                  sans-serif;
    font-weight: 200;
 }
+#logo h1 > span:hover a {
+   color: rgba(255,255,255,1);
+}
+#logo a.logo-icon {
+   vertical-align: -1pt;
+}
+#logo a.logo-text {
+   font-family: "Avenir Next",
+                "HelveticaNeue-Light",
+                "Helvetica Neue Light",
+                "Helvetica Neue",
+                Helvetica, Arial,
+                sans-serif;
+   font-weight: 400;
+   vertical-align: -1pt;
+}
+
+
 #zoom, #scale {
          position: relative;
             float: left;
@@ -127,64 +148,69 @@ html, body {
                  display: inline-block;
                    width: 1em;
                   height: 1em;
+                  margin: -1px 0 0 0;
                  padding: 4pt;
         background-color: rgba(255,255,255,0.75);
                    color: black;
-                  border: 1pt solid rgba(0,0,0,1);
+                  border: 2px solid rgba(0,0,0,1);
                font-size: 12pt;
               text-align: center;
           vertical-align: middle;
              line-height: 1em;
-        -o-border-radius: 80pt;
-      -moz-border-radius: 80pt;
-   -webkit-border-radius: 80pt;
-           border-radius: 80pt;
+        -o-border-radius: 16px;
+      -moz-border-radius: 16px;
+   -webkit-border-radius: 16px;
+           border-radius: 16px;
                   cursor: pointer;
 }
 #hv-header .viewport-action:hover {
                 color: #cb2027;
-     background-color: rgba(0,0,0,1);
-      -moz-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
+         border-color: #cb2027;
+         color: rgba(255,255,255,0.75);
+         border-color: rgba(255,255,255,0.75);
+   background-color: rgba(0,0,0,0.75);
+     /* -moz-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
    -webkit-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
-           box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
+           box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);*/
 }
 #hv-header .viewport-action:active {
-   background-color: yellow;
+              color: #cb2027;
+       border-color: #cb2027;
+   background-color: black;
 }
 #hv-header .viewport-action.active {
               color: #cb2027;
+       border-color: #cb2027;
    background-color: white;
 }
-#hv-header .viewport-action > span,
-#hv-header .viewport-action > span {
-   display: none;
-   vertical-align: 0.75pt;
+#hv-header .viewport-action.active:active {
+              color: #cb2027;
+       border-color: #cb2027;
+   background-color: black;
 }
 
 #hv-header .viewport-action.segmented-left {
-                  margin: 0;
-        -o-border-radius: 80pt 0 0 80pt;
-      -moz-border-radius: 80pt 0 0 80pt;
-   -webkit-border-radius: 80pt 0 0 80pt;
-           border-radius: 80pt 0 0 80pt;
-                  border: 1pt 0 1pt 1pt;
+        -o-border-radius: 12px 0 0 12px;
+      -moz-border-radius: 12px 0 0 12px;
+   -webkit-border-radius: 12px 0 0 12px;
+           border-radius: 12px 0 0 12px;
+                  border: 2px 0 2px 2px;
 
 }
 #hv-header .viewport-action.segmented-middle {
-                  margin: 0;
         -o-border-radius: 0;
       -moz-border-radius: 0;
    -webkit-border-radius: 0;
            border-radius: 0;
-                  border: 1pt 0;
+                  border: 2px 0;
 }
 #hv-header .viewport-action.segmented-right {
-                  margin: 0;
-        -o-border-radius: 0 80pt 80pt 0;
-      -moz-border-radius: 0 80pt 80pt 0;
-   -webkit-border-radius: 0 80pt 80pt 0;
-           border-radius: 0 80pt 80pt 0;
-                  border: 1pt 1pt 1pt 0;
+             margin-left: -1px;
+        -o-border-radius: 0 12px 12px 0;
+      -moz-border-radius: 0 12px 12px 0;
+   -webkit-border-radius: 0 12px 12px 0;
+           border-radius: 0 12px 12px 0;
+                  border: 2px 2px 2px 2px;
 }
 
 
@@ -542,11 +568,7 @@ html, body {
    box-shadow:       0px 0px 1px 1px yellow;
 }
 
-/* Logo */
-#helioviewer-logo-main {
-   margin-top:12px;
-   margin-left: 9px;
-}
+
 
 
 /* Opacity Slider */
