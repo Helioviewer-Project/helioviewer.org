@@ -27,6 +27,16 @@ var HelioviewerMouseCoordinates = MouseCoordinates.extend(
         $(document).bind('cartesian-mouse-coords', $.proxy(this.cartesianMouseCoords, this));
     },
 
+    updateImageScale: function (imageScale) {
+        this.imageScale = imageScale;
+        if ( this.mouseCoords == "arcseconds" ) {
+            this.cartesianMouseCoords();
+        }
+        else if ( this.mouseCoords == "polar" ) {
+            this.polarMouseCoords();
+        }
+    },
+
     /**
      * @description Toggles mouse-coords visibility
      *
