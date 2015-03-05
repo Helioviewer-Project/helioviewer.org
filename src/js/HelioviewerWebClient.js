@@ -120,34 +120,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this._displayGreeting();
 
-        /* Open Left and Right Drawers */
-        setTimeout(
-            function () {
+        if ( Helioviewer.userSettings.get("state.hv-drawer-left") == true ) {
+            setTimeout( function () {
                 self.drawerLeftClick(true);
-
-                $('#accordion-date   .disclosure-triangle').click();
-                $('#accordion-images .disclosure-triangle').click();
-                //$('#accordion-events .disclosure-triangle').click();
-
-                setTimeout(
-                    function () {
-                        self.drawerYoutubeClick(true);
-                    },
-                    250
-                );
-
-                $('#accordion-youtube     .disclosure-triangle').click();
-                $('#accordion-news        .disclosure-triangle').click();
-                $('#accordion-screenshots .disclosure-triangle').click();
-                $('#accordion-movies      .disclosure-triangle').click();
-                $('#accordion-vso         .disclosure-triangle').click();
-                $('#accordion-sdo         .disclosure-triangle').click();
-                $('#accordion-link        .disclosure-triangle').click();
-                $('#accordion-social      .disclosure-triangle').click();
-                $('#accordion-help-links  .disclosure-triangle').click();
-            },
-            500
-        );
+                }, 250
+            );
+        }
 
     },
 
@@ -702,16 +680,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 
     drawerLeftClick: function(openNow) {
-        var self = this;
-
         if ( this.drawerLeftOpened || openNow === false ) {
-            this.drawerLeft.css('width', 0);
             $('.drawer-contents', this.drawerLeft).hide();
-            this.drawerLeftTab.css('left', '-2.7em');
+            this.drawerLeft.css('width', 0);
             this.drawerLeft.css('padding', 0);
             this.drawerLeft.css('border', 'none');
-
+            this.drawerLeftTab.css('left', '-2.7em');
             this.drawerLeftOpened = false;
+            Helioviewer.userSettings.set("state.hv-drawer-left", false);
         }
         else if ( !this.drawerLeftOpened || openNow === true ) {
             this.drawerLeft.css('width', this.drawerLeftOpenedWidth+'em');
@@ -724,10 +700,26 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             }, this.drawerSpeed);
 
             this.drawerLeftOpened = true;
-        }
+            Helioviewer.userSettings.set("state.hv-drawer-left", true);
 
+            this.reopenAccordions(this.drawerLeft);
+        }
         return;
     },
+
+    reopenAccordions: function(drawer) {
+        var self = this;
+        var accordions = drawer.find('.accordion');
+        if ( accordions.length > 0 ) {
+            $.each(accordions, function(i, accordion) {
+                if ( Helioviewer.userSettings.get("state."+accordion.id) == true) {
+                    $(accordion).find('.header').trigger("click", [true]);
+                }
+            });
+        }
+        return;
+    },
+
 
     drawerNewsClick: function() {
         var self = this,
@@ -930,15 +922,16 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         return;
     },
 
-    accordionHeaderClick: function(event) {
+    accordionHeaderClick: function(event, openNow) {
         var obj = $(event.target).parent().find('.disclosure-triangle');
 
-        if ( obj.attr('class').indexOf('closed') != -1 ) {
+        if ( obj.attr('class').indexOf('closed') != -1 || openNow === true) {
             obj.html('▼');
             obj.addClass('opened');
             obj.removeClass('closed');
             $('.content', obj.parent().parent()).show();
             $('.contextual-help', obj.parent().parent()).show();
+            Helioviewer.userSettings.set("state."+obj.parent().parent().attr('id'), true);
         }
         else {
             obj.html('►');
@@ -946,6 +939,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             obj.removeClass('opened');
             $('.content', obj.parent().parent()).hide();
             $('.contextual-help', obj.parent().parent()).hide();
+            Helioviewer.userSettings.set("state."+obj.parent().parent().attr('id'), false);
         }
 
         event.stopPropagation();
