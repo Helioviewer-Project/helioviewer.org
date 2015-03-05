@@ -355,7 +355,6 @@ html, body {
    position: relative;
    margin: 0;
    padding: 0;
-   display: none;
    height: 100%;
    overflow-y: scroll;
    z-index: 2;
@@ -785,7 +784,7 @@ span.ui-icon-hover, div.ui-icon-hover {
 /** Settings dialog */
 
 #settings-dialog {
-   display:none;
+   display: none;
    margin: 15px 15px 0 15px;
    font-size: 1em;
 }
