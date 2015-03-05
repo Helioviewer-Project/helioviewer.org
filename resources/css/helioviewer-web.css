@@ -164,10 +164,8 @@ html, body {
                   cursor: pointer;
 }
 #hv-header .viewport-action:hover {
-                color: #cb2027;
-         border-color: #cb2027;
-         color: rgba(255,255,255,0.75);
-         border-color: rgba(255,255,255,0.75);
+              color: rgba(255,255,255,0.75);
+       border-color: rgba(255,255,255,0.75);
    background-color: rgba(0,0,0,0.75);
      /* -moz-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
    -webkit-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
@@ -195,7 +193,18 @@ html, body {
    -webkit-border-radius: 12px 0 0 12px;
            border-radius: 12px 0 0 12px;
                   border: 2px 0 2px 2px;
-
+      border-right-color: black;
+}
+#hv-header .viewport-action.segmented-left:hover,
+#hv-header .viewport-action.segmented-left:active,
+#hv-header .viewport-action.segmented-left.active:active {
+   border-right-color: black;
+}
+#hv-header .viewport-action.segmented-left.active:hover {
+                color: rgba(255,255,255,0.75);
+         border-color: rgba(255,255,255,0.75);
+   border-right-color: rgba(0,0,0,0.75);
+     background-color: rgba(0,0,0,0.75);
 }
 #hv-header .viewport-action.segmented-middle {
         -o-border-radius: 0;
@@ -211,6 +220,17 @@ html, body {
    -webkit-border-radius: 0 12px 12px 0;
            border-radius: 0 12px 12px 0;
                   border: 2px 2px 2px 2px;
+}
+#hv-header .viewport-action.segmented-right:hover,
+#hv-header .viewport-action.segmented-right:active,
+#hv-header .viewport-action.segmented-right.active:active {
+   border-left-color: black;
+}
+#hv-header .viewport-action.segmented-right.active:hover {
+                color: rgba(255,255,255,0.75);
+         border-color: rgba(255,255,255,0.75);
+   border-left-color: rgba(0,0,0,0.75);
+     background-color: rgba(0,0,0,0.75);
 }
 
 
