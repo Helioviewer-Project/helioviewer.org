@@ -118,6 +118,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this._initEventHandlers();
         this._setupSettingsUI();
 
+        $('#mouse-cartesian').click();
+        $('#earth-button').click();
+
         this._displayGreeting();
 
         if ( Helioviewer.userSettings.get("state.hv-drawer-left") == true ) {
