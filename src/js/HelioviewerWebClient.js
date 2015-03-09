@@ -37,24 +37,31 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.drawerLeftTabBorderRight  = "2pt solid rgba(0,0,0,1)";
         this.drawerLeftTabBorderBottom = "2pt solid rgba(0,0,0,1)";
         this.drawerNews                = $('#hv-drawer-news');
+        this.drawerNewsOpened          = false;
         this.drawerNewsOpenedHeight    = 'auto';
         this.drawerNewsOpenedWidth     = '25em';
         this.drawerMovies              = $('#hv-drawer-movies');
+        this.drawerMoviesOpened        = false;
         this.drawerMoviesOpenedHeight  = 'auto';
         this.drawerMoviesOpenedWidth   = '25em';
         this.drawerScreenshots             = $('#hv-drawer-screenshots');
+        this.drawerScreenshotsOpened       = false;
         this.drawerScreenshotsOpenedHeight = 'auto';
         this.drawerScreenshotsOpenedWidth  = '25em';
         this.drawerYoutube             = $('#hv-drawer-youtube');
+        this.drawerYoutubeOpened       = false;
         this.drawerYoutubeOpenedHeight = '55em';
         this.drawerYoutubeOpenedWidth  = '25em';
         this.drawerData                = $('#hv-drawer-data');
+        this.drawerDataOpened          = false;
         this.drawerDataOpenedHeight    = 'auto';
         this.drawerDataOpenedWidth     = '25em';
         this.drawerShare               = $('#hv-drawer-share');
+        this.drawerShareOpened         = false;
         this.drawerShareOpenedHeight   = 'auto';
         this.drawerShareOpenedWidth    = '25em';
         this.drawerHelp                = $('#hv-drawer-help');
+        this.drawerHelpOpened          = false;
         this.drawerHelpOpenedHeight    = 'auto';
         this.drawerHelpOpenedWidth     = '25em';
 
@@ -118,17 +125,59 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this._initEventHandlers();
         this._setupSettingsUI();
 
+        this._displayGreeting();
+
         $('#mouse-cartesian').click();
         $('#earth-button').click();
 
-        this._displayGreeting();
+        this.drawerUserSettings = Helioviewer.userSettings.get("state.drawers");
+        $.each(this.drawerUserSettings, function(drawerSelector, drawerObj) {
+            switch(drawerSelector) {
+            case "#hv-drawer-left":
+                if ( drawerObj.open ) {
+                    self.drawerLeftClick(true);
+                }
+                break;
+            case "#hv-drawer-news":
+                if ( drawerObj.open ) {
+                    self.drawerNewsClick(true);
+                }
+                break;
+            case "#hv-drawer-youtube":
+                if ( drawerObj.open ) {
+                    self.drawerYoutubeClick(true);
+                }
+                break;
+            case "#hv-drawer-movies":
+                if ( drawerObj.open ) {
+                    self.drawerMoviesClick(true);
+                }
+                break;
+            case "#hv-drawer-screenshots":
+                if ( drawerObj.open ) {
+                    self.drawerScreenshotsClick(true);
+                }
+                break;
+            case "#hv-drawer-data":
+                if ( drawerObj.open ) {
+                    self.drawerDataClick(true);
+                }
+                break;
+            case "#hv-drawer-share":
+                if ( drawerObj.open ) {
+                    self.drawerShareClick(true);
+                }
+                break;
+            case "#hv-drawer-help":
+                if ( drawerObj.open ) {
+                    self.drawerHelpClick(true);
+                }
+                break;
+            default:
+                console.info(['no drawer: ', drawerSelector, obj]);
+            }
+        });
 
-        if ( Helioviewer.userSettings.get("state.hv-drawer-left") == true ) {
-            setTimeout( function () {
-                self.drawerLeftClick(true);
-                }, 250
-            );
-        }
 
     },
 
@@ -686,14 +735,16 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         if ( this.drawerLeftOpened || openNow === false ) {
             $('.drawer-contents', this.drawerLeft).hide();
             this.drawerLeft.css('width', 0);
+            this.drawerLeft.css('height', 0);
             this.drawerLeft.css('padding', 0);
             this.drawerLeft.css('border', 'none');
             this.drawerLeftTab.css('left', '-2.7em');
             this.drawerLeftOpened = false;
-            Helioviewer.userSettings.set("state.hv-drawer-left", false);
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-left.open", false);
         }
         else if ( !this.drawerLeftOpened || openNow === true ) {
             this.drawerLeft.css('width', this.drawerLeftOpenedWidth+'em');
+            this.drawerLeft.css('height', this.drawerLeftOpenedHeight+'em');
             this.drawerLeft.css('border-right', this.drawerLeftTabBorderRight);
             this.drawerLeft.css('border-bottom', this.drawerLeftTabBorderBottom);
             this.drawerLeftTab.css('left', (this.drawerLeftOpenedWidth+this.drawerLeftTabLeft)+'em');
@@ -703,211 +754,232 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             }, this.drawerSpeed);
 
             this.drawerLeftOpened = true;
-            Helioviewer.userSettings.set("state.hv-drawer-left", true);
-
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-left.open", true);
             this.reopenAccordions(this.drawerLeft);
         }
         return;
     },
 
-    reopenAccordions: function(drawer) {
-        var self = this;
-        var accordions = drawer.find('.accordion');
-        if ( accordions.length > 0 ) {
-            $.each(accordions, function(i, accordion) {
-                if ( Helioviewer.userSettings.get("state."+accordion.id) == true) {
-                    $(accordion).find('.header').trigger("click", [true]);
-                }
-            });
-        }
-        return;
-    },
-
-
-    drawerNewsClick: function() {
-        var self = this,
-            buttonId = '#news-button';
+    drawerNewsClick: function(openNow) {
+        var self = this, buttonId = "#news-button";
 
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerNews.attr('id'));
 
-        if ( $(buttonId).hasClass('opened') ) {
+        if ( $(buttonId).hasClass('opened') || openNow === false ) {
             self.drawerNews.css('transition', '');
-            $('.drawer-contents', self.drawerNews).fadeOut(10);
-            self.drawerNews.css('height', 0);
-            self.drawerNews.css('padding', 0);
-            self.drawerNews.hide();
+            $('.drawer-contents', this.drawerNews).fadeOut(10);
+            this.drawerNews.css('width', 0);
+            this.drawerNews.css('height', 0);
+            this.drawerNews.css('padding', 0);
+            this.drawerNews.css({'display':'none'});
             $(buttonId).removeClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-news.open", false);
         }
-        else if ( !$(buttonId).hasClass('opened') ) {
+        else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
             self.drawerNews.css('transition', 'height 500ms');
-            self.drawerNews.css('height', self.drawerNewsOpenedHeight);
+            this.drawerNews.css('width', this.drawerNewsOpenedWidth);
+            this.drawerNews.css('height', this.drawerNewsOpenedHeight);
             setTimeout(function () {
                 self.drawerNews.show();
-                $('.drawer-contents', self.drawerNews).fadeIn(500);
-            }, self.drawerSpeed);
+                $('.drawer-contents', this.drawerNews).fadeIn(500);
+                self.drawerNews.css('transition', '');
+            }, this.drawerSpeed);
             $(buttonId).addClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-news.open", true);
+            this.reopenAccordions(this.drawerNews);
         }
 
         return;
     },
 
-    drawerYoutubeClick: function() {
-        var self = this,
-            buttonId = '#youtube-button';
+    drawerYoutubeClick: function(openNow) {
+        var self = this, buttonId = "#youtube-button";
 
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerYoutube.attr('id'));
 
-        if ( $(buttonId).hasClass('opened') ) {
-            self.drawerNews.css('transition', '');
+        if ( $(buttonId).hasClass('opened') || openNow === false ) {
+            self.drawerYoutube.css('transition', '');
             $('.drawer-contents', this.drawerYoutube).fadeOut(10);
+            this.drawerYoutube.css('width', 0);
             this.drawerYoutube.css('height', 0);
             this.drawerYoutube.css('padding', 0);
             this.drawerYoutube.css({'display':'none'});
             $(buttonId).removeClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-youtube.open", false);
         }
-        else if ( !$(buttonId).hasClass('opened') ) {
-            self.drawerNews.css('transition', 'height 500ms');
+        else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
+            self.drawerYoutube.css('transition', 'height 500ms');
+            this.drawerYoutube.css('width', this.drawerYoutubeOpenedWidth);
             this.drawerYoutube.css('height', this.drawerYoutubeOpenedHeight);
             setTimeout(function () {
                 self.drawerYoutube.show();
                 $('.drawer-contents', this.drawerYoutube).fadeIn(500);
+                self.drawerYoutube.css('transition', '');
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-youtube.open", true);
+            this.reopenAccordions(this.drawerYoutube);
         }
 
         return;
     },
 
-    drawerMoviesClick: function() {
-        var self = this,
-            buttonId = '#movies-button';
+    drawerMoviesClick: function(openNow) {
+        var self = this, buttonId = "#movies-button";
 
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerMovies.attr('id'));
 
-        if ( $(buttonId).hasClass('opened') ) {
-            self.drawerNews.css('transition', '');
+        if ( $(buttonId).hasClass('opened') || openNow === false ) {
+            self.drawerMovies.css('transition', '');
             $('.drawer-contents', this.drawerMovies).fadeOut(10);
+            this.drawerMovies.css('width', 0);
             this.drawerMovies.css('height', 0);
             this.drawerMovies.css('padding', 0);
             this.drawerMovies.css({'display':'none'});
             $(buttonId).removeClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-movies.open", false);
         }
-        else if ( !$(buttonId).hasClass('opened') ) {
-            self.drawerNews.css('transition', 'height 500ms');
+        else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
+            self.drawerMovies.css('transition', 'height 500ms');
+            this.drawerMovies.css('width', this.drawerMoviesOpenedWidth);
             this.drawerMovies.css('height', this.drawerMoviesOpenedHeight);
             setTimeout(function () {
                 self.drawerMovies.show();
                 $('.drawer-contents', this.drawerMovies).fadeIn(500);
+                self.drawerMovies.css('transition', '');
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-movies.open", true);
+            this.reopenAccordions(this.drawerMovies);
         }
 
         return;
     },
 
-    drawerScreenshotsClick: function() {
-        var self = this,
-            buttonId = '#screenshots-button';
+    drawerScreenshotsClick: function(openNow) {
+        var self = this, buttonId = "#screenshots-button";
 
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerScreenshots.attr('id'));
 
-        if ( $(buttonId).hasClass('opened') ) {
-            self.drawerNews.css('transition', '');
+        if ( $(buttonId).hasClass('opened') || openNow === false ) {
+            self.drawerScreenshots.css('transition', '');
             $('.drawer-contents', this.drawerScreenshots).fadeOut(10);
+            this.drawerScreenshots.css('width', 0);
             this.drawerScreenshots.css('height', 0);
             this.drawerScreenshots.css('padding', 0);
             this.drawerScreenshots.css({'display':'none'});
             $(buttonId).removeClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-screenshots.open", false);
         }
-        else if ( !$(buttonId).hasClass('opened') ) {
-            self.drawerNews.css('transition', 'height 500ms');
+        else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
+            self.drawerScreenshots.css('transition', 'height 500ms');
+            this.drawerScreenshots.css('width', this.drawerScreenshotsOpenedWidth);
             this.drawerScreenshots.css('height', this.drawerScreenshotsOpenedHeight);
             setTimeout(function () {
                 self.drawerScreenshots.show();
                 $('.drawer-contents', this.drawerScreenshots).fadeIn(500);
+                self.drawerScreenshots.css('transition', '');
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-screenshots.open", true);
+            this.reopenAccordions(this.drawerScreenshots);
         }
 
         return;
     },
 
-    drawerDataClick: function() {
-        var self = this,
-            buttonId = '#data-button';
+    drawerDataClick: function(openNow) {
+        var self = this, buttonId = "#data-button";
 
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerData.attr('id'));
 
-        if ( $(buttonId).hasClass('opened') ) {
-            self.drawerNews.css('transition', '');
+        if ( $(buttonId).hasClass('opened') || openNow === false ) {
+            self.drawerData.css('transition', '');
             $('.drawer-contents', this.drawerData).fadeOut(10);
+            this.drawerData.css('width', 0);
             this.drawerData.css('height', 0);
             this.drawerData.css('padding', 0);
             this.drawerData.css({'display':'none'});
             $(buttonId).removeClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-data.open", false);
         }
-        else if ( !$(buttonId).hasClass('opened') ) {
-            self.drawerNews.css('transition', 'height 500ms');
+        else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
+            self.drawerData.css('transition', 'height 500ms');
+            this.drawerData.css('width', this.drawerDataOpenedWidth);
             this.drawerData.css('height', this.drawerDataOpenedHeight);
             setTimeout(function () {
                 self.drawerData.show();
                 $('.drawer-contents', this.drawerData).fadeIn(500);
+                self.drawerData.css('transition', '');
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-data.open", true);
+            this.reopenAccordions(this.drawerData);
         }
 
         return;
     },
 
-    drawerShareClick: function() {
-        var self = this,
-            buttonId = '#share-button';
+    drawerShareClick: function(openNow) {
+        var self = this, buttonId = "#share-button";
 
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerShare.attr('id'));
 
-        if ( $(buttonId).hasClass('opened') ) {
-            self.drawerNews.css('transition', '');
+        if ( $(buttonId).hasClass('opened') || openNow === false ) {
+            self.drawerShare.css('transition', '');
             $('.drawer-contents', this.drawerShare).fadeOut(10);
+            this.drawerShare.css('width', 0);
             this.drawerShare.css('height', 0);
             this.drawerShare.css('padding', 0);
             this.drawerShare.css({'display':'none'});
             $(buttonId).removeClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-share.open", false);
         }
-        else if ( !$(buttonId).hasClass('opened') ) {
-            self.drawerNews.css('transition', 'height 500ms');
+        else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
+            self.drawerShare.css('transition', 'height 500ms');
+            this.drawerShare.css('width', this.drawerShareOpenedWidth);
             this.drawerShare.css('height', this.drawerShareOpenedHeight);
             setTimeout(function () {
                 self.drawerShare.show();
                 $('.drawer-contents', this.drawerShare).fadeIn(500);
+                self.drawerShare.css('transition', '');
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-share.open", true);
+            this.reopenAccordions(this.drawerShare);
         }
 
         return;
     },
 
-    drawerHelpClick: function() {
+    drawerHelpClick: function(openNow) {
         var self = this,
             buttonId = '#help-button';
 
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerHelp.attr('id'));
 
-        if ( $(buttonId).hasClass('opened') ) {
-            self.drawerNews.css('transition', '');
+        if ( $(buttonId).hasClass('opened') || openNow === false ) {
+            self.drawerHelp.css('transition', '');
             $('.drawer-contents', this.drawerHelp).fadeOut(10);
+            this.drawerHelp.css('width', 0);
             this.drawerHelp.css('height', 0);
             this.drawerHelp.css('padding', 0);
             this.drawerHelp.css({'display':'none'});
             $(buttonId).removeClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-help.open", false);
         }
-        else if ( !$(buttonId).hasClass('opened') ) {
+        else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
             self.drawerHelp.css('transition', 'height 500ms');
+            this.drawerHelp.css('width', this.drawerHelpOpenedWidth);
             this.drawerHelp.css('height', this.drawerHelpOpenedHeight);
             setTimeout(function () {
                 self.drawerHelp.show();
                 $('.drawer-contents', this.drawerHelp).fadeIn(500);
+                self.drawerHelp.css('transition', '');
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-help.open", true);
+            this.reopenAccordions(this.drawerHelp);
         }
 
         return;
@@ -926,7 +998,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
     accordionHeaderClick: function(event, openNow) {
-        var obj = $(event.target).parent().find('.disclosure-triangle');
+        var obj = $(event.target).parent().find('.disclosure-triangle'),
+            drawerId    = obj.parent().parent().parent().parent().attr('id'),
+            accordionId = obj.parent().parent().attr('id');
 
         if ( obj.attr('class').indexOf('closed') != -1 || openNow === true) {
             obj.html('▼');
@@ -934,7 +1008,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             obj.removeClass('closed');
             $('.content', obj.parent().parent()).show();
             $('.contextual-help', obj.parent().parent()).show();
-            Helioviewer.userSettings.set("state."+obj.parent().parent().attr('id'), true);
+            Helioviewer.userSettings.set("state.drawers.#"+drawerId+".accordions.#"+accordionId+".open", true);
         }
         else {
             obj.html('►');
@@ -942,23 +1016,37 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             obj.removeClass('opened');
             $('.content', obj.parent().parent()).hide();
             $('.contextual-help', obj.parent().parent()).hide();
-            Helioviewer.userSettings.set("state."+obj.parent().parent().attr('id'), false);
+            Helioviewer.userSettings.set("state.drawers.#"+drawerId+".accordions.#"+accordionId+".open", false);
         }
-
         event.stopPropagation();
     },
 
+    reopenAccordions: function(drawer) {
+        var self = this,
+            accordions = drawer.find('.accordion'),
+            accordionUserSettings = Helioviewer.userSettings.get("state.drawers.#"+drawer.attr('id')+".accordions");
+
+        if ( Object.keys(accordionUserSettings).length > 0 ) {
+            $.each(accordionUserSettings, function(selector, accordionObj) {
+                if ( accordionObj.open ) {
+                    $(selector).find('.header').trigger("click", [true]);
+                }
+            });
+        }
+        return;
+    },
 
     closeTabDrawersExcept: function (buttonId, drawerId) {
         self = this;
 
         $.each( this.tabbedDrawers, function (i, drawer) {
             if ( drawer != drawerId ) {
-
                 $('.drawer-contents', drawer).fadeOut(100);
                 $(drawer).css('height', 0);
+                $(drawer).css('width', 0);
                 $(drawer).css('padding', 0);
                 $(self.tabbedDrawerButtons[drawer]).removeClass('opened');
+                Helioviewer.userSettings.set("state.drawers."+drawer+".open", false);
             }
         });
 

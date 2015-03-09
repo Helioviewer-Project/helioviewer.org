@@ -64,92 +64,105 @@ var SettingsLoader = (
             },
             // Application state
             state: {
-                'accordion-date': true,
-                'accordion-images': true,
-                'accordion-events': false,
-                centerX    : 0,
-                centerY    : 0,
-                date       : date.getTime(),
-                'hv-drawer-left': true,
-                    drawers: [ {
-                        "#hv-drawer-left": {
-                            "open": true,
-                            "accordions": [
-                                {"accordion-date"  : { "open": true  }},
-                                {"accordion-images": { "open": true  }},
-                                {"accordion-events": { "open": false }}
-                            ]
-                        }}, {
-
-                        "#hv-drawer-news": {
-                            "open": false,
-                            "accordions": [
-                                {"accordion-news": { "open": true }}
-                            ]
-                        }}, {
-
-                        "#hv-drawer-youtube": {
-                            "open": true,
-                            "accordions": [
-                                {"accordion-youtube": { "open": true }}
-                            ]
-                        }}, {
-
-                        "#hv-drawer-movies": {
-                            "open": false,
-                            "accordions": [
-                                {"accordion-movies": { "open": true }}
-                            ]
-                        }}, {
-
-                        "#hv-drawer-screenshots": {
-                            "open": false,
-                            "accordions": [
-                                {"accordion-screenshots": { "open": true }}
-                            ]
-                        }}, {
-
-                        "#hv-drawer-data": {
-                            "open": false,
-                            "accordions": [
-                                {"accordion-vso": { "open": true }},
-                                {"accordion-sdo": { "open": true }}
-                            ]
-                        }}, {
-
-                        "#hv-drawer-share": {
-                            "open": false,
-                            "accordions": [
-                                {"accordion-link"  : { "open": true }},
-                                {"accordion-social": { "open": true }}
-                            ]
-                        }}, {
-
-                        "#hv-drawer-help": {
-                            "open": false,
-                            "accordions": [
-                                {"accordion-help-links": { "open": true }}
-                            ]
-                        }}
-                    ],
-                eventLayers: [],
-                eventLabels: true,
-                imageScale : serverSettings.defaultImageScale,
-                scale      : true,
-                scaleType  :'earth',
-                scaleX     : 0,
-                scaleY     : 0,
-                tileLayers : [{
-                    visible    : true,
-                    opacity    : 100,
-                    uiLabels   : [ {'label':'Observatory',
+                "centerX"    : 0,
+                "centerY"    : 0,
+                "date"       : date.getTime(),
+                "drawers": {
+                    "#hv-drawer-left": {
+                        "open": true,
+                        "accordions": {
+                            "#accordion-date": {
+                                "open": true
+                            },
+                            "#accordion-images": {
+                                "open": true
+                            },
+                            "#accordion-events": {
+                                "open": false
+                            }
+                        }
+                    },
+                    "#hv-drawer-news": {
+                        "open": false,
+                        "accordions": {
+                            "#accordion-news": {
+                                "open": true
+                            }
+                        }
+                    },
+                    "#hv-drawer-youtube": {
+                        "open": true,
+                        "accordions": {
+                            "#accordion-youtube": {
+                                "open": true
+                            }
+                        }
+                    },
+                    "#hv-drawer-movies": {
+                        "open": false,
+                        "accordions": {
+                            "#accordion-movies": {
+                                "open": true
+                            }
+                        }
+                    },
+                    "#hv-drawer-screenshots": {
+                        "open": false,
+                        "accordions": {
+                            "#accordion-screenshots": {
+                                "open": true
+                            }
+                        }
+                    },
+                    "#hv-drawer-data": {
+                        "open": false,
+                        "accordions": {
+                            "#accordion-vso": {
+                                "open": true
+                            },
+                            "#accordion-sdo": {
+                                "open": true
+                            }
+                        }
+                    },
+                    "#hv-drawer-share": {
+                        "open": false,
+                        "accordions": {
+                            "#accordion-link": {
+                                "open": true
+                            },
+                            "#accordion-social": {
+                                "open": true
+                            }
+                        }
+                    },
+                    "#hv-drawer-help": {
+                        "open": false,
+                        "accordions": {
+                            "#accordion-help-links": {
+                                "open": true
+                            }
+                        }
+                    }
+                },
+                "eventLayers": [],
+                "eventLabels": true,
+                "imageScale" : serverSettings.defaultImageScale,
+                "scale"      : true,
+                "scaleType"  :'earth',
+                "scaleX"     : 0,
+                "scaleY"     : 0,
+                "tileLayers" : [{
+                    "visible"    : true,
+                    "opacity"    : 100,
+                    "uiLabels"   : [ {'label':'Observatory',
                                     'name' :'SDO'},
                                    {'label':'Instrument',
                                     'name' :'AIA'},
                                    {'label':'Measurement',
                                     'name' :'304'} ]
                 }],
-                timeStep   : 86400
+                "timeStep"   : 86400
             },
             version: serverSettings.version
         };

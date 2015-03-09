@@ -70,11 +70,24 @@ var UserSettings = Class.extend(
 
         if (lookup.length === 1) {
             return this.settings[key];
-        } else if (lookup.length === 2) {
+        }
+        else if (lookup.length === 2) {
             return this.settings[lookup[0]][lookup[1]];
         }
+        else if (lookup.length === 3) {
+            return this.settings[lookup[0]][lookup[1]][lookup[2]];
+        }
+        else if (lookup.length === 4) {
+            return this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]];
+        }
+        else if (lookup.length === 5) {
+            return this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]];
+        }
+        else if (lookup.length === 6) {
+            return this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]];
+        }
 
-        return this.settings[lookup[0]][lookup[1]][lookup[2]];
+        return this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]][lookup[6]];
     },
 
     /**
@@ -85,11 +98,24 @@ var UserSettings = Class.extend(
 
         if (lookup.length === 1) {
             return this._defaults[key];
-        } else if (lookup.length === 2) {
+        }
+        else if (lookup.length === 2) {
             return this._defaults[lookup[0]][lookup[1]];
         }
+        else if (lookup.length === 3) {
+            return this._defaults[lookup[0]][lookup[1]][lookup[2]];
+        }
+        else if (lookup.length === 4) {
+            return this._defaults[lookup[0]][lookup[1]][lookup[2]][lookup[3]];
+        }
+        else if (lookup.length === 5) {
+            return this._defaults[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]];
+        }
+        else if (lookup.length === 6) {
+            return this._defaults[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]];
+        }
 
-        return this._defaults[lookup[0]][lookup[1]][lookup[2]];
+        return this._defaults[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]][lookup[6]];
     },
 
     /**
@@ -110,10 +136,24 @@ var UserSettings = Class.extend(
 
         if (lookup.length === 1) {
             this.settings[key] = value;
-        } else if (lookup.length === 2) {
+        }
+        else if (lookup.length === 2) {
             this.settings[lookup[0]][lookup[1]] = value;
-        } else {
+        }
+        else if (lookup.length === 3) {
             this.settings[lookup[0]][lookup[1]][lookup[2]] = value;
+        }
+        else if (lookup.length === 4) {
+            this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] = value;
+        }
+        else if (lookup.length === 5) {
+            this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]] = value;
+        }
+        else if (lookup.length === 6) {
+            this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]] = value;
+        }
+        else {
+            this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]][lookup[6]] = value;
         }
 
         this._save();
