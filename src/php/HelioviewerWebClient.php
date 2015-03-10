@@ -448,15 +448,9 @@ Note that when an image is not available for the exact date and time you selecte
                     <div class="section">
                         <!-- User-Submitted Videos -->
                         <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all">
-                            <a id="user-video-gallery-next" class="qtip-left" href="#" title="Go to next page.">
-                                <div class='fa fa-triangle-1-n'></div>
-                            </a>
                             <div id="user-video-gallery-main">
                                 <div id="user-video-gallery-spinner"></div>
                             </div>
-                            <a id="user-video-gallery-prev" class="qtip-left" href="#" title="Go to previous page.">
-                                <div class='fa fa-triangle-1-s'></div>
-                            </a>
                         </div>
                     </div>
                 </div>

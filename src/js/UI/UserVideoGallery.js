@@ -19,24 +19,17 @@ var UserVideoGallery = Class.extend(
     init : function (url) {
         this._container   = $("#user-video-gallery-main");
         this._loader      = $("#user-video-gallery-spinner");
-        this._nextPageBtn = $("#user-video-gallery-next");
-        this._prevPageBtn = $("#user-video-gallery-prev");
 
         this._working     = false;
 
         // Feed URL
         this.url = url || Helioviewer.api;
 
-        // Local
-        this._pageSize = this._choosePageSize();
-        this._startIndex = 0;
-
         // Remote (may differ from local due to deleted videos, etc)
-        this._numVideos = 40;
+        this._numVideos = 20;
 
         this._videos = [];
 
-        this._setupEventHandlers();
         this._fetchVideos();
 
         // Auto-refresh every couple minutes
@@ -51,10 +44,7 @@ var UserVideoGallery = Class.extend(
      * Updates video gallery to show new entries
      */
     _updateGallery: function () {
-        var endIndex = Math.min(this._startIndex + this._pageSize,
-                                this._videos.length);
-
-        this._buildHTML(this._videos.slice(this._startIndex, endIndex));
+        this._buildHTML(this._videos);
     },
 
     /**
@@ -143,10 +133,10 @@ var UserVideoGallery = Class.extend(
 
             html += "<a target='_blank' href='" + vid.url + "' " +
                     "alt='video thumbnail'>" +
-                    "<div class='user-video-thumbnail-container'>" +
-                    "<div style='text-align: left; margin-left: 25px;'>" +
+                    "<div id='user-video-thumbnail-container'>" +
+                    "<div style='text-align: center;'>" +
                     when + "</div>" +
-                    "<img src='" + img + "' alt='user video thumbnail' />" +
+                    "<img class='user-video-thumbnail' src='" + img + "' alt='user video thumbnail' />" +
                     "</div></a><br />";
         });
 
@@ -155,93 +145,8 @@ var UserVideoGallery = Class.extend(
 
         this._loader.hide();
         this._container.append(html);
-        //this._container.fadeIn();
 
         this._working = false;
-    },
-
-    /**
-     * Go to the previous page
-     */
-    _prevPage: function () {
-        if (this._working) {
-            return false;
-        }
-
-        if (this._startIndex + this._pageSize < this._videos.length) {
-            this._startIndex += this._pageSize;
-            this._updateGallery();
-        }
-
-        return false;
-    },
-
-    /**
-     * Go to the next page
-     */
-    _nextPage: function () {
-        if (this._working) {
-            return false;
-        }
-
-        if (this._startIndex > 0) {
-            this._startIndex = Math.max(0, this._startIndex - this._pageSize);
-            this._updateGallery();
-        }
-
-        return false;
-    },
-
-    /**
-     * Performs a quick check on the browser height to decide how many video
-     * thumbnails to show at once
-     */
-    _choosePageSize: function () {
-        var height = $(window).height();
-
-        if (height > 1035) {
-            return 3;
-        } else if (height > 780) {
-            return 2;
-        }
-        return 1;
-    },
-
-    /**
-     * Enables scrolling through video gallery pages using the mouse wheel
-     */
-    _onMouseWheelMove: function (e, delta) {
-        if (delta > 0) {
-            this._nextPage();
-        } else {
-            this._prevPage();
-        }
-        return false;
-    },
-
-    /**
-     * Resize user video gallery to use up any available space
-     */
-    _onResize: function (e) {
-        var oldPageSize = this._pageSize;
-
-        // Determine new optimal pageSize
-        this._pageSize = this._choosePageSize();
-
-        // Don't update HTML no videos have been retrieved yet
-        if (this._videos.length === 0) {
-            return;
-        }
-
-        // Only update HTML if the page size has changed
-        if (this._pageSize !== oldPageSize) {
-            // Expand gallery size when currently displaying last page and
-            // resizing
-            if (this._startIndex + this._pageSize > this._videos.length) {
-                this._startIndex = this._videos.length - this._pageSize;
-            }
-            this._updateGallery();
-        }
     },
 
     /**
@@ -253,21 +158,6 @@ var UserVideoGallery = Class.extend(
         } else {
             $(this).find("img").removeClass("video-glow");
         }
-    },
-
-    /**
-     * Setup event handlers
-     */
-    _setupEventHandlers: function () {
-        this._nextPageBtn.click($.proxy(this._nextPage, this));
-        this._prevPageBtn.click($.proxy(this._prevPage, this));
-
-        $(window).resize($.proxy(this._onResize, this));
-
-        // Setup hover event handler
-        //this._container.find("a")
-        //    .live('mouseover mouseout', this._onVideoHover);
-
-        this._container.mousewheel($.proxy(this._onMouseWheelMove, this));
     }
+
 });
