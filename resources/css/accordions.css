@@ -12,6 +12,7 @@
 
 .tile-accordion-header-left {
     float: left;
+    line-height: 1.65em;
 }
 
 span.tile-accordion-header-right > span.accordion-header-divider,
@@ -23,6 +24,7 @@ span.event-accordion-header-right > span.accordion-header-divider {
 
 .dynaccordion-tab {
     cursor: pointer;
+    margin-bottom: 0.50em;
 }
 
 .dynaccordion-cell {
@@ -99,15 +101,11 @@ select.layer-select {
 #TileLayerAccordion-Container .dynaccordion-section,
 #EventLayerAccordion-Container .dynaccordion-section {
     margin: 0;
-    padding: 0.55em 0.125em 0.55em 1em;
+    padding: 0.55em 0.125em 0.1em 1em;
     background: -o-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
     background: -moz-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
     background: -webkit-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
     background: linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
-}
-
-.dynaccordion-tab {
-    margin-bottom: 1em;
 }
 
 #TileLayerAccordion-Container .dynaccordion-cell,
