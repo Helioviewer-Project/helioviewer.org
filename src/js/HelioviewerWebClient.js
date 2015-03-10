@@ -734,6 +734,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     drawerLeftClick: function(openNow) {
         if ( this.drawerLeftOpened || openNow === false ) {
             $('.drawer-contents', this.drawerLeft).hide();
+            $(this.drawerLeft).hide();
             this.drawerLeft.css('width', 0);
             this.drawerLeft.css('height', 0);
             this.drawerLeft.css('padding', 0);
@@ -744,13 +745,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         }
         else if ( !this.drawerLeftOpened || openNow === true ) {
             this.drawerLeft.css('width', this.drawerLeftOpenedWidth+'em');
-            this.drawerLeft.css('height', this.drawerLeftOpenedHeight+'em');
+            this.drawerLeft.css('height', 'auto');
             this.drawerLeft.css('border-right', this.drawerLeftTabBorderRight);
             this.drawerLeft.css('border-bottom', this.drawerLeftTabBorderBottom);
             this.drawerLeftTab.css('left', (this.drawerLeftOpenedWidth+this.drawerLeftTabLeft)+'em');
             $(this.drawerLeft.parent()).css('left', this.drawerLeftOpenedWidth+'em');
             setTimeout(function () {
-                $('.drawer-contents', this.drawerLeft).show();
+                self.drawerLeft.show();
+                $('.drawer-contents', self.drawerLeft).show();
             }, this.drawerSpeed);
 
             this.drawerLeftOpened = true;
