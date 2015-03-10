@@ -87,10 +87,6 @@ var EventLayerAccordion = Layer.extend(
                       + 'id="visibilityBtn-' + id + '" '
                       + 'title="Toggle visibility of event marker pins" '
                       + '></span>';
-        /*
-        removeBtn = "<span class='ui-icon ui-icon-closethick removeBtn' id='removeBtn-" + id +
-                    "' title='Remove layer'></span>";
-        */
 
         labelsBtn = '<span class="fa fa-tags fa-fw labelsBtn'
                   + labelsHidden + '" '
@@ -106,7 +102,6 @@ var EventLayerAccordion = Layer.extend(
              +        '<span class="timestamp user-selectable"></span>'
              +        visibilityBtn
              +        labelsBtn
-          /* +        removeBtn */
              +     '</div>'
              + '</div>';
 
@@ -208,17 +203,7 @@ var EventLayerAccordion = Layer.extend(
             e.stopPropagation();
         };
 
-        // Function for handling layer remove button
-//        removeLayer = function (e) {
-//            $(document).trigger("remove-event-layer", [id]);
-//            self._removeTooltips(id);
-//            self.domNode.dynaccordion('removeSection', {id: id});
-//            $(document).trigger("save-event-layers");
-//            e.stopPropagation();
-//        };
-
         visibilityBtn.bind('click', this, toggleVisibility);
-//        removeBtn.bind('click', this, removeLayer);
     },
 
 
