@@ -295,6 +295,7 @@ html, body {
 
 /* Drawers */
 #hv-drawer-left {
+                 display: none;
                  z-index: 2;
                 position: absolute;
                      top: 3em;
@@ -356,7 +357,7 @@ html, body {
    position: relative;
    margin: 0;
    padding: 0;
-   height: 100%;
+   height: auto;
    overflow-y: scroll;
    z-index: 2;
 }
