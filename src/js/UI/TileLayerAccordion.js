@@ -89,9 +89,9 @@ var TileLayerAccordion = Layer.extend(
         var visibilityBtn, removeBtn, hidden, head, body;
 
         // initial visibility
-        hidden = (visible ? "" : " hidden");
+        hidden = (visible ? "fa fa-eye fa-fw layerManagerBtn visible" : "fa fa-eye-slash fa-fw layerManagerBtn visible hidden");
 
-        visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
+        visibilityBtn = '<span class="'
                       + hidden + '" '
                       + 'id="visibilityBtn-' + id + '" '
                       + 'title="Toggle Image Layer Visibility" '

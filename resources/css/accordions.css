@@ -10,6 +10,10 @@
     font-size: 10.5px;
 }
 
+.tile-accordion-header-left {
+    float: left;
+}
+
 span.tile-accordion-header-right > span.accordion-header-divider,
 span.event-accordion-header-right > span.accordion-header-divider {
     position: absolute;
@@ -95,7 +99,7 @@ select.layer-select {
 #TileLayerAccordion-Container .dynaccordion-section,
 #EventLayerAccordion-Container .dynaccordion-section {
     margin: 0;
-    padding: 0.55em 1em;
+    padding: 0.55em 0.125em 0.55em 1em;
     background: -o-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
     background: -moz-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
     background: -webkit-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
