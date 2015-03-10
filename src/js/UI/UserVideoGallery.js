@@ -134,9 +134,9 @@ var UserVideoGallery = Class.extend(
             html += "<a target='_blank' href='" + vid.url + "' " +
                     "alt='video thumbnail'>" +
                     "<div id='user-video-thumbnail-container'>" +
+                    "<img class='user-video-thumbnail' src='" + img + "' alt='user video thumbnail' />" +
                     "<div style='text-align: center;'>" +
                     when + "</div>" +
-                    "<img class='user-video-thumbnail' src='" + img + "' alt='user video thumbnail' />" +
                     "</div></a><br />";
         });
 

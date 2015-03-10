@@ -812,9 +812,9 @@ alert('MovieManagerUI.showYouTubeUploadDialog() assumes 4-level hierarchy in lay
                   '&format=flv';
 
             return '<div id="movie-player-' + movie.id + '">' +
-                       '<iframe src="' + url + '" width="' + width +
+                       '<iframe id="movie-player-iframe" src="' + url + '" width="' + width +
                        '" height="' + height + '" marginheight="0" marginwidth="0" ' +
-                       'scrolling="no" frameborder="0" style="width: 100%; margin-bottom: 2px;" />' +
+                       'scrolling="no" frameborder="0" />' +
                    '</div>' +
                    '<div style="width:100%;">' +
                        '<div style="float:left;" class="video-links">' +
