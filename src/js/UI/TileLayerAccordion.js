@@ -191,7 +191,7 @@ var TileLayerAccordion = Layer.extend(
      */
     _buildEntryBody: function (id) {
         var hierarchy, display, info, jp2, label, letters, opacitySlide,
-            popups='';
+            popups='', body;
 
         // Opacity slider placeholder
         opacitySlide  = '<div class="layer-select-label">Opacity: </div>'
@@ -225,17 +225,26 @@ var TileLayerAccordion = Layer.extend(
                    +  '</select>';
         });
 
-        jp2 = '<span id="image-' + id + '-download-btn" '
-            +       'class="image-download-btn ui-icon ui-icon-image" '
-            +       'title="Download full JPEG 2000 image (grayscale).">'
-            + '</span>';
+        jp2 = '<div id="image-' + id + '-download-btn" '
+            +       'class="image-download-btn fa fa-image fa-fw" '
+            +       'title="Download full JPEG 2000 image (grayscale)."'
+            +       'style="position: absolute; top: 1.8em; right: 0.05em;">'
+            + '</div>';
 
-        info = '<span id="image-' + id + '-info-btn" '
-             +       'class="image-info-dialog-btn ui-icon ui-icon-info" '
-             +       'title="Display image header">'
-             + '</span>';
+        info = '<div id="image-' + id + '-info-btn" '
+             +       'class="image-info-dialog-btn fa fa-h-square fa-fw" '
+             +       'title="Display FITS image header."'
+             +       'style="position: absolute; top: 0.2em; right: 0.05em;">'
+             + '</div>';
 
-        return (opacitySlide + popups + jp2 + info);
+        body = '<div style="position: relative;">'
+             + jp2
+             + info
+             + opacitySlide
+             + popups
+             + '</div>';
+
+        return (body);
     },
 
     /**
