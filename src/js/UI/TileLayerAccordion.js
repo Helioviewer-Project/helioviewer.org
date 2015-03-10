@@ -226,15 +226,15 @@ var TileLayerAccordion = Layer.extend(
         });
 
         jp2 = '<div id="image-' + id + '-download-btn" '
-            +       'class="image-download-btn fa fa-image fa-fw" '
+            +       'class="image-download-btn fa fa-file-image-o fa-fw" '
             +       'title="Download full JPEG 2000 image (grayscale)."'
-            +       'style="position: absolute; top: 1.8em; right: 0em;">'
+            +       'style="position: absolute; top: 1.8em; right: 0;">'
             + '</div>';
 
         info = '<div id="image-' + id + '-info-btn" '
              +       'class="image-info-dialog-btn fa fa-h-square fa-fw" '
              +       'title="Display FITS image header."'
-             +       'style="position: absolute; top: 0.2em; right: 0.01em;">'
+             +       'style="position: absolute; top: 0.2em; right: 0;">'
              + '</div>';
 
         body = '<div style="position: relative; margin-bottom: 1em;">'

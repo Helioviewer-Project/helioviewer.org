@@ -750,10 +750,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerLeft.css('border-bottom', this.drawerLeftTabBorderBottom);
             this.drawerLeftTab.css('left', (this.drawerLeftOpenedWidth+this.drawerLeftTabLeft)+'em');
             $(this.drawerLeft.parent()).css('left', this.drawerLeftOpenedWidth+'em');
-            setTimeout(function () {
-                self.drawerLeft.show();
-                $('.drawer-contents', self.drawerLeft).show();
-            }, this.drawerSpeed);
+            this.drawerLeft.show();
+            $('.drawer-contents', this.drawerLeft).show();
 
             this.drawerLeftOpened = true;
             Helioviewer.userSettings.set("state.drawers.#hv-drawer-left.open", true);
