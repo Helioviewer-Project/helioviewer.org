@@ -247,3 +247,8 @@ select.layer-select {
 #sdo-previews .preview.start {
     margin-right: 1em;
 }
+
+.image-info-dialog-btn:hover,
+.image-download-btn:hover {
+    color: yellow;
+}

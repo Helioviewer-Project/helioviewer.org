@@ -14,7 +14,7 @@ div#usage-dialog {
 }
 
 .image-info-dialog-btn {
-	margin-left: 242px;
+	float: right;
 	cursor: pointer;
 }
 
