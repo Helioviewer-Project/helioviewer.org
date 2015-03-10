@@ -96,6 +96,10 @@ abstract class HelioviewerClient {
 
     <link rel="shortcut icon" href="favicon.ico" />
 
+    <!-- Blog RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="The Helioviewer Project Blog RSS Feed" href="http://blog.helioviewer.org/feed/" />
+    <link rel="alternate" type="application/atom+xml" title="The Helioviewer Project Blog Atom Feed" href="http://blog.helioviewer.org/feed/atom/" />
+
     <!--OpenGraph Metadata-->
     <meta property="og:title" content="Helioviewer.org" />
 <?php
