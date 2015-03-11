@@ -102,7 +102,7 @@ var TimeControls = Class.extend(
 
                     layerHierarchy[i] = [];
                     $.each( letters, function (j, letter) {
-                        if ( $('#'+letters[j]+'-select-'+idBase).is(":visible") ) {
+                        if ( $('#'+letters[j]+'-select-'+idBase).css('display') != 'none' ) {
                             label = $('#'+letters[j]+'-label-'+idBase).html()
                                     .slice(0,-1);
                             name  = $('#'+letters[j]+'-select-'+idBase
@@ -268,7 +268,7 @@ var TimeControls = Class.extend(
             dateFormat     : 'yy/mm/dd',
             mandatory      : true,
             showOn         : 'button',
-            yearRange      : '1990:'+String((new Date).getFullYear()), 
+            yearRange      : '1990:'+String((new Date).getFullYear()),
             onSelect       : function (dateStr) {
                 window.setTimeout(function () {
                     self._onTextFieldChange();
