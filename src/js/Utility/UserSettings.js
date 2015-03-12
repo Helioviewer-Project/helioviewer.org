@@ -333,6 +333,31 @@ var UserSettings = Class.extend(
     },
 
     /**
+     * Processes an array of objects representing selected event types and FRMs
+     * and convert it into a string for passing through URLs
+     */
+    parseLayersURLString: function (layerArray) {
+        var layerString = '';
+
+        if ( typeof layerArray == "undefined" ) {
+            layerArray = this.get("state.tileLayers");
+        }
+
+        $.each(layerArray, function (i, layerObj) {
+            layerString += "[";
+
+            $.each(layerObj.uiLabels, function (i, labelObj) {
+                layerString += labelObj.name + ",";
+            });
+            layerString += parseInt(layerObj.layeringOrder) + ",";
+            layerString += parseInt(layerObj.opacity);
+
+            layerString += "],";
+        });
+        return layerString.slice(0, -1);
+    },
+
+    /**
      * Processes a string containing one or more event types and FRMs and
      * converts them into JavaScript objects
      */

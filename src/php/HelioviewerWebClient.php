@@ -796,11 +796,11 @@ Note that when an image is not available for the exact date and time you selecte
 
                         <div id='movie-manager-build-btns' class='media-manager-build-btns'>
                             <div style="width: 65%; margin: 0 auto; font-size: 1.5em;">
-                                <div id='movie-manager-full-viewport' class='text-btn qtip-left' title=''>
+                                <div id='movie-manager-full-viewport' class='text-btn qtip-left' title='...'>
                                     <span class='fa fa-copy fa-fw'></span>
                                     <span style='line-height: 1.6em'>Copy Link</span>
                                 </div>
-                                <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title=''>
+                                <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='...'>
                                     <span class='fa fa-envelope fa-fw'></span>
                                     <span style='line-height: 1.6em'>Email Link</span>
                                 </div>
@@ -823,7 +823,7 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div id='twitter' class='social-btns'>
                                 <div style="width: 50%; margin: 0 auto; font-size: 1.5em;">
-                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
+                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title='...'>
                                         <span class='fa fa-twitter-square fa-fw'></span>
                                         <span style='line-height: 1.6em'>Tweet Screenshot</span>
                                     </div>
@@ -837,7 +837,7 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div id='facebook' class='social-btns'>
                                 <div style="width: 50%; margin: 0 auto; font-size: 1.5em;">
-                                    <div id='' class='text-btn qtip-left color-facebook' style="width: 100%;" title=''>
+                                    <div id='' class='text-btn qtip-left color-facebook' style="width: 100%;" title='...'>
                                         <span class='fa fa-facebook-square fa-fw'></span>
                                         <span style='line-height: 1.6em'>Share Screenshot</span>
                                     </div>
@@ -851,7 +851,7 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div id='pinterest' class='social-btns'>
                                 <div style="width: 50%; margin: 0 auto; font-size: 1.5em;">
-                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
+                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title='...'>
                                         <span class='fa fa-pinterest-square fa-fw'></span>
                                         <span style='line-height: 1.6em'>Pin Screenshot</span>
                                     </div>
@@ -884,7 +884,7 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div id='' class='social-btns'>
                                 <div style="width: 90%; margin: 0 auto; font-size: 1.5em;">
-                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
+                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title='...'>
                                         <span class='fa fa-bookmark-o fa-fw'></span>
                                         <span style='line-height: 1.6em'>User's Guide</span>
                                     </div>
@@ -893,7 +893,7 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div id='' class='social-btns'>
                                 <div style="width: 90%; margin: 0 auto; font-size: 1.5em;">
-                                    <div id='' class='text-btn qtip-left color-facebook' style="width: 100%;" title=''>
+                                    <div id='' class='text-btn qtip-left color-facebook' style="width: 100%;" title='...'>
                                         <span class='fa fa-key fa-fw'></span>
                                         <span style='line-height: 1.6em'>Visual Glossary</span>
                                     </div>
@@ -902,7 +902,7 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div id='' class='social-btns'>
                                 <div style="width: 90%; margin: 0 auto; font-size: 1.5em;">
-                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
+                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title='...'>
                                         <span class='fa fa-keyboard-o fa-fw'></span>
                                         <span style='line-height: 1.6em'>Keyboard Shortcuts</span>
                                     </div>
@@ -911,7 +911,7 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div id='' class='social-btns'>
                                 <div style="width: 90%; margin: 0 auto; font-size: 1.5em;">
-                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
+                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title='...'>
                                         <span class='fa fa-book fa-fw'></span>
                                         <span style='line-height: 1.6em'> Documentation</span>
                                     </div>
@@ -920,7 +920,7 @@ Note that when an image is not available for the exact date and time you selecte
 
                             <div id='' class='social-btns'>
                                 <div style="width: 90%; margin: 0 auto; font-size: 1.5em;">
-                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title=''>
+                                    <div id='' class='text-btn qtip-left' style="width: 100%;" title='...'>
                                         <span class='fa fa-code fa-fw'></span>
                                         <span style='line-height: 1.6em'> Public API Documentation</span>
                                     </div>
@@ -1055,30 +1055,6 @@ Note that when an image is not available for the exact date and time you selecte
         </div>
     </div>
 </div>
-
-
-<!-- Footer -->
-<!-- <div id="footer">
-    <div id="footer-container-outer">
-        <div id="footer-container-inner"> -->
-            <!-- Meta links -->
-<!--             <div id="footer-links">
-                <a href="http://helioviewer.org/wiki/Helioviewer.org_User_Guide_2.4.0" class="light" target="_blank">Help</a>
-                <a id="helioviewer-glossary" class="light" href="dialogs/glossary.html">Glossary</a>
-                <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
-                <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
-                <a href="http://wiki.helioviewer.org/wiki/Main_Page" class="light" target="_blank">Wiki</a>
-                <a href="http://blog.helioviewer.org/" class="light" target="_blank">Blog</a>
-                <a href="http://jhelioviewer.org" class="light" target="_blank">JHelioviewer</a>
-                <a href="http://api.helioviewer.org/docs/v2/" class="light" target="_blank">Public API</a>
-                <a href="https://twitter.com/Helioviewer" class="light" title="Follow @helioviewer on Twitter" target="_blank">@helioviewer</a>
-                <a href="mailto:<?php echo $this->config['contact_email']; ?>" class="light">Contact</a>
-                <a href="https://bugs.launchpad.net/helioviewer.org/" class="light" style="margin-right:2px;" target="_blank">Report Problem</a>
-            </div>
-        </div>
-    </div>
-</div> -->
-<!-- end Footer -->
 
 
 <?php
