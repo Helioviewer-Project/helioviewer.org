@@ -533,7 +533,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         tags = [];
 
         $.each(movie.layers.split("],["), function (i, layerStr) {
-alert('MovieManagerUI.showYouTubeUploadDialog() assumes 4-level hierarchy in layerStr');
+console.error('MovieManagerUI.showYouTubeUploadDialog() assumes 4-level hierarchy in layerStr');
             var parts = layerStr.replace(']', "").replace('[', "")
                         .split(",").slice(0, 4);
 

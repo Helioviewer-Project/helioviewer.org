@@ -177,8 +177,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 console.info(['no drawer: ', drawerSelector, obj]);
             }
         });
-
-
     },
 
     /**
@@ -918,7 +916,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
             setTimeout(function () {
                 $(document).trigger('update-external-datasource-integration');
-            }, 100);
+            }, 50);
         }
 
         return;
@@ -1244,6 +1242,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             sourceId  = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
             date      = $(accordion).find('.timestamp').html();
 
+            imageLayer = '['+sourceId+',1,100]';
+
 
             if ( VSOuiVisible ) {
                 startDate = $('#vso-start-date').val()
@@ -1255,7 +1255,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                           + $('#vso-end-time').val()
                           + 'Z';
 
-                imageLayer = '['+sourceId+',1,100]';
                 sourceIDsAll.push(sourceId);
                 instruments.push(nickname.split(' ')[0]);
                 if ( parseInt(nickname.split(' ')[1], 10) ) {
@@ -1310,7 +1309,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
                 html = '';
                 html = '<div class="header">'
-                     // +     '<input type="checkbox" checked /> '
                      +     nickname
                      + '</div>'
                      + '<div class="previews">'
@@ -1353,7 +1351,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
                 html = '';
                 html = '<div class="header">'
-                     // +     '<input type="checkbox" checked /> '
                      +     nickname
                      + '</div>'
                      + '<div class="previews">'
