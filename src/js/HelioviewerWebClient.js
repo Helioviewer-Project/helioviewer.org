@@ -915,6 +915,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $(buttonId).addClass('opened');
             Helioviewer.userSettings.set("state.drawers.#hv-drawer-data.open", true);
             this.reopenAccordions(this.drawerData);
+
+            setTimeout(function () {
+                $(document).trigger('update-external-datasource-integration');
+            }, 100);
         }
 
         return;
@@ -1018,21 +1022,39 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $('.contextual-help', obj.parent().parent()).hide();
             Helioviewer.userSettings.set("state.drawers.#"+drawerId+".accordions.#"+accordionId+".open", false);
         }
+
+        if ( accordionId == 'accordion-vso' ||
+             accordionId == 'accordion-sdo' ) {
+
+            $(document).trigger('update-external-datasource-integration');
+        }
+
         event.stopPropagation();
     },
 
     reopenAccordions: function(drawer) {
         var self = this,
             accordions = drawer.find('.accordion'),
-            accordionUserSettings = Helioviewer.userSettings.get("state.drawers.#"+drawer.attr('id')+".accordions");
+            accordionUserSettings = Helioviewer.userSettings.get("state.drawers.#"+drawer.attr('id')+".accordions"),
+            trigger = false;
 
         if ( Object.keys(accordionUserSettings).length > 0 ) {
             $.each(accordionUserSettings, function(selector, accordionObj) {
                 if ( accordionObj.open ) {
                     $(selector).find('.header').trigger("click", [true]);
+                    if ( selector == '#accordion-vso' ||
+                         selector == '#accordion-sdo' ) {
+
+                        trigger = true;
+                    }
                 }
             });
         }
+
+        if ( trigger ) {
+            $(document).trigger('update-external-datasource-integration');
+        }
+
         return;
     },
 
@@ -1115,8 +1137,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             width, height,
             jGrowlOpts = {sticky:true, header:'Just now'},
             url, body,
+            SDOuiVisible = false,
+            VSOuiVisible = false,
             self = this;
-
+        if ( typeof this.viewport._tileLayerManager == 'undefined' ) {
+            return false;
+        }
         vport = this.viewport.getViewportInformation();
 
         // Arc seconds per pixel
@@ -1135,55 +1161,79 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                   - vport['coordinates']['top'] )   * imageScale;
 
 
+        if ( $('#accordion-vso .content').is(':visible') ) {
+            VSOuiVisible = true
+        }
+        if ( $('#accordion-sdo .content').is(':visible') ) {
+            SDOuiVisible = true;
+        }
+
+
         // If this method is triggered by a change to the Tile Layer dates,
         // then update the values in the export tool.
         // (Otherwise, user updated the export dates themselves)
         if ( event['type'] == 'update-external-datasource-integration' ) {
-            $('#vso-start-date').val(
-            this.viewport.getEarliestLayerDate().toUTCDateString());
-            $('#vso-start-time').val(
-                this.viewport.getEarliestLayerDate().toUTCTimeString());
-            $('#vso-end-date').val(
-                this.viewport.getLatestLayerDate().toUTCDateString());
-            $('#vso-end-time').val(
-                this.viewport.getLatestLayerDate().toUTCTimeString());
 
-            $('#sdo-start-date').val(
+            if ( VSOuiVisible ) {
+                $('#vso-start-date').val(
                 this.viewport.getEarliestLayerDate().toUTCDateString());
-            $('#sdo-start-time').val(
-                this.viewport.getEarliestLayerDate().toUTCTimeString());
-            $('#sdo-end-date').val(
-                this.viewport.getLatestLayerDate().toUTCDateString());
-            $('#sdo-end-time').val(
-                this.viewport.getLatestLayerDate().toUTCTimeString());
+                $('#vso-start-time').val(
+                    this.viewport.getEarliestLayerDate().toUTCTimeString());
+                $('#vso-end-date').val(
+                    this.viewport.getLatestLayerDate().toUTCDateString());
+                $('#vso-end-time').val(
+                    this.viewport.getLatestLayerDate().toUTCTimeString());
+            }
 
-            $('#sdo-center-x').val( x0.toFixed(2) );
-            $('#sdo-center-y').val( y0.toFixed(2) );
+            if ( SDOuiVisible ) {
+                $('#sdo-start-date').val(
+                this.viewport.getEarliestLayerDate().toUTCDateString());
+                $('#sdo-start-time').val(
+                    this.viewport.getEarliestLayerDate().toUTCTimeString());
+                $('#sdo-end-date').val(
+                    this.viewport.getLatestLayerDate().toUTCDateString());
+                $('#sdo-end-time').val(
+                    this.viewport.getLatestLayerDate().toUTCTimeString());
 
-            $('#sdo-width').val(width.toFixed(2));
-            $('#sdo-height').val(height.toFixed(2));
+                $('#sdo-center-x').val( x0.toFixed(2) );
+                $('#sdo-center-y').val( y0.toFixed(2) );
+
+                $('#sdo-width').val(width.toFixed(2));
+                $('#sdo-height').val(height.toFixed(2));
+            }
+
         }
 
-        // Remove Old Links
-        vsoLinks.html('');
 
-        // Remove Old Previews
-        vsoPreviews.html('');
-        sdoPreviews.html('');
+        if ( VSOuiVisible ) {
+            // Remove Old Links
+            vsoLinks.html('');
 
-        // Disable Buttons
-        $.each( vsoButtons.children(), function (i, button) {
-            button = $(button);
-            button.removeAttr('href');
-            button.unbind('click');
-            button.addClass('inactive');
-        });
-        $.each( sdoButtons.children(), function (i, button) {
-            button = $(button);
-            button.removeAttr('href');
-            button.unbind('click');
-            button.addClass('inactive');
-        });
+            // Remove Old Previews
+            vsoPreviews.html('');
+
+            // Disable Buttons
+            $.each( vsoButtons.children(), function (i, button) {
+                button = $(button);
+                button.removeAttr('href');
+                button.unbind('click');
+                button.addClass('inactive');
+            });
+        }
+
+        if ( SDOuiVisible ) {
+            // Remove Old Previews
+            sdoPreviews.html('');
+
+            // Disable Buttons
+            $.each( sdoButtons.children(), function (i, button) {
+                button = $(button);
+                button.removeAttr('href');
+                button.unbind('click');
+                button.addClass('inactive');
+            });
+        }
+
 
         $.each( $('#accordion-images .dynaccordion-section'), function(i,accordion) {
 
@@ -1195,94 +1245,98 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             date      = $(accordion).find('.timestamp').html();
 
 
-            startDate = $('#vso-start-date').val()
-                      + 'T'
-                      + $('#vso-start-time').val()
-                      + 'Z';
-            endDate   = $('#vso-end-date').val()
-                      + 'T'
-                      + $('#vso-end-time').val()
-                      + 'Z';
+            if ( VSOuiVisible ) {
+                startDate = $('#vso-start-date').val()
+                          + 'T'
+                          + $('#vso-start-time').val()
+                          + 'Z';
+                endDate   = $('#vso-end-date').val()
+                          + 'T'
+                          + $('#vso-end-time').val()
+                          + 'Z';
 
-            imageLayer = '['+sourceId+',1,100]';
-            sourceIDsAll.push(sourceId);
-            instruments.push(nickname.split(' ')[0]);
-            if ( parseInt(nickname.split(' ')[1], 10) ) {
-                wavesAll.push(parseInt(nickname.split(' ')[1], 10));
+                imageLayer = '['+sourceId+',1,100]';
+                sourceIDsAll.push(sourceId);
+                instruments.push(nickname.split(' ')[0]);
+                if ( parseInt(nickname.split(' ')[1], 10) ) {
+                    wavesAll.push(parseInt(nickname.split(' ')[1], 10));
+                }
+
+                url  = 'http://virtualsolar.org/cgi-bin/vsoui.pl'
+                     + '?startyear='   + startDate.split('/')[0]
+                     + '&startmonth='  + startDate.split('/')[1]
+                     + '&startday='    + startDate.split('/')[2].split('T')[0]
+                     + '&starthour='   + startDate.split('T')[1].split(':')[0]
+                     + '&startminute=' + startDate.split('T')[1].split(':')[1]
+                     + '&endyear='     + endDate.split('/')[0]
+                     + '&endmonth='    + endDate.split('/')[1]
+                     + '&endday='      + endDate.split('/')[2].split('T')[0]
+                     + '&endhour='     + endDate.split('T')[1].split(':')[0]
+                     + '&endminute='   + endDate.split('T')[1].split(':')[1]
+                     + '&instrument='  + nickname.split(' ')[0];
+                if ( parseInt(nickname.split(' ')[1], 10) ) {
+                    url += '&wave='        + 'other'
+                        +  '&wavemin='     + nickname.split(' ')[1]
+                        +  '&wavemax='     + nickname.split(' ')[1]
+                        +  '&waveunit='    + 'Angstrom';
+                }
+
+                html = '<a href="' + url + '" target="_blank">'
+                     + nickname
+                     + ' '
+                     + date
+                     + ' UTC <i class="fa fa-external-link-square fa-fw"></i></a>';
+                vsoLinks.append(html);
+
+                hardcodedScale = '10';
+                if ( nickname.toUpperCase() == 'LASCO C2' ) {
+                    hardcodedScale = '50';
+                }
+                else if ( nickname.toUpperCase() == 'LASCO C3' ) {
+                    hardcodedScale = '250';
+                }
+                else if ( nickname.toUpperCase() == 'COR1-A' ) {
+                    hardcodedScale = '35';
+                }
+                else if ( nickname.toUpperCase() == 'COR1-B' ) {
+                    hardcodedScale = '35';
+                }
+                else if ( nickname.toUpperCase() == 'COR2-A' ) {
+                    hardcodedScale = '130';
+                }
+                else if ( nickname.toUpperCase() == 'COR2-B' ) {
+                    hardcodedScale = '130';
+                }
+
+                html = '';
+                html = '<div class="header">'
+                     // +     '<input type="checkbox" checked /> '
+                     +     nickname
+                     + '</div>'
+                     + '<div class="previews">'
+                     +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?'
+                     + 'imageScale=' + hardcodedScale
+                     + '&layers=[' + sourceId + ',1,100]'
+                     + '&events=&eventLabels=false'
+                     + '&scale=false&scaleType=earth&scaleX=0&scaleY=0'
+                     + '&date=' + startDate
+                     + '&x0=0&y0=0&width=256&height=256&display=true&watermark=false" class="preview start" /> '
+                     +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?'
+                     + 'imageScale=' + hardcodedScale
+                     + '&layers=[' + sourceId + ',1,100]'
+                     + '&events=&eventLabels=false'
+                     + '&scale=false&scaleType=earth&scaleX=0&scaleY=0'
+                     + '&date=' + endDate
+                     + '&x0=0&y0=0&width=256&height=256&display=true&watermark=false" class="preview end" /> '
+                     + '</div>';
+                vsoPreviews.append(html);
             }
 
-            url  = 'http://virtualsolar.org/cgi-bin/vsoui.pl'
-                 + '?startyear='   + startDate.split('/')[0]
-                 + '&startmonth='  + startDate.split('/')[1]
-                 + '&startday='    + startDate.split('/')[2].split('T')[0]
-                 + '&starthour='   + startDate.split('T')[1].split(':')[0]
-                 + '&startminute=' + startDate.split('T')[1].split(':')[1]
-                 + '&endyear='     + endDate.split('/')[0]
-                 + '&endmonth='    + endDate.split('/')[1]
-                 + '&endday='      + endDate.split('/')[2].split('T')[0]
-                 + '&endhour='     + endDate.split('T')[1].split(':')[0]
-                 + '&endminute='   + endDate.split('T')[1].split(':')[1]
-                 + '&instrument='  + nickname.split(' ')[0];
-            if ( parseInt(nickname.split(' ')[1], 10) ) {
-                url += '&wave='        + 'other'
-                    +  '&wavemin='     + nickname.split(' ')[1]
-                    + '&wavemax='     + nickname.split(' ')[1]
-                    + '&waveunit='    + 'Angstrom';
-            }
-
-            html = '<a href="' + url + '" target="_blank">'
-                 + nickname
-                 + ' '
-                 + date
-                 + ' UTC <i class="fa fa-external-link-square fa-fw"></i></a>';
-            vsoLinks.append(html);
-
-            hardcodedScale = '10';
-            if ( nickname.toUpperCase() == 'LASCO C2' ) {
-                hardcodedScale = '50';
-            }
-            else if ( nickname.toUpperCase() == 'LASCO C3' ) {
-                hardcodedScale = '250';
-            }
-            else if ( nickname.toUpperCase() == 'COR1-A' ) {
-                hardcodedScale = '35';
-            }
-            else if ( nickname.toUpperCase() == 'COR1-B' ) {
-                hardcodedScale = '35';
-            }
-            else if ( nickname.toUpperCase() == 'COR2-A' ) {
-                hardcodedScale = '130';
-            }
-            else if ( nickname.toUpperCase() == 'COR2-B' ) {
-                hardcodedScale = '130';
-            }
-
-            html = '';
-            html = '<div class="header">'
-                 // +     '<input type="checkbox" checked /> '
-                 +     nickname
-                 + '</div>'
-                 + '<div class="previews">'
-                 +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?'
-                 + 'imageScale=' + hardcodedScale
-                 + '&layers=[' + sourceId + ',1,100]'
-                 + '&events=&eventLabels=false'
-                 + '&scale=false&scaleType=earth&scaleX=0&scaleY=0'
-                 + '&date=' + startDate
-                 + '&x0=0&y0=0&width=256&height=256&display=true&watermark=false" class="preview start" /> '
-                 +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?'
-                 + 'imageScale=' + hardcodedScale
-                 + '&layers=[' + sourceId + ',1,100]'
-                 + '&events=&eventLabels=false'
-                 + '&scale=false&scaleType=earth&scaleX=0&scaleY=0'
-                 + '&date=' + endDate
-                 + '&x0=0&y0=0&width=256&height=256&display=true&watermark=false" class="preview end" /> '
-                 + '</div>';
-            vsoPreviews.append(html);
 
 
-            if ( nickname.search('AIA ') != -1 ||
-                 nickname.search('HMI ') != -1 ) {
+            if ( SDOuiVisible &&
+                (nickname.search('AIA ') != -1 ||
+                 nickname.search('HMI ') != -1)  ) {
 
                 startDate = $('#sdo-start-date').val()
                           + 'T'
@@ -1338,84 +1392,87 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         });
 
 
-        startDate = $('#vso-start-date').val().replace(/\//g,'-')
-                  + 'T'
-                  + $('#vso-start-time').val()
-                  + 'Z';
-        endDate   = $('#vso-end-date').val().replace(/\//g,'-')
-                  + 'T'
-                  + $('#vso-end-time').val()
-                  + 'Z';
+        if ( VSOuiVisible ) {
+            startDate = $('#vso-start-date').val().replace(/\//g,'-')
+                      + 'T'
+                      + $('#vso-start-time').val()
+                      + 'Z';
+            endDate   = $('#vso-end-date').val().replace(/\//g,'-')
+                      + 'T'
+                      + $('#vso-end-time').val()
+                      + 'Z';
 
 
-        // VSO SunPy Script Button
-        $('#vso-sunpy').removeClass('inactive');
-        $('#vso-sunpy').bind('click', function (e) {
-            url = Helioviewer.api + '/'
-                + '?action=getSciDataScript'
-                + '&imageScale=' + imageScale
-                + '&sourceIds=[' + sourceIDsAll.join(',')+']'
-                + '&startDate=' + startDate
-                + '&endDate=' + endDate
-                + '&lang=sunpy'
-                + '&provider=vso';
-            body = '<a href="' + url + '">'
-                 +     'Your Python/SunPy script for requesting science data '
-                 +     'from the VSO is ready.<br /><br />'
-                 +     '<b>Click here to download.</b>'
-                 + '</a>';
-            $(document).trigger("message-console-log",
-                                [body, jGrowlOpts, true, true]);
-        });
+            // VSO SunPy Script Button
+            $('#vso-sunpy').removeClass('inactive');
+            $('#vso-sunpy').bind('click', function (e) {
+                url = Helioviewer.api + '/'
+                    + '?action=getSciDataScript'
+                    + '&imageScale=' + imageScale
+                    + '&sourceIds=[' + sourceIDsAll.join(',')+']'
+                    + '&startDate=' + startDate
+                    + '&endDate=' + endDate
+                    + '&lang=sunpy'
+                    + '&provider=vso';
+                body = '<a href="' + url + '">'
+                     +     'Your Python/SunPy script for requesting science data '
+                     +     'from the VSO is ready.<br /><br />'
+                     +     '<b>Click here to download.</b>'
+                     + '</a>';
+                $(document).trigger("message-console-log",
+                                    [body, jGrowlOpts, true, true]);
+            });
 
 
-        // VSO SolarSoft Script Button
-        $('#vso-ssw').removeClass('inactive');
-        $('#vso-ssw').bind('click', function (e) {
-            url = Helioviewer.api + '/'
-                + '?action=getSciDataScript'
-                + '&imageScale=' + imageScale
-                + '&sourceIds=[' + sourceIDsAll.join(',')+']'
-                + '&startDate=' + startDate
-                + '&endDate=' + endDate
-                + '&lang=sswidl'
-                + '&provider=vso'
-                + '&x1=' + x1
-                + '&y1=' + y1
-                + '&x2=' + x2
-                + '&y2=' + y2;
-            body = '<a href="' + url + '">'
-                 +     'Your IDL/SolarSoft script for requesting science data '
-                 +     'from the VSO is ready.<br /><br />'
-                 +     '<b>Click here to download.</b>'
-                 + '</a>';
-            $(document).trigger("message-console-log",
-                                [body, jGrowlOpts, true, true]);
-        });
+            // VSO SolarSoft Script Button
+            $('#vso-ssw').removeClass('inactive');
+            $('#vso-ssw').bind('click', function (e) {
+                url = Helioviewer.api + '/'
+                    + '?action=getSciDataScript'
+                    + '&imageScale=' + imageScale
+                    + '&sourceIds=[' + sourceIDsAll.join(',')+']'
+                    + '&startDate=' + startDate
+                    + '&endDate=' + endDate
+                    + '&lang=sswidl'
+                    + '&provider=vso'
+                    + '&x1=' + x1
+                    + '&y1=' + y1
+                    + '&x2=' + x2
+                    + '&y2=' + y2;
+                body = '<a href="' + url + '">'
+                     +     'Your IDL/SolarSoft script for requesting science data '
+                     +     'from the VSO is ready.<br /><br />'
+                     +     '<b>Click here to download.</b>'
+                     + '</a>';
+                $(document).trigger("message-console-log",
+                                    [body, jGrowlOpts, true, true]);
+            });
 
-        // VSO Website Button
-        $('#vso-www').attr('href', 'http://virtualsolar.org/cgi-bin/vsoui.pl'
-            + '?startyear='   +   startDate.split('-')[0]
-            + '&startmonth='  +   startDate.split('-')[1]
-            + '&startday='    +   startDate.split('-')[2].split('T')[0]
-            + '&starthour='   +   startDate.split('T')[1].split(':')[0]
-            + '&startminute=' +   startDate.split('T')[1].split(':')[1]
-            + '&endyear='     +     endDate.split('-')[0]
-            + '&endmonth='    +     endDate.split('-')[1]
-            + '&endday='      +     endDate.split('-')[2].split('T')[0]
-            + '&endhour='     +     endDate.split('T')[1].split(':')[0]
-            + '&endminute='   +     endDate.split('T')[1].split(':')[1]
-            + '&instrument='  + instruments.join('&instrument=')
-            + '&wave='        +            'other'
-            + '&wavemin='     +    Math.min.apply(Math,wavesAll)
-            + '&wavemax='     +    Math.max.apply(Math,wavesAll)
-            + '&waveunit='    +            'Angstrom'
-        );
-        $('#vso-www').removeClass('inactive');
+            // VSO Website Button
+            $('#vso-www').attr('href', 'http://virtualsolar.org/cgi-bin/vsoui.pl'
+                + '?startyear='   +   startDate.split('-')[0]
+                + '&startmonth='  +   startDate.split('-')[1]
+                + '&startday='    +   startDate.split('-')[2].split('T')[0]
+                + '&starthour='   +   startDate.split('T')[1].split(':')[0]
+                + '&startminute=' +   startDate.split('T')[1].split(':')[1]
+                + '&endyear='     +     endDate.split('-')[0]
+                + '&endmonth='    +     endDate.split('-')[1]
+                + '&endday='      +     endDate.split('-')[2].split('T')[0]
+                + '&endhour='     +     endDate.split('T')[1].split(':')[0]
+                + '&endminute='   +     endDate.split('T')[1].split(':')[1]
+                + '&instrument='  + instruments.join('&instrument=')
+                + '&wave='        +            'other'
+                + '&wavemin='     +    Math.min.apply(Math,wavesAll)
+                + '&wavemax='     +    Math.max.apply(Math,wavesAll)
+                + '&waveunit='    +            'Angstrom'
+            );
+            $('#vso-www').removeClass('inactive');
+        }
 
 
 
-        if ( wavesSDO.length > 0 ) {
+
+        if ( SDOuiVisible && wavesSDO.length > 0 ) {
 
             // SDO SolarSoft Script Button
             $('#sdo-ssw').removeClass('inactive');
