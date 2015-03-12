@@ -710,13 +710,13 @@ Note that when an image is not available for the exact date and time you selecte
 
 
                             <div class="row">
-                                <div id='movie-manager-build-btns' class='media-manager-build-btns' style="font-size: 1.4em;">
-                                    <div style="width: 70%; margin: 0 auto;">
-                                        <div id='movie-manager-full-viewport' class='text-btn qtip-left' title='Create a movie using the entire viewport.'>
+                                <div style="font-size: 1.4em;">
+                                    <div class="media-manager-build-btns" style="width: 70%; margin: 0 auto;">
+                                        <div id='sdo-full-viewport' class='text-btn qtip-left' title='Entire viewport.'>
                                             <span class='fa fa-arrows-alt fa-fw'></span>
                                             <span style='line-height: 1.6em'>Full Viewport</span>
                                         </div>
-                                        <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a movie of a sub-region of the viewport.'>
+                                        <div id='sdo-select-area' class='text-btn qtip-left' style='float:right;' title='Sub-field'>
                                             <span class='fa fa-crop fa-fw'></span>
                                             <span style='line-height: 1.6em'>Select Area</span>
                                         </div>
@@ -794,13 +794,13 @@ Note that when an image is not available for the exact date and time you selecte
 
                         <br />
 
-                        <div id='movie-manager-build-btns' class='media-manager-build-btns'>
+                        <div>
                             <div style="width: 65%; margin: 0 auto; font-size: 1.5em;">
-                                <div id='movie-manager-full-viewport' class='text-btn qtip-left' title='...'>
+                                <div id='share-copy-link' class='text-btn qtip-left' title='...'>
                                     <span class='fa fa-copy fa-fw'></span>
                                     <span style='line-height: 1.6em'>Copy Link</span>
                                 </div>
-                                <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='...'>
+                                <div id='share-email-link' class='text-btn qtip-left' style='float:right;' title='...'>
                                     <span class='fa fa-envelope fa-fw'></span>
                                     <span style='line-height: 1.6em'>Email Link</span>
                                 </div>
