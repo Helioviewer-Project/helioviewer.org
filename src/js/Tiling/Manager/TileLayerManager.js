@@ -51,9 +51,8 @@ var TileLayerManager = LayerManager.extend(
      *              cookies
      */
     save: function () {
-        var layers = this.toJSON();
-
-        Helioviewer.userSettings.set("state.tileLayers", layers);
+        Helioviewer.userSettings.set("state.tileLayers", this.toJSON());
+        $(document).trigger('update-external-datasource-integration');
     },
 
     /**
@@ -171,6 +170,7 @@ var TileLayerManager = LayerManager.extend(
         $.each(this._layers, function (i, layer) {
             this.updateRequestTime(date);
         });
+        $(document).trigger('update-external-datasource-integration');
     },
 
     getRequestDateAsISOString: function () {

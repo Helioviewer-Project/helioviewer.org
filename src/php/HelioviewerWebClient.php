@@ -638,24 +638,24 @@ Note that when an image is not available for the exact date and time you selecte
                         <h1>Request Image Sequence from VSO</h1>
                         <div>
                             <div class="row">
-                                <div class="label">Start Date:</div>
+                                <div class="label inactive">Start Date:</div>
                                 <div class="field">
-                                    <input type="text" id="vso-start-date" name="vso-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+                                    <input type="text" id="vso-start-date" name="vso-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" disabled />
 
-                                    <input id="vso-start-time" name="vso-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+                                    <input id="vso-start-time" name="vso-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
 
                                     <div class="suffix">UTC</div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="label">End Date:</div>
+                                <div class="label inactive">End Date:</div>
                                 <div class="field">
-                                    <input type="text" id="vso-end-date" name="vso-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+                                    <input type="text" id="vso-end-date" name="vso-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" disabled />
 
-                                    <input id="vso-end-time" name="vso-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+                                    <input id="vso-end-time" name="vso-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
 
-                                    <div class="suffix">UTC</div></div>
+                                    <div class="suffix inactive">UTC</div></div>
                             </div>
 
                             <div class="row">
@@ -710,13 +710,13 @@ Note that when an image is not available for the exact date and time you selecte
 
 
                             <div class="row">
-                                <div style="font-size: 1.4em;">
-                                    <div class="media-manager-build-btns" style="width: 70%; margin: 0 auto;">
-                                        <div id='sdo-full-viewport' class='text-btn qtip-left' title='Entire viewport.'>
+                                <div style="font-size: 1.3em;">
+                                    <div class="media-manager-build-btns buttons" style="width: 70%; margin: 0 auto;">
+                                        <div id='sdo-full-viewport' class='text-btn qtip-left selected inactive' title='Entire viewport.'>
                                             <span class='fa fa-arrows-alt fa-fw'></span>
                                             <span style='line-height: 1.6em'>Full Viewport</span>
                                         </div>
-                                        <div id='sdo-select-area' class='text-btn qtip-left' style='float:right;' title='Sub-field'>
+                                        <div id='sdo-select-area' class='text-btn qtip-left inactive' style='float:right;' title='Sub-field'>
                                             <span class='fa fa-crop fa-fw'></span>
                                             <span style='line-height: 1.6em'>Select Area</span>
                                         </div>

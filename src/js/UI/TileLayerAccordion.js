@@ -280,6 +280,7 @@ var TileLayerAccordion = Layer.extend(
             $("#visibilityBtn-" + id).toggleClass('hidden');
             $("#visibilityBtn-" + id).toggleClass('fa-eye');
             $("#visibilityBtn-" + id).toggleClass('fa-eye-slash');
+            $(document).trigger("save-tile-layers");
             e.stopPropagation();
         };
 
@@ -289,7 +290,6 @@ var TileLayerAccordion = Layer.extend(
             self._removeTooltips(id);
             self.domNode.dynaccordion('removeSection', {id: id});
             $(document).trigger("save-tile-layers");
-            $(document).trigger('update-external-datasource-integration');
             e.stopPropagation();
         };
 
@@ -524,8 +524,6 @@ var TileLayerAccordion = Layer.extend(
             window.open(Helioviewer.api + "?action=getJP2Image&id=" + imageId);
             return false;
         });
-
-        $(document).trigger('update-external-datasource-integration');
     },
 
     /**
