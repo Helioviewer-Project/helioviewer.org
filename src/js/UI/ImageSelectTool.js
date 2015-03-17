@@ -181,7 +181,7 @@ var ImageSelectTool = Class.extend(
             callbackSuccess(roi);
         }
         else {
-            alert('no area');
+            console.error('no area');
             this.cleanup(null, callbackCleanup);
         }
     },

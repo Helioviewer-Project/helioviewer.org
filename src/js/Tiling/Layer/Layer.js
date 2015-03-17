@@ -1,9 +1,10 @@
 /**
  * @fileOverview "Abstract" Layer class.
+ * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a>
  * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class */
 "use strict";
@@ -33,7 +34,7 @@ var Layer = Class.extend(
 
     /**
      * @description Sets the Layer's visibility
-     * @param {Boolean} visible Hide/Show layer 
+     * @param {Boolean} visible Hide/Show layer
      * @returns {Boolean} Returns new setting
      */
     setVisibility: function (visible) {
@@ -44,7 +45,8 @@ var Layer = Class.extend(
         else {
             this.domNode.hide();
         }
-        
+
+        $(document).trigger('update-external-datasource-integration');
         return this.visible;
     },
 

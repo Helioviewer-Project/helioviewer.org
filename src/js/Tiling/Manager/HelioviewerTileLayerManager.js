@@ -175,7 +175,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
 
     /**
      * Updates the data source for a tile layer after the user changes one
-     * of its properties (e.g. observatory or instrument)
+     * of its properties
      */
     /**
      * Changes data source and fetches image for new source
