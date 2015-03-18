@@ -181,6 +181,11 @@ html, body {
        border-color: #cb2027;
    background-color: white;
 }
+#hv-header .viewport-action.active:hover {
+              color: rgba(255,255,255,0.75);
+       border-color: rgba(255,255,255,0.75);
+   background-color: rgba(0,0,0,0.75);
+}
 #hv-header .viewport-action.active:active {
               color: #cb2027;
        border-color: #cb2027;
