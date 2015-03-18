@@ -524,6 +524,8 @@ var TileLayerAccordion = Layer.extend(
             window.open(Helioviewer.api + "?action=getJP2Image&id=" + imageId);
             return false;
         });
+
+        $(document).trigger('update-external-datasource-integration');
     },
 
     /**
