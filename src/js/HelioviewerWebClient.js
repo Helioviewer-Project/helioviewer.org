@@ -402,7 +402,17 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         $('#accordion-vso input[type=text]').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this));
 
-        $('#accordion-sdo input[type=text]').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this));
+        $('#sdo-start-date, #sdo-start-time, #sdo-end-date, #sdo-end-time').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this));
+
+        $('#sdo-center-x, #sdo-center-y, #sdo-width, #sdo-height').bind('change', function () {
+
+            if ( $('#sdo-full-viewport').hasClass('selected') ) {
+                $('#sdo-full-viewport').removeClass('selected');
+                $('#sdo-select-area').addClass('selected');
+            }
+            self.updateExternalDataSourceIntegration();
+        });
+
 
         $(this.drawerLeftTab).bind('click', $.proxy(this.drawerLeftClick, this));
         this.drawerLeft.bind('mouseover', function (event) { event.stopPropagation(); });
@@ -566,12 +576,16 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      */
     updateSDOaccordion: function (sdoPreviews, sdoButtons, imageAccordions, imageScale) {
 
-        var vport, imageScale;
+        var vport, imageScale,
+            sDate = $('#sdo-start-date').val(),
+            sTime = $('#sdo-start-time').val(),
+            eDate = $('#sdo-end-date').val(),
+            eTime = $('#sdo-end-time').val();
 
         // Wipe the slate clean
         this._clearSDOaccordion(sdoPreviews, sdoButtons);
 
-        this._setSDOtimes();
+        this._setSDOtimes(sDate, sTime, eDate, eTime);
 
         if ( $('#sdo-full-viewport').hasClass('selected') ) {
             vport = this.viewport.getViewportInformation();
@@ -752,14 +766,19 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 
     updateVSOaccordion: function (vsoLinks, vsoPreviews, vsoButtons, imageAccordions, imageScale) {
+
         var nickname, startDate, endDate, sourceId,
             sourceIDs = Array(), instruments = Array(), waves = Array(),
+            sDate = $('#vso-start-date').val(),
+            sTime = $('#vso-start-time').val(),
+            eDate = $('#vso-end-date').val(),
+            eTime = $('#vso-end-time').val(),
             self = this;
 
         // Wipe the slate clean
         this._clearVSOaccordion(vsoLinks, vsoPreviews, vsoButtons);
 
-        this._setVSOtimes();
+        this._setVSOtimes(sDate, sTime, eDate, eTime);
 
         $.each( imageAccordions, function(i, accordion) {
 
@@ -1737,8 +1756,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 
     _setVSOtimes: function (startDate, startTime, endDate, endTime) {
-        if ( typeof startDate=='undefined' || typeof startTime=='undefined'
-          || typeof endDate  =='undefined' || typeof endTime  =='undefined' ) {
+
+        if ( startDate=='' || startTime=='' || endDate=='' || endTime=='' ) {
 
             startDate = this.viewport.getEarliestLayerDate().toUTCDateString();
             startTime = this.viewport.getEarliestLayerDate().toUTCTimeString();
@@ -1758,8 +1777,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * TODO: Ignore non-AIA/HMI layers
      */
     _setSDOtimes: function (startDate, startTime, endDate, endTime) {
-        if ( typeof startDate=='undefined' || typeof startTime=='undefined'
-          || typeof endDate  =='undefined' || typeof endTime  =='undefined' ) {
+
+        if ( startDate=='' || startTime=='' || endDate=='' || endTime=='' ) {
 
             startDate = this.viewport.getEarliestLayerDate().toUTCDateString();
             startTime = this.viewport.getEarliestLayerDate().toUTCTimeString();
