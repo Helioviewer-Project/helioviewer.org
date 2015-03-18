@@ -128,7 +128,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this._displayGreeting();
 
         $('#mouse-cartesian').click();
-        $('#earth-button').click();
 
         this.drawerUserSettings = Helioviewer.userSettings.get("state.drawers");
         $.each(this.drawerUserSettings, function(drawerSelector, drawerObj) {

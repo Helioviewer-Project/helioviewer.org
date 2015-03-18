@@ -93,6 +93,7 @@ var ImageScale = Class.extend(
         this.scale_button.unbind();
         this.scale_button.bind('click',  $.proxy(this.earthMaximize,  this));
         this.scale_button.toggleClass('active', false);
+        this._getScaleSettings();
     },
 
     earthMaximize: function() {
@@ -109,6 +110,7 @@ var ImageScale = Class.extend(
         this.scale_button.unbind();
         this.scale_button.bind('click',  $.proxy(this.earthMinimize,  this));
         this.scale_button.toggleClass('active', true);
+        this._getScaleSettings();
     },
 
     scaleContainerDragTo: function(containerX, containerY) {
@@ -130,6 +132,7 @@ var ImageScale = Class.extend(
         Helioviewer.userSettings.set("state.scaleY",    scaleXY.y);
         Helioviewer.userSettings.set("state.containerX",this.scale_container.position().left);
         Helioviewer.userSettings.set("state.containerY",this.scale_container.position().top);
+        this._getScaleSettings();
     },
 
     resetIfOutsideViewportBounds: function(event) {
@@ -163,6 +166,8 @@ var ImageScale = Class.extend(
         Helioviewer.userSettings.set("state.scaleX",    scaleXY.x);
         Helioviewer.userSettings.set("state.scaleY",    scaleXY.y);
 
+        this._getScaleSettings();
+
         return scaleXY;
     },
 
@@ -184,8 +189,8 @@ var ImageScale = Class.extend(
     display: function() {
         this._getScaleSettings();
 
-        if ( Helioviewer.userSettings.get("state.scaleX") == 0 ||
-             Helioviewer.userSettings.get("state.scaleY") == 0 ) {
+        if ( parseInt(Helioviewer.userSettings.get("state.scaleX")) == 0 ||
+             parseInt(Helioviewer.userSettings.get("state.scaleY")) == 0 ) {
 
             this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.scale_container.width()/2;
             this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.scale_container.height();
