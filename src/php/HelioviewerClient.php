@@ -87,7 +87,7 @@ abstract class HelioviewerClient {
      */
     protected function printHead($signature) {
 ?>
-    <?php printf("<!-- Helioviewer.org 2.3.0 (rev. %s), %s -->\n", $this->config["build_num"], $this->config["last_update"]);?>
+    <?php printf("<!-- Helioviewer.org 3.0 (rev. %s), %s -->\n", $this->config["build_num"], $this->config["last_update"]);?>
     <title>Helioviewer.org - Solar and heliospheric image visualization tool</title>
     <meta charset="utf-8" />
     <meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
