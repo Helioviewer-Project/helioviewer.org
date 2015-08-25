@@ -1,19 +1,6 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Database connection helper
- *
- * PHP version 5
- *
- * @category Database
- * @package  Helioviewer
- * @author   Jeff Stys <jeff.stys@nasa.gov>
- * @author   Patrick Schmiedel <patrick.schmiedel@gmx.net>
- * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
- */
-/**
  * Database connection helper class
  *
  * @category Database
@@ -22,8 +9,9 @@
  * @author   Patrick Schmiedel <patrick.schmiedel@gmx.net>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
+ * @link     https://github.com/Helioviewer-Project
  */
+
 class Database_DbConnection {
 
     private $_host     = HV_DB_HOST;

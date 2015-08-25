@@ -2,17 +2,6 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Helper_HelioviewerLayers Class Definition
- *
- * PHP version 5
- *
- * @category Helper
- * @package  Helioviewer
- * @author   Jeff Stys <jeff.stys@nasa.gov>
- * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
- */
-/**
  * A simple class to represent one or more Helioviewer layers in a request.
  *
  * @category Helper
@@ -20,11 +9,12 @@
  * @author   Jeff Stys <jeff.stys@nasa.gov>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
+ * @link     https://github.com/Helioviewer-Project
  *
  * TODO 11/23/2010: Check to make sure number of valid layers is > 0
  * and stop execution otherwise
  */
+
 require_once HV_ROOT_DIR.'/src/php/Database/ImgIndex.php';
 
 class Helper_HelioviewerLayers {

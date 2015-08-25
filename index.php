@@ -61,13 +61,13 @@
     }
 
     // Default to HTML5 client
-    if ( !isset($urlSettings['output']) ) {
-        require_once 'src/php/HelioviewerWebClient.php';
-        $helioviewer = new HelioviewerWebClient($urlSettings);
-    }
-    else if ( $urlSettings['output'] == 'embed' ) {
+    if ( isset($urlSettings['output']) && $urlSettings['output'] == 'embed' ) {
         // Embedded version of Helioviewer.org
         require_once 'src/php/HelioviewerEmbeddedClient.php';
         $helioviewer = new HelioviewerEmbeddedClient($urlSettings);
+    }
+    else {
+        require_once 'src/php/HelioviewerWebClient.php';
+        $helioviewer = new HelioviewerWebClient($urlSettings);
     }
 ?>

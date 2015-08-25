@@ -2,32 +2,21 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Movie_FFMPEGEncoder Class Definition
+ * Calls FFMpeg commands
  * 
  * Detecting problems with FFmpeg encoding:
  *  When using exec to call FFmpeg from the command line no useful return code or output
  *  information is returned. In order to the detect problems then the simplest way is to
  *  check and make sure the filesize is reasonable.
  *
- *
- * PHP version 5
- *
  * @category Movie
  * @package  Helioviewer
  * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
+ * @link     https://github.com/Helioviewer-Project
  */
-/**
- * Calls FFMpeg commands
- *
- * @category Movie
- * @package  Helioviewer
- * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
- * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
- */
+
 class Movie_FFMPEGEncoder
 {
     
