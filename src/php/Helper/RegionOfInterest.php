@@ -2,17 +2,6 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Helper_RegionOfInterest Class Definition
- * 
- * PHP version 5
- * 
- * @category Helper
- * @package  Helioviewer
- * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
- */
-define("INVALID_REGION_OF_INTEREST", "Requested region has a width or height equal to zero");
-/**
  * A simple class to represent a rectangular region of interest on or around the Sun. Region of interest here refers
  * to a region of interest in space. This region may be larger than, smaller than, or the same size as a given
  * image. In order to determine how the region of interest in space translates to an image sub-region, the getPixelROI
@@ -22,9 +11,11 @@ define("INVALID_REGION_OF_INTEREST", "Requested region has a width or height equ
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
+ * @link     https://github.com/Helioviewer-Project
  * @see      http://www.lmsal.com/helio-informatics/hpkb/
  */
+define("INVALID_REGION_OF_INTEREST", "Requested region has a width or height equal to zero");
+
 class Helper_RegionOfInterest
 {
     private $_top;

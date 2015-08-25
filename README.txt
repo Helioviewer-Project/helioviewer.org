@@ -7,7 +7,7 @@ based on the JPEG 2000 image compression standard.
 
 To request a new feature or to report a bug, visit 
   
-    https://launchpad.net/helioviewer.org
+    https://github.com/Helioviewer-Project
 
 For the most up-to-date documentation on Helioviewer.org and related efforts,
 see the official wiki at

@@ -7,29 +7,14 @@
  * file, create global constants which can be used to access those
  * configuration parameters, and fix data types for known parameters.
  *
- * PHP version 5
- *
  * @category Configuration
  * @package  Helioviewer
  * @author   Jeff Stys <jeff.stys@nasa.gov>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
+ * @link     https://github.com/Helioviewer-Project
  */
-/**
- * Helioviewer Configuration Helper
- *
- * A helper class created to assist in parsing Helioviewer's configuration
- * file. It creates global constants which can be used to access those
- * configuration parameters, and fix data types for known parameters.
- *
- * @category Configuration
- * @package  Helioviewer
- * @author   Jeff Stys <jeff.stys@nasa.gov>
- * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
- */
+
 class Config {
 
     private $_bools  = array('disable_cache', 'enable_statistics_collection');

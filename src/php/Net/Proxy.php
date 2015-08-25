@@ -2,17 +2,6 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Helioviewer Net_Proxy Class Definition
- *
- * PHP version 5
- *
- * @category Net
- * @package  Helioviewer
- * @author   Jeff Stys <jeff.stys@nasa.gov>
- * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
- */
-/**
  * Provides proxy functionality to enable remote AJAX requests and to assist
  * in distributed server-mode.
  *
@@ -27,8 +16,9 @@
  * @author   Jeff Stys <jeff.stys@nasa.gov>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
+ * @link     https://github.com/Helioviewer-Project
  */
+
 class Net_Proxy {
 
     private $_baseURL;

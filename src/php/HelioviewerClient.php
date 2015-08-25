@@ -4,29 +4,14 @@
  *
  * An abstract base class representing a generic Helioviewer client instance
  *
- * PHP version 5
- *
  * @category Application
  * @package  Helioviewer
  * @author   Jeff Stys <jeff.stys@nasa.gov>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
+ * @link     https://github.com/Helioviewer-Project
  */
-/**
- * HelioviewerClient class definition
- *
- * An abstract base class representing a generic Helioviewer client instance
- *
- * PHP version 5
- *
- * @category Application
- * @package  Helioviewer
- * @author   Jeff Stys <jeff.stys@nasa.gov>
- * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
- */
+
 abstract class HelioviewerClient {
 
     protected $config;
