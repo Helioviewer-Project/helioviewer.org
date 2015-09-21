@@ -780,7 +780,7 @@ Note that when an image is not available for the exact date and time you selecte
                         <br />
 
                         <div>
-                            <div style="width: 65%; margin: 0 auto; font-size: 1.5em;">
+                            <div style="width: 65%; height: 40px; margin: 0 auto; font-size: 1.5em;">
                                 <div id='share-copy-link' class='text-btn qtip-left' title='...'>
                                     <span class='fa fa-copy fa-fw'></span>
                                     <span style='line-height: 1.6em'>Copy Link</span>
