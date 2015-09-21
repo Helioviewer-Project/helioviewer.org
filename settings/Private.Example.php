@@ -14,6 +14,8 @@ define("HV_DB_PASS", "helioviewer");
  * http://code.google.com/apis/youtube/overview.html
  */
 define("HV_YOUTUBE_DEVELOPER_KEY", "");
+define("HV_GOOGLE_OAUTH2_CLIENT_ID", "");
+define("HV_GOOGLE_OAUTH2_CLIENT_SECRET", "");
 
 /**
  * Password to use when generating unique movie IDs. This can be any random

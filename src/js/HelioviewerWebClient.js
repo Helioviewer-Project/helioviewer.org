@@ -428,7 +428,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $('.contextual-help').bind('click', $.proxy(this.contextualHelpClick, this));
 
 
-        $('#link-button').click(function (e) {
+        $('#share-button').click(function (e) {
             // Google analytics event
             if (typeof(_gaq) !== "undefined") {
                 _gaq.push(['_trackEvent', 'Shares', 'Homepage - URL']);
@@ -1106,9 +1106,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var callback = function (response) {
             $("#helioviewer-long-url").attr("value", url);
             $("#helioviewer-short-url").attr("value", response.data.url);
-
+			$("#helioviewer-url-shorten").removeAttr("checked");
+			$("#helioviewer-url-input-box").attr('value', url).select();
             // Display URL
-            $("#helioviewer-url-box-msg").text(msg);
+            /*$("#helioviewer-url-box-msg").text(msg);
             $("#url-dialog").dialog({
                 dialogClass: 'helioviewer-modal-dialog',
                 height    : 125,
@@ -1119,11 +1120,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 resizable : true,
                 title     : "Helioviewer - Direct Link",
                 open      : function (e) {
-                    $("#helioviewer-url-shorten").removeAttr("checked");
+                    
                     $('.ui-widget-overlay').hide().fadeIn();
-                    $("#helioviewer-url-input-box").attr('value', url).select();
+                    
                 }
-            });
+            });*/
         };
 
         // Get short version of URL and open dialog

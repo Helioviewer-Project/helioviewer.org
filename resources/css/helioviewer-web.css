@@ -308,7 +308,7 @@ html, body {
               max-height: 95%;
                  padding: 0;
               overflow-x: auto;
-              overflow-y: scroll;
+              overflow-y: auto;
         background-color: rgba(255,255,255,0.33);
                    color: rgba(255,255,255,0.85);
              font-family: 'Helvetica Neue',
@@ -329,7 +329,7 @@ html, body {
 #hv-drawer-left .drawer-contents {
                height: auto;
            max-height: 100%;
-           overflow-y: scroll;
+           overflow-y: auto;
            transition: width 200ms;
 }
 .hv-drawer-right {
@@ -340,7 +340,7 @@ html, body {
    right: 0;
    height: 0;
    max-height: 95%;
-   overflow: scroll;
+   overflow: auto;
    width: 25em;
    background-color: rgba(255,255,255,0.33);
    color: rgba(255,255,255,0.85);
@@ -365,7 +365,7 @@ html, body {
    margin: 0;
    padding: 0;
    height: auto;
-   overflow-y: scroll;
+   overflow-y: auto;
    z-index: 2;
 }
 
