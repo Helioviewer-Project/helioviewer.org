@@ -32,7 +32,7 @@ class Database_ImgIndex {
      */
     private function _dbConnect() {
         if ( $this->_dbConnection === false ) {
-            include_once HV_ROOT_DIR.'/src/php/Database/DbConnection.php';
+            include_once 'src/php/Database/DbConnection.php';
             $this->_dbConnection = new Database_DbConnection();
         }
     }
@@ -46,7 +46,7 @@ class Database_ImgIndex {
         $layers, $bitmask, $events, $eventsLabels, $scale, $scaleType,
         $scaleX, $scaleY, $numLayers) {
 
-        include_once HV_ROOT_DIR.'/src/php/Helper/DateTimeConversions.php';
+        include_once 'src/php/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
 
