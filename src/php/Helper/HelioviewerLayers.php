@@ -15,7 +15,7 @@
  * and stop execution otherwise
  */
 
-require_once HV_ROOT_DIR.'/src/php/Database/ImgIndex.php';
+require_once 'src/php/Database/ImgIndex.php';
 
 class Helper_HelioviewerLayers {
 
