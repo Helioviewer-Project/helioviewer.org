@@ -11,15 +11,38 @@ var Config = Class.extend(
     /** @lends Config.prototype */
     {
     /**
+     * Default parameters
+     */
+     params: {
+        'back_end'             	: "http://helioviewer.org/api.php",
+        'web_root_url'         	: "http://helioviewer.org",
+        'static_asset_url'     	: "http://helioviewer.org",
+	    'build_num'             : 700,
+        'default_image_scale'   : 4.8408817,
+        'min_image_scale'       : 0.60511022,
+        'max_image_scale'       : 154.90822,
+        'max_tile_layers'       : 5,
+        'prefetch_size'        	: 0,
+        'default_timestep'   	: 86400,
+        'news_url'             	: "http://blog.helioviewer.org/",
+        'user_video_feed'       : "http://helioviewer.org/api.php",
+        'contact_email'        	: "contact@helioviewer.org",
+        'disable_cache'        	: false,
+     },
+    
+    /**
      * @description Creates a new Config.
      * @constructs
      */
     init: function (params) {
-        this.params = params;
+        var self = this;
+        
+        $.each(params, function (k,v) {
+	        self.params[k] = v;
+        });
 
         this.bools  = ["disable_cache"];
-        this.ints   = ["build_num", "default_timestep", "prefetch_size", "max_movie_frames",
-                       "max_tile_layers"];
+        this.ints   = ["build_num", "default_timestep", "prefetch_size", "max_movie_frames", "max_tile_layers"];
         this.floats = ["default_image_scale", "min_image_scale", "max_image_scale"];
 
         this.fixTypes();
@@ -33,7 +56,7 @@ var Config = Class.extend(
 
         // Booleans
         $.each(this.bools, function () {
-            param = self.params[this].toLowerCase();
+            param = self.params[this].toString().toLowerCase();
 
             if ((param === "true") || (param === "1")) {
                 self.params[this] = true;

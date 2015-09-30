@@ -491,13 +491,13 @@ var MovieManagerUI = MediaManagerUI.extend(
         // (already done for input fields...)
 
         // Initialize YouTube upload button
-        $('#youtube-upload-' + movie.id).click(function () {
+        $('#youtube-upload-' + movie.id).on('click', function () {
             self.showYouTubeUploadDialog(movie);
             return false;
         });
 
         // Initialize video link button
-        $('#video-link-' + movie.id).click(function () {
+        $('#video-link-' + movie.id).on('click', function () {
             // Hide flash movies to prevent blocking
             if (!($.support.h264 || $.support.vp8)) {
                 $(".movie-player-dialog").dialog("close");
@@ -533,7 +533,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         tags = [];
 
         $.each(movie.layers.split("],["), function (i, layerStr) {
-console.error('MovieManagerUI.showYouTubeUploadDialog() assumes 4-level hierarchy in layerStr');
+			//console.error('MovieManagerUI.showYouTubeUploadDialog() assumes 4-level hierarchy in layerStr');
             var parts = layerStr.replace(']', "").replace('[', "")
                         .split(",").slice(0, 4);
 
@@ -653,7 +653,7 @@ console.error('MovieManagerUI.showYouTubeUploadDialog() assumes 4-level hierarch
      */
     _validateVideoUploadForm: function () {
         var keywords         = $("#youtube-tags").val(),
-            keywordMinLength = 2,
+            keywordMinLength = 1,
             keywordMaxLength = 30;
 
         // Make sure the title field is not empty
