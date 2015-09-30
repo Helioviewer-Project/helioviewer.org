@@ -272,7 +272,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         });
 
         // Keyboard shortcuts dialog
-        this._setupDialog("#helioviewer-usage", "#usage-dialog", {
+        this._setupDialog("#help-links-shortcuts", "#usage-dialog", {
             "title": "Helioviewer - Usage Tips"
         });
 
@@ -307,7 +307,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         };
 
         // Button click handler
-        $(btn).click(function () {
+        $(btn).on('click', function () {
             var d   = $(dialog),
                 btn = $(this);
 
@@ -319,7 +319,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                     d.dialog('open');
                 }
             } else {
-                d.load(this.href, onLoad).dialog($.extend(defaults, options));
+	            var url = $(this).attr('rel');
+                d.load(url, onLoad).dialog($.extend(defaults, options));
                 btn.addClass("dialog-loaded");
             }
             return false;
@@ -425,7 +426,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $('#help-button').bind('click', $.proxy(this.drawerHelpClick, this));
 
         $('.drawer-contents .header').bind('click', $.proxy(this.accordionHeaderClick, this));
-        $('.contextual-help').bind('click', $.proxy(this.contextualHelpClick, this));
 
 
         $('#share-button').click(function (e) {
@@ -458,22 +458,81 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             assignTouchHandlers(this);
         });
 
-        $("#helioviewer-url-shorten").click(function (e) {
+        $(".helioviewer-url-shorten").on('click', function (e) {
             var url;
 
             if (e.target.checked) {
-                url = $("#helioviewer-short-url").attr("value");
+                url = $(".helioviewer-short-url").attr("value");
             }
             else {
-                url = $("#helioviewer-long-url").attr("value");
+                url = $(".helioviewer-long-url").attr("value");
             }
 
-            $("#helioviewer-url-input-box").attr('value', url).select();
+            $(".helioviewer-url-input-box").attr('value', url).select();
         });
+		
+		
+		// Email Link
+		$('#share-email-link').on('click', function(e){
+			var subject = 'Helioviewer.org - Solar and heliospheric image visualization tool';
+			var link = encodeURIComponent(self.toURL());
+			window.location.href = "mailto:?subject="+subject+"&body=\r\n\r\n"+link;
+		});
+		
+		// Copy Link to Clipboard
+		$('#share-copy-link').on('click', function(e){
+			document.execCommand('copy');
+		});
+		var isIe = (navigator.userAgent.toLowerCase().indexOf("msie") != -1 || navigator.userAgent.toLowerCase().indexOf("trident") != -1);
+		document.addEventListener('copy', function(e) {
+			var textToPutOnClipboard = self.toURL();
+		    if (isIe) {
+		        window.clipboardData.setData('Text', textToPutOnClipboard);    
+		    } else {
+		        e.clipboardData.setData('text/plain', textToPutOnClipboard);
+		    }
 
-        $('#facebook-button').bind('click', $.proxy(this.facebook, this));
-        $('#pinterest-button').bind('click', $.proxy(this.pinterest, this));
+	        // Options for the jGrowl notification
+	        var jGrowlOpts = {
+	            sticky: true,
+	            header: "Just now"
+	        };
 
+			// Create the jGrowl notification.
+        	$(document).trigger("message-console-log", ["Link successfully copied to clipboard.", jGrowlOpts, true, true]);
+		    e.preventDefault();
+		});
+		
+		
+        $('#share-twitter-link').on('click', $.proxy(this.twitter, this));
+        $('#share-facebook-link').on('click', $.proxy(this.facebook, this));
+        $('#share-pinterest-link').on('click', $.proxy(this.pinterest, this));
+		//Help Links
+		//Guide
+		$('#help-links-guide').on('click', function(){
+			window.open('http://wiki.helioviewer.org/wiki/Helioviewer.org_User_Guide_2.4.0','_blank');
+		});
+		
+		//Glossary
+		$('#help-links-glossary').on('click', function(){
+			//http://helioviewer.org/dialogs/glossary.html
+		});
+		
+		//Shortcuts
+		$('#help-links-shortcuts').on('click', function(){
+			//http://helioviewer.org/dialogs/usage.php
+		});
+		
+		//Documentation
+		$('#help-links-documentation').on('click', function(){
+			window.open('http://wiki.helioviewer.org/wiki/Main_Page','_blank');
+		});
+		
+		//API Documentation
+		$('#help-links-api-documentation').on('click', function(){
+			window.open(Helioviewer.api + '/docs/v2','_blank');
+		});
+		
         $('#mouse-cartesian').click( function (event) {
             var buttonPolar     = $('#mouse-polar');
             var buttonCartesian = $('#mouse-cartesian');
@@ -744,15 +803,15 @@ var HelioviewerWebClient = HelioviewerClient.extend(
              +     nickname
              + '</div>'
              + '<div class="previews">'
-             +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?'
-             + 'imageScale=' + hardcodedScale
+             +     '<img src="' + Helioviewer.api + '?action=takeScreenshot'
+             + '&imageScale=' + hardcodedScale
              + '&layers=['   + sourceId + ',1,100]'
              + '&events=&eventLabels=false'
              + '&scale=false&scaleType=earth&scaleX=0&scaleY=0'
              + '&date='      + startDate
              + '&x0=0&y0=0&width=256&height=256&display=true&watermark=false" class="preview start" /> '
-             +     '<img src="http://api.helioviewer.org/v2/takeScreenshot/?'
-             + 'imageScale=' + hardcodedScale
+             +     '<img src="' + Helioviewer.api + '?action=takeScreenshot'
+             + '&imageScale=' + hardcodedScale
              + '&layers=['   + sourceId + ',1,100]'
              + '&events=&eventLabels=false'
              + '&scale=false&scaleType=earth&scaleX=0&scaleY=0'
@@ -940,9 +999,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                      +     nickname
                      + '</div>'
                      + '<div class="previews">'
-                     +     '<img src="http://api.helioviewer.org/v2/'
-                     +     'takeScreenshot/?'
-                     +     'imageScale=' + thumbImageScale
+                     +     '<img src="' + Helioviewer.api + '?action=takeScreenshot'
+                     +     '&imageScale=' + thumbImageScale
                      +     '&layers='    + imageLayer
                      +     '&events=&eventLabels=false'
                      +     '&scale=false&scaleType=earth&scaleX=0&scaleY=0'
@@ -960,9 +1018,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                                                   )
                                           ) + ';"'
                      +     ' />'
-                     +     '<img src="http://api.helioviewer.org/v2/'
-                     +     'takeScreenshot/?'
-                     +     'imageScale=' + thumbImageScale
+                     +     '<img src="' + Helioviewer.api + '?action=takeScreenshot'
+                     +     '&imageScale=' + thumbImageScale
                      +     '&layers='    + imageLayer
                      +     '&events=&eventLabels=false'
                      +     '&scale=false&scaleType=earth&scaleX=0&scaleY=0'
@@ -1101,30 +1158,32 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * displays a dialog containing a link to the current page
      * @param {Object} url
      */
-    displayURL: function (url, msg) {
+    displayURL: function (url, msg, displayDialog = false) {
         // Get short URL before displaying
         var callback = function (response) {
-            $("#helioviewer-long-url").attr("value", url);
-            $("#helioviewer-short-url").attr("value", response.data.url);
-			$("#helioviewer-url-shorten").removeAttr("checked");
-			$("#helioviewer-url-input-box").attr('value', url).select();
+            $(".helioviewer-long-url").attr("value", url);
+            $(".helioviewer-short-url").attr("value", response.data.url);
+			$(".helioviewer-url-shorten").removeAttr("checked");
+			$(".helioviewer-url-input-box").attr('value', url).select();
             // Display URL
-            /*$("#helioviewer-url-box-msg").text(msg);
-            $("#url-dialog").dialog({
-                dialogClass: 'helioviewer-modal-dialog',
-                height    : 125,
-                maxHeight : 125,
-                width     : $('html').width() * 0.5,
-                minWidth  : 350,
-                modal     : true,
-                resizable : true,
-                title     : "Helioviewer - Direct Link",
-                open      : function (e) {
-                    
-                    $('.ui-widget-overlay').hide().fadeIn();
-                    
-                }
-            });*/
+            if(displayDialog){
+	            $("#helioviewer-url-box-msg").text(msg);
+	            $("#url-dialog").dialog({
+	                dialogClass: 'helioviewer-modal-dialog',
+	                height    : 125,
+	                maxHeight : 125,
+	                width     : $('html').width() * 0.5,
+	                minWidth  : 350,
+	                modal     : true,
+	                resizable : true,
+	                title     : "Helioviewer - Direct Link",
+	                open      : function (e) {
+	                    
+	                    $('.ui-widget-overlay').hide().fadeIn();
+	                    
+	                }
+	            });
+            }
         };
 
         // Get short version of URL and open dialog
@@ -1153,7 +1212,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         if (typeof(_gaq) !== "undefined") {
             _gaq.push(['_trackEvent', 'Shares', 'Movie - URL']);
         }
-        this.displayURL(url, msg);
+        this.displayURL(url, msg, true);
     },
 
     /**
@@ -1622,7 +1681,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             obj.addClass('opened');
             obj.removeClass('closed');
             $('.content', obj.parent().parent()).show();
-            $('.contextual-help', obj.parent().parent()).show();
             Helioviewer.userSettings.set("state.drawers.#"+drawerId+".accordions.#"+accordionId+".open", true);
         }
         else {
@@ -1630,7 +1688,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             obj.addClass('closed');
             obj.removeClass('opened');
             $('.content', obj.parent().parent()).hide();
-            $('.contextual-help', obj.parent().parent()).hide();
             Helioviewer.userSettings.set("state.drawers.#"+drawerId+".accordions.#"+accordionId+".open", false);
         }
 
@@ -1692,18 +1749,23 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         event.stopPropagation();
     },
 
-    twitter: function() {
-        self = this;
-        $(this).prop('data-url', encodeURIComponent(self.toURL()) );
-        $('#twitter-button').bind('click', $.proxy(this.twitter, this));
-        return;
+    twitter: function(e) {
+        var href   = 'https://twitter.com/share?url='
+                   + encodeURIComponent($('#helioviewer-short-url').val())
+                   + '&text=Helioviewer.org - Solar and heliospheric image visualization tool',
+            target = $(e.target).attr('target');
+        e.stopPropagation();
+
+        window.open(href, target);
+        return false;
     },
 
     facebook: function(e) {
-
-        var href   = $(e.target).attr('href')
-                   + '&u='
-                   + encodeURIComponent(this.toURL()),
+        var href   = 'https://www.facebook.com/sharer/sharer.php?'
+                   + '&s=100'
+                   + '&p[images][0]='+encodeURIComponent(Helioviewer.api+'?action=downloadScreenshot&id=3240748')
+                   + '&p[title]=Helioviewer.org - Solar and heliospheric image visualization tool'
+                   + '&p[url]='+encodeURIComponent($('#helioviewer-short-url').val()),
             target = $(e.target).attr('target');
         e.stopPropagation();
 
@@ -1716,8 +1778,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $('#pinterest-button').unbind('click');
 
         var url = encodeURIComponent(self.toURL());
-        var media = encodeURIComponent('http://api.helioviewer.org/v2/downloadScreenshot/?id=3240748');
-        var desc = $(this).attr('data-desc')+' '+encodeURIComponent(self.toURL());
+        var media = encodeURIComponent(Helioviewer.api+'?action=downloadScreenshot&id=3240748');
+        var desc = 'Helioviewer.org - Solar and heliospheric image visualization tool '+encodeURIComponent($('#helioviewer-short-url').val());
         window.open("//www.pinterest.com/pin/create/button/"+
         "?url="+url+
         "&media="+media+

@@ -15,7 +15,7 @@ var VisualGlossary = Class.extend(
      */ 
     init: function (setupDialog) {
         // Settings dialog
-        setupDialog("#helioviewer-glossary", "#glossary-dialog", {
+        setupDialog("#help-links-glossary", "#glossary-dialog", {
             "title": "Helioviewer - Glossary",
             "width": 800,
             "height": $(document).height() * 0.8

@@ -273,9 +273,9 @@ a.show-tags-btn {
     background: -webkit-linear-gradient(rgba(0,0,1), rgba(0,0,0,0.5));
     background: linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0.5));
     padding: 0;
-    -moz-box-shadow:    0px 0px 2px 1px red;
-    -webkit-box-shadow: 0px 0px 2px 1px red;
-    box-shadow:         0px 0px 2px 1px red;
+    -moz-box-shadow:    0px 0px 2px 1px white;
+    -webkit-box-shadow: 0px 0px 2px 1px white;
+    box-shadow:         0px 0px 2px 1px white;
     color: white;
 }
 .ui-dialog-buttonpane {
@@ -289,7 +289,7 @@ a.show-tags-btn {
     -moz-border-radius: 0.25em 0.25em 0 0;
     -webkit-border-radius: 0.25em 0.25em 0 0;
     border-radius: 0.25em 0.25em 0 0;
-    -moz-box-shadow:    1px 1px 0px 0px rgba(255,0,0,0.25);
-    -webkit-box-shadow: 1px 1px 0px 0px rgba(255,0,0,0.25);
-    box-shadow:         1px 1px 0px 0px rgba(255,0,0,0.25);
+    -moz-box-shadow:    1px 1px 0px 0px rgba(255,255,255,0.25);
+    -webkit-box-shadow: 1px 1px 0px 0px rgba(255,255,255,0.25);
+    box-shadow:         1px 1px 0px 0px rgba(255,255,255,0.25);
 }
