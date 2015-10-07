@@ -1,0 +1,142 @@
+<project name="Helioviewer" default="build" basedir="../../">
+    <!-- Helioviewer Apache Ant build.xml. -->
+    <!-- Last updated: July 2013 By Jeff -->
+    <description>
+        Helioviewer Apache Ant build.xml
+    </description>
+
+    <!-- Minification and concatenation -->
+    <target name="build" depends="web, embed">
+    </target>
+
+
+    <!-- Web Client -->
+    <target name="web">
+        <echo>### Web Client ###</echo>
+
+        <echo>removing old build files...</echo>
+        <mkdir dir="resources/compressed"/>
+        <delete quiet='false'>
+            <fileset dir="resources/compressed" includes="helioviewer.js, helioviewer.min.js" />
+            <fileset dir="resources/compressed" includes="helioviewer.css, helioviewer.min.css" />
+        </delete>
+
+        <echo>concatenating JavaScript...</echo>
+        <concat destfile="resources/compressed/helioviewer.js" encoding="UTF-8" outputencoding="UTF-8" fixlastline="true">
+            <filelist dir="resources/js" files="Utility/Config.js, Utility/HelperFunctions.js, Tiling/Layer/Layer.js, Tiling/Layer/TileLoader.js, Tiling/Layer/TileLayer.js, Tiling/Layer/HelioviewerTileLayer.js, Utility/KeyboardManager.js, Tiling/Manager/LayerManager.js, Tiling/Manager/TileLayerManager.js, Tiling/Manager/HelioviewerTileLayerManager.js, Image/JP2Image.js, Viewport/Helper/MouseCoordinates.js, Viewport/Helper/HelioviewerMouseCoordinates.js, Viewport/Helper/SandboxHelper.js, Viewport/Helper/ViewportMovementHelper.js, Viewport/HelioviewerViewport.js, HelioviewerClient.js, UI/ZoomControls.js, UI/ImageScale.js, Utility/InputValidator.js, Utility/SettingsLoader.js, Utility/UserSettings.js, Tiling/Manager/LayerManager.js, Events/EventManager.js, Events/EventType.js, Events/EventTree.js, Events/EventFeatureRecognitionMethod.js, Events/EventLayerManager.js, Events/EventMarker.js, Events/EventLayerManager.js, Events/HelioviewerEventLayer.js, Events/HelioviewerEventLayerManager.js, UI/TreeSelect.js, UI/ImageSelectTool.js, Media/MediaManagerUI.js, Media/MediaManager.js, Media/MovieManager.js, Media/MovieManagerUI.js, Media/ScreenshotManager.js, Media/ScreenshotManagerUI.js, UI/TileLayerAccordion.js, UI/EventLayerAccordion.js, UI/MessageConsole.js, UI/TimeControls.js, Utility/FullscreenControl.js, HelioviewerWebClient.js, UI/UserVideoGallery.js, UI/Glossary.js, UI/jquery.ui.dynaccordion.js"/>
+        </concat>
+
+        <echo>concatenating CSS...</echo>
+        <concat destfile="resources/compressed/helioviewer.css" encoding="UTF-8" eol="lf">
+            <filelist dir="resources/css" files="helioviewer-base.css, helioviewer-web.css"/>
+            <fileset dir="resources/css" includes="*.css" excludes="helioviewer-base.css, helioviewer-web.css, helioviewer-embed.css, api.css"/>
+        </concat>
+
+        <echo>minimizing JavaScript...</echo>
+        <exec dir="resources/build/jsmin" executable="jsmin.py" input="resources/compressed/helioviewer.js"
+          output="resources/compressed/helioviewer.min.js.tmp" resolveexecutable="true" />
+
+        <echo>compressing CSS...</echo>
+        <exec dir="resources/compressed/" executable="java">
+            <arg line="-jar ../../resources/build/yuicompressor/yuicompressor-2.4.2.jar --type css -o helioviewer.min.css.tmp helioviewer.css" />
+        </exec>
+
+        <echo>adding link to source JavaScript...</echo>
+        <concat destfile="resources/compressed/helioviewer.min.js" encoding="UTF-8" eol="lf">
+            <file file="resources/build/concat/Header.js" />
+            <file file="resources/compressed/helioviewer.min.js.tmp" />
+        </concat>
+        <delete file="resources/compressed/helioviewer.min.js.tmp" />
+
+        <echo>adding link to source CSS...</echo>
+        <concat destfile="resources/compressed/helioviewer.min.css" encoding="UTF-8" eol="lf">
+            <file file="resources/build/concat/Header.css" />
+            <file file="resources/compressed/helioviewer.min.css.tmp" />
+        </concat>
+        <delete file="resources/compressed/helioviewer.min.css.tmp" />
+
+        <echo>DONE</echo>
+    </target>
+
+
+    <!-- Embed Client -->
+    <target name="embed">
+        <echo>### Embed Client ###</echo>
+
+        <echo>removing old build files...</echo>
+        <delete quiet='false'>
+            <fileset dir="resources/compressed/" includes="helioviewer-embed.js, helioviewer-embed.min.js" />
+            <fileset dir="resources/compressed/" includes="helioviewer-embed.css, helioviewer-embed.min.css" />
+        </delete>
+
+        <echo>concatenating JavaScript...</echo>
+        <concat destfile="resources/compressed/helioviewer-embed.js" encoding="UTF-8" outputencoding="UTF-8" fixlastline="true">
+            <filelist dir="resources/js" files="Utility/Config.js, Utility/HelperFunctions.js, Tiling/Layer/Layer.js, Tiling/Layer/TileLoader.js, Tiling/Layer/TileLayer.js, Tiling/Layer/HelioviewerTileLayer.js, Utility/KeyboardManager.js, Tiling/Manager/LayerManager.js, Tiling/Manager/TileLayerManager.js, Tiling/Manager/HelioviewerTileLayerManager.js, Image/JP2Image.js, Viewport/Helper/MouseCoordinates.js, Viewport/Helper/HelioviewerMouseCoordinates.js, Viewport/Helper/SandboxHelper.js, Viewport/Helper/ViewportMovementHelper.js, Viewport/HelioviewerViewport.js, HelioviewerClient.js, UI/ZoomControls.js, UI/ImageScale.js, Utility/InputValidator.js, Utility/SettingsLoader.js, Utility/UserSettings.js, Tiling/Manager/LayerManager.js, Events/EventManager.js, Events/EventType.js, Events/EventTree.js, Events/EventFeatureRecognitionMethod.js, Events/EventLayerManager.js, Events/EventMarker.js, Events/EventLayerManager.js, Events/HelioviewerEventLayer.js, Events/HelioviewerEventLayerManager.js, HelioviewerEmbeddedClient.js"/>
+        </concat>
+
+        <echo>concatenating CSS...</echo>
+        <concat destfile="resources/compressed/helioviewer-embed.css" encoding="UTF-8" eol="lf">
+            <filelist dir="resources/css" files="helioviewer-base.css, helioviewer-embed.css, zoom-control.css"/>
+        </concat>
+
+        <echo>minimizing JavaScript...</echo>
+        <exec dir="resources/build/jsmin" executable="jsmin.py" input="resources/compressed/helioviewer-embed.js"
+          output="resources/compressed/helioviewer-embed.min.js.tmp" resolveexecutable="true" />
+
+        <echo>compressing CSS...</echo>
+        <exec dir="resources/compressed/" executable="java">
+            <arg line="-jar ../../resources/build/yuicompressor/yuicompressor-2.4.2.jar --type css -o helioviewer-embed.min.css.tmp helioviewer-embed.css" />
+        </exec>
+
+        <echo>adding link to source JavaScript...</echo>
+        <concat destfile="resources/compressed/helioviewer-embed.min.js" encoding="UTF-8" eol="lf">
+            <file file="resources/build/concat/Header.js" />
+            <file file="resources/compressed/helioviewer-embed.min.js.tmp" />
+        </concat>
+        <delete file="resources/compressed/helioviewer-embed.min.js.tmp" />
+
+        <echo>adding link to source CSS...</echo>
+        <concat destfile="resources/compressed/helioviewer-embed.min.css" encoding="UTF-8" eol="lf">
+            <file file="resources/build/concat/Header.css" />
+            <file file="resources/compressed/helioviewer-embed.min.css.tmp" />
+        </concat>
+        <delete file="resources/compressed/helioviewer-embed.min.css.tmp" />
+
+        <echo>DONE</echo>
+    </target>
+
+    <!-- JavaScript Documentation Generation -->
+    <target name="jsdoc">
+        <echo>Generating documentation...</echo>
+        <exec dir="resources/build/jsdoc-toolkit/" executable="java">
+            <arg line="-jar jsrun.jar app/run.js -a -p -t=templates/jsdoc -d=../../docs/ ../../resources/js" />
+        </exec>
+    </target>
+
+
+    <!--  JSLint -->
+    <target name="jslint">
+        <description>
+            Verifies JavaScript code using the Rhino version of JSLint.
+            Requires Rhino (sudo apt-get install rhino).
+        </description>
+        <property name="rhino.jar" value="/usr/share/java/js.jar"/>
+        <property name="jslint.js" value="resources/build/jslint/jslint.js"/>
+        <echo message="Running JSLint..."/>
+        <apply executable="java" parallel="false">
+            <fileset dir="resources/js/" includes="**/*.js" />
+            <arg line="-jar"/>
+            <arg path="${rhino.jar}"/>
+            <arg path="${jslint.js}"/>
+        </apply>
+    </target>
+
+    <!-- Cleanup -->
+    <target name="clean">
+        <echo>Removing old build files</echo>
+        <delete quiet='false'>
+            <fileset dir="resources/compressed" includes="*.js" />
+            <fileset dir="resources/compressed" includes="*.css" />
+        </delete>
+    </target>
+</project>
