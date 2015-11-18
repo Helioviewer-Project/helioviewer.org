@@ -132,27 +132,59 @@ var UserSettings = Class.extend(
         }
 
         // Update settings
-        var lookup = key.split(".");
-
+        var lookup = key.split(".");	
+		
         if (lookup.length === 1) {
             this.settings[key] = value;
         }
         else if (lookup.length === 2) {
+            if(typeof this.settings[lookup[0]] == 'undefined'){ this.settings[lookup[0]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]] == 'undefined'){ this.settings[lookup[0]][lookup[1]] = ''; }
             this.settings[lookup[0]][lookup[1]] = value;
         }
         else if (lookup.length === 3) {
+            if(typeof this.settings[lookup[0]] == 'undefined'){ this.settings[lookup[0]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]] == 'undefined'){ this.settings[lookup[0]][lookup[1]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]] = ''; }
+            
             this.settings[lookup[0]][lookup[1]][lookup[2]] = value;
         }
         else if (lookup.length === 4) {
+            if(typeof this.settings[lookup[0]] == 'undefined'){ this.settings[lookup[0]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]] == 'undefined'){ this.settings[lookup[0]][lookup[1]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] = ''; }
+            
             this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] = value;
         }
         else if (lookup.length === 5) {
+            if(typeof this.settings[lookup[0]] == 'undefined'){ this.settings[lookup[0]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]] == 'undefined'){ this.settings[lookup[0]][lookup[1]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]] = ''; }
+            
             this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]] = value;
         }
         else if (lookup.length === 6) {
+            if(typeof this.settings[lookup[0]] == 'undefined'){ this.settings[lookup[0]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]] == 'undefined'){ this.settings[lookup[0]][lookup[1]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]] = ''; }
+
             this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]] = value;
         }
         else {
+            if(typeof this.settings[lookup[0]] == 'undefined'){ this.settings[lookup[0]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]] == 'undefined'){ this.settings[lookup[0]][lookup[1]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]] = {}; }
+            if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]] = {}; }
+			if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]][lookup[6]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]][lookup[6]] = ''; }
+
             this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]][lookup[5]][lookup[6]] = value;
         }
 

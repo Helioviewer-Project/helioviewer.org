@@ -54,6 +54,7 @@
     <link rel="stylesheet" href="resources/css/dialogs.css" />
     <link rel="stylesheet" href="resources/css/events.css" />
     <link rel="stylesheet" href="resources/css/media-manager.css" />
+    <link rel="stylesheet" href="resources/css/timeline.css" />
     <link rel="stylesheet" href="resources/css/timenav.css" />
     <link rel="stylesheet" href="resources/css/video-gallery.css" />
     <link rel="stylesheet" href="resources/css/youtube.css" />
@@ -778,7 +779,22 @@
 	        </div>
 	    </div>
 	
-	
+		
+		<div id="hv-drawer-timeline" class="helioviewer-drawer-bottom">
+	        <div id="hv-drawer-tab-timeline" class="drawer-tab drawer-tab-bottom">Data Timeline</div>
+	        <div class="drawer-contents">
+		        <div class="drawer-items">
+			        <div id="data-coverage-timeline" style="width:100%;height:300px;"></div>
+			        <div id="data-coverage-timeline-events" style="width:100%;height:300px;display:none;"></div>
+			        <button id="btn-prev">&larr; Previous</button>
+			        <button id="btn-zoom-in">&#10133; Zoom In</button>
+			        <button id="btn-center">Center</button>
+			        <button id="btn-zoom-out">&#10134; Zoom Out</button>
+			        <button id="btn-next">Next &rarr;</button>
+		        </div>
+	        </div>
+	    </div>
+		
 	    <!-- Glossary dialog -->
 	    <div id='glossary-dialog'></div>
 	
@@ -907,6 +923,9 @@
 	<script src="resources/lib/jquery.json-2.3/jquery.json-2.3.min.js" type="text/javascript" ></script>
 	<script src="resources/lib/jquery.cookie/jquery.cookie.min.js" type="text/javascript" ></script>
 	<script src="resources/lib/Cookiejar/jquery.cookiejar.pack.js" type="text/javascript"></script>
+	<script src="resources/lib/Highstock-2.1.9/js/highstock.js" type="text/javascript"></script>
+	<script src="resources/lib/Highstock-2.1.9/js/highcharts-more.js" type="text/javascript"></script>
+	<script src="resources/lib/custom_events-master/customEvents.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.jgrowl/jquery.jgrowl.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.imgareaselect-0.9.8/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
@@ -952,6 +971,7 @@
 	<script src="resources/js/HelioviewerClient.js" type="text/javascript"></script>
 	<script src="resources/js/UI/ZoomControls.js" type="text/javascript"></script>
 	<script src="resources/js/UI/ImageScale.js" type="text/javascript"></script>
+	<script src="resources/js/UI/Timeline.js" type="text/javascript"></script>
 	<script src="resources/js/Utility/InputValidator.js" type="text/javascript"></script>
 	<script src="resources/js/Utility/SettingsLoader.js" type="text/javascript"></script>
 	<script src="resources/js/Utility/UserSettings.js" type="text/javascript"></script>
