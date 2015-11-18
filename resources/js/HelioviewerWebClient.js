@@ -36,6 +36,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.drawerLeftTabLeft         = -2.6; /* em */
         this.drawerLeftTabBorderRight  = "2pt solid rgba(0,0,0,1)";
         this.drawerLeftTabBorderBottom = "2pt solid rgba(0,0,0,1)";
+        this.drawerTimeline            = $('#hv-drawer-timeline');
+        this.drawerTimelineTab         = $('#hv-drawer-tab-timeline');
+        this.drawerTimelineOpened      = false;
+        this.drawerTimelineOpenedHeight= '326';
         this.drawerNews                = $('#hv-drawer-news');
         this.drawerNewsOpened          = false;
         this.drawerNewsOpenedHeight    = 'auto';
@@ -64,6 +68,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.drawerHelpOpened          = false;
         this.drawerHelpOpenedHeight    = 'auto';
         this.drawerHelpOpenedWidth     = '25em';
+        
 
         this.tabbedDrawers = ['#hv-drawer-news', '#hv-drawer-movies',
                               '#hv-drawer-screenshots', '#hv-drawer-youtube',
@@ -126,7 +131,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this._setupSettingsUI();
 
         this._displayGreeting();
-
+		
         $('#mouse-cartesian').click();
 
         this.drawerUserSettings = Helioviewer.userSettings.get("state.drawers");
@@ -135,6 +140,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             case "#hv-drawer-left":
                 if ( drawerObj.open ) {
                     self.drawerLeftClick(true);
+                }
+                break;
+            case "#hv-drawer-timeline":
+                if ( drawerObj.open ) {
+                    self.drawerTimelineClick(true);
                 }
                 break;
             case "#hv-drawer-news":
@@ -176,6 +186,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 console.info(['no drawer: ', drawerSelector, obj]);
             }
         });
+        
+        this.updateHeightsInsideViewportContainer();
+        
     },
 
     /**
@@ -416,6 +429,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         $(this.drawerLeftTab).bind('click', $.proxy(this.drawerLeftClick, this));
         this.drawerLeft.bind('mouseover', function (event) { event.stopPropagation(); });
+        
+        $(this.drawerTimelineTab).bind('click', $.proxy(this.drawerTimelineClick, this));
+        this.drawerTimeline.bind('mouseover', function (event) { event.stopPropagation(); });
 
         $('#news-button').bind('click', $.proxy(this.drawerNewsClick, this));
         $('#youtube-button').bind('click', $.proxy(this.drawerYoutubeClick, this));
@@ -427,6 +443,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         $('.drawer-contents .header').bind('click', $.proxy(this.accordionHeaderClick, this));
 
+		$(document).bind("updateHeightsInsideViewportContainer", $.proxy(this.updateHeightsInsideViewportContainer, this));
 
         $('#share-button').click(function (e) {
             // Google analytics event
@@ -1397,6 +1414,58 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         return this.serverSettings.rootURL + "/?" + decodeURIComponent($.param(params));
     },
 
+    updateHeightsInsideViewportContainer: function() {
+        var newHeight, sidebars, windowHeight = parseInt($(window).height()),
+            header, viewport, drawerBottom, drawerLeft, drawerRight;
+
+        header       = $('#hv-header');
+        viewport     = $('#helioviewer-viewport');
+        drawerLeft   = $('#hv-drawer-left');
+        drawerBottom = $('#hv-drawer-timeline');
+        //left sidebars
+        var drawerNews   	= $('#hv-drawer-news');
+        var drawerYouTube   = $('#hv-drawer-youtube');
+        var drawerMovies   	= $('#hv-drawer-movies');
+        var drawerScreenshots = $('#hv-drawer-screenshots');
+        var drawerData   	= $('#hv-drawer-data');
+        var drawerShare   	= $('#hv-drawer-share');
+        var drawerHelp   	= $('#hv-drawer-help');
+
+        sidebars = [drawerLeft, drawerNews, drawerYouTube, drawerMovies, drawerScreenshots, drawerData, drawerShare, drawerHelp];
+		
+        $.each(sidebars, function(i, sidebar) {
+            if(self.drawerTimelineOpened == true){
+	            
+	            newHeight = windowHeight
+                      - parseInt(header.css('border-top-width'))
+                      - parseInt(header.css('margin-top'))
+                      - parseInt(header.css('padding-top'))
+                      - parseInt(header.css('height'))
+                      - parseInt(header.css('padding-bottom'))
+                      - parseInt(header.css('margin-bottom'))
+                      - parseInt(header.css('border-bottom-width'))
+                      - parseInt(sidebar.css('border-top-width'))
+                      - parseInt(sidebar.css('margin-top'))
+                      - parseInt(sidebar.css('padding-top'))
+                      - parseInt(sidebar.css('padding-bottom'))
+                      - parseInt(sidebar.css('margin-bottom'))
+                      - parseInt(sidebar.css('border-bottom-width'));
+
+				sidebar.css('max-height', (newHeight - self.drawerTimelineOpenedHeight) + 'px');
+            }else{
+	            sidebar.css('max-height', '100%');
+            }
+        });
+		/*
+        newHeight = windowHeight
+                  - parseInt(viewport.css('padding-top'))
+                  - parseInt(viewport.css('padding-bottom'));
+        $('#helioviewer-viewport').css('height', newHeight);
+
+        newHeight = windowHeight
+                  - parseInt($('#helioviewer-header').css('height'));
+        $('#helioviewer-viewport-container').css('height', newHeight);*/
+    },
 
     drawerLeftClick: function(openNow) {
         if ( this.drawerLeftOpened || openNow === false ) {
@@ -1424,6 +1493,41 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             Helioviewer.userSettings.set("state.drawers.#hv-drawer-left.open", true);
             this.reopenAccordions(this.drawerLeft);
         }
+        return;
+    },
+	
+	drawerTimelineClick: function(openNow) {
+        if ( this.drawerTimelineOpened || openNow === false ) {
+            this.drawerTimeline.css('height', 0);
+            $('.drawer-contents', this.drawerTimeline).hide();
+            this.drawerTimeline.css('padding', 0);
+            
+            //for (var i=1; i<=this.drawerSpeed; i=i+10) {
+            //    setTimeout(this.updateHeightsInsideViewportContainer, i);
+            //}
+            setTimeout(
+                this.updateHeightsInsideViewportContainer,
+                this.drawerSpeed*2
+            );
+			
+			Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline.open", false);
+            this.drawerTimelineOpened = false;
+        }
+        else if ( !this.drawerTimelineOpened || openNow === true ) {
+            this.drawerTimeline.css('height', this.drawerTimelineOpenedHeight + 'px');
+            $('.drawer-contents', this.drawerTimeline).show();
+            
+            //for (var i=1; i<=this.drawerSpeed; i=i+10) {
+            //    setTimeout(this.updateHeightsInsideViewportContainer, i);
+            //}
+            setTimeout(self.updateHeightsInsideViewportContainer, this.drawerSpeed);
+			
+			Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline.open", true);
+            this.drawerTimelineOpened = true;
+            
+            this.timeline   = new Timeline();
+        }
+
         return;
     },
 

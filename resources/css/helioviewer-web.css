@@ -358,6 +358,24 @@ html, body {
    z-index: 2;
 }
 
+.helioviewer-drawer-bottom {
+    position: absolute;
+    bottom: 0;
+    clear: both;
+    width: 100%;
+    height: 0; /* opened via JavaScript */
+    background-color: rgba(0, 0, 0, 0.75);
+    color: rgba(255,255,255,0.8);
+    font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
+    font-weight: 200;
+    text-align: center;
+    border-top: 0.45em solid #000;
+    -moz-box-shadow:    0px -1px 1px -1px rgba(255,255,255,0.75);
+    -webkit-box-shadow: 0px -1px 1px -1px rgba(255,255,255,0.75);
+    box-shadow:         0px -1px 1px -1px rgba(255,255,255,0.75);
+    overflow-y: visible;
+    z-index: 9;
+}
 
 .drawer-contents {
    display: none;
@@ -368,7 +386,6 @@ html, body {
    overflow-y: auto;
    z-index: 2;
 }
-
 
 
 /* Drawer Tabs */
@@ -406,9 +423,17 @@ html, body {
    left: -2em;
    cursor: pointer;
 }
+.drawer-tab-bottom {
+    position: relative;
+    margin: -2em auto 0 auto;
+}
 
-
-
+.helioviewer-drawer-bottom .drawer-tab{
+	width:7em;
+	border-top:1px solid white;
+	border-left:1px solid white;
+	border-right:1px solid white;
+}
 
 /* Accordions */
 

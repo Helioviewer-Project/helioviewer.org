@@ -1,0 +1,53 @@
+#helioviewer_timeline {
+    position: absolute;
+    bottom: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 424px;
+    max-height: 96%;
+    text-align: center;
+    background-color: rgba(0,0,0,0.65);
+}
+
+#helioviewer_timeline header.clickme {
+    font-size: 0.67em;
+    color: #ccc;
+    width: 12em;
+    background-color: rgba(0,0,0,0.65);
+    border-bottom: 0;
+    padding: 4px 2px;
+    margin: -21px auto 0 auto;
+    border-radius: 3px 3px 0 0;
+}
+#helioviewer_timeline header.clickme:hover {
+    color: #fff;
+    background-color: rgba(0,0,0,0.85);
+}
+
+#hv-drawer-timeline button {
+    color: #ccc;
+    background-color: rgba(80,80,80, 0.65);
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 300;
+    font-size: 11px;
+    border: 0;
+    padding: 2px 4px;
+    margin: 0 4px;
+}
+#hv-drawer-timeline button:hover {
+    color: #fff;
+    background-color: rgba(112,112,112, 0.65);
+}
+
+#hv-drawer-timeline #btn-prev {
+    float: left;
+}
+#hv-drawer-timeline #btn-next {
+    float: right;
+}
+#hv-drawer-timeline #btn-back {
+    display: none;
+}
+#data-coverage-timeline > div{
+	min-width:100% !important;
+}

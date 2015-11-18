@@ -68,7 +68,7 @@ var JP2Image = Class.extend(
 	            sticky: true,
 	            header: "Just now"
 	        };
-	        $(document).trigger("message-console-log", [result.error, jGrowlOpts, true, true]);
+	        //$(document).trigger("message-console-log", [result.error, jGrowlOpts, true, true]);
 	        return;
         }
         if (this.id === result.id) {
