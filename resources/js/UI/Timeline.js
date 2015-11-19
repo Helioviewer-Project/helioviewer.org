@@ -154,10 +154,26 @@ var Timeline = Class.extend({
                     },
                     point: {
                         events: {
-                            //dblclick: this.dataCoverageScatterPlot,
-                            //click: function(event) {
-                            //    var date = new Date(this.x);
-                            //}
+                            dblclick: function(e){
+	                            
+	                            var minRange = 30 * 60 * 1000;
+	                            
+	                            var min = this.x;
+	                            var max = this.x + this.series.currentDataGrouping.totalRange;
+	                            
+	                            if(minRange > this.series.currentDataGrouping.totalRange){
+	                            	var minSideRange = minRange / 2;
+	                            	var columnCenter = this.x + (this.series.currentDataGrouping.totalRange / 2);
+	                            	min = columnCenter - minSideRange;
+	                            	max = columnCenter + minSideRange;
+	                            }
+	                            
+	                            var chart = $('#data-coverage-timeline').highcharts();
+								chart.xAxis[0].setExtremes(min, max);
+								
+								self.afterSetExtremes({min:min, max:max});
+								return true;
+                            }
                         }
                     }
                 },
@@ -182,17 +198,18 @@ var Timeline = Class.extend({
                 followPointer: false,
                 shared: true,
                 xDateFormat: "%A, %b %e, %H:%M UTC",
-                formatter: function() {
+                formatter: function(e) {
 	                var str = '';
 					var count = 0;
 					var type = 'column';
 	                if(typeof this.series == "undefined"){
+		                str += '<span style="color:#ffffff;"><b>'+Highcharts.dateFormat('%Y/%m/%e %H:%M:%S UTC', this.x)+' - '+Highcharts.dateFormat('%Y/%m/%e %H:%M:%S UTC', this.x+this.points[0].series.currentDataGrouping.totalRange)+'</b></span><br/>';
 		                $.each(this.points, function(i, point) {
 							type = point.series.type;
 							if(type == 'column'){
 								str += '<span style="color:'+point.series.color+'">'+point.series.name+'</span>: <b>'+Highcharts.numberFormat(point.y,0,'.',',')+' images</b><br/>';
 							}else{
-								str += '<span style="color:'+point.series.color+'">'+point.series.name+'</span>: <b>'+Highcharts.dateFormat('%A, %b %e, %H:%M:%S UTC', point.x)+'</b><br/>';
+								str += '<span style="color:'+point.series.color+'">'+point.series.name+'</span>: <b>'+Highcharts.dateFormat('%Y/%m/%e %H:%M:%S UTC', point.x)+'</b><br/>';
 							}
 						});
 	                }else{
@@ -200,7 +217,7 @@ var Timeline = Class.extend({
 		            	if(type == 'column'){
 							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.numberFormat(this.y,0,'.',',')+' images</b><br/>';
 						}else{
-							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.dateFormat('%A, %b %e, %H:%M:%S UTC', this.x)+'</b><br/>';
+							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.dateFormat('%Y/%m/%e %H:%M:%S UTC', this.x)+'</b><br/>';
 						}
 		            }
 					return str;
@@ -500,9 +517,6 @@ var Timeline = Class.extend({
 
         $(document).on('observation-time-changed', $.proxy(this._updateTimelineDate, this));
         $(document).on('update-external-datasource-integration', $.proxy(this._updateTimeline, this));
-        //$(document).on('save-tile-layers', $.proxy(this._updateTimeline, this));
-        //$(document).on('toggle-events', $.proxy(this._updateTimeline, this));
-        //$(document).on('toggle-event-labels', $.proxy(this._updateTimeline, this));
     },
     
     btnZoomIn: function() {
