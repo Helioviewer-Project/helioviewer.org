@@ -7,6 +7,8 @@ eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
 newcap: true, immed: true, maxlen: 80, sub: true */
 /*globals $, Class */
 "use strict";
+var timelineExtremesChanged = false;
+
 var Timeline = Class.extend({
 	
     init: function () {
@@ -22,10 +24,10 @@ var Timeline = Class.extend({
         this.setHighchartsTheme();
         //Set Timeline options
         this.setTimelineOptions();
-        //Set events
-        this._setupEventHandlers();
         //Render
         this.render();
+        //Set events
+        this._setupEventHandlers();
     },
 
     loadingIndicator: function (show) {
@@ -49,20 +51,29 @@ var Timeline = Class.extend({
             chart : {
 				type: 'column',
 				stacking: 'normal',
-                zoomType: 'x',
+                //zoomType: 'x',
+                //panning: true,
+				//panKey: 'shift',
                 events:{
 	                selection: function(event) {
-		                var chart = $('#data-coverage-timeline').highcharts();
-						chart.xAxis[0].setExtremes(event.xAxis[0].min, event.xAxis[0].max);
-						
-						var span     = event.xAxis[0].max - event.xAxis[0].min;
-        
-				        if(span < 30 * 60 * 1000){
-					        return false;
-				        }
-						
-						self.afterSetExtremes({min:event.xAxis[0].min, max:event.xAxis[0].max});
-						return true;
+		                if (event.xAxis) {
+			                timelineExtremesChanged = false;
+			                var chart = $('#data-coverage-timeline').highcharts();
+							chart.xAxis[0].setExtremes(event.xAxis[0].min, event.xAxis[0].max);
+							
+							var span     = event.xAxis[0].max - event.xAxis[0].min;
+	        
+					        if(span < 30 * 60 * 1000){
+						        return false;
+					        }
+						        
+					        if(event.xAxis[0].min < 0) event.xAxis[0].min = 0;
+							
+							self.afterSetExtremes({min:event.xAxis[0].min, max:event.xAxis[0].max});
+						}else{
+							//console.log('drag');
+						}
+						return true;	
 					}
                 },
                 resetZoomButton: {
@@ -115,7 +126,9 @@ var Timeline = Class.extend({
                 plotLines: [],
                 ordinal: false,
                 events : {
-                    //afterSetExtremes : this.afterSetExtremes
+                    afterSetExtremes : function (e) {
+	                    timelineExtremesChanged = true;
+	                }
                 },
                 minRange: 30 * 60 * 1000 // 30 minutes
             },
@@ -155,23 +168,22 @@ var Timeline = Class.extend({
                     point: {
                         events: {
                             dblclick: function(e){
-	                            
 	                            var minRange = 30 * 60 * 1000;
 	                            
-	                            var min = this.x;
-	                            var max = this.x + this.series.currentDataGrouping.totalRange;
+	                            var minTime = this.x;
+	                            var maxTime = this.x + this.series.closestPointRange;
 	                            
-	                            if(minRange > this.series.currentDataGrouping.totalRange){
+	                            if(minRange > this.series.closestPointRange){
 	                            	var minSideRange = minRange / 2;
-	                            	var columnCenter = this.x + (this.series.currentDataGrouping.totalRange / 2);
-	                            	min = columnCenter - minSideRange;
-	                            	max = columnCenter + minSideRange;
+	                            	var columnCenter = this.x + (this.series.closestPointRange / 2);
+	                            	
+	                            	minTime = columnCenter - minSideRange;
+	                            	maxTime = columnCenter + minSideRange;
 	                            }
 	                            
 	                            var chart = $('#data-coverage-timeline').highcharts();
-								chart.xAxis[0].setExtremes(min, max);
-								
-								self.afterSetExtremes({min:min, max:max});
+								chart.xAxis[0].setExtremes(minTime, maxTime);
+								self.afterSetExtremes({min:minTime, max:maxTime});
 								return true;
                             }
                         }
@@ -203,7 +215,7 @@ var Timeline = Class.extend({
 					var count = 0;
 					var type = 'column';
 	                if(typeof this.series == "undefined"){
-		                str += '<span style="color:#ffffff;"><b>'+Highcharts.dateFormat('%Y/%m/%e %H:%M:%S UTC', this.x)+' - '+Highcharts.dateFormat('%Y/%m/%e %H:%M:%S UTC', this.x+this.points[0].series.currentDataGrouping.totalRange)+'</b></span><br/>';
+		                str += '<span style="color:#ffffff;"><b>'+Highcharts.dateFormat('%Y/%m/%e %H:%M:%S UTC', this.x)+' - '+Highcharts.dateFormat('%Y/%m/%e %H:%M:%S UTC', this.x+this.points[0].series.closestPointRange)+'</b></span><br/>';
 		                $.each(this.points, function(i, point) {
 							type = point.series.type;
 							if(type == 'column'){
@@ -509,6 +521,8 @@ var Timeline = Class.extend({
     },
     
     _setupEventHandlers: function(){
+	    var self = this;
+	    
 	    $('#btn-zoom-in').on('click', $.proxy(this.btnZoomIn, this));
         $('#btn-zoom-out').on('click', $.proxy(this.btnZoomOut, this));
         $('#btn-prev').on('click', $.proxy(this.btnPrev, this));
@@ -517,6 +531,9 @@ var Timeline = Class.extend({
 
         $(document).on('observation-time-changed', $.proxy(this._updateTimelineDate, this));
         $(document).on('update-external-datasource-integration', $.proxy(this._updateTimeline, this));
+        
+        
+        
     },
     
     btnZoomIn: function() {
@@ -535,6 +552,8 @@ var Timeline = Class.extend({
 	        newMin	 = extremes.min;
 	        newMax	 = extremes.max;
         }
+        
+        if(newMin < 0)  newMin = 0;
 
         chart.xAxis[0].setExtremes(newMin, newMax);
         this.afterSetExtremes({min:newMin, max:newMax});
@@ -551,7 +570,17 @@ var Timeline = Class.extend({
         span   = extremes.max - extremes.min;
         newMin = extremes.min-(span*scaleFactor);
         newMax = extremes.max+(span*scaleFactor);
-
+		
+		var today = Date.now() + 24 * 60 * 60 * 1000;
+		if(newMax > today){
+			newMax = today;
+		}
+		
+		var minDay = new Date(1991, 9, 11, 0, 0, 0).getTime();
+		if(newMin < minDay){
+			newMin = minDay;
+		}
+		
         chart.xAxis[0].setExtremes(newMin, newMax);
         this.afterSetExtremes({min:newMin, max:newMax});
     },
@@ -567,6 +596,10 @@ var Timeline = Class.extend({
         newMin   = extremes.min - span;
         newMax   = extremes.max - span;
         
+        if(newMin < 0){
+	        newMin = 0;
+        }
+        
         chart.xAxis[0].setExtremes(newMin, newMax);
         this.afterSetExtremes({min:newMin, max:newMax});
     },
@@ -581,6 +614,10 @@ var Timeline = Class.extend({
         span     = parseInt((extremes.max - extremes.min)/2);
         newMin   = extremes.min + span;
         newMax   = extremes.max + span;
+        
+        if(newMin < 0){
+	        newMin = 0;
+        }
 
         chart.xAxis[0].setExtremes(newMin, newMax);
         this.afterSetExtremes({min:newMin, max:newMax});
@@ -632,9 +669,46 @@ var Timeline = Class.extend({
                 };
             });
 	        // create the chart
-	        $('#data-coverage-timeline').highcharts('StockChart', self._timelineOptions);
+	        $('#data-coverage-timeline').highcharts('StockChart', self._timelineOptions,function(chart){
+			        $(document).on('mouseup',function(){
+			            if (timelineExtremesChanged) {
+				            
+				            var extremes, newMin, newMax, span;
+					
+					        extremes = chart.xAxis[0].getExtremes();
+					        
+					        newMin   = extremes.min;
+					        newMax   = extremes.max;
+					        
+					        if(newMin < 0)  newMin = 0;
+					        if(newMax < 0)  newMax = 0;
+					        
+					        self.afterSetExtremes({min:newMin, max:newMax});
+					        timelineExtremesChanged = false;
+			            }
+			        }),
+			        $(document).on('mousedown',function(){
+			            timelineExtremesChanged = false;
+			        });
+			        $('#data-coverage-timeline').bind('mousewheel', function(event) {
+				        event.preventDefault();
+				        if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
+				            self.btnZoomIn();
+						} else {
+				            self.btnZoomOut();
+				        }
+			        });
+			    });
+			    
 	        self.drawPlotLine();
 	        $('#data-coverage-timeline').highcharts().xAxis[0].setExtremes(startDate, endDate);
+	        var chart = $('#data-coverage-timeline').highcharts();
+		    chart.pointer.cmd = chart.pointer.onContainerMouseDown;
+		    chart.pointer.onContainerMouseDown = function (a){
+		        this.zoomX=this.zoomHor=this.hasZoom=a.shiftKey;
+		        this.cmd(a);
+		    }; 
+	        
 	    });
     },
     
