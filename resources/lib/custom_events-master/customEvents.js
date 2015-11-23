@@ -40,9 +40,11 @@
                             
                             (function(key) {
                                 if (events.hasOwnProperty(key)) {
-                                    elem.on(key, function(e) {
-                                        events[key].call(obj,e);
-                                    });
+                                    if(typeof elem != "undefined"){
+	                                    elem.on(key, function(e) {
+	                                        events[key].call(obj,e);
+	                                    });
+                                    }
                                 }
                             })(key)
                             
