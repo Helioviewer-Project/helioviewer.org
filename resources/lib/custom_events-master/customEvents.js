@@ -40,7 +40,7 @@
                             
                             (function(key) {
                                 if (events.hasOwnProperty(key)) {
-                                    if(typeof elem != "undefined"){
+                                    if(elem != null && typeof elem != "undefined"){
 	                                    elem.on(key, function(e) {
 	                                        events[key].call(obj,e);
 	                                    });

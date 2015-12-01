@@ -381,7 +381,12 @@ var UserSettings = Class.extend(
             $.each(layerObj.uiLabels, function (i, labelObj) {
                 layerString += labelObj.name + ",";
             });
-            layerString += parseInt(layerObj.layeringOrder) + ",";
+            
+            if(typeof layerObj.layeringOrder == 'undefined'){
+	            layerString += "1,";
+            }else{
+	            layerString += parseInt(layerObj.layeringOrder) + ",";
+            }
             layerString += parseInt(layerObj.opacity);
 
             layerString += "],";
