@@ -134,6 +134,7 @@ var Timeline = Class.extend({
             },
 
             yAxis: {
+	            type: 'logarithmic',
                 floor: 0,
                 allowDecimals: false,
                 labels: {}
@@ -173,13 +174,17 @@ var Timeline = Class.extend({
 	                            var minTime = this.x;
 	                            var maxTime = this.x + this.series.closestPointRange;
 	                            
+	                            var columnCenter = this.x + (this.series.closestPointRange / 2)
+	                            
 	                            if(minRange > this.series.closestPointRange){
 	                            	var minSideRange = minRange / 2;
-	                            	var columnCenter = this.x + (this.series.closestPointRange / 2);
 	                            	
 	                            	minTime = columnCenter - minSideRange;
 	                            	maxTime = columnCenter + minSideRange;
 	                            }
+	                            
+	                            var date = new Date(columnCenter);
+	                            helioviewer.timeControls.setDate(date);
 	                            
 	                            var chart = $('#data-coverage-timeline').highcharts();
 								chart.xAxis[0].setExtremes(minTime, maxTime);
@@ -651,11 +656,12 @@ var Timeline = Class.extend({
 		endDate = date + (30 * 60 * 1000);//30 minutes
 		
 		//Build instruments string for url
-        imageLayers = Helioviewer.userSettings.get("state.tileLayers");
+        /*imageLayers = Helioviewer.userSettings.get("state.tileLayers");
         $.each(imageLayers, function (i, obj) {
-            layers.push('[' + obj.Observatory + ',' + obj.Instrument + ',' + obj.Measurement + ',1,100]');
+            layers.push('[' + obj.Observatory + ',' + obj.Instrument + ' ' + obj.Detector + ',' + obj.Measurement + ',1,100]');
         });
-        imageLayersStr = layers.join(','); 
+        imageLayersStr = layers.join(',');*/ 
+        imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
 	    
 	    var _url = Helioviewer.api+'?action=getDataCoverage&imageLayers='+ imageLayersStr +'&startDate='+ startDate +'&endDate='+ endDate +'&callback=?';
 	    $.getJSON(_url, function (data) {
@@ -786,27 +792,33 @@ var Timeline = Class.extend({
 		var self = this;
 		
         var chart = $('#data-coverage-timeline').highcharts();
-		var chartType = 'column';
+		var chartTypeX = 'column';
+		var chartTypeY = 'logarithmic';
 		if(Math.round(e.max) - Math.round(e.min) <= 60 * 60 * 1000){
-	        chartType = 'scatter';
+	        chartTypeX = 'scatter';
+			chartTypeY = 'linear';
         }
         
         chart.showLoading('Loading data from server...');
         
         //Build instruments string for url
-        var imageLayers = Helioviewer.userSettings.get("state.tileLayers");
+        /*var imageLayers = Helioviewer.userSettings.get("state.tileLayers");
         var layers = [];
         $.each(imageLayers, function (i, obj) {
-            layers.push('[' + obj.Observatory + ',' + obj.Instrument + ',' + obj.Measurement + ',1,100]');
+            layers.push('[' + obj.Observatory + ',' + obj.Instrument + ' ' + obj.Detector + ',' + obj.Measurement + ',1,100]');
         });
-        var imageLayersStr = layers.join(','); 
+        var imageLayersStr = layers.join(',');*/
+        var imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
         
         var _url = Helioviewer.api+'?action=getDataCoverage&imageLayers='+ imageLayersStr +'&startDate='+ Math.round(e.min) +'&endDate='+ Math.round(e.max) +'&callback=?';
         $.getJSON(_url, function(data) {
+			var seriesVisability = [];
+				
+			
 			while(chart.series.length > 0) {
+				seriesVisability[ chart.series[0].name ] = chart.series[0].visible;
                 chart.series[0].remove(false);
             }
-            chart.reflow();
 			
 			var categories = [];
             var count = 0;
@@ -815,16 +827,23 @@ var Timeline = Class.extend({
                     name: series['name'],
                     data: series['data'],
                     color: _colors[parseInt(series.sourceId)]
-                }, true, false);
+                }, false, false);
                 
                 categories.push(series['label']);
                 count++;
             });
             
             $.each(chart.series, function (id, series) {
-                chart.series[id].update({type: chartType});
-   
+	            if(typeof seriesVisability[series.name] != "undefined"){
+		            if(seriesVisability[series.name] == false){
+			            chart.series[id].setVisible(false);
+		            }
+	            }
+                chart.series[id].update({type: chartTypeX}, false);
             });
+            
+            chart.yAxis[0].update({ type: chartTypeY}, false);
+                
             self.drawPlotLine();
             chart.redraw();
             chart.hideLoading();

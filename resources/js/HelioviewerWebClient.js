@@ -1525,7 +1525,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 			Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline.open", true);
             this.drawerTimelineOpened = true;
             
-            this.timeline   = new Timeline();
+			if(typeof this.timeline == 'undefined'){
+				this.timeline   = new Timeline();
+			}
         }
 
         return;
