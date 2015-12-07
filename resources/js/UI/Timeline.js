@@ -273,7 +273,8 @@ var Timeline = Class.extend({
 
             legend: {
                 enabled: true,
-                itemDistance: 12
+                itemDistance: 12,
+                y:20
             },
 
         };
@@ -841,6 +842,8 @@ var Timeline = Class.extend({
             });
             
             chart.yAxis[0].update({ type: chartTypeY}, false);
+            
+            chart.setTitle({ text: 'Showing Data from '+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+' to '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',e.max) });
                 
             self.drawPlotLine();
             chart.redraw();
