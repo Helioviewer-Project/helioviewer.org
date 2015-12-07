@@ -144,7 +144,7 @@ html, body {
 }
 
 /* Header Buttons */
-#hv-header .viewport-action {
+#hv-header .viewport-action, #hv-drawer-timeline .viewport-action {
                 position: relative;
                  display: inline-block;
                    width: 1em;
@@ -164,7 +164,7 @@ html, body {
            border-radius: 16px;
                   cursor: pointer;
 }
-#hv-header .viewport-action:hover {
+#hv-header .viewport-action:hover, #hv-drawer-timeline .viewport-action:hover {
               color: rgba(255,255,255,0.75);
        border-color: rgba(255,255,255,0.75);
    background-color: rgba(0,0,0,0.75);
@@ -172,7 +172,7 @@ html, body {
    -webkit-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
            box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);*/
 }
-#hv-header .viewport-action:active {
+#hv-header .viewport-action:active, #hv-drawer-timeline .viewport-action:active {
               color: #cb2027;
        border-color: #cb2027;
    background-color: black;
