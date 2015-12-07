@@ -656,13 +656,8 @@ var Timeline = Class.extend({
 		endDate = date + (30 * 60 * 1000);//30 minutes
 		
 		//Build instruments string for url
-        /*imageLayers = Helioviewer.userSettings.get("state.tileLayers");
-        $.each(imageLayers, function (i, obj) {
-            layers.push('[' + obj.Observatory + ',' + obj.Instrument + ' ' + obj.Detector + ',' + obj.Measurement + ',1,100]');
-        });
-        imageLayersStr = layers.join(',');*/ 
         imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
-	    
+        	    
 	    var _url = Helioviewer.api+'?action=getDataCoverage&imageLayers='+ imageLayersStr +'&startDate='+ startDate +'&endDate='+ endDate +'&callback=?';
 	    $.getJSON(_url, function (data) {
 			//assign colors
@@ -802,16 +797,16 @@ var Timeline = Class.extend({
 			chartTypeY = 'linear';
         }
         
-        chart.showLoading('Loading data from server...');
         
-        //Build instruments string for url
-        /*var imageLayers = Helioviewer.userSettings.get("state.tileLayers");
-        var layers = [];
-        $.each(imageLayers, function (i, obj) {
-            layers.push('[' + obj.Observatory + ',' + obj.Instrument + ' ' + obj.Detector + ',' + obj.Measurement + ',1,100]');
-        });
-        var imageLayersStr = layers.join(',');*/
         var imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
+        
+        if(imageLayersStr == ''){
+	        chart.showLoading('You must have at least one visible image layer.');
+	        return;
+        }else{
+	       	chart.showLoading('Loading data from server...'); 
+        }
+        
         
         var _url = Helioviewer.api+'?action=getDataCoverage&imageLayers='+ imageLayersStr +'&startDate='+ Math.round(e.min) +'&endDate='+ Math.round(e.max) +'&callback=?';
         $.getJSON(_url, function(data) {
