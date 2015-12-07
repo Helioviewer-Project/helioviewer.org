@@ -1514,6 +1514,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerTimelineOpened = false;
         }
         else if ( !this.drawerTimelineOpened || openNow === true ) {
+            var imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
+	        if(imageLayersStr == ''){
+		        $(document).trigger("message-console-log", ["To open Data Timeline you must have at least one visible image layer.", {sticky: true,header: "Just now"}, true, true]);
+		        return;
+	        }
+            
             this.drawerTimeline.css('height', this.drawerTimelineOpenedHeight + 'px');
             $('.drawer-contents', this.drawerTimeline).show();
             
@@ -1527,6 +1533,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             
 			if(typeof this.timeline == 'undefined'){
 				this.timeline   = new Timeline();
+				
 			}
         }
 

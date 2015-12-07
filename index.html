@@ -973,7 +973,13 @@
 		};
 		
 	    $(function () {
-	        settingsJSON = {};
+	        settingsJSON = {
+		        'back_end'             	: "http://api.hv.com",
+	            'news_url'             	: "http://blog.helioviewer.org/",
+	            'web_root_url'          : "http://hv.com",
+	            'user_video_feed'       : "http://api.hv.com",
+	            'static_asset_url'      : "http://hv.com"
+	        };
 		    serverSettings = new Config(settingsJSON).toArray();
 		    zoomLevels = [0.60511022,1.21022044,2.42044088,4.84088176,9.68176352,19.36352704,38.72705408,77.45410816,154.90821632];
 
