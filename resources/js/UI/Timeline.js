@@ -220,13 +220,13 @@ var Timeline = Class.extend({
 					var count = 0;
 					var type = 'column';
 	                if(typeof this.series == "undefined"){
-		                str += '<span style="color:#ffffff;"><b>'+Highcharts.dateFormat('%Y/%m/%e %H:%M:%S UTC', this.x)+' - '+Highcharts.dateFormat('%Y/%m/%e %H:%M:%S UTC', this.x+this.points[0].series.closestPointRange)+'</b></span><br/>';
+		                str += '<span style="color:#ffffff;"><b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', this.x)+' - '+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x+this.points[0].series.closestPointRange)+'</b></span><br/>';
 		                $.each(this.points, function(i, point) {
 							type = point.series.type;
 							if(type == 'column'){
 								str += '<span style="color:'+point.series.color+'">'+point.series.name+'</span>: <b>'+Highcharts.numberFormat(point.y,0,'.',',')+' images</b><br/>';
 							}else{
-								str += '<span style="color:'+point.series.color+'">'+point.series.name+'</span>: <b>'+Highcharts.dateFormat('%Y/%m/%e %H:%M:%S UTC', point.x)+'</b><br/>';
+								str += '<span style="color:'+point.series.color+'">'+point.series.name+'</span>: <b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', point.x)+'</b><br/>';
 							}
 						});
 	                }else{
@@ -234,7 +234,7 @@ var Timeline = Class.extend({
 		            	if(type == 'column'){
 							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.numberFormat(this.y,0,'.',',')+' images</b><br/>';
 						}else{
-							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.dateFormat('%Y/%m/%e %H:%M:%S UTC', this.x)+'</b><br/>';
+							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x)+'</b><br/>';
 						}
 		            }
 					return str;
@@ -728,12 +728,13 @@ var Timeline = Class.extend({
 
         chart.xAxis[0].addPlotLine({
             value: date,
-            width: 1,
-            color: '#ccc',
+            width: 2,
+            color: '#fff',
             zIndex: 5,
             id: 'viewport-plotline',
             label: {
-                text: 'Viewport Timestamp',
+	            useHTML:true,
+                text: 'Observation date',
                 verticalAlign: 'top',
                 align: 'center',
                 y: 56,
@@ -741,9 +742,11 @@ var Timeline = Class.extend({
                 rotation: 270,
                 style: {
                     fontFamily: '"Source Code Pro", monospace',
-                    fontWeight: 200,
+                    fontWeight: 'bold',
                     fontSize: '10px',
-                    color: '#fff'
+                    color: '#000',
+                    background: '#fff',
+                    padding: '1px 10px 1px 10px',
                 }
             }
         });
