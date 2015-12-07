@@ -783,13 +783,14 @@
 		<div id="hv-drawer-timeline" class="helioviewer-drawer-bottom">
 	        <div id="hv-drawer-tab-timeline" class="drawer-tab drawer-tab-bottom">Data Timeline</div>
 	        <div class="drawer-contents">
+		        <div style="display:block;position:absolute;top:10px;left:10px;z-index:5;"><input type="checkbox" id="hv-drawer-timeline-logarithmic"> Logarithmic View</div>
 		        <div class="drawer-items">
 			        <div id="data-coverage-timeline" style="width:100%;height:300px;"></div>
 			        <div id="data-coverage-timeline-events" style="width:100%;height:300px;display:none;"></div>
 			        <button id="btn-prev">&larr; Previous</button>
-			        <button id="btn-zoom-in">&#10133; Zoom In</button>
-			        <button id="btn-center">Center</button>
-			        <button id="btn-zoom-out">&#10134; Zoom Out</button>
+			        <div id="btn-zoom-in" class="viewport-action fa fa-search-plus qtip-topleft" title="Zoom In Timeline"></div>
+			        <div id="btn-center" class="viewport-action fa fa-crosshairs qtip-topleft" title="Center Timeline at Observation Date"></div>
+			        <div id="btn-zoom-out" class="viewport-action fa fa-search-minus qtip-topleft" title="Zoom Out Timeline"></div>
 			        <button id="btn-next">Next &rarr;</button>
 		        </div>
 	        </div>
@@ -1071,13 +1072,7 @@
 		};
 		
 	    $( document ).ready(function(){
-	        settingsJSON = {
-		        'back_end'             	: "http://api.hv.com",
-	            'news_url'             	: "http://blog.helioviewer.org/",
-	            'web_root_url'          : "http://hv.com",
-	            'user_video_feed'       : "http://api.hv.com",
-	            'static_asset_url'      : "http://hv.com"
-	        };
+	        settingsJSON = {};
 		    serverSettings = new Config(settingsJSON).toArray();
 		    zoomLevels = [0.60511022,1.21022044,2.42044088,4.84088176,9.68176352,19.36352704,38.72705408,77.45410816,154.90821632];
 

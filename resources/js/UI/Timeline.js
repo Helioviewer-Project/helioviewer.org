@@ -134,7 +134,7 @@ var Timeline = Class.extend({
             },
 
             yAxis: {
-	            type: 'logarithmic',
+	            type: 'linear',
                 floor: 0,
                 allowDecimals: false,
                 labels: {}
@@ -537,7 +537,7 @@ var Timeline = Class.extend({
 
         $(document).on('observation-time-changed', $.proxy(this._updateTimelineDate, this));
         $(document).on('update-external-datasource-integration', $.proxy(this._updateTimeline, this));
-        
+        $("#hv-drawer-timeline-logarithmic").on('click', $.proxy(this._updateTimeline, this));
         
         
     },
@@ -792,7 +792,12 @@ var Timeline = Class.extend({
 		
         var chart = $('#data-coverage-timeline').highcharts();
 		var chartTypeX = 'column';
-		var chartTypeY = 'logarithmic';
+		var chartTypeY = 'linear';
+		
+		if($("#hv-drawer-timeline-logarithmic").is(':checked')){
+			chartTypeY = 'logarithmic';
+		}
+		
 		if(Math.round(e.max) - Math.round(e.min) <= 60 * 60 * 1000){
 	        chartTypeX = 'scatter';
 			chartTypeY = 'linear';
