@@ -710,7 +710,8 @@ var Timeline = Class.extend({
 		        this.zoomX=this.zoomHor=this.hasZoom=a.shiftKey;
 		        this.cmd(a);
 		    }; 
-	        
+		    
+	        chart.setTitle({ text: Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',startDate)+' - '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',endDate) });
 	    });
     },
     
@@ -848,7 +849,7 @@ var Timeline = Class.extend({
             
             chart.yAxis[0].update({ type: chartTypeY}, false);
             
-            chart.setTitle({ text: 'Showing Data from '+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+' to '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',e.max) });
+            chart.setTitle({ text: Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+' - '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',e.max) });
                 
             self.drawPlotLine();
             chart.redraw();
