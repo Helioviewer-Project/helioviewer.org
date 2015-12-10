@@ -547,7 +547,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		
 		//API Documentation
 		$('#help-links-api-documentation').on('click', function(){
-			window.open(Helioviewer.root + '/docs/v2','_blank');
+			window.open(Helioviewer.api + '/docs/v2','_blank');
 		});
 		
         $('#mouse-cartesian').click( function (event) {
