@@ -712,6 +712,7 @@ var Timeline = Class.extend({
 		    }; 
 		    
 	        chart.setTitle({ text: Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',startDate)+' - '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',endDate) });
+	        self.setNavigationButtonsTitles({min:startDate, max:endDate});
 	    });
     },
     
@@ -850,12 +851,51 @@ var Timeline = Class.extend({
             chart.yAxis[0].update({ type: chartTypeY}, false);
             
             chart.setTitle({ text: Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+' - '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',e.max) });
+            self.setNavigationButtonsTitles(e);
                 
             self.drawPlotLine();
             chart.redraw();
             chart.hideLoading();
         });
         return true;
+    },
+    
+    setNavigationButtonsTitles: function(e) {
+	    var msPerMinute = 60 * 1000;
+	    var msPerHour = msPerMinute * 60;
+	    var msPerDay = msPerHour * 24;
+	    var msPerMonth = msPerDay * 30;
+	    var msPerYear = msPerDay * 365;
+	
+	    var elapsed = parseInt((e.max - e.min) / 2);
+		
+		var extension = '';
+	    if (elapsed < msPerMinute) {
+	         extension =  Math.round(elapsed/1000) + ' seconds';   
+	    }
+	
+	    else if (elapsed < msPerHour) {
+	         extension =  Math.round(elapsed/msPerMinute) + ' minutes';   
+	    }
+	
+	    else if (elapsed < msPerDay ) {
+	         extension =  Math.round(elapsed/msPerHour ) + ' hours';   
+	    }
+	
+	    else if (elapsed < msPerMonth) {
+	        extension =  Math.round(elapsed/msPerDay) + ' days';   
+	    }
+	
+	    else if (elapsed < msPerYear) {
+	        extension =  Math.round(elapsed/msPerMonth) + ' months';   
+	    }
+	
+	    else {
+	        extension =  Math.round(elapsed/msPerYear ) + ' years';   
+	    }
+	    
+	    $('#btn-prev').html('-' + extension);
+	    $('#btn-next').html('+' + extension);
     }
 });    
 
