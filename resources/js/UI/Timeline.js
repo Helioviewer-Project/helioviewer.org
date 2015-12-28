@@ -11,6 +11,9 @@ var timelineExtremesChanged = false;
 
 var Timeline = Class.extend({
 	
+	minNavDate:0,
+	maxNavDate:0,
+	
     init: function () {
 	    var layers = [];
 
@@ -219,8 +222,20 @@ var Timeline = Class.extend({
 	                var str = '';
 					var count = 0;
 					var type = 'column';
+					
 	                if(typeof this.series == "undefined"){
-		                str += '<span style="color:#ffffff;"><b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', this.x)+' - '+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x+this.points[0].series.closestPointRange)+'</b></span><br/>';
+		                var from = this.x;
+						var to = this.x+this.points[0].series.closestPointRange;
+						
+						//fix Labels
+						if(from < self.minNavDate){
+							from = self.minNavDate;
+						}
+						if(to > self.maxNavDate){
+							to = self.maxNavDate;
+						}
+						
+		                str += '<span style="color:#ffffff;"><b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', from)+' - '+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', to)+'</b></span><br/>';
 		                $.each(this.points, function(i, point) {
 							type = point.series.type;
 							if(type == 'column'){
@@ -711,6 +726,9 @@ var Timeline = Class.extend({
 		        this.cmd(a);
 		    }; 
 		    
+		    self.minNavDate = startDate;
+            self.maxNavDate = endDate;
+		    
 	        chart.setTitle({ text: Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',startDate)+' - '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',endDate) });
 	        self.setNavigationButtonsTitles({min:startDate, max:endDate});
 	    });
@@ -849,6 +867,9 @@ var Timeline = Class.extend({
             });
             
             chart.yAxis[0].update({ type: chartTypeY}, false);
+            
+            self.minNavDate = e.min;
+            self.maxNavDate = e.max;
             
             chart.setTitle({ text: Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+' - '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',e.max) });
             self.setNavigationButtonsTitles(e);
