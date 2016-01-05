@@ -52,10 +52,9 @@ var Timeline = Class.extend({
 
         this._timelineOptions = {
             chart : {
-				type: 'column',
-				stacking: 'normal',
+				type: 'scatter',
                 //zoomType: 'x',
-                //panning: true,
+                panning: true,
 				//panKey: 'shift',
                 events:{
 	                selection: function(event) {
@@ -126,6 +125,7 @@ var Timeline = Class.extend({
             },
 
             xAxis : {
+	            type: 'datetime',
                 plotLines: [],
                 ordinal: false,
                 events : {
@@ -140,7 +140,12 @@ var Timeline = Class.extend({
 	            type: 'linear',
                 floor: 0,
                 allowDecimals: false,
-                labels: {}
+                labels: {
+	                enabled:false
+                },
+                title: {
+	                text: null
+	            }
             },
 
             loading: {
@@ -156,7 +161,7 @@ var Timeline = Class.extend({
             plotOptions: {
                 column: {
                     animation: false,
-                    stacking: 'normal',
+                    //stacking: 'normal',
                     pointPadding: 0,
                     borderWidth: 0.5,
                     borderColor: '#000',
@@ -208,6 +213,15 @@ var Timeline = Class.extend({
                             }
                         }
                     }
+		        },
+		        
+		        series:{
+					stacking: 'normal',
+			        dataGrouping:{
+				        enabled: false
+				        //forced: true,
+				        //groupPixelWidth: 20,
+			        }
 		        }
             },
 
@@ -228,12 +242,12 @@ var Timeline = Class.extend({
 						var to = this.x+this.points[0].series.closestPointRange;
 						
 						//fix Labels
-						if(from < self.minNavDate){
+						/*if(from < self.minNavDate){
 							from = self.minNavDate;
 						}
 						if(to > self.maxNavDate){
 							to = self.maxNavDate;
-						}
+						}*/
 						
 		                str += '<span style="color:#ffffff;"><b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', from)+' - '+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', to)+'</b></span><br/>';
 		                $.each(this.points, function(i, point) {
@@ -686,7 +700,7 @@ var Timeline = Class.extend({
                 };
             });
 	        // create the chart
-	        $('#data-coverage-timeline').highcharts('StockChart', self._timelineOptions,function(chart){
+	        $('#data-coverage-timeline').highcharts( self._timelineOptions,function(chart){
 			        $(document).on('mouseup',function(){
 			            if (timelineExtremesChanged) {
 				            
@@ -729,7 +743,7 @@ var Timeline = Class.extend({
 		    self.minNavDate = startDate;
             self.maxNavDate = endDate;
 		    
-	        chart.setTitle({ text: Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',startDate)+' - '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',endDate) });
+		    self.setTitle({min:startDate,max:endDate});
 	        self.setNavigationButtonsTitles({min:startDate, max:endDate});
 	    });
     },
@@ -818,7 +832,7 @@ var Timeline = Class.extend({
 			chartTypeY = 'logarithmic';
 		}
 		
-		if(Math.round(e.max) - Math.round(e.min) <= 60 * 60 * 1000){
+		if(Math.round(e.max) - Math.round(e.min) <= 90 * 60 * 1000){
 	        chartTypeX = 'scatter';
 			chartTypeY = 'linear';
         }
@@ -871,14 +885,32 @@ var Timeline = Class.extend({
             self.minNavDate = e.min;
             self.maxNavDate = e.max;
             
-            chart.setTitle({ text: Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+' - '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',e.max) });
             self.setNavigationButtonsTitles(e);
                 
             self.drawPlotLine();
             chart.redraw();
+            self.setTitle(e);
             chart.hideLoading();
         });
         return true;
+    },
+    
+    setTitle: function(e){
+	    var chart = $('#data-coverage-timeline').highcharts();
+	    
+	    var minTime = chart.xAxis[0].series[0].points[0].x;
+	    
+		if(typeof chart.xAxis[0].closestPointRange != 'undefined'){
+	    	var pointsCount = chart.xAxis[0].series[0].points.length;
+			var lastPoint = chart.xAxis[0].series[0].points[pointsCount-1].x + chart.xAxis[0].closestPointRange;
+			e.max = lastPoint;
+		}
+		
+	    if(minTime > e.min){
+		    e.min = minTime;
+	    }
+	    
+	    chart.setTitle({ text: Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+' - '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',e.max) });
     },
     
     setNavigationButtonsTitles: function(e) {
