@@ -8,6 +8,7 @@ newcap: true, immed: true, maxlen: 80, sub: true */
 /*globals $, Class */
 "use strict";
 var timelineExtremesChanged = false;
+var timelineTick = 'minute';
 
 var Timeline = Class.extend({
 	
@@ -125,6 +126,7 @@ var Timeline = Class.extend({
             },
 
             xAxis : {
+	            tickmarkPlacement: 'between',
 	            type: 'datetime',
                 plotLines: [],
                 ordinal: false,
@@ -133,6 +135,36 @@ var Timeline = Class.extend({
 	                    timelineExtremesChanged = true;
 	                }
                 },
+                tickPositioner: function () {
+	                var positions = [];
+	                var columnOffset = this.minPointOffset;
+	                var info = this.tickPositions.info;
+	                timelineTick = this.tickPositions.info.unitName;
+	                
+	                $.each(this.tickPositions, function(k,v){
+		                positions[k] = (v-columnOffset);
+	                });
+	                
+	                positions.info = info;
+	                
+	                return positions;
+                },
+                labels: {
+			        formatter: function () {
+			        	var dateTimeLabelFormats = {
+			                millisecond: '%H:%M:%S.%L',
+			                second: '%H:%M:%S',
+			                minute: '%H:%M',
+			                hour: '%H:%M',
+			                day: '%e. %b',
+			                week: '%e. %b',
+			                month: '%b \'%y',
+			                year: '%Y'
+			            };
+			        	
+			        	return Highcharts.dateFormat(dateTimeLabelFormats[timelineTick], this.value+this.axis.minPointOffset);
+			        }
+			    },
                 minRange: 30 * 60 * 1000 // 30 minutes
             },
 
@@ -160,6 +192,7 @@ var Timeline = Class.extend({
 
             plotOptions: {
                 column: {
+                    //pointPlacement: 'between',
                     animation: false,
                     //stacking: 'normal',
                     pointPadding: 0,
