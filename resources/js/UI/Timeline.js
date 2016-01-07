@@ -825,14 +825,14 @@ var Timeline = Class.extend({
 		var self = this;
 		
         var chart = $('#data-coverage-timeline').highcharts();
-		var chartTypeX = 'datetime';
+		var chartTypeX = 'column';
 		var chartTypeY = 'linear';
 		
 		if($("#hv-drawer-timeline-logarithmic").is(':checked')){
 			chartTypeY = 'logarithmic';
 		}
 		
-		if(Math.round(e.max) - Math.round(e.min) <= 60 * 60 * 1000){
+		if(Math.round(e.max) - Math.round(e.min) <= 105 * 60 * 1000){
 	        chartTypeX = 'scatter';
 			chartTypeY = 'linear';
         }
