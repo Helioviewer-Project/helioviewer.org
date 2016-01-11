@@ -980,8 +980,8 @@ var Timeline = Class.extend({
 	        extension =  Math.round(elapsed/msPerYear ) + ' years';   
 	    }
 	    
-	    $('#btn-prev').html('-' + extension);
-	    $('#btn-next').html('+' + extension);
+	    $('#btn-prev').html('&larr; ' + extension);
+	    $('#btn-next').html(extension + ' &rarr;');
     }
 });    
 
