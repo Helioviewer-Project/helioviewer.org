@@ -53,7 +53,7 @@ var Timeline = Class.extend({
 
         this._timelineOptions = {
             chart : {
-				type: 'scatter',
+				type: 'column',
                 //zoomType: 'x',
                 panning: true,
 				//panKey: 'shift',
@@ -715,8 +715,8 @@ var Timeline = Class.extend({
 		
 		//Get current HV time
 		date = parseInt(Helioviewer.userSettings.get("state.date"));
-		startDate = date - (30 * 60 * 1000);//30 minutes
-		endDate = date + (30 * 60 * 1000);//30 minutes
+		startDate = date - (7 * 24 * 60 * 60 * 1000);//7 DAYS
+		endDate = date + (7 * 24 * 60 * 60 * 1000);//7 DAYS
 		
 		//Build instruments string for url
         imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
