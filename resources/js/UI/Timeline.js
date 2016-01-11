@@ -821,7 +821,7 @@ var Timeline = Class.extend({
         var chart = $('#data-coverage-timeline').highcharts();
 		
 		//Get current HV time
-		date = parseInt(Helioviewer.userSettings.get("state.date"));
+		var date = parseInt(Helioviewer.userSettings.get("state.date"));
 
         extremes = chart.xAxis[0].getExtremes();
         
