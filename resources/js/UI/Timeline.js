@@ -956,28 +956,35 @@ var Timeline = Class.extend({
 	    var elapsed = parseInt((e.max - e.min) / 2);
 		
 		var extension = '';
+		var time = 0;
 	    if (elapsed < msPerMinute) {
-	         extension =  Math.round(elapsed/1000) + ' seconds';   
+	        time = Math.round(elapsed/1000);
+	        extension =  time + ' second' + (time > 1 ? 's' : '');   
 	    }
 	
 	    else if (elapsed < msPerHour) {
-	         extension =  Math.round(elapsed/msPerMinute) + ' minutes';   
+	        time = Math.round(elapsed/msPerMinute);
+	        extension =  time + ' minute' + (time > 1 ? 's' : '');    
 	    }
 	
 	    else if (elapsed < msPerDay ) {
-	         extension =  Math.round(elapsed/msPerHour ) + ' hours';   
+	        time = Math.round(elapsed/msPerHour );
+	        extension =  time + ' hour' + (time > 1 ? 's' : '');    
 	    }
 	
 	    else if (elapsed < msPerMonth) {
-	        extension =  Math.round(elapsed/msPerDay) + ' days';   
+	        time = Math.round(elapsed/msPerDay);
+	        extension =  time + ' day' + (time > 1 ? 's' : '');     
 	    }
 	
 	    else if (elapsed < msPerYear) {
-	        extension =  Math.round(elapsed/msPerMonth) + ' months';   
+	        time = Math.round(elapsed/msPerMonth);
+	        extension =  time + ' month' + (time > 1 ? 's' : '');     
 	    }
 	
 	    else {
-	        extension =  Math.round(elapsed/msPerYear ) + ' years';   
+	        time = Math.round(elapsed/msPerYear );
+	        extension =  time + ' year' + (time > 1 ? 's' : '');     
 	    }
 	    
 	    $('#btn-prev').html('&larr; ' + extension);
