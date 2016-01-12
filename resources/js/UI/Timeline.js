@@ -796,7 +796,6 @@ var Timeline = Class.extend({
 			var date = Helioviewer.userSettings.get("state.date") - chart.xAxis[0].minPointOffset;
 		}
 		
-        
         chart.xAxis[0].removePlotLine('viewport-plotline');
 		
         chart.xAxis[0].addPlotLine({
@@ -932,8 +931,9 @@ var Timeline = Class.extend({
             
             self.setNavigationButtonsTitles(e);
                 
-            self.drawPlotLine(chartTypeX);
+            
             chart.redraw();
+            self.drawPlotLine(chartTypeX);
             self.setTitle(e);
             chart.hideLoading();
         });
