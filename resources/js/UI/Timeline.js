@@ -764,7 +764,7 @@ var Timeline = Class.extend({
 			        });
 			    });
 			    
-	        self.drawPlotLine();
+	        self.drawPlotLine('column');
 	        $('#data-coverage-timeline').highcharts().xAxis[0].setExtremes(startDate, endDate);
 	        var chart = $('#data-coverage-timeline').highcharts();
 		    chart.pointer.cmd = chart.pointer.onContainerMouseDown;
@@ -781,14 +781,20 @@ var Timeline = Class.extend({
 	    });
     },
     
-    drawPlotLine: function(){
-        //Get current HV time
-		var date = Helioviewer.userSettings.get("state.date");
+    drawPlotLine: function(chartTypeX){
         
         var chart = $('#data-coverage-timeline').highcharts();
         
+        //Get current HV time
+		if(chartTypeX == 'scatter'){
+			var date = Helioviewer.userSettings.get("state.date");
+		}else{
+			var date = Helioviewer.userSettings.get("state.date") - chart.xAxis[0].minPointOffset;
+		}
+		
+        
         chart.xAxis[0].removePlotLine('viewport-plotline');
-
+		
         chart.xAxis[0].addPlotLine({
             value: date,
             width: 2,
@@ -920,7 +926,7 @@ var Timeline = Class.extend({
             
             self.setNavigationButtonsTitles(e);
                 
-            self.drawPlotLine();
+            self.drawPlotLine(chartTypeX);
             chart.redraw();
             self.setTitle(e);
             chart.hideLoading();
@@ -1117,6 +1123,3 @@ var _colorsEvents  = {
 	CD: '#ffd391',
 	UNK: '#d4d4d4'
 };
-	
-	
-	
