@@ -1532,8 +1532,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerTimelineOpened = true;
             
 			if(typeof this.timeline == 'undefined'){
-				this.timeline   = new Timeline();
-				
+				this.timeline   = new Timeline();				
+			}else{
+				this.timeline.drawPlotLine();
 			}
         }
 

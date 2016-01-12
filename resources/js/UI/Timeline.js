@@ -783,6 +783,10 @@ var Timeline = Class.extend({
     
     drawPlotLine: function(chartTypeX){
         
+        if(typeof chartTypeX == "undefined"){
+	        var chartTypeX = 'column';
+        }
+        
         var chart = $('#data-coverage-timeline').highcharts();
         
         //Get current HV time
@@ -813,9 +817,11 @@ var Timeline = Class.extend({
                     fontFamily: '"Source Code Pro", monospace',
                     fontWeight: 'bold',
                     fontSize: '10px',
-                    color: '#000',
-                    background: '#fff',
+                    color: 'black',
+                    background: 'white',
                     padding: '1px 10px 1px 10px',
+                    fill:'white',
+                    stroke:'white'
                 }
             }
         });
