@@ -21,6 +21,11 @@ var SandboxHelper = Class.extend(
      */
     center: function () {
         var top, left;
+        
+        //Get ViewPort size offset
+        var heightOffset = $(window).height();
+        var widthOffset = $(window).width();
+        
         left = 0.5 * this.domNode.width();
         top  = 0.5 * this.domNode.height();
 
@@ -31,6 +36,10 @@ var SandboxHelper = Class.extend(
      * Find the center of the sandbox
      */
     getCenter: function () {
+        //Get ViewPort size offset
+        var heightOffset = $(window).height();
+        var widthOffset = $(window).width();
+        
         return {
             x: 0.5 * this.domNode.width(), 
             y: 0.5 * this.domNode.height()
@@ -47,14 +56,18 @@ var SandboxHelper = Class.extend(
 
         oldCenter = this.getCenter();
         
+        //Get ViewPort size offset
+        var heightOffset = $(window).height();
+        var widthOffset = $(window).width();
+        
+        
         // Update sandbox dimensions
         this.domNode.css({
-            width  : desiredSandboxSize.width  + 'px',
-            height : desiredSandboxSize.height + 'px',
-            left   : viewportCenter.x - (0.5 * desiredSandboxSize.width) + 'px',
-            top    : viewportCenter.y - (0.5 * desiredSandboxSize.height) + 'px'            
+            width  : (desiredSandboxSize.width + widthOffset)  + 'px',
+            height : (desiredSandboxSize.height + heightOffset) + 'px',
+            left   : (viewportCenter.x - ( widthOffset * 0.5 ) ) - (0.5 * desiredSandboxSize.width) + 'px',
+            top    : (viewportCenter.y - ( heightOffset * 0.5 ) ) - (0.5 * desiredSandboxSize.height) + 'px'            
         });
-
         newCenter = this.getCenter();
 
         // Difference
