@@ -286,7 +286,11 @@ var Timeline = Class.extend({
 		                $.each(this.points, function(i, point) {
 							type = point.series.type;
 							if(type == 'column'){
-								str += '<span style="color:'+point.series.color+'">'+point.series.name+'</span>: <b>'+Highcharts.numberFormat(point.y,0,'.',',')+' images</b><br/>';
+								var ext = '';
+								if(point.y != 1){
+									ext = 's';
+								}
+								str += '<span style="color:'+point.series.color+'">'+point.series.name+'</span>: <b>'+Highcharts.numberFormat(point.y,0,'.',',')+' image'+ext+'</b><br/>';
 							}else{
 								str += '<span style="color:'+point.series.color+'">'+point.series.name+'</span>: <b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', point.x)+'</b><br/>';
 							}
@@ -294,7 +298,11 @@ var Timeline = Class.extend({
 	                }else{
 		                type = this.series.type;
 		            	if(type == 'column'){
-							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.numberFormat(this.y,0,'.',',')+' images</b><br/>';
+							var ext = '';
+							if(point.y != 1){
+								ext = 's';
+							}
+							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.numberFormat(this.y,0,'.',',')+' image'+ext+'</b><br/>';
 						}else{
 							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x)+'</b><br/>';
 						}
