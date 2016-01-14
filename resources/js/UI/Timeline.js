@@ -9,6 +9,7 @@ newcap: true, immed: true, maxlen: 80, sub: true */
 "use strict";
 var timelineExtremesChanged = false;
 var timelineTick = 'minute';
+var zoomTickTime = 0;
 
 var Timeline = Class.extend({
 	
@@ -274,13 +275,7 @@ var Timeline = Class.extend({
 		                var from = this.x;
 						var to = this.x+this.points[0].series.closestPointRange;
 						
-						//fix Labels
-						/*if(from < self.minNavDate){
-							from = self.minNavDate;
-						}
-						if(to > self.maxNavDate){
-							to = self.maxNavDate;
-						}*/
+						zoomTickTime = parseInt( (from + to) * 0.5 );
 						
 		                str += '<span style="color:#ffffff;"><b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', from)+' - '+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', to)+'</b></span><br/>';
 		                $.each(this.points, function(i, point) {
@@ -296,6 +291,9 @@ var Timeline = Class.extend({
 							}
 						});
 	                }else{
+		                
+		                zoomTickTime = this.x;
+		                
 		                type = this.series.type;
 		            	if(type == 'column'){
 							var ext = '';
@@ -613,17 +611,32 @@ var Timeline = Class.extend({
     },
     
     btnZoomIn: function() {
-        var extremes, newMin, newMax, span, scaleFactor = 0.25;
+        var extremes, center, newMin, newMax, offsetMin, offsetMax, centerOffset, span, scaleFactor = 0.25;
 
         var chart = $('#data-coverage-timeline').highcharts();
 
         extremes = chart.xAxis[0].getExtremes();
-        
         span     = extremes.max - extremes.min;
-        
+		center 	 = extremes.min + (span * 0.5);
+		var oldOffset = zoomTickTime - center;
+		var newOffset = oldOffset * 0.5;
+		
         if(span > 30 * 60 * 1000){
+	        //zoom offset
+	        extremes.min = zoomTickTime - (span * 0.5);
+			extremes.max = zoomTickTime + (span * 0.5);		
+		
 	        newMin   = extremes.min + (span * scaleFactor);
 			newMax   = extremes.max - (span * scaleFactor);
+			
+			//keep same timestamp on where mouse pointer is
+			if(centerOffset > 0){
+				newMin   = newMin + newOffset;
+				newMax   = newMax + newOffset;
+			}else{
+				newMin   = newMin - newOffset;
+				newMax   = newMax - newOffset;
+			}
         }else{
 	        newMin	 = extremes.min;
 	        newMax	 = extremes.max;
@@ -637,16 +650,30 @@ var Timeline = Class.extend({
 
 
     btnZoomOut: function() {
-        var extremes, newMin, newMax, span, scaleFactor = 1;
+        var extremes, newMin, newMax, span, scaleFactor = 2;
 
         var chart = $('#data-coverage-timeline').highcharts();
 
         extremes = chart.xAxis[0].getExtremes();
+		span   = extremes.max - extremes.min;
+		var center 	 = extremes.min + (span * 0.5);
+		var oldOffset = zoomTickTime - center;
+		var newOffset = oldOffset * 2;
 
-        span   = extremes.max - extremes.min;
-        newMin = extremes.min-(span*scaleFactor);
-        newMax = extremes.max+(span*scaleFactor);
-		
+		//zoom offset
+        newMin = zoomTickTime - span;
+		newMax = zoomTickTime + span;
+
+        
+        //keep same timestamp on where mouse pointer is
+		if(newOffset > 0){
+			newMin   = newMin - newOffset;
+			newMax   = newMax - newOffset;
+		}else{
+			newMin   = newMin - newOffset;
+			newMax   = newMax - newOffset;
+		}
+			
 		var today = Date.now() + 24 * 60 * 60 * 1000;
 		if(newMax > today){
 			newMax = today;
@@ -763,6 +790,14 @@ var Timeline = Class.extend({
 			            timelineExtremesChanged = false;
 			        });
 			        $('#data-coverage-timeline').bind('mousewheel', function(event) {
+				        var container = $(chart.container),
+					        offset = container.offset(),
+					        x, y, isInside;
+				        
+				        x = event.clientX - chart.plotLeft - offset.left;
+				        y = event.clientY - chart.plotTop - offset.top;
+				        isInside = chart.isInsidePlot(x, y);
+				        
 				        event.preventDefault();
 				        if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
 				            self.btnZoomIn();
