@@ -860,7 +860,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             if ( !$(accordion).find('.visible').hasClass('hidden') ) {
                 nickname = $(accordion).find('.tile-accordion-header-left').html();
                 sourceId = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
-                date     = $(accordion).find('.timestamp').html();
+                var date     = $(accordion).find('.timestamp').html();
 
                 startDate = $('#vso-start-date').val() + 'T'
                           + $('#vso-start-time').val() + 'Z';
