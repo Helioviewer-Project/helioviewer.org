@@ -157,9 +157,9 @@ var ViewportMovementHelper = Class.extend(
      */
     update: function () {
         var center, newSize;
-        center  = this._getCenter();
         newSize = this._getDesiredSandboxDimensions();
-
+        center  = this._getCenter();
+		
         this.sandboxHelper.updateSandbox(center, newSize);
     },
 
@@ -263,8 +263,9 @@ var ViewportMovementHelper = Class.extend(
         height = this.domNode.height();
 
         return {
-            width : Math.max(0, this.maxLayerDimensions.width  - width),
-            height: Math.max(0, this.maxLayerDimensions.height - height)
+            width : Math.max(0, width),//width : Math.max(0, this.maxLayerDimensions.width  - width),
+            height: Math.max(0, height)//height: Math.max(0, this.maxLayerDimensions.height - height)
+            
         };
     },
 
