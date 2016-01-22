@@ -265,9 +265,16 @@ var Timeline = Class.extend({
                 crosshairs: true,
                 followPointer: false,
                 shared: true,
+                useHTML: true,
+				style: {
+					zIndex: 100
+				},
+				backgroundColor: 'rgba(0,0,0,0)',
+				borderWidth: 0,
+				shadow: false,
                 xDateFormat: "%A, %b %e, %H:%M UTC",
                 formatter: function(e) {
-	                var str = '';
+	                var str = '<div style="border:1px solid #80ffff; background:#000;padding:5px;z-index:999;">';
 					var count = 0;
 					var type = 'column';
 					
@@ -305,7 +312,7 @@ var Timeline = Class.extend({
 							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x)+'</b><br/>';
 						}
 		            }
-					return str;
+					return str + '</div>';
 	            }
             },
             
@@ -753,11 +760,21 @@ var Timeline = Class.extend({
 		startDate = date - (7 * 24 * 60 * 60 * 1000);//7 DAYS
 		endDate = date + (7 * 24 * 60 * 60 * 1000);//7 DAYS
 		
+		zoomTickTime = date;
+		
 		//Build instruments string for url
         imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
+        
+        if(startDate < 0 || endDate < 0 || startDate > endDate){
+	        return false;
+        }
         	    
 	    var _url = Helioviewer.api+'?action=getDataCoverage&imageLayers='+ imageLayersStr +'&startDate='+ startDate +'&endDate='+ endDate +'&callback=?';
 	    $.getJSON(_url, function (data) {
+		    
+		    if(typeof data.error != 'undefined'){
+			    alert(data.error);
+		    }
 			//assign colors
             self._timelineOptions.series = [];
             $.each(data, function (id, series) {
@@ -808,6 +825,8 @@ var Timeline = Class.extend({
 			    });
 			    
 	        self.drawPlotLine('column');
+	        self.drawCarringtonLines(startDate, endDate);
+	        
 	        $('#data-coverage-timeline').highcharts().xAxis[0].setExtremes(startDate, endDate);
 	        var chart = $('#data-coverage-timeline').highcharts();
 		    chart.pointer.cmd = chart.pointer.onContainerMouseDown;
@@ -816,12 +835,55 @@ var Timeline = Class.extend({
 		        this.cmd(a);
 		    }; 
 		    
+		    $('.highcharts-tooltip, .highcharts-tooltip span').css({'z-index': '99999 !important', 'background-color':'#000'});
+		    //$('.highcharts-tooltip span').css({'position': 'relative'});
+		    
 		    self.minNavDate = startDate;
             self.maxNavDate = endDate;
 		    
 		    self.setTitle({min:startDate,max:endDate});
 	        self.setNavigationButtonsTitles({min:startDate, max:endDate});
 	    });
+    },
+    
+    drawCarringtonLines: function(Start, End){
+        
+        var Period = End - Start;
+        var From = Start - Period;
+        var To = End + Period;
+        
+        
+        var carringtons = get_carringtons_between_timestamps(From, To);
+        var timestamps = carringtons_to_timestamps(carringtons);
+        
+        var chart = $('#data-coverage-timeline').highcharts();
+		
+		timestamps.forEach(function( t ){
+			
+			chart.xAxis[0].removePlotLine('viewport-plotline-carrington-' + t);
+			
+			if(Period < 60 * 60 * 24 * 365 * 2 * 1000){
+				chart.xAxis[0].addPlotLine({
+		            value: t,
+		            width: 1,
+		            color: '#C0C0C0',
+		            zIndex: -2,
+		            id: 'viewport-plotline-carrington-' + t,
+		            dashStyle: 'ShortDot',
+		            label: {
+						useHTML:true,
+						text: 'CR ' + Math.floor(timestamp_to_carrington(t)),
+						style: {
+							color: 'white',
+							fontSize: '10px',
+		                    fill:'white',
+		                    stroke:'white',
+							background: 'black'
+						}
+		            }
+		        });
+			}
+		});
     },
     
     drawPlotLine: function(chartTypeX){
@@ -845,7 +907,7 @@ var Timeline = Class.extend({
             value: date,
             width: 2,
             color: '#fff',
-            zIndex: 5,
+            zIndex: -1,
             id: 'viewport-plotline',
             label: {
 	            useHTML:true,
@@ -934,11 +996,17 @@ var Timeline = Class.extend({
 	       	chart.showLoading('Loading data from server...'); 
         }
         
+        if(e.min < 0 || e.max < 0 || e.min > e.max){
+	        return false;
+        }
         
         var _url = Helioviewer.api+'?action=getDataCoverage&imageLayers='+ imageLayersStr +'&startDate='+ Math.round(e.min) +'&endDate='+ Math.round(e.max) +'&callback=?';
         $.getJSON(_url, function(data) {
 			var seriesVisability = [];
-				
+			
+			if(typeof data.error != 'undefined'){
+			    alert(data.error);
+		    }	
 			
 			while(chart.series.length > 0) {
 				seriesVisability[ chart.series[0].name ] = chart.series[0].visible;
@@ -977,6 +1045,7 @@ var Timeline = Class.extend({
             
             chart.redraw();
             self.drawPlotLine(chartTypeX);
+            self.drawCarringtonLines(e.min, e.max);
             self.setTitle(e);
             chart.hideLoading();
         });
@@ -985,6 +1054,10 @@ var Timeline = Class.extend({
     
     setTitle: function(e){
 	    var chart = $('#data-coverage-timeline').highcharts();
+		
+	    if(typeof chart.xAxis[0].series[0] == 'undefined' || typeof chart.xAxis[0].series[0].points[0] == 'undefined' || chart.xAxis[0].series[0].points[0].x < 0){
+			return false;    
+	    }
 	    
 	    var minTime = chart.xAxis[0].series[0].points[0].x;
 	    
@@ -1046,6 +1119,61 @@ var Timeline = Class.extend({
 	    $('#btn-next').html(extension + ' &rarr;');
     }
 });    
+
+//Calculate Carrington Number
+
+function timestamp_to_carrington( timestamp ){
+	
+	timestamp = timestamp / 1000;
+	
+	var j_fabio = timestamp / 86400 + 2440587.5;
+
+	var carrington = (1. / 27.2753) * (j_fabio - 2398167.0) + 1.0;
+	
+	return carrington;
+}
+
+
+function carrington_to_timestamp( carrington ){
+	
+	var j_fabio = carrington - 1;
+	j_fabio = 27.2753 * j_fabio;
+	j_fabio = j_fabio + 2398167;
+
+	var timestamp = Math.round( (j_fabio - 2440587.5) * 86400 );
+
+	return timestamp * 1000;
+}
+
+
+function get_carringtons_between_timestamps( start, end ){
+	var carringtons = [];
+	
+	var startCarrington = timestamp_to_carrington( start );
+	var endCarrington = timestamp_to_carrington( end );
+
+	for(var i = Math.floor( startCarrington ); i <= Math.ceil( endCarrington ); i++){
+		if(i >= startCarrington && i <= endCarrington){
+			carringtons.push( i );
+		}
+	}
+	
+	return carringtons;
+}
+
+
+function carringtons_to_timestamps(carringtons){
+	var timestamps = [];
+	
+	if(carringtons.length > 0){
+		carringtons.forEach(function( c ){
+			timestamps.push( carrington_to_timestamp(c) );
+		});
+	}
+	
+	return timestamps;
+}
+
 
 var _colors  = [
     '#008000', //  0 SOHO EIT 171
