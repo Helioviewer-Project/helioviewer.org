@@ -867,12 +867,12 @@ var Timeline = Class.extend({
 		            value: t,
 		            width: 1,
 		            color: '#C0C0C0',
-		            zIndex: -2,
+		            zIndex: 5,
 		            id: 'viewport-plotline-carrington-' + t,
 		            dashStyle: 'ShortDot',
 		            label: {
 						useHTML:true,
-						text: 'CR ' + Math.floor(timestamp_to_carrington(t)),
+						text: '&uarr; CR ' + (Math.floor(timestamp_to_carrington(t)) + 1),
 						style: {
 							color: 'white',
 							fontSize: '10px',
@@ -907,7 +907,7 @@ var Timeline = Class.extend({
             value: date,
             width: 2,
             color: '#fff',
-            zIndex: -1,
+            zIndex: 6,
             id: 'viewport-plotline',
             label: {
 	            useHTML:true,
