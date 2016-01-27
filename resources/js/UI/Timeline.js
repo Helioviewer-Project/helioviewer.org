@@ -825,7 +825,7 @@ var Timeline = Class.extend({
 			    });
 			    
 	        self.drawPlotLine('column');
-	        self.drawCarringtonLines(startDate, endDate);
+	        self.drawCarringtonLines(startDate, endDate, 'column');
 	        
 	        $('#data-coverage-timeline').highcharts().xAxis[0].setExtremes(startDate, endDate);
 	        var chart = $('#data-coverage-timeline').highcharts();
@@ -846,7 +846,19 @@ var Timeline = Class.extend({
 	    });
     },
     
-    drawCarringtonLines: function(Start, End){
+    drawCarringtonLines: function(Start, End, chartTypeX){
+        if(typeof chartTypeX == "undefined"){
+	        var chartTypeX = 'column';
+        }
+        
+        var chart = $('#data-coverage-timeline').highcharts();
+
+		if(chartTypeX == 'scatter'){
+			var offset = 0;
+		}else{
+			var offset = chart.xAxis[0].minPointOffset;
+		}
+        
         
         var Period = End - Start;
         var From = Start - Period;
@@ -855,24 +867,24 @@ var Timeline = Class.extend({
         
         var carringtons = get_carringtons_between_timestamps(From, To);
         var timestamps = carringtons_to_timestamps(carringtons);
-        
-        var chart = $('#data-coverage-timeline').highcharts();
-		
-		timestamps.forEach(function( t ){
+
+		carringtons.forEach(function( carrington ){
 			
-			chart.xAxis[0].removePlotLine('viewport-plotline-carrington-' + t);
+			var t = carrington_to_timestamp(carrington);
+			
+			chart.xAxis[0].removePlotLine('viewport-plotline-carrington-' + carrington);
 			
 			if(Period < 60 * 60 * 24 * 365 * 2 * 1000){
 				chart.xAxis[0].addPlotLine({
-		            value: t,
+		            value: t.getTime() - offset,
 		            width: 1,
 		            color: '#C0C0C0',
 		            zIndex: 5,
-		            id: 'viewport-plotline-carrington-' + t,
+		            id: 'viewport-plotline-carrington-' + carrington,
 		            dashStyle: 'ShortDot',
 		            label: {
 						useHTML:true,
-						text: '&uarr; CR ' + (Math.floor(timestamp_to_carrington(t)) + 1),
+						text: '&uarr; CR ' + carrington,
 						style: {
 							color: 'white',
 							fontSize: '10px',
@@ -1045,7 +1057,7 @@ var Timeline = Class.extend({
             
             chart.redraw();
             self.drawPlotLine(chartTypeX);
-            self.drawCarringtonLines(e.min, e.max);
+            self.drawCarringtonLines(e.min, e.max, chartTypeX);
             self.setTitle(e);
             chart.hideLoading();
         });
@@ -1120,59 +1132,6 @@ var Timeline = Class.extend({
     }
 });    
 
-//Calculate Carrington Number
-
-function timestamp_to_carrington( timestamp ){
-	
-	timestamp = timestamp / 1000;
-	
-	var j_fabio = timestamp / 86400 + 2440587.5;
-
-	var carrington = (1. / 27.2753) * (j_fabio - 2398167.0) + 1.0;
-	
-	return carrington;
-}
-
-
-function carrington_to_timestamp( carrington ){
-	
-	var j_fabio = carrington - 1;
-	j_fabio = 27.2753 * j_fabio;
-	j_fabio = j_fabio + 2398167;
-
-	var timestamp = Math.round( (j_fabio - 2440587.5) * 86400 );
-
-	return timestamp * 1000;
-}
-
-
-function get_carringtons_between_timestamps( start, end ){
-	var carringtons = [];
-	
-	var startCarrington = timestamp_to_carrington( start );
-	var endCarrington = timestamp_to_carrington( end );
-
-	for(var i = Math.floor( startCarrington ); i <= Math.ceil( endCarrington ); i++){
-		if(i >= startCarrington && i <= endCarrington){
-			carringtons.push( i );
-		}
-	}
-	
-	return carringtons;
-}
-
-
-function carringtons_to_timestamps(carringtons){
-	var timestamps = [];
-	
-	if(carringtons.length > 0){
-		carringtons.forEach(function( c ){
-			timestamps.push( carrington_to_timestamp(c) );
-		});
-	}
-	
-	return timestamps;
-}
 
 
 var _colors  = [
