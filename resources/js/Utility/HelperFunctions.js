@@ -411,3 +411,176 @@ function assignTouchHandlers(element) {
     element.addEventListener("touchend", touchHandler, true);
     element.addEventListener("touchcancel", touchHandler, true);
 }
+
+
+/**
+ * @description Convert Date object to Julian Day.
+ * @returns {Float} Julian Day.
+ */
+Date.prototype.Date2Julian = function() {
+	return ((this / 86400000) - (this.getTimezoneOffset() / 1440000) + 2440587.5);
+};
+
+/**
+ * @description Convert Julian Date to Date Object.
+ * @returns {Date} Date Object.
+ */
+Number.prototype.Julian2Date = function() {
+
+	var X = parseFloat(this)+0.5;
+	var Z = Math.floor(X); //Get day without time
+	var F = X - Z; //Get time
+	var Y = Math.floor((Z-1867216.25)/36524.25);
+	var A = Z+1+Y-Math.floor(Y/4);
+	var B = A+1524;
+	var C = Math.floor((B-122.1)/365.25);
+	var D = Math.floor(365.25*C);
+	var G = Math.floor((B-D)/30.6001);
+	//must get number less than or equal to 12)
+	var month = (G<13.5) ? (G-1) : (G-13);
+	//if Month is January or February, or the rest of year
+	var year = (month<2.5) ? (C-4715) : (C-4716);
+	month -= 1; //Handle JavaScript month format
+	var UT = B-D-Math.floor(30.6001*G)+F;
+	var day = Math.floor(UT);
+	//Determine time
+	UT -= Math.floor(UT);
+	UT *= 24;
+	var hour = Math.floor(UT);
+	UT -= Math.floor(UT);
+	UT *= 60;
+	var minute = Math.floor(UT);
+	UT -= Math.floor(UT);
+	UT *= 60;
+	var second = Math.round(UT);
+	
+	return new Date(Date.UTC(year, month, day, hour, minute, second));
+};
+
+
+//Calculate Carrington Number
+/*
+	PURPOSE: 
+		Conver given UNIX timestamp to Carrington Rotation number
+	INPUT:
+		timestamp = Unix timestamp
+	OUTPUT:
+		carr = float
+	NOTES:
+		Ref: Astronomical Algorithms, Chapter 28, page 179, 1st edition [Meeus, 1991]
+		http://flux.aos.wisc.edu/data/code/util/jhulib/sun.pro	
+		http://flux.aos.wisc.edu/data/code/util/jhulib/dt_tm_tocr.pro
+	TODO:
+		Review Formulas for carrington rotation number in SolarSoft IDL:
+		http://sohowww.nascom.nasa.gov/solarsoft/soho/lasco/idl/synoptic/carrlong.pro
+		http://sohowww.nascom.nasa.gov/solarsoft/soho/lasco/idl/synoptic/carrdate2.pro
+		http://sohowww.nascom.nasa.gov/solarsoft/soho/lasco/idl/synoptic/carrdate.pro
+		http://sohowww.nascom.nasa.gov/solarsoft/gen/idl/solar/carr2ex.pro
+		http://sohowww.nascom.nasa.gov/solarsoft/yohkoh/ucon/idl/sxt_co/carr2date.pro
+		http://sohowww.nascom.nasa.gov/solarsoft/yohkoh/ucon/idl/hara/carr2btime.pro
+*/
+
+function timestamp_to_carrington(timestamp){
+	
+	var jd = new Date(timestamp).Date2Julian();
+	
+	var carr = (jd-2398140.227)/27.2752316;
+	
+	//Correction
+	var dt = carrington_to_timestamp(carr);
+	var jdt = dt.Date2Julian();
+	var err = (jd-jdt)/27.2752316;
+	carr = carr + err;
+	
+	return carr;
+}
+
+/*
+	PURPOSE: 
+		Conver given Carrington Rotation number Date object
+	INPUT:
+		carr = Carrington Rotation number
+	OUTPUT:
+		date = Date Object
+	NOTES:
+		Ref: Astronomical Algorithms, Chapter 28, page 179, 1st edition [Meeus, 1991]
+		http://flux.aos.wisc.edu/data/code/util/jhulib/sun.pro	
+		http://flux.aos.wisc.edu/data/code/util/jhulib/dt_tm_fromcr.pro
+	TODO:
+		Review Formulas for carrington rotation number in SolarSoft IDL:
+		http://sohowww.nascom.nasa.gov/solarsoft/soho/lasco/idl/synoptic/carrlong.pro
+		http://sohowww.nascom.nasa.gov/solarsoft/soho/lasco/idl/synoptic/carrdate2.pro
+		http://sohowww.nascom.nasa.gov/solarsoft/soho/lasco/idl/synoptic/carrdate.pro
+		http://sohowww.nascom.nasa.gov/solarsoft/gen/idl/solar/carr2ex.pro
+		http://sohowww.nascom.nasa.gov/solarsoft/yohkoh/ucon/idl/sxt_co/carr2date.pro
+		http://sohowww.nascom.nasa.gov/solarsoft/yohkoh/ucon/idl/hara/carr2btime.pro
+*/		
+function carrington_to_timestamp(carr){
+	//------  Find JD from CR ---------
+	var julian = 2398140.227 + 27.2752316 * carr;//27.27522957
+	
+	var radeg = 180./ Math.PI;
+	
+	var m = (281.96 + 26.882476 * carr) / radeg;
+	var corr = 0.1454 * Math.sin(m) - 0.0085 * Math.sin(2 * m) - 0.0141 * Math.cos(2 * m);
+	
+	var res = (julian + corr);
+
+	//Convert Julian Day to current DateTime
+	var date = res.Julian2Date();
+	
+	return date;
+}
+
+/*function timestamp_to_carrington( timestamp ){
+	
+	timestamp = timestamp / 1000;
+	
+	var j_fabio = timestamp / 86400 + 2440587.5;
+
+	var carrington = (1. / 27.2753) * (j_fabio - 2398167.0) + 1.0;
+	
+	return carrington;
+}
+
+
+function carrington_to_timestamp( carrington ){
+	
+	var j_fabio = carrington;
+	j_fabio = 27.2753 * j_fabio;
+	j_fabio = j_fabio + 2398167;
+
+	var timestamp = Math.round( (j_fabio - 2440587.5) * 86400 );
+
+	return timestamp * 1000;
+}*/
+
+
+function get_carringtons_between_timestamps( start, end ){
+	var carringtons = [];
+	
+	var startCarrington = timestamp_to_carrington( start );
+	var endCarrington = timestamp_to_carrington( end );
+
+	for(var i = Math.floor( startCarrington ); i <= Math.ceil( endCarrington ); i++){
+		if(i >= startCarrington && i <= endCarrington){
+			carringtons.push( i );
+		}
+	}
+	
+	return carringtons;
+}
+
+
+function carringtons_to_timestamps(carringtons){
+	var timestamps = [];
+	
+	if(carringtons.length > 0){
+		carringtons.forEach(function( c ){
+			var dt = carrington_to_timestamp(c);
+			timestamps.push( dt.getTime() );
+		});
+	}
+	
+	return timestamps;
+}
