@@ -263,9 +263,10 @@ var ViewportMovementHelper = Class.extend(
         height = this.domNode.height();
 
         return {
-            width : Math.max(0, width),//width : Math.max(0, this.maxLayerDimensions.width  - width),
-            height: Math.max(0, height)//height: Math.max(0, this.maxLayerDimensions.height - height)
-            
+            //width : Math.max(0, width),//width : Math.max(0, this.maxLayerDimensions.width  - width),
+            //height: Math.max(0, height)//height: Math.max(0, this.maxLayerDimensions.height - height)
+            width : Math.max(width, this.maxLayerDimensions.width  - width * 2),
+            height: Math.max(height, this.maxLayerDimensions.height - height * 2)
         };
     },
 
