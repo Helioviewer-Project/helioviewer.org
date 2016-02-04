@@ -138,7 +138,7 @@ var EventMarker = Class.extend(
             });
         }
         else {
-            this.labelText = this.concept;
+            this.labelText = this.frm_name + ' ' + this.frm_specificid;
         }
     },
 
@@ -347,7 +347,7 @@ var EventMarker = Class.extend(
             headingText = this.event_type+': ' + this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]];
         }
         else {
-            headingText = this.concept;
+            headingText = this.frm_name + ' ' + this.frm_specificid;
         }
 
         // Header Tabs
@@ -679,7 +679,7 @@ var EventMarker = Class.extend(
             headingText = this.event_type+': ' + this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]];
         }
         else {
-            headingText = this.concept;
+            headingText = this.event_type + ': ' + this.frm_name + ' ' + this.frm_specificid;
         }
 
         content     += '<div class="close-button ui-icon ui-icon-closethick" title="Close PopUp Window"></div>'+"\n"
