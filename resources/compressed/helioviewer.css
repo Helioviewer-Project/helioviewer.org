@@ -739,7 +739,7 @@ div.text-btn:hover a:hover {
 }
 
 span.ui-icon-hover, div.ui-icon-hover {
-   background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+   background-image: url(../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
 .section-header {
@@ -1838,7 +1838,7 @@ a.show-tags-btn {
 
 
 .helioviewer-modal-dialog .ui-widget-header .ui-icon {
-	background-image: url("../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_ffffff_256x240.png")
+	background-image: url("../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_ffffff_256x240.png")
 }
 
 
@@ -1964,16 +1964,16 @@ a.show-tags-btn {
 }
 
 .ui-state-hover-bgonly {
-    background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-bg_dots-small_40_00498f_2x2.png);
+    background-image: url(../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-bg_dots-small_40_00498f_2x2.png);
     background-color: #00498f;
 }
 
 .ui-state-hover-icononly {
-    background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+    background-image: url(../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
 .ui-icon:hover {
-    background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+    background-image: url(../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
 .layerManagerBtn.visible:hover {
@@ -2439,7 +2439,7 @@ a.show-tags-btn {
 }
 
 #movie-button.active .ui-icon, #screenshot-button.active .ui-icon {
-    background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+    background-image: url(../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
 #movie-button.active, #screenshot-button.active {
