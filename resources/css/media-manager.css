@@ -77,7 +77,7 @@
 }
 
 #movie-button.active .ui-icon, #screenshot-button.active .ui-icon {
-    background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+    background-image: url(../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
 #movie-button.active, #screenshot-button.active {
