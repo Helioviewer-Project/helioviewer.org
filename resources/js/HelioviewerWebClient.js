@@ -1851,6 +1851,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 $(drawer).css('height', 0);
                 $(drawer).css('width', 0);
                 $(drawer).css('padding', 0);
+                $(drawer).css({'display':'none'});
                 $(self.tabbedDrawerButtons[drawer]).removeClass('opened');
                 Helioviewer.userSettings.set("state.drawers."+drawer+".open", false);
             }
