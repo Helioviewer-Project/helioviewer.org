@@ -1870,7 +1870,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     twitter: function(e) {
         var href   = 'https://twitter.com/share?url='
                    + encodeURIComponent($('.helioviewer-short-url').val())
-                   + '&text=Helioviewer.org - Solar and heliospheric image visualization tool',
+                   + '&text=from Helioviewer.org'
+                   + '&hashtags=helioviewer',
             target = $(e.target).attr('target');
         e.stopPropagation();
 
