@@ -452,7 +452,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             }
             self.displayURL(self.toURL(), msg);
         });
-
+		setTimeout(function(){ self.displayURL(self.toURL(), msg); }, 100);
 
         // Highlight both text and icons for text buttons
 
@@ -523,6 +523,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		
         $('#share-twitter-link').on('click', $.proxy(this.twitter, this));
         $('#share-facebook-link').on('click', $.proxy(this.facebook, this));
+        $('#share-google-link').on('click', $.proxy(this.google, this));
         $('#share-pinterest-link').on('click', $.proxy(this.pinterest, this));
 		//Help Links
 		//Guide
@@ -1868,7 +1869,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     twitter: function(e) {
         var href   = 'https://twitter.com/share?url='
-                   + encodeURIComponent($('#helioviewer-short-url').val())
+                   + encodeURIComponent($('.helioviewer-short-url').val())
                    + '&text=Helioviewer.org - Solar and heliospheric image visualization tool',
             target = $(e.target).attr('target');
         e.stopPropagation();
@@ -1882,7 +1883,16 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                    + '&s=100'
                    + '&p[images][0]='+encodeURIComponent(Helioviewer.api+'?action=downloadScreenshot&id=3240748')
                    + '&p[title]=Helioviewer.org - Solar and heliospheric image visualization tool'
-                   + '&p[url]='+encodeURIComponent($('#helioviewer-short-url').val()),
+                   + '&p[url]='+encodeURIComponent($('.helioviewer-long-url').val()),
+            target = $(e.target).attr('target');
+        e.stopPropagation();
+
+        window.open(href, target);
+        return false;
+    },
+
+    google: function(e) {
+        var href   = 'https://plus.google.com/share?url='+encodeURIComponent($('.helioviewer-long-url').val()),
             target = $(e.target).attr('target');
         e.stopPropagation();
 
@@ -1896,7 +1906,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         var url = encodeURIComponent(self.toURL());
         var media = encodeURIComponent(Helioviewer.api+'?action=downloadScreenshot&id=3240748');
-        var desc = 'Helioviewer.org - Solar and heliospheric image visualization tool '+encodeURIComponent($('#helioviewer-short-url').val());
+        var desc = 'Helioviewer.org - Solar and heliospheric image visualization tool '+encodeURIComponent($('.helioviewer-short-url').val());
         window.open("//www.pinterest.com/pin/create/button/"+
         "?url="+url+
         "&media="+media+

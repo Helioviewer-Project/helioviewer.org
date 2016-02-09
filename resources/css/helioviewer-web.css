@@ -944,6 +944,10 @@ span.ui-icon-hover, div.ui-icon-hover {
    color: #cb2027;  /* pinterest logo red */
    border: 3px solid #cb2027;
 }
+#google.social-btns .text-btn:hover {
+   color: #dd5044;  /* pinterest logo red */
+   border: 3px solid #dd5044;
+}
 
 
 
