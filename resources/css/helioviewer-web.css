@@ -553,6 +553,11 @@ html, body {
    padding: 0.3em 0.5em;
    vertical-align: middle;
 }
+
+_:-ms-fullscreen, :root .accordion select option{
+   color: #000000;
+}
+
 .row .field .suffix {
    display: inline-block;
    margin-left: 0.2em;
