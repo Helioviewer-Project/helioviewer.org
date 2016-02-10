@@ -1868,10 +1868,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
     twitter: function(e) {
-        var href   = 'https://twitter.com/share?url='
-                   + encodeURIComponent($('.helioviewer-short-url').val())
-                   + '&text=from Helioviewer.org'
-                   + '&hashtags=helioviewer',
+        var href   = 'https://twitter.com/share?'
+                   + 'url=' + encodeURIComponent($('.helioviewer-short-url').val()) + '&'
+                   + 'via=helioviewer&'
+                   + '&text=from Helioviewer.org',
             target = $(e.target).attr('target');
         e.stopPropagation();
 
