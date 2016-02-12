@@ -60,6 +60,29 @@ Date.prototype.toUTCTimeString = function () {
     return hour.padLeft(0, 2) + ':' + min.padLeft(0, 2) + ':' + sec.padLeft(0, 2);
 };
 
+
+/**
+ * @description Outputs a Date string of the format "YYYY/MM/dd"
+ * @returns {String} Datestring.
+ */
+Date.prototype.toDateString = function () {
+    var year  = this.getFullYear()    + '',
+        month = (this.getMonth() + 1) + '',
+        day   = this.getDate()        + '';
+    return year + '/' + month.padLeft(0, 2) + '/' + day.padLeft(0, 2);
+};
+
+/**
+ * @description Outputs a Date string of the format "HH:mm:ss"
+ * @returns {String} Datestring.
+ */
+Date.prototype.toTimeString = function () {
+    var hour = this.getHours()  + '',
+        min = this.getMinutes() + '',
+        sec = this.getSeconds() + '';
+    return hour.padLeft(0, 2) + ':' + min.padLeft(0, 2) + ':' + sec.padLeft(0, 2);
+};
+
 /**
  * Takes a localized javascript date and returns a date set to the UTC time.
  *

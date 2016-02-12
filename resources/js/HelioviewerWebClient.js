@@ -411,11 +411,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             btns;
 
 
-        $(document).on('update-external-datasource-integration', $.proxy(this.updateExternalDataSourceIntegration, this));
+        $(document).on('update-external-datasource-integration', $.proxy(this.updateExternalDataSourceIntegration, this, true));
 
-        $('#accordion-vso input[type=text]').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this));
+        $('#accordion-vso input[type=text]').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this, false));
 
-        $('#sdo-start-date, #sdo-start-time, #sdo-end-date, #sdo-end-time').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this));
+        $('#sdo-start-date, #sdo-start-time, #sdo-end-date, #sdo-end-time').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this, false));
 
         $('#sdo-center-x, #sdo-center-y, #sdo-width, #sdo-height').bind('change', function () {
 
@@ -423,7 +423,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 $('#sdo-full-viewport').removeClass('selected');
                 $('#sdo-select-area').addClass('selected');
             }
-            self.updateExternalDataSourceIntegration();
+            self.updateExternalDataSourceIntegration(self, false);
         });
 
 
@@ -650,18 +650,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     /**
      *
      */
-    updateSDOaccordion: function (sdoPreviews, sdoButtons, imageAccordions, imageScale) {
+    updateSDOaccordion: function (sdoPreviews, sdoButtons, imageAccordions, imageScale, global) {
 
-        var vport, imageScale,
-            sDate = $('#sdo-start-date').val(),
-            sTime = $('#sdo-start-time').val(),
-            eDate = $('#sdo-end-date').val(),
-            eTime = $('#sdo-end-time').val();
-
+        var vport, imageScale;
+			
         // Wipe the slate clean
         this._clearSDOaccordion(sdoPreviews, sdoButtons);
-
-        this._setSDOtimes(sDate, sTime, eDate, eTime);
 
         if ( $('#sdo-full-viewport').hasClass('selected') ) {
             vport = this.viewport.getViewportInformation();
@@ -674,7 +668,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             });
         }
 
-        this.setSDOthumbnails(sdoPreviews, imageAccordions, imageScale);
+        this.setSDOthumbnails(sdoPreviews, imageAccordions, imageScale, global);
         this.setSDOscriptDownloadButtons(imageAccordions, imageScale);
     },
 
@@ -786,9 +780,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 +  '&wavemax='  + nickname.split(' ')[1]
                 +  '&waveunit=' + 'Angstrom';
         }
-
+        
+        var sDate = startDate.replace(/T|Z/gi, ' ');
+        var eDate = endDate.replace(/T|Z/gi, ' ');
+        
         html = '<a href="' + url + '" target="_blank">'
-             + nickname + ' ' + date
+             + nickname + ' ' + sDate
              + ' UTC <i class="fa fa-external-link-square fa-fw"></i></a>';
 
         return html;
@@ -841,10 +838,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
 
-    updateVSOaccordion: function (vsoLinks, vsoPreviews, vsoButtons, imageAccordions, imageScale) {
+    updateVSOaccordion: function (vsoLinks, vsoPreviews, vsoButtons, imageAccordions, imageScale, global) {
 
         var nickname, startDate, endDate, sourceId,
             sourceIDs = Array(), instruments = Array(), waves = Array(),
+            sTimestamp = 0,
+            eTimestamp = 0,
             sDate = $('#vso-start-date').val(),
             sTime = $('#vso-start-time').val(),
             eDate = $('#vso-end-date').val(),
@@ -854,20 +853,33 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         // Wipe the slate clean
         this._clearVSOaccordion(vsoLinks, vsoPreviews, vsoButtons);
 
-        this._setVSOtimes(sDate, sTime, eDate, eTime);
-
         $.each( imageAccordions, function(i, accordion) {
-
+			
             if ( !$(accordion).find('.visible').hasClass('hidden') ) {
                 nickname = $(accordion).find('.tile-accordion-header-left').html();
                 sourceId = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
                 var date     = $(accordion).find('.timestamp').html();
-
-                startDate = $('#vso-start-date').val() + 'T'
-                          + $('#vso-start-time').val() + 'Z';
-                endDate   = $('#vso-end-date').val()   + 'T'
-                          + $('#vso-end-time').val()   + 'Z';
-
+				var timestamp = new Date(date).getTime();
+				
+				if(global){
+					if(sTimestamp == 0 || timestamp < sTimestamp){
+						sTimestamp = timestamp;
+					}
+					if(eTimestamp == 0 || timestamp > eTimestamp){
+						eTimestamp = timestamp;
+					}
+					
+					
+					var sDate = new Date(timestamp);
+					startDate = endDate = sDate.toDateString() + 'T' + sDate.toTimeString() + 'Z';
+				}else{
+					startDate = $('#vso-start-date').val() + 'T'
+	                          + $('#vso-start-time').val() + 'Z';
+	                endDate   = $('#vso-end-date').val()   + 'T'
+	                          + $('#vso-end-time').val()   + 'Z';
+				}
+				
+				
                 sourceIDs.push(sourceId);
                 instruments.push(nickname.split(' ')[0]);
                 if ( parseInt(nickname.split(' ')[1], 10) ) {
@@ -878,10 +890,25 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                     self._vsoLink(startDate, endDate, nickname)
                 );
                 vsoPreviews.append(
-                    self._vsoThumbnail(startDate, endDate, nickname, sourceId)
+                    self._vsoThumbnail(startDate, startDate, nickname, sourceId)
                 );
             }
         });
+		
+		if(global){
+			var _sDate = new Date(sTimestamp);
+			var _eDate = new Date(eTimestamp);
+			
+			var sDate = _sDate.toDateString();
+			var sTime = _sDate.toTimeString();
+			var eDate = _eDate.toDateString();
+			var eTime = _eDate.toTimeString();
+			
+			startDate 	= _sDate.toDateString() + 'T' + _sDate.toTimeString() + 'Z';
+			endDate 	= _eDate.toDateString() + 'T' + _eDate.toTimeString() + 'Z';
+		}
+		
+        this._setVSOtimes(sDate, sTime, eDate, eTime);
 
         if ( sourceIDs.length > 0 ) {
             this._updateVSObuttons(startDate, endDate, sourceIDs, instruments, waves);
@@ -890,7 +917,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 
     _updateVSObuttons: function (startDate, endDate, sourceIDs, instruments, waves) {
-
+	
         var x1=0, y1=0, x2=0, y2=0, url, body, imageScale,
             vport = this.viewport.getViewportInformation();
 
@@ -977,9 +1004,15 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
 
-    setSDOthumbnails: function (sdoPreviews, imageAccordions, imageScale) {
+    setSDOthumbnails: function (sdoPreviews, imageAccordions, imageScale, global) {
         var html, nickname, startDate, endDate, sourceId, imageLayer,
-            x1, x2, y1, y2, thumbImageScale;
+            x1, x2, y1, y2, thumbImageScale,
+            sDate = $('#sdo-start-date').val(),
+            sTime = $('#sdo-start-time').val(),
+            eDate = $('#sdo-end-date').val(),
+            eTime = $('#sdo-end-time').val(),
+            sTimestamp = 0,
+            eTimestamp = 0;
 
         sdoPreviews.html('');
 
@@ -993,11 +1026,29 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
                 sourceId = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
                 imageLayer = '['+sourceId+',1,100]';
-
-                startDate = $('#sdo-start-date').val() + 'T'
-                          + $('#sdo-start-time').val() + 'Z';
-                endDate   = $('#sdo-end-date').val()   + 'T'
-                          + $('#sdo-end-time').val()   + 'Z';
+				
+				var date     = $(accordion).find('.timestamp').html();
+				var timestamp = new Date(date).getTime();
+				
+				if(global){
+					if(sTimestamp == 0 || timestamp < sTimestamp){
+						sTimestamp = timestamp;
+					}
+					if(eTimestamp == 0 || timestamp > eTimestamp){
+						eTimestamp = timestamp;
+					}
+					
+					
+					var sDate = new Date(timestamp);
+					startDate = endDate = sDate.toDateString() + 'T' + sDate.toTimeString() + 'Z';
+				}else{
+					startDate = $('#sdo-start-date').val() + 'T'
+                        	  + $('#sdo-start-time').val() + 'Z';
+	                endDate   = $('#sdo-end-date').val()   + 'T'
+	                          + $('#sdo-end-time').val()   + 'Z';
+				}
+				
+                
 
                 if ( startDate == 'TZ' || endDate == 'TZ' ) {
                     return false;
@@ -1060,6 +1111,19 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 sdoPreviews.append(html);
             }
         });
+        
+        if(global){
+			var _sDate = new Date(sTimestamp);
+			var _eDate = new Date(eTimestamp);
+			
+			var sDate = _sDate.toDateString();
+			var sTime = _sDate.toTimeString();
+			var eDate = _eDate.toDateString();
+			var eTime = _eDate.toTimeString();
+		}
+        
+        this._setSDOtimes(sDate, sTime, eDate, eTime);
+        
     },
 
 
@@ -1917,7 +1981,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         return;
     },
 
-    updateExternalDataSourceIntegration: function (event) {
+    updateExternalDataSourceIntegration: function (global, event) {
         var imageAccordions = $('#accordion-images .dynaccordion-section'),
             vsoLinks        = $('#vso-links'),
             vsoPreviews     = $('#vso-previews'),
@@ -1935,12 +1999,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         if ( $('#accordion-vso .content').is(':visible') ) {
             this.updateVSOaccordion(vsoLinks, vsoPreviews, vsoButtons,
-                imageAccordions, imageScale);
+                imageAccordions, imageScale, global);
         }
 
         if ( $('#accordion-sdo .content').is(':visible') ) {
             this.updateSDOaccordion(sdoPreviews, sdoButtons, imageAccordions,
-                imageScale);
+                imageScale, global);
         }
     },
 
