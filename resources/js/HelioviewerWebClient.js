@@ -1518,7 +1518,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 				sidebar.css('max-height', (newHeight - self.drawerTimelineOpenedHeight) + 'px');
             }else{
-	            sidebar.css('max-height', '100%');
+	            //sidebar.css('max-height', '100%');
             }
         });
 		/*
