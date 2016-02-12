@@ -1908,7 +1908,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
     closeTabDrawersExcept: function (buttonId, drawerId) {
-        self = this;
+        var self = this;
 
         $.each( this.tabbedDrawers, function (i, drawer) {
             if ( drawer != drawerId ) {
@@ -1966,7 +1966,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
     pinterest: function() {
-        self = this;
+        var self = this;
         $('#pinterest-button').unbind('click');
 
         var url = encodeURIComponent(self.toURL());
