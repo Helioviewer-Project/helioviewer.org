@@ -87,11 +87,6 @@ var Timeline = Class.extend({
                 }
             },
 
-
-            scrollbar: {
-                liveRedraw: false
-            },
-
             title: {
                 text: ''
             },
