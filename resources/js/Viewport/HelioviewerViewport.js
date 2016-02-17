@@ -99,7 +99,7 @@ var HelioviewerViewport = Class.extend(
      * @description Returns the current image scale (in arc-seconds/px) for which the tiles should be matched to.
      */
     getImageScale: function () {
-        return parseFloat(this.imageScale.toPrecision(8));
+        return parseFloat(this.imageScale.toPrecision());
     },
 
     /**

@@ -181,18 +181,18 @@ var ViewportMovementHelper = Class.extend(
         vpWidth  = this.domNode.width();
         vpHeight = this.domNode.height();
 
-        if (vpWidth % 2 === 1) {
-            vpWidth += 1;
-        }
-        if (vpHeight % 2 === 1) {
-            vpHeight += 1;
-        }
+        //if (vpWidth % 2 === 1) {
+        //    vpWidth += 1;
+        //}
+        //if (vpHeight % 2 === 1) {
+        //    vpHeight += 1;
+        //}
 
         return {
             left:  left,
             top :  top,
-            right:  vpWidth  + left,
-            bottom: vpHeight + top
+            right:  Math.round(vpWidth)  + left,
+            bottom: Math.round(vpHeight) + top
         };
     },
 
