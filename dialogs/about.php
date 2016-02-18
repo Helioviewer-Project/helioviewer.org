@@ -1,12 +1,12 @@
 
 <img src="resources/images/logos/about_white.png" alt="Helioviewer.org Logo"><br>
-<div style="width:100%; text-align: center;">
+<!--<div style="width:100%; text-align: center;">
     <span style="margin-left: auto; margin-right: auto; font-size:small;">Last Updated: 2015/09/29 (2.4.0)</span>
-</div>
+</div>-->
 <br />
 
-Helioviewer.org is an open-source project for the visualization of solar and heliospheric data.
-The project is funded by <acronym title="European Space Agency">ESA</acronym> and <acronym title="National Aeronautics and Space Administration">NASA</acronym>.
+Helioviewer.org is part of the <a href="https://github.com/Helioviewer-Project" style="text-decoration: underline; font-weight: normal;" class="light">Helioviewer Project</a>, an open-source project for the visualization of solar and heliospheric data.
+The Helioviewer Project is funded by <acronym title="European Space Agency">ESA</acronym> and <acronym title="National Aeronautics and Space Administration">NASA</acronym>.
 For more information, please visit our <a href="http://helioviewer.org/wiki/Main_Page" style="text-decoration: underline; font-weight: normal;" class="light">Wiki</a>.
 
 <br /><br />

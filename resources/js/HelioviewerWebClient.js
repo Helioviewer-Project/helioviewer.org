@@ -279,7 +279,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var self = this;
 
         // About dialog
-        this._setupDialog("#helioviewer-about", "#about-dialog", {
+        this._setupDialog("#help-links-about", "#about-dialog", {
             "title"  : "Helioviewer - About",
             "height" : 400
         });
