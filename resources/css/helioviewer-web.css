@@ -928,8 +928,8 @@ span.ui-icon-hover, div.ui-icon-hover {
    background-color: white;
 }
 .social-btns .text-btn:active {
-    color: yellow;
-    border: 1px solid yellow;
+    color: rgba(175,0,255,1);
+    border: 1px solid rgba(175,0,255,1);
 }
 
 #facebook.social-btns .text-btn:hover {
