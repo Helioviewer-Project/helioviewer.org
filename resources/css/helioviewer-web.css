@@ -919,8 +919,8 @@ span.ui-icon-hover, div.ui-icon-hover {
     font-size: 0.8em;
 }
 .social-btns .text-btn:hover {
-    color: rgba(255,255,0,1);
-    border: 1px solid rgba(255,255,0,1);
+    color: rgba(175,0,255,1);
+    border: 1px solid rgba(175,0,255,1);
      background-color: rgba(0,0,0,1);
       -moz-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
    -webkit-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
