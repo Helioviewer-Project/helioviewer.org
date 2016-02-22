@@ -830,7 +830,7 @@ var Timeline = Class.extend({
 		        this.cmd(a);
 		    }; 
 		    
-		    $('.highcharts-tooltip, .highcharts-tooltip span').css({'z-index': '99999 !important', 'background-color':'#000'});
+		    $('div.highcharts-tooltip, div.highcharts-tooltip span').css({'z-index': '99999', 'background-color':'#000'});
 		    //$('.highcharts-tooltip span').css({'position': 'relative'});
 		    
 		    self.minNavDate = startDate;
