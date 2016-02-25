@@ -219,6 +219,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                   "approximately " + waitTime + ". You may view it at any " +
                   "time after it is ready by clicking the 'Movie' button";
             $(document).trigger("message-console-info", msg);
+            self._refresh();
         };
 
         // Make request
@@ -270,6 +271,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         $(document).bind("movie-ready", function (event, movie) {
             $("#" + self._type + "-" + movie.id).qtip("destroy");
             self._buildPreviewTooltip(movie);
+            self._refresh();
         });
 
         // Upload form submission
