@@ -581,7 +581,40 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 buttonCartesian.removeClass("active");
             }
         });
+		
+		$('#earth-button').on('click', function () {
+			var buttonEarth     	= $('#earth-button');
+			var buttonScaleBar 	= $('#scalebar-button');
+			var scale_container 	= $('#earth-container');
 
+            if ( buttonEarth.hasClass("active") ) {
+	            $(document).trigger('hide-scale-window');
+				scale_container.hide();
+                buttonEarth.removeClass("active");
+                buttonScaleBar.removeClass("active");
+            } else {
+                $(document).trigger('earch-scale-window');
+                buttonEarth.addClass("active");
+                buttonScaleBar.removeClass("active");
+            }
+        });
+        $('#scalebar-button').on('click', function () {
+			var buttonEarth     	= $('#earth-button');
+			var buttonScaleBar 	= $('#scalebar-button');
+			var scale_container 	= $('#earth-container');
+
+            if ( buttonScaleBar.hasClass("active") ) {
+	            $(document).trigger('hide-scale-window');
+                scale_container.hide();
+                buttonScaleBar.removeClass("active");
+                buttonEarth.removeClass("active");
+            } else {
+                $(document).trigger('scalebar-scale-window');
+                buttonScaleBar.addClass("active");
+                buttonEarth.removeClass("active");
+            }
+        });
+		
         $('#sdo-full-viewport').click(function () {
             $('#sdo-select-area').removeClass('selected');
             $('#sdo-full-viewport').addClass('selected');
@@ -598,10 +631,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 self._cleanupFunctions.push('helioviewer.drawerLeftClick()');
                 helioviewer.drawerLeftClick();
             }
-            if ( $('#earth-button').hasClass('active') ) {
+            /*if ( $('#earth-button').hasClass('active') ) {
                 self._cleanupFunctions.push("$('#earth-button').click()");
                 $('#earth-button').click();
             }
+            if ( $('#scalebar-button').hasClass('active') ) {
+                self._cleanupFunctions.push("$('#scalebar-button').click()");
+                $('#scalebar-button').click();
+            }*/
 
             self._cleanupFunctions.push('helioviewer.drawerDataClick()');
             helioviewer.drawerDataClick();

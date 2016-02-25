@@ -21,23 +21,35 @@ var ImageScale = Class.extend(
         this._rsunInArcseconds       = 959.705;
 
         this._earthSunRadiusFraction = 6367.5 / 695500.;  // km
-
+		
+		this.buttonEarth     	= $('#earth-button');
+        this.buttonScaleBar 	= $('#scalebar-button');
+        //this.container 			= $('#earth-container');
+		
         this._initScale();
+		this._initEventHandlers();
     },
 
-
+    _initEventHandlers: function () {
+        
+        $(document).bind('toggle-scale-window', $.proxy(this.toggleScale, this));
+        $(document).bind('hide-scale-window', $.proxy(this.hideScale, this));
+        $(document).bind('scalebar-scale-window', $.proxy(this.barScale, this));
+        $(document).bind('earch-scale-window', $.proxy(this.earthScale, this));        
+    },
+	
     _initScale: function() {
-        var earthURL = 'resources/images/earth.png';
 
         if ( $('#earth-container').length > 0 ) {
            $('#earth-container').remove();
         }
 
         this._earthDiameterInPixels();
+        this._scaleBarSizeInKM();
 
-        this.scale_container = $('<div id="earth-container"></div>').appendTo("#helioviewer-viewport");
-        this.scale_container.draggable();
-        this.scale_container.css({
+        this.container = $('<div id="earth-container"></div>').appendTo("#helioviewer-viewport");
+        this.container.draggable();
+        this.container.css({
             'position'    : 'absolute',
             'z-index'     : '999',
             'width'       : '73px',
@@ -47,31 +59,134 @@ var ImageScale = Class.extend(
             'box-shadow'  : '0px 0px 5px black',
             'cursor'      : 'move'
         });
-        this.scale_container.attr('title','Click and drag to re-position scale indicator.');
+        this.container.attr('title','Click and drag to re-position scale indicator.');
 
         $('<div style="position:relative; height:12px;"><div id="earthLabel" style="color: white; background-color: #333; text-align: center; font-size: 10px; padding: 2px 0 2px 2px;">Earth Scale</div></div>').appendTo("#earth-container");
-        $('<div style="position:relative; width:72px; height:45px;"><img id="earthScale" src="resources/images/earth.png" style="width: '+this.earthDiameterInPixels+'px; height: '+this.earthDiameterInPixels+'px; position: absolute; left: '+(36-(this.earthDiameterInPixels/2))+'px; top: '+(23-(this.earthDiameterInPixels/2))+'px;" /></div>').appendTo("#earth-container");
+        $('<div style="position:relative; width:72px; height:45px;"><div id="barScaleBlock"><p id="barScaleLabel" style="padding:0px 10px;text-align:center;font-size:8px;margin:13px 0px 5px;">'+this.scaleBarSizeInKM+' km</p><div style="display:block;clear:both;margin:0px auto;height:4px;border:2px solid #fcfcfc;border-top:none;width:50px"></div></div><img id="earthScale" src="resources/images/earth.png" style="width: '+this.earthDiameterInPixels+'px; height: '+this.earthDiameterInPixels+'px; position: absolute; left: '+(36-(this.earthDiameterInPixels/2))+'px; top: '+(23-(this.earthDiameterInPixels/2))+'px;" /></div>').appendTo("#earth-container");
 
         this.scale_button    = $(document).find('#earth-button');
-        this.scale_image     = this.scale_container.find('#earthScale');
-        this.scale_label     = this.scale_container.find('#earthLabel');
+        this.scale_image     = this.container.find('#earthScale');
+        this.scale_label     = this.container.find('#earthLabel');
 
         $(document).bind("earth-scale",   $.proxy(this.earthRescale, this));
 
-        this.scale_container.bind("mousedown", function () { return false; });
-        this.scale_container.bind('dblclick',  function () { return false; });
-        this.scale_container.bind('click',     function () { return false; });
+        this.container.bind("mousedown", function () { return false; });
+        this.container.bind('dblclick',  function () { return false; });
+        this.container.bind('click',     function () { return false; });
 
-        this.scale_container.bind('dragstop', $.proxy(this.scaleContainerDragStop, this));
-
-        this.scale_button.bind('click', $.proxy(this.earthMinimize, this));
+        this.container.bind('dragstop', $.proxy(this.scaleContainerDragStop, this));
 
         this.display();
+    },
+
+    /**
+     * @description
+     */
+    hideScale: function () {
+        this.container.hide();
+        
+    	Helioviewer.userSettings.set("state.scale", false);
+		Helioviewer.userSettings.set("state.scaleType", 'disabled');
+		
+		this.buttonScaleBar.attr('title','Show Length scale Indicator');
+		this.buttonEarth.attr('title','Show Earth-Scale Indicator');
+        
+        this.buttonEarth.removeClass("active");
+        this.buttonScaleBar.removeClass("active");
+    },
+
+    /**
+     * @description
+     */
+    earthScale: function () {
+		var scaleXY = this.resetIfOutsideViewportBounds();
+		
+        this.mouseCoords = "earth";
+        this.container.show();
+        
+    	Helioviewer.userSettings.set("state.scale", true);
+		Helioviewer.userSettings.set("state.scaleType", 'earth');
+        Helioviewer.userSettings.set("state.scaleX", scaleXY.x);
+		Helioviewer.userSettings.set("state.scaleY", scaleXY.y);
+		
+		this.buttonScaleBar.attr('title','Show Length scale Indicator');
+		this.buttonEarth.attr('title','Hide Earth-Scale Indicator');
+        
+        $('#earthLabel').html('Earth Scale');
+        $('#earthScale').show();
+        $('#barScaleBlock').hide();
+        this.buttonScaleBar.removeClass("active");
+        this.buttonEarth.addClass("active");
+        this.buttonScaleBar.removeClass("active");
+        
+
+        this._getScaleSettings();
+    },
+
+    /**
+     * @description
+     */
+    barScale: function () {
+		var scaleXY = this.resetIfOutsideViewportBounds();
+		
+        this.mouseCoords = "scalebar";
+        this.container.show();
+        
+    	Helioviewer.userSettings.set("state.scale", true);
+		Helioviewer.userSettings.set("state.scaleType", 'scalebar');
+        Helioviewer.userSettings.set("state.scaleX", scaleXY.x);
+		Helioviewer.userSettings.set("state.scaleY", scaleXY.y);
+		
+		this.buttonScaleBar.attr('title','Hide Length scale Indicator');
+		this.buttonEarth.attr('title','Show Earth-Scale Indicator');
+        
+        $('#earthLabel').html('Bar Scale');
+        $('#barScaleBlock').show();
+        $('#earthScale').hide();
+        this.buttonScaleBar.addClass("active");
+        this.buttonEarth.removeClass("active");
+        
+
+        this._getScaleSettings();
+    },
+
+    updateImageScale: function (imageScale) {
+        this.imageScale = imageScale;
+        if ( this.scaleType == "earth" ) {
+            this.earthScale();
+        }
+        else if ( this.scaleType == "scalebar" ) {
+            this.barScale();
+        }
+    },
+
+	/**
+     * @description Toggles scale visibility
+     */
+    toggleScale: function () {
+        // Case 1: Disabled -> Earth
+        if (this.scaleType === "disabled") {
+            this.earthScale();
+        }
+
+        // Case 2: Earth -> Bar
+        else if (this.scaleType === "earth") {
+            this.barScale();
+        }
+
+        // Case 3: Bar -> Disabled
+        else if (this.mouseCoords === "scalebar") {
+            this.container.hide();
+            this.scaleType = "disabled";
+            this.buttonEarth.removeClass("active");
+            this.buttonScaleBar.removeClass("active");
+        }
     },
 
     earthRescale: function() {
         // Grab new imageScale and recompute Earth scale pixel size
         this._earthDiameterInPixels();
+        this._scaleBarSizeInKM();
 
         this.scale_image.css({
             'width' : this.earthDiameterInPixels+'px',
@@ -80,41 +195,15 @@ var ImageScale = Class.extend(
             'left': (36-(this.earthDiameterInPixels/2))+'px',
             'top' : (23-(this.earthDiameterInPixels/2))+'px'
         });
-
+		
+		$('#barScaleLabel').html( this.scaleBarSizeInKM + ' km');
+		
         // Update X,Y position of scale container (in arcseconds)
         this.scaleContainerDragStop();
     },
 
-    earthMinimize: function(event) {
-        Helioviewer.userSettings.set("state.scale", false);
-        Helioviewer.userSettings.set("state.scaleType", 'earth');
-        this.scale_button.attr('title','Show Earth-Scale Indicator');
-        this.scale_container.hide();
-        this.scale_button.unbind();
-        this.scale_button.bind('click',  $.proxy(this.earthMaximize,  this));
-        this.scale_button.toggleClass('active', false);
-        this._getScaleSettings();
-    },
-
-    earthMaximize: function() {
-        var scaleXY;
-
-        scaleXY = this.resetIfOutsideViewportBounds();
-
-        Helioviewer.userSettings.set("state.scale", true);
-        Helioviewer.userSettings.set("state.scaleType", 'earth');
-        Helioviewer.userSettings.set("state.scaleX", scaleXY.x);
-        Helioviewer.userSettings.set("state.scaleY", scaleXY.y);
-        this.scale_button.attr('title','Hide Earth-Scale Indicator');
-        this.scale_container.show();
-        this.scale_button.unbind();
-        this.scale_button.bind('click',  $.proxy(this.earthMinimize,  this));
-        this.scale_button.toggleClass('active', true);
-        this._getScaleSettings();
-    },
-
     scaleContainerDragTo: function(containerX, containerY) {
-        this.scale_container.css({
+        this.container.css({
             'position' : 'absolute',
             'top'      : containerY+'px',
             'left'     : containerX+'px'
@@ -127,11 +216,11 @@ var ImageScale = Class.extend(
 
         scaleXY = this.resetIfOutsideViewportBounds();
 
-        Helioviewer.userSettings.set("state.scaleType",'earth');
+        //Helioviewer.userSettings.set("state.scaleType",'earth');
         Helioviewer.userSettings.set("state.scaleX",    scaleXY.x);
         Helioviewer.userSettings.set("state.scaleY",    scaleXY.y);
-        Helioviewer.userSettings.set("state.containerX",this.scale_container.position().left);
-        Helioviewer.userSettings.set("state.containerY",this.scale_container.position().top);
+        Helioviewer.userSettings.set("state.containerX",this.container.position().left);
+        Helioviewer.userSettings.set("state.containerY",this.container.position().top);
         this._getScaleSettings();
     },
 
@@ -142,15 +231,15 @@ var ImageScale = Class.extend(
 
         // Snap back to default position if dragged outside of Viewport bounds
         if ( Helioviewer.userSettings.get("state.containerX") <= 0 ||
-             Helioviewer.userSettings.get("state.containerX") >= this.scale_container.parent().width()-this.scale_container.width() ||
+             Helioviewer.userSettings.get("state.containerX") >= this.container.parent().width()-this.container.width() ||
              Helioviewer.userSettings.get("state.containerY") <= $('#hv-header').height() ||
-             Helioviewer.userSettings.get("state.containerY") >= this.scale_container.parent().height()-this.scale_container.height()
+             Helioviewer.userSettings.get("state.containerY") >= this.container.parent().height()-this.container.height()
             ) {
 
-            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.scale_container.width()/2;
-            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.scale_container.height();
+            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.container.width()/2;
+            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
 
-            this.scale_container.css({
+            this.container.css({
                 'position' : 'absolute',
                 'top'      : this.containerY+'px',
                 'left'     : this.containerX+'px'
@@ -162,7 +251,7 @@ var ImageScale = Class.extend(
             Helioviewer.userSettings.get("state.containerY")
         );
 
-        Helioviewer.userSettings.set("state.scaleType",'earth');
+        //Helioviewer.userSettings.set("state.scaleType",'earth');
         Helioviewer.userSettings.set("state.scaleX",    scaleXY.x);
         Helioviewer.userSettings.set("state.scaleY",    scaleXY.y);
 
@@ -170,7 +259,17 @@ var ImageScale = Class.extend(
 
         return scaleXY;
     },
-
+	
+	_scaleBarSizeInKM: function(){
+		this.imageScale  = Helioviewer.userSettings.get("state.imageScale");
+		
+		var earthInPixels = 2 * this._earthSunRadiusFraction * (this._rsunInArcseconds / this.imageScale);
+		
+		var sizeInKM = Math.round((50 * (2 * 6367.5)) / earthInPixels);
+		var sizeInKMRounded = Math.round(sizeInKM/1000)*1000;
+		
+		this.scaleBarSizeInKM = sizeInKMRounded.toLocaleString();
+	},
 
     _earthDiameterInPixels: function() {
         this.imageScale  = Helioviewer.userSettings.get("state.imageScale");
@@ -192,18 +291,19 @@ var ImageScale = Class.extend(
         if ( parseInt(Helioviewer.userSettings.get("state.scaleX")) == 0 ||
              parseInt(Helioviewer.userSettings.get("state.scaleY")) == 0 ) {
 
-            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.scale_container.width()/2;
-            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.scale_container.height();
+            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.container.width()/2;
+            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
             this.scale = false;
         }
 
         this.scaleContainerDragTo(this.containerX, this.containerY);
 
-        if ( this.scale === false ) {
-            this.earthMinimize();
-        }
-        else {
-            this.earthMaximize();
+        if ( this.scaleType === 'earth' ) {
+            this.earthScale();
+        } else if( this.scaleType === 'scalebar' ) {
+            this.barScale();
+        } else {
+            this.hideScale();
         }
     }
 });
