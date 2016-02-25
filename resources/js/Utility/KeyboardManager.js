@@ -122,6 +122,7 @@ var KeyboardManager = Class.extend(
             'c': 'center-viewport',
             'd': 'toggle-event-labels',
             'm': 'toggle-mouse-coords',
+            's': 'toggle-scale-window',
             '-': 'zoom-out',
             '_': 'zoom-out',
             '=': 'zoom-in',
