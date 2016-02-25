@@ -1711,7 +1711,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var self = this, buttonId = "#movies-button";
 
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerMovies.attr('id'));
-
+		
+		self._movieManagerUI._refresh();
+		
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
             self.drawerMovies.css('transition', '');
             $('.drawer-contents', this.drawerMovies).fadeOut(10);
@@ -1743,8 +1745,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var self = this, buttonId = "#screenshots-button";
 
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerScreenshots.attr('id'));
-
+		
+		self._screenshotManagerUI._refresh();
+        
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
+	        
             self.drawerScreenshots.css('transition', '');
             $('.drawer-contents', this.drawerScreenshots).fadeOut(10);
             this.drawerScreenshots.css('width', 0);
