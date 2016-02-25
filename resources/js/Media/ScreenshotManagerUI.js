@@ -213,6 +213,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             );
             self._addItem(screenshot);
             self._displayDownloadNotification(screenshot);
+            self._refresh();
         }, Helioviewer.dataType);
     },
 
