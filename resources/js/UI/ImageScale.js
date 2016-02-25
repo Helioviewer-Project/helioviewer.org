@@ -213,14 +213,15 @@ var ImageScale = Class.extend(
 
     scaleContainerDragStop: function(event) {
         var scaleXY;
+        
+        Helioviewer.userSettings.set("state.containerX",this.container.position().left);
+        Helioviewer.userSettings.set("state.containerY",this.container.position().top);
 
         scaleXY = this.resetIfOutsideViewportBounds();
 
         //Helioviewer.userSettings.set("state.scaleType",'earth');
         Helioviewer.userSettings.set("state.scaleX",    scaleXY.x);
         Helioviewer.userSettings.set("state.scaleY",    scaleXY.y);
-        Helioviewer.userSettings.set("state.containerX",this.container.position().left);
-        Helioviewer.userSettings.set("state.containerY",this.container.position().top);
         this._getScaleSettings();
     },
 
