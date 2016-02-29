@@ -32,7 +32,7 @@ For more information, please visit our <a href="http://helioviewer.org/wiki/Main
 <!-- Sponsored by -->
 <div id="about-credits" style="width:100%; text-align:center;">
     <span style="margin-left:auto; margin-right: auto;">
-        <b>Sponsored by: </b><br />
+        <b>Helioviewer.org makes use of the following tools:</b><br />
         <a href="https://www.browserstack.com/" style="text-decoration: underline;" target="_blank">BrowserStack</a> - Cross Browser Testing Tool.<br/>
         <a href="http://www.highcharts.com/" style="text-decoration: underline;" target="_blank">Highcharts</a> - Interactive JavaScript charts for your webpage.<br/>
 
