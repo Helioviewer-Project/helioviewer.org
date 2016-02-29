@@ -5,9 +5,9 @@
 </div>-->
 <br />
 
-Helioviewer.org is part of the <a href="https://github.com/Helioviewer-Project" style="text-decoration: underline; font-weight: normal;" class="light">Helioviewer Project</a>, an open-source project for the visualization of solar and heliospheric data.
+Helioviewer.org is part of the <a href="https://github.com/Helioviewer-Project" style="text-decoration: underline; font-weight: normal;" class="light" target="_blank">Helioviewer Project</a>, an open-source project for the visualization of solar and heliospheric data.
 The Helioviewer Project is funded by <acronym title="European Space Agency">ESA</acronym> and <acronym title="National Aeronautics and Space Administration">NASA</acronym>.
-For more information, please visit our <a href="http://helioviewer.org/wiki/Main_Page" style="text-decoration: underline; font-weight: normal;" class="light">Wiki</a>.
+For more information, please visit our <a href="http://helioviewer.org/wiki/Main_Page" style="text-decoration: underline; font-weight: normal;" class="light" target="_blank">Wiki</a>.
 
 <br /><br />
 
@@ -15,16 +15,26 @@ For more information, please visit our <a href="http://helioviewer.org/wiki/Main
 <div id="about-credits" style="width:100%; text-align:center;">
     <span style="margin-left:auto; margin-right: auto;">
         <b>Credits: </b><br />
-        <a href="http://sdo.gsfc.nasa.gov/">SDO (NASA)</a>,
-        <a href="http://sohowww.nascom.nasa.gov/">SOHO</a> (<a href="http://soho.esac.esa.int/" title="European Space Agency">ESA</a>/<a href="http://nasa.gov/" title="National Aeronautics and Space Administration">NASA</a>),
-        <a href="http://www.nasa.gov/mission_pages/stereo/main/index.html">STEREO (NASA)</a>,
-        <a href="http://sci.esa.int/proba2/">PROBA2 (ESA)</a>,
-        <a href="http://www.isas.ac.jp/e/enterp/missions/yohkoh/index.shtml">Yohkoh (JAXA/NASA/PPARC)</a>,
-        <a href="http://www.nasa.gov/centers/goddard/home/index.html" title="Goddard Space Flight Center">GSFC</a>,
-        <a href="http://www.astro.oma.be/" title="Royal Observatory of Belgium">Royal Observatory of Belgium</a>,
-        <a href="http://www.lmsal.com" title="Lockheed Martin Solar &amp; Astrophysics Laboratory">LMSAL</a>,
-        <a href="http://umbra.nascom.nasa.gov/" title="Solar Data Analysis Center">SDAC</a>,
-        <a href="http://sun.stanford.edu/">Stanford University</a>,
-        <a href="http://solar.physics.montana.edu/sol_phys/fft/">MSU/SDO-FFT</a>
+        <a href="http://sdo.gsfc.nasa.gov/" target="_blank">SDO (NASA)</a>,
+        <a href="http://sohowww.nascom.nasa.gov/" target="_blank">SOHO</a> (<a href="http://soho.esac.esa.int/" title="European Space Agency" target="_blank">ESA</a>/<a href="http://nasa.gov/" title="National Aeronautics and Space Administration" target="_blank">NASA</a>),
+        <a href="http://www.nasa.gov/mission_pages/stereo/main/index.html" target="_blank">STEREO (NASA)</a>,
+        <a href="http://sci.esa.int/proba2/" target="_blank">PROBA2 (ESA)</a>,
+        <a href="http://www.isas.ac.jp/e/enterp/missions/yohkoh/index.shtml" target="_blank">Yohkoh (JAXA/NASA/PPARC)</a>,
+        <a href="http://www.nasa.gov/centers/goddard/home/index.html" title="Goddard Space Flight Center" target="_blank">GSFC</a>,
+        <a href="http://www.astro.oma.be/" title="Royal Observatory of Belgium" target="_blank">Royal Observatory of Belgium</a>,
+        <a href="http://www.lmsal.com" title="Lockheed Martin Solar &amp; Astrophysics Laboratory" target="_blank">LMSAL</a>,
+        <a href="http://umbra.nascom.nasa.gov/" title="Solar Data Analysis Center" target="_blank">SDAC</a>,
+        <a href="http://sun.stanford.edu/" target="_blank">Stanford University</a>,
+        <a href="http://solar.physics.montana.edu/sol_phys/fft/" target="_blank">MSU/SDO-FFT</a>
+    </span>
+</div>
+<br />
+<!-- Sponsored by -->
+<div id="about-credits" style="width:100%; text-align:center;">
+    <span style="margin-left:auto; margin-right: auto;">
+        <b>Sponsored by: </b><br />
+        <a href="https://www.browserstack.com/" style="text-decoration: underline;" target="_blank">BrowserStack</a> - Cross Browser Testing Tool.<br/>
+        <a href="http://www.highcharts.com/" style="text-decoration: underline;" target="_blank">Highcharts</a> - Interactive JavaScript charts for your webpage.<br/>
+
     </span>
 </div>
