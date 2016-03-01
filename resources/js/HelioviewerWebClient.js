@@ -502,7 +502,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		});
 		var isIe = (navigator.userAgent.toLowerCase().indexOf("msie") != -1 || navigator.userAgent.toLowerCase().indexOf("trident") != -1);
 		document.addEventListener('copy', function(e) {
-			var textToPutOnClipboard = self.toURL();
+			if(e.target.className == 'helioviewer-url-input-box'){
+				var textToPutOnClipboard = $(e.target).val();
+			}else{
+				var textToPutOnClipboard = self.toURL();
+			}
+			
 		    if (isIe) {
 		        window.clipboardData.setData('Text', textToPutOnClipboard);    
 		    } else {
@@ -1313,7 +1318,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             dataType: Helioviewer.dataType,
             data: {
                 "action": "shortenURL",
-                "queryString": url.substr(this.serverSettings.rootURL.length + 2)
+                "queryString": this.serverSettings.rootURL + '/?' + url.substr(this.serverSettings.rootURL.length + 2)
             },
             success: callback
         });
