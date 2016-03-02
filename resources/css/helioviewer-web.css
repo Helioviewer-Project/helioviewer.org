@@ -470,6 +470,14 @@ html, body {
    text-align: center;
    width: 1em;
 }
+.disclosure-triangle-alway-open {
+   color: rgba(0,0,0,1);
+   font-size: 0.8em;
+   padding: 0 0.1em 0 0.5em;
+   display: inline-block;
+   text-align: center;
+   width: 1em;
+}
 .accordion .header:hover .disclosure-triangle {
    color: rgba(255,255,255,1);
 }
