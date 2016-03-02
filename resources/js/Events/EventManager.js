@@ -370,7 +370,8 @@ var EventManager = Class.extend({
 
             checkedFRMs[checkedTypeObj['event_type']] = [];
             $.each ( checkedTypeObj['frms'], function(j, frmName) {
-                checkedFRMs[checkedTypeObj['event_type']].push(frmName);
+	            var frmNameChanged = frmName.replace(/\\/g,'');
+                checkedFRMs[checkedTypeObj['event_type']].push(frmNameChanged);
             });
         });
 

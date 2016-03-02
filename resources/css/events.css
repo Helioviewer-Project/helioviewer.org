@@ -68,7 +68,7 @@
     position: absolute;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 280px;
+    width: 330px;
 }
 .event-popup h1 {
     display: inline-block;
