@@ -213,7 +213,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 delay: 1000
             },
             style: {
-                classes:'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
+                classes:'qtip-light qtip-shadow qtip-rounded'
             }
         });
 
