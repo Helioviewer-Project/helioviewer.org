@@ -1402,7 +1402,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 });
 				
 				if(newNewsAmount > 0){
-			        $('#news-button').html('<span class="notification-counter">!</span>');
+			        $('#news-button').html('<span class="notification-counter">'+newNewsAmount+'</span>');
 		        }
 				
                 more = "<div id='more-articles'><a href='" + url +
