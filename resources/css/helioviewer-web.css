@@ -958,7 +958,6 @@ span.ui-icon-hover, div.ui-icon-hover {
 }
 
 
-
 /* NEWS */
 #hv-header #news-button:hover,
 #hv-header #news-button.opened {
@@ -1275,3 +1274,18 @@ span.ui-icon-hover, div.ui-icon-hover {
     border-color: yellow;
 }
 
+.notification-counter {   
+    position: relative;
+    top: -10px;
+    left: 0px;
+    
+    background-color: rgba(212, 19, 13, 1);
+    color: #fff;
+    border-radius: 15px;
+    padding: 1px 3px;
+    font-size: 8px;
+    border-color: #fff;
+    border-width: 1px;
+    border-style: solid;
+    font-weight: bold;
+}
