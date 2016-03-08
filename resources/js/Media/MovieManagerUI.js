@@ -760,16 +760,23 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     getVideoPlayerHTML: function (movie, width, height) {
         var downloadURL, downloadLink, youtubeBtn,
-            linkBtn, linkURL, tweetBtn, facebookBtn;
+            linkBtn, linkURL, gifLink, gifURL, tweetBtn, facebookBtn;
 
         // Download
         downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
                       "&format=mp4&hq=true";
+        //gifURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
+        //              "&format=gif";
 
         downloadLink = "<div style='float:left;'><a target='_parent' href='" + downloadURL +
             "' title='Download high-quality video'>" +
             "<img style='width:93px; height:32px;' class='video-download-icon' " +
             "src='resources/images/download_93x32.png' /></a></div>";
+         
+        //gifLink = "<div style='float:left;'><a target='_parent' href='" + gifURL +
+        //    "' title='Download animated GIF image'>" +
+        //    "<img style='width:93px; height:32px;' class='video-download-icon' " +
+        //    "src='resources/images/gif_93x32.png' /></a></div>";    
 
         // Upload to YouTube
         youtubeBtn = '<div style="float:left;"><a id="youtube-upload-' + movie.id + '" href="#" ' +
@@ -802,7 +809,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                    '" controls preload autoplay' +
                    ' style="width:100%; height: 90%;"></video></div>' +
                    '<div style="width:100%"><div style="float:left;" class="video-links">' +
-                   youtubeBtn + linkBtn + downloadLink +
+                   youtubeBtn + linkBtn + downloadLink + //gifLink +
                    '</div> <div style="float:right;">' + facebookBtn +
                    tweetBtn + '</div></div>';
         }
@@ -820,7 +827,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                    '</div>' +
                    '<div style="width:100%;">' +
                        '<div style="float:left;" class="video-links">' +
-                        youtubeBtn + linkBtn + downloadLink +
+                        youtubeBtn + linkBtn + downloadLink + //gifLink +
                    '</div>' +
                    '<div style="float:right;">' + facebookBtn + tweetBtn +
                    '</div>';
