@@ -1246,10 +1246,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             + '&xCen='   +  $('#sdo-center-x').val()
             + '&yCen='   + ($('#sdo-center-y').val()*-1)
             + '&wavelengths=' + waves.join(',')
-            + '&startDate=' + $('#vso-start-date').val().replace(/\//g,'-')
-            + '&startTime=' + $('#vso-start-time').val().slice(0,-3)
-            + '&stopDate='  + $('#vso-end-date').val().replace(/\//g,'-')
-            + '&stopTime='  + $('#vso-end-time').val().slice(0,-3)
+            + '&startDate=' + $('#sdo-start-date').val().replace(/\//g,'-')
+            + '&startTime=' + $('#sdo-start-time').val().slice(0,-3)
+            + '&stopDate='  + $('#sdo-end-date').val().replace(/\//g,'-')
+            + '&stopTime='  + $('#sdo-end-time').val().slice(0,-3)
             + '&cadence=12'
         );
 
