@@ -411,7 +411,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             btns;
 
 
-        $(document).on('update-external-datasource-integration', $.proxy(this.updateExternalDataSourceIntegration, this, true));
+        $(document).on('update-external-datasource-integration', $.proxy(this.updateExternalDataSourceIntegration, this, false));
+        $(document).on('observation-time-layers-changed', $.proxy(this.updateExternalDataSourceIntegration, this, true));
 
         $('#accordion-vso input[type=text]').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this, false));
 
@@ -2054,6 +2055,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             vsoButtons      = $('#vso-buttons'),
             sdoPreviews     = $('#sdo-previews'),
             sdoButtons      = $('#sdo-buttons'),
+            sdoGlobal 		= global,
+            vsoGlobal 		= global,
             vport, imageScale;
 
         if ( typeof this.viewport._tileLayerManager == 'undefined' ) {
@@ -2064,13 +2067,19 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         imageScale = vport['imageScale'];  // Arcseconds per pixel
 
         if ( $('#accordion-vso .content').is(':visible') ) {
+            if($('#vso-start-date').val() == ''){
+	            vsoGlobal = true;
+            }
             this.updateVSOaccordion(vsoLinks, vsoPreviews, vsoButtons,
-                imageAccordions, imageScale, global);
+                imageAccordions, imageScale, vsoGlobal);
         }
 
         if ( $('#accordion-sdo .content').is(':visible') ) {
+            if($('#sdo-start-date').val() == ''){
+	            sdoGlobal = true;
+            }
             this.updateSDOaccordion(sdoPreviews, sdoButtons, imageAccordions,
-                imageScale, global);
+                imageScale, sdoGlobal);
         }
     },
 
