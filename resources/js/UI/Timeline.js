@@ -1062,22 +1062,32 @@ var Timeline = Class.extend({
     setTitle: function(e){
 	    var chart = $('#data-coverage-timeline').highcharts();
 		
-	    if(typeof chart.xAxis[0].series[0] == 'undefined' || typeof chart.xAxis[0].series[0].points[0] == 'undefined' || chart.xAxis[0].series[0].points[0].x < 0){
+	    /*if(typeof chart.xAxis[0].series[0] == 'undefined' || typeof chart.xAxis[0].series[0].points[0] == 'undefined' || chart.xAxis[0].series[0].points[0].x < 0){
 			return false;    
 	    }
-	    
+
 	    var minTime = chart.xAxis[0].series[0].points[0].x;
 	    
 		if(typeof chart.xAxis[0].closestPointRange != 'undefined'){
 	    	var pointsCount = chart.xAxis[0].series[0].points.length;
 			var lastPoint = chart.xAxis[0].series[0].points[pointsCount-1].x + chart.xAxis[0].closestPointRange;
 			e.max = lastPoint;
+		}*/
+		
+		if(typeof chart.xAxis[0].series[0] == 'undefined' || typeof chart.xAxis[0].series[0].points[0] == 'undefined' || chart.xAxis[0].series[0].points[0].x < 0){
+			return false;    
+	    }
+
+	    var minTime = chart.xAxis[0].series[0].points[0].x;
+	    
+		if(typeof chart.xAxis[0].closestPointRange != 'undefined'){
+			e.max = e.max + chart.xAxis[0].closestPointRange;
 		}
 		
 	    if(minTime > e.min){
 		    e.min = minTime;
 	    }
-	    
+
 	    chart.setTitle({ text: Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+' - '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',e.max) });
     },
     
