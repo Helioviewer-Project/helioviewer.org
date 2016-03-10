@@ -412,7 +412,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 
         $(document).on('update-external-datasource-integration', $.proxy(this.updateExternalDataSourceIntegration, this, false));
-        $(document).on('observation-time-layers-changed', $.proxy(this.updateExternalDataSourceIntegration, this, true));
+        $(document).on('observation-time-changed', function(e){
+	        setTimeout(function(){ self.updateExternalDataSourceIntegration(true,e); }, 500);
+        });
 
         $('#accordion-vso input[type=text]').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this, false));
 
@@ -883,7 +885,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     updateVSOaccordion: function (vsoLinks, vsoPreviews, vsoButtons, imageAccordions, imageScale, global) {
 
-        var nickname, startDate, endDate, sourceId,
+        var nickname, startDate, endDate, globalStartDate, globalEndDate, sourceId,
             sourceIDs = Array(), instruments = Array(), waves = Array(),
             sTimestamp = 0,
             eTimestamp = 0,
@@ -904,17 +906,20 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 var date     = $(accordion).find('.timestamp').html();
 				var timestamp = new Date(date).getTime();
 				
+				
+				if(sTimestamp == 0 || timestamp < sTimestamp){
+					sTimestamp = timestamp;
+				}
+				if(eTimestamp == 0 || timestamp > eTimestamp){
+					eTimestamp = timestamp;
+				}
+				
+				var sDate = new Date(timestamp);
+				
+				globalStartDate = globalEndDate = sDate.toDateString() + 'T' + sDate.toTimeString() + 'Z';
+				
 				if(global){
-					if(sTimestamp == 0 || timestamp < sTimestamp){
-						sTimestamp = timestamp;
-					}
-					if(eTimestamp == 0 || timestamp > eTimestamp){
-						eTimestamp = timestamp;
-					}
-					
-					
-					var sDate = new Date(timestamp);
-					startDate = endDate = sDate.toDateString() + 'T' + sDate.toTimeString() + 'Z';
+					startDate = endDate = globalStartDate;
 				}else{
 					startDate = $('#vso-start-date').val() + 'T'
 	                          + $('#vso-start-time').val() + 'Z';
@@ -928,10 +933,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 if ( parseInt(nickname.split(' ')[1], 10) ) {
                     waves.push(parseInt(nickname.split(' ')[1], 10));
                 }
-
-                vsoLinks.append(
-                    self._vsoLink(startDate, endDate, nickname)
+                
+				vsoLinks.append(
+                    self._vsoLink(globalStartDate, globalEndDate, nickname)
                 );
+                
                 vsoPreviews.append(
                     self._vsoThumbnail(startDate, startDate, nickname, sourceId)
                 );
@@ -1832,6 +1838,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
             setTimeout(function () {
                 $(document).trigger('update-external-datasource-integration');
+                $(document).trigger('observation-time-layers-changed');
             }, 50);
         }
 

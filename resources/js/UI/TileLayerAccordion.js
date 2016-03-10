@@ -80,7 +80,6 @@ var TileLayerAccordion = Layer.extend(
         this._initOpacitySlider(id, opacity, onOpacityChange);
         this._setupEventHandlers(id);
         this._updateTimeStamp(id, date);
-        $(document).trigger('observation-time-layers-changed');
     },
 
     /**
@@ -527,7 +526,6 @@ var TileLayerAccordion = Layer.extend(
         });
 
         $(document).trigger('update-external-datasource-integration');
-        $(document).trigger('observation-time-layers-changed');
     },
 
     /**
