@@ -1546,8 +1546,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     updateHeightsInsideViewportContainer: function() {
         var newHeight, sidebars, windowHeight = parseInt($(window).height()),
-            header, viewport, drawerBottom, drawerLeft, drawerRight;
-
+            header, viewport, drawerBottom, drawerLeft, drawerRight, self = this;
+		
         header       = $('#hv-header');
         viewport     = $('#helioviewer-viewport');
         drawerLeft   = $('#hv-drawer-left');
@@ -1560,11 +1560,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var drawerData   	= $('#hv-drawer-data');
         var drawerShare   	= $('#hv-drawer-share');
         var drawerHelp   	= $('#hv-drawer-help');
+		var isOpen 			= Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline.open");
 
         sidebars = [drawerLeft, drawerNews, drawerYouTube, drawerMovies, drawerScreenshots, drawerData, drawerShare, drawerHelp];
 		
         $.each(sidebars, function(i, sidebar) {
-            if(self.drawerTimelineOpened == true){
+            if(isOpen == true){
 	            
 	            newHeight = windowHeight
                       - parseInt(header.css('border-top-width'))
@@ -1581,9 +1582,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                       - parseInt(sidebar.css('margin-bottom'))
                       - parseInt(sidebar.css('border-bottom-width'));
 
-				sidebar.css('max-height', (newHeight - self.drawerTimelineOpenedHeight) + 'px');
+				sidebar.css('max-height', (newHeight - drawerBottom.height()) + 'px');
             }else{
-	            //sidebar.css('max-height', '100%');
+	            sidebar.css('max-height', '100%');
             }
         });
 		/*
@@ -1627,6 +1628,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 	
 	drawerTimelineClick: function(openNow) {
+		var self = this;
         if ( this.drawerTimelineOpened || openNow === false ) {
             this.drawerTimeline.css('height', 0);
             $('.drawer-contents', this.drawerTimeline).hide();
@@ -1656,7 +1658,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             //for (var i=1; i<=this.drawerSpeed; i=i+10) {
             //    setTimeout(this.updateHeightsInsideViewportContainer, i);
             //}
-            setTimeout(self.updateHeightsInsideViewportContainer, this.drawerSpeed);
+            setTimeout(this.updateHeightsInsideViewportContainer, this.drawerSpeed);
 			
 			Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline.open", true);
             this.drawerTimelineOpened = true;
