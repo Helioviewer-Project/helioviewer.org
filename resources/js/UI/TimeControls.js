@@ -258,42 +258,32 @@ var TimeControls = Class.extend(
      */
     _initDatePicker: function () {
         var btnId, btn, self = this;
-
-        // Initialize datepicker
-        this.cal = this._dateInput.datepicker({
-            buttonImage    : 'resources/images/blackGlass/calendar_small.png',
-            buttonImageOnly: true,
-            buttonText     : "Select a date.",
-            changeYear     : true,
-            dateFormat     : 'yy/mm/dd',
-            mandatory      : true,
-            showOn         : 'button',
-            yearRange      : '1990:'+String((new Date).getFullYear()),
-            onSelect       : function (dateStr) {
-                window.setTimeout(function () {
-                    self._onTextFieldChange();
-                }, 500);
-            }
-        });
-
-        // Datepicker icon
-        btnId = '#observation-controls .ui-datepicker-trigger';
-        btn   = $(btnId);
-
-        btn.hover(
-            function () {
-                this.src = "resources/images/blackGlass/calendar_small-hover.png";
-            },
-            function () {
-                this.src = "resources/images/blackGlass/calendar_small.png";
-            }
-        ).attr("title", "Select an observation date.")
-         .click(function () {
-                btn.qtip("hide");
-            });
-
-        // Tooltips
-        btn.qtip();
+		this._dateInput.datetimepicker({
+			timepicker:false,
+			format:'Y/m/d',
+			theme:'dark'
+		});
+		
+		//TimePicker
+		var time = '';
+		this._timeInput.TimePickerAlone({
+			twelveHoursFormat:false,
+			seconds:true,
+			ampm:false,
+			saveOnChange: false,
+			//mouseWheel:false,
+			theme:'dark',
+			onHide: function ($input) {
+				if(time != ''){
+					$input.val(time).change();
+				}
+				
+				return true;
+			},
+			onChange: function (str, datetime) {
+				time = str;
+			}
+		});
     },
 
     /**
