@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,user-scalable=no" />
+	<link href='https://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
+	<title>TimePicker Demo by XDSoft.net</title>
+	<link rel="stylesheet" href="build/jquery.timepicker.min.css">
+	<script src="moment.min.js"></script>
+	<script src="jquery.min.js"></script>
+	<script src="jquery.mousewheel.min.js"></script>
+	<script src="build/jquery.timepicker.min.js"></script>
+</head>
+<body>
+	<input value="16:23:01" type="text"/>
+	<script>
+	$('input').TimePickerAlone({
+		hours: true,
+		minutes: true,
+		seconds: false,
+		ampm: true
+	});
+	window.onerror = function (m){
+	alert(m)
+	}
+	</script>
+	<p>
+		<a href="http://xdsoft.net/jqplugins/timepicker/">Documentation</a>
+	</p>
+</body>
+</html>
