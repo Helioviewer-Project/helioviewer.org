@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<svg height="12px" version="1.1" viewBox="0 0 9 12" width="9px" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title/>
+	<desc/>
+	<defs/>
+	<g transform="rotate(180 4.1999969482421875,6) " fill="none" fill-rule="evenodd" id="Page-1" stroke="none" stroke-width="1">
+		<g fill="#444444" id="Core" transform="translate(-218.000000, -90.000000)">
+			<g id="chevron-left" transform="translate(218.500000, 90.000000)">
+				<path d="M7.4,1.4 L6,0 L-8.8817842e-16,6 L6,12 L7.4,10.6 L2.8,6 L7.4,1.4 Z" id="Shape"/>
+			</g>
+		</g>
+	</g>
+</svg>

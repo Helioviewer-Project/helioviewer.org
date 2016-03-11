@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Period Picker Demo</title>
+	<link rel="stylesheet" href="build/jquery.periodpicker.min.css">
+	<link rel="stylesheet" href="build/jquery.timepicker.min.css">
+	<script src="jquery.min.js"></script>
+	<script src="build/jquery.periodpicker.full.min.js"></script>
+    <style>
+        pre {
+            font-family: Consolas, 'Liberation Mono', Courier, monospace;
+            color: #f0f0f0;
+            background: #3f3f3f;
+            border-radius: 3px;
+            white-space: pre-wrap;
+            tab-size: 2em;
+            padding:10px;
+            font-family: Menlo, Monaco, monospace, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>Period Picker is so good!</h1>
+    <pre>&lt;input type="text" value="12:00 2012/12/12" id="datetimepicker"/&gt;</pre>
+    <pre></pre>
+	<input type="text" value="12:00 2012/12/12" id="datetimepicker"/>
+<script>jQuery('#datetimepicker').periodpicker({
+    norange: true, // use only one value
+    cells: [1, 1], // show only one month
+
+    resizeButton: false, // deny resize picker
+    fullsizeButton: false,
+    fullsizeOnDblClick: false,
+
+    timepicker: true, // use timepicker
+    timepickerOptions: {
+        hours: true,
+        minutes: true,
+        seconds: false,
+        ampm: true
+    }
+});
+</script>
+	<script>
+        document.getElementsByTagName('pre')[1].innerText = document.getElementsByTagName('script')[2].innerHTML;
+	</script>
+	<p>
+		<a href="http://xdsoft.net/jqplugins/periodpicker/">Documentation</a>
+	</p>
+</body>
+</html>
