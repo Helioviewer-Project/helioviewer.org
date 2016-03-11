@@ -13,7 +13,7 @@
   font-family: 'Century Gothic', CenturyGothic, AppleGothic, 'Muli', sans-serif;
   font-size: 1em;
   overflow: hidden;
-  font-size: 16px;
+  font-size: 12px;
   padding: 0;
 }
 .periodpicker_timepicker,
@@ -87,14 +87,14 @@
   -o-transition: font 0.1s linear;
   transition: font 0.1s linear;
   position: relative;
-  color: #727272;
+  color: #9f9f9f;
 }
 .periodpicker_timepicker .periodpicker_timepicker_sliders > div > div > div.active {
   -webkit-transition: none;
   -moz-transition: none;
   -o-transition: none;
   transition: none;
-  color: #4B4B4B;
+  color: #fcfcfc;
   font-size: 1.1em;
   font-weight: 700;
 }
@@ -120,9 +120,9 @@
   left: 0px;
   right: 0px;
   height: 20px;
-  -webkit-box-shadow: inset 1px 32px 20px 0px rgba(255, 255, 255, 0.55);
-     -moz-box-shadow: inset 1px 32px 20px 0px rgba(255, 255, 255, 0.55);
-          box-shadow: inset 1px 32px 20px 0px rgba(255, 255, 255, 0.55);
+  -webkit-box-shadow: inset 1px 32px 20px 0px rgba(0, 0, 0, 0.55);
+     -moz-box-shadow: inset 1px 32px 20px 0px rgba(0, 0, 0, 0.55);
+          box-shadow: inset 1px 32px 20px 0px rgba(0, 0, 0, 0.55);
   z-index: 2;
 }
 .periodpicker_timepicker:after {
@@ -132,9 +132,9 @@
   right: 0px;
   bottom: 0;
   height: 20px;
-  -webkit-box-shadow: inset 0px -32px 20px 0px rgba(255, 255, 255, 0.55);
-     -moz-box-shadow: inset 0px -32px 20px 0px rgba(255, 255, 255, 0.55);
-          box-shadow: inset 0px -32px 20px 0px rgba(255, 255, 255, 0.55);
+  -webkit-box-shadow: inset 0px -32px 20px 0px rgba(0, 0, 0, 0.55);
+     -moz-box-shadow: inset 0px -32px 20px 0px rgba(0, 0, 0, 0.55);
+          box-shadow: inset 0px -32px 20px 0px rgba(0, 0, 0, 0.55);
   z-index: 2;
 }
 .periodpicker_timepicker .periodpicker_timepicker_center {
@@ -161,7 +161,7 @@
   position: absolute;
   height: 300px;
   width: 99px;
-  background: #fff;
+  background: #000;
   z-index: 33001;
   border: 1px solid rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.4);

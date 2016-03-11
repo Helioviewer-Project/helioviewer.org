@@ -428,6 +428,131 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             }
             self.updateExternalDataSourceIntegration(self, false);
         });
+        
+        $('#vso-start-date').datetimepicker({
+			timepicker:false,
+			format:'Y/m/d',
+			theme:'dark',
+			onShow:function( ct ){
+				this.setOptions({
+					maxDate:$('#vso-end-date').val()?$('#vso-end-date').val():false
+				})
+			}
+		});
+		
+		$('#vso-end-date').datetimepicker({
+			timepicker:false,
+			format:'Y/m/d',
+			theme:'dark',
+			onShow:function( ct ){
+				this.setOptions({
+					minDate:$('#vso-start-date').val()?$('#vso-start-date').val():false
+				})
+			}
+		});
+		
+		$('#sdo-start-date').datetimepicker({
+			timepicker:false,
+			format:'Y/m/d',
+			theme:'dark',
+			onShow:function( ct ){
+				this.setOptions({
+					maxDate:$('#vso-end-date').val()?$('#vso-end-date').val():false
+				})
+			}
+		});
+		
+		$('#sdo-end-date').datetimepicker({
+			timepicker:false,
+			format:'Y/m/d',
+			theme:'dark',
+			onShow:function( ct ){
+				this.setOptions({
+					minDate:$('#vso-start-date').val()?$('#vso-start-date').val():false
+				})
+			}
+		});
+		
+		//TimePicker's
+		var time1 = '';
+		var time2 = '';
+		var time3 = '';
+		var time4 = '';
+		$('#vso-start-time').TimePickerAlone({
+			twelveHoursFormat:false,
+			seconds:true,
+			ampm:false,
+			saveOnChange: false,
+			//mouseWheel:false,
+			theme:'dark',
+			onHide: function ($input) {
+				if(time1 != ''){
+					$input.val(time1).change();
+				}
+				
+				return true;
+			},
+			onChange: function (str, datetime) {
+				time1 = str;
+			}
+		});
+		
+		$('#vso-end-time').TimePickerAlone({
+			twelveHoursFormat:false,
+			seconds:true,
+			ampm:false,
+			saveOnChange: false,
+			//mouseWheel:false,
+			theme:'dark',
+			onHide: function ($input) {
+				if(time2 != ''){
+					$input.val(time2).change();
+				}
+				
+				return true;
+			},
+			onChange: function (str, datetime) {
+				time2 = str;
+			}
+		});
+		
+		$('#sdo-start-time').TimePickerAlone({
+			twelveHoursFormat:false,
+			seconds:true,
+			ampm:false,
+			saveOnChange: false,
+			//mouseWheel:false,
+			theme:'dark',
+			onHide: function ($input) {
+				if(time3 != ''){
+					$input.val(time3).change();
+				}
+				
+				return true;
+			},
+			onChange: function (str, datetime) {
+				time3 = str;
+			}
+		});
+		
+		$('#sdo-end-time').TimePickerAlone({
+			twelveHoursFormat:false,
+			seconds:true,
+			ampm:false,
+			saveOnChange: false,
+			//mouseWheel:false,
+			theme:'dark',
+			onHide: function ($input) {
+				if(time4 != ''){
+					$input.val(time4).change();
+				}
+				
+				return true;
+			},
+			onChange: function (str, datetime) {
+				time4 = str;
+			}
+		});
 
 
         $(this.drawerLeftTab).bind('click', $.proxy(this.drawerLeftClick, this));
@@ -2090,6 +2215,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.updateSDOaccordion(sdoPreviews, sdoButtons, imageAccordions,
                 imageScale, sdoGlobal);
         }
+        
+        $('#vso-start-time').TimePickerAlone('setValue', $('#vso-start-time').val());
+        $('#vso-end-time').TimePickerAlone('setValue', $('#vso-end-time').val());
+        $('#sdo-start-time').TimePickerAlone('setValue', $('#sdo-start-time').val());
+        $('#sdo-end-time').TimePickerAlone('setValue', $('#sdo-end-time').val());
     },
 
 
