@@ -553,7 +553,23 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				time4 = str;
 			}
 		});
-
+		
+		//Fix Scroll
+		$('#hv-drawer-data').on( 'scroll', function(){ 
+			$('.periodpicker_timepicker_dialog').removeClass('visible');
+			$('#vso-start-time, #vso-end-time, #sdo-start-time, #sdo-end-time').blur() ;
+				
+			$('#vso-start-date').datetimepicker('hide') ;
+			$('#vso-end-date').datetimepicker('hide') ;
+			$('#sdo-start-date').datetimepicker('hide') ;
+			$('#sdo-end-date').datetimepicker('hide') ;
+		});
+		$('#hv-drawer-left').on( 'scroll', function(){ 
+			$('.periodpicker_timepicker_dialog').removeClass('visible');
+			$('#time').blur() ;
+			$('#date').datetimepicker('hide') ;
+		});
+		
 
         $(this.drawerLeftTab).bind('click', $.proxy(this.drawerLeftClick, this));
         this.drawerLeft.bind('mouseover', function (event) { event.stopPropagation(); });
