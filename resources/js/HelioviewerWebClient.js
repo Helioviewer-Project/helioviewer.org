@@ -1671,6 +1671,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * @returns {String} A URL representing the current state of Helioviewer.org.
      */
     toURL: function (shorten) {
+        if ( typeof this.viewport._tileLayerManager == 'undefined' ) {
+            return this.serverSettings.rootURL;
+        }
+        
         // URL parameters
         var params = {
             "date"        : this.viewport._tileLayerManager.getRequestDateAsISOString(),
