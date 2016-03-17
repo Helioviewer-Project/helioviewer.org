@@ -48,7 +48,11 @@ var MediaManager = Class.extend(
                     // Add "A" or "B" to differentiate spacecraft
                     name += ", " + layer[2] + "-" +
                             layer[0].substr(-1) + " ";
-                } else {
+                } else if (layer[0] === "TRACE") {
+	                // For TRACE images
+	                currentGroup = layer[0];
+                    name += ", " + layer[0] + " ";
+	            } else {
                     // Otherwise use the instrument name
                     currentGroup = layer[1];
                     name += ", " + layer[1] + " ";
@@ -58,7 +62,10 @@ var MediaManager = Class.extend(
             // For LASCO, use the detector for the right-hand side
             if (layer[1] === "LASCO") {
                 name += layer[2];
-            } else if (layer[2].substr(0, 3) === "COR") {
+            } else if (layer[0] === "TRACE") {
+                // For TRACE images
+                name += layer[1];
+            } else if (typeof layer[2] != 'undefined' && layer[2].substr(0, 3) === "COR") {
                 // For COR1 & 2 images
 
             } else {
