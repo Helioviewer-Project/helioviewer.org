@@ -123,7 +123,11 @@ var TimeControls = Class.extend(
                 $.each( hierarchy, function (j, property) {
                     leaf = leaf[property['name']];
                 });
-
+				
+				if(leaf['end'] == null){
+					leaf['end'] = new Date().toUTCString();
+				}
+				
                 date = Date.parseUTCDate(leaf['end']);
                 if (date > mostRecent) {
                     mostRecent = date;
