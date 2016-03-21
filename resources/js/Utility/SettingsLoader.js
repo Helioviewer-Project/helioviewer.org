@@ -143,6 +143,9 @@ var SettingsLoader = (
                                 "open": true
                             }
                         }
+                    },
+                    "#hv-drawer-timeline": {
+                        "open": false
                     }
                 },
                 "eventLayers": [],
