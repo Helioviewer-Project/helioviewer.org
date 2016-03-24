@@ -677,7 +677,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		//Help Links
 		//Guide
 		$('#help-links-guide').on('click', function(){
-			window.open('http://wiki.helioviewer.org/wiki/Helioviewer.org_User_Guide_2.4.0','_blank');
+			window.open('http://wiki.helioviewer.org/wiki/Helioviewer.org_User_Guide_3.0.0','_blank');
 		});
 		
 		//Glossary
@@ -698,6 +698,26 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		//API Documentation
 		$('#help-links-api-documentation').on('click', function(){
 			window.open(Helioviewer.api + '/docs/v2','_blank');
+		});
+		
+		//Blog
+		$('#help-links-blog').on('click', function(){
+			window.open('http://blog.helioviewer.org/','_blank');
+		});
+		
+		//JHelioviewer
+		$('#help-links-jhelioviewer').on('click', function(){
+			window.open('http://www.jhelioviewer.org/','_blank');
+		});
+		
+		//Contact
+		$('#help-links-contact').on('click', function(){
+			window.location.href = 'mailto:contact@helioviewer.org';
+		});
+		
+		//Github
+		$('#help-links-github').on('click', function(){
+			window.open('https://github.com/Helioviewer-Project/helioviewer.org/issues','_blank');
 		});
 		
         $('#mouse-cartesian').click( function (event) {
