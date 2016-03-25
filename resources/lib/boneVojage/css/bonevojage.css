@@ -1,0 +1,114 @@
+div#tooltip {
+  display: none;
+  position: absolute;
+  left: 0;
+  max-width: 12.5em;
+  min-width: 12.5em;
+  padding: 2em 2em 0 2em;
+  z-index: 100001;
+  line-height: 1.2em;
+  text-align: center;
+  background: #fff;
+  background: rgba(255,255,255,0.99);
+  box-shadow: 0 0 10px #000;
+  box-shadow: 0 2px 0 #ccc, 0 3px 0 #c9c9c9, 0 4px 0 #bbb, 0 5px 0 #b9b9b9, 0 6px 0 #aaa, 0 7px 1px rgba(0,0,0,0.10), 0 1px 5px rgba(0,0,0,0.10), 0 2px 3px rgba(0,0,0,0.30), 0 4px 5px rgba(0,0,0,0.20), 0 6px 10px rgba(0,0,0,0.25), 0 11px 10px rgba(0,0,0,0.20), 0 21px 20px rgba(0,0,0,0.15);
+  border-radius: 4px;
+}
+div#tooltip ul {
+  clear: both;
+  margin: 0.5em auto 1em auto;
+  display: inline-block;
+}
+div#tooltip ul li {
+  float: left;
+  border-radius: 100%;
+  width: 10px;
+  height: 10px;
+  background-color: #ccc;
+  margin: 2px;
+  cursor: pointer;
+}
+div#tooltip ul li:hover,
+div#tooltip ul li.active {
+  background-color: #333;
+}
+div#tooltip div#close {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  cursor: pointer;
+  width: 1em;
+  height: 1em;
+}
+div#tooltip div#close:before {
+  content: "\D7";
+  color: #333;
+  font-size: 1.4em;
+  text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff, 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,0.10), 0 0 5px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.30), 0 3px 5px rgba(0,0,0,0.20), 0 5px 10px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.20), 0 20px 20px rgba(0,0,0,0.15);
+}
+div#tooltip div#buttons {
+  width: 100%;
+  display: inline-block;
+}
+div#tooltip div#buttons div#next,
+div#tooltip div#buttons div#prev {
+  display: none;
+  float: left;
+  margin: 1em;
+  background-color: #fff;
+  font-size: 0.9em;
+  padding: 0.4em 0.8em;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #ccc, 0 3px 0 #c9c9c9, 0 4px 0 #bbb, 0 5px 0 #b9b9b9, 0 6px 0 #aaa, 0 7px 1px rgba(0,0,0,0.10), 0 1px 5px rgba(0,0,0,0.10), 0 2px 3px rgba(0,0,0,0.30), 0 4px 5px rgba(0,0,0,0.20), 0 6px 10px rgba(0,0,0,0.25), 0 11px 10px rgba(0,0,0,0.20), 0 21px 20px rgba(0,0,0,0.15);
+  border-radius: 4px;
+}
+div#tooltip div#buttons div#next {
+  float: right;
+}
+div#tooltip.left:before,
+div#tooltip.right:before,
+div#tooltip.top:before,
+div#tooltip.bottom:before,
+div#tooltip.bottom-left:before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-right: 5px solid transparent;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid transparent;
+}
+div#tooltip.left:before {
+  top: 48%;
+  right: -10px;
+  border-left: 5px solid #000;
+}
+div#tooltip.right:before {
+  top: 50%;
+  left: -10px;
+  border-right: 5px solid #000;
+}
+div#tooltip.top:before {
+  bottom: -14px;
+  left: 50%;
+  border-top: 5px solid #000;
+}
+div#tooltip.bottom:before {
+  top: -10px;
+  left: 50%;
+  border-bottom: 5px solid #000;
+}
+div#modal_top,
+div#modal_bottom,
+div#modal_left,
+div#modal_right {
+  display: none;
+  position: absolute;
+  z-index: 100000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  background: #000;
+  background: rgba(0,0,0,0.70);
+}

@@ -78,7 +78,7 @@ var SettingsLoader = (
                                 "open": true
                             },
                             "#accordion-events": {
-                                "open": false
+                                "open": true
                             }
                         }
                     },

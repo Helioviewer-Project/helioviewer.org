@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="resources/lib/DatetimePicker/jquery.datetimepicker.css"/ >
     <link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.min.css"/ >
     <link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.timepicker.css"/ >
+    <link rel="stylesheet" href="resources/lib/boneVojage/bonevojage.css">
 
     <!-- jQuery UI Theme Modifications -->
     <link rel="stylesheet" href="resources/css/dot-luv.css">
@@ -136,16 +137,18 @@
 	
 	
 	        <div id="scale">
-	            <div id="mouse-cartesian" class="viewport-action segmented-left fa fa-cube" title="Toggle Mouse Coordinates (Cartesian)"></div><div id="mouse-polar" class="viewport-action segmented-right fa fa-dot-circle-o" style="border-left: 0;" title="Toggle Mouse Coordinates (Polar)"></div>
-	
-	        	<div id="earth-button" class="viewport-action segmented-left fa fa-globe" title="Toggle Earth-Scale Indicator."></div><div id="scalebar-button" class="viewport-action segmented-right fa fa-arrows-h" style="border-left: 0;" title="Toggle Length scale indicator."></div>
+	            
+				<div id="earth-button" class="viewport-action segmented-left fa fa-globe" title="Toggle Earth-Scale Indicator."></div><div id="scalebar-button" class="viewport-action segmented-right fa fa-arrows-h" style="border-left: 0;" title="Toggle Length scale indicator."></div>
 	
 	        </div>
 	
 	        <!-- Mouse coordinates display -->
-	        <div id="mouse-coords" style="display: none;">
-	            <div id="mouse-coords-x"></div>
-	            <div id="mouse-coords-y"></div>
+	        <div id="mouse-coords-box">
+		        <div id="mouse-coords">
+		            <div id="mouse-coords-x"></div>
+		            <div id="mouse-coords-y"></div>
+		        </div>
+		        <div id="mouse-cartesian" style="margin-top:4px;" class="viewport-action segmented-left fa fa-cube" title="Toggle Mouse Coordinates (Cartesian)"></div><div id="mouse-polar" class="viewport-action segmented-right fa fa-dot-circle-o" style="border-left: 0;margin-top:4px;" title="Toggle Mouse Coordinates (Polar)"></div>
 	        </div>
 	
 	    </div>
@@ -636,7 +639,7 @@
 	                </div>
 	                <div class="content" style="display:block;">
 	                    <div class="section">
-	                        <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all">
+	                        <div id="social-panel">
 	
 	                            <div id='twitter' class='social-btns'>
 	                                <div style="font-size: 1.5em;">
@@ -697,6 +700,15 @@
 	                <div class="content" style="display:block;">
 	                    <div class="section">
 	                        <div id="help-links-panel" class="">
+	
+	                            <div id='' class='social-btns'>
+	                                <div style="font-size: 1.5em;">
+	                                    <div id='help-links-tutorial' onclick="startTutorial();" class='text-btn qtip-left' style="width: 90%;border:none;" title="Interactive Tutorial" rel="/dialogs/about.php">
+	                                        <span class='fa fa-compass fa-fw'></span>
+	                                        <span style='line-height: 1.6em'>Interactive Tutorial</span>
+	                                    </div>
+	                                </div>
+	                            </div>
 	
 	                            <div id='' class='social-btns'>
 	                                <div style="font-size: 1.5em;">
@@ -798,12 +810,13 @@
 	
 	        </div>
 	    </div>
-	
+		
+		
+	    <div id="hv-drawer-tab-timeline" class="drawer-tab drawer-tab-bottom">Image Timeline</div>
 		<div id="hv-drawer-timeline" class="helioviewer-drawer-bottom">
-	        <div id="hv-drawer-tab-timeline" class="drawer-tab drawer-tab-bottom">Image Timeline</div>
-	        <div class="drawer-contents" style="height:330px;">
+	        <div class="drawer-contents">
 		        <div style="display:block;position:absolute;top:10px;left:10px;z-index:5;"><input type="checkbox" id="hv-drawer-timeline-logarithmic"> Logarithmic View</div>
-		        <div class="drawer-items">
+		        <div class="drawer-items" style="height:330px;">
 			        <div id="data-coverage-timeline" style="width:100%;height:300px;"></div>
 			        <div id="data-coverage-timeline-events" style="width:100%;height:300px;display:none;"></div>
 			        <button id="btn-prev">&larr; 7 days</button>
@@ -956,6 +969,7 @@
     <script src="resources/lib/DatetimePicker/build/jquery.datetimepicker.full.min.js" type="text/javascript" language="javascript"></script>
     <script src="resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.full.min.js" type="text/javascript" language="javascript"></script>
     <script src="resources/lib/period_picker.2.7.8.pro/build/jquery.timepicker.min.js" type="text/javascript" language="javascript"></script>
+    <script src="resources/lib/boneVojage/jquery.bonevojage.js" type="text/javascript" language="javascript"></script>
 
 	
 	

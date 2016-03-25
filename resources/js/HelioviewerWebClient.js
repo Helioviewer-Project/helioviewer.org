@@ -1613,9 +1613,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         }
 
         $(document).trigger("message-console-info",
-            ["<b>Welcome to Helioviewer.org</b>, a solar data browser. First time here? Be sure to check out our " +
-             "<a href=\"http://wiki.helioviewer.org/wiki/Helioviewer.org_User_Guide_2.4.0\" " +
-             "class=\"message-console-link\" target=\"_blank\"> User Guide</a>.</br>", {"sticky": false, "life": 10000}]
+            ["<b>Welcome to Helioviewer.org</b>, a solar data browser. First time here? Be sure to complete our " +
+             "<a href=\"javascript:void(0);\" class=\"message-console-link\" onclick=\"startTutorial();\"> Interactive Tutorial</a>.</br>", 
+             {"sticky": true}]
         );
 
         Helioviewer.userSettings.set("notifications.welcome", false);
@@ -1795,7 +1795,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	drawerTimelineClick: function(openNow) {
 		var self = this;
         if ( this.drawerTimelineOpened || openNow === false ) {
-            this.drawerTimeline.css('height', 0);
+            $('#hv-drawer-tab-timeline').css('bottom', '0px');
+            this.drawerTimeline.css('height', 0).hide();
             $('.drawer-contents', this.drawerTimeline).hide();
             this.drawerTimeline.css('padding', 0);
             
@@ -1817,7 +1818,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		        return;
 	        }
             
-            this.drawerTimeline.css('height', this.drawerTimelineOpenedHeight + 'px');
+            $('#hv-drawer-tab-timeline').css('bottom', this.drawerTimelineOpenedHeight + 'px');
+            this.drawerTimeline.show().css('height', this.drawerTimelineOpenedHeight + 'px');
             $('.drawer-contents', this.drawerTimeline).show();
             
             //for (var i=1; i<=this.drawerSpeed; i=i+10) {
