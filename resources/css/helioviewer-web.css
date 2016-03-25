@@ -121,12 +121,12 @@ html, body {
 }
 
 
-#zoom, #scale {
+#zoom, #scale, mouse-coords-box {
          position: relative;
             float: left;
             width: auto;
-           height: 3em;
-           margin: 2pt 0 0 0.5em;
+           height: 2em;
+           margin: 2pt 0 0 0em;
           padding: 2pt;
        overflow-x: hidden;
        overflow-y: hidden;
@@ -137,12 +137,15 @@ html, body {
             color: rgba(255,255,255,0.8);
    vertical-align: middle;
 }
-#scale {
+#scale, #mouse-coords-box {
           float: right;
-   margin-right: 1em;
+   margin-right: 0em;
      text-align: right;
+     
 }
-
+#mouse-coords-box {
+	width:200px;
+}
 /* Header Buttons */
 #hv-header .viewport-action, #hv-drawer-timeline .viewport-action {
                 position: relative;
@@ -358,6 +361,18 @@ html, body {
    z-index: 2;
 }
 
+#hv-drawer-tab-timeline{
+	position: absolute;
+    bottom: 0;
+    width: 7em;
+    border-top: 1px solid white;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    border-bottom: 1px solid black;
+    left:50%;
+    margin-left:-3.5em;
+}
+
 .helioviewer-drawer-bottom {
     position: absolute;
     bottom: 0;
@@ -369,12 +384,13 @@ html, body {
     font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
     font-weight: 200;
     text-align: center;
-    border-top: 0.45em solid #000;
+    /*border-top: 0.45em solid #000;*/
     -moz-box-shadow:    0px -1px 1px -1px rgba(255,255,255,0.75);
     -webkit-box-shadow: 0px -1px 1px -1px rgba(255,255,255,0.75);
     box-shadow:         0px -1px 1px -1px rgba(255,255,255,0.75);
     overflow-y: visible;
     z-index: 9;
+    display: none;
 }
 
 .drawer-contents {
@@ -924,7 +940,7 @@ span.ui-icon-hover, div.ui-icon-hover {
     border-radius: 1em;
     padding: 0.1em 0.4em;
     font-weight: 400;
-    font-size: 0.8em;
+    font-size: 13px;
 }
 .social-btns .text-btn:hover {
     color: rgba(175,0,255,1);
@@ -1214,7 +1230,7 @@ span.ui-icon-hover, div.ui-icon-hover {
 #mouse-coords {
           z-index: 2;
          position: relative;
-            float: right;
+            float: left;
             width: auto;
              left: 0;
        margin-top: 1em;

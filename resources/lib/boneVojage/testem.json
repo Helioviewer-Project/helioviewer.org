@@ -1,0 +1,13 @@
+{
+ "launch_in_dev": [
+  "chrome"
+ ],
+ "src_files":[
+
+  	"js/scripts/lib/jquery-1.8.2.min.js",
+  	"js/scripts/main_c.js",
+  	"js/tests/*.js"
+
+ ]
+
+}
