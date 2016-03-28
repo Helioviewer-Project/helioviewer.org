@@ -274,8 +274,9 @@ var Timeline = Class.extend({
 					var type = 'column';
 					
 	                if(typeof this.series == "undefined"){
+		                var index = this.points[0].point.index;
 		                var from = this.x;
-						var to = this.x+this.points[0].series.closestPointRange;
+						var to = this.points[0].series.data[index + 1].x - 1;//this.x+this.points[0].series.closestPointRange;
 						
 						zoomTickTime = parseInt( (from + to) * 0.5 );
 						
