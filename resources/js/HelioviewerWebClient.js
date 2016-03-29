@@ -1100,7 +1100,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 );
                 
                 vsoPreviews.append(
-                    self._vsoThumbnail(startDate, startDate, nickname, sourceId)
+                    self._vsoThumbnail(startDate, endDate, nickname, sourceId)
                 );
             }
         });
@@ -2129,19 +2129,21 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             accordions = drawer.find('.accordion'),
             accordionUserSettings = Helioviewer.userSettings.get("state.drawers.#"+drawer.attr('id')+".accordions"),
             trigger = false;
-
-        if ( Object.keys(accordionUserSettings).length > 0 ) {
-            $.each(accordionUserSettings, function(selector, accordionObj) {
-                if ( accordionObj.open ) {
-                    $(selector).find('.header').trigger("click", [true]);
-                    if ( selector == '#accordion-vso' ||
-                         selector == '#accordion-sdo' ) {
-
-                        trigger = true;
-                    }
-                }
-            });
-        }
+		if(typeof accordionUserSettings != 'undefined'){
+			if ( Object.keys(accordionUserSettings).length > 0 ) {
+	            $.each(accordionUserSettings, function(selector, accordionObj) {
+	                if ( accordionObj.open ) {
+	                    $(selector).find('.header').trigger("click", [true]);
+	                    if ( selector == '#accordion-vso' ||
+	                         selector == '#accordion-sdo' ) {
+	
+	                        trigger = true;
+	                    }
+	                }
+	            });
+	        }
+		}
+        
 
         if ( trigger ) {
             $(document).trigger('update-external-datasource-integration');

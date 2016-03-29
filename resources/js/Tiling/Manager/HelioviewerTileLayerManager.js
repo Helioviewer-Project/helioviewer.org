@@ -123,6 +123,23 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
 
         opacity = this._computeLayerStartingOpacity(
                     params.layeringOrder, false);
+		
+		if(typeof params.uiLabels == 'undefined'){
+			if(params.observatory == 'SOHO' || params.observatory == 'STEREO_A' || params.observatory == 'STEREO_B'){
+					params.uiLabels = [  
+			           {"label":"Observatory","name":params.observatory},
+			           {"label":"Instrument","name":params.instrument},
+			           {"label":"Detector","name":params.detector},
+			           {"label":"Measurement","name":params.measurement}
+			        ];
+				}else{
+					params.uiLabels = [  
+			           {"label":"Observatory","name":params.observatory},
+			           {"label":"Instrument","name":params.instrument},
+			           {"label":"Measurement","name":params.measurement}
+			        ];
+				}
+		}
 
         // Add the layer
         this.addLayer(
@@ -150,7 +167,24 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
                 basicParams = basicParams[obj['name']];
             });
             $.extend(params, basicParams);
-
+			
+			if(typeof params.uiLabels == 'undefined'){
+				if(params.observatory == 'SOHO' || params.observatory == 'STEREO_A' || params.observatory == 'STEREO_B'){
+					params.uiLabels = [  
+			           {"label":"Observatory","name":params.observatory},
+			           {"label":"Instrument","name":params.instrument},
+			           {"label":"Detector","name":params.detector},
+			           {"label":"Measurement","name":params.measurement}
+			        ];
+				}else{
+					params.uiLabels = [  
+			           {"label":"Observatory","name":params.observatory},
+			           {"label":"Instrument","name":params.instrument},
+			           {"label":"Measurement","name":params.measurement}
+			        ];
+				}
+			}
+			
             layer = new HelioviewerTileLayer(index, self._observationDate,
                 self.tileSize, self.viewportScale, self.tileVisibilityRange,
                 params.uiLabels, params.sourceId, params.nickname,
