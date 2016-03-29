@@ -138,7 +138,7 @@ var TileLayerAccordion = Layer.extend(
 
         $.each( letters, function (i, letter) {
             ids.push('#'+letter+'-select-'+id);
-            if (typeof hierarchy[i] != 'undefined') {
+            if (typeof hierarchy != 'undefined' && typeof hierarchy[i] != 'undefined') {
                 selected[i] = hierarchy[i]['name'];
             }
             else {
@@ -501,7 +501,7 @@ var TileLayerAccordion = Layer.extend(
         $.each( letters, function(i, letter) {
             label  = entry.find("#"+letters[i]+"-label-"+id);
             select = entry.find("#"+letters[i]+"-select-"+id);
-            if ( typeof hierarchy[i] != 'undefined' ) {
+            if ( typeof hierarchy != 'undefined' && typeof hierarchy[i] != 'undefined' ) {
                 label.html(hierarchy[i]['label']+':').show();
                 select.show();
             }
