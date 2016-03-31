@@ -38,6 +38,8 @@ var TileLayerManager = LayerManager.extend(
                         $.proxy(this.updateMaxDimensions, this))
                    .bind("save-tile-layers",
                         $.proxy(this.save, this))
+                   .bind("save-tile-layers-from-accordion",
+                        $.proxy(this.saveFromAccordion, this))
                    .bind("add-new-tile-layer",
                         $.proxy(this.addNewLayer, this))
                    .bind("remove-tile-layer",
@@ -52,6 +54,66 @@ var TileLayerManager = LayerManager.extend(
      */
     save: function () {
         Helioviewer.userSettings.set("state.tileLayers", this.toJSON());
+        $(document).trigger('update-external-datasource-integration');
+    },
+
+    /**
+     * @description Updates the list of loaded tile layers stored in
+     *              cookies
+     */
+    saveFromAccordion: function () {
+        // Get hierarchy of label:name for each layer accordion
+        var self = this, letters=Array('a','b','c','d','e'), layerHierarchy = {}, idOrder = {};
+        
+        $.each( $("#TileLayerAccordion-Container .dynaccordion-section"),
+            function (i, accordion) {
+                var idBase = $(accordion).attr('id'), label, name, layer = [];
+				
+				idOrder[i] = idBase;
+				
+                layerHierarchy[i] = {};
+                layerHierarchy[i]['visible'] = true;
+                layerHierarchy[i]['opacity'] = $("#opacity-slider-track-" + idBase).slider("value");
+                layerHierarchy[i]['uiLabels'] = [];
+                
+                if ( $(accordion).find('.visible').hasClass('hidden') ) {
+                    layerHierarchy[i]['visible'] = false;
+                }
+                
+                $.each( letters, function (j, letter) {
+                    if ( $('#'+letters[j]+'-select-'+idBase).css('display') != 'none' ) {
+                        label = $('#'+letters[j]+'-label-'+idBase).html().slice(0,-1);
+                        name  = $('#'+letters[j]+'-select-'+idBase+' option:selected').val();
+
+                        layerHierarchy[i]['uiLabels'][j] = { 'label':label, 'name' :name }
+                        layerHierarchy[i][label] = name;
+                    }
+                });
+            }
+        );
+        
+        //change Layers Order
+        var startZIndex = -8;
+        $.each(idOrder, function(i, id){
+	        $.each($('#moving-container .tile-layer-container'), function(j, layer){
+		        var rel = $(layer).attr('rel');
+		        if(rel == id){
+			        $(layer).css('z-index', startZIndex);
+			        startZIndex = startZIndex - 1;
+		        }
+	        });
+        });
+        //change layer order inside object
+        $.each(idOrder, function(i, id){
+	        $.each(self._layers, function(j, layer){
+		        if(layer.id == id){
+			        self._layers[j].order = parseInt(i)+1;
+		        }
+	        });
+        });
+        
+        //save order
+        Helioviewer.userSettings.set("state.tileLayers", layerHierarchy);
         $(document).trigger('update-external-datasource-integration');
     },
 
@@ -252,7 +314,7 @@ var TileLayerManager = LayerManager.extend(
      * @param array roi Region of interest in pixels
      */
     getVisibleLayers: function(roi) {
-        var rsunAS, rsun, radii, layers = [], threshold = 10, self = this;
+        var rsunAS, rsun, radii, layers = {}, threshold = 10, self = this;
 
         // Coronagraph inner circle radii in arc-seconds
         // TODO 2012/04/11: Compute using header info? are hv-tags
@@ -292,7 +354,8 @@ var TileLayerManager = LayerManager.extend(
                     return;
                 }
             }
-            layers.push(layer);
+            
+            layers[layer.order] = layer;
         });
 
         return this._stringify(layers);

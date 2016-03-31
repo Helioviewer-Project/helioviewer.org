@@ -416,6 +416,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	        setTimeout(function(){ self.updateExternalDataSourceIntegration(true,e); }, 500);
         });
 
+		$('#TileLayerAccordion-Container').sortable({
+			placeholder:'sortable-placeholder', 
+			handle:'.tile-accordion-header-left'
+		}).bind('sortupdate', function(e, ui) {
+			$(document).trigger('save-tile-layers-from-accordion');
+		});
+
         $('#accordion-vso input[type=text]').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this, false));
 
         $('#sdo-start-date, #sdo-start-time, #sdo-end-date, #sdo-end-time').bind('change', $.proxy(this.updateExternalDataSourceIntegration, this, false));

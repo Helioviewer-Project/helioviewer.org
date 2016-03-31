@@ -147,7 +147,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
                     this._observationDate, this.tileSize, this.viewportScale,
                     this.tileVisibilityRange, params.uiLabels,
                     params.sourceId, params.nickname, params.visible,
-                    opacity, params.layeringOrder)
+                    opacity, params.layeringOrder, this._layers.length)
         );
 
         this.save();
@@ -158,7 +158,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * or the defaults.
      */
     _loadStartingLayers: function (layers) {
-        var layer, basicParams, self = this;
+        var layer, basicParams, j=0, self = this;
 
         $.each(layers, function (index, params) {
 
@@ -188,9 +188,10 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             layer = new HelioviewerTileLayer(index, self._observationDate,
                 self.tileSize, self.viewportScale, self.tileVisibilityRange,
                 params.uiLabels, params.sourceId, params.nickname,
-                params.visible, params.opacity, params.layeringOrder);
+                params.visible, params.opacity, params.layeringOrder, j);
 
             self.addLayer(layer);
+            j++;
         });
     },
 
