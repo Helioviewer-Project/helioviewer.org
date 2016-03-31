@@ -29,14 +29,14 @@ var TileLayer = Layer.extend(
      * @constructs
      * @description Creates a new TileLayer
      */
-    init: function (index, date, tileSize, viewportScale, tileVisibilityRange, name, visible, opacity) {
+    init: function (index, date, tileSize, viewportScale, tileVisibilityRange, name, visible, opacity, id) {
         $.extend(this, this.defaultOptions);
         this._super();
 
         this.loaded = false;
 
         this._requestDate = date;
-        this.domNode = $('<div class="tile-layer-container" />').appendTo("#moving-container");
+        this.domNode = $('<div class="tile-layer-container" rel="'+id+'"/>').appendTo("#moving-container");
 
         this.viewportScale = viewportScale;
 
@@ -188,7 +188,7 @@ var TileLayer = Layer.extend(
      * IE7: Want z-indices < 1 to ensure event icon visibility
      */
     _loadStaticProperties: function () {
-        this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
+        this.domNode.css("z-index", -10 - parseInt(this.order, 10));//this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
 
         // opacity
         if (this.opacity !== 100) {

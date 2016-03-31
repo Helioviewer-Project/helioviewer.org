@@ -30,14 +30,17 @@ var HelioviewerTileLayer = TileLayer.extend(
      * </div>
      */
     init: function (index, date, tileSize, viewportScale, tileVisibilityRange,
-        hierarchy, sourceId, name, visible, opacity) {
-
+        hierarchy, sourceId, name, visible, opacity, layeringOrder, order) {
+		
+		// Create a random id which can be used to link tile layer with its corresponding tile layer accordion entry
+        var id = "tile-layer-" + new Date().getTime();
+		
         this._super(index, date, tileSize, viewportScale, tileVisibilityRange,
-            name, visible, opacity);
-
-        // Create a random id which can be used to link tile layer with its corresponding tile layer accordion entry
-        this.id = "tile-layer-" + new Date().getTime();
-
+            name, visible, opacity, id);
+		
+        this.id = id;
+        this.order = order;
+		
         this._setupEventHandlers();
 
         $(document).trigger("create-tile-layer-accordion-entry",

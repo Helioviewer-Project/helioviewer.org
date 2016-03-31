@@ -14,9 +14,9 @@ var Config = Class.extend(
      * Default parameters
      */
      params: {
-        'back_end'             	: "http://helioviewer.org/api.php",
+        'back_end'             	: "http://api.helioviewer.org/",
         'web_root_url'         	: "http://helioviewer.org",
-        'static_asset_url'     	: "http://helioviewer.org",
+        'static_asset_url'     	: "http://api.helioviewer.org",
 	    'build_num'             : 700,
         'default_image_scale'   : 4.8408817,
         'min_image_scale'       : 0.60511022,
@@ -25,9 +25,9 @@ var Config = Class.extend(
         'prefetch_size'        	: 0,
         'default_timestep'   	: 86400,
         'news_url'             	: "http://blog.helioviewer.org/",
-        'user_video_feed'       : "http://helioviewer.org/api.php",
+        'user_video_feed'       : "http://api.helioviewer.org/",
         'contact_email'        	: "contact@helioviewer.org",
-        'disable_cache'        	: false,
+        'disable_cache'        	: false
      },
     
     /**

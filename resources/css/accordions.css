@@ -13,6 +13,7 @@
 .tile-accordion-header-left {
     float: left;
     line-height: 1.65em;
+    cursor:move;
 }
 
 span.tile-accordion-header-right > span.accordion-header-divider,
