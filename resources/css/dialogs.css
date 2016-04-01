@@ -270,7 +270,7 @@ a.show-tags-btn {
     border-radius: 0.25em;
     background: -o-linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0.5));
     background: -moz-linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0.5));
-    background: -webkit-linear-gradient(rgba(0,0,1), rgba(0,0,0,0.5));
+    background: -webkit-linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0.5));
     background: linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0.5));
     padding: 0;
     -moz-box-shadow:    0px 0px 2px 1px white;
