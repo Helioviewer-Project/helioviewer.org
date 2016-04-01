@@ -119,12 +119,13 @@
 .drawer-contents .layer-Head .left {
     float: left;
     text-align: left;
-    width: 42%;
+    width: 36%;
 }
 .drawer-contents .layer-Head .right {
     float: right;
     text-align: right;
     width: 52%;
+    margin-right:15px;
 }
 
 
