@@ -254,7 +254,7 @@ var TileLayerManager = LayerManager.extend(
 
         // Get a string representation of each layer that overlaps the ROI
         $.each(layers, function () {
-            layerString += "[" + this.serialize() + "],";
+            layerString = "[" + this.serialize() + "]," + layerString;
         });
 
         // Remove trailing comma and return
