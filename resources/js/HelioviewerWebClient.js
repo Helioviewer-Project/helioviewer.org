@@ -1737,6 +1737,81 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         return this.serverSettings.rootURL + "/?" + decodeURIComponent($.param(params));
     },
+    
+    /**
+     * Builds a screenshot URL for the current view
+     *
+     * @returns {String} A URL representing the screenshot of viewport.
+     */
+    getViewportScreenshotURL: function(timestamp, name){
+	    var x0=0, y0=0, x1, x2, y1, y2, width=0, height=0, vport, imageScale, imageAccordions, roi, html = '', 
+		date, sourceId, opacity, imageLayer = '', thumbImageScale;
+		
+		var sDate = new Date(timestamp);
+		var sDateUTC = new Date(sDate.getUTCFullYear(), sDate.getUTCMonth(), sDate.getUTCDate(),  sDate.getUTCHours(), sDate.getUTCMinutes(), sDate.getUTCSeconds());
+		date = sDateUTC.toDateString() + 'T' + sDateUTC.toTimeString() + 'Z';
+		
+		vport = this.viewport.getViewportInformation();
+		imageScale = vport['imageScale'];
+		imageAccordions = $('#accordion-images .dynaccordion-section');
+		
+		roi = {
+	          'left': vport['coordinates']['left'],
+	         'right': vport['coordinates']['right'],
+	           'top': vport['coordinates']['top'],
+	        'bottom': vport['coordinates']['bottom']
+	    };
+		
+		x0 = (imageScale * (roi.left + roi.right) / 2).toFixed(2);
+	    y0 = (imageScale * (roi.bottom + roi.top) / 2).toFixed(2);
+	    width  = (( roi.right - roi.left ) * imageScale).toFixed(2);
+	    height = (( roi.bottom - roi.top ) * imageScale).toFixed(2);
+		
+		x1 = Math.round(parseFloat(x0) - parseFloat(width / 2));
+	    x2 = Math.round(parseFloat(x0) + parseFloat(width / 2));
+	
+	    y1 = Math.round(parseFloat(y0) - parseFloat(height / 2));
+	    y2 = Math.round(parseFloat(y0) + parseFloat(height / 2));
+	
+	    thumbImageScale = width / 128;
+		
+		if(typeof name != 'undefined'){
+			var layers = name.split(" ");
+			var layerData = '';
+			$.each(layers, function(i, n){
+				if(n != ''){
+					layerData += n+',';
+				}
+			});
+			imageLayer = '['+layerData+'1,100],';
+		}else{
+			$.each( imageAccordions, function(i, accordion) {
+		        if ( !$(accordion).find('.visible').hasClass('hidden')) {
+		            sourceId = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
+		            opacity = $(accordion).find('.opacity-slider-track').slider("value");
+		            imageLayer = '['+sourceId+',1,'+opacity+'],' + imageLayer;
+		        }
+		    });
+	    }
+	    
+	    //Output
+	    html = '<img src="' + Helioviewer.api + '?action=takeScreenshot'
+	                 +     '&imageScale=' + thumbImageScale
+	                 +     '&layers='    + imageLayer.slice(0, -1)
+	                 +     '&events=&eventLabels=false'
+	                 +     '&scale=false&scaleType=earth&scaleX=0&scaleY=0'
+	                 +     '&date='      + date
+	                 +     '&x1=' + x1
+	                 +     '&x2=' + x2
+	                 +     '&y1=' + y1
+	                 +     '&y2=' + y2
+	                 +     '&display=true&watermark=false" '
+	                 +     'class="preview end" '
+	                 +     'style="display:block;width:' + 160 + 'px; ' + 'height:' + Math.round( 160 / ( width / height ) ) + 'px;border: 1px solid rgba(255,255,255,0.2);margin:5px;"'
+	                 +     ' />';
+	    
+	    return html;             
+    },
 
     updateHeightsInsideViewportContainer: function() {
         var newHeight, sidebars, windowHeight = parseInt($(window).height()),
