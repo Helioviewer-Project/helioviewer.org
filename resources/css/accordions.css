@@ -24,7 +24,6 @@ span.event-accordion-header-right > span.accordion-header-divider {
 }
 
 .dynaccordion-tab {
-    cursor: pointer;
     margin-bottom: 0.50em;
 }
 
@@ -37,6 +36,7 @@ span.event-accordion-header-right > span.accordion-header-divider {
 div.accordion-arrow {
     float:left;
     border:none;
+    cursor: pointer;
 }
 
 .ui-accordion-header {

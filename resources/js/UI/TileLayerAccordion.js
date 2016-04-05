@@ -290,6 +290,7 @@ var TileLayerAccordion = Layer.extend(
             self._removeTooltips(id);
             self.domNode.dynaccordion('removeSection', {id: id});
             $(document).trigger("save-tile-layers");
+            $(document).trigger("save-tile-layers-from-accordion");
             e.stopPropagation();
         };
 

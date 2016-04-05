@@ -232,7 +232,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
 
         // Update layering order and z-index
         layer.layeringOrder = layeringOrder;
-        layer.domNode.css("z-index", parseInt(layer.layeringOrder, 10) - 10);
+        layer.domNode.css("z-index", -10 - parseInt(this.order, 10));//parseInt(layer.layeringOrder, 10) - 10
 
         // Update associated JPEG 2000 image
         layer.image.updateDataSource(hierarchySelected, sourceId );

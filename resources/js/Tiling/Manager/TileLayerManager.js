@@ -93,7 +93,7 @@ var TileLayerManager = LayerManager.extend(
         );
         
         //change Layers Order
-        var startZIndex = -8;
+        var startZIndex = -11;
         $.each(idOrder, function(i, id){
 	        $.each($('#moving-container .tile-layer-container'), function(j, layer){
 		        var rel = $(layer).attr('rel');

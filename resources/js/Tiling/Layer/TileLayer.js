@@ -188,7 +188,7 @@ var TileLayer = Layer.extend(
      * IE7: Want z-indices < 1 to ensure event icon visibility
      */
     _loadStaticProperties: function () {
-        this.domNode.css("z-index", -10 - parseInt(this.order, 10));//this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
+        this.domNode.css("z-index", -11 - parseInt(this.order, 10));//this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
 
         // opacity
         if (this.opacity !== 100) {
