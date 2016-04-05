@@ -610,8 +610,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         btns = $("#social-buttons .text-btn, " +
                  "#movie-manager-container .text-btn, " +
                  "#image-area-select-buttons > .text-btn, " +
-                 "#screenshot-manager-container .text-btn, " +
-                 "#event-container .text-btn");
+                 "#screenshot-manager-container .text-btn");
         btns.live("mouseover",
             function () {
                 $(this).find(".ui-icon").addClass("ui-icon-hover");
