@@ -1192,13 +1192,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		
 		//Because VSO doesn't accept seconds we need to validate date inputs and if values
 		// within one minute ve need to round start minute and ent minute
-		var startTimestamp = getUTCTimestamp(startDate);
-		var endTimestamp = getUTCTimestamp(endDate);
+		var startTimestamp = getDateFromUTCString(startDate);
+		var endTimestamp = getDateFromUTCString(endDate);
 
 		var coeff = 1000 * 60;
 		startTimestamp = new Date(Math.floor(startTimestamp / coeff) * coeff);
 		startDate 	= startTimestamp.toDateString() + 'T' + startTimestamp.toTimeString() + 'Z';
-			
+		
 		endTimestamp = new Date( (Math.floor(endTimestamp / coeff) * coeff) + 60000);
 		endDate 	= endTimestamp.toDateString() + 'T' + endTimestamp.toTimeString() + 'Z';
 
@@ -1429,11 +1429,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		//Because SDO doesn't accept seconds we need to validate date inputs and if values
 		// within one minute ve need to round start minute and ent minute
 		var coeff = 1000 * 60;
-		var startTimestamp = Date.parseUTCDate($('#sdo-start-date').val() + ' ' + $('#sdo-start-time').val());
+		var startTimestamp = getDateFromUTCString($('#sdo-start-date').val() + ' ' + $('#sdo-start-time').val());
 		startTimestamp = new Date(Math.floor(startTimestamp.getTime() / coeff) * coeff);
 		
-		var endTimestamp = Date.parseUTCDate($('#sdo-end-date').val() + ' ' + $('#sdo-end-time').val());
-		endTimestamp = new Date( (Math.floor(startTimestamp.getTime() / coeff) * coeff) + 60000);
+		var endTimestamp = getDateFromUTCString($('#sdo-end-date').val() + ' ' + $('#sdo-end-time').val());
+		endTimestamp = new Date( (Math.floor(endTimestamp.getTime() / coeff) * coeff) + 60000);
 		
         // SDO Website Button
         $('#sdo-www').attr('href', 'http://www.lmsal.com/get_aia_data/'
@@ -1442,10 +1442,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             + '&xCen='   +  $('#sdo-center-x').val()
             + '&yCen='   + ($('#sdo-center-y').val()*-1)
             + '&wavelengths=' + waves.join(',')
-            + '&startDate=' + startTimestamp.toUTCDateString().replace(/\//g,'-')
-            + '&startTime=' + startTimestamp.toUTCTimeString().slice(0,-3)
-            + '&stopDate='  + endTimestamp.toUTCDateString().replace(/\//g,'-')
-            + '&stopTime='  + endTimestamp.toUTCTimeString().slice(0,-3)
+            + '&startDate=' + startTimestamp.toDateString().replace(/\//g,'-')
+            + '&startTime=' + startTimestamp.toTimeString().slice(0,-3)
+            + '&stopDate='  + endTimestamp.toDateString().replace(/\//g,'-')
+            + '&stopTime='  + endTimestamp.toTimeString().slice(0,-3)
             + '&cadence=12'
         );
 

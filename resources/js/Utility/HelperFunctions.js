@@ -163,6 +163,24 @@ var getUTCTimestamp = function (date) {
 };
 
 /**
+ * @description Converts a ISO 8601 UTC formatted date string into a Date object
+ *  e.g. "2003-10-05T00:00:00Z" => 1065312000000
+ */
+var getDateFromUTCString = function (date) {
+    var year, month, day, hours, minutes, seconds, ms;
+
+    year    = parseInt(date.substr(0, 4), 10);
+    month   = parseInt(date.substr(5, 2), 10) - 1;
+    day     = parseInt(date.substr(8, 2), 10);
+    hours   = parseInt(date.substr(11, 2), 10);
+    minutes = parseInt(date.substr(14, 2), 10);
+    seconds = parseInt(date.substr(17, 2), 10);
+    ms = 0;
+
+    return new Date(year, month, day, hours, minutes, seconds, ms);
+};
+
+/**
  * @description Pads a string to the left.
  * @param {String} padding Character to use for padding, e.g. " "
  * @param {Int} minLength Length to pad up to
