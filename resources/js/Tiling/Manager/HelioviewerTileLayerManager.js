@@ -238,8 +238,8 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         layer.image.updateDataSource(hierarchySelected, sourceId );
 
         // Update opacity (also triggers save-tile-layers event)
-        opacity = this._computeLayerStartingOpacity(layer.layeringOrder, true);
-        $("#opacity-slider-track-" + id).slider("value", opacity);
+        //opacity = this._computeLayerStartingOpacity(layer.layeringOrder, true);
+        //$("#opacity-slider-track-" + id).slider("value", opacity);
     },
 
     /**
