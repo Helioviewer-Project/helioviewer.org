@@ -74,13 +74,13 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
             );
     
             // Open/Close animation
-            $('#' + id + ' > div.dynaccordion-tab').unbind().click(function () {
+            $('#' + id + ' > div.dynaccordion-tab > div.accordion-arrow').unbind().click(function () {
                 if (self.options.displayArrows) {
-                    var arrowIcon = $(this).find('.accordion-arrow')[0]; 
+                    var arrowIcon = this; 
                     $(arrowIcon).toggleClass('ui-icon-triangle-1-s');
                     $(arrowIcon).toggleClass('ui-icon-triangle-1-e');
                 }
-                $(this).next().slideToggle('fast');
+                $('#' + id + ' > div.dynaccordion-tab').next().slideToggle('fast');
             });
             
             // Chose initial view
