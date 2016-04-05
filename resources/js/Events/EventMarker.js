@@ -709,8 +709,11 @@ var EventMarker = Class.extend(
             });
         }
 
-        content     += '<div class="btn-container text-btn">'+"\n"
-                    +       "\t"+'<div class="ui-icon ui-icon-info btn event-info"></div><div class="btn-label btn event-info">View HEK data</div>'+"\n"
+        content     += '<div class="btn-container">'+"\n"
+                    +       "\t"+'<div class="btn-label btn event-info text-btn"><i class="fa fa-info-circle fa-fw"></i>View HEK data</div>'+"\n"
+                    + 		"<div style=\"clear:both\"></div>\n"
+                    //+       "\t"+'<div class="ui-icon ui-icon-copy btn copy-to-data" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"></div>'
+                    +		"\t"+'<div class="btn-label btn copy-to-data text-btn" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"><i class="fa fa-copy fa-fw"></i> Copy times to data download</div>'+"\n"
 //                    +       "\t"+'<div class="ui-icon ui-icon-video btn event-movie"></div><div class="btn-label btn event-movie">Generate Movie</div>'+"\n"
                     +  '</div>'+"\n";
 
@@ -735,6 +738,22 @@ var EventMarker = Class.extend(
         });
         this.eventPopupDomNode.find(".event-movie").bind('click', function() {
             alert('Event-based movie generation not yet implemented.')
+        });
+        this.eventPopupDomNode.find(".copy-to-data").bind('click', function() {
+            var start = $(this).data('start');
+            var end = $(this).data('end');
+            
+            var startArr = start.split(" ");
+            var endArr = end.split(" ");
+            
+            //Set dates
+            if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-data.open") == false){
+				helioviewer.drawerDataClick(true);
+			}
+            $('#vso-start-date, #sdo-start-date').val(startArr[0]);
+            $('#vso-start-time, #sdo-start-time').val(startArr[1]).change();
+            $('#vso-end-date, #sdo-end-date').val(endArr[0]);
+            $('#vso-end-time, #sdo-end-time').val(endArr[1]).change();
         });
         this.eventPopupDomNode.find(".btn.event-info").bind('click', $.proxy(this._showEventInfoDialog, this));
         this.eventPopupDomNode.find('.close-button').bind('click', $.proxy(this.toggleEventPopUp, this));
