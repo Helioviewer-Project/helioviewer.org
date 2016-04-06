@@ -711,9 +711,9 @@ var EventMarker = Class.extend(
 		
 		var noaaSearch = '';
 		if( this.frm_name == "NOAA SWPC Observer"){
-			noaaSearch = '<div class="btn-label btn event-search-external text-btn" data-url=\'https://ui.adsabs.harvard.edu/#search/q="'+this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]+'"&sort=date desc\' target="_blank"><i class="fa fa-search fa-fw"></i>ADS Search <i class="fa fa-fa-external-link fa-fw"></i></div>\
+			noaaSearch = '<div class="btn-label btn event-search-external text-btn" data-url=\'https://ui.adsabs.harvard.edu/#search/q="'+this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]+'"&sort=date desc\' target="_blank"><i class="fa fa-search fa-fw"></i>ADS Search <b class="fa fa-external-link fa-fw"></b></div>\
 						<div style=\"clear:both\"></div>\
-						<div class="btn-label btn event-search-external text-btn" data-url="http://search.arxiv.org:8081/?query='+this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]+'&in=" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search <i class="fa fa-fa-external-link fa-fw"></i></div>\
+						<div class="btn-label btn event-search-external text-btn" data-url="http://search.arxiv.org:8081/?query='+this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]+'&in=" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search <i class="fa fa-external-link fa-fw"></i></div>\
 						<div style=\"clear:both\"></div>';
 		}
 		
