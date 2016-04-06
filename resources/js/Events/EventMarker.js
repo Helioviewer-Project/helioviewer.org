@@ -708,11 +708,20 @@ var EventMarker = Class.extend(
                         +  '</div>'+"\n";
             });
         }
-
+		
+		var noaaSearch = '';
+		if( this.frm_name == "NOAA SWPC Observer"){
+			noaaSearch = '<div class="btn-label btn event-search-external text-btn" data-url=\'https://ui.adsabs.harvard.edu/#search/q="'+this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]+'"&sort=date desc\' target="_blank"><i class="fa fa-search fa-fw"></i>ADS Search <i class="fa fa-fa-external-link fa-fw"></i></div>\
+						<div style=\"clear:both\"></div>\
+						<div class="btn-label btn event-search-external text-btn" data-url="http://search.arxiv.org:8081/?query='+this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]+'&in=" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search <i class="fa fa-fa-external-link fa-fw"></i></div>\
+						<div style=\"clear:both\"></div>';
+		}
+		
         content     += '<div class="btn-container">'+"\n"
                     +       "\t"+'<div class="btn-label btn event-info text-btn"><i class="fa fa-info-circle fa-fw"></i>View HEK data</div>'+"\n"
                     + 		"<div style=\"clear:both\"></div>\n"
                     //+       "\t"+'<div class="ui-icon ui-icon-copy btn copy-to-data" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"></div>'
+                    +		noaaSearch
                     +		"\t"+'<div class="btn-label btn copy-to-data text-btn" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>'+"\n"
 //                    +       "\t"+'<div class="ui-icon ui-icon-video btn event-movie"></div><div class="btn-label btn event-movie">Generate Movie</div>'+"\n"
                     +  '</div>'+"\n";
@@ -754,6 +763,10 @@ var EventMarker = Class.extend(
             $('#vso-start-time, #sdo-start-time').val(startArr[1]).change();
             $('#vso-end-date, #sdo-end-date').val(endArr[0]);
             $('#vso-end-time, #sdo-end-time').val(endArr[1]).change();
+        });
+        this.eventPopupDomNode.find(".event-search-external").bind('click', function() {
+            var url = $(this).data('url');
+            window.open(url, '_blank');
         });
         this.eventPopupDomNode.find(".btn.event-info").bind('click', $.proxy(this._showEventInfoDialog, this));
         this.eventPopupDomNode.find('.close-button').bind('click', $.proxy(this.toggleEventPopUp, this));
