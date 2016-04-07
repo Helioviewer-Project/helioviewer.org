@@ -110,11 +110,22 @@ var ZoomControls = Class.extend(
      * @param {Event} event Event class
      */
     _onMouseWheelMove: function (e, delta) {
+        if(scrollLock){
+	        return false;
+        }
+        
+        //Lock the scroll
+        scrollLock = true;
+        window.setTimeout(function(){
+            scrollLock = false;
+        },500);
+        
         if (delta > 0) {
             this.zoomInBtn.click();
         } else {
             this.zoomOutBtn.click();
         }
+        
         return false;
     },
 

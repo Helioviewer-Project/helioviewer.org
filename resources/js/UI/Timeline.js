@@ -822,6 +822,15 @@ var Timeline = Class.extend({
 					        offset = container.offset(),
 					        x, y, isInside;
 				        
+				        if(scrollLock){
+					        return false;
+				        }
+				        //Lock the scroll
+				        scrollLock = true;
+				        window.setTimeout(function(){
+				            scrollLock = false;
+				        },200);
+				        
 				        x = event.clientX - chart.plotLeft - offset.left;
 				        y = event.clientY - chart.plotTop - offset.top;
 				        isInside = chart.isInsidePlot(x, y);

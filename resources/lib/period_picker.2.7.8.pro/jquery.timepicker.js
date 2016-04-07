@@ -277,6 +277,16 @@
 		});
 		that.timepicker.find('.periodpicker_timepicker_sliders>div').on('mousewheel', function (e) {
 			if (that.options.mouseWheel) {
+				if(scrollLock){
+			        return false;
+		        }
+		        
+		        //Lock the scroll
+		        scrollLock = true;
+		        window.setTimeout(function(){
+		            scrollLock = false;
+		        },100);
+		        
 				var box = $(this), time = [null, null, null, null], i = parseInt($(this).data('index'), 10);
 				box.addClass('draggable');
 				if (i < 3) {
