@@ -829,7 +829,7 @@ var Timeline = Class.extend({
 				        scrollLock = true;
 				        window.setTimeout(function(){
 				            scrollLock = false;
-				        },200);
+				        },500);
 				        
 				        x = event.clientX - chart.plotLeft - offset.left;
 				        y = event.clientY - chart.plotTop - offset.top;
