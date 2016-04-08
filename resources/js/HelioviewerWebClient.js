@@ -596,15 +596,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 		$(document).bind("updateHeightsInsideViewportContainer", $.proxy(this.updateHeightsInsideViewportContainer, this));
 
-        $('#share-button').click(function (e) {
-            // Google analytics event
-            if (typeof(_gaq) !== "undefined") {
-                _gaq.push(['_trackEvent', 'Shares', 'Homepage - URL']);
-            }
-            self.displayURL(self.toURL(), msg);
-        });
-		setTimeout(function(){ self.displayURL(self.toURL(), msg); }, 100);
-
         // Highlight both text and icons for text buttons
 
         btns = $("#social-buttons .text-btn, " +
@@ -2133,6 +2124,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             Helioviewer.userSettings.set("state.drawers.#hv-drawer-share.open", false);
         }
         else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
+	        setTimeout(function(){ self.displayURL(self.toURL(), "Link directly to the current state of Helioviewer:"); });
             self.drawerShare.css('transition', 'height 500ms');
             this.drawerShare.css('width', this.drawerShareOpenedWidth);
             this.drawerShare.css('height', this.drawerShareOpenedHeight);

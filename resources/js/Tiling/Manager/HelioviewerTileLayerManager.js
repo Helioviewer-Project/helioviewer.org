@@ -236,7 +236,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
 
         // Update associated JPEG 2000 image
         layer.image.updateDataSource(hierarchySelected, sourceId );
-
+		$(document).trigger("save-tile-layers");
         // Update opacity (also triggers save-tile-layers event)
         //opacity = this._computeLayerStartingOpacity(layer.layeringOrder, true);
         //$("#opacity-slider-track-" + id).slider("value", opacity);
