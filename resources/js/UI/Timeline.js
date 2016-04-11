@@ -762,7 +762,7 @@ var Timeline = Class.extend({
     },
     
     render: function(){
-	    var _url, imageLayersStr, layers = [], imageLayers=[], date, startDate, endDate, self;
+	    var _url, imageLayersStr = '', layers = [], imageLayers=[], date, startDate, endDate, self;
 		
 		self = this;
 		
@@ -774,7 +774,15 @@ var Timeline = Class.extend({
 		zoomTickTime = date;
 		
 		//Build instruments string for url
-        imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
+		$.each( $('#accordion-images .dynaccordion-section'), function(i, accordion) {
+	        if ( !$(accordion).find('.visible').hasClass('hidden')) {
+	            var sourceId = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
+	            var opacity = parseInt($(accordion).find('.opacity-slider-track').slider("value"));
+	            opacity = opacity <= 0 ? 1 : opacity;
+	            imageLayersStr = '['+sourceId+',1,'+opacity+'],' + imageLayersStr;
+	        }
+	    });
+		//imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
         
         if(startDate < 0 || endDate < 0 || startDate > endDate){
 	        return false;
@@ -1018,8 +1026,16 @@ var Timeline = Class.extend({
 			chartTypeY = 'linear';
         }
         
-        
-        var imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
+        var imageLayersStr = '';
+        $.each( $('#accordion-images .dynaccordion-section'), function(i, accordion) {
+	        if ( !$(accordion).find('.visible').hasClass('hidden')) {
+	            var sourceId = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
+	            var opacity = parseInt($(accordion).find('.opacity-slider-track').slider("value"));
+	            opacity = opacity <= 0 ? 1 : opacity;
+	            imageLayersStr = '['+sourceId+',1,'+opacity+'],' + imageLayersStr;
+	        }
+	    });
+        //var imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
         
         if(imageLayersStr == ''){
 	        chart.showLoading('You must have at least one visible image layer.');
