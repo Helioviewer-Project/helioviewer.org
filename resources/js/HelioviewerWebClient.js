@@ -646,7 +646,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 			if(e.target.className == 'helioviewer-url-input-box'){
 				var textToPutOnClipboard = $(e.target).val();
 			}else{
-				var textToPutOnClipboard = self.toURL();
+				return true;
+				//var textToPutOnClipboard = self.toURL();
 			}
 			
 		    if (isIe) {
@@ -1925,7 +1926,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerTimelineOpened = true;
             
 			if(typeof this.timeline == 'undefined'){
-				this.timeline   = new Timeline();				
+				setTimeout(function(){self.timeline   = new Timeline();}, 200);
+				//this.timeline   = new Timeline();				
 			}else{
 				this.timeline.drawPlotLine();
 			}
