@@ -765,6 +765,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Download
         downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
                       "&format=mp4&hq=true";
+        var gifURLEncoded = movie.url;
+        gifURL = encodeURIComponent(gifURLEncoded).replace(/'/g,"%27").replace(/"/g,"%22");
         //gifURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
         //              "&format=gif";
 
@@ -772,6 +774,11 @@ var MovieManagerUI = MediaManagerUI.extend(
             "' title='Download high-quality video'>" +
             "<img style='width:93px; height:32px;' class='video-download-icon' " +
             "src='resources/images/download_93x32.png' /></a></div>";
+         
+        gifLink = "<div style='float:left;'><a target='_blank' href='http://imgur.com/vidgif/video?url=" + gifURL +
+            "' title='Create animated GIF image with Imgur'>" +
+            "<img style='width:93px; height:32px;' class='video-download-icon' " +
+            "src='resources/images/gif_imgur_93x32.png' /></a></div>"; 
          
         //gifLink = "<div style='float:left;'><a target='_parent' href='" + gifURL +
         //    "' title='Download animated GIF image'>" +
@@ -809,7 +816,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                    '" controls preload autoplay' +
                    ' style="width:100%; height: 90%;"></video></div>' +
                    '<div style="width:100%"><div style="float:left;" class="video-links">' +
-                   youtubeBtn + linkBtn + downloadLink + //gifLink +
+                   youtubeBtn + linkBtn + downloadLink + gifLink +
                    '</div> <div style="float:right;">' + facebookBtn +
                    tweetBtn + '</div></div>';
         }
@@ -827,7 +834,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                    '</div>' +
                    '<div style="width:100%;">' +
                        '<div style="float:left;" class="video-links">' +
-                        youtubeBtn + linkBtn + downloadLink + //gifLink +
+                        youtubeBtn + linkBtn + downloadLink + gifLink +
                    '</div>' +
                    '<div style="float:right;">' + facebookBtn + tweetBtn +
                    '</div>';
