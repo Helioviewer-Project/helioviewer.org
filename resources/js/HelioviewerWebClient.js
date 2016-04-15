@@ -710,7 +710,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		
 		//Contact
 		$('#help-links-contact').on('click', function(){
-			window.location.href = 'mailto:contact@helioviewer.org';
+			window.location.href = 'mailto:'+self.serverSettings.contactEmail;
 		});
 		
 		//Github

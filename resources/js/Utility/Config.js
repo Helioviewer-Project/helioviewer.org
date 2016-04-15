@@ -16,18 +16,15 @@ var Config = Class.extend(
      params: {
         'back_end'             	: "http://api.helioviewer.org/",
         'web_root_url'         	: "http://helioviewer.org",
-        'static_asset_url'     	: "http://api.helioviewer.org",
 	    'build_num'             : 700,
         'default_image_scale'   : 4.8408817,
         'min_image_scale'       : 0.60511022,
         'max_image_scale'       : 154.90822,
         'max_tile_layers'       : 5,
         'prefetch_size'        	: 0,
-        'default_timestep'   	: 86400,
         'news_url'             	: "http://blog.helioviewer.org/",
         'user_video_feed'       : "http://api.helioviewer.org/",
-        'contact_email'        	: "contact@helioviewer.org",
-        'disable_cache'        	: false
+        'contact_email'        	: "contact@helioviewer.org"
      },
     
     /**
@@ -41,8 +38,8 @@ var Config = Class.extend(
 	        self.params[k] = v;
         });
 
-        this.bools  = ["disable_cache"];
-        this.ints   = ["build_num", "default_timestep", "prefetch_size", "max_movie_frames", "max_tile_layers"];
+        this.bools  = [];
+        this.ints   = ["build_num", "prefetch_size", "max_movie_frames", "max_tile_layers"];
         this.floats = ["default_image_scale", "min_image_scale", "max_image_scale"];
 
         this.fixTypes();
@@ -88,13 +85,11 @@ var Config = Class.extend(
             'maxImageScale'       : this.params["max_image_scale"],
             'maxTileLayers'       : this.params["max_tile_layers"],
             'prefetchSize'        : this.params["prefetch_size"],
-            'timeIncrementSecs'   : this.params["default_timestep"],
             'backEnd'             : this.params["back_end"],
             'newsURL'             : this.params["news_url"],
             'rootURL'             : this.params["web_root_url"],
             'videoFeed'           : this.params["user_video_feed"],
             'contactEmail'        : this.params["contact_email"],
-            'staticAssetUrl'      : this.params["static_asset_url"],
             'apiURL'              : this.params["back_end"]
         };
     }
