@@ -1796,7 +1796,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	                 +     '&x2=' + x2
 	                 +     '&y1=' + y1
 	                 +     '&y2=' + y2
-	                 +     '&display=true&watermark=false" '
+	                 +     '&display=true&watermark=false'
+	                 +     '&timestamp=' + Date.now() + '" '
 	                 +     'class="preview end" '
 	                 +     'style="display:block;width:' + 160 + 'px; ' + 'height:' + Math.round( 160 / ( width / height ) ) + 'px;border: 1px solid rgba(255,255,255,0.2);margin:5px;"'
 	                 +     ' />';
