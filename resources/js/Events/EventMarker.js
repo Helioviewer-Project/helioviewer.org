@@ -725,7 +725,7 @@ var EventMarker = Class.extend(
                     + 		"<div style=\"clear:both\"></div>\n"
                     //+       "\t"+'<div class="ui-icon ui-icon-copy btn copy-to-data" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"></div>'
                     +		noaaSearch
-                    +		"\t"+'<div class="btn-label btn copy-to-data text-btn" data-start="'+this.event_starttime+'" data-end="'+this.event_endtime+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>'+"\n"
+                    +		"\t"+'<div class="btn-label btn copy-to-data text-btn" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>'+"\n"
 //                    +       "\t"+'<div class="ui-icon ui-icon-video btn event-movie"></div><div class="btn-label btn event-movie">Generate Movie</div>'+"\n"
                     +  '</div>'+"\n";
 
