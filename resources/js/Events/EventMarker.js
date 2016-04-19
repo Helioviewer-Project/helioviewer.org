@@ -719,11 +719,13 @@ var EventMarker = Class.extend(
 		}
 		
         content     += '<div class="btn-container">'+"\n"
-                    +       "\t"+'<div class="btn-label btn event-info text-btn"><i class="fa fa-info-circle fa-fw"></i>View HEK data</div>'+"\n"
+                    +       "\t"+'<div class="btn-label btn event-info text-btn"><i class="fa fa-info-circle fa-fw"></i> View HEK data</div>'+"\n"
+                    + 		"<div style=\"clear:both\"></div>\n"
+                    +       "\t"+'<div class="btn-label btn event-create-movie text-btn" data-start="'+this.event_starttime+'" data-end="'+this.event_endtime+'"><i class="fa fa-video-camera fa-fw"></i> Make movie using event times and current field of view</div>'+"\n"
                     + 		"<div style=\"clear:both\"></div>\n"
                     //+       "\t"+'<div class="ui-icon ui-icon-copy btn copy-to-data" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"></div>'
                     +		noaaSearch
-                    +		"\t"+'<div class="btn-label btn copy-to-data text-btn" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>'+"\n"
+                    +		"\t"+'<div class="btn-label btn copy-to-data text-btn" data-start="'+this.event_starttime+'" data-end="'+this.event_endtime+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>'+"\n"
 //                    +       "\t"+'<div class="ui-icon ui-icon-video btn event-movie"></div><div class="btn-label btn event-movie">Generate Movie</div>'+"\n"
                     +  '</div>'+"\n";
 
@@ -765,6 +767,23 @@ var EventMarker = Class.extend(
             $('#vso-end-date, #sdo-end-date').val(endArr[0]);
             $('#vso-end-time, #sdo-end-time').val(endArr[1]).change();
         });
+		
+		//Create Movie from event popup
+		this.eventPopupDomNode.find(".event-create-movie").bind('click', function() {
+	        var start = $(this).data('start') + '.000Z';
+            var end = $(this).data('end') + '.000Z';
+            
+            //build an movie settings object
+            var formSettings = [
+	            {name : 'speed-method', value : 'framerate'},
+	            {name : 'framerate', value : 15},
+	            {name : 'startTime', value : start},
+	            {name : 'endTime', value : end},
+            ];
+            
+            helioviewer._movieManagerUI._buildMovieRequest(formSettings);
+        });
+        
         this.eventPopupDomNode.find(".event-search-external").bind('click', function() {
             var url = $(this).data('url');
             window.open(url, '_blank');
