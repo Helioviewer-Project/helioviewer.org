@@ -74,7 +74,25 @@ var MovieManagerUI = MediaManagerUI.extend(
             this._movieEvents = '';
             this._movieEventsLabels = false;
         }
-
+		
+		if(typeof formParams['startTime'] != 'undefined'){
+	        var roi = helioviewer.getViewportRegionOfInterest();
+	        var layers = helioviewer.getVisibleLayers(roi);
+	        var events = helioviewer.getEvents();
+	
+	        // Make sure selection region and number of layers are acceptible
+	        if (!this._validateRequest(roi, layers)) {
+	            return;
+	        }
+	
+	        // Store chosen ROI and layers
+	        this._movieScale  = helioviewer.getImageScale();
+	        this._movieROI    = this._toArcsecCoords(roi, this._movieScale);
+	        this._movieLayers = layers;
+	        this._movieEvents = events;
+	        this._movieEventsLabels = helioviewer.getEventsLabels();
+	    }    
+		
         // Movie request parameters
         baseParams = {
             action       : "queueMovie",
@@ -90,8 +108,15 @@ var MovieManagerUI = MediaManagerUI.extend(
         };
 
         // Add ROI and start and end dates
-        params = $.extend(baseParams, this._movieROI,
-                          this._getMovieTimeWindow());
+        if(typeof formParams['startTime'] != 'undefined'){
+	        var dates =  {
+	            "startTime": formParams['startTime'],
+	            "endTime"  : formParams['endTime']
+	        };
+	        params = $.extend(baseParams, this._movieROI, dates);
+        }else{
+	        params = $.extend(baseParams, this._movieROI, this._getMovieTimeWindow());
+        }
 
         // (Optional) Frame-rate or movie-length
         if (formParams['speed-method'] === "framerate") {
