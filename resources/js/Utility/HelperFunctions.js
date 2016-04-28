@@ -365,10 +365,16 @@ var extractLayerName = function (layer) {
 var parseLayerString = function (str) {
     var params = str.split(","),
         uiLabels=Array();
-
+	
+	var lastName = '';
+	var count = 0;
+	
     for (var i=0; i<params.length-2; i++) {
-        uiLabels[i] = { 'label' : '',
-                        'name'  : params[i] };
+        if(params[i] != lastName){
+	        uiLabels[count] = { 'label' : '', 'name'  : params[i] };
+	        count++;
+        }
+        lastName = params[i];
     }
 
     return {
