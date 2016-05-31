@@ -24,7 +24,7 @@
     background-color: rgba(0,0,0,0.85);
 }
 
-#hv-drawer-timeline button {
+#hv-drawer-timeline button, #hv-drawer-timeline-events button {
     color: #ccc;
     background-color: rgba(80,80,80, 0.65);
     font-family: 'Source Code Pro', monospace;
@@ -34,20 +34,20 @@
     padding: 2px 4px;
     margin: 0 4px;
 }
-#hv-drawer-timeline button:hover {
+#hv-drawer-timeline button:hover, #hv-drawer-timeline-events button:hover {
     color: #fff;
     background-color: rgba(112,112,112, 0.65);
 }
 
-#hv-drawer-timeline #btn-prev {
+#hv-drawer-timeline #btn-prev, #hv-drawer-timeline-events #timeline-events-btn-prev {
     float: left;
 }
-#hv-drawer-timeline #btn-next {
+#hv-drawer-timeline #btn-next, #hv-drawer-timeline-events #timeline-events-btn-next {
     float: right;
 }
-#hv-drawer-timeline #btn-back {
+#hv-drawer-timeline #btn-back, #hv-drawer-timeline-events #timeline-events-btn-back {
     display: none;
 }
-#data-coverage-timeline > div{
+#data-coverage-timeline > div, #data-coverage-timeline-events > div{
 	min-width:100% !important;
 }

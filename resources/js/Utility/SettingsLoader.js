@@ -146,6 +146,9 @@ var SettingsLoader = (
                     },
                     "#hv-drawer-timeline": {
                         "open": false
+                    },
+                    "#hv-drawer-timeline-events": {
+                        "open": false
                     }
                 },
                 "eventLayers": [],

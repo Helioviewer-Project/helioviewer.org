@@ -10,6 +10,8 @@ newcap: true, immed: true, maxlen: 80, sub: true */
 var timelineExtremesChanged = false;
 var timelineTick = 'minute';
 var zoomTickTime = 0;
+var timelineStartDate = 0;
+var timelineEndDate = 0;
 
 var Timeline = Class.extend({
 	
@@ -787,6 +789,15 @@ var Timeline = Class.extend({
         if(startDate < 0 || endDate < 0 || startDate > endDate){
 	        return false;
         }
+        
+        if(timelineStartDate > 0 && timelineEndDate > 0){
+	        startDate = timelineStartDate;
+			endDate = timelineEndDate;
+        }else{
+	        timelineStartDate = startDate;
+			timelineEndDate = endDate;
+        }
+        
         	    
 	    var _url = Helioviewer.api+'?action=getDataCoverage&imageLayers='+ imageLayersStr +'&startDate='+ startDate +'&endDate='+ endDate +'&callback=?';
 	    $.getJSON(_url, function (data) {
@@ -1048,6 +1059,9 @@ var Timeline = Class.extend({
 	        return false;
         }
         
+        timelineStartDate = Math.round(e.min);
+        timelineEndDate = Math.round(e.max);
+        
         var _url = Helioviewer.api+'?action=getDataCoverage&imageLayers='+ imageLayersStr +'&startDate='+ Math.round(e.min) +'&endDate='+ Math.round(e.max) +'&callback=?';
         $.getJSON(_url, function(data) {
 			var seriesVisability = [];
@@ -1280,28 +1294,3 @@ var _colors  = [
     '#ffffff', // 96
     '#ffffff'  // 97
 ];
-
-var _colorsEvents  = {
-	ER: '#ff8dad',
-	SS: '#8ce6ff',
-	OS: '#81fffc',
-	CH: '#fef38e',
-	AR: '#ff8f97',
-	PG: '#ab8cff',
-	SG: '#e986ff',
-	FE: '#a3ff8d',
-	EF: '#95c6ff',
-	CW: '#ebff8c',
-	FI: '#c8ff8d',
-	CJ: '#9da4ff',
-	CC: '#ff8acc',
-	FL: '#7affae',
-	FA: '#7bff8e',
-	CME: '#ffb294',
-	LP: '#7cffc9',
-	TO: '#ca89ff',
-	SP: '#ff82ff',
-	CR: '#ff85ff',
-	CD: '#ffd391',
-	UNK: '#d4d4d4'
-};
