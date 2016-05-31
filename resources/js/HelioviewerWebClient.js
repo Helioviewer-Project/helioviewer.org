@@ -40,6 +40,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.drawerTimelineTab         = $('#hv-drawer-tab-timeline');
         this.drawerTimelineOpened      = false;
         this.drawerTimelineOpenedHeight= '326';
+        this.drawerTimelineEvents      = $('#hv-drawer-timeline-events');
+        this.drawerTimelineEventsTab   = $('#hv-drawer-tab-timeline-events');
+        this.drawerTimelineEventsOpened      = false;
+        this.drawerTimelineEventsOpenedHeight= '326';
         this.drawerNews                = $('#hv-drawer-news');
         this.drawerNewsOpened          = false;
         this.drawerNewsOpenedHeight    = 'auto';
@@ -147,6 +151,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                     self.drawerTimelineClick(true);
                 }
                 break;
+            case "#hv-drawer-timeline-events":
+                if ( drawerObj.open ) {
+                    self.drawerTimelineEventsClick(true);
+                }
+                break;
             case "#hv-drawer-news":
                 if ( drawerObj.open ) {
                     self.drawerNewsClick(true);
@@ -244,14 +253,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var self = this;
 
         $(document).bind("datasources-initialized", function (e, dataSources) {
-            var tileLayerAccordion = new TileLayerAccordion(
-                    '#tileLayerAccordion', dataSources, date);
+            self._tileLayerAccordion = new TileLayerAccordion(
+                   '#tileLayerAccordion', dataSources, date);
         });
 
-        $(document).bind("event-types-initialized",
-            function (e, eventTypes, date) {
-                var eventLayerAccordion = new EventLayerAccordion(
-                        '#eventLayerAccordion', eventTypes, date);
+        $(document).bind("event-types-initialized", function (e, eventTypes, date) {
+            self._eventLayerAccordion = new EventLayerAccordion(
+                    '#eventLayerAccordion', eventTypes, date);
         });
 
         this._super("#helioviewer-viewport-container-outer", date,
@@ -583,6 +591,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         
         $(this.drawerTimelineTab).bind('click', $.proxy(this.drawerTimelineClick, this));
         this.drawerTimeline.bind('mouseover', function (event) { event.stopPropagation(); });
+        
+        $(this.drawerTimelineEventsTab).bind('click', $.proxy(this.drawerTimelineEventsClick, this));
+        this.drawerTimelineEvents.bind('mouseover', function (event) { event.stopPropagation(); });
 
         $('#news-button').bind('click', $.proxy(this.drawerNewsClick, this));
         $('#youtube-button').bind('click', $.proxy(this.drawerYoutubeClick, this));
@@ -1807,12 +1818,20 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     updateHeightsInsideViewportContainer: function() {
         var newHeight, sidebars, windowHeight = parseInt($(window).height()),
-            header, viewport, drawerBottom, drawerLeft, drawerRight, self = this;
+            header, viewport, drawerBottomHeight, drawerLeft, drawerRight, self = this;
 		
         header       = $('#hv-header');
         viewport     = $('#helioviewer-viewport');
         drawerLeft   = $('#hv-drawer-left');
-        drawerBottom = $('#hv-drawer-timeline');
+        
+        if($('#hv-drawer-timeline').height() > 0){
+	        drawerBottomHeight = $('#hv-drawer-timeline').height();
+        }else if ($('#hv-drawer-timeline-events').height() > 0){
+	        drawerBottomHeight = $('#hv-drawer-timeline-events').height();
+        }else{
+	        drawerBottomHeight = 0;
+        }
+        
         //left sidebars
         var drawerNews   	= $('#hv-drawer-news');
         var drawerYouTube   = $('#hv-drawer-youtube');
@@ -1821,7 +1840,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var drawerData   	= $('#hv-drawer-data');
         var drawerShare   	= $('#hv-drawer-share');
         var drawerHelp   	= $('#hv-drawer-help');
-		var isOpen 			= Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline.open");
+		var isOpen 			= false;
+		if(
+			Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline.open") == true ||
+			Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true
+		){
+			isOpen = true
+		}
 
         sidebars = [drawerLeft, drawerNews, drawerYouTube, drawerMovies, drawerScreenshots, drawerData, drawerShare, drawerHelp];
 		
@@ -1843,7 +1868,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                       - parseInt(sidebar.css('margin-bottom'))
                       - parseInt(sidebar.css('border-bottom-width'));
 
-				sidebar.css('max-height', (newHeight - drawerBottom.height()) + 'px');
+				sidebar.css('max-height', (newHeight - drawerBottomHeight) + 'px');
             }else{
 	            sidebar.css('max-height', '100%');
             }
@@ -1892,6 +1917,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		var self = this;
         if ( this.drawerTimelineOpened || openNow === false ) {
             $('#hv-drawer-tab-timeline').css('bottom', '0px');
+            $('#hv-drawer-tab-timeline-events').css('bottom', '0px');
             this.drawerTimeline.css('height', 0).hide();
             $('.drawer-contents', this.drawerTimeline).hide();
             this.drawerTimeline.css('padding', 0);
@@ -1908,6 +1934,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerTimelineOpened = false;
         }
         else if ( !this.drawerTimelineOpened || openNow === true ) {
+            this.drawerTimelineEventsClick(false);
+            
             var imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
 	        if(imageLayersStr == ''){
 		        $(document).trigger("message-console-log", ["To open Data Timeline you must have at least one visible image layer.", {sticky: true,header: "Just now"}, true, true]);
@@ -1915,6 +1943,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	        }
             
             $('#hv-drawer-tab-timeline').css('bottom', this.drawerTimelineOpenedHeight + 'px');
+            $('#hv-drawer-tab-timeline-events').css('bottom', this.drawerTimelineOpenedHeight + 'px');
             this.drawerTimeline.show().css('height', this.drawerTimelineOpenedHeight + 'px');
             $('.drawer-contents', this.drawerTimeline).show();
             
@@ -1926,11 +1955,76 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 			Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline.open", true);
             this.drawerTimelineOpened = true;
             
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline-events.open", false);
+            this.drawerTimelineEventsOpened = false;
+            
 			if(typeof this.timeline == 'undefined'){
 				setTimeout(function(){self.timeline   = new Timeline();}, 200);
 				//this.timeline   = new Timeline();				
 			}else{
 				this.timeline.drawPlotLine();
+				$('#data-coverage-timeline').highcharts().xAxis[0].setExtremes(timelineStartDate, timelineEndDate);
+				this.timeline.afterSetExtremes({min:timelineStartDate, max:timelineEndDate});
+			}
+        }
+
+        return;
+    },
+	
+	drawerTimelineEventsClick: function(openNow) {
+		var self = this;
+        if ( this.drawerTimelineEventsOpened || openNow === false ) {
+            $('#hv-drawer-tab-timeline-events').css('bottom', '0px');
+            $('#hv-drawer-tab-timeline').css('bottom', '0px');
+            this.drawerTimelineEvents.css('height', 0).hide();
+            $('.drawer-contents', this.drawerTimelineEvents).hide();
+            this.drawerTimelineEvents.css('padding', 0);
+            
+            //for (var i=1; i<=this.drawerSpeed; i=i+10) {
+            //    setTimeout(this.updateHeightsInsideViewportContainer, i);
+            //}
+            setTimeout(
+                this.updateHeightsInsideViewportContainer,
+                this.drawerSpeed*2
+            );
+			
+			Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline-events.open", false);
+            this.drawerTimelineEventsOpened = false;
+            
+            if(this.drawerTimelineOpened){
+	            //Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline.open", false);
+				//this.drawerTimelineOpened = false;
+            }
+        }
+        else if ( !this.drawerTimelineEventsOpened || openNow === true ) {
+	        this.drawerTimelineClick(false);
+	        
+            var imageLayersStr = this.getEvents();
+	        if(imageLayersStr == ''){
+		        $(document).trigger("message-console-log", ["To open Data Timeline you must select at least one event.", {sticky: true,header: "Just now"}, true, true]);
+		        return;
+	        }
+            
+            
+            $('#hv-drawer-tab-timeline-events').css('bottom', this.drawerTimelineEventsOpenedHeight + 'px');
+            $('#hv-drawer-tab-timeline').css('bottom', this.drawerTimelineEventsOpenedHeight + 'px');
+            this.drawerTimelineEvents.show().css('height', this.drawerTimelineEventsOpenedHeight + 'px');
+            $('.drawer-contents', this.drawerTimelineEvents).show();
+
+            setTimeout(this.updateHeightsInsideViewportContainer, this.drawerSpeed);
+			
+			Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline-events.open", true);
+            this.drawerTimelineEventsOpened = true;
+            
+            Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline.open", false);
+            this.drawerTimelineOpened = false;
+            
+			if(typeof this.timelineEvents == 'undefined'){
+				setTimeout(function(){self.timelineEvents   = new TimelineEvents();}, 200);			
+			}else{
+				this.timelineEvents.drawPlotLine();
+				$('#data-coverage-timeline-events').highcharts().xAxis[0].setExtremes(timelineStartDate, timelineEndDate);
+				this.timelineEvents.afterSetExtremes({min:timelineStartDate, max:timelineEndDate});
 			}
         }
 
