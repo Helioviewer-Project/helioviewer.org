@@ -10,6 +10,7 @@ newcap: true, immed: true, maxlen: 80, sub: true */
 var timelineExtremesChanged = false;
 var timelineTick = 'minute';
 var zoomTickTime = 0;
+var isShared = true;
 
 $(function () {
     
@@ -313,9 +314,10 @@ var TimelineEvents = Class.extend({
 	                            }
 	                            
 	                            var date = new Date(columnCenter);
-	                            helioviewer.timeControls.setDate(date);
+	                            helioviewer.timeControls.setDate(date, true);
 	                            
 	                            var chart = $('#data-coverage-timeline-events').highcharts();
+
 								chart.xAxis[0].setExtremes(minTime, maxTime);
 								self.afterSetExtremes({min:minTime, max:maxTime});
 								return true;
@@ -497,6 +499,8 @@ var TimelineEvents = Class.extend({
 		                var from = this.x;
 		                var to = this.x+this.points[0].series.closestPointRange;
 						
+						zoomTickTime = parseInt( (from + to) * 0.5 );
+						
 		                str += '<div style="width:340px;">\
 		                			<b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', from)+' - '+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', to)+' UTC</b>\
 		                		</div>';
@@ -506,7 +510,8 @@ var TimelineEvents = Class.extend({
 							if(point.y != 1){
 								ext = 's';
 							}
-							str += '<span style="color:'+point.series.color+';padding-left:5px;">'+point.series.name+'</span>: <b>'+Highcharts.numberFormat(point.y,0,'.',',')+' event'+ext+'</b><br/>';
+							
+							str += '<span style="color:'+point.series.color+';padding-left:5px;font-size:9px;line-height:9px;">'+point.series.name+'</span>: <b style="font-size:9px;line-height:9px;">'+Highcharts.numberFormat(point.y,0,'.',',')+' event'+ext+'</b><br/>';
 						});
 						
 	                }else{//return false;
@@ -520,7 +525,7 @@ var TimelineEvents = Class.extend({
 				            headingText = point.event_type + ': ' + point.frm_name + ' ' + point.frm_specificid;
 				        }
 				
-				        str     += '<h1 class="user-selectable">'+headingText+' '+point.kb_archivid+'</h1>'+"\n";
+				        str     += '<h1 class="user-selectable">'+headingText+'</h1>'+"\n";
 				
 				        if ( point.event_peaktime != null && point.event_peaktime != '' && point.event_peaktime != '0000-00-00 00:00:00') {
 				            str += '<div class="container">'+"\n"
@@ -617,24 +622,31 @@ var TimelineEvents = Class.extend({
 		            }
 					return str + '</div>';
 	            },
-	            positioner: function (labelWidth, labelHeight, point) {
-	                var tooltipX, tooltipY;
-	                labelWidth = 175;
-	                if (point.plotX + labelWidth*2 > this.chart.plotWidth) {
-	                    tooltipX = point.plotX + this.chart.plotLeft - labelWidth*2 - 20;
-	                //}else if (point.plotX < labelWidth) {
-	                //    tooltipX = point.plotX + this.chart.plotLeft - 30;
+	            positioner: function (boxWidth, boxHeight, point, e) {
+	                var tooltipX = 0, tooltipY = 0;
+	                if(typeof this.chart.mouseCoords.x == 'undefined' || typeof this.chart.mouseCoords.y == 'undefined'){
+		                return {x: 0, y: 0}
+	                }
+	                var x = this.chart.mouseCoords.x;
+	                var y = this.chart.mouseCoords.y;
+	                var xOffset = 5;
+	                var yOffset = -130;
+	                
+	                if (x + 350 > this.chart.plotWidth) {
+	                    tooltipX = x - 350;
 	                } else {
-	                   // tooltipX = point.plotX + this.chart.plotLeft - labelWidth;
-	                    tooltipX = point.plotX + this.chart.plotLeft + 20;
+	                    tooltipX = x;
+	                }
+
+	                if(y < 150){
+		                tooltipY = y - 75;
+	                }else{
+		                tooltipY = y - 130;
 	                }
 	                
-	                //tooltipY = point.plotY + 100;// + this.chart.plotTop - 20;
-	                //if(this.chart.series[0].type == 'xrange'){
-		            //    tooltipY = 0;
-	                //}else{
-		                tooltipY = 40;//point.plotY + this.chart.plotTop - 40;
-	                //}
+	                if(isShared){
+		                tooltipY = 0;
+	                }
 	                
 	                return {
 	                    x: tooltipX,
@@ -937,8 +949,9 @@ var TimelineEvents = Class.extend({
         $('#timeline-events-btn-next').on('click', $.proxy(this.btnNext, this));
         $('#timeline-events-btn-center').on('click', $.proxy(this.btnCenter, this));
 
-        $(document).on('observation-time-changed', $.proxy(this._updateTimelineDate, this));
-        $(document).on('update-external-datasource-integration', $.proxy(this._updateTimeline, this));
+        $(document).on('observation-time-changed-update-timeline', $.proxy(this._updateTimelineDate, this));
+        //$(document).on('update-external-datasource-integration', $.proxy(this._updateTimeline, this));
+        $(document).on('change-feature-events-state', $.proxy(this._updateTimeline, this));
         $("#hv-drawer-timeline-events-logarithmic").on('click', $.proxy(this._updateTimeline, this));
         
         
@@ -1078,7 +1091,7 @@ var TimelineEvents = Class.extend({
     },
     
     render: function(){
-	    var _url, eventLayersStr = '', layers = [], eventLayers=[], date, startDate, endDate, self, isShared = true;
+	    var _url, eventLayersStr = '', layers = [], eventLayers=[], date, startDate, endDate, self, chartTypeX = 'column';
 		
 		self = this;
 		
@@ -1125,6 +1138,10 @@ var TimelineEvents = Class.extend({
                 
                 if(series.res == 'm'){
 	                isShared = false;
+	                chartTypeX = 'xrange';
+                }else{
+	                isShared = true;
+	                chartTypeX = 'column';
                 }
             });
             
@@ -1132,7 +1149,7 @@ var TimelineEvents = Class.extend({
             
 	        // create the chart
 	        $('#data-coverage-timeline-events').highcharts( self._timelineOptions,function(chart){
-			        $(document).on('mouseup',function(){
+			        $('#data-coverage-timeline-events').on('mouseup',function(){
 			            if (timelineExtremesChanged) {
 				            
 				            var extremes, newMin, newMax, span;
@@ -1149,7 +1166,7 @@ var TimelineEvents = Class.extend({
 					        timelineExtremesChanged = false;
 			            }
 			        }),
-			        $(document).on('mousedown',function(){
+			        $('#data-coverage-timeline-events').on('mousedown',function(){
 			            timelineExtremesChanged = false;
 			        });
 			        $('#data-coverage-timeline-events').bind('mousewheel', function(event) {
@@ -1177,10 +1194,24 @@ var TimelineEvents = Class.extend({
 				            self.btnZoomOut();
 				        }
 			        });
+			        
+			        chart.container.addEventListener('mouseover', function(e) {
+			            chart.container.addEventListener('mousemove', chartEventsContainerMouseMove);
+			        });
+			        chart.container.addEventListener('mouseout', function(e) {
+			            chart.container.removeEventListener('mousemove', chartEventsContainerMouseMove);
+			        });
+			        
+			        function chartEventsContainerMouseMove(event) {
+			            var containerCoords = $(chart.container).position();//element_position(chart.container);
+			            var relativeMouseX = event.pageX - containerCoords.x;
+			            var relativeMouseY = event.pageY - containerCoords.y;
+			            chart.mouseCoords = { x: event.chartX, y: event.chartY };
+			        }
 			    });
 			    
-	        self.drawPlotLine('column');
-	        self.drawCarringtonLines(startDate, endDate, 'column');
+	        self.drawPlotLine(chartTypeX);
+	        self.drawCarringtonLines(startDate, endDate, chartTypeX);
 	        
 	        $('#data-coverage-timeline-events').highcharts().xAxis[0].setExtremes(startDate, endDate);
 	        var chart = $('#data-coverage-timeline-events').highcharts();
@@ -1302,7 +1333,11 @@ var TimelineEvents = Class.extend({
     
     _updateTimelineDate: function(){
 	    var extremes, newMin, newMax, span;
-
+		
+		if($('#hv-drawer-timeline-events').is(":visible") != true){
+			return;
+		}
+		
         var chart = $('#data-coverage-timeline-events').highcharts();
 		
 		//Get current HV time
@@ -1320,7 +1355,11 @@ var TimelineEvents = Class.extend({
     
     _updateTimeline: function(){
 	    var extremes, newMin, newMax, span;
-
+		
+		if($('#hv-drawer-timeline-events').is(":visible") != true){
+			return;
+		}
+		
         var chart = $('#data-coverage-timeline-events').highcharts();
 
         
@@ -1345,17 +1384,10 @@ var TimelineEvents = Class.extend({
         var chart = $('#data-coverage-timeline-events').highcharts();
 		var chartTypeX = 'column';
 		var chartTypeY = 'linear';
-		var isShared = true;
 		
 		if($("#hv-drawer-timeline-events-logarithmic").is(':checked')){
 			chartTypeY = 'logarithmic';
 		}
-		
-		if(Math.round(e.max) - Math.round(e.min) <= 1 * 24 * 60 * 60 * 1000){
-	        chartTypeX = 'xrange';
-			chartTypeY = 'linear';
-			isShared = false;
-        }
         
         var eventLayersStr = helioviewer.getEvents();
         
@@ -1398,6 +1430,14 @@ var TimelineEvents = Class.extend({
                 
                 categories.push((typeof _eventsSeries[series.event_type] == 'undefined' ? series['name']: _eventsSeries[series.event_type].name ));
                 count++;
+                
+                if(series.res == 'm'){
+	                isShared = false;
+	                chartTypeX = 'xrange';
+                }else{
+	                isShared = true;
+	                chartTypeX = 'column';
+                }
             });
 
             chart.yAxis[0].setCategories(categories);
@@ -1433,8 +1473,11 @@ var TimelineEvents = Class.extend({
 	    var chart = $('#data-coverage-timeline-events').highcharts();
 		
 		if(
+			typeof chart.xAxis == 'undefined' ||
 			typeof chart.xAxis[0] == 'undefined' ||
+			typeof chart.xAxis[0].series == 'undefined' || 
 			typeof chart.xAxis[0].series[0] == 'undefined' || 
+			typeof chart.xAxis[0].series[0].points == 'undefined' || 
 			typeof chart.xAxis[0].series[0].points[0] == 'undefined' || 
 			chart.xAxis[0].series[0].points[0].x < 0){
 			return false;    

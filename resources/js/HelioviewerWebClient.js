@@ -1934,13 +1934,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerTimelineOpened = false;
         }
         else if ( !this.drawerTimelineOpened || openNow === true ) {
-            this.drawerTimelineEventsClick(false);
             
             var imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
 	        if(imageLayersStr == ''){
 		        $(document).trigger("message-console-log", ["To open Data Timeline you must have at least one visible image layer.", {sticky: true,header: "Just now"}, true, true]);
 		        return;
 	        }
+	        
+            this.drawerTimelineEventsClick(false);
             
             $('#hv-drawer-tab-timeline').css('bottom', this.drawerTimelineOpenedHeight + 'px');
             $('#hv-drawer-tab-timeline-events').css('bottom', this.drawerTimelineOpenedHeight + 'px');
@@ -1965,6 +1966,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				this.timeline.drawPlotLine();
 				$('#data-coverage-timeline').highcharts().xAxis[0].setExtremes(timelineStartDate, timelineEndDate);
 				this.timeline.afterSetExtremes({min:timelineStartDate, max:timelineEndDate});
+				this.timeline.setTitle({min:timelineStartDate, max:timelineEndDate});
 			}
         }
 
@@ -1997,14 +1999,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             }
         }
         else if ( !this.drawerTimelineEventsOpened || openNow === true ) {
-	        this.drawerTimelineClick(false);
 	        
             var imageLayersStr = this.getEvents();
 	        if(imageLayersStr == ''){
-		        $(document).trigger("message-console-log", ["To open Data Timeline you must select at least one event.", {sticky: true,header: "Just now"}, true, true]);
+		        $(document).trigger("message-console-log", ["To open Events Timeline you must select at least one event.", {sticky: true,header: "Just now"}, true, true]);
 		        return;
 	        }
-            
+	        
+            this.drawerTimelineClick(false);
             
             $('#hv-drawer-tab-timeline-events').css('bottom', this.drawerTimelineEventsOpenedHeight + 'px');
             $('#hv-drawer-tab-timeline').css('bottom', this.drawerTimelineEventsOpenedHeight + 'px');
@@ -2025,6 +2027,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				this.timelineEvents.drawPlotLine();
 				$('#data-coverage-timeline-events').highcharts().xAxis[0].setExtremes(timelineStartDate, timelineEndDate);
 				this.timelineEvents.afterSetExtremes({min:timelineStartDate, max:timelineEndDate});
+				this.timelineEvents.setTitle({min:timelineStartDate, max:timelineEndDate});
 			}
         }
 

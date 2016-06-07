@@ -223,7 +223,7 @@ var Timeline = Class.extend({
 	                            }
 	                            
 	                            var date = new Date(columnCenter);
-	                            helioviewer.timeControls.setDate(date);
+	                            helioviewer.timeControls.setDate(date, true);
 	                            
 	                            var chart = $('#data-coverage-timeline').highcharts();
 								chart.xAxis[0].setExtremes(minTime, maxTime);
@@ -326,6 +326,30 @@ var Timeline = Class.extend({
 						}
 		            }
 					return str + '</div>';
+	            },
+	            positioner: function (labelWidth, labelHeight, point) {
+	                var tooltipX, tooltipY;
+	                labelWidth = 175;
+	                if (point.plotX + labelWidth*2 > this.chart.plotWidth) {
+	                    tooltipX = point.plotX + this.chart.plotLeft - labelWidth*2 - 20;
+	                //}else if (point.plotX < labelWidth) {
+	                //    tooltipX = point.plotX + this.chart.plotLeft - 30;
+	                } else {
+	                   // tooltipX = point.plotX + this.chart.plotLeft - labelWidth;
+	                    tooltipX = point.plotX + this.chart.plotLeft + 20;
+	                }
+	                
+	                //tooltipY = point.plotY + 100;// + this.chart.plotTop - 20;
+	                //if(this.chart.series[0].type == 'xrange'){
+		            //    tooltipY = 0;
+	                //}else{
+		                tooltipY = 40;//point.plotY + this.chart.plotTop - 40;
+	                //}
+	                
+	                return {
+	                    x: tooltipX,
+	                    y: tooltipY
+	                };
 	            }
             },
             
@@ -816,7 +840,7 @@ var Timeline = Class.extend({
             });
 	        // create the chart
 	        $('#data-coverage-timeline').highcharts( self._timelineOptions,function(chart){
-			        $(document).on('mouseup',function(){
+			        $('#data-coverage-timeline').on('mouseup',function(){
 			            if (timelineExtremesChanged) {
 				            
 				            var extremes, newMin, newMax, span;
@@ -833,7 +857,7 @@ var Timeline = Class.extend({
 					        timelineExtremesChanged = false;
 			            }
 			        }),
-			        $(document).on('mousedown',function(){
+			        $('#data-coverage-timeline').on('mousedown',function(){
 			            timelineExtremesChanged = false;
 			        });
 			        $('#data-coverage-timeline').bind('mousewheel', function(event) {
@@ -984,7 +1008,11 @@ var Timeline = Class.extend({
     
     _updateTimelineDate: function(){
 	    var extremes, newMin, newMax, span;
-
+		
+		if($('#hv-drawer-timeline').is(":visible") != true){
+			return;
+		}
+		
         var chart = $('#data-coverage-timeline').highcharts();
 		
 		//Get current HV time
@@ -1002,7 +1030,11 @@ var Timeline = Class.extend({
     
     _updateTimeline: function(){
 	    var extremes, newMin, newMax, span;
-
+		
+		if($('#hv-drawer-timeline').is(":visible") != true){
+			return;
+		}
+		
         var chart = $('#data-coverage-timeline').highcharts();
 
         
