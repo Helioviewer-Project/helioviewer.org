@@ -100,6 +100,13 @@ var EventTree = Class.extend({
             // Dim rows that don't have associated features/events
             if ( event_type.children.length == 0 ) {
                 $('#'+event_type['attr'].id).css({'opacity':'0.5'});
+                $('#'+event_type['attr'].id).addClass('empty-element');
+                
+                var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
+	            if(visState != true){
+		            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
+					$('#'+event_type['attr'].id).hide();
+	            }
             }
 
             $.each(event_type['children'], function(j, frm) {
@@ -185,6 +192,7 @@ var EventTree = Class.extend({
 
         // Show/Hide events to match new state of the checkboxes
         $(document).trigger("toggle-events");
+        $(document).trigger("change-feature-events-state");
     },
 
     hoverOn: function (event) {

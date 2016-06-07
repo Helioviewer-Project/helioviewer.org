@@ -66,11 +66,12 @@ var EventManager = Class.extend({
         $(document).bind("fetch-eventFRMs", $.proxy(this._queryEventFRMs, this));
         $(document).bind("toggle-events", $.proxy(this._toggleEvents, this));
         $(document).bind('toggle-event-labels',  $.proxy(this.toggleEventLabels, this));
+        $(document).bind('reinit-events-list',  $.proxy(this.reinit, this));
     },
 
-    reinit: function(date) {
+    reinit: function(event, date) {
         var visState;
-
+		
         $("#event-container").remove();
         $('<div id="event-container"></div>').appendTo("#moving-container");
 
@@ -215,12 +216,11 @@ var EventManager = Class.extend({
     _generateTreeData: function (data) {
 
         var self = this, obj, index=0, event_type_arr, type_count=0, count_str;
-
+		
         // Re-initialize _jsTreeData in case it contains old values
         self._jsTreeData = [];
 
         $.each(data, function (event_type, event_type_obj) {
-
             // Split event_type into a text label and an abbreviation
             event_type_arr = event_type.split('/');
 
@@ -303,7 +303,7 @@ var EventManager = Class.extend({
     updateRequestTime: function () {
         var managerStartDate, managerEndDate, eventStartDate, eventEndDate, self = this;
 
-        this.reinit(new Date($("#date").val().replace(/\//g,"-") +"T"+ $("#time").val()+"Z"));
+        this.reinit(false, new Date($("#date").val().replace(/\//g,"-") +"T"+ $("#time").val()+"Z"));
     },
 
 

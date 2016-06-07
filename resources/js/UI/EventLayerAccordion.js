@@ -76,12 +76,25 @@ var EventLayerAccordion = Layer.extend(
      */
     _createAccordionEntry: function (index, id, name, markersVisible, labelsVisible, startOpened) {
 
-        var visibilityBtn, labelsBtn/*, removeBtn*/, markersHidden, labelsHidden, head, body, self=this;
+        var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, head, body, self=this;
+		
+		var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
+        if ( typeof visState == 'undefined') {
+            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
+            visState = true;
+        }
 
         // initial visibility
         markersHidden = (markersVisible ? "" : " hidden");
         labelsHidden  = ( labelsVisible ? "" : " hidden");
-
+        availableHidden  = ( visState ? "" : " hidden");
+		
+		availableBtn = '<span class="fa fa-bullseye fa-fw layerAvailableBtn visible'
+                      + availableHidden + '" '
+                      + 'id="visibilityAvailableBtn-' + id + '" '
+                      + 'title="Toggle visibility of empty elements inside Features and Events list" '
+                      + '></span>';
+		
         visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
                       + markersHidden + '" '
                       + 'id="visibilityBtn-' + id + '" '
@@ -100,7 +113,8 @@ var EventLayerAccordion = Layer.extend(
              +     '</div>'
              +     '<div class="right">'
              +        '<span class="timestamp user-selectable"></span>'
-             +        visibilityBtn
+             +        availableBtn
+             +		  visibilityBtn
              +        labelsBtn
              +     '</div>'
              + '</div>';
@@ -136,6 +150,20 @@ var EventLayerAccordion = Layer.extend(
 
         this.domNode.find("#labelsBtn-"+id).click( function(e) {
             $(document).trigger("toggle-event-labels", [$("#labelsBtn-"+id)]);
+            e.stopPropagation();
+        });
+
+        this.domNode.find("#visibilityAvailableBtn-"+id).click( function(e) {
+            var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
+            if(visState == true){
+	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
+	            $(this).addClass('hidden');
+				$('#eventJSTree .empty-element').hide();
+            }else{
+	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
+	            $(this).removeClass('hidden');
+	            $('#eventJSTree .empty-element').show();
+            }
             e.stopPropagation();
         });
 

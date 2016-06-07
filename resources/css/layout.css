@@ -75,7 +75,26 @@
     color: rgba(255,0,0,0.50);
 }
 
-
+.drawer-contents .fa.layerAvailableBtn {
+    font-size: 1.2em;
+    background: none;
+    color: rgba(0,255,0,1.0);
+}
+.drawer-contents .fa.layerAvailableBtn:hover {
+    color: rgba(0,255,0,0.75);
+}
+.drawer-contents .fa.layerAvailableBtn:active {
+    color: rgba(0,255,0,0.50);
+}
+.drawer-contents .fa.layerAvailableBtn.hidden {
+    color: rgba(255,0,0,1.0);
+}
+.drawer-contents .fa.layerAvailableBtn.hidden:hover {
+    color: rgba(255,0,0,0.75);
+}
+.drawer-contents .fa.layerAvailableBtn.hidden:active {
+    color: rgba(255,0,0,0.50);
+}
 
 /*  F/E Labels Visibility Toggle  */
 .drawer-contents .fa.labelsBtn {
@@ -119,12 +138,12 @@
 .drawer-contents .layer-Head .left {
     float: left;
     text-align: left;
-    width: 36%;
+    width: 33%;
 }
 .drawer-contents .layer-Head .right {
     float: right;
     text-align: right;
-    width: 52%;
+    width: 56%;
     margin-right:15px;
 }
 

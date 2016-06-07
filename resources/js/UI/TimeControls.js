@@ -145,9 +145,9 @@ var TimeControls = Class.extend(
      *
      * @param {Date} date A JavaScript Date object with the new time to use
      */
-    setDate: function (date) {
+    setDate: function (date, updateTimeline) {
         this._date = date;
-        this._onDateChange();
+        this._onDateChange(updateTimeline);
     },
 
     /**
@@ -293,10 +293,13 @@ var TimeControls = Class.extend(
     /**
      * Updates form fields and lets other interested objects know about new time
      */
-    _onDateChange: function () {
+    _onDateChange: function (updateTimeline) {
         this._updateInputFields();
         Helioviewer.userSettings.set("state.date", this._date.getTime());
         $(document).trigger("observation-time-changed", [this._date]);
+        if(typeof updateTimeline == 'undefined'){
+	        $(document).trigger("observation-time-changed-update-timeline", [this._date]);
+        }
     },
 
     /**
