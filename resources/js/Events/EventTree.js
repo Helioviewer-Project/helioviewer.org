@@ -54,6 +54,7 @@ var EventTree = Class.extend({
             // Bind event handler that triggers whenever checkboxes are checked/unchecked
             this._container.bind("change_state.jstree", $.proxy(this._treeChangedState, this));
         }
+        $(document).trigger("change-feature-events-state");
 
     },
 
@@ -77,6 +78,7 @@ var EventTree = Class.extend({
 
         // Bind event handler that triggers whenever checkboxes are checked/unchecked
         this._container.bind("change_state.jstree", $.proxy(this._treeChangedState, this));
+        $(document).trigger("change-feature-events-state");
     },
 
     jstreeFunc: function (name, args) {
@@ -192,7 +194,6 @@ var EventTree = Class.extend({
 
         // Show/Hide events to match new state of the checkboxes
         $(document).trigger("toggle-events");
-        $(document).trigger("change-feature-events-state");
     },
 
     hoverOn: function (event) {
