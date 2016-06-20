@@ -11,6 +11,7 @@ var timelineExtremesChanged = false;
 var timelineTick = 'minute';
 var zoomTickTime = 0;
 var isShared = true;
+var timelineRes = 'm';
 
 $(function () {
     
@@ -210,8 +211,8 @@ var TimelineEvents = Class.extend({
 
             xAxis : {
 	            //tickInterval: 1000,
-	            minRange: 1000,
-	            tickmarkPlacement: 'between',
+	            //minRange: 1000,
+	            //tickmarkPlacement: 'between',
 	            type: 'datetime',
                 plotLines: [],
                 ordinal: false,
@@ -330,126 +331,14 @@ var TimelineEvents = Class.extend({
 			        pointPadding: 0.25,
 			        pointWidth: 4,
 			        borderRadius:3,
-		            grouping: true,
+		            grouping: false,
 		            stickyTracking: false,
                     point: {
                         events: {
                             dblclick: function(e){
 	                         	var date = new Date(this.x);
 								helioviewer.timeControls.setDate(date);    
-                            }/*,
-                            click: function(evt) {
-	                            var point = this;
-				                var str = '<div class="event-popup" style="border:1px solid #80ffff; background:#000;padding:5px;z-index:999;">';
-
-				                var headingText = '';
-								if ( point.hasOwnProperty('hv_labels_formatted') && Object.keys(point.hv_labels_formatted).length > 0 ) {
-						            headingText = point.event_type+': ' + point.hv_labels_formatted[Object.keys(point.hv_labels_formatted)[0]];
-						        }
-						        else {
-						            headingText = point.event_type + ': ' + point.frm_name + ' ' + point.frm_specificid;
-						        }
-						
-						        str     += '<h1 class="user-selectable">'+headingText+' '+point.kb_archivid+'</h1>'+"\n";
-						
-						        if ( point.event_peaktime != null && point.event_peaktime != '' && point.event_peaktime != '0000-00-00 00:00:00') {
-						            str += '<div class="container">'+"\n"
-						                    +      "\t"+'<div class="param-container"><div class="param-label user-selectable">Peak Time:</div></div>'+"\n"
-						                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', point.event_peaktime)+'</div><div class="ui-icon ui-icon-arrowstop-1-n" title="Jump to Event Peak Time"></div></div>'+"\n"
-						                    +  '</div>'+"\n";
-						        }
-						        str     += '<div class="container">'+"\n"
-						                    +      "\t"+'<div class="param-container"><div class="param-label user-selectable">Start Time: </div></div>'+"\n"
-						                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x)+'</div><div class="ui-icon ui-icon-arrowstop-1-w" title="Jump to Event Start Time"></div></div>'+"\n"
-						                    +  '</div>'+"\n"
-						                    +  '<div class="container">'+"\n"
-						                    +      "\t"+'<div class="param-container"><div class="param-label user-selectable">End Time: </div></div>'+"\n"
-						                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', point.x2)+'</div><div class="ui-icon ui-icon-arrowstop-1-e" title="Jump to Event End Time"></div>'+"\n"
-						                    +  '</div>'+"\n";
-						
-						        if ( point.hasOwnProperty('hv_labels_formatted') && Object.keys(point.hv_labels_formatted).length > 0 ) {
-						            $.each( point.hv_labels_formatted, function (param, value) {
-						                str += '<div class="container">'+"\n"
-						                        +      "\t"+'<div class="param-container"><div class="param-label user-selectable">'+param+': </div></div>'+"\n"
-						                        +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+value+'</div></div>'+"\n"
-						                        +  '</div>'+"\n";
-						            });
-						        }
-								
-								var noaaSearch = '';
-								if( this.frm_name == "NOAA SWPC Observer"){
-									var eventName = point.hv_labels_formatted[Object.keys(point.hv_labels_formatted)[0]];
-									noaaSearch = '<div class="btn-label btn event-search-external text-btn" data-url=\'https://ui.adsabs.harvard.edu/#search/q="'+eventName+'"&sort=date desc\' target="_blank"><i class="fa fa-search fa-fw"></i>ADS search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
-												<div style=\"clear:both\"></div>\
-												<div class="btn-label btn event-search-external text-btn" data-url="http://search.arxiv.org:8081/?query='+eventName+'&in=" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
-												<div style=\"clear:both\"></div>';
-								}
-								
-						        str     += '<div class="btn-container">'+"\n"
-						                    +       "\t"+'<div class="btn-label btn event-info-event text-btn" data-kbarchivid="'+ point.kb_archivid +'"><i class="fa fa-info-circle fa-fw"></i> View HEK data</div>'+"\n"
-						                    + 		"<div style=\"clear:both\"></div>\n"
-						                    +       "\t"+'<div class="btn-label btn event-create-movie-event text-btn" data-start="'+Highcharts.dateFormat('%Y/%m/%dT%H:%M:%S', this.x)+'" data-end="'+Highcharts.dateFormat('%Y/%m/%dT%H:%M:%S', point.x2)+'"><i class="fa fa-video-camera fa-fw"></i> Make movie using event times and current field of view</div>'+"\n"
-						                    + 		"<div style=\"clear:both\"></div>\n"
-						                    +		noaaSearch
-						                    +		"\t"+'<div class="btn-label btn copy-to-data-event text-btn" data-start="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', this.x)+'" data-end="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', point.x2)+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>'+"\n"
-											+  '</div>'+"\n";
-								
-								var eventPopupDomNode = $('<div class="event-popup"/>');
-						        eventPopupDomNode.html(str);
-								$('#hv-drawer-timeline-events .event-popup').remove();
-								$('#hv-drawer-timeline-events').append(eventPopupDomNode);
-								
-								
-								$("body").off('click', '.copy-to-data-event');
-								$("body").off('click', '.event-create-movie-event');
-								$("body").off('click', '.event-info-event');
-								$("body").off('click', '.event-search-external');
-								
-								$("body").on('click', '.copy-to-data-event',function() {
-						            var start = $(this).data('start');
-						            var end = $(this).data('end');
-						            
-						            var startArr = start.split(" ");
-						            var endArr = end.split(" ");
-						            
-						            //Set dates
-						            if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-data.open") == false){
-										helioviewer.drawerDataClick(true);
-									}
-						            $('#vso-start-date, #sdo-start-date').val(startArr[0]);
-						            $('#vso-start-time, #sdo-start-time').val(startArr[1]).change();
-						            $('#vso-end-date, #sdo-end-date').val(endArr[0]);
-						            $('#vso-end-time, #sdo-end-time').val(endArr[1]).change();
-						        });
-								
-								//Create Movie from event popup
-								$("body").on('click', '.event-create-movie-event', function() {
-							        var start = $(this).data('start') + '.000Z';
-						            var end = $(this).data('end') + '.000Z';
-						            
-						            //build an movie settings object
-						            var formSettings = [
-							            {name : 'speed-method', value : 'framerate'},
-							            {name : 'framerate', value : 15},
-							            {name : 'startTime', value : start},
-							            {name : 'endTime', value : end},
-						            ];
-						            
-						            helioviewer._movieManagerUI._buildMovieRequest(formSettings);
-						        });
-						        
-						        $("body").on('click', '.event-info-event', function(){
-							        var kb_archivid = $(this).data('kbarchivid');
-							        self._showEventInfoDialog(kb_archivid);
-						        });
-						        
-						        $("body").on('click', '.event-search-external',  function() {
-						            var url = $(this).data('url');
-						            window.open(url, '_blank');
-						        });
-						        
-						        return false;
-	                        }*/
+                            }
                         }
                     }
 		        },
@@ -497,8 +386,11 @@ var TimelineEvents = Class.extend({
 
 	                if(typeof this.points != "undefined"){
 		                var from = this.x;
-		                var to = this.x+this.points[0].series.closestPointRange;
-						
+		                
+		                var index = this.points[0].series.xData.indexOf(this.x);
+		                //var to = this.x+this.points[0].series.closestPointRange;
+		                var to = (this.points[0].series.xData[index + 1] - 1);
+		                
 						zoomTickTime = parseInt( (from + to) * 0.5 );
 						
 		                str += '<div style="width:340px;">\
@@ -511,7 +403,7 @@ var TimelineEvents = Class.extend({
 								ext = 's';
 							}
 							
-							str += '<span style="color:'+point.series.color+';padding-left:5px;font-size:9px;line-height:9px;">'+point.series.name+'</span>: <b style="font-size:9px;line-height:9px;">'+Highcharts.numberFormat(point.y,0,'.',',')+' event'+ext+'</b><br/>';
+							str += '<span style="color:'+point.series.color+';padding-left:5px;font-size:9px;line-height:9px;">'+point.series.name+'</span>: <b style="font-size:9px;line-height:9px;">'+Highcharts.numberFormat(point.y,0,'.',',')+' detection'+ext+'</b><br/>';
 						});
 						
 	                }else{//return false;
@@ -624,7 +516,11 @@ var TimelineEvents = Class.extend({
 	            },
 	            positioner: function (boxWidth, boxHeight, point, e) {
 	                var tooltipX = 0, tooltipY = 0;
-	                if(typeof this.chart.mouseCoords.x == 'undefined' || typeof this.chart.mouseCoords.y == 'undefined'){
+	                if(typeof this.chart == 'undefined' || 
+	                	typeof this.chart.mouseCoords == 'undefined' || 
+	                	typeof this.chart.mouseCoords.x == 'undefined' || 
+	                	typeof this.chart.mouseCoords.y == 'undefined'
+	                ){
 		                return {x: 0, y: 0}
 	                }
 	                var x = this.chart.mouseCoords.x;
@@ -1136,6 +1032,7 @@ var TimelineEvents = Class.extend({
                 };
                 categories.push(series['name']);
                 
+                timelineRes = series.res;
                 if(series.res == 'm'){
 	                isShared = false;
 	                chartTypeX = 'xrange';
@@ -1393,6 +1290,9 @@ var TimelineEvents = Class.extend({
         
         if(eventLayersStr == ''){
 	        chart.showLoading('You must to select least one visible event layer.');
+	        while(chart.series.length > 0) {
+                chart.series[0].remove(false);
+            }
 	        return;
         }else{
 	       	chart.showLoading('Loading data from server...'); 
@@ -1431,6 +1331,7 @@ var TimelineEvents = Class.extend({
                 categories.push((typeof _eventsSeries[series.event_type] == 'undefined' ? series['name']: _eventsSeries[series.event_type].name ));
                 count++;
                 
+                timelineRes = series.res;
                 if(series.res == 'm'){
 	                isShared = false;
 	                chartTypeX = 'xrange';
