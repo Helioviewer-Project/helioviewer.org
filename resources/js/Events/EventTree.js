@@ -44,21 +44,27 @@ var EventTree = Class.extend({
             this._container.jstree("uncheck_all",null,true);
         }
         else {
-            this._container.jstree("check_all",null,true);
             // Unbind event handler that normally triggers when checkboxes are checked/unchecked
             // because we're about to do that a lot
             this._container.unbind("change_state.jstree", $.proxy(this._treeChangedState, this));
+            
+            this._container.jstree("check_all",null,true);
 
             $(document).trigger("fetch-eventFRMs");
 
             // Bind event handler that triggers whenever checkboxes are checked/unchecked
             this._container.bind("change_state.jstree", $.proxy(this._treeChangedState, this));
+            $(document).trigger("change_state.jstree", this);
         }
-        $(document).trigger("change-feature-events-state");
 
     },
 
     toggle_checkboxes_state: function (e, toState) {
+
+        // Unbind event handler that normally triggers when checkboxes are checked/unchecked
+        // because we're about to do that a lot
+        this._container.unbind("change_state.jstree", $.proxy(this._treeChangedState, this));
+        
         if (toState == 'off') {
             this._container.jstree("uncheck_all",null,true);
         }
@@ -70,15 +76,11 @@ var EventTree = Class.extend({
             return;
         }
 
-        // Unbind event handler that normally triggers when checkboxes are checked/unchecked
-        // because we're about to do that a lot
-        this._container.unbind("change_state.jstree", $.proxy(this._treeChangedState, this));
-
         $(document).trigger("fetch-eventFRMs");
 
         // Bind event handler that triggers whenever checkboxes are checked/unchecked
         this._container.bind("change_state.jstree", $.proxy(this._treeChangedState, this));
-        $(document).trigger("change-feature-events-state");
+        this._treeChangedState();
     },
 
     jstreeFunc: function (name, args) {
@@ -194,6 +196,8 @@ var EventTree = Class.extend({
 
         // Show/Hide events to match new state of the checkboxes
         $(document).trigger("toggle-events");
+        $(document).trigger("change-feature-events-state");
+        console.log(1);
     },
 
     hoverOn: function (event) {
