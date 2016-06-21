@@ -860,9 +860,9 @@
 				<div class="drawer-items">
 					<div id="data-coverage-timeline" style="width:100%;height:300px;"></div>
 					<button id="btn-prev">&larr; 7 days</button>
-					<div id="btn-center" class="viewport-action fa fa-crosshairs qtip-topleft" title="Center Timeline at Observation Date"></div>
-					<div id="btn-zoom-out" class="viewport-action fa fa-search-minus qtip-topleft" title="Zoom Out Timeline"></div>
-					<div id="btn-zoom-in" class="viewport-action fa fa-search-plus qtip-topleft" title="Zoom In Timeline"></div>
+					<div id="btn-center" class="viewport-action fa fa-crosshairs qtip-topleft" style="margin-top:-10px;" title="Center Timeline at Observation Date"></div>
+					<div id="btn-zoom-out" class="viewport-action fa fa-search-minus qtip-topleft" style="margin-top:-10px;" title="Zoom Out Timeline"></div>
+					<div id="btn-zoom-in" class="viewport-action fa fa-search-plus qtip-topleft" style="margin-top:-10px;" title="Zoom In Timeline"></div>
 					<button id="btn-next">7 days &rarr;</button>
 				</div>
 			</div>
@@ -875,9 +875,9 @@
 				<div class="drawer-items">
 					<div id="data-coverage-timeline-events" style="width:100%;height:300px;"></div>
 					<button id="timeline-events-btn-prev">&larr; 7 days</button>
-					<div id="timeline-events-btn-center" class="viewport-action fa fa-crosshairs qtip-topleft" title="Center Timeline at Observation Date"></div>
-					<div id="timeline-events-btn-zoom-out" class="viewport-action fa fa-search-minus qtip-topleft" title="Zoom Out Timeline"></div>
-					<div id="timeline-events-btn-zoom-in" class="viewport-action fa fa-search-plus qtip-topleft" title="Zoom In Timeline"></div>
+					<div id="timeline-events-btn-center" class="viewport-action fa fa-crosshairs qtip-topleft" style="margin-top:-10px;" title="Center Timeline at Observation Date"></div>
+					<div id="timeline-events-btn-zoom-out" class="viewport-action fa fa-search-minus qtip-topleft" style="margin-top:-10px;" title="Zoom Out Timeline"></div>
+					<div id="timeline-events-btn-zoom-in" class="viewport-action fa fa-search-plus qtip-topleft" style="margin-top:-10px;" title="Zoom In Timeline"></div>
 					<button id="timeline-events-btn-next">7 days &rarr;</button>
 				</div>
 			</div>
