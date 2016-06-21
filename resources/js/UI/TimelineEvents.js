@@ -444,7 +444,7 @@ var TimelineEvents = Class.extend({
 				        }
 						
 						var noaaSearch = '';
-						if( this.frm_name == "NOAA SWPC Observer"){
+						if( point.frm_name == "NOAA SWPC Observer"){
 							var eventName = point.hv_labels_formatted[Object.keys(point.hv_labels_formatted)[0]];
 							noaaSearch = '<div class="btn-label btn event-search-external text-btn" data-url=\'https://ui.adsabs.harvard.edu/#search/q="'+eventName+'"&sort=date desc\' target="_blank"><i class="fa fa-search fa-fw"></i>ADS search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
 										<div style=\"clear:both\"></div>\
@@ -466,6 +466,20 @@ var TimelineEvents = Class.extend({
 						$("body").off('click', '.event-create-movie-event');
 						$("body").off('click', '.event-info-event');
 						$("body").off('click', '.event-search-external');
+						$("body").off('click', '.ui-icon-arrowstop-1-w');
+						$("body").off('click', '.ui-icon-arrowstop-1-n');
+						$("body").off('click', '.ui-icon-arrowstop-1-e');
+						
+						// Event bindings
+				        $("body").on('click', ".ui-icon-arrowstop-1-w", function () {
+				            helioviewer.timeControls.setDate( new Date(point.event_starttime+".000Z") );
+				        });
+				        $("body").on('click', ".ui-icon-arrowstop-1-n", function () {
+				            helioviewer.timeControls.setDate( new Date(point.event_peaktime+".000Z") );
+				        });
+				        $("body").on('click', ".ui-icon-arrowstop-1-e", function () {
+				            helioviewer.timeControls.setDate( new Date(point.event_endtime+".000Z") );
+				        });
 						
 						$("body").on('click', '.copy-to-data-event',function() {
 				            var start = $(this).data('start');
