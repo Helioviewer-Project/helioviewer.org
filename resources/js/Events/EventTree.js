@@ -197,7 +197,6 @@ var EventTree = Class.extend({
         // Show/Hide events to match new state of the checkboxes
         $(document).trigger("toggle-events");
         $(document).trigger("change-feature-events-state");
-        console.log(1);
     },
 
     hoverOn: function (event) {
