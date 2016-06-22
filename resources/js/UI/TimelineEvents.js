@@ -327,6 +327,12 @@ var TimelineEvents = Class.extend({
 								chart.xAxis[0].setExtremes(minTime, maxTime);
 								self.afterSetExtremes({min:minTime, max:maxTime});
 								return true;
+                            },
+                            mouseOver: function(e){
+	                            $('#hv-drawer-timeline-events-logarithmic-holder').css({'z-index':0});
+                            },
+                            mouseOut: function(e){
+	                            $('#hv-drawer-timeline-events-logarithmic-holder').css({'z-index':5}); 
                             }
                         }
                     }
@@ -343,6 +349,14 @@ var TimelineEvents = Class.extend({
                             dblclick: function(e){
 	                         	var date = new Date(timelineMouseValueX);
 								helioviewer.timeControls.setDate(date);    
+                            },
+                            mouseOver: function(e){
+	                            if($("#" + this.kb_archivid).length != 0) {
+		                            $("#event-container .event-layer > div[id!='"+this.kb_archivid+"']").css({'opacity':'0.2'});
+	                            }
+                            },
+                            mouseOut: function(e){
+	                         	$("#event-container .event-layer > div").css({'opacity':'1.0'});    
                             }
                         }
                     }
@@ -1065,7 +1079,11 @@ var TimelineEvents = Class.extend({
                 }
             });
             
-            //self._timelineOptions.yAxis = categories;
+            if(chartTypeX == 'xrange'){
+	            $('#hv-drawer-timeline-events-logarithmic-holder').hide();
+            }else{
+	            $('#hv-drawer-timeline-events-logarithmic-holder').show();
+            }
             
 	        // create the chart
 	        $('#data-coverage-timeline-events').highcharts( self._timelineOptions,function(chart){
@@ -1371,6 +1389,13 @@ var TimelineEvents = Class.extend({
 	                chartTypeX = 'column';
                 }
             });
+            
+            if(chartTypeX == 'xrange'){
+	            $('#hv-drawer-timeline-events-logarithmic-holder').hide();
+	            chartTypeY = 'linear';
+            }else{
+	            $('#hv-drawer-timeline-events-logarithmic-holder').show();
+            }
 
             chart.yAxis[0].setCategories(categories);
 

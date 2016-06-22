@@ -1120,6 +1120,13 @@ var Timeline = Class.extend({
                 count++;
             });
             
+            if(chartTypeX == 'scatter'){
+	            $('#hv-drawer-timeline-logarithmic-holder').hide();
+	            chartTypeY = 'linear';
+            }else{
+	            $('#hv-drawer-timeline-logarithmic-holder').show();
+            }
+            
             $.each(chart.series, function (id, series) {
 	            if(typeof seriesVisability[series.name] != "undefined"){
 		            if(seriesVisability[series.name] == false){

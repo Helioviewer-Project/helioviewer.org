@@ -856,7 +856,7 @@
 		<div id="hv-drawer-tab-timeline" class="drawer-tab drawer-tab-bottom">Image Timeline</div>
 		<div id="hv-drawer-timeline" class="helioviewer-drawer-bottom">
 			<div class="drawer-contents" style="height:330px;">
-				<div style="display:block;position:absolute;top:10px;left:10px;z-index:5;"><input type="checkbox" id="hv-drawer-timeline-logarithmic"> Logarithmic View</div>
+				<div id="hv-drawer-timeline-logarithmic-holder" style="display:block;position:absolute;top:10px;left:10px;z-index:5;"><input type="checkbox" id="hv-drawer-timeline-logarithmic"> Logarithmic View</div>
 				<div class="drawer-items">
 					<div id="data-coverage-timeline" style="width:100%;height:300px;"></div>
 					<button id="btn-prev">&larr; 7 days</button>
@@ -871,7 +871,7 @@
 		<div id="hv-drawer-tab-timeline-events" class="drawer-tab drawer-tab-bottom">Events Timeline</div>
 		<div id="hv-drawer-timeline-events" class="helioviewer-drawer-bottom">
 			<div class="drawer-contents" style="height:330px;">
-				<div style="display:block;position:absolute;top:10px;left:10px;z-index:5;"><input type="checkbox" id="hv-drawer-timeline-events-logarithmic"> Logarithmic View</div>
+				<div id="hv-drawer-timeline-events-logarithmic-holder" style="display:none;position:absolute;top:10px;left:10px;z-index:5;"><input type="checkbox" id="hv-drawer-timeline-events-logarithmic"> Logarithmic View</div>
 				<div class="drawer-items">
 					<div id="data-coverage-timeline-events" style="width:100%;height:300px;"></div>
 					<button id="timeline-events-btn-prev">&larr; 7 days</button>
