@@ -51,6 +51,9 @@ var EventMarker = Class.extend(
         this.eventMarkerDomNode.attr({
             'class' : "event-marker"
         });
+        this.eventMarkerDomNode.attr({
+            'id' : this.kb_archivid.replace(/ivo:\/\/helio-informatics.org\//g, "")
+        });
         this.pos = {
             x: ( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) -12,
             y: (-this.hv_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale) -38
