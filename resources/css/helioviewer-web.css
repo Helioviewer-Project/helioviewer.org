@@ -365,7 +365,7 @@ html, body {
 #hv-drawer-tab-timeline{
 	position: absolute;
     bottom: 0;
-    width: 7em;
+    width: 7.5em;
     border-top: 1px solid white;
     border-left: 1px solid white;
     border-right: 1px solid white;
@@ -376,7 +376,7 @@ html, body {
 #hv-drawer-tab-timeline-events{
 	position: absolute;
     bottom: 0;
-    width: 7.5em;
+    width: 8em;
     border-top: 1px solid white;
     border-left: 1px solid white;
     border-right: 1px solid white;
@@ -384,6 +384,12 @@ html, body {
     left:50%;
     margin-left:10px;
 }
+#hv-drawer-tab-timeline-events.selected,
+#hv-drawer-tab-timeline.selected{
+	font-weight: bold;
+}
+
+
 .helioviewer-drawer-bottom {
     position: absolute;
     bottom: 0;

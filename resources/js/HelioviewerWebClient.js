@@ -1916,8 +1916,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	drawerTimelineClick: function(openNow) {
 		var self = this;
         if ( this.drawerTimelineOpened || openNow === false ) {
-            $('#hv-drawer-tab-timeline').css('bottom', '0px');
-            $('#hv-drawer-tab-timeline-events').css('bottom', '0px');
+            $('#hv-drawer-tab-timeline').css('bottom', '0px').removeClass('selected');
+            $('#hv-drawer-tab-timeline-events').css('bottom', '0px').removeClass('selected');
             this.drawerTimeline.css('height', 0).hide();
             $('.drawer-contents', this.drawerTimeline).hide();
             this.drawerTimeline.css('padding', 0);
@@ -1943,7 +1943,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	        
             this.drawerTimelineEventsClick(false);
             
-            $('#hv-drawer-tab-timeline').css('bottom', this.drawerTimelineOpenedHeight + 'px');
+            $('#hv-drawer-tab-timeline').css('bottom', this.drawerTimelineOpenedHeight + 'px').addClass('selected');
             $('#hv-drawer-tab-timeline-events').css('bottom', this.drawerTimelineOpenedHeight + 'px');
             this.drawerTimeline.show().css('height', this.drawerTimelineOpenedHeight + 'px');
             $('.drawer-contents', this.drawerTimeline).show();
@@ -1976,8 +1976,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	drawerTimelineEventsClick: function(openNow) {
 		var self = this;
         if ( this.drawerTimelineEventsOpened || openNow === false ) {
-            $('#hv-drawer-tab-timeline-events').css('bottom', '0px');
-            $('#hv-drawer-tab-timeline').css('bottom', '0px');
+            $('#hv-drawer-tab-timeline-events').css('bottom', '0px').removeClass('selected');
+            $('#hv-drawer-tab-timeline').css('bottom', '0px').removeClass('selected');
             this.drawerTimelineEvents.css('height', 0).hide();
             $('.drawer-contents', this.drawerTimelineEvents).hide();
             this.drawerTimelineEvents.css('padding', 0);
@@ -2008,7 +2008,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	        
             this.drawerTimelineClick(false);
             
-            $('#hv-drawer-tab-timeline-events').css('bottom', this.drawerTimelineEventsOpenedHeight + 'px');
+            $('#hv-drawer-tab-timeline-events').css('bottom', this.drawerTimelineEventsOpenedHeight + 'px').addClass('selected');
             $('#hv-drawer-tab-timeline').css('bottom', this.drawerTimelineEventsOpenedHeight + 'px');
             this.drawerTimelineEvents.show().css('height', this.drawerTimelineEventsOpenedHeight + 'px');
             $('.drawer-contents', this.drawerTimelineEvents).show();
