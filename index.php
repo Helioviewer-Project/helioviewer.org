@@ -855,14 +855,14 @@
 	
 		<div id="hv-drawer-tab-timeline" class="drawer-tab drawer-tab-bottom">Image Timeline</div>
 		<div id="hv-drawer-timeline" class="helioviewer-drawer-bottom">
-			<div class="drawer-contents" style="height:330px;">
+			<div class="drawer-contents" style="height:350px;">
 				<div id="hv-drawer-timeline-logarithmic-holder" style="display:block;position:absolute;top:10px;left:10px;z-index:5;"><input type="checkbox" id="hv-drawer-timeline-logarithmic"> Logarithmic View</div>
 				<div class="drawer-items">
-					<div id="data-coverage-timeline" style="width:100%;height:300px;"></div>
+					<div id="data-coverage-timeline" style="width:100%;height:315px;"></div>
 					<button id="btn-prev">&larr; 7 days</button>
-					<div id="btn-center" class="viewport-action fa fa-crosshairs qtip-topleft" style="margin-top:-10px;" title="Center Timeline at Observation Date"></div>
-					<div id="btn-zoom-out" class="viewport-action fa fa-search-minus qtip-topleft" style="margin-top:-10px;" title="Zoom Out Timeline"></div>
-					<div id="btn-zoom-in" class="viewport-action fa fa-search-plus qtip-topleft" style="margin-top:-10px;" title="Zoom In Timeline"></div>
+					<div id="btn-center" class="viewport-action fa fa-crosshairs qtip-topleft" title="Center Timeline at Observation Date"></div>
+					<div id="btn-zoom-out" class="viewport-action fa fa-search-minus qtip-topleft" title="Zoom Out Timeline"></div>
+					<div id="btn-zoom-in" class="viewport-action fa fa-search-plus qtip-topleft" title="Zoom In Timeline"></div>
 					<button id="btn-next">7 days &rarr;</button>
 				</div>
 			</div>
@@ -870,14 +870,14 @@
 	
 		<div id="hv-drawer-tab-timeline-events" class="drawer-tab drawer-tab-bottom">Events Timeline</div>
 		<div id="hv-drawer-timeline-events" class="helioviewer-drawer-bottom">
-			<div class="drawer-contents" style="height:330px;">
+			<div class="drawer-contents" style="height:350px;">
 				<div id="hv-drawer-timeline-events-logarithmic-holder" style="display:none;position:absolute;top:10px;left:10px;z-index:5;"><input type="checkbox" id="hv-drawer-timeline-events-logarithmic"> Logarithmic View</div>
 				<div class="drawer-items">
-					<div id="data-coverage-timeline-events" style="width:100%;height:300px;"></div>
+					<div id="data-coverage-timeline-events" style="width:100%;height:315px;"></div>
 					<button id="timeline-events-btn-prev">&larr; 7 days</button>
-					<div id="timeline-events-btn-center" class="viewport-action fa fa-crosshairs qtip-topleft" style="margin-top:-10px;" title="Center Timeline at Observation Date"></div>
-					<div id="timeline-events-btn-zoom-out" class="viewport-action fa fa-search-minus qtip-topleft" style="margin-top:-10px;" title="Zoom Out Timeline"></div>
-					<div id="timeline-events-btn-zoom-in" class="viewport-action fa fa-search-plus qtip-topleft" style="margin-top:-10px;" title="Zoom In Timeline"></div>
+					<div id="timeline-events-btn-center" class="viewport-action fa fa-crosshairs qtip-topleft" title="Center Timeline at Observation Date"></div>
+					<div id="timeline-events-btn-zoom-out" class="viewport-action fa fa-search-minus qtip-topleft" title="Zoom Out Timeline"></div>
+					<div id="timeline-events-btn-zoom-in" class="viewport-action fa fa-search-plus qtip-topleft" title="Zoom In Timeline"></div>
 					<button id="timeline-events-btn-next">7 days &rarr;</button>
 				</div>
 			</div>
