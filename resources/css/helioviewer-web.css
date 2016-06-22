@@ -386,7 +386,9 @@ html, body {
 }
 #hv-drawer-tab-timeline-events.selected,
 #hv-drawer-tab-timeline.selected{
-	font-weight: bold;
+	background:#fcfcfc;
+	color:#000;
+    border-bottom: 1px solid white;
 }
 
 
