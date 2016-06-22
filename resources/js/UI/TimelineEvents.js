@@ -12,6 +12,11 @@ var timelineTick = 'minute';
 var zoomTickTime = 0;
 var isShared = true;
 var timelineRes = 'm';
+var timelineMouseCoordX = 0;
+var timelineMouseCoordY = 0;
+var timelineMouseValueX = 0;
+var timelineMouseValueY = 0;
+
 
 $(function () {
     
@@ -336,7 +341,7 @@ var TimelineEvents = Class.extend({
                     point: {
                         events: {
                             dblclick: function(e){
-	                         	var date = new Date(this.x);
+	                         	var date = new Date(timelineMouseValueX);
 								helioviewer.timeControls.setDate(date);    
                             }
                         }
@@ -1007,6 +1012,7 @@ var TimelineEvents = Class.extend({
 		
 		//Get current HV time
 		date = parseInt(Helioviewer.userSettings.get("state.date"));
+		timelineMouseValueX = date;
 		//startDate = date - (7 * 24 * 60 * 60 * 1000);//7 DAYS
 		//endDate = date + (7 * 24 * 60 * 60 * 1000);//7 DAYS
 		startDate = date - (10 * 60 * 60 * 1000);//7 DAYS
@@ -1118,6 +1124,14 @@ var TimelineEvents = Class.extend({
 			            var relativeMouseX = event.pageX - containerCoords.x;
 			            var relativeMouseY = event.pageY - containerCoords.y;
 			            chart.mouseCoords = { x: event.chartX, y: event.chartY };
+			            
+			            if(chart.isInsidePlot(event.chartX - chart.plotLeft, event.chartY - chart.plotTop)){
+				            event = chart.pointer.normalize(event);
+				            timelineMouseCoordX = event.chartX - chart.plotLeft;
+					        timelineMouseCoordY = event.chartY - chart.plotTop;
+					        timelineMouseValueX = chart.xAxis[0].toValue(event.chartX);
+					        timelineMouseValueY = chart.yAxis[0].toValue(event.chartY);
+			            }
 			        }
 			    });
 			    
