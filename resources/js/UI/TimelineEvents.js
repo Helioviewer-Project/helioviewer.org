@@ -441,6 +441,9 @@ var TimelineEvents = Class.extend({
 				
 				        if ( point.hasOwnProperty('hv_labels_formatted') && Object.keys(point.hv_labels_formatted).length > 0 ) {
 				            $.each( point.hv_labels_formatted, function (param, value) {
+				                value = value.replace(/u03b1/g, "&alpha;");
+				                value = value.replace(/u03b2/g, "&beta;");
+				                value = value.replace(/u03b3/g, "&gamma;");
 				                str += '<div class="container">'+"\n"
 				                        +      "\t"+'<div class="param-container"><div class="param-label user-selectable">'+param+': </div></div>'+"\n"
 				                        +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+value+'</div></div>'+"\n"
