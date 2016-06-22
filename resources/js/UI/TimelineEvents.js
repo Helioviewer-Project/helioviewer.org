@@ -1317,7 +1317,7 @@ var TimelineEvents = Class.extend({
         var eventLayersStr = helioviewer.getEvents();
         
         if(eventLayersStr == ''){
-	        chart.showLoading('You must to select least one visible event layer.');
+	        chart.showLoading('No event types selected.');
 	        while(chart.series.length > 0) {
                 chart.series[0].remove(false);
             }
