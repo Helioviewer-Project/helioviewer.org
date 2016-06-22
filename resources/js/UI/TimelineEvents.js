@@ -1317,7 +1317,7 @@ var TimelineEvents = Class.extend({
         var eventLayersStr = helioviewer.getEvents();
         
         if(eventLayersStr == ''){
-	        chart.showLoading('No event types selected.');
+	        chart.showLoading('No event types selected.<br/>Use the Feature and Event selector to choose event types.');
 	        while(chart.series.length > 0) {
                 chart.series[0].remove(false);
             }
