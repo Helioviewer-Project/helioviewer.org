@@ -337,6 +337,8 @@ var TimelineEvents = Class.extend({
 			        borderRadius:3,
 		            grouping: false,
 		            stickyTracking: false,
+                    borderColor: '#000',
+                    borderWidth:1,
                     point: {
                         events: {
                             dblclick: function(e){
@@ -1045,7 +1047,7 @@ var TimelineEvents = Class.extend({
 			timelineEndDate = endDate;
         }
         	    
-	    var _url = Helioviewer.api+'?action=getDataCoverage&eventLayers='+ eventLayersStr +'&startDate='+ startDate +'&endDate='+ endDate +'&callback=?';
+	    var _url = Helioviewer.api+'?action=getDataCoverage&eventLayers='+ eventLayersStr +'&currentDate='+ date +'&startDate='+ startDate +'&endDate='+ endDate +'&callback=?';
 	    $.getJSON(_url, function (data) {
 		    
 		    if(typeof data.error != 'undefined'){
@@ -1346,8 +1348,9 @@ var TimelineEvents = Class.extend({
         
         timelineStartDate = Math.round(e.min);
         timelineEndDate = Math.round(e.max);
+        var date = parseInt(Helioviewer.userSettings.get("state.date"));
         
-        var _url = Helioviewer.api+'?action=getDataCoverage&eventLayers='+ eventLayersStr +'&startDate='+ Math.round(e.min) +'&endDate='+ Math.round(e.max) +'&callback=?';
+        var _url = Helioviewer.api+'?action=getDataCoverage&eventLayers='+ eventLayersStr +'&currentDate='+ date +'&startDate='+ Math.round(e.min) +'&endDate='+ Math.round(e.max) +'&callback=?';
         $.getJSON(_url, function(data) {
 			var seriesVisability = [];
 			
