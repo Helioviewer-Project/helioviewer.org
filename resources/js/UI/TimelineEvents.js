@@ -17,7 +17,6 @@ var timelineMouseCoordY = 0;
 var timelineMouseValueX = 0;
 var timelineMouseValueY = 0;
 
-
 $(function () {
     
         /**
@@ -327,12 +326,6 @@ var TimelineEvents = Class.extend({
 								chart.xAxis[0].setExtremes(minTime, maxTime);
 								self.afterSetExtremes({min:minTime, max:maxTime});
 								return true;
-                            },
-                            mouseOver: function(e){
-	                            $('#hv-drawer-timeline-events-logarithmic-holder').css({'z-index':0});
-                            },
-                            mouseOut: function(e){
-	                            $('#hv-drawer-timeline-events-logarithmic-holder').css({'z-index':5}); 
                             }
                         }
                     }
@@ -422,7 +415,7 @@ var TimelineEvents = Class.extend({
 								ext = 's';
 							}
 							
-							str += '<span style="color:'+point.series.color+';padding-left:5px;font-size:9px;line-height:9px;">'+point.series.name+'</span>: <b style="font-size:9px;line-height:9px;">'+Highcharts.numberFormat(point.y,0,'.',',')+' detection'+ext+'</b><br/>';
+							str += '<p style="font-size:10px;line-height:12px;padding-left:5px;"><span style="color:'+point.series.color+';">'+point.series.name+'</span>: <b>'+Highcharts.numberFormat(point.y,0,'.',',')+' detection'+ext+'</b></p>';
 						});
 						
 	                }else{//return false;
@@ -577,7 +570,7 @@ var TimelineEvents = Class.extend({
 	                }
 	                
 	                if(isShared){
-		                tooltipY = 0;
+		                tooltipY = 17;
 	                }
 	                
 	                return {
