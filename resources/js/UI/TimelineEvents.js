@@ -1442,7 +1442,7 @@ var TimelineEvents = Class.extend({
 			e.max = e.max + chart.xAxis[0].closestPointRange;
 		}
 		
-	    if(minTime > e.min){
+	    if(minTime > e.min && timelineRes != 'm'){
 		    e.min = minTime;
 	    }
 
