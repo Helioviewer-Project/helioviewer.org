@@ -333,7 +333,7 @@ var TimelineEvents = Class.extend({
     
 		        xrange: {
 			        pointPadding: 0.25,
-			        pointWidth: 4,
+			        //pointWidth: 4,
 			        borderRadius:3,
 		            grouping: false,
 		            stickyTracking: false,
@@ -345,13 +345,25 @@ var TimelineEvents = Class.extend({
 	                         	var date = new Date(timelineMouseValueX);
 								helioviewer.timeControls.setDate(date);    
                             },
-                            mouseOver: function(e){
-	                            if($("#" + this.kb_archivid).length != 0) {
-		                            $("#event-container .event-layer > div[id!='"+this.kb_archivid+"']").css({'opacity':'0.2'});
+                            mouseOver: function(e){console.log(this);
+	                            this.selected = true;
+	                            this.graphic.attr('fill', '#fff');
+	                            //if(this.graphic.fill == '#ffffff'){
+		                        //this.graphic.attr('stroke', 3);
+	                            
+	                            var id = this.kb_archivid;
+	                            id = id.replace(/\(|\)|\.|\:/g, "");
+	                            if($("#" + id).length != 0) {
+		                            $("#event-container .event-layer > div[id!='"+id+"']").css({'opacity':'0.2'});
+		                            $("#event-container .event-layer > div[id='"+id+"']").css({'z-index':'1000'}); 
 	                            }
                             },
                             mouseOut: function(e){
-	                         	$("#event-container .event-layer > div").css({'opacity':'1.0'});    
+	                            var point = this;
+		                        this.graphic.attr('fill', this.color);
+		                        
+	                            setTimeout(function() { point.selected = false; }, 100);
+	                         	$("#event-container .event-layer > div").css({'opacity':'1.0', 'z-index':'997'});    
                             }
                         }
                     }
