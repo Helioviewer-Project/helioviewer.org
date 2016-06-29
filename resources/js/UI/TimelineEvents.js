@@ -443,7 +443,7 @@ var TimelineEvents = Class.extend({
 				            headingText = point.event_type + ': ' + point.frm_name + ' ' + point.frm_specificid;
 				        }
 				
-				        str     += '<h1 class="user-selectable">'+headingText+'</h1>'+"\n";
+				        str     += '<h1 class="user-selectable" style="font-size:13px;margin-bottom:0px;">'+headingText+'</h1>'+"\n";
 				
 				        if ( point.event_peaktime != null && point.event_peaktime != '' && point.event_peaktime != '0000-00-00 00:00:00') {
 				            str += '<div class="container">'+"\n"
@@ -475,19 +475,19 @@ var TimelineEvents = Class.extend({
 						var noaaSearch = '';
 						if( point.frm_name == "NOAA SWPC Observer"){
 							var eventName = point.hv_labels_formatted[Object.keys(point.hv_labels_formatted)[0]];
-							noaaSearch = '<div class="btn-label btn event-search-external text-btn" data-url=\'https://ui.adsabs.harvard.edu/#search/q="'+eventName+'"&sort=date desc\' target="_blank"><i class="fa fa-search fa-fw"></i>ADS search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
+							noaaSearch = '<div class="btn-label btn event-search-external text-btn" style="line-height: 14px;" data-url=\'https://ui.adsabs.harvard.edu/#search/q="'+eventName+'"&sort=date desc\' target="_blank"><i class="fa fa-search fa-fw"></i>ADS search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
 										<div style=\"clear:both\"></div>\
-										<div class="btn-label btn event-search-external text-btn" data-url="http://search.arxiv.org:8081/?query='+eventName+'&in=" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
+										<div class="btn-label btn event-search-external text-btn" style="line-height: 14px;" data-url="http://search.arxiv.org:8081/?query='+eventName+'&in=" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
 										<div style=\"clear:both\"></div>';
 						}
 						
 				        str     += '<div class="btn-container">'+"\n"
-				                    +       "\t"+'<div class="btn-label btn event-info-event text-btn" data-kbarchivid="'+ point.kb_archivid +'"><i class="fa fa-info-circle fa-fw"></i> View HEK data</div>'+"\n"
+				                    +       "\t"+'<div class="btn-label btn event-info-event text-btn" style="line-height: 14px;" data-kbarchivid="'+ point.kb_archivid +'"><i class="fa fa-info-circle fa-fw"></i> View HEK data</div>'+"\n"
 				                    + 		"<div style=\"clear:both\"></div>\n"
-				                    +       "\t"+'<div class="btn-label btn event-create-movie-event text-btn" data-start="'+Highcharts.dateFormat('%Y/%m/%dT%H:%M:%S', this.x)+'" data-end="'+Highcharts.dateFormat('%Y/%m/%dT%H:%M:%S', point.x2)+'"><i class="fa fa-video-camera fa-fw"></i> Make movie using event times and current field of view</div>'+"\n"
+				                    +       "\t"+'<div class="btn-label btn event-create-movie-event text-btn" style="line-height: 14px;" data-start="'+Highcharts.dateFormat('%Y/%m/%dT%H:%M:%S', this.x)+'" data-end="'+Highcharts.dateFormat('%Y/%m/%dT%H:%M:%S', point.x2)+'"><i class="fa fa-video-camera fa-fw"></i> Make movie using event times and current field of view</div>'+"\n"
 				                    + 		"<div style=\"clear:both\"></div>\n"
 				                    +		noaaSearch
-				                    +		"\t"+'<div class="btn-label btn copy-to-data-event text-btn" data-start="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', this.x)+'" data-end="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', point.x2)+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>'+"\n"
+				                    +		"\t"+'<div class="btn-label btn copy-to-data-event text-btn" style="line-height: 14px;" data-start="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', this.x)+'" data-end="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', point.x2)+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>'+"\n"
 									+  '</div>'+"\n";
 						
 						
