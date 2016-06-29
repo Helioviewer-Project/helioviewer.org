@@ -424,12 +424,12 @@ var TimelineEvents = Class.extend({
 		                		</div>';
 
 		                $.each(this.points, function(i, point) {
-							var ext = '';
+							var ext = 'entry';
 							if(point.y != 1){
-								ext = 's';
+								ext = 'entries';
 							}
 							
-							str += '<p style="font-size:10px;line-height:12px;padding-left:5px;"><span style="color:'+point.series.color+';">'+point.series.name+'</span>: <b>'+Highcharts.numberFormat(point.y,0,'.',',')+' detection'+ext+'</b></p>';
+							str += '<p style="font-size:10px;line-height:12px;padding-left:5px;"><span style="color:'+point.series.color+';">'+point.series.name+'</span>: <b>'+Highcharts.numberFormat(point.y,0,'.',',')+' '+ext+'</b></p>';
 						});
 						
 	                }else{//return false;
