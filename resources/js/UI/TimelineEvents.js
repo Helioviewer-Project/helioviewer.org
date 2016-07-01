@@ -231,6 +231,10 @@ var TimelineEvents = Class.extend({
 	                var info = this.tickPositions.info;
 	                timelineTick = this.tickPositions.info.unitName;
 	                
+	                if(timelineRes == 'm'){
+		                columnOffset = 0;
+	                }
+	                
 	                $.each(this.tickPositions, function(k,v){
 		                positions[k] = (v-columnOffset);
 	                });
@@ -252,7 +256,11 @@ var TimelineEvents = Class.extend({
 			                year: '%Y'
 			            };
 			        	
-			        	return Highcharts.dateFormat(dateTimeLabelFormats[timelineTick], this.value+this.axis.minPointOffset);
+			        	if(timelineRes == 'm'){
+				        	return Highcharts.dateFormat(dateTimeLabelFormats[timelineTick], this.value);
+			        	}else{
+				        	return Highcharts.dateFormat(dateTimeLabelFormats[timelineTick], this.value+this.axis.minPointOffset);
+			        	}
 			        }
 			    },
                 minRange: 60 * 60 * 1000 // 30 minutes
@@ -345,7 +353,7 @@ var TimelineEvents = Class.extend({
 	                         	var date = new Date(timelineMouseValueX);
 								helioviewer.timeControls.setDate(date);    
                             },
-                            mouseOver: function(e){console.log(this);
+                            mouseOver: function(e){
 	                            this.selected = true;
 	                            this.graphic.attr('fill', '#fff');
 	                            //if(this.graphic.fill == '#ffffff'){
