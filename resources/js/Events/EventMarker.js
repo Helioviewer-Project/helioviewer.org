@@ -274,6 +274,23 @@ var EventMarker = Class.extend(
             this.eventMarkerDomNode.css('zIndex', '997');
             this.label.addClass("event-label-hover");
             this.label.show();
+            
+            if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
+	            var eventID = event.currentTarget.id;
+	            var chart = $('#data-coverage-timeline-events').highcharts();
+	            $.each(chart.series, function (id, series) {
+		            $.each(series.data, function (idp, point) {
+			            if (series.data.hasOwnProperty(idp)) {
+				            if(eventID == point.kb_archivid){
+					            chart.series[id].data[idp].selected = true;
+					            chart.series[id].data[idp].graphic.attr('fill', '#fff');
+				            }
+			            }
+			            
+		            });
+	            });
+	            
+            }
         }
         else if ( event.type == 'mouseleave' ) {
             if ( !this._labelVisible) {
@@ -281,6 +298,23 @@ var EventMarker = Class.extend(
             }
             this.label.removeClass("event-label-hover");
             this.eventMarkerDomNode.css('zIndex', this._zIndex);
+            
+            if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
+	            var eventID = event.currentTarget.id;
+	            var chart = $('#data-coverage-timeline-events').highcharts();
+	            $.each(chart.series, function (id, series) {
+		            $.each(series.data, function (idp, point) {
+			            if (series.data.hasOwnProperty(idp)) {
+				            if(eventID == point.kb_archivid){
+					            chart.series[id].data[idp].graphic.attr('fill', point.color);
+					            
+					            setTimeout(function() { chart.series[id].data[idp].selected = false; }, 100);
+				            }
+			            }
+		            });
+	            });
+	            
+            }
         }
 
         return true;
