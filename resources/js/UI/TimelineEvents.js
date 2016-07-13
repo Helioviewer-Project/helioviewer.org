@@ -361,23 +361,26 @@ var TimelineEvents = Class.extend({
 	                            
 	                            var id = this.kb_archivid;
 	                            id = id.replace(/\(|\)|\.|\:/g, "");
-	                            if($("#" + id).length != 0) {
-		                            $("#event-container .event-layer > div[id!='"+id+"']").css({'opacity':'0.2'});
-		                            $("#event-container .event-layer > div[id!='"+id+"']").parent().css({'opacity':'0.2'});
-		                            $("#event-container .event-layer > div[id='"+id+"']").parent().css({'opacity':'1'});
-		                            $("#event-container .event-layer > div[id='"+id+"']").css({'z-index':'1000'}); 
+	                            if($("#marker_" + id).length != 0) {
+		                            $("#event-container .event-layer > div[id!='marker_"+id+"']").css({'opacity':'0.2'});
+		                            $("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'0.2'});
+		                            $("#event-container .event-layer > div[id='marker_"+id+"']").parent().css({'opacity':'1'});
+		                            $("#event-container .event-layer > div[id='marker_"+id+"']").css({'z-index':'1000'}); 
+		                            $("#event-container .event-layer > div[id='region_"+id+"']").css({'opacity':'1'});
 	                            }
                             },
                             mouseOut: function(e){
 	                            var point = this;
-		                        this.graphic.attr('fill', this.color);
-		                        
-	                            setTimeout(function() { point.selected = false; }, 100);
-	                            
-	                            var id = this.kb_archivid;
-	                            id = id.replace(/\(|\)|\.|\:/g, "");
-		                        $("#event-container .event-layer > div[id!='"+id+"']").parent().css({'opacity':'1'});
-	                         	$("#event-container .event-layer > div").css({'opacity':'1.0', 'z-index':'997'});    
+		                        if(this.graphic){
+			                        this.graphic.attr('fill', this.color);
+			                        
+		                            setTimeout(function() { point.selected = false; }, 100);
+		                            
+		                            var id = this.kb_archivid;
+		                            id = id.replace(/\(|\)|\.|\:/g, "");
+			                        $("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'1'});
+		                         	$("#event-container .event-layer > div").css({'opacity':'1.0', 'z-index':'997'});
+		                        }    
                             }
                         }
                     }
@@ -1198,6 +1201,20 @@ var TimelineEvents = Class.extend({
 		    
 		    self.setTitle({min:startDate,max:endDate});
 	        self.setNavigationButtonsTitles({min:startDate, max:endDate});
+	        
+	        //Assign points classes
+	        if(timelineRes == 'm'){
+		        $.each(chart.series, function (id, series) {//console.log(series);
+			        var pointIndex = 0;
+		            $.each(series.data, function (idp, point) {
+			            if (series.cropStart < idp && series.data.hasOwnProperty(idp)) {
+				            var pointClass= point.kb_archivid.replace(/\(|\)|\.|\:/g, "");
+				            $( '.highcharts-series-' + id ).find( "rect" ).eq( pointIndex ).addClass( 'point_' + pointClass );
+				            pointIndex++;
+			            }
+		            });
+	            });
+	        }
 	    });
     },
     
@@ -1444,6 +1461,20 @@ var TimelineEvents = Class.extend({
             self.drawCarringtonLines(e.min, e.max, chartTypeX);
             self.setTitle(e);
             chart.hideLoading();
+	        
+	        //Assign points classes
+	        if(timelineRes == 'm'){
+		        $.each(chart.series, function (id, series) {
+			        var pointIndex = 0;
+		            $.each(series.data, function (idp, point) {
+			            if (series.data.hasOwnProperty(idp)) {
+				            var pointClass= point.kb_archivid.replace(/\(|\)|\.|\:/g, "");
+				            $( '.highcharts-series-' + id ).find( "rect" ).eq( pointIndex ).addClass( 'point_' + pointClass );
+				            pointIndex++;
+			            }
+		            });
+	            });
+	        }
         });
         return true;
     },
