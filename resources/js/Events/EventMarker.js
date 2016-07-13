@@ -56,7 +56,8 @@ var EventMarker = Class.extend(
         id = id.replace(/ivo:\/\/helio-informatics.org\//g, "")
         id = id.replace(/\(|\)|\.|\:/g, "");
         this.eventMarkerDomNode.attr({
-            'id' : id
+            'rel' : id,
+            'id' : 'marker_'+id
         });
         this.pos = {
             x: ( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) -12,
@@ -101,6 +102,15 @@ var EventMarker = Class.extend(
             this.eventRegionDomNode.attr({
                 'class' : "event-region"
             });
+            
+            var id = this.kb_archivid;
+	        id = id.replace(/ivo:\/\/helio-informatics.org\//g, "")
+	        id = id.replace(/\(|\)|\.|\:/g, "");
+	        this.eventRegionDomNode.attr({
+	            'rel' : id,
+				'id' : 'region_'+id
+	        });
+        
             this.region_scaled = {
                 width:  this.hv_poly_width_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale ),
                 height: this.hv_poly_height_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )
@@ -276,20 +286,8 @@ var EventMarker = Class.extend(
             this.label.show();
             
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
-	            var eventID = event.currentTarget.id;
-	            var chart = $('#data-coverage-timeline-events').highcharts();
-	            $.each(chart.series, function (id, series) {
-		            $.each(series.data, function (idp, point) {
-			            if (series.data.hasOwnProperty(idp)) {
-				            if(eventID == point.kb_archivid){
-					            chart.series[id].data[idp].selected = true;
-					            chart.series[id].data[idp].graphic.attr('fill', '#fff');
-				            }
-			            }
-			            
-		            });
-	            });
-	            
+	            var eventID = $(event.currentTarget).attr('rel');
+	            $(".highcharts-series > rect[class!='point_"+eventID+"']").hide();
             }
         }
         else if ( event.type == 'mouseleave' ) {
@@ -300,20 +298,7 @@ var EventMarker = Class.extend(
             this.eventMarkerDomNode.css('zIndex', this._zIndex);
             
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
-	            var eventID = event.currentTarget.id;
-	            var chart = $('#data-coverage-timeline-events').highcharts();
-	            $.each(chart.series, function (id, series) {
-		            $.each(series.data, function (idp, point) {
-			            if (series.data.hasOwnProperty(idp)) {
-				            if(eventID == point.kb_archivid){
-					            chart.series[id].data[idp].graphic.attr('fill', point.color);
-					            
-					            setTimeout(function() { chart.series[id].data[idp].selected = false; }, 100);
-				            }
-			            }
-		            });
-	            });
-	            
+	            $(".highcharts-series > rect").show();
             }
         }
 
