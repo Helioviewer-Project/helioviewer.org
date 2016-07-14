@@ -1089,6 +1089,7 @@ var TimelineEvents = Class.extend({
                 self._timelineOptions.series[id] = {
                     name: (typeof _eventsSeries[series.event_type] == 'undefined' ? series['name']: _eventsSeries[series.event_type].name ),
                     data: series['data'],
+                    showInLegend: series['showInLegend'],
                     color: _eventsSeries[series.event_type].color
                 };
                 categories.push(series['name']);
@@ -1202,36 +1203,21 @@ var TimelineEvents = Class.extend({
 		    self.setTitle({min:startDate,max:endDate});
 	        self.setNavigationButtonsTitles({min:startDate, max:endDate});
 	        
-	        //Assign points classes and hide invisible series
-	        var visibleData = false;
-	        $.each(chart.series, function (id, series) {//console.log(series);
-		        var pointIndex = 0;
-		        visibleData = false;
-	            $.each(series.data, function (idp, point) {
-		            if(timelineRes == 'm'){
-				        if(series.data.hasOwnProperty(idp)){
-				            if (series.cropStart < idp) {
+	        //Assign points classes
+	        if(timelineRes == 'm'){
+		        $.each(chart.series, function (id, series) {
+			        var pointIndex = 0;
+		            $.each(series.data, function (idp, point) {
+			            if(series.data.hasOwnProperty(idp)){
+				            if (series.cropStart <= idp) {
 					            var pointClass= point.kb_archivid.replace(/\(|\)|\.|\:/g, "");
 					            $( '.highcharts-series-' + id ).find( "rect" ).eq( pointIndex ).addClass( 'point_' + pointClass );
 					            pointIndex++;
 				            }
-							if(endDate >= point['x'] && startDate <= point['x2']){
-								visibleData = true;
-							}
-				        }    
-		            }else{
-			            if(series.data.hasOwnProperty(idp)){
-				            if(endDate >= point['x'] && startDate <= point['x'] && point['y'] > 0){
-								visibleData = true;
-							}
-						}
-		            }
+				        }
+		            });
 	            });
-	            //Hide Empty series
-	            if(visibleData == false){
-		            $('.highcharts-legend-item').eq(id).hide();
-	            }
-            });
+            }
 	    });
     },
     
@@ -1430,6 +1416,7 @@ var TimelineEvents = Class.extend({
 		            //pointWidth: 5,
                     name: (typeof _eventsSeries[series.event_type] == 'undefined' ? series['name']: _eventsSeries[series.event_type].name ),
                     data: series['data'],
+                    showInLegend: series['showInLegend'],
                     color: _eventsSeries[series.event_type].color
                 }, false, false);
                 
@@ -1479,35 +1466,19 @@ var TimelineEvents = Class.extend({
             e = self.setTitle(e);
             chart.hideLoading();
 
-	        //Assign points classes and hide invisible series
-	        var visibleData = false;
-	        $.each(chart.series, function (id, series) {//console.log(series);
-		        var pointIndex = 0;
-		        visibleData = false;
-	            $.each(series.data, function (idp, point) {
-		            if(timelineRes == 'm'){
-				        if(series.data.hasOwnProperty(idp)){
+	        //Assign points classes
+	        if(timelineRes == 'm'){
+		        $.each(chart.series, function (id, series) {
+			        var pointIndex = 0;
+		            $.each(series.data, function (idp, point) {
+			            if(series.data.hasOwnProperty(idp)){
 				            var pointClass= point.kb_archivid.replace(/\(|\)|\.|\:/g, "");
 				            $( '.highcharts-series-' + id ).find( "rect" ).eq( pointIndex ).addClass( 'point_' + pointClass );
 				            pointIndex++;
-
-							if(e.max >= point['x'] && e.min <= point['x2']){
-								visibleData = true;
-							}
-				        }    
-		            }else{
-			            if(series.data.hasOwnProperty(idp)){
-				            if(e.max >= point['x'] && e.min <= point['x'] && point['y'] > 0){
-								visibleData = true;
-							}
-						}	
-		            }
+					    }   
+		            });
 	            });
-	            //Hide Empty series
-	            if(visibleData == false){
-		            $('.highcharts-legend-item').eq(id).hide();
-	            }
-            });
+	        }
         });
         return true;
     },
