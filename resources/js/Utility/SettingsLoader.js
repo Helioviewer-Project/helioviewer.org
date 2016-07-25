@@ -95,6 +95,9 @@ var SettingsLoader = (
                         "accordions": {
                             "#accordion-youtube": {
                                 "open": true
+                            },
+                            "#accordion-youtube-current": {
+                                "open": false
                             }
                         }
                     },
