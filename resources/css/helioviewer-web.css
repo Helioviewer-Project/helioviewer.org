@@ -938,13 +938,6 @@ span.ui-icon-hover, div.ui-icon-hover {
    color: rgba(255,255,255,0.33);
 }
 
-
-#user-video-gallery.ui-widget-content {
-   background: none;
-   border: none;
-}
-
-
 .social-btns {
     min-height: 3em;
 }

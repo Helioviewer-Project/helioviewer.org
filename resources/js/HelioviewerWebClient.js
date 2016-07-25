@@ -59,7 +59,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.drawerYoutube             = $('#hv-drawer-youtube');
         this.drawerYoutubeOpened       = false;
         this.drawerYoutubeOpenedHeight = 'auto';
-        this.drawerYoutubeOpenedWidth  = '25em';
+        this.drawerYoutubeOpenedWidth  = '30em';
         this.drawerData                = $('#hv-drawer-data');
         this.drawerDataOpened          = false;
         this.drawerDataOpenedHeight    = 'auto';
@@ -2095,6 +2095,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
             Helioviewer.userSettings.set("state.drawers.#hv-drawer-youtube.open", true);
+            this._userVideos._checkForNewMovies();
+            this._userVideos._fetchCurrentVideos();
             this.reopenAccordions(this.drawerYoutube);
         }
 
