@@ -356,17 +356,17 @@ var TimelineEvents = Class.extend({
                             mouseOver: function(e){
 	                            this.selected = true;
 	                            this.graphic.attr('fill', '#fff');
-	                            //if(this.graphic.fill == '#ffffff'){
-		                        //this.graphic.attr('stroke', 3);
 	                            
-	                            var id = this.kb_archivid;
-	                            id = id.replace(/\(|\)|\.|\:/g, "");
-	                            if($("#marker_" + id).length != 0) {
-		                            $("#event-container .event-layer > div[id!='marker_"+id+"']").css({'opacity':'0.2'});
-		                            $("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'0.2'});
-		                            $("#event-container .event-layer > div[id='marker_"+id+"']").parent().css({'opacity':'1'});
-		                            $("#event-container .event-layer > div[id='marker_"+id+"']").css({'z-index':'1000'}); 
-		                            $("#event-container .event-layer > div[id='region_"+id+"']").css({'opacity':'1'});
+	                            if(typeof this.kb_archivid != 'undefined'){
+		                            var id = this.kb_archivid;
+		                            id = id.replace(/\(|\)|\.|\:/g, "");
+		                            if($("#marker_" + id).length != 0) {
+			                            $("#event-container .event-layer > div[id!='marker_"+id+"']").css({'opacity':'0.2'});
+			                            $("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'0.2'});
+			                            $("#event-container .event-layer > div[id='marker_"+id+"']").parent().css({'opacity':'1'});
+			                            $("#event-container .event-layer > div[id='marker_"+id+"']").css({'z-index':'1000'}); 
+			                            $("#event-container .event-layer > div[id='region_"+id+"']").css({'opacity':'1'});
+		                            }
 	                            }
                             },
                             mouseOut: function(e){
