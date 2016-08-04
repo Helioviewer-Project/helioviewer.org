@@ -375,11 +375,12 @@ var TimelineEvents = Class.extend({
 									this.graphic.attr('fill', this.color);
 									
 									setTimeout(function() { point.selected = false; }, 100);
-									
-									var id = this.kb_archivid;
-									id = id.replace(/\(|\)|\.|\:/g, "");
-									$("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'1'});
-								 	$("#event-container .event-layer > div").css({'opacity':'1.0', 'z-index':'997'});
+									if(typeof this.kb_archivid != 'undefined'){
+										var id = this.kb_archivid;
+										id = id.replace(/\(|\)|\.|\:/g, "");
+										$("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'1'});
+									 	$("#event-container .event-layer > div").css({'opacity':'1.0', 'z-index':'997'});
+								 	}
 								}	
 							}
 						}
@@ -1047,7 +1048,7 @@ var TimelineEvents = Class.extend({
 	},
 	
 	render: function(){
-		var _url, eventLayersStr = '', layers = [], eventLayers=[], date, startDate, endDate, self, chartTypeX = 'column';
+		var _url, eventLayersStr = '', layers = [], eventLayers=[], date, startDate, endDate, self, chartTypeX = 'xrange', isShared = false;
 		
 		self = this;
 		
@@ -1075,123 +1076,129 @@ var TimelineEvents = Class.extend({
 			timelineStartDate = startDate;
 			timelineEndDate = endDate;
 		}
-				
-		var _url = Helioviewer.api+'?action=getDataCoverage&eventLayers='+ eventLayersStr +'&currentDate='+ date +'&startDate='+ startDate +'&endDate='+ endDate +'&callback=?';
-		$.getJSON(_url, function (data) {
+		
+		self._timelineOptions.series = [];
 			
-			if(typeof data.error != 'undefined'){
-				alert(data.error);
-			}
-			//assign colors
-			var categories = [];
-			self._timelineOptions.series = [];
-			$.each(data, function (id, series) {
-				self._timelineOptions.series[id] = {
-					name: (typeof _eventsSeries[series.event_type] == 'undefined' ? series['name']: _eventsSeries[series.event_type].name ),
-					data: series['data'],
-					showInLegend: series['showInLegend'],
-					color: _eventsSeries[series.event_type].color
-				};
-				categories.push(series['name']);
+		//Draggble start and end dates
+		var visibleAreaInSeconds = endDate - startDate;
+		var draggbleStart = (startDate - visibleAreaInSeconds * 5);
+		var draggbleEnd = (endDate + visibleAreaInSeconds * 5);
+		
+		var series = [];
+		series.unshift({
+			'x': draggbleStart-1,
+			'x2': draggbleStart,
+			'y': 0,
+			'kb_archivid': '',
+			'hv_labels_formatted': '',
+			'event_type': '',
+			'frm_name': '',
+			'frm_specificid': '',
+			'event_peaktime': '',
+			'event_starttime': '',
+			'event_endtime': ''
+		});
+		series.push({
+			'x': draggbleEnd,
+			'x2': draggbleEnd+1,
+			'y': 0,
+			'kb_archivid': '',
+			'hv_labels_formatted': '',
+			'event_type': '',
+			'frm_name': '',
+			'frm_specificid': '',
+			'event_peaktime': '',
+			'event_starttime': '',
+			'event_endtime': ''
+		});
+		
+		self._timelineOptions.series[0] = {
+			name: 'Empty',
+			data: series,
+			showInLegend: false,
+			color: '#ffffff'
+		};
+		
+		// create the chart
+		$('#data-coverage-timeline-events').highcharts( self._timelineOptions,function(chart){
+			$('#data-coverage-timeline-events').on('mouseup',function(){
+				if (timelineExtremesChanged) {
+					
+					var extremes, newMin, newMax, span;
+			
+					extremes = chart.xAxis[0].getExtremes();
+					
+					newMin   = extremes.min;
+					newMax   = extremes.max;
+					
+					if(newMin < 0)  newMin = 0;
+					if(newMax < 0)  newMax = 0;
+					
+					self.afterSetExtremes({min:newMin, max:newMax});
+					timelineExtremesChanged = false;
+				}
+			}),
+			$('#data-coverage-timeline-events').on('mousedown',function(){
+				timelineExtremesChanged = false;
+			});
+			$('#data-coverage-timeline-events').bind('mousewheel', function(event) {
+				var container = $(chart.container),
+					offset = container.offset(),
+					x, y, isInside;
 				
-				timelineRes = series.res;
-				if(series.res == 'm'){
-					isShared = false;
-					chartTypeX = 'xrange';
-				}else{
-					isShared = true;
-					chartTypeX = 'column';
+				if(scrollLock){
+					return false;
+				}
+				//Lock the scroll
+				scrollLock = true;
+				window.setTimeout(function(){
+					scrollLock = false;
+				},500);
+				
+				x = event.clientX - chart.plotLeft - offset.left;
+				y = event.clientY - chart.plotTop - offset.top;
+				isInside = chart.isInsidePlot(x, y);
+				
+				event.preventDefault();
+				if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
+					self.btnZoomIn();
+				} else {
+					self.btnZoomOut();
 				}
 			});
+		   	
+		   	$('#data-coverage-timeline-events').on('dblclick',function(e){
+				if(timelineRes == 'm'){
+					var date = new Date(timelineMouseValueX);
+					helioviewer.timeControls.setDate(date);
+				}
+			});
+		   	 
+			chart.container.addEventListener('mouseover', function(e) {
+				chart.container.addEventListener('mousemove', chartEventsContainerMouseMove);
+			});
+			chart.container.addEventListener('mouseout', function(e) {
+				chart.container.removeEventListener('mousemove', chartEventsContainerMouseMove);
+			});
 			
-			if(chartTypeX == 'xrange'){
-				$('#hv-drawer-timeline-events-logarithmic-holder').hide();
-			}else{
-				$('#hv-drawer-timeline-events-logarithmic-holder').show();
+			function chartEventsContainerMouseMove(event) {
+				var containerCoords = $(chart.container).position();//element_position(chart.container);
+				var relativeMouseX = event.pageX - containerCoords.x;
+				var relativeMouseY = event.pageY - containerCoords.y;
+				chart.mouseCoords = { x: event.chartX, y: event.chartY };
+				
+				if(chart.isInsidePlot(event.chartX - chart.plotLeft, event.chartY - chart.plotTop)){
+					event = chart.pointer.normalize(event);
+					timelineMouseCoordX = event.chartX - chart.plotLeft;
+					timelineMouseCoordY = event.chartY - chart.plotTop;
+					timelineMouseValueX = chart.xAxis[0].toValue(event.chartX);
+					timelineMouseValueY = chart.yAxis[0].toValue(event.chartY);
+				}
 			}
 			
-			// create the chart
-			$('#data-coverage-timeline-events').highcharts( self._timelineOptions,function(chart){
-					$('#data-coverage-timeline-events').on('mouseup',function(){
-						if (timelineExtremesChanged) {
-							
-							var extremes, newMin, newMax, span;
-					
-							extremes = chart.xAxis[0].getExtremes();
-							
-							newMin   = extremes.min;
-							newMax   = extremes.max;
-							
-							if(newMin < 0)  newMin = 0;
-							if(newMax < 0)  newMax = 0;
-							
-							self.afterSetExtremes({min:newMin, max:newMax});
-							timelineExtremesChanged = false;
-						}
-					}),
-					$('#data-coverage-timeline-events').on('mousedown',function(){
-						timelineExtremesChanged = false;
-					});
-					$('#data-coverage-timeline-events').bind('mousewheel', function(event) {
-						var container = $(chart.container),
-							offset = container.offset(),
-							x, y, isInside;
-						
-						if(scrollLock){
-							return false;
-						}
-						//Lock the scroll
-						scrollLock = true;
-						window.setTimeout(function(){
-							scrollLock = false;
-						},500);
-						
-						x = event.clientX - chart.plotLeft - offset.left;
-						y = event.clientY - chart.plotTop - offset.top;
-						isInside = chart.isInsidePlot(x, y);
-						
-						event.preventDefault();
-						if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
-							self.btnZoomIn();
-						} else {
-							self.btnZoomOut();
-						}
-					});
-				   	
-				   	$('#data-coverage-timeline-events').on('dblclick',function(e){
-						if(timelineRes == 'm'){
-							var date = new Date(timelineMouseValueX);
-							helioviewer.timeControls.setDate(date);
-						}
-					});
-				   	 
-					chart.container.addEventListener('mouseover', function(e) {
-						chart.container.addEventListener('mousemove', chartEventsContainerMouseMove);
-					});
-					chart.container.addEventListener('mouseout', function(e) {
-						chart.container.removeEventListener('mousemove', chartEventsContainerMouseMove);
-					});
-					
-					function chartEventsContainerMouseMove(event) {
-						var containerCoords = $(chart.container).position();//element_position(chart.container);
-						var relativeMouseX = event.pageX - containerCoords.x;
-						var relativeMouseY = event.pageY - containerCoords.y;
-						chart.mouseCoords = { x: event.chartX, y: event.chartY };
-						
-						if(chart.isInsidePlot(event.chartX - chart.plotLeft, event.chartY - chart.plotTop)){
-							event = chart.pointer.normalize(event);
-							timelineMouseCoordX = event.chartX - chart.plotLeft;
-							timelineMouseCoordY = event.chartY - chart.plotTop;
-							timelineMouseValueX = chart.xAxis[0].toValue(event.chartX);
-							timelineMouseValueY = chart.yAxis[0].toValue(event.chartY);
-						}
-					}
-				});
-				
 			self.drawPlotLine(chartTypeX);
 			self.drawCarringtonLines(startDate, endDate, chartTypeX);
-			
-			$('#data-coverage-timeline-events').highcharts().xAxis[0].setExtremes(startDate, endDate);
+					
 			var chart = $('#data-coverage-timeline-events').highcharts();
 			chart.pointer.cmd = chart.pointer.onContainerMouseDown;
 			chart.pointer.onContainerMouseDown = function (a){
@@ -1200,32 +1207,19 @@ var TimelineEvents = Class.extend({
 			}; 
 			chart.tooltip.shared = isShared;
 			
-			
 			$('div.highcharts-tooltip, div.highcharts-tooltip span').css({'z-index': '99999', 'background-color':'#000'});
-			//$('.highcharts-tooltip span').css({'position': 'relative'});
 			
 			self.minNavDate = startDate;
 			self.maxNavDate = endDate;
-			
+				
 			self.setTitle({min:startDate,max:endDate});
 			self.setNavigationButtonsTitles({min:startDate, max:endDate});
 			
-			//Assign points classes
-			if(timelineRes == 'm'){
-				$.each(chart.series, function (id, series) {
-					var pointIndex = 0;
-					$.each(series.data, function (idp, point) {
-						if(series.data.hasOwnProperty(idp)){
-							if (series.cropStart <= idp) {
-								var pointClass= point.kb_archivid.replace(/\(|\)|\.|\:/g, "");
-								$( '.highcharts-series-' + id ).find( "rect" ).eq( pointIndex ).addClass( 'point_' + pointClass );
-								pointIndex++;
-							}
-						}
-					});
-				});
-			}
+			$('#data-coverage-timeline-events').highcharts().xAxis[0].setExtremes(startDate, endDate);
+			self.afterSetExtremes({min:startDate, max:endDate});
 		});
+		
+		
 	},
 	
 	drawCarringtonLines: function(Start, End, chartTypeX){
@@ -1416,18 +1410,37 @@ var TimelineEvents = Class.extend({
 				chart.series[0].remove(false);
 			}
 			
-			var categories = [];
+			
+			//Draggble start and end dates
+			var visibleAreaInSeconds = Math.round(e.max) - Math.round(e.min);
+			var draggbleStart = Math.round(e.min) - visibleAreaInSeconds;
+			var draggbleEnd = Math.round(e.max) + visibleAreaInSeconds;
+			
 			var count = 0;
 			$.each(data, function (sourceId, series) {
+				if(series['res'] == 'm' && !series['showInLegend']){
+					series['data'].push({
+						'x': draggbleStart,
+						'x2': draggbleEnd,
+						'y': 0,
+						'kb_archivid': '',
+						'hv_labels_formatted': '',
+						'event_type': '',
+						'frm_name': '',
+						'frm_specificid': '',
+						'event_peaktime': '',
+						'event_starttime': '',
+						'event_endtime': ''
+					});
+				}
+				
 				chart.addSeries({
-					//pointWidth: 5,
 					name: (typeof _eventsSeries[series.event_type] == 'undefined' ? series['name']: _eventsSeries[series.event_type].name ),
 					data: series['data'],
 					showInLegend: series['showInLegend'],
 					color: _eventsSeries[series.event_type].color
 				}, false, false);
 				
-				categories.push((typeof _eventsSeries[series.event_type] == 'undefined' ? series['name']: _eventsSeries[series.event_type].name ));
 				count++;
 				
 				timelineRes = series.res;
@@ -1446,8 +1459,6 @@ var TimelineEvents = Class.extend({
 			}else{
 				$('#hv-drawer-timeline-events-logarithmic-holder').show();
 			}
-
-			chart.yAxis[0].setCategories(categories);
 
 			$.each(chart.series, function (id, series) {
 				if(typeof seriesVisability[series.name] != "undefined"){
@@ -1493,27 +1504,29 @@ var TimelineEvents = Class.extend({
 	setTitle: function(e){
 		var chart = $('#data-coverage-timeline-events').highcharts();
 		
-		if(
-			typeof chart.xAxis == 'undefined' ||
-			typeof chart.xAxis[0] == 'undefined' ||
-			typeof chart.xAxis[0].series == 'undefined' || 
-			typeof chart.xAxis[0].series[0] == 'undefined' || 
-			typeof chart.xAxis[0].series[0].points == 'undefined' || 
-			typeof chart.xAxis[0].series[0].points[0] == 'undefined' || 
-			chart.xAxis[0].series[0].points[0].x < 0){
-			return false;	
+		if(timelineRes != 'm'){
+			if(
+				typeof chart.xAxis == 'undefined' ||
+				typeof chart.xAxis[0] == 'undefined' ||
+				typeof chart.xAxis[0].series == 'undefined' || 
+				typeof chart.xAxis[0].series[0] == 'undefined' || 
+				typeof chart.xAxis[0].series[0].points == 'undefined' || 
+				typeof chart.xAxis[0].series[0].points[0] == 'undefined' || 
+				chart.xAxis[0].series[0].points[0].x < 0){
+				return false;	
+			}
+	
+			var minTime = chart.xAxis[0].series[0].points[0].x;
+			
+			if(typeof chart.xAxis[0].closestPointRange != 'undefined'){
+				e.max = e.max + chart.xAxis[0].closestPointRange;
+			}
+			
+			if(minTime > e.min){
+				e.min = minTime;
+			}
 		}
-
-		var minTime = chart.xAxis[0].series[0].points[0].x;
 		
-		if(typeof chart.xAxis[0].closestPointRange != 'undefined'){
-			e.max = e.max + chart.xAxis[0].closestPointRange;
-		}
-		
-		if(minTime > e.min && timelineRes != 'm'){
-			e.min = minTime;
-		}
-
 		chart.setTitle({ text: Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+' - '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',e.max) });
 		
 		return e;
