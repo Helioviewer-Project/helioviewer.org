@@ -832,19 +832,44 @@ var MovieManagerUI = MediaManagerUI.extend(
         facebookBtn = '<div style="float:right;"><iframe src="//www.facebook.com/plugins/like.php?href='+encodeURIComponent('http://'+document.domain+'/?movieId='+movie.id)+'&amp;width=90&amp;height=21&amp;colorscheme=dark&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;send=false&amp;appId=6899099925" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px; width:90px;" allowTransparency="false"></iframe></div>';
 
         // HTML5 Video (H.264 or WebM)
-        if ($.support.vp8 || $.support.h264) {
+        //if ($.support.vp8 || $.support.h264) {
             // Work-around: use relative paths to simplify debugging
-            url = movie.url.substr(movie.url.search("cache"));
+			var url = movie.url.substr(movie.url.search("cache"));
+			var fileNameIndex = url.lastIndexOf("/") + 1;
+			var filename = url.substr(fileNameIndex);
+			var filenameHQ = filename.replace('.mp4', '-hq.mp4');
+			var filenameWebM = filename.replace('.mp4', '-.webm');
+			var filePath = url.substring(0, url.lastIndexOf("/"));
 
-            // IE9 only supports relative dimensions specified using CSS
-            return '<div><video id="movie-player-' + movie.id + '" src="' + url +
-                   '" controls preload autoplay' +
-                   ' style="width:100%; height: 90%;"></video></div>' +
-                   '<div style="width:100%"><div style="float:left;" class="video-links">' +
-                   youtubeBtn + linkBtn + downloadLink + gifLink +
-                   '</div> <div style="float:right;">' + facebookBtn +
-                   tweetBtn + '</div></div>';
-        }
+			return '<style>.mejs-container .mejs-controls {bottom: -20px;}</style>\
+				    <div>\
+						<video id="movie-player-' + movie.id + '" width="'+(width - 15)+'" height="'+(height - 20)+'" poster="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" controls="controls" preload="none" autoplay="true">\
+						    <source type="video/mp4" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameHQ+'" />\
+						    <source type="video/webm" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameWebM+'" />\
+						    <object width="'+width+'" height="'+(height - 20)+'" type="application/x-shockwave-flash" data="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf">\
+						        <param name="movie" value="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf" />\
+						        <param name="flashvars" value="controls=true&amp;poster='+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png&amp;file='+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filename+'" />\
+						        <img src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" width="'+width+'" height="'+height+'" title="No video playback capabilities" />\
+						    </object>\
+						</video>\
+					</div>\
+					<div style="width:100%">\
+						<div style="float:left;" class="video-links">' + 
+							youtubeBtn + linkBtn + downloadLink + gifLink + 
+						'</div>\
+						<div style="float:right;">' + facebookBtn + tweetBtn + '</div>\
+					</div>\
+					<script>\
+					// using jQuery\
+					$("video").mediaelementplayer({\
+						enableAutosize: true,\
+						features: ["playpause","progress","current","duration"],\
+						alwaysShowControls: false\
+					});\
+					</script>';
+		   	
+
+        /*}
 
         // Fallback (flash player)
         else {
@@ -855,7 +880,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             return '<div id="movie-player-' + movie.id + '">' +
                        '<iframe id="movie-player-iframe" src="' + url + '" width="' + width +
                        '" height="' + height + '" marginheight="0" marginwidth="0" ' +
-                       'scrolling="no" frameborder="0" />' +
+                       'scrolling="no" frameborder="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"/>' +
                    '</div>' +
                    '<div style="width:100%;">' +
                        '<div style="float:left;" class="video-links">' +
@@ -863,7 +888,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                    '</div>' +
                    '<div style="float:right;">' + facebookBtn + tweetBtn +
                    '</div>';
-        }
+        }*/
     },
 
     /**
