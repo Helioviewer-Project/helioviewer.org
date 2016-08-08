@@ -505,7 +505,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         dialog.dialog({
             title     : "Movie Player: " + title,
             width     : ((dimensions.width < 575)?600:dimensions.width+25),
-            height    : dimensions.height + 80,
+            height    : dimensions.height + 90,
             resizable : $.support.h264 || $.support.vp8,
             close     : function () {
                             $(this).empty();
@@ -544,6 +544,12 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) +
                      "full.png";
+        
+        $("video").mediaelementplayer({
+			enableAutosize: true,
+			features: ["playpause","progress","current","duration", "fullscreen"],
+			alwaysShowControls: true
+		});
     },
 
     /**
@@ -853,20 +859,12 @@ var MovieManagerUI = MediaManagerUI.extend(
 						    </object>\
 						</video>\
 					</div>\
-					<div style="width:100%">\
+					<div style="width:100%;padding-top: 25px;">\
 						<div style="float:left;" class="video-links">' + 
 							youtubeBtn + linkBtn + downloadLink + gifLink + 
 						'</div>\
 						<div style="float:right;">' + facebookBtn + tweetBtn + '</div>\
-					</div>\
-					<script>\
-					// using jQuery\
-					$("video").mediaelementplayer({\
-						enableAutosize: true,\
-						features: ["playpause","progress","current","duration"],\
-						alwaysShowControls: false\
-					});\
-					</script>';
+					</div>';
 		   	
 
         /*}
