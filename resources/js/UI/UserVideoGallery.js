@@ -166,7 +166,7 @@ var UserVideoGallery = Class.extend(
      * Builds video gallery HTML
      */
     _buildHTML: function (videos) {
-        var html = "", self = this;
+        var html = "", self = this, count = 0;
 
         // Remove old thumbmails
         this._container.find("a, br").remove();
@@ -176,7 +176,7 @@ var UserVideoGallery = Class.extend(
         $.each(videos, function (i, vid) {
             var when = new Date.parseUTCDate(vid.published) .getElapsedTime() + ' ago', img = vid.thumbnails['small'], html = '';
 
-            html += "<a target='_blank' href='" + vid.url + "' " +
+            html = "<a target='_blank' href='" + vid.url + "' " +
                     "alt='video thumbnail' id='youtube-movie-"+vid.id+"'>" +
                     "<div class='user-video-thumbnail-container'>" +
                     "<img class='user-video-thumbnail' src='" + img + "' alt='user video thumbnail' />" +
@@ -208,8 +208,13 @@ var UserVideoGallery = Class.extend(
 	            show: {
 	                delay: 140
 	            }
-	        });    
+	        });
+	        count++;    
         });
+        
+		if(count == 0){
+			this._containerCurrent.append('<p>No shared movies found.</p>');
+		}
 
         this._working = false;
     },
@@ -218,7 +223,7 @@ var UserVideoGallery = Class.extend(
      * Builds video gallery HTML
      */
     _buildHTMLCurrent: function (videos) {
-        var html = "", self = this;
+        var html = "", self = this, count = 0;
 
         // Remove old thumbmails
         this._containerCurrent.find("a, br").remove();
@@ -260,9 +265,14 @@ var UserVideoGallery = Class.extend(
 	            show: {
 	                delay: 140
 	            }
-	        });    
+	        });
+	        count++;     
         });
-
+        
+		if(count == 0){
+			this._containerCurrent.append('<p>No shared movies found.</p>');
+		}
+		
         this._working = false;
     },
 
