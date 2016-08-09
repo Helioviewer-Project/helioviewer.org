@@ -169,7 +169,7 @@ var UserVideoGallery = Class.extend(
         var html = "", self = this, count = 0;
 
         // Remove old thumbmails
-        this._container.find("a, br").remove();
+        this._container.find("a, br, p").remove();
 		
 		this._loader.hide();
 		
@@ -226,7 +226,7 @@ var UserVideoGallery = Class.extend(
         var html = "", self = this, count = 0;
 
         // Remove old thumbmails
-        this._containerCurrent.find("a, br").remove();
+        this._containerCurrent.find("a, br, p").remove();
 		
 		this._loaderCurrent.hide();
 		
