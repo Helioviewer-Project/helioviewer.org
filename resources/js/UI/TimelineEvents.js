@@ -460,13 +460,20 @@ var TimelineEvents = Class.extend({
 						else {
 							headingText = point.event_type + ': ' + point.frm_name + ' ' + point.frm_specificid;
 						}
-				
+						
+						headingText = headingText.replace(/u03b1/g, "α");
+				        headingText = headingText.replace(/u03b2/g, "β");
+				        headingText = headingText.replace(/u03b3/g, "γ");
+						headingText = headingText.replace(/u00b1/g, "±");
+						headingText = headingText.replace(/u00b2/g, "²");
+						
 						str	 += '<h1 class="user-selectable" style="font-size:13px;margin-bottom:0px;">'+headingText+'</h1>'+"\n";
 				
 						if ( point.event_peaktime != null && point.event_peaktime != '' && point.event_peaktime != '0000-00-00 00:00:00') {
+							point.event_peaktime = point.event_peaktime.replace(/-/g, "/");
 							str += '<div class="container">'+"\n"
 									+	  "\t"+'<div class="param-container"><div class="param-label user-selectable">Peak Time:</div></div>'+"\n"
-									+	  "\t"+'<div class="value-container"><div class="param-value user-selectable">'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', point.event_peaktime)+'</div><div class="ui-icon ui-icon-arrowstop-1-n" title="Jump to Event Peak Time"></div></div>'+"\n"
+									+	  "\t"+'<div class="value-container"><div class="param-value user-selectable">'+point.event_peaktime+' UTC</div><div class="ui-icon ui-icon-arrowstop-1-n" title="Jump to Event Peak Time"></div></div>'+"\n"
 									+  '</div>'+"\n";
 						}
 						str	 += '<div class="container">'+"\n"
@@ -480,9 +487,11 @@ var TimelineEvents = Class.extend({
 				
 						if ( point.hasOwnProperty('hv_labels_formatted') && Object.keys(point.hv_labels_formatted).length > 0 ) {
 							$.each( point.hv_labels_formatted, function (param, value) {
-								value = value.replace(/u03b1/g, "&alpha;");
-								value = value.replace(/u03b2/g, "&beta;");
-								value = value.replace(/u03b3/g, "&gamma;");
+								value = value.replace(/u03b1/g, "α");
+						        value = value.replace(/u03b2/g, "β");
+						        value = value.replace(/u03b3/g, "γ");
+								value = value.replace(/u00b1/g, "±");
+								value = value.replace(/u00b2/g, "²");
 								str += '<div class="container">'+"\n"
 										+	  "\t"+'<div class="param-container"><div class="param-label user-selectable">'+param+': </div></div>'+"\n"
 										+	  "\t"+'<div class="value-container"><div class="param-value user-selectable">'+value+'</div></div>'+"\n"
@@ -1615,6 +1624,11 @@ var TimelineEvents = Class.extend({
 		else {
 			headingText = data.frm_name + ' ' + data.frm_specificid;
 		}
+		headingText = headingText.replace(/u03b1/g, "α");
+        headingText = headingText.replace(/u03b2/g, "β");
+        headingText = headingText.replace(/u03b3/g, "γ");
+		headingText = headingText.replace(/u00b1/g, "±");
+		headingText = headingText.replace(/u00b2/g, "²");
 
 		// Header Tabs
 		html += '<div class="event-info-dialog-menu">'
