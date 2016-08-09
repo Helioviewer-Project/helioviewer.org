@@ -336,7 +336,7 @@
 					.undelegate(".jstree")
 					.removeData("jstree-instance-id")
 					.find("[class^='jstree']")
-						.andSelf()
+						.addBack()
 						.attr("class", function () { return this.className.replace(/jstree[^ ]*|$/ig,''); });
 				// remove the actual data
 				instances[n] = null;
@@ -497,7 +497,7 @@
 				}
 				else {
 					original_obj = obj;
-					if(obj.is(".jstree-closed")) { obj = obj.find("li.jstree-closed").andSelf(); }
+					if(obj.is(".jstree-closed")) { obj = obj.find("li.jstree-closed").addBack(); }
 					else { obj = obj.find("li.jstree-closed"); }
 				}
 				var _this = this;
@@ -512,12 +512,12 @@
 			close_all	: function (obj) {
 				var _this = this;
 				obj = obj ? this._get_node(obj) : this.get_container();
-				obj.find("li.jstree-open").andSelf().each(function () { _this.close_node(this); });
+				obj.find("li.jstree-open").addBack().each(function () { _this.close_node(this); });
 				this.__callback({ "obj" : obj });
 			},
 			clean_node	: function (obj) {
 				obj = obj && obj != -1 ? $(obj) : this.get_container();
-				obj = obj.is("li") ? obj.find("li").andSelf() : obj.find("li");
+				obj = obj.is("li") ? obj.find("li").addBack() : obj.find("li");
 				obj.removeClass("jstree-last")
 					.filter("li:last-child").addClass("jstree-last").end()
 					.filter(":has(ul)")
@@ -731,7 +731,7 @@
 			},
 			check_move : function () {
 				var obj = prepared_move;
-				if(obj.or[0] === obj.o[0] || obj.r.parentsUntil(".jstree").andSelf().filter("li").index(obj.o) !== -1) { return false; }
+				if(obj.or[0] === obj.o[0] || obj.r.parentsUntil(".jstree").addBack().filter("li").index(obj.o) !== -1) { return false; }
 				return true;
 			},
 			move_node : function (obj, ref, position, is_copy, is_prepared, skip_check) {
@@ -746,7 +746,7 @@
 				var o = false;
 				if(is_copy) {
 					o = obj.o.clone();
-					o.find("*[id]").andSelf().each(function () {
+					o.find("*[id]").addBack().each(function () {
 						if(this.id) { this.id = "copy_" + this.id; }
 					});
 				}
@@ -958,7 +958,7 @@
 				.bind("move_node.jstree", $.proxy(function (e, data) {
 					if(this.get_settings().crrm.move.open_onmove) {
 						var t = this;
-						data.rslt.np.parentsUntil(".jstree").andSelf().filter(".jstree-closed").each(function () {
+						data.rslt.np.parentsUntil(".jstree").addBack().filter(".jstree-closed").each(function () {
 							t.open_node(this, false, true);
 						});
 					}
@@ -2199,16 +2199,17 @@
 			},
 			change_state : function (obj, state) {
 				obj = this._get_node(obj);
+				if(obj==false){return false;}
 				state = (state === false || state === true) ? state : obj.hasClass("jstree-checked");
-				if(state) { obj.find("li").andSelf().removeClass("jstree-checked jstree-undetermined").addClass("jstree-unchecked"); }
-				else { obj.find("li").andSelf().removeClass("jstree-unchecked jstree-undetermined").addClass("jstree-checked"); this.data.ui.last_selected = obj; }
+				if(state) { obj.find("li").addBack().removeClass("jstree-checked jstree-undetermined").addClass("jstree-unchecked"); }
+				else { obj.find("li").addBack().removeClass("jstree-unchecked jstree-undetermined").addClass("jstree-checked"); this.data.ui.last_selected = obj; }
 
 				var _this = this;
 				obj.parentsUntil(this.get_container(), "li").each(function () {
 					var $this = $(this);
 					if(state) {
 						if($this.children("ul").children(".jstree-checked, .jstree-undetermined").length) {
-							$this.parentsUntil(_this.get_container(), "li").andSelf().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
+							$this.parentsUntil(_this.get_container(), "li").addBack().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
 							return false;
 						}
 						else {
@@ -2217,7 +2218,7 @@
 					}
 					else {
 						if($this.children("ul").children(".jstree-unchecked, .jstree-undetermined").length) {
-							$this.parentsUntil(_this.get_container(), "li").andSelf().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
+							$this.parentsUntil(_this.get_container(), "li").addBack().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
 							return false;
 						}
 						else {
@@ -2274,7 +2275,7 @@
 				else if(a === 0 && b === 0) { this.uncheck_node(obj); }
 				else if(a === c) { this.check_node(obj); }
 				else { 
-					obj.parentsUntil(this.get_container(),"li").andSelf().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
+					obj.parentsUntil(this.get_container(),"li").addBack().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
 				}
 			},
 			reselect : function () {

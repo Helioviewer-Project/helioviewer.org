@@ -86,8 +86,7 @@ var TreeSelect = Class.extend(
 
         for (i = 0; i < this.selectIds.length; i += 1) {
             if (i > depth) {
-                this.selected[i] = selectField(this.selected[i], eval(nav),
-                                               depth);
+                this.selected[i] = selectField(this.selected[i], eval(nav), depth);
             }
             if ( typeof this.selected[i] != 'undefined' ) {
                 nav += '["' + this.selected[i] + '"]';
@@ -205,8 +204,8 @@ var TreeSelect = Class.extend(
 
         $.each(this.selectIds, function (i, id) {
             $(id).change(function (e) {
-                if ( $(this).attr('value') != '' ) {
-                    self._updateSelected(i, $(this).attr('value'));
+                if ( $(this).val() != '' ) {
+                    self._updateSelected(i, $(this).val());
                     self.callback(self._value());
                 }
             });

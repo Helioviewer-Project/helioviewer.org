@@ -34,8 +34,8 @@
 	
 	<!-- Library CSS -->
 	<link rel="stylesheet" href="resources/lib/yui-2.8.2r1/reset-fonts.css" />
-	<link rel="stylesheet" href="resources/lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.12.custom.css" />	
-	<link rel="stylesheet" href="resources/lib/jquery.jgrowl/jquery.jgrowl.css" />
+	<link rel="stylesheet" href="resources/lib/jquery-ui-1.12.0/jquery-ui.min.css" />	
+	<link rel="stylesheet" href="resources/lib/jquery.jgrowl-1.4.5/jquery.jgrowl.min.css" />
 	<link rel="stylesheet" href="resources/lib/jquery.qTip2/jquery.qtip.min.css" />
 	<link rel="stylesheet" href="resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
 	<link rel="stylesheet" href="resources/lib/DatetimePicker/jquery.datetimepicker.css"/ >
@@ -657,7 +657,7 @@
 							<div id="helioviewer-url-box" style="font-size: 1em;">
 								<span id="helioviewer-url-box-msg"></span>
 								<form style="margin-top: 5px; text-align: center;">
-									<input type="text" class="helioviewer-url-input-box" style="width:98%;" value="http://helioviewer.org" />
+									<input type="text" class="helioviewer-url-input-box helioviewer-url-input-box-menu" style="width:98%;" value="http://helioviewer.org" />
 									<label for="helioviewer-url-shorten">Shorten with bit.ly? </label>
 									<input type="checkbox" class="helioviewer-url-shorten" />
 									<input type="hidden" class="helioviewer-short-url" value="" />
@@ -945,7 +945,7 @@
 			<div id="helioviewer-url-box">
 				<span id="helioviewer-url-box-msg"></span>
 				<form style="margin-top: 5px;">
-					<input type="text" class="helioviewer-url-input-box" style="width:98%;" value="http://helioviewer.org" />
+					<input type="text" class="helioviewer-url-input-box helioviewer-url-input-box-video" style="width:98%;" value="http://helioviewer.org" />
 					<label for="helioviewer-url-shorten">Shorten with bit.ly? </label>
 					<input type="checkbox" class="helioviewer-url-shorten" />
 					<input type="hidden" class="helioviewer-short-url" value="" />
@@ -1021,12 +1021,11 @@
 	</div>
 	
 	<!-- Library JavaScript -->
-	<script src="resources/lib/jquery/jquery-1.12.1.min.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery-ui/jquery-ui-1.9.2.min.js" type="text/javascript"></script>
+	<script src="resources/lib/jquery/jquery-3.1.0.min.js" type="text/javascript"></script>
+	<script src="resources/lib/jquery-ui-1.12.0/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.mousewheel/jquery.mousewheel.3.1.13.min.js" type="text/javascript"></script>
-	<script src="resources/lib/date.js/date-en-US.js" type="text/javascript"></script>
+	<script src="resources/lib/jquery.browser/dist/jquery.browser.min.js" type="text/javascript" language="javascript"></script>
 	<script src="resources/lib/jquery.qTip2/jquery.qtip.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.qTip2/imagesloaded.pkg.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery-number-master/jquery.number.min.js" type="text/javascript"></script>
@@ -1036,11 +1035,10 @@
 	<script src="resources/lib/Highstock-4.2.1/js/highstock.js" type="text/javascript"></script>
 	<script src="resources/lib/Highstock-4.2.1/js/highcharts-more.js" type="text/javascript"></script>
 	<script src="resources/lib/custom_events-master/customEvents.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery.jgrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
+	<script src="resources/lib/jquery.jgrowl-1.4.5/jquery.jgrowl.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.imgareaselect-0.9.8/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
-	<script src="resources/lib/jquery.jsTree-1.0rc/jquery.jstree.min.js"></script>
+	<script src="resources/lib/jquery.jsTree-1.0rc/jquery.jstree.js"></script>
 	<script src="resources/lib/DatetimePicker/build/jquery.datetimepicker.full.js" type="text/javascript" language="javascript"></script>
 	<script src="resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.full.min.js" type="text/javascript" language="javascript"></script>
 	<script src="resources/lib/period_picker.2.7.8.pro/jquery.timepicker.js" type="text/javascript" language="javascript"></script>
