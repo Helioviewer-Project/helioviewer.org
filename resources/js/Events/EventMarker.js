@@ -151,14 +151,11 @@ var EventMarker = Class.extend(
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
             this.labelText = "";
             $.each( this.hv_labels_formatted, function (key,value) {
-	            value = value.replace(/u03b1/g, "&alpha;");
-                value = value.replace(/u03b2/g, "&beta;");
-                value = value.replace(/u03b3/g, "&gamma;");
-                self.labelText += value + "<br/>\n";
+                self.labelText += self.fixTitles(value) + "<br/>\n";
             });
         }
         else {
-            this.labelText = this.frm_name + ' ' + this.frm_specificid;
+            this.labelText = this.fixTitles(this.frm_name) + ' ' + this.fixTitles(this.frm_specificid);
         }
     },
 
@@ -373,10 +370,10 @@ var EventMarker = Class.extend(
         dialog =  $("<div id='event-info-dialog' class='event-info-dialog' />");
 
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
-            headingText = this.event_type+': ' + this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]];
+            headingText = this.event_type+': ' + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
         }
         else {
-            headingText = this.frm_name + ' ' + this.frm_specificid;
+            headingText = this.fixTitles(this.frm_name) + ' ' + this.fixTitles(this.frm_specificid);
         }
 
         // Header Tabs
@@ -705,10 +702,10 @@ var EventMarker = Class.extend(
         var content = '', headingText = '', self = this;
 
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
-            headingText = this.event_type+': ' + this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]];
+            headingText = this.event_type+': ' + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
         }
         else {
-            headingText = this.event_type + ': ' + this.frm_name + ' ' + this.frm_specificid;
+            headingText = this.event_type + ': ' + this.fixTitles(this.frm_name) + ' ' + this.fixTitles(this.frm_specificid);
         }
 
         content     += '<div class="close-button ui-icon ui-icon-closethick" title="Close PopUp Window"></div>'+"\n"
@@ -731,9 +728,7 @@ var EventMarker = Class.extend(
 
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
             $.each( this.hv_labels_formatted, function (param, value) {
-                value = value.replace(/u03b1/g, "&alpha;");
-                value = value.replace(/u03b2/g, "&beta;");
-                value = value.replace(/u03b3/g, "&gamma;");
+				value = self.fixTitles(value);
                 content += '<div class="container">'+"\n"
                         +      "\t"+'<div class="param-container"><div class="param-label user-selectable">'+param+': </div></div>'+"\n"
                         +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+value+'</div></div>'+"\n"
@@ -743,7 +738,7 @@ var EventMarker = Class.extend(
 		
 		var noaaSearch = '';
 		if( this.frm_name == "NOAA SWPC Observer"){
-			var eventName = this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]];
+			var eventName = this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
 			noaaSearch = '<div class="btn-label btn event-search-external text-btn" data-url=\'https://ui.adsabs.harvard.edu/#search/q="'+eventName+'"&sort=date desc\' target="_blank"><i class="fa fa-search fa-fw"></i>ADS search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
 						<div style=\"clear:both\"></div>\
 						<div class="btn-label btn event-search-external text-btn" data-url="http://search.arxiv.org:8081/?query='+eventName+'&in=" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
@@ -839,6 +834,16 @@ var EventMarker = Class.extend(
         this.eventPopupDomNode.find("h1, .param-label, .param-value").enableSelection();
 
         this.parentFRM.domNode.append(this.eventPopupDomNode);
+    },
+    
+    fixTitles: function(s){
+	    s = s.replace(/u03b1/g, "α");
+        s = s.replace(/u03b2/g, "β");
+        s = s.replace(/u03b3/g, "γ");
+		s = s.replace(/u00b1/g, "±");
+		s = s.replace(/u00b2/g, "²");
+		
+		return s;
     }
 
 });
