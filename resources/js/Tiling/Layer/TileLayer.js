@@ -244,10 +244,10 @@ var TileLayer = Layer.extend(
         }
 
         // Load tile
-        img.error(function (e) {
+        img.on('error', function (e) {
             img.unbind("error");
             $(this).attr("src", emptyTile);
-        }).load(function () {
+        }).on('load', function () {
             $(this).width(512).height(512); // Wait until image is done loading specify dimensions in order to prevent
                                             // Firefox from displaying place-holders
         }).attr("src", this.getTileURL(x, y));
@@ -255,7 +255,7 @@ var TileLayer = Layer.extend(
         //      Makes sure all of the images have finished downloading before swapping them in
         img.appendTo(this.domNode);
         if (onTileLoadComplete) {
-            img.load(onTileLoadComplete);
+            img.on('load', onTileLoadComplete);
         }
     },
 

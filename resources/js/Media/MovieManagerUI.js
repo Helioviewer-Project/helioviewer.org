@@ -160,16 +160,19 @@ var MovieManagerUI = MediaManagerUI.extend(
         // We want shift start and end time if needed to ensure that entire
         // duration will be used. For now, we will assume that the most
         // recent data available is close to now() to make things simple
-        endTime = helioviewer.getDate().addSeconds(movieLength / 2);
+        
+        endTime = new Date(helioviewer.getDate().getTime() + (movieLength / 2) * 1000);
 
         now = new Date();
         diff = endTime.getTime() - now.getTime();
-        currentTime.addSeconds(Math.min(0, -diff / 1000));
-
+        currentTime = new Date(currentTime.getTime() + Math.min(0, -diff));
+		
+		startTimeStr = new Date(currentTime.getTime() + (-movieLength / 2) * 1000);
+		endTimeStr = new Date(currentTime.getTime() + (movieLength / 2) * 1000);
         // Start and end datetime strings
         return {
-            "startTime": currentTime.addSeconds(-movieLength / 2).toISOString(),
-            "endTime"  : currentTime.addSeconds(movieLength).toISOString()
+            "startTime": startTimeStr.toISOString(),
+            "endTime"  : endTimeStr.toISOString()
         };
     },
 
@@ -282,12 +285,12 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         // Setup hover and click handlers for movie history items
         $("#movie-history .history-entry")
-           .live('click', $.proxy(this._onMovieClick, this))
-           .live('mouseover mouseout', $.proxy(this._onMovieHover, this));
+           .on('click', $.proxy(this._onMovieClick, this))
+           .on('mouseover mouseout', $.proxy(this._onMovieHover, this));
 
 
         // Download completion notification link
-        $(".message-console-movie-ready").live('click', function (event) {
+        $(".message-console-movie-ready").on('click', function (event) {
             var movie = $(event.currentTarget).data('movie');
             self._createMoviePlayerDialog(movie);
         });
@@ -503,12 +506,13 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Have to append the video player here, otherwise adding it to the div
         // beforehand results in the browser attempting to download it.
         dialog.dialog({
+            dialogClass: "movie-player-dialog-" + movie.id,
             title     : "Movie Player: " + title,
             width     : ((dimensions.width < 575)?600:dimensions.width+25),
             height    : dimensions.height + 90,
             resizable : $.support.h264 || $.support.vp8,
             close     : function () {
-                            $(this).empty();
+                            $(this).remove();
                         },
             zIndex    : 9999,
             show      : 'fade'

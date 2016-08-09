@@ -341,7 +341,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 }
             } else {
 	            var url = $(this).attr('rel');
-                d.load(url, onLoad).dialog($.extend(defaults, options));
+	            if(url){
+		            d.load(url, onLoad).dialog($.extend(defaults, options));
+	            }else{
+		            d.dialog($.extend(defaults, options));
+	            }
+                
                 btn.addClass("dialog-loaded");
             }
             return false;
@@ -613,11 +618,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                  "#movie-manager-container .text-btn, " +
                  "#image-area-select-buttons > .text-btn, " +
                  "#screenshot-manager-container .text-btn");
-        btns.live("mouseover",
+        btns.on("mouseover",
             function () {
                 $(this).find(".ui-icon").addClass("ui-icon-hover");
             });
-        btns.live("mouseout",
+        btns.on("mouseout",
             function () {
                 $(this).find(".ui-icon").removeClass("ui-icon-hover");
             });
@@ -650,8 +655,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		
 		// Copy Link to Clipboard
 		$('#share-copy-link').on('click', function(e){
-			document.execCommand('copy');
+			$('.helioviewer-url-input-box-menu').on("focus", function() {
+				$(this).select();
+			});
+			$( ".helioviewer-url-input-box-menu" ).focus();
+			document.execCommand('copy'); 
 		});
+		
 		var isIe = (navigator.userAgent.toLowerCase().indexOf("msie") != -1 || navigator.userAgent.toLowerCase().indexOf("trident") != -1);
 		document.addEventListener('copy', function(e) {
 			if(e.target.className == 'helioviewer-url-input-box'){
@@ -1559,27 +1569,26 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             Helioviewer.userSettings.set("notifications.news", new Date().getTime());
         }
         
-        $.getFeed({
+        $.ajax({
             url: Helioviewer.api,
             data: {"action": "getNewsFeed"},
             dataType: dtype,
             success: function (feed) {
-                var link, date, more, description, newNewsAmount = 0;;
-
-                // Display message if there was an error retrieving the feed
-                if (!feed.items) {
-                    $("#social-panel").append("Unable to retrieve news feed...");
-                    return;
-                }
+                var link, date, more, description, newNewsAmount = 0;
 				
-                // Grab the n most recent articles
-                $.each(feed.items.slice(0, n), function (i, a) {
-                    link = "<a href='" + a.link + "' alt='" + a.title + "' target='_blank'>" + a.title + "</a><br />";
-                    date = "<div class='article-date'>" + a.updated.slice(0, 26) + "UTC</div>";
+				$(feed).find('item').each(function(){
+					var $item = $(this);
+					var title = $item.find('title').text();
+					var description = $item.find('description').text();
+					var updated = $item.find('pubDate').text();
+					var link = $item.find('link').text();
+					
+					link = "<a href='" + link + "' alt='" + title + "' target='_blank'>" + title + "</a><br />";
+                    date = "<div class='article-date'>" + updated.slice(0, 26) + "UTC</div>";
                     html += "<div class='blog-entry'>" + link + date;
 					
 					//Check for notification
-					var newsDate = (new Date(a.updated)).getTime();
+					var newsDate = (new Date(updated)).getTime();
 					var lastNewsTime = Helioviewer.userSettings.get("notifications.news");
 					
 					if(newsDate > lastNewsTime){
@@ -1588,8 +1597,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 					
                     // Include description?
                     if (showDescription) {
-                        description = a.description;
-
                         // Shorten if requested
                         if (typeof descriptionWordLength === "number") {
                             description = description.split(" ").slice(0, descriptionWordLength).join(" ") + " [...]";
@@ -1598,15 +1605,20 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                     }
 
                     html += "</div>";
-                });
+				});
 				
-				if(newNewsAmount > 0){
-			        $('#news-button').html('<span class="notification-counter">'+newNewsAmount+'</span>');
-		        }
+				// Display message if there was an error retrieving the feed
+				if(html == ''){
+					$("#social-panel").append("Unable to retrieve news feed...");
+                    return;
+				}else{
+					if(newNewsAmount > 0){
+				        $('#news-button').html('<span class="notification-counter">'+newNewsAmount+'</span>');
+			        }
+				}
 				
-                more = "<div id='more-articles'><a href='" + url +
-                       "' title='The Helioviewer Project Blog'>Visit Blog...</a></div>";
-
+                more = "<div id='more-articles'><a href='" + url +  "' title='The Helioviewer Project Blog'>Visit Blog...</a></div>";
+				
                 $("#social-panel").append(html + more);
             }
         });

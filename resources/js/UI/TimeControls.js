@@ -220,7 +220,7 @@ var TimeControls = Class.extend(
      * @param {int} seconds The number of seconds to adjust the date by
      */
     _addSeconds: function (seconds) {
-        this._date.addSeconds(seconds);
+	    this._date = new Date(this._date.getTime() + seconds*1000);
         this._onDateChange();
     },
 
