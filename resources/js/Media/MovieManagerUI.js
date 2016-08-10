@@ -851,7 +851,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 			var filenameWebM = filename.replace('.mp4', '-.webm');
 			var filePath = url.substring(0, url.lastIndexOf("/"));
 
-			return '<style>.mejs-container .mejs-controls {bottom: -20px;}</style>\
+			return '<style>.mejs-container .mejs-controls {bottom: -20px;}.mejs-container.mejs-container-fullscreen .mejs-controls{bottom: 0px;}</style>\
 				    <div>\
 						<video id="movie-player-' + movie.id + '" width="'+(width - 15)+'" height="'+(height - 20)+'" poster="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" controls="controls" preload="none" autoplay="true">\
 						    <source type="video/mp4" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameHQ+'" />\
