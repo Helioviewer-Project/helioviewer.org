@@ -29,6 +29,7 @@ var UserVideoGallery = Class.extend(
 
         // Remote (may differ from local due to deleted videos, etc)
         this._numVideos = 20;
+        this._numVideosCurrent = 20;
 
         this._videos = [];
         this._videosCurrent = [];
@@ -49,6 +50,17 @@ var UserVideoGallery = Class.extend(
 	        	self._fetchCurrentVideos();
 	        }	
         });
+        
+        $('#user-video-gallery-current').on('click', '.user-video-label', function(){
+	        var rel = $(this).data('time');
+	        helioviewer.timeControls.setDate( new Date(rel).toUTCDate() );
+        });
+        
+        $('#user-video-gallery-current').on('click', '.user-video-current-show-more', function(){
+	        $(this).remove();
+	        self._containerCurrent.append(self._loaderCurrent);
+	        self._fetchCurrentVideosShowMore();
+        });
     },
 
     /**
@@ -64,12 +76,36 @@ var UserVideoGallery = Class.extend(
         this._lastTimeCurrentVideosUpdated = parseInt(Helioviewer.userSettings.get("state.date"));
         var params = {
             "action": "getObservationDateVideos",
-            "num"   : this._numVideos,
+            "num"   : this._numVideosCurrent,
             "date"   : new Date(this._lastTimeCurrentVideosUpdated).toISOString()
         };
-
+		// Remove old thumbmails
+        $('.user-video-thumbnail-container-current').remove();
+        this._containerCurrent.find("p, div").remove();
+        
         // Show loading indicator
-        this._containerCurrent.find("a").remove();
+        this._loaderCurrent.show();
+
+        this._working = true;
+
+        // Fetch videos
+        $.get(this.url, params, $.proxy(this._processResponseCurrent, this), Helioviewer.dataType);
+    },
+
+    /**
+     * Load More videos
+     */
+    _fetchCurrentVideosShowMore: function () {
+        // Query parameters
+        this._lastTimeCurrentVideosUpdated = parseInt(Helioviewer.userSettings.get("state.date"));
+        var params = {
+            "action": "getObservationDateVideos",
+            "num"   : this._numVideosCurrent,
+            "skip"   : $('.user-video-thumbnail-container-current').length,
+            "date"   : new Date(this._lastTimeCurrentVideosUpdated).toISOString()
+        };
+        
+        // Show loading indicator
         this._loaderCurrent.show();
 
         this._working = true;
@@ -93,6 +129,9 @@ var UserVideoGallery = Class.extend(
         if (this._videos.length > 0) {
             params.since = this._videos[0].published.replace(" ", "T") + ".000Z";
         }
+
+        // Remove old thumbmails
+        this._container.find("p, div").remove();
 
         this._working = true;
 
@@ -121,7 +160,8 @@ var UserVideoGallery = Class.extend(
         }
 
         this._videos = videos.concat(this._videos);
-        this._updateGallery();
+        //Updates video gallery to show new entries
+        this._buildHTML(this._videos);
     },
 
     /**
@@ -145,20 +185,7 @@ var UserVideoGallery = Class.extend(
         }
 
         this._videosCurrent = videos;
-        this._updateGalleryCurrent();
-    },
-
-    /**
-     * Updates video gallery to show new entries
-     */
-    _updateGallery: function () {
-        this._buildHTML(this._videos);
-    },
-
-    /**
-     * Updates video gallery to show new entries
-     */
-    _updateGalleryCurrent: function () {
+        //Updates video gallery to show new entries
         this._buildHTMLCurrent(this._videosCurrent);
     },
 
@@ -167,22 +194,18 @@ var UserVideoGallery = Class.extend(
      */
     _buildHTML: function (videos) {
         var html = "", self = this, count = 0;
-
-        // Remove old thumbmails
-        this._container.find("a, br, p").remove();
 		
 		this._loader.hide();
 		
         $.each(videos, function (i, vid) {
             var when = new Date.parseUTCDate(vid.published) .getElapsedTime() + ' ago', img = vid.thumbnails['small'], html = '';
-
-            html = "<a target='_blank' href='" + vid.url + "' " +
-                    "alt='video thumbnail' id='youtube-movie-"+vid.id+"'>" +
-                    "<div class='user-video-thumbnail-container'>" +
-                    "<img class='user-video-thumbnail' src='" + img + "' alt='user video thumbnail' />" +
-                    "<div style='text-align: center;'>" +
-                    when + "</div>" +
-                    "</div></a><br />";
+			
+			html = "<div class='user-video-thumbnail-container user-video-thumbnail-container-recent'>\
+                    	<a target='_blank' href='" + vid.url + "' alt='video thumbnail' id='youtube-movie-current-"+vid.id+"'>\
+							<img class='user-video-thumbnail' src='" + img + "' alt='user video thumbnail' />\
+                    	</a>\
+                    	<div style='text-align: center;'>" + when + "</div>\
+                    </div>";
                     
             // Drop tailing line break
 			html = html.slice(0, -6);  
@@ -212,7 +235,7 @@ var UserVideoGallery = Class.extend(
 	        count++;    
         });
         
-		if(count == 0){
+		if($('.user-video-thumbnail-container-recent').length == 0){
 			this._containerCurrent.append('<p>No shared movies found.</p>');
 		}
 
@@ -224,22 +247,23 @@ var UserVideoGallery = Class.extend(
      */
     _buildHTMLCurrent: function (videos) {
         var html = "", self = this, count = 0;
-
-        // Remove old thumbmails
-        this._containerCurrent.find("a, br, p").remove();
 		
 		this._loaderCurrent.hide();
 		
         $.each(videos, function (i, vid) {
             var img = vid.thumbnails['small'];
-
-            html = "<a target='_blank' href='" + vid.url + "' " +
-                    "alt='video thumbnail' id='youtube-movie-current-"+vid.id+"'>" +
-                    "<div class='user-video-thumbnail-container'>" +
-                    "<img class='user-video-thumbnail' src='" + img + "' alt='user video thumbnail' />" +
-                    "<div style='text-align: center;padding:0px 10px;'>" +
-                    vid.title + "</div>" +
-                    "</div></a><br />";
+			
+			var videoStartDate = new Date(vid.startDate);
+			var videoEndDate = new Date(vid.endDate);
+			var videoMiddleDate = new Date((videoStartDate.getTime() + videoEndDate.getTime()) / 2);
+			
+			
+            html = "<div class='user-video-thumbnail-container user-video-thumbnail-container-current'>\
+                    	<a target='_blank' href='" + vid.url + "' " + "alt='video thumbnail' id='youtube-movie-current-"+vid.id+"'>\
+							<img class='user-video-thumbnail' src='" + img + "' alt='user video thumbnail' />\
+                    	</a>\
+                    	<div style='text-align: center;padding:0px 10px; cursor:pointer' class='qtip-left user-video-label' data-time='"+videoMiddleDate.getTime()+"' title='Set observation date to "+videoMiddleDate.toDateString()+" "+videoMiddleDate.toTimeString()+" UTC'>" + vid.title + "</div>\
+                    </div>";
                     
             // Drop tailing line break
 			html = html.slice(0, -6);  
@@ -269,8 +293,10 @@ var UserVideoGallery = Class.extend(
 	        count++;     
         });
         
-		if(count == 0){
+		if($('.user-video-thumbnail-container-current').length == 0){
 			this._containerCurrent.append('<p>No shared movies found.</p>');
+		}else if(count == this._numVideosCurrent){
+			this._containerCurrent.append('<span class="user-video-current-show-more">SHOW MORE</span>');
 		}
 		
         this._working = false;
