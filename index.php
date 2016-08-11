@@ -303,7 +303,7 @@
 							<!-- User-Submitted Videos -->
 							<div id="user-video-gallery-current" class="ui-widget ui-widget-content ui-corner-all">
 								<div id="user-video-gallery-main-current">
-									<div id="user-video-gallery-spinner-current"></div>
+									<span id="user-video-gallery-spinner-current"></span>
 								</div>
 							</div>
 						</div>
@@ -321,7 +321,7 @@
 							<!-- User-Submitted Videos -->
 							<div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all">
 								<div id="user-video-gallery-main">
-									<div id="user-video-gallery-spinner"></div>
+									<span id="user-video-gallery-spinner"></span>
 								</div>
 							</div>
 						</div>
