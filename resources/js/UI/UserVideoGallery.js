@@ -81,6 +81,7 @@ var UserVideoGallery = Class.extend(
         };
 		// Remove old thumbmails
         $('.user-video-thumbnail-container-current').remove();
+        $('.user-video-current-show-more').remove();
         this._containerCurrent.find("p, div").remove();
         
         // Show loading indicator
