@@ -284,7 +284,7 @@ var EventMarker = Class.extend(
             
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
 	            var eventID = $(event.currentTarget).attr('rel');
-	            $(".highcharts-series > rect[class!='point_"+eventID+"']").hide();
+	            $(".highcharts-series > rect:not(.point_"+eventID+")").hide();
             }
         }
         else if ( event.type == 'mouseleave' ) {

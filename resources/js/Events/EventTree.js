@@ -220,9 +220,10 @@ var EventTree = Class.extend({
                 $(obj).css({'opacity':'1.00'});
             }
         });
-        
         var className = 'point_type_'+this['attr'].id;
-		$(".highcharts-series > rect:not(."+className+")").hide();
+        if(timelineRes == 'm' && $('.'+className).length > 0){
+			$(".highcharts-series > rect:not(."+className+")").hide();
+        }
     },
 
     hoverOff: function (event) {
@@ -261,8 +262,9 @@ var EventTree = Class.extend({
                 }
             }
         });
-		$(".highcharts-series > rect:not(.point_name_"+eventTypeAbbrName+")").hide();
-
+        if(timelineRes == 'm' && $('.point_name_'+eventTypeAbbrName).length > 0){
+	        $(".highcharts-series > rect:not(.point_name_"+eventTypeAbbrName+")").hide();
+        }
     },
 
     hoverOffFRM: function (event) {
