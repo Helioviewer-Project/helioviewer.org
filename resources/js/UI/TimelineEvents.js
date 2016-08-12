@@ -340,6 +340,7 @@ var TimelineEvents = Class.extend({
 				},
 	
 				xrange: {
+					cropThreshold: 1000,
 					pointPadding: 0.25,
 					//pointWidth: 4,
 					borderRadius:3,
