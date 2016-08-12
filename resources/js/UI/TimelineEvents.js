@@ -1500,7 +1500,9 @@ var TimelineEvents = Class.extend({
 					$.each(series.data, function (idp, point) {
 						if(series.data.hasOwnProperty(idp)){
 							var pointClass= point.kb_archivid.replace(/\(|\)|\.|\:/g, "");
-							$( '.highcharts-series-' + id ).find( "rect" ).eq( pointIndex ).addClass( 'point_' + pointClass );
+							var pointClassName= point.frm_name.replace(/ /g,'_');
+							var pointClassType= point.event_type;
+							$( '.highcharts-series-' + id ).find( "rect" ).eq( pointIndex ).addClass( 'point_' + pointClass ).addClass( 'point_name_' + pointClassName ).addClass( 'point_type_' + pointClassType );
 							pointIndex++;
 						}   
 					});
