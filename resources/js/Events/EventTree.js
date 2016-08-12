@@ -220,15 +220,20 @@ var EventTree = Class.extend({
                 $(obj).css({'opacity':'1.00'});
             }
         });
+        
+        var className = 'point_type_'+this['attr'].id;
+		$(".highcharts-series > rect:not(."+className+")").hide();
     },
 
     hoverOff: function (event) {
         $("#event-container > div.event-layer").css({'opacity':'1.0'});
+		$(".highcharts-series > rect").show();
     },
 
     hoverOnFRM: function (event) {
-        var emphasisNode, deEmphasisNodes, eventTypeAbbr, eventLayerNodes, found;
+        var emphasisNode, deEmphasisNodes, eventTypeAbbr, eventLayerNodes, found, eventTypeAbbrName;
         eventTypeAbbr = this['attr'].id.split("--")[0];
+        eventTypeAbbrName = this['attr'].id.split("--")[1];
 
         emphasisNode  = $("#"+this['attr'].id.replace("--", "__"));
         deEmphasisNodes = $("[id^="+eventTypeAbbr+"__]");
@@ -256,6 +261,7 @@ var EventTree = Class.extend({
                 }
             }
         });
+		$(".highcharts-series > rect:not(.point_name_"+eventTypeAbbrName+")").hide();
 
     },
 
@@ -289,6 +295,6 @@ var EventTree = Class.extend({
                 }
             }
         });
-
+		$(".highcharts-series > rect").show();
     }
 });
