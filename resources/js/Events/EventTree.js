@@ -221,7 +221,7 @@ var EventTree = Class.extend({
             }
         });
         var className = 'point_type_'+this['attr'].id;
-        if(timelineRes == 'm' && $('.'+className).length > 0){
+        if(timelineRes == 'm'){
 			$(".highcharts-series > rect:not(."+className+")").hide();
         }
     },
@@ -262,7 +262,7 @@ var EventTree = Class.extend({
                 }
             }
         });
-        if(timelineRes == 'm' && $('.point_name_'+eventTypeAbbrName).length > 0){
+        if(timelineRes == 'm'){
 	        $(".highcharts-series > rect:not(.point_name_"+eventTypeAbbrName+")").hide();
         }
     },

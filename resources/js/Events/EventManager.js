@@ -57,7 +57,7 @@ var EventManager = Class.extend({
         // Populate event_type/frm_name checkbox hierarchy with placeholder data
         // (important in case the JSON event cache is missing and would take
         //  a while to re-generate.)
-        this._queryDefaultEventTypes();
+        //this._queryDefaultEventTypes();
 
         // Populate event_type/frm_name checkbox hierarchy with actual data
         this._queryEventFRMs();
@@ -280,13 +280,13 @@ var EventManager = Class.extend({
             index++;
         });
 
-
         // Create a new EventTree object only if one hasn't already been created
         if (!self._eventTree) {
             self._eventTree = new EventTree(this._jsTreeData, this._treeContainer);
+        }else{
+	        self._eventTree.reload(this._jsTreeData);
         }
 
-        self._eventTree.reload(this._jsTreeData);
     },
 
     _escapeInvalidCssChars: function (selector) {
