@@ -970,14 +970,13 @@ var TimelineEvents = Class.extend({
 
 		extremes = chart.xAxis[0].getExtremes();
 		span   = extremes.max - extremes.min;
-		var center 	 = extremes.min + (span * 0.5);
+		var center 	 = extremes.min + Math.round(span * 0.5);
 		var oldOffset = zoomTickTime - center;
 		var newOffset = oldOffset * 2;
 
 		//zoom offset
 		newMin = zoomTickTime - span;
 		newMax = zoomTickTime + span;
-
 		
 		//keep same timestamp on where mouse pointer is
 		if(newOffset > 0){
@@ -1340,7 +1339,8 @@ var TimelineEvents = Class.extend({
 		
 		//Get current HV time
 		var date = parseInt(Helioviewer.userSettings.get("state.date"));
-
+		zoomTickTime = date;
+		
 		extremes = chart.xAxis[0].getExtremes();
 		
 		span	 = parseInt((extremes.max - extremes.min)/2);

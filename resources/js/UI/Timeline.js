@@ -1017,7 +1017,8 @@ var Timeline = Class.extend({
 		
 		//Get current HV time
 		var date = parseInt(Helioviewer.userSettings.get("state.date"));
-
+		zoomTickTime = date;
+		
         extremes = chart.xAxis[0].getExtremes();
         
         span     = parseInt((extremes.max - extremes.min)/2);
