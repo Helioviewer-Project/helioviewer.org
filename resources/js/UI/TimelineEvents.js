@@ -1331,10 +1331,6 @@ var TimelineEvents = Class.extend({
 	_updateTimelineDate: function(){
 		var extremes, newMin, newMax, span;
 		
-		if($('#hv-drawer-timeline-events').is(":visible") != true){
-			return;
-		}
-		
 		var chart = $('#data-coverage-timeline-events').highcharts();
 		
 		//Get current HV time
@@ -1346,7 +1342,14 @@ var TimelineEvents = Class.extend({
 		span	 = parseInt((extremes.max - extremes.min)/2);
 		newMin   = date - span;
 		newMax   = date + span;
-
+		
+		timelineStartDate = Math.round(newMin);
+        timelineEndDate = Math.round(newMax);
+		
+		if($('#hv-drawer-timeline-events').is(":visible") != true){
+			return;
+		}
+		
 		chart.xAxis[0].setExtremes(newMin, newMax);
 		this.afterSetExtremes({min:newMin, max:newMax});
 	},
