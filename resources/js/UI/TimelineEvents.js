@@ -317,22 +317,11 @@ var TimelineEvents = Class.extend({
 								var minTime = this.x;
 								var maxTime = this.x + this.series.closestPointRange;
 								
-								var columnCenter = this.x + (this.series.closestPointRange / 2)
-								
-								if(minRange > this.series.closestPointRange){
-									var minSideRange = minRange / 2;
-									
-									minTime = columnCenter - minSideRange;
-									maxTime = columnCenter + minSideRange;
-								}
+								var columnCenter = this.x + (this.series.closestPointRange / 2);
 								
 								var date = new Date(columnCenter);
 								helioviewer.timeControls.setDate(date, true);
-								
-								var chart = $('#data-coverage-timeline-events').highcharts();
-
-								chart.xAxis[0].setExtremes(minTime, maxTime);
-								self.afterSetExtremes({min:minTime, max:maxTime});
+								self.btnCenter();
 								return true;
 							}
 						}
