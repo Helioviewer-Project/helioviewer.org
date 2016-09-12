@@ -349,7 +349,7 @@ var TimelineEvents = Class.extend({
 								
 								if(typeof this.kb_archivid != 'undefined'){
 									var id = this.kb_archivid;
-									id = id.replace(/\(|\)|\.|\:/g, "");
+									id = id.replace(/\(|\)|\.|\+|\:/g, "");
 									if($("#marker_" + id).length != 0) {
 										$("#event-container .event-layer > div[id!='marker_"+id+"']").css({'opacity':'0.2'});
 										$("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'0.2'});
@@ -367,7 +367,7 @@ var TimelineEvents = Class.extend({
 									setTimeout(function() { point.selected = false; }, 100);
 									if(typeof this.kb_archivid != 'undefined'){
 										var id = this.kb_archivid;
-										id = id.replace(/\(|\)|\.|\:/g, "");
+										id = id.replace(/\(|\)|\.|\+|\:/g, "");
 										$("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'1'});
 									 	$("#event-container .event-layer > div").css({'opacity':'1.0', 'z-index':'997'});
 								 	}
@@ -1492,7 +1492,7 @@ var TimelineEvents = Class.extend({
 					var pointIndex = 0;
 					$.each(series.data, function (idp, point) {
 						if(series.data.hasOwnProperty(idp)){
-							var pointClass= point.kb_archivid.replace(/\(|\)|\.|\:/g, "");
+							var pointClass= point.kb_archivid.replace(/\(|\)|\.|\+|\:/g, "");
 							var pointClassName= point.frm_name.replace(/ /g,'_');
 							var pointClassType= point.event_type;
 							$( '.highcharts-series-' + id ).find( "rect" ).eq( pointIndex ).addClass( 'point_' + pointClass ).addClass( 'point_name_' + pointClassName ).addClass( 'point_type_' + pointClassType );

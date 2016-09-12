@@ -54,7 +54,7 @@ var EventMarker = Class.extend(
         
         var id = this.kb_archivid;
         id = id.replace(/ivo:\/\/helio-informatics.org\//g, "")
-        id = id.replace(/\(|\)|\.|\:/g, "");
+        id = id.replace(/\(|\)|\.|\+|\:/g, "");
         this.eventMarkerDomNode.attr({
             'rel' : id,
             'id' : 'marker_'+id
@@ -105,7 +105,7 @@ var EventMarker = Class.extend(
             
             var id = this.kb_archivid;
 	        id = id.replace(/ivo:\/\/helio-informatics.org\//g, "")
-	        id = id.replace(/\(|\)|\.|\:/g, "");
+	        id = id.replace(/\(|\)|\.|\+|\:/g, "");
 	        this.eventRegionDomNode.attr({
 	            'rel' : id,
 				'id' : 'region_'+id
