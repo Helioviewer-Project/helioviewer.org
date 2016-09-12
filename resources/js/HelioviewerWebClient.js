@@ -865,7 +865,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         height = ( roi.bottom - roi.top ) * imageScale;
 
         $('#sdo-center-x').val(   x0.toFixed(2) );
-        $('#sdo-center-y').val(   y0.toFixed(2) );
+        $('#sdo-center-y').val(   y0.toFixed(2) * -1 );
         $('#sdo-width').val(   width.toFixed(2) );
         $('#sdo-height').val( height.toFixed(2) );
 
@@ -1453,7 +1453,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             + '?width='  + $('#sdo-width').val()
             + '&height=' + $('#sdo-height').val()
             + '&xCen='   +  $('#sdo-center-x').val()
-            + '&yCen='   + ($('#sdo-center-y').val()*-1)
+            + '&yCen='   + ($('#sdo-center-y').val())
             + '&wavelengths=' + waves.join(',')
             + '&startDate=' + startTimestamp.toDateString().replace(/\//g,'-')
             + '&startTime=' + startTimestamp.toTimeString().slice(0,-3)
