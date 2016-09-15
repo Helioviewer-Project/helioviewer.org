@@ -339,10 +339,15 @@ var TimelineEvents = Class.extend({
 					borderWidth:1,
 					point: {
 						events: {
-						//dblclick: function(e){
-							//	var date = new Date(timelineMouseValueX);
-							//	helioviewer.timeControls.setDate(date);	
-							//},
+							dblclick: function(e){
+								var date = new Date(timelineMouseValueX);
+
+								if(typeof this.zeroSeconds != 'undefined'){
+									var date = new Date(this.x + this.modifier);
+								}
+								
+								helioviewer.timeControls.setDate(date);	
+							},
 							mouseOver: function(e){
 								this.selected = true;
 								this.graphic.attr('fill', '#fff');
@@ -372,18 +377,6 @@ var TimelineEvents = Class.extend({
 									 	$("#event-container .event-layer > div").css({'opacity':'1.0', 'z-index':'997'});
 								 	}
 								}	
-							}
-						}
-					}
-				},
-	
-				scatter: {
-					grouping: false,
-					point: {
-						events: {
-							dblclick: function(e){
-							 	var date = new Date(this.x);
-								helioviewer.timeControls.setDate(date);	
 							}
 						}
 					}
@@ -466,13 +459,14 @@ var TimelineEvents = Class.extend({
 									+	  "\t"+'<div class="value-container"><div class="param-value user-selectable">'+point.event_peaktime+' UTC</div><div class="ui-icon ui-icon-arrowstop-1-n" title="Jump to Event Peak Time"></div></div>'+"\n"
 									+  '</div>'+"\n";
 						}
+						
 						str	 += '<div class="container">'+"\n"
 									+	  "\t"+'<div class="param-container"><div class="param-label user-selectable">Start Time: </div></div>'+"\n"
-									+	  "\t"+'<div class="value-container"><div class="param-value user-selectable">'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x)+'</div><div class="ui-icon ui-icon-arrowstop-1-w" title="Jump to Event Start Time"></div></div>'+"\n"
+									+	  "\t"+'<div class="value-container"><div class="param-value user-selectable">'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', (this.x + point.modifier))+'</div><div class="ui-icon ui-icon-arrowstop-1-w" title="Jump to Event Start Time"></div></div>'+"\n"
 									+  '</div>'+"\n"
 									+  '<div class="container">'+"\n"
 									+	  "\t"+'<div class="param-container"><div class="param-label user-selectable">End Time: </div></div>'+"\n"
-									+	  "\t"+'<div class="value-container"><div class="param-value user-selectable">'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', point.x2)+'</div><div class="ui-icon ui-icon-arrowstop-1-e" title="Jump to Event End Time"></div>'+"\n"
+									+	  "\t"+'<div class="value-container"><div class="param-value user-selectable">'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', (point.x2 - point.modifier))+'</div><div class="ui-icon ui-icon-arrowstop-1-e" title="Jump to Event End Time"></div>'+"\n"
 									+  '</div>'+"\n";
 				
 						if ( point.hasOwnProperty('hv_labels_formatted') && Object.keys(point.hv_labels_formatted).length > 0 ) {
@@ -1165,12 +1159,12 @@ var TimelineEvents = Class.extend({
 				}
 			});
 		   	
-		   	$('#data-coverage-timeline-events').on('dblclick',function(e){
-				if(timelineRes == 'm'){
-					var date = new Date(timelineMouseValueX);
-					helioviewer.timeControls.setDate(date);
-				}
-			});
+		    //$('#data-coverage-timeline-events').on('dblclick',function(e){
+			//	if(timelineRes == 'm'){
+			//		var date = new Date(timelineMouseValueX);
+			//		helioviewer.timeControls.setDate(date);
+			//	}
+			//});
 		   	 
 			chart.container.addEventListener('mouseover', function(e) {
 				chart.container.addEventListener('mousemove', chartEventsContainerMouseMove);
