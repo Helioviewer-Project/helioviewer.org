@@ -1299,8 +1299,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 x1 = Math.round(parseFloat($('#sdo-center-x').val()) - parseFloat($('#sdo-width').val()) / 2);
                 x2 = Math.round(parseFloat($('#sdo-center-x').val()) + parseFloat($('#sdo-width').val()) / 2);
 
-                y1 = Math.round(parseFloat($('#sdo-center-y').val()) - parseFloat($('#sdo-height').val()) / 2);
-                y2 = Math.round(parseFloat($('#sdo-center-y').val()) + parseFloat($('#sdo-height').val()) / 2);
+                y1 = Math.round(parseFloat($('#sdo-center-y').val()*-1) - parseFloat($('#sdo-height').val()) / 2);
+                y2 = Math.round(parseFloat($('#sdo-center-y').val()*-1) + parseFloat($('#sdo-height').val()) / 2);
 
                 thumbImageScale = parseFloat($('#sdo-width').val()) / 256;
 
