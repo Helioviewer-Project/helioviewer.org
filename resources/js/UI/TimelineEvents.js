@@ -1133,7 +1133,10 @@ var TimelineEvents = Class.extend({
 			$('#data-coverage-timeline-events').on('mousedown',function(){
 				timelineExtremesChanged = false;
 			});
-			$('#data-coverage-timeline-events').bind('mousewheel', function(event) {
+			
+			var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel" //FF doesn't recognize mousewheel as of FF3.x
+
+			$('#data-coverage-timeline-events').on(mousewheelevt, function(event) {
 				var container = $(chart.container),
 					offset = container.offset(),
 					x, y, isInside;
