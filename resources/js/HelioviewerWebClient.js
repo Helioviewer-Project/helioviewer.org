@@ -422,8 +422,21 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var self = this,
             msg  = "Link directly to the current state of Helioviewer:",
             btns;
-
-
+		
+		// Update Heliovuewer link
+		$(document).on('update-external-datasource-integration', function(e){
+	        $(".helioviewer-url-input-box").attr('value', self.toURL());
+			$(".helioviewer-url-shorten").removeAttr("checked");
+        });
+        $(document).on('observation-time-changed', function(e){
+	        $(".helioviewer-url-input-box").attr('value', self.toURL());
+			$(".helioviewer-url-shorten").removeAttr("checked");
+        });
+        $(document).on('change-feature-events-state', function(e){
+	        $(".helioviewer-url-input-box").attr('value', self.toURL());
+			$(".helioviewer-url-shorten").removeAttr("checked");
+        });
+        	
         $(document).on('update-external-datasource-integration', $.proxy(this.updateExternalDataSourceIntegration, this, false));
         $(document).on('observation-time-changed', function(e){
 	        setTimeout(function(){ self.updateExternalDataSourceIntegration(true,e); }, 500);
@@ -633,16 +646,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         });
 
         $(".helioviewer-url-shorten").on('click', function (e) {
-            var url;
-
-            if (e.target.checked) {
-                url = $(".helioviewer-short-url").attr("value");
-            }
-            else {
-                url = $(".helioviewer-long-url").attr("value");
-            }
-
-            $(".helioviewer-url-input-box").attr('value', url).select();
+            self.displayURL(self.toURL());
         });
 		
 		
@@ -1498,8 +1502,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var callback = function (response) {
             $(".helioviewer-long-url").attr("value", url);
             $(".helioviewer-short-url").attr("value", response.data.url);
-			$(".helioviewer-url-shorten").removeAttr("checked");
-			$(".helioviewer-url-input-box").attr('value', url).select();
+			if($(".helioviewer-url-shorten").is(':checked')){
+				$(".helioviewer-url-input-box").attr("value", response.data.url).select();
+			}else{
+				$(".helioviewer-url-input-box").attr('value', url).select();
+			}
             // Display URL
             if(displayDialog){
 	            $("#helioviewer-url-box-msg").text(msg);
@@ -1548,6 +1555,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             _gaq.push(['_trackEvent', 'Shares', 'Movie - URL']);
         }
         this.displayURL(url, msg, true);
+        $(".helioviewer-url-shorten").removeAttr("checked");
     },
 
     /**
@@ -2238,7 +2246,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             Helioviewer.userSettings.set("state.drawers.#hv-drawer-share.open", false);
         }
         else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
-	        setTimeout(function(){ self.displayURL(self.toURL(), "Link directly to the current state of Helioviewer:"); });
+	        var url = self.toURL();
+	        $(".helioviewer-url-input-box").attr('value', url).select();
+			$(".helioviewer-long-url").attr("value", url);
+			$(".helioviewer-url-shorten").removeAttr("checked");
+			$(".helioviewer-short-url").attr("value", "");
+			
             self.drawerShare.css('transition', 'height 500ms');
             this.drawerShare.css('width', this.drawerShareOpenedWidth);
             this.drawerShare.css('height', this.drawerShareOpenedHeight);
@@ -2386,6 +2399,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
     twitter: function(e) {
+        var self = this;
+        self.displayURL(self.toURL());
         var href   = 'https://twitter.com/share?'
                    + 'url=' + encodeURIComponent($('.helioviewer-short-url').val()) + '&'
                    + 'via=helioviewer&'
@@ -2421,6 +2436,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     pinterest: function() {
         var self = this;
+        self.displayURL(self.toURL());
         $('#pinterest-button').unbind('click');
 
         var url = encodeURIComponent(self.toURL());
