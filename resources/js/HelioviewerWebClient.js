@@ -423,18 +423,28 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             msg  = "Link directly to the current state of Helioviewer:",
             btns;
 		
+		if($('.helioviewer-url-input-box').is(':visible')){
+			$(".helioviewer-url-input-box").attr("value", self.toURL());
+		}
+		
 		// Update Heliovuewer link
 		$(document).on('update-external-datasource-integration', function(e){
-	        $(".helioviewer-url-input-box").attr('value', self.toURL());
-			$(".helioviewer-url-shorten").removeAttr("checked");
+	        if ( $('.helioviewer-url-input-box').is(':visible') ) {
+	        	$(".helioviewer-url-input-box").attr('value', self.toURL());
+				$(".helioviewer-url-shorten").removeAttr("checked");
+			}
         });
         $(document).on('observation-time-changed', function(e){
-	        $(".helioviewer-url-input-box").attr('value', self.toURL());
-			$(".helioviewer-url-shorten").removeAttr("checked");
+	        if ( $('.helioviewer-url-input-box').is(':visible') ) {
+	        	$(".helioviewer-url-input-box").attr('value', self.toURL());
+				$(".helioviewer-url-shorten").removeAttr("checked");
+			}
         });
         $(document).on('change-feature-events-state', function(e){
-	        $(".helioviewer-url-input-box").attr('value', self.toURL());
-			$(".helioviewer-url-shorten").removeAttr("checked");
+	        if ( $('.helioviewer-url-input-box').is(':visible') ) {
+	        	$(".helioviewer-url-input-box").attr('value', self.toURL());
+				$(".helioviewer-url-shorten").removeAttr("checked");
+			}
         });
         	
         $(document).on('update-external-datasource-integration', $.proxy(this.updateExternalDataSourceIntegration, this, false));
