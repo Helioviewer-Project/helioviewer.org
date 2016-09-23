@@ -14,16 +14,16 @@ var Config = Class.extend(
      * Default parameters
      */
      params: {
-        'back_end'             	: "http://api.helioviewer.org/",
-        'web_root_url'         	: "http://helioviewer.org",
+        'back_end'             	: "https://api.helioviewer.org/",
+        'web_root_url'         	: "https://helioviewer.org",
 	    'build_num'             : 700,
         'default_image_scale'   : 4.8408817,
         'min_image_scale'       : 0.60511022,
         'max_image_scale'       : 154.90822,
         'max_tile_layers'       : 5,
         'prefetch_size'        	: 0,
-        'news_url'             	: "http://blog.helioviewer.org/",
-        'user_video_feed'       : "http://api.helioviewer.org/",
+        'news_url'             	: "https://blog.helioviewer.org/",
+        'user_video_feed'       : "https://api.helioviewer.org/",
         'contact_email'        	: "contact@helioviewer.org"
      },
     

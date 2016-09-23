@@ -284,9 +284,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
 
         // Setup hover and click handlers for movie history items
-        $("#movie-history .history-entry")
-           .on('click', $.proxy(this._onMovieClick, this))
-           .on('mouseover mouseout', $.proxy(this._onMovieHover, this));
+        $("#movie-history .history-entry").on('click', $.proxy(this._onMovieClick, this));
+        $("#movie-history .history-entry").on('mouseover mouseout', $.proxy(this._onMovieHover, this));
 
 
         // Download completion notification link
@@ -405,11 +404,17 @@ var MovieManagerUI = MediaManagerUI.extend(
      * nothing.
      */
     _onMovieClick: function (event) {
-        var id, movie, dialog, action;
+        var id, movie, dialog, action, dateRequested;
 
         id    = $(event.currentTarget).data('id');
         movie = this._manager.get(id);
-
+		
+		dateRequested = Date.parseUTCDate(movie.dateRequested);
+        if((new Date) - dateRequested >= 90 * 24 * 60 * 60 * 1000){
+			this._rebuildItem(movie);
+			return false;
+        }
+		
         // If the movie is ready, open movie player
         if (movie.status === 2) {
             dialog = $("movie-player-" + id);
@@ -443,9 +448,11 @@ var MovieManagerUI = MediaManagerUI.extend(
      * if available, and some basic information about the screenshot or movie
      */
     _buildPreviewTooltipHTML: function (movie) {
-        var width, height, thumbnail, html = "";
-
-        if (movie.status === 2) {
+        var width, height, thumbnail, html = "", dateRequested;
+		
+		dateRequested = Date.parseUTCDate(movie.dateRequested);
+		
+        if (movie.status === 2 && (new Date) - dateRequested <= 90 * 24 * 60 * 60 * 1000) {
             thumbnail = movie.thumbnail;
 
             html += "<div style='text-align: center;'>" +
@@ -897,7 +904,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Refreshes status information for movies in the history
      */
     _refresh: function () {
-        var status, elapsedTime;
+        var status, statusMsg, dateRequested;
 
         // Update the status information for each row in the history
         $.each(this._manager.toArray(), function (i, item) {
@@ -905,17 +912,72 @@ var MovieManagerUI = MediaManagerUI.extend(
 
             // For completed entries, display elapsed time
             if (item.status === 2) {
-                elapsedTime = Date.parseUTCDate(item.dateRequested)
-                                  .getElapsedTime();
-                status.html(elapsedTime);
+                dateRequested = Date.parseUTCDate(item.dateRequested);
+                if((new Date) - dateRequested >= 90 * 24 * 60 * 60 * 1000){
+					statusMsg = '<span class="rebuild-item" data-id="'+item.id+'" title="Regenerate movie"> regenerate <span class="fa fa-refresh"></span></span>';
+                }else{
+	                statusMsg = dateRequested.getElapsedTime();
+                }
             // For failed movie requests, display an error
             } else if (item.status === 3) {
-                status.html("<span style='color:LightCoral;'>Error</span>");
+                statusMsg = '<span style="color:LightCoral;">error</span>';
+            // Otherwise show the item as processing
+            } else if (item.status === 1) {
+                statusMsg = '<span class="processing">processing '+item.progress+'%</span>';
             // Otherwise show the item as processing
             } else {
-                status.html("<span class='processing'>Processing</span>");
+                statusMsg = '<span style="color:#f9a331">queued</span>';
             }
+            status.html(statusMsg);
         });
+    },
+
+    /**
+     * Refreshes status information for movies in the history
+     */
+    _rebuildItem: function (movie) {
+	    var callback, self = this, params = {};
+		
+		params = {
+			'action': 'reQueueMovie',
+			'id': movie.id,
+			'force': true
+		};
+		
+        // AJAX Responder
+        callback = function (response) {
+            var msg, waitTime;
+
+            if ((response === null) || response.error) {
+                // Queue full
+                if (response.errno === 40) {
+                    msg = response.error;
+                } else {
+                    // Other error
+                    msg = "We are unable to create a movie for the time you " +
+                        "requested. Please select a different time range " +
+                        "and try again. ("+response.error+")";
+                }
+                $(document).trigger("message-console-info", msg);
+                return;
+            } else if (response.warning) {
+                $(document).trigger("message-console-info", response.warning);
+                return;
+            }
+
+            self._manager.update( movie.id, {'status':0, 'dateRequested':new Date().toISOString(), 'token': response.token});
+            self._manager._monitorQueuedMovie(movie.id, new Date().toISOString(), response.token, 5);
+
+            waitTime = humanReadableNumSeconds(response.eta);
+            msg = "Your video is processing and will be available in " +
+                  "approximately " + waitTime + ". You may view it at any " +
+                  "time after it is ready by clicking the 'Movie' button";
+            $(document).trigger("message-console-info", msg);
+            self._refresh();
+        };
+
+        // Make request
+        $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
     },
 
     /**
