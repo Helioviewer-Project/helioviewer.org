@@ -33,7 +33,7 @@ var MovieManager = MediaManager.extend(
         var self = this;
         $.each(movies, function (i, movie) {
             if (movie.status < 2) {
-                self._monitorQueuedMovie(movie.id, Date.parseUTCDate(movie.dateRequested), 0);
+                self._monitorQueuedMovie(movie.id, Date.parseUTCDate(movie.dateRequested), movie.token);
             }
         });
     },
@@ -138,14 +138,15 @@ var MovieManager = MediaManager.extend(
             "y2"            : y2,
             "status"        : 0,
             "token"         : token,
-            "name"          : this._getName(layers)
+            "name"          : this._getName(layers),
+            "progress"      : 0
         };
 
         if (this._history.unshift(movie) > this._historyLimit) {
             this._history = this._history.slice(0, this._historyLimit);
         }
 
-        this._monitorQueuedMovie(id, Date.parseUTCDate(dateRequested), token, eta);
+        this._monitorQueuedMovie(id, Date.parseUTCDate(dateRequested), token, 5);
 
         this._save();
         return movie;
@@ -162,34 +163,14 @@ var MovieManager = MediaManager.extend(
      * @param {Int}     width         Movie width
      * @param {Int}     height        Movie height
      */
-    update: function (id, frameRate, numFrames, startDate, endDate, width,
-        height, thumbnails, url) {
+    update: function (id, params) {
 
         var movie = this.get(id);
 
         // Add the new values
-        $.extend(movie, {
-            "frameRate" : frameRate,
-            "numFrames" : numFrames,
-            "startDate" : startDate,
-            "endDate"   : endDate,
-            "width"     : width,
-            "height"    : height,
-            "status"    : 2,
-            "thumbnail" : thumbnails.small,
-            "url"       : url
-        });
-
-        // Delete resque token
-        delete movie.token;
+        $.extend(movie, params);
 
         this._save();
-
-        // Update preview tooltip
-        $(document).trigger("movie-ready", [movie]);
-
-        // Notify user
-        this._displayDownloadNotification(movie);
     },
 
     /**
@@ -238,15 +219,46 @@ var MovieManager = MediaManager.extend(
                     if ((Date.now() - dateRequested) / 1000 > (24 * 60 * 60)) {
                         self._abort(id);
                     }
+                    
+                    var status = '';
+                    if(response.status == 0){
+	                    status = '<span style="color:#f9a331">queued</span>';
+	                    if(typeof response.jobStatus != 'undefined' && response.jobStatus == 3){
+		                    var movie = self.get(id);
+		                    self._abort(id);
+		                    helioviewer._movieManagerUI._rebuildItem(movie);
+	                    }
+                    }else{
+	                    var progress = Math.round(response.progress * 100);
+	                    status = '<span class="processing">processing '+progress+'%</span>';
+	                    self.update(id, {'status':1, 'progress':progress});
+                    }
+                    
                     // Otherwise continue to monitor
                     self._monitorQueuedMovie(id, dateRequested, token, 60);
+                    
+                    $('#movie-'+id+' .status').html(status);
                 } else if (response.error) {
                     self._abort(id);
                 }  else {
-                    self.update(id, response.frameRate, response.numFrames,
-                                response.startDate, response.endDate,
-                                response.width, response.height,
-                                response.thumbnails, response.url);
+                    self.update(id, {
+			            "frameRate" : response.frameRate,
+			            "numFrames" : response.numFrames,
+			            "startDate" : response.startDate,
+			            "endDate"   : response.endDate,
+			            "width"     : response.width,
+			            "height"    : response.height,
+			            "status"    : 2,
+			            "thumbnail" : response.thumbnails.small,
+			            "url"       : response.url
+			        });
+					
+					var movie = self.get(id);
+			        // Update preview tooltip
+			        $(document).trigger("movie-ready", [movie]);
+			
+			        // Notify user
+			        self._displayDownloadNotification(movie);
                 }
             };
 

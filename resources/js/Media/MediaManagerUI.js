@@ -95,7 +95,7 @@ var MediaManagerUI = Class.extend(
         }
 
         html = $("<div id='" + htmlId + "' class='history-entry'>" +
-               "<div class='label'><a class='text-btn' style='float: left' href='" + url +
+               "<div class='label' data-id='" + item.id + "'><a class='text-btn' style='float: left' href='" + url +
                "'>" + name + "</a></div>" +
                "<div class='status'></div>" +
                "</div>");
