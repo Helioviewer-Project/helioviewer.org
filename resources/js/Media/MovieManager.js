@@ -270,10 +270,6 @@ var MovieManager = MediaManager.extend(
             };
             $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
         };
-        
-        if(){
-	        
-        }
         setTimeout(queryMovieStatus, Math.max(eta, 5) * 1000);
     },
 
