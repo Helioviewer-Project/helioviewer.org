@@ -225,7 +225,7 @@ var MovieManager = MediaManager.extend(
 	                    status = '<span style="color:#f9a331">queued</span>';
 	                    if(typeof response.jobStatus != 'undefined' && response.jobStatus == 3){
 		                    var movie = self.get(id);
-		                    self._abort(id);
+		                    self._abort(id, true);
 		                    helioviewer._movieManagerUI._rebuildItem(movie);
 	                    }
                     }else{
@@ -270,26 +270,32 @@ var MovieManager = MediaManager.extend(
             };
             $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
         };
+        
+        if(){
+	        
+        }
         setTimeout(queryMovieStatus, Math.max(eta, 5) * 1000);
     },
 
     /**
      * Aborts a failed movie request
      */
-    _abort: function (id) {
+    _abort: function (id, doNotShowMsg) {
         var error, movie = this.get(id);
 
         // Mark as failed
         movie["status"] = 3;
         this._save();
-
-        // Notify user
-        error = "Sorry, we were unable to create the movie you requested. " +
+		
+		if(doNotShowMsg != true){
+			// Notify user
+			error = "Sorry, we were unable to create the movie you requested. " +
                 "This usually means that there are not enough images for the " +
                 "time range requested. Please try adjusting the observation " +
                 "date or movie duration and try creating a new movie.";
 
-        $(document).trigger("message-console-error", [error, {"sticky": true}]);
+			$(document).trigger("message-console-error", [error, {"sticky": true}]);
+		}
     },
 
     /**
