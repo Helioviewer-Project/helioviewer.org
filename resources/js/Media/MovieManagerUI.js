@@ -410,7 +410,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         movie = this._manager.get(id);
 		
 		dateRequested = Date.parseUTCDate(movie.dateRequested);
-        if((new Date) - dateRequested >= 90 * 24 * 60 * 60 * 1000){
+        if((new Date) - dateRequested >= 180 * 24 * 60 * 60 * 1000 || movie.status === 3){
 			this._rebuildItem(movie);
 			return false;
         }
@@ -452,7 +452,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 		
 		dateRequested = Date.parseUTCDate(movie.dateRequested);
 		
-        if (movie.status === 2 && (new Date) - dateRequested <= 90 * 24 * 60 * 60 * 1000) {
+        if (movie.status === 2 && (new Date) - dateRequested <= 180 * 24 * 60 * 60 * 1000) {
             thumbnail = movie.thumbnail;
 
             html += "<div style='text-align: center;'>" +
@@ -913,14 +913,14 @@ var MovieManagerUI = MediaManagerUI.extend(
             // For completed entries, display elapsed time
             if (item.status === 2) {
                 dateRequested = Date.parseUTCDate(item.dateRequested);
-                if((new Date) - dateRequested >= 90 * 24 * 60 * 60 * 1000){
+                if((new Date) - dateRequested >= 180 * 24 * 60 * 60 * 1000){
 					statusMsg = '<span class="rebuild-item" data-id="'+item.id+'" title="Regenerate movie"> regenerate <span class="fa fa-refresh"></span></span>';
                 }else{
 	                statusMsg = dateRequested.getElapsedTime();
                 }
             // For failed movie requests, display an error
             } else if (item.status === 3) {
-                statusMsg = '<span style="color:LightCoral;">error</span>';
+                statusMsg = '<span style="color:LightCoral;" class="rebuild-item" data-id="'+item.id+'">error</span>';
             // Otherwise show the item as processing
             } else if (item.status === 1) {
                 statusMsg = '<span class="processing">processing '+item.progress+'%</span>';
