@@ -724,7 +724,7 @@ div.text-btn:hover a:hover {
 }
 
 span.ui-icon-hover, div.ui-icon-hover {
-   background-image: url(../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+   background-image: url(../lib/jquery-ui-1.12.0/images/ui-icons_d18f61_256x240.png) !important;
 }
 
 .section-header {
