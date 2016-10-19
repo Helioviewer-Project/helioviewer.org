@@ -404,7 +404,7 @@ var Timeline = Class.extend({
     setHighchartsTheme: function(){
 	    // Custom Fonts
         Highcharts.createElement('link', {
-           href: 'http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,700',
+           href: '//fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,700',
            rel: 'stylesheet',
            type: 'text/css'
         }, null, document.getElementsByTagName('head')[0]);
