@@ -30,7 +30,7 @@
 	<meta property="og:title" content="Helioviewer.org" />
 	<!--OpenGraph Metadata Image-->
 	<meta id="fb-og-image" property="og:description" content="Solar and heliospheric image visualization tool." />
-	<meta id="fb-og-image" property="og:image" content="http://helioviewer.org/resources/images/logos/hvlogo1s_transparent.png" />
+	<meta id="fb-og-image" property="og:image" content="//helioviewer.org/resources/images/logos/hvlogo1s_transparent.png" />
 	
 	<!-- Library CSS -->
 	<link rel="stylesheet" href="resources/lib/yui-2.8.2r1/reset-fonts.css" />
@@ -657,7 +657,7 @@
 							<div id="helioviewer-url-box" style="font-size: 1em;">
 								<span id="helioviewer-url-box-msg"></span>
 								<form style="margin-top: 5px; text-align: center;">
-									<input type="text" class="helioviewer-url-input-box helioviewer-url-input-box-menu" style="width:98%;" value="http://helioviewer.org" />
+									<input type="text" class="helioviewer-url-input-box helioviewer-url-input-box-menu" style="width:98%;" value="https://helioviewer.org" />
 									<label for="helioviewer-url-shorten">Shorten with bit.ly? </label>
 									<input type="checkbox" class="helioviewer-url-shorten" />
 									<input type="hidden" class="helioviewer-short-url" value="" />
@@ -765,7 +765,7 @@
 	
 								<div id='' class='social-btns'>
 									<div style="font-size: 1.5em;">
-										<div id='help-links-legacy' onclick="window.open('http://legacy.helioviewer.org','_blank');" class='text-btn qtip-left' style="width: 90%;border:none;" title="Legacy Helioviewer.org" >
+										<div id='help-links-legacy' onclick="window.open('https://legacy.helioviewer.org','_blank');" class='text-btn qtip-left' style="width: 90%;border:none;" title="Legacy Helioviewer.org" >
 											<span class='fa fa-certificate fa-fw'></span>
 											<span style='line-height: 1.6em'>Legacy Helioviewer.org</span>
 										</div>
@@ -945,7 +945,7 @@
 			<div id="helioviewer-url-box">
 				<span id="helioviewer-url-box-msg"></span>
 				<form style="margin-top: 5px;">
-					<input type="text" class="helioviewer-url-input-box helioviewer-url-input-box-video" style="width:98%;" value="http://helioviewer.org" />
+					<input type="text" class="helioviewer-url-input-box helioviewer-url-input-box-video" style="width:98%;" value="https://helioviewer.org" />
 					<label for="helioviewer-url-shorten">Shorten with bit.ly? </label>
 					<input type="checkbox" class="helioviewer-url-shorten" />
 					<input type="hidden" class="helioviewer-short-url" value="" />
@@ -1174,16 +1174,16 @@
 		
 		$( document ).ready(function(){
 			settingsJSON = {
-				//'back_end'             	: "http://api.helioviewer.org/",
-		        //'web_root_url'         	: "http://helioviewer.org",
-			    //'build_num'             : 700,
-		        //'default_image_scale'   : 4.8408817,
-		        //'min_image_scale'       : 0.60511022,
-		        //'max_image_scale'       : 154.90822,
-		        //'max_tile_layers'       : 5,
+				//'back_end'             	: "https://api.helioviewer.org/",
+		        //'web_root_url'         	: "https://helioviewer.org",
+			    //'build_num'             	: 700,
+		        //'default_image_scale'   	: 4.8408817,
+		        //'min_image_scale'       	: 0.60511022,
+		        //'max_image_scale'       	: 154.90822,
+		        //'max_tile_layers'       	: 5,
 		        //'prefetch_size'        	: 0,
 		        //'news_url'             	: "http://blog.helioviewer.org/",
-		        //'user_video_feed'       : "http://api.helioviewer.org/",
+		        //'user_video_feed'       	: "https://api.helioviewer.org/",
 		        //'contact_email'        	: "contact@helioviewer.org"
 			};
 			serverSettings = new Config(settingsJSON).toArray();

@@ -164,7 +164,7 @@ var TreeSelect = Class.extend(
                         // escape any periods ('.') before using in a
                         // JQuery selector
                         name = name.replace('.','\\.');
-                        select.find("option[value="+name+"]")
+                        select.find('option[value="'+name+'"]')
                               .attr("selected", true);
                     }
                     else {
