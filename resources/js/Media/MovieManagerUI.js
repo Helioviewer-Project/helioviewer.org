@@ -284,7 +284,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
 
         // Setup hover and click handlers for movie history items
-        $("#movie-history .history-entry").on('click', $.proxy(this._onMovieClick, this));
+        $("#movie-history").on('click', '.history-entry', $.proxy(this._onMovieClick, this));
         $("#movie-history .history-entry").on('mouseover mouseout', $.proxy(this._onMovieHover, this));
 
 
