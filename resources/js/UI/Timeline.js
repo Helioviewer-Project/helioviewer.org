@@ -853,8 +853,8 @@ var Timeline = Class.extend({
 			            timelineExtremesChanged = false;
 			        });
 			        
-			        var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel" //FF doesn't recognize mousewheel as of FF3.x
-			        $('#data-coverage-timeline').on(mousewheelevt, function(event) {
+			        var mousewheelevt=(/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
+			        $('#data-coverage-timeline').on('mousewheel', function(event) {
 				        var container = $(chart.container),
 					        offset = container.offset(),
 					        x, y, isInside;
@@ -873,7 +873,7 @@ var Timeline = Class.extend({
 				        isInside = chart.isInsidePlot(x, y);
 				        
 				        event.preventDefault();
-				        if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
+				        if (event.originalEvent.deltaY < 0 || event.originalEvent.detail < 0) {
 				            self.btnZoomIn();
 						} else {
 				            self.btnZoomOut();
