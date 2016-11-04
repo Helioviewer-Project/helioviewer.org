@@ -932,6 +932,9 @@
 				<div style='padding:10px;'>
 					<input type="checkbox" name="latest-image-option" id="settings-latest-image" value="true" />
 					<label for="settings-latest-image">Refresh with the latest data every 5 minutes</label><br />
+					
+					<input type="checkbox" name="movie-play-automatic-option" id="settings-movie-play-automatic" value="true" />
+					<label for="settings-movie-play-automatic">Automatically play generated movies</label><br />
 				</div>
 				</fieldset>
 			</form>

@@ -285,6 +285,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         // Setup hover and click handlers for movie history items
         $("#movie-history").on('click', '.history-entry', $.proxy(this._onMovieClick, this));
+        $("#message-console").on('click', '.message-console-movie-ready', $.proxy(this._onMovieClick, this));
         $("#movie-history .history-entry").on('mouseover mouseout', $.proxy(this._onMovieHover, this));
 
 
@@ -553,8 +554,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                  "/lib/flowplayer/flowplayer-3.2.8.swf?config=" +
                  encodeURIComponent("{'clip':{'url': '../../" + flvURL + "'}}");
 
-        screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) +
-                     "full.png";
+        screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) + "full.png";
         
         $("video").mediaelementplayer({
 			enableAutosize: true,
@@ -857,10 +857,11 @@ var MovieManagerUI = MediaManagerUI.extend(
 			var filenameHQ = filename.replace('.mp4', '-hq.mp4');
 			var filenameWebM = filename.replace('.mp4', '-.webm');
 			var filePath = url.substring(0, url.lastIndexOf("/"));
-
+			var autoplay = (Helioviewer.userSettings.get("options.movieautoplay") ? 'autoplay="autoplay"' : '');
+			
 			return '<style>.mejs-container .mejs-controls {bottom: -20px;}.mejs-container.mejs-container-fullscreen .mejs-controls{bottom: 0px;}</style>\
 				    <div>\
-						<video id="movie-player-' + movie.id + '" width="'+(width - 15)+'" height="'+(height - 20)+'" poster="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" controls="controls" preload="none" autoplay="true">\
+						<video id="movie-player-' + movie.id + '" width="'+(width - 15)+'" height="'+(height - 20)+'" poster="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" controls="controls" preload="none" '+autoplay+'>\
 						    <source type="video/mp4" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameHQ+'" />\
 						    <source type="video/webm" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameWebM+'" />\
 						    <object width="'+width+'" height="'+(height - 20)+'" type="application/x-shockwave-flash" data="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf">\

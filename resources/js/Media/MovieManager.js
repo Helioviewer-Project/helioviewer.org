@@ -188,7 +188,8 @@ var MovieManager = MediaManager.extend(
                 msg.find(".message-console-movie-ready").data("movie", movie);
             }
         };
-        message = "<span class='message-console-movie-ready'>" +
+        
+        message = "<span class='message-console-movie-ready' data-id=\""+movie.id+"\">" +
                   "Your " + movie.name + " movie is ready! " +
                   "Click here to watch or download it.</span>";
 

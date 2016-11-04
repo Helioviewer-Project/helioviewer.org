@@ -372,12 +372,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * initializes event-handlers
      */
     _setupSettingsUI: function () {
-        var form, dateLatest, datePrevious, autorefresh, self = this;
+        var form, dateLatest, datePrevious, autorefresh, autoplay, self = this;
 
         form         = $("#helioviewer-settings");
         dateLatest   = $("#settings-date-latest");
         datePrevious = $("#settings-date-previous");
         autorefresh  = $("#settings-latest-image");
+        autoplay     = $("#settings-movie-play-automatic");
 
         // Starting date
         if (Helioviewer.userSettings.get("options.date") === "latest") {
@@ -395,6 +396,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.timeControls.disableAutoRefresh();
         }
 
+        // Movies auto-play
+        if (Helioviewer.userSettings.get("options.movieautoplay")) {
+            autoplay.attr("checked", "checked");
+        } else {
+            autoplay.removeAttr("checked");
+        }
+
         // Event-handlers
         dateLatest.change(function (e) {
             Helioviewer.userSettings.set("options.date", "latest");
@@ -403,14 +411,16 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             Helioviewer.userSettings.set("options.date", "previous");
         });
         autorefresh.change(function (e) {
-            Helioviewer.userSettings.set(
-                "options.autorefresh", e.target.checked);
+            Helioviewer.userSettings.set("options.autorefresh", e.target.checked);
             if (e.target.checked) {
                 self.timeControls.enableAutoRefresh();
             }
             else {
                 self.timeControls.disableAutoRefresh();
             }
+        });
+        autoplay.change(function (e) {
+            Helioviewer.userSettings.set("options.movieautoplay", e.target.checked);
         });
 
     },
