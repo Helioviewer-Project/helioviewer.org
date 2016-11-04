@@ -50,7 +50,8 @@ var SettingsLoader = (
                     duration: 86400,
                     format: "mp4"
                 },
-                autorefresh: false
+                autorefresh: false,
+                movieautoplay: false
             },
             // Saved movie and screenshots
             history: {
