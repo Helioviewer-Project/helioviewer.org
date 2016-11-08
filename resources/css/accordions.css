@@ -149,7 +149,7 @@ select.layer-select {
     border: 2px solid rgba(0,0,0,1);
 }
 #TileLayerAccordion-Container .opacity-slider-track {
-    width:  9em;
+    width:  10em;
     height: 4px;
 }
 #TileLayerAccordion-Container .opacity-slider-track > .ui-slider-handle {
@@ -177,7 +177,7 @@ select.layer-select {
 }
 
 select.layer-select {
-    width:  12em;
+    width:  13.5em;
 }
 
 #vso-links a {
