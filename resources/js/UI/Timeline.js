@@ -1267,45 +1267,45 @@ var _colors  = [
     '#FFC000', // 33 Yohkoh SXT AlMgMn
     '#FFFF00', // 34 Yohkoh SXT thin-Al
     '#C08040', // 35 Yohkoh SXT white-light
-    '#ffffff', // 36
-    '#ffffff', // 37
-    '#ffffff', // 38
-    '#ffffff', // 39
-    '#ffffff', // 40
-    '#ffffff', // 41
-    '#ffffff', // 42
-    '#ffffff', // 43
-    '#ffffff', // 44
-    '#ffffff', // 45
-    '#ffffff', // 46
-    '#ffffff', // 47
-    '#ffffff', // 48
-    '#ffffff', // 49
-    '#ffffff', // 50
-    '#ffffff', // 51
-    '#ffffff', // 52
-    '#ffffff', // 53
-    '#ffffff', // 54
-    '#ffffff', // 55
-    '#ffffff', // 56
-    '#ffffff', // 57
-    '#ffffff', // 58
-    '#ffffff', // 59
-    '#ffffff', // 60
-    '#ffffff', // 61
-    '#ffffff', // 62
-    '#ffffff', // 63
-    '#ffffff', // 64
-    '#ffffff', // 65
-    '#ffffff', // 66
-    '#ffffff', // 67
-    '#ffffff', // 68
-    '#ffffff', // 69
-    '#ffffff', // 70
-    '#ffffff', // 71
-    '#ffffff', // 72
-    '#ffffff', // 73
-    '#ffffff', // 74
+    '#ffffff', // 36 
+    '#ffffff', // 37 
+    '#1E3D5D', // 38 XRT Al_med/Al_mesh
+    '#2D4C6C', // 39 XRT Al_med/Al_thick
+    '#3D5C7C', // 40 XRT Al_med/Be_thick
+    '#4C6B8B', // 41 XRT Al_med/Gband
+    '#547393', // 42 XRT Al_med/Open
+    '#6382A2', // 43 XRT Al_med/Ti_poly
+    '#7291B1', // 44 XRT Al_poly/Al_mesh
+    '#81A0C0', // 45 XRT Al_poly/Al_thick
+    '#90AFCF', // 46 XRT Al_poly/Be_thick
+    '#9FBEDE', // 47 XRT Al_poly/Gband
+    '#AFCEEE', // 48 XRT Al_poly/Open
+    '#BEDDFD', // 49 XRT Al_poly/Ti_poly
+    '#CDECFF', // 50 XRT Be_med/Al_mesh
+    '#DDFCFF', // 51 XRT Be_med/Al_thick
+    '#719093', // 52 XRT Be_med/Be_thick
+    '#81A0A3', // 53 XRT Be_med/Gband
+    '#90AFB2', // 54 XRT Be_med/Open
+    '#9FBEC1', // 55 XRT Be_med/Ti_poly
+    '#C6E5E8', // 56 XRT Be_thin/Al_mesh
+    '#AFCED1', // 57 XRT Be_thin/Al_thick
+    '#CDECEF', // 58 XRT Be_thin/Be_thick
+    '#7998B8', // 59 XRT Be_thin/Gband
+    '#88A7C7', // 60 XRT Be_thin/Open
+    '#97B6D6', // 61 XRT Be_thin/Ti_poly
+    '#A7C6E6', // 62 XRT C_poly/Al_mesh
+    '#B6D5F5', // 63 XRT C_poly/Al_thick
+    '#C5E4FF', // 64 XRT C_poly/Be_thick
+    '#BEDDFD', // 65 XRT C_poly/Gband
+    '#D5F4FF', // 66 XRT C_poly/Open
+    '#DCFBFF', // 67 XRT C_poly/Ti_poly
+    '#78979B', // 68 XRT Mispositioned/Mispositioned
+    '#87A6AA', // 69 XRT Open/Al_mesh
+    '#97B6BA', // 70 XRT Open/Al_thick
+    '#A6C5C9', // 71 XRT Open/Be_thick
+    '#B5D4D8', // 72 XRT Open/Gband
+    '#C5E4E8', // 73 XRT Open/Open
+    '#EBFFFF', // 74 XRT Open/Ti_poly
     '#C04000', // 75 TRACE  171
     '#FF8040', // 76 TRACE  195
     '#FFC080', // 77 TRACE  284
@@ -1313,7 +1313,7 @@ var _colors  = [
     '#FFFF80', // 79 TRACE 1550
     '#FFFFC0', // 80 TRACE 1600
     '#C0C080', // 81 TRACE 1700
-    '#ffffff', // 82
+    '#ffffff', // 82 TRACE white-light
     '#ffffff', // 83
     '#ffffff', // 84
     '#ffffff', // 85
