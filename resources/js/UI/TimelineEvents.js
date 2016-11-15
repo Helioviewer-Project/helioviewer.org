@@ -159,7 +159,7 @@ var TimelineEvents = Class.extend({
 							
 							var span	 = event.xAxis[0].max - event.xAxis[0].min;
 			
-							if(span < 60 * 60 * 1000){
+							if(span < 180 * 60 * 1000){
 								return false;
 							}
 								
@@ -263,7 +263,7 @@ var TimelineEvents = Class.extend({
 						}
 					}
 				},
-				minRange: 60 * 60 * 1000 // 30 minutes
+				minRange: 180 * 60 * 1000 // 30 minutes
 			},
 
 			yAxis: {
@@ -312,7 +312,7 @@ var TimelineEvents = Class.extend({
 					point: {
 						events: {
 							dblclick: function(e){
-								var minRange = 60 * 60 * 1000;
+								var minRange = 180 * 60 * 1000;
 								
 								var minTime = this.x;
 								var maxTime = this.x + this.series.closestPointRange;
@@ -918,7 +918,7 @@ var TimelineEvents = Class.extend({
 		var oldOffset = zoomTickTime - center;
 		var newOffset = oldOffset * 0.5;
 		
-		if(span > 60 * 60 * 1000){
+		if(span > 180 * 60 * 1000){
 			//zoom offset
 			extremes.min = zoomTickTime - (span * 0.5);
 			extremes.max = zoomTickTime + (span * 0.5);		
@@ -1388,6 +1388,12 @@ var TimelineEvents = Class.extend({
 		
 		if(e.min < 0 || e.max < 0 || e.min > e.max){
 			return false;
+		}
+		
+		if((e.max - e.min) / 1000 / 60 < 180){
+			var center = (e.max + e.min) / 2;
+			e.min = center - (90 * 60 * 1000);
+			e.max = center + (90 * 60 * 1000);
 		}
 		
 		timelineStartDate = Math.round(e.min);
