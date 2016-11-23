@@ -143,14 +143,15 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
 
         // Add the layer
         this.addLayer(
-            new HelioviewerTileLayer(this._layers.length,
+            new HelioviewerTileLayer(0,
                     this._observationDate, this.tileSize, this.viewportScale,
                     this.tileVisibilityRange, params.uiLabels,
                     params.sourceId, params.nickname, params.visible,
-                    opacity, params.layeringOrder, this._layers.length)
+                    opacity, params.layeringOrder, 0)
         );
 
         this.save();
+        $(document).trigger('save-tile-layers-from-accordion');
     },
 
     /**
