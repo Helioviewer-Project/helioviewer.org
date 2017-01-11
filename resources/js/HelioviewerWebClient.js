@@ -372,13 +372,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * initializes event-handlers
      */
     _setupSettingsUI: function () {
-        var form, dateLatest, datePrevious, autorefresh, autoplay, self = this;
+        var form, dateLatest, datePrevious, autorefresh, autoplay, duration, self = this;
 
         form         = $("#helioviewer-settings");
         dateLatest   = $("#settings-date-latest");
         datePrevious = $("#settings-date-previous");
         autorefresh  = $("#settings-latest-image");
         autoplay     = $("#settings-movie-play-automatic");
+        duration     = $("#settings-movie-duration");
 
         // Starting date
         if (Helioviewer.userSettings.get("options.date") === "latest") {
@@ -403,6 +404,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             autoplay.removeAttr("checked");
         }
 
+        // Default movie duration
+        duration.val(Helioviewer.userSettings.get("options.movies.duration"));
+
         // Event-handlers
         dateLatest.change(function (e) {
             Helioviewer.userSettings.set("options.date", "latest");
@@ -421,6 +425,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         });
         autoplay.change(function (e) {
             Helioviewer.userSettings.set("options.movieautoplay", e.target.checked);
+        });
+        duration.change(function () {
+            Helioviewer.userSettings.set("options.movies.duration", parseInt(this.value, 10));
         });
 
     },
