@@ -48,6 +48,7 @@ var SettingsLoader = (
                 movies: {
                     cadence: "auto", // "auto" | number of seconds
                     duration: 86400,
+                    dialog: 'default',
                     format: "mp4"
                 },
                 autorefresh: false,

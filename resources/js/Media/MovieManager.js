@@ -90,7 +90,8 @@ var MovieManager = MediaManager.extend(
             "name"          : this._getName(layers),
             "status"        : 2,
             "thumbnail"     : thumbnail,
-            "url"           : url
+            "url"           : url,
+            "size"          : 0
         };
         this._super(movie);
 
@@ -117,7 +118,7 @@ var MovieManager = MediaManager.extend(
      */
     queue: function (id, eta, token, imageScale, layers, events, eventsLabels,
                 scale, scaleType, scaleX, scaleY, dateRequested, startDate,
-                endDate, x1, x2, y1, y2) {
+                endDate, x1, x2, y1, y2, size) {
 
         var movie = {
             "id"            : id,
@@ -139,7 +140,8 @@ var MovieManager = MediaManager.extend(
             "status"        : 0,
             "token"         : token,
             "name"          : this._getName(layers),
-            "progress"      : 0
+            "progress"      : 0,
+            "size"      	: size
         };
 
         if (this._history.unshift(movie) > this._historyLimit) {

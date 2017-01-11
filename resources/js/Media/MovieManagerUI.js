@@ -75,7 +75,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             this._movieEventsLabels = false;
         }
 		
-		if(typeof formParams['startTime'] != 'undefined'){
+		/*if(typeof formParams['startTime'] != 'undefined'){
 	        var roi = helioviewer.getViewportRegionOfInterest();
 	        var layers = helioviewer.getVisibleLayers(roi);
 	        var events = helioviewer.getEvents();
@@ -91,7 +91,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 	        this._movieLayers = layers;
 	        this._movieEvents = events;
 	        this._movieEventsLabels = helioviewer.getEventsLabels();
-	    }    
+	    }*/    
 		
         // Movie request parameters
         baseParams = {
@@ -104,7 +104,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             scaleType    : Helioviewer.userSettings.get("state.scaleType"),
             scaleX       : Helioviewer.userSettings.get("state.scaleX"),
             scaleY       : Helioviewer.userSettings.get("state.scaleY"),
-            format       : this._manager.format
+            format       : this._manager.format,
+            size         : 0
         };
 
         // Add ROI and start and end dates
@@ -132,6 +133,10 @@ var MovieManagerUI = MediaManagerUI.extend(
                 throw "Movie length must be between 5 and 100 seconds.";
             }
             baseParams['movieLength'] = formParams['movie-length'];
+        }
+        
+        if(typeof formParams['size'] != 'undefined' && (parseInt(formParams['size']) >=0 || parseInt(formParams['size']) <=5)){
+	        params['size'] = parseInt(formParams['size']);
         }
 
         // Submit request
@@ -198,7 +203,22 @@ var MovieManagerUI = MediaManagerUI.extend(
         this._movieLayers = layers;
         this._movieEvents = events;
         this._movieEventsLabels = helioviewer.getEventsLabels();
-
+        
+        //Choose dialog format
+        if(Helioviewer.userSettings.get("options.movies.dialog") == 'advanced'){
+	        $('.movie-duration-box').hide();
+            $('.movie-time-box').show();
+            $('.movie-format-box').show();
+	        $('.movie-settings-more-btn').hide();
+            $('.movie-settings-less-btn').show();
+        }else{
+	        $('.movie-time-box').hide();
+            $('.movie-format-box').hide();
+            $('.movie-duration-box').show();
+            $('.movie-settings-less-btn').hide();
+	        $('.movie-settings-more-btn').show();
+        }
+		
         this.hide();
         this._settingsConsole.hide();
         this._settingsDialog.show();
@@ -238,8 +258,9 @@ var MovieManagerUI = MediaManagerUI.extend(
                 params.eventsLabels, params.scale, params.scaleType,
                 params.scaleX, params.scaleY, new Date().toISOString(),
                 params.startTime, params.endTime, params.x1, params.x2,
-                params.y1, params.y2
+                params.y1, params.y2, params.size
             );
+            
             self._addItem(movie);
 
             waitTime = humanReadableNumSeconds(response.eta);
@@ -342,12 +363,72 @@ var MovieManagerUI = MediaManagerUI.extend(
     _initSettings: function () {
         var length, lengthInput, duration, durationSelect,
             frameRateInput, settingsForm, self = this;
-
+		
+		duration = Math.round(Helioviewer.userSettings.get("options.movies.duration") / 2) * 1000;
+		
+		//Movie Generation time pickers
+		$('#movie-start-date').datetimepicker({
+			timepicker:false,
+			format:'Y/m/d',
+			theme:'dark',
+			onShow:function( ct ){
+				var observationDate = new Date(Helioviewer.userSettings.get("state.date") - duration);
+				this.setOptions({
+					maxDate: observationDate.toUTCDateString() 
+				})
+			}
+		});
+		$('#movie-end-date').datetimepicker({
+			timepicker:false,
+			format:'Y/m/d',
+			theme:'dark',
+			onShow:function( ct ){
+				var observationDate = new Date(Helioviewer.userSettings.get("state.date") + duration);
+				this.setOptions({
+					maxDate: observationDate.toUTCDateString() 
+				})
+			}
+		});
+		$('#movie-start-date').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
+		$('#movie-end-date').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
+		
+		//TimePicker
+		$('#movie-start-time').TimePickerAlone({
+			twelveHoursFormat:false,
+			seconds:true,
+			ampm:false,
+			saveOnChange: false,
+			//mouseWheel:false,
+			theme:'dark'
+		});
+		$('#movie-end-time').TimePickerAlone({
+			twelveHoursFormat:false,
+			seconds:true,
+			ampm:false,
+			saveOnChange: false,
+			//mouseWheel:false,
+			theme:'dark'
+		});
+		$('#movie-start-time').TimePickerAlone('setValue', new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
+		$('#movie-end-time').TimePickerAlone('setValue', new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+		$('#movie-start-time').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
+		$('#movie-end-time').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());		
+		
+		$(document).on('observation-time-changed, movies-setting-duration-trigger', function(e){
+	        var duration = Math.round(Helioviewer.userSettings.get("options.movies.duration") / 2) * 1000;
+	        $('#movie-start-date').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
+			$('#movie-end-date').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
+	        $('#movie-start-time').TimePickerAlone('setValue', new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
+			$('#movie-end-time').TimePickerAlone('setValue', new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+			$('#movie-start-time').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
+			$('#movie-end-time').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());	
+        });
+		
         // Advanced movie settings
         frameRateInput = $("#frame-rate");
         lengthInput    = $("#movie-length");
         durationSelect = $("#movie-duration");
-
+		
         // Speed method enable/disable
         $("#speed-method-f").change(function () {
             lengthInput.attr("disabled", true);
@@ -365,6 +446,40 @@ var MovieManagerUI = MediaManagerUI.extend(
             self._settingsDialog.hide();
             self.show();
         });
+        
+        // More button
+        $(".movie-settings-more-btn").click(function (e) {
+            $('.movie-duration-box').hide();
+            $('.movie-time-box').show();
+            $('.movie-format-box').show();
+	        $('.movie-settings-more-btn').hide();
+            $('.movie-settings-less-btn').show();
+            Helioviewer.userSettings.set("options.movies.dialog", 'advanced');
+        });
+        
+        // less button
+        $(".movie-settings-less-btn").click(function (e) {
+            $('.movie-time-box').hide();
+            $('.movie-format-box').hide();
+            $('.movie-duration-box').show();
+            $('.movie-settings-less-btn').hide();
+	        $('.movie-settings-more-btn').show();
+            Helioviewer.userSettings.set("options.movies.dialog", 'default');
+        });
+
+        // Duration event listener
+        durationSelect.bind('change', function (e) {
+            Helioviewer.userSettings.set("options.movies.duration",
+            parseInt(this.value, 10));
+            $(document).trigger('movies-setting-duration-trigger');
+        });
+        
+        durationSelect.find("[value=" + Helioviewer.userSettings.get("options.movies.duration") + "]").attr("selected", "selected");
+
+        // Reset to default values
+        frameRateInput.val(15);
+        lengthInput.val(20);
+        
 
         // Submit button
         settingsForm = $("#movie-settings-form");
@@ -372,7 +487,26 @@ var MovieManagerUI = MediaManagerUI.extend(
         $("#movie-settings-submit-btn").button().click(function (e) {
             // Validate and submit movie request
             try {
-                self._buildMovieRequest(settingsForm.serializeArray());
+                var speedMethodVal = $('#speed-method-f').is(':checked') ? 'framerate' : 'length';
+                var frameRateVal = $('#speed-method-f').is(':checked') ? $('#frame-rate').val() : $('#movie-length').val();
+                var startTimeVal = $('#movie-start-date').val().replace(/\//g, '-') + 'T' + $('#movie-start-time').val() + '.000Z';
+                var endTimeVal = $('#movie-end-date').val().replace(/\//g, '-') + 'T' + $('#movie-end-time').val() + '.000Z';
+                var sizeVal = $('#movie-size').val();
+                var durationVal = $('#movie-duration').val();
+                
+                var formSettings = [
+		            {name : 'speed-method', value : speedMethodVal},
+		            {name : 'framerate', value : frameRateVal},
+		            {name : 'startTime', value : startTimeVal},
+		            {name : 'endTime', value : endTimeVal},
+		            {name : 'size', value : sizeVal},
+	            ];
+                
+                if(Helioviewer.userSettings.get("options.movies.dialog") !== 'advanced'){
+	                formSettings['size'] = 0;
+                }
+
+                self._buildMovieRequest(formSettings);
             } catch (ex) {
                 // Display an error message if invalid values are specified
                 // for movie settings
@@ -384,20 +518,6 @@ var MovieManagerUI = MediaManagerUI.extend(
             }
             return false;
         });
-
-        // Movie duration
-        duration = Helioviewer.userSettings.get("options.movies.duration"),
-
-        // Duration event listener
-        durationSelect.bind('change', function (e) {
-            Helioviewer.userSettings.set("options.movies.duration",
-            parseInt(this.value, 10));
-        });
-
-        // Reset to default values
-        frameRateInput.val(15);
-        lengthInput.val(20);
-        durationSelect.find("[value=" + duration + "]").attr("selected", "selected");
     },
 
     /**
@@ -464,7 +584,23 @@ var MovieManagerUI = MediaManagerUI.extend(
             height = movie.height;
         } else {
             width  = Math.round(movie.x2 - movie.x1);
-            height = Math.round(movie.y2 - movie.y1);
+			height = Math.round(movie.y2 - movie.y1);
+            
+            if(typeof movie.size != 'undefined'){
+	            if(movie.size == 1){
+			        width = 1280;
+			        height = 720;
+		        }else if(movie.size == 2){
+			        width = 1920;
+			        height = 1080;
+		        }else if(movie.size == 3){
+			        width = 2560;
+			        height = 1440;
+		        }else if(movie.size == 4){
+			        width = 3840;
+			        height = 2160;
+		        }
+            }
         }
 
         html += "<table class='preview-tooltip'>" +
