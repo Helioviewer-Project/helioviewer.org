@@ -585,9 +585,12 @@ var MovieManagerUI = MediaManagerUI.extend(
         } else {
             width  = Math.round(movie.x2 - movie.x1);
 			height = Math.round(movie.y2 - movie.y1);
-            
+
             if(typeof movie.size != 'undefined'){
-	            if(movie.size == 1){
+	            if(movie.size == 0){
+			        width = Math.round(width / movie.imageScale);
+			        height = Math.round(height / movie.imageScale);
+		        }else if(movie.size == 1){
 			        width = 1280;
 			        height = 720;
 		        }else if(movie.size == 2){
@@ -600,6 +603,9 @@ var MovieManagerUI = MediaManagerUI.extend(
 			        width = 3840;
 			        height = 2160;
 		        }
+            }else{
+	            width = Math.round(width / movie.imageScale);
+			    height = Math.round(height / movie.imageScale);
             }
         }
 
