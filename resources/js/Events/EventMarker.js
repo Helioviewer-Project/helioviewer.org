@@ -370,10 +370,10 @@ var EventMarker = Class.extend(
         dialog =  $("<div id='event-info-dialog' class='event-info-dialog' />");
 
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
-            headingText = this.event_type+': ' + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
+            headingText = this.concept+': ' + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
         }
         else {
-            headingText = this.fixTitles(this.frm_name) + ' ' + this.fixTitles(this.frm_specificid);
+            headingText = this.concept + ' ' + this.fixTitles(this.frm_name) + ' ' + this.fixTitles(this.frm_specificid);
         }
 
         // Header Tabs
@@ -702,10 +702,10 @@ var EventMarker = Class.extend(
         var content = '', headingText = '', self = this;
 
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
-            headingText = this.event_type+': ' + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
+            headingText = this.concept+': ' + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
         }
         else {
-            headingText = this.event_type + ': ' + this.fixTitles(this.frm_name) + ' ' + this.fixTitles(this.frm_specificid);
+            headingText = this.concept + ': ' + this.fixTitles(this.frm_name) + ' ' + this.fixTitles(this.frm_specificid);
         }
 
         content     += '<div class="close-button ui-icon ui-icon-closethick" title="Close PopUp Window"></div>'+"\n"

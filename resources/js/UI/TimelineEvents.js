@@ -438,10 +438,10 @@ var TimelineEvents = Class.extend({
 						
 						var headingText = '';
 						if ( point.hasOwnProperty('hv_labels_formatted') && Object.keys(point.hv_labels_formatted).length > 0 ) {
-							headingText = point.event_type+': ' + point.hv_labels_formatted[Object.keys(point.hv_labels_formatted)[0]];
+							headingText = point.concept+': ' + point.hv_labels_formatted[Object.keys(point.hv_labels_formatted)[0]];
 						}
 						else {
-							headingText = point.event_type + ': ' + point.frm_name + ' ' + point.frm_specificid;
+							headingText = point.concept + ': ' + point.frm_name + ' ' + point.frm_specificid;
 						}
 						
 						headingText = headingText.replace(/u03b1/g, "α");
@@ -1615,10 +1615,10 @@ var TimelineEvents = Class.extend({
 		dialog =  $("<div id='event-info-dialog' class='event-info-dialog' />");
 
 		if ( data.hasOwnProperty('hv_labels_formatted') && Object.keys(data.hv_labels_formatted).length > 0 ) {
-			headingText = data.event_type+': ' + data.hv_labels_formatted[Object.keys(data.hv_labels_formatted)[0]];
+			headingText = data.concept+': ' + data.hv_labels_formatted[Object.keys(data.hv_labels_formatted)[0]];
 		}
 		else {
-			headingText = data.frm_name + ' ' + data.frm_specificid;
+			headingText = data.concept + ' ' + data.frm_name + ' ' + data.frm_specificid;
 		}
 		headingText = headingText.replace(/u03b1/g, "α");
         headingText = headingText.replace(/u03b2/g, "β");
