@@ -9,6 +9,11 @@
 	if (isset($_GET['debug']) || $forceDebug) {
 		$debug = true;
 	}
+	
+	$debugTime = 0;
+	if($debug){
+		$debugTime = time();
+	}
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -380,23 +385,34 @@
 								<div id='movie-settings-form-container'>
 								<form id='movie-settings-form'>
 	
-								<!-- Movie duration -->
-								<fieldset style='padding: 0px; margin: 5px 0px 8px'>
-									<label for='movie-duration' style='margin-right: 5px; font-style: italic;'>Duration</label>
-									<select id='movie-duration' name='movie-duration'>
-										<option value='3600'>1 hour</option>
-										<option value='10800'>3 hours</option>
-										<option value='21600'>6 hours</option>
-										<option value='43200'>12 hours</option>
-										<option value='86400'>1 day</option>
-										<option value='172800'>2 days</option>
-										<option value='604800'>1 week</option>
-										<option value='2419200'>28 days</option>
-									</select>
-								</fieldset>
-	
 								<!-- Advanced movie settings -->
 								<div id='movie-settings-advanced'>
+									
+									<!-- Movie duration -->
+									<fieldset style='padding: 0px; margin: 5px 0px 8px' class="movie-duration-box">
+										<label for='movie-duration' style='margin-right: 5px; font-style: italic;'>Duration</label>
+										<select id='movie-duration' name='movie-duration'>
+											<option value='3600'>1 hour</option>
+											<option value='10800'>3 hours</option>
+											<option value='21600'>6 hours</option>
+											<option value='43200'>12 hours</option>
+											<option value='86400'>1 day</option>
+											<option value='172800'>2 days</option>
+											<option value='604800'>1 week</option>
+											<option value='2419200'>28 days</option>
+										</select>
+									</fieldset>
+									
+									<!-- Movie Start/End Time -->
+									<fieldset style='padding: 0px; margin: 5px 0px 8px' class="movie-time-box">
+										<label for='movie-start-date' style='width: 40px; font-style: italic;'>Start </label>
+										<input type="text" id="movie-start-date" name="movie-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+										<input id="movie-start-time" name="movie-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/> UTC<br/>
+										
+										<label for='movie-end-date' style='width: 40px; font-style: italic;'>End </label>
+										<input type="text" id="movie-end-date" name="movie-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+										<input id="movie-end-time" name="movie-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/> UTC<br/>
+									</fieldset>
 	
 									<!-- Movie Speed -->
 									<fieldset id='movie-settings-speed'>
@@ -411,10 +427,25 @@
 											<input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
 										</div>
 									</fieldset>
+	
+									<!-- Movie Start/End Time -->
+									<fieldset style='padding: 0px; margin: 5px 0px 8px;' class="movie-format-box">
+										<label for='movie-size' style='width: 40px; font-style: italic;'>Size</label>
+										<select id='movie-size' name='movie-size' style="width:190px;">
+											<option value='0' selected="selected">Original</option>
+											<option value='1'>720p (1280 x 720, HD Ready)</option>
+											<option value='2'>1080p (1920 x 1080, Full HD)</option>
+											<option value='3'>1440p (2560 x 1440, Quad HD)</option>
+											<option value='4'>2160p (3840 x 2160, 4K or Ultra HD)</option>
+										</select>
+									</fieldset>
+									
 								</div>
 	
 								<!-- Movie request submit button -->
 								<div id='movie-settings-submit'>
+									<a href="#" class="movie-settings-more-btn" style="float:left;margin-top:17px;text-decoration: underline;">Advanced Settings</a>
+									<a href="#" class="movie-settings-less-btn" style="float:left;margin-top:17px;text-decoration: underline;">Less Settings</a>
 									<input type="button" id='movie-settings-cancel-btn' value="Cancel" />
 									<input type="submit" id='movie-settings-submit-btn' value="Ok" />
 								</div>
@@ -935,6 +966,18 @@
 					
 					<input type="checkbox" name="movie-play-automatic-option" id="settings-movie-play-automatic" value="true" />
 					<label for="settings-movie-play-automatic">Automatically play generated movies</label><br />
+					
+					<label for='settings-movie-duration' >Default movie duration</label>
+					<select id='settings-movie-duration' name='settings-movie-duration'>
+						<option value='3600'>1 hour</option>
+						<option value='10800'>3 hours</option>
+						<option value='21600'>6 hours</option>
+						<option value='43200'>12 hours</option>
+						<option value='86400'>1 day</option>
+						<option value='172800'>2 days</option>
+						<option value='604800'>1 week</option>
+						<option value='2419200'>28 days</option>
+					</select>
 				</div>
 				</fieldset>
 			</form>
@@ -1052,58 +1095,58 @@
 	<?php
 	if ($debug){	
 	?>
-		<script src="resources/js/Utility/Config.js" type="text/javascript"></script>
-		<script src="resources/js/Utility/HelperFunctions.js" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Layer/Layer.js" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Layer/TileLoader.js" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Layer/TileLayer.js" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Layer/HelioviewerTileLayer.js" type="text/javascript"></script>
-		<script src="resources/js/Utility/KeyboardManager.js" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Manager/LayerManager.js" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Manager/TileLayerManager.js" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Manager/HelioviewerTileLayerManager.js" type="text/javascript"></script>
-		<script src="resources/js/Image/JP2Image.js" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/MouseCoordinates.js" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/HelioviewerMouseCoordinates.js" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/SandboxHelper.js" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/ViewportMovementHelper.js" type="text/javascript"></script>
-		<script src="resources/js/Viewport/HelioviewerViewport.js" type="text/javascript"></script>
-		<script src="resources/js/HelioviewerClient.js" type="text/javascript"></script>
-		<script src="resources/js/UI/ZoomControls.js" type="text/javascript"></script>
-		<script src="resources/js/UI/ImageScale.js" type="text/javascript"></script>
-		<script src="resources/js/UI/Timeline.js" type="text/javascript"></script>
-		<script src="resources/js/UI/TimelineEvents.js" type="text/javascript"></script>
-		<script src="resources/js/Utility/InputValidator.js" type="text/javascript"></script>
-		<script src="resources/js/Utility/SettingsLoader.js" type="text/javascript"></script>
-		<script src="resources/js/Utility/UserSettings.js" type="text/javascript"></script>
-		<script src="resources/js/Utility/Tutorial.js" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Manager/LayerManager.js" type="text/javascript"></script>
-		<script src="resources/js/Events/EventManager.js" type="text/javascript"></script>
-		<script src="resources/js/Events/EventType.js" type="text/javascript"></script>
-		<script src="resources/js/Events/EventTree.js" type="text/javascript"></script>
-		<script src="resources/js/Events/EventFeatureRecognitionMethod.js" type="text/javascript"></script>
-		<script src="resources/js/Events/EventLayerManager.js" type="text/javascript"></script>
-		<script src="resources/js/Events/EventMarker.js" type="text/javascript"></script>
-		<script src="resources/js/Events/EventLayerManager.js" type="text/javascript"></script>
-		<script src="resources/js/Events/HelioviewerEventLayer.js" type="text/javascript"></script>
-		<script src="resources/js/Events/HelioviewerEventLayerManager.js" type="text/javascript"></script>
-		<script src="resources/js/UI/TreeSelect.js" type="text/javascript"></script>
-		<script src="resources/js/UI/ImageSelectTool.js" type="text/javascript"></script>
-		<script src="resources/js/Media/MediaManagerUI.js" type="text/javascript"></script>
-		<script src="resources/js/Media/MediaManager.js" type="text/javascript"></script>
-		<script src="resources/js/Media/MovieManager.js" type="text/javascript"></script>
-		<script src="resources/js/Media/MovieManagerUI.js" type="text/javascript"></script>
-		<script src="resources/js/Media/ScreenshotManager.js" type="text/javascript"></script>
-		<script src="resources/js/Media/ScreenshotManagerUI.js" type="text/javascript"></script>
-		<script src="resources/js/UI/TileLayerAccordion.js" type="text/javascript"></script>
-		<script src="resources/js/UI/EventLayerAccordion.js" type="text/javascript"></script>
-		<script src="resources/js/UI/MessageConsole.js" type="text/javascript"></script>
-		<script src="resources/js/UI/TimeControls.js" type="text/javascript"></script>
-		<script src="resources/js/Utility/FullscreenControl.js" type="text/javascript"></script>
-		<script src="resources/js/HelioviewerWebClient.js" type="text/javascript"></script>
-		<script src="resources/js/UI/UserVideoGallery.js" type="text/javascript"></script>
-		<script src="resources/js/UI/Glossary.js" type="text/javascript"></script>
-		<script src="resources/js/UI/jquery.ui.dynaccordion.js" type="text/javascript"></script>
+		<script src="resources/js/Utility/Config.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Utility/HelperFunctions.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Tiling/Layer/Layer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Tiling/Layer/TileLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Tiling/Layer/TileLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Tiling/Layer/HelioviewerTileLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Utility/KeyboardManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Tiling/Manager/LayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Tiling/Manager/TileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Tiling/Manager/HelioviewerTileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Image/JP2Image.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/Helper/MouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/Helper/HelioviewerMouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/Helper/SandboxHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/Helper/ViewportMovementHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/HelioviewerViewport.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/HelioviewerClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/ZoomControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/ImageScale.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/Timeline.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/TimelineEvents.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Utility/InputValidator.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Utility/SettingsLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Utility/UserSettings.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Utility/Tutorial.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Tiling/Manager/LayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Events/EventManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Events/EventType.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Events/EventTree.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Events/EventFeatureRecognitionMethod.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Events/EventMarker.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Events/HelioviewerEventLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Events/HelioviewerEventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/TreeSelect.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/ImageSelectTool.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Media/MediaManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Media/MediaManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Media/MovieManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Media/MovieManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Media/ScreenshotManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Media/ScreenshotManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/TileLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/EventLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/MessageConsole.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/TimeControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Utility/FullscreenControl.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/HelioviewerWebClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/UserVideoGallery.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/Glossary.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/jquery.ui.dynaccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
 	<?php
 	} else {	
 	?>
