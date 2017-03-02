@@ -1792,7 +1792,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      *
      * @returns {String} A URL representing the screenshot of viewport.
      */
-    getViewportScreenshotURL: function(timestamp, name){
+    getViewportScreenshotURL: function(timestamp, name, delay){
 	    var x0=0, y0=0, x1, x2, y1, y2, width=0, height=0, vport, imageScale, imageAccordions, roi, html = '', 
 		date, sourceId, opacity, imageLayer = '', thumbImageScale;
 		
@@ -1824,7 +1824,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	
 	    thumbImageScale = width / 128;
 		
-		if(typeof name != 'undefined'){
+		if(typeof name != 'undefined' && name != 'undefined'){
 			var layers = name.split(" ");
 			var layerData = '';
 			$.each(layers, function(i, n){
@@ -1844,7 +1844,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	    }
 	    
 	    //Output
-	    html = '<img src="' + Helioviewer.api + '?action=takeScreenshot'
+	    var url = Helioviewer.api + '?action=takeScreenshot'
 	                 +     '&imageScale=' + thumbImageScale
 	                 +     '&layers='    + imageLayer.slice(0, -1)
 	                 +     '&events=&eventLabels=false'
@@ -1854,11 +1854,16 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	                 +     '&x2=' + x2
 	                 +     '&y1=' + y1
 	                 +     '&y2=' + y2
-	                 +     '&display=true&watermark=false'
-	                 +     '&timestamp=' + Date.now() + '" '
-	                 +     'class="preview end" '
-	                 +     'style="display:block;width:' + 160 + 'px; ' + 'height:' + Math.round( 160 / ( width / height ) ) + 'px;border: 1px solid rgba(255,255,255,0.2);margin:5px;"'
-	                 +     ' />';
+	                 +     '&display=true&watermark=false';
+	    
+	    var style = 'display:block;width:' + 160 + 'px; ' + 'height:' + Math.round( 160 / ( width / height ) ) + 'px;border: 1px solid rgba(255,255,255,0.2);margin:5px;';
+	    
+	    if(typeof delay != 'undefined' && delay == true){
+		    style += 'background:url(/resources/images/ajax-loader-large.gif) no-repeat center center;';
+		    html = '<img data-delayedsrc="'+url+'" class="preview end" style="'+style+'"/>';
+	    }else{
+		    html = '<img src="'+url+'" class="preview end" style="'+style+'"/>';
+	    }
 	    
 	    return html;             
     },
