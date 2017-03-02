@@ -414,7 +414,16 @@ var MovieManagerUI = MediaManagerUI.extend(
 		$('#movie-start-time').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
 		$('#movie-end-time').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());		
 		
-		$(document).on('observation-time-changed, movies-setting-duration-trigger', function(e){
+		$(document).on('observation-time-changed', function(e){
+	        var duration = Math.round(Helioviewer.userSettings.get("options.movies.duration") / 2) * 1000;
+	        $('#movie-start-date').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
+			$('#movie-end-date').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
+	        $('#movie-start-time').TimePickerAlone('setValue', new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
+			$('#movie-end-time').TimePickerAlone('setValue', new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+			$('#movie-start-time').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
+			$('#movie-end-time').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());	
+        });
+        $(document).on('movies-setting-duration-trigger', function(e){
 	        var duration = Math.round(Helioviewer.userSettings.get("options.movies.duration") / 2) * 1000;
 	        $('#movie-start-date').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
 			$('#movie-end-date').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());

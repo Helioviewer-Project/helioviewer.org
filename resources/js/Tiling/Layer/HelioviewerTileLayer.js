@@ -76,7 +76,8 @@ var HelioviewerTileLayer = TileLayer.extend(
                             [this.id, this.name, this.image.getSourceId(),
                              this.opacity,
                              new Date(getUTCTimestamp(this.image.date)),
-                             this.image.id, this.image.hierarchy]);
+                             this.image.id, this.image.hierarchy,
+                             this.image.name]);
     },
 
     /**
