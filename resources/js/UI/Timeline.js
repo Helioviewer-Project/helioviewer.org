@@ -266,12 +266,14 @@ var Timeline = Class.extend({
 	                var str = '<div style="border:1px solid #80ffff; background:#000;padding:5px;z-index:999;">';
 					var count = 0;
 					var type = 'column';
+					var imageClass = 'timelineThumb';
 					
 	                if(typeof this.series == "undefined"){
 		                var index = this.points[0].point.index;
 		                var from = this.x;
 						var to = this.points[0].series.data[index + 1].x - 1;//this.x+this.points[0].series.closestPointRange;
-						var utcDate = new Date().getTime();; 
+						var utcDate = new Date().getTime();
+						imageClass += index;
 						
 						zoomTickTime = parseInt( (from + to) * 0.5 );
 						
@@ -284,8 +286,8 @@ var Timeline = Class.extend({
 			            
 			            if(from < utcDate){
 			                str += '<div style="width:340px;">\
-			                			<div style="width:170px;float:left;">'+helioviewer.getViewportScreenshotURL(from)+'</div>\
-			                			<div style="width:170px;float:left;">'+helioviewer.getViewportScreenshotURL(to)+'</div>\
+			                			<div style="width:170px;float:left;" class="'+imageClass+'">'+helioviewer.getViewportScreenshotURL(from, 'undefined', true)+'</div>\
+			                			<div style="width:170px;float:left;" class="'+imageClass+'">'+helioviewer.getViewportScreenshotURL(to, 'undefined', true)+'</div>\
 			                			<div style="clear:both;"></div>\
 			                		</div>';
 			            }
@@ -305,6 +307,7 @@ var Timeline = Class.extend({
 						
 	                }else{
 		                zoomTickTime = this.x;
+		                imageClass += zoomTickTime;
 		                
 		                type = this.series.type;
 		            	if(type == 'column'){
@@ -314,9 +317,18 @@ var Timeline = Class.extend({
 							}
 							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.numberFormat(this.y,0,'.',',')+' image'+ext+'</b><br/>';
 						}else{
-							str += '<center><span style="color:'+this.series.color+'">'+this.series.name+'</span><br><b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x)+'</b><br/>'+helioviewer.getViewportScreenshotURL(this.x, this.series.name)+'</center>';
+							str += '<center class="'+imageClass+'"><span style="color:'+this.series.color+'">'+this.series.name+'</span><br><b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x)+'</b><br/>'+helioviewer.getViewportScreenshotURL(this.x, this.series.name, true)+'</center>';
 						}
 		            }
+		            
+		            setTimeout(function () {
+					    $('.' + imageClass + ' img').each(function () {
+					    	var imagex = $(this);
+							var imgOriginal = imagex.data('delayedsrc');
+							$(imagex).attr('src', imgOriginal);
+					    });
+					 }, 500);
+		            
 					return str + '</div>';
 	            },
 	            positioner: function (labelWidth, labelHeight, point) {
