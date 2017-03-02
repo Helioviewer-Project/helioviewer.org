@@ -79,7 +79,7 @@ var TileLayerAccordion = Layer.extend(
         this._initTreeSelect(id, hierarchy);
         this._initOpacitySlider(id, opacity, onOpacityChange);
         this._setupEventHandlers(id);
-        this._updateTimeStamp(id, date);
+        //this._updateTimeStamp(id, date);
     },
 
     /**
@@ -487,16 +487,15 @@ var TileLayerAccordion = Layer.extend(
     /**
      *
      */
-    _updateAccordionEntry: function (event, id, name, sourceId, opacity, date, imageId,
-        hierarchy) {
+    _updateAccordionEntry: function (event, id, name, sourceId, opacity, date, imageId, hierarchy, imageName) {
 
         var entry=$("#"+id), self=this, letters=['a','b','c','d','e'],
             label, select;
 
         this._updateTimeStamp(id, date);
 
-        entry.find(".tile-accordion-header-left").html(name);
-        entry.find(".tile-accordion-header-left").attr('title', name);
+        entry.find(".tile-accordion-header-left").html(imageName);
+        entry.find(".tile-accordion-header-left").attr('title', imageName);
         entry.find(".tile-accordion-header-left").attr('data-sourceid', sourceId);
 
         $.each( letters, function(i, letter) {
