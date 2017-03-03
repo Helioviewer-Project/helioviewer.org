@@ -1081,7 +1081,7 @@ var Timeline = Class.extend({
 			chartTypeY = 'linear';
         }
         
-        var imageLayersStr = '';
+        /*var imageLayersStr = '';
         $.each( $('#accordion-images .dynaccordion-section'), function(i, accordion) {
 	        if ( !$(accordion).find('.visible').hasClass('hidden')) {
 	            var sourceId = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
@@ -1089,8 +1089,8 @@ var Timeline = Class.extend({
 	            opacity = opacity <= 0 ? 1 : opacity;
 	            imageLayersStr = '['+sourceId+',1,'+opacity+'],' + imageLayersStr;
 	        }
-	    });
-        //var imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
+	    });*/
+        var imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
         
         if(imageLayersStr == ''){
 	        chart.showLoading('You must have at least one visible image layer.');
@@ -1347,18 +1347,18 @@ var _colors  = {
     98 : '#ffffff',  // 97
     99 : '#ffffff',  // 97
     100 : '#ffffff',  // 97
-    10001 : '#1E3D5D', // 38 XRT Al_med/Al_mesh
-    10002 : '#2D4C6C', // 39 XRT Al_med/Al_thick
-    10003 : '#3D5C7C', // 40 XRT Al_med/Be_thick
-    10004 : '#4C6B8B', // 41 XRT Al_med/Gband
-    10005 : '#547393', // 42 XRT Al_med/Open
-    10006 : '#6382A2', // 43 XRT Al_med/Ti_poly
-    10007 : '#7291B1', // 44 XRT Al_poly/Al_mesh
-    10008 : '#81A0C0', // 45 XRT Al_poly/Al_thick
-    10009 : '#90AFCF', // 46 XRT Al_poly/Be_thick
-    10010 : '#9FBEDE', // 47 XRT Al_poly/Gband
-    10011 : '#AFCEEE', // 48 XRT Al_poly/Open
-    10012 : '#BEDDFD', // 49 XRT Al_poly/Ti_poly
-    10013 : '#CDECFF' // 50 XRT Be_med/Al_mesh
+    10001 : '#306ead', // XRT Any/Any
+    10002 : '#2D4C6C', // XRT Any/Al_mesh
+    10003 : '#3D5C7C', // XRT Any/Al_thick
+    10004 : '#4C6B8B', // XRT Any/Be_thick
+    10005 : '#547393', // XRT Any/Gband
+    10006 : '#6382A2', // XRT Any/Open
+    10007 : '#7291B1', // XRT Any/Ti_poly
+    10008 : '#81A0C0', // XRT Al_med/Any
+    10009 : '#90AFCF', // XRT Al_poly/Any
+    10010 : '#9FBEDE', // XRT Be_med/Any
+    10011 : '#AFCEEE', // XRT Be_thin/Any
+    10012 : '#BEDDFD', // XRT C_poly/Any
+    10013 : '#CDECFF' // XRT Open/Any
 
 };
