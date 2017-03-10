@@ -228,7 +228,7 @@ a.show-tags-btn {
 
 /* About Dialog */
 #about-credits a {
-    text-decoration: none;
+    text-decoration: underline;
 }
 
 /* Visual Glossary */
