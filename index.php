@@ -3,7 +3,7 @@
 	$debug = false;
 	
 	//Force debug mode. Set it to true to always force debug mode.
-	$forceDebug = true;
+	$forceDebug = false;
 	
 	//check if URL have debug parameter
 	if (isset($_GET['debug']) || $forceDebug) {
@@ -17,7 +17,7 @@
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
-	<!-- Helioviewer.org 3.0 (rev. 700), 2012/04/02 -->
+	<!-- Helioviewer.org 3.2 2017/03/31 -->
 	<title><?=($debug ? '[DEBUG]' : '')?> Helioviewer.org - Solar and heliospheric image visualization tool</title>
 	<meta charset="utf-8" />
 	<meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
@@ -1227,9 +1227,6 @@
 		
 		$( document ).ready(function(){
 			settingsJSON = {
-				'back_end'             		: "http://api.hv.org/",
-		        'web_root_url'         		: "http://hv.org",
-		        'user_video_feed'       	: "http://api.hv.org/"
 				//'back_end'             	: "https://api.helioviewer.org/",
 		        //'web_root_url'         	: "https://helioviewer.org",
 			    //'build_num'             	: 700,
