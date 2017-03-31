@@ -214,7 +214,8 @@ var EventTree = Class.extend({
             });
 
             if ( found === false && emphasisNodes.length > 0 ) {
-                $(obj).css({'opacity':'0.20'});
+                $(obj).css({'opacity':'0'});
+                $('.movie-viewport-icon').hide();
             }
             else {
                 $(obj).css({'opacity':'1.00'});
@@ -255,11 +256,12 @@ var EventTree = Class.extend({
                 });
                 if ( found === true ) {
                     //$(obj).css({'opacity':'0.50'});
-                    $(obj).css({'opacity':'0.20'});
+                    $(obj).css({'opacity':'0'});
                 }
                 else {
-                    $(obj).css({'opacity':'0.20'});
+                    $(obj).css({'opacity':'0'});
                 }
+                $('.movie-viewport-icon').hide();
             }
         });
         if(timelineRes == 'm'){
@@ -295,6 +297,7 @@ var EventTree = Class.extend({
                 else {
                     $(obj).css({'opacity':'1.0'});
                 }
+                $('.movie-viewport-icon').show();
             }
         });
 		$(".highcharts-series > rect").show();

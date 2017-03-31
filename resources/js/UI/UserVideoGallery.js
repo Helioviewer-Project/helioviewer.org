@@ -12,6 +12,7 @@ newcap: true, immed: true, maxlen: 80, sub: true */
 var UserVideoGallery = Class.extend(
     /** @lends UserVideoGallery.prototype */
     {
+	observationDateMovies: {},    
     /**
      * @constructs
      * @description Creates a new UserVideoGallery component
@@ -23,6 +24,10 @@ var UserVideoGallery = Class.extend(
         this._loaderCurrent      	= $("#user-video-gallery-spinner-current");
 
         this._working     = false;
+		
+		//create empty container
+		$('<div id="movies-container"></div>').appendTo("#moving-container");
+		this._moviesContainer      	= $("#movies-container");
 
         // Feed URL
         this.url = url || Helioviewer.api;
@@ -46,7 +51,7 @@ var UserVideoGallery = Class.extend(
         }, 120000);
         
         $(document).on('observation-time-changed', function(e){
-	        if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-youtube.open")){
+	        if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-youtube.open") || Helioviewer.userSettings.get("options.showinviewport")){
 	        	self._fetchCurrentVideos();
 	        }	
         });
@@ -61,6 +66,27 @@ var UserVideoGallery = Class.extend(
 	        self._containerCurrent.append(self._loaderCurrent);
 	        self._fetchCurrentVideosShowMore();
         });
+        
+        $(document).bind("image-scale-changed", $.proxy(this.changeScale, this));
+        
+        //Show in viewport button initialization
+        if(Helioviewer.userSettings.get("options.showinviewport")){
+	        $('#movies-show-in-viewport').prop( "checked", true );
+	        this._moviesContainer.show();
+        }else{
+	        $('#movies-show-in-viewport').prop( "checked", false );
+	        this._moviesContainer.hide();
+        }
+        
+        $('#movies-show-in-viewport').change(function(){
+	        if($(this).is(":checked")) { 
+	            Helioviewer.userSettings.set("options.showinviewport", true);
+	            self._moviesContainer.show();
+	        }else{ 
+	            Helioviewer.userSettings.set("options.showinviewport", false); 
+	            self._moviesContainer.hide();
+	        }
+	    });
     },
 
     /**
@@ -76,7 +102,6 @@ var UserVideoGallery = Class.extend(
         this._lastTimeCurrentVideosUpdated = parseInt(Helioviewer.userSettings.get("state.date"));
         var params = {
             "action": "getObservationDateVideos",
-            "num"   : this._numVideosCurrent,
             "date"   : new Date(this._lastTimeCurrentVideosUpdated).toISOString()
         };
 		// Remove old thumbmails
@@ -250,6 +275,8 @@ var UserVideoGallery = Class.extend(
         var html = "", self = this, count = 0;
 		
 		this._loaderCurrent.hide();
+		var currentScale = Helioviewer.userSettings.get("state.imageScale");
+		self._moviesContainer.html('');
 		
         $.each(videos, function (i, vid) {
             var img = vid.thumbnails['small'];
@@ -258,13 +285,63 @@ var UserVideoGallery = Class.extend(
 			var videoEndDate = new Date(vid.endDate);
 			var videoMiddleDate = new Date((videoStartDate.getTime() + videoEndDate.getTime()) / 2);
 			
+			//Viewport movie box
+			var iconTop = ((vid.roi.top + vid.roi.bottom)/2) / currentScale * vid.imageScale;
+			var iconLeft = ((vid.roi.right + vid.roi.left)/2) / currentScale * vid.imageScale;
+			var boxTop = vid.roi.top / currentScale * vid.imageScale;
+			var boxLeft = vid.roi.left / currentScale * vid.imageScale;
+			var boxHeight = vid.roi.height / currentScale * vid.imageScale;
+			var boxWidth = vid.roi.width / currentScale * vid.imageScale;
+			var title = vid.keywords;
+			title = vid.title.substring(0, vid.title.indexOf('('));
 			
-            html = "<div class='user-video-thumbnail-container user-video-thumbnail-container-current'>\
+			self._moviesContainer.append('<a id="youtube-movie-viewport-icon-'+vid.id+'" class="movie-viewport-icon event-label"\
+					href="'+ vid.url +'" target="_blank"\
+					data-id="'+vid.id+'" data-scale="'+vid.imageScale+'" data-top="'+((vid.roi.top + vid.roi.bottom)/2)+'" data-left="'+((vid.roi.right + vid.roi.left)/2)+'" \
+					style="left: '+iconLeft+'px;top: '+iconTop+'px;"><i class="fa fa-video-camera"></i> '+title+'\
+				</a>');
+            //Movie border box
+            /*self._moviesContainer.append('<div id="youtube-movie-viewport-box-'+vid.id+'" \
+					class="movie-viewport-box" \
+					data-id="'+vid.id+'" data-scale="'+vid.imageScale+'" data-top="'+vid.roi.top+'" data-left="'+vid.roi.left+'" data-height="'+vid.roi.height+'" data-width="'+vid.roi.width+'"\
+					style="left: '+boxLeft+'px;top: '+boxTop+'px;height: '+boxHeight+'px;width: '+boxWidth+'px;">\
+				</div>');
+            
+            $('#youtube-movie-viewport-icon-'+vid.id).hover(function(){
+	            $('#youtube-movie-viewport-box-'+vid.id).show();
+            },function(){
+	            $('#youtube-movie-viewport-box-'+vid.id).hide();
+            });*/
+            
+            
+	        $("#youtube-movie-viewport-icon-" + vid.id).qtip({
+	            content: {
+	                title: {
+	                    text: vid.title
+	                },
+	                text: self._buildPreviewTooltipHTML(vid)
+	            },
+	            show: {
+	                delay: 140
+	            },
+	            position : {
+		            //my : 'right center',
+					//at : 'left center',
+				    viewport: $('#helioviewer-viewport-container-inner'),
+				    adjust : {
+				        //method: 'none shift',
+				        screen : true
+				    }
+				}
+	        });
+			
+            html = "<div class='user-video-thumbnail-container user-video-thumbnail-container-current' data-id='"+vid.id+"'>\
                     	<a target='_blank' href='" + vid.url + "' " + "alt='video thumbnail' id='youtube-movie-current-"+vid.id+"'>\
 							<img class='user-video-thumbnail' src='" + img + "' alt='user video thumbnail' />\
                     	</a>\
                     	<div style='text-align: center;padding:0px 10px; cursor:pointer' class='qtip-left user-video-label' data-time='"+videoMiddleDate.getTime()+"' title='Set observation date to "+videoMiddleDate.toDateString()+" "+videoMiddleDate.toTimeString()+" UTC'>" + vid.title + "</div>\
                     </div>";
+            
                     
             // Drop tailing line break
 			html = html.slice(0, -6);  
@@ -291,14 +368,27 @@ var UserVideoGallery = Class.extend(
 	                delay: 140
 	            }
 	        });
-	        count++;     
+	        count++;
         });
         
 		if($('.user-video-thumbnail-container-current').length == 0){
-			this._containerCurrent.append('<p>No shared movies found.</p>');
+			this._containerCurrent.append('<p><br/>No shared movies found.</p>');
 		}else if(count == this._numVideosCurrent){
 			this._containerCurrent.append('<span class="user-video-current-show-more">SHOW MORE</span>');
 		}
+	    
+	    $('#user-video-gallery-main-current > div').off();
+	    $('#user-video-gallery-main-current > div').hover(function(){
+            var id = $(this).data('id');
+            $('.movie-viewport-icon').hide();
+            $('.event-marker').hide();
+            $('.event-region').hide();
+            $('#youtube-movie-viewport-icon-'+id).show();
+        },function(){
+            $('.movie-viewport-icon').show();
+            $('.event-marker').show();
+            $('.event-region').show();
+        });
 		
         this._working = false;
     },
@@ -335,5 +425,36 @@ var UserVideoGallery = Class.extend(
 
         return html;
     },
-
+	
+	changeScale: function (event, imageScale) {
+        
+        $('.movie-viewport-icon').each(function(i, obj){
+	        var id = $(obj).data('id');
+	        var scale = $(obj).data('scale');
+	        var iconTop = $(obj).data('top') / imageScale * scale;
+			var iconLeft = $(obj).data('left') / imageScale * scale;
+			
+			$('#youtube-movie-viewport-icon-'+id).css({
+				top: iconTop + 'px',
+				left: iconLeft + 'px'
+			});
+        });
+        
+        /*$('.movie-viewport-box').each(function(i, obj){
+	        var id = $(obj).data('id');
+	        var scale = $(obj).data('scale');
+			var boxTop = $(obj).data('top') / imageScale * scale;
+			var boxLeft = $(obj).data('left') / imageScale * scale;
+			var boxHeight = $(obj).data('height') / imageScale * scale;
+			var boxWidth = $(obj).data('width') / imageScale * scale;
+			
+			$('#youtube-movie-viewport-box-'+id).css({
+				top: boxTop + 'px',
+				left: boxLeft + 'px',
+				height: boxHeight + 'px',
+				width: boxWidth + 'px'
+			});
+        });*/
+        
+    }
 });

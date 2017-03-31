@@ -134,9 +134,9 @@ var EventMarker = Class.extend(
                 this.parentFRM.domNode.append(this.eventRegionDomNode);
             }
 
-            this.eventRegionDomNode.bind("click", $.proxy(this.toggleEventPopUp, this));
-            this.eventRegionDomNode.mouseenter($.proxy(this.toggleEventLabel, this));
-            this.eventRegionDomNode.mouseleave($.proxy(this.toggleEventLabel, this));
+            //this.eventRegionDomNode.bind("click", $.proxy(this.toggleEventPopUp, this));
+            //this.eventRegionDomNode.mouseenter($.proxy(this.toggleEventLabel, this));
+            //this.eventRegionDomNode.mouseleave($.proxy(this.toggleEventLabel, this));
         }
     },
 

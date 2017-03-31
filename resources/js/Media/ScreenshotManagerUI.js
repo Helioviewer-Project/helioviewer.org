@@ -193,6 +193,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             scaleType     : Helioviewer.userSettings.get("state.scaleType"),
             scaleX        : Helioviewer.userSettings.get("state.scaleX"),
             scaleY        : Helioviewer.userSettings.get("state.scaleY"),
+            movieIcons    : Helioviewer.userSettings.get("options.showinviewport"),
             date          : helioviewer.getDate().toISOString(),
             display       : false
         }, this._toArcsecCoords(roi, imageScale));

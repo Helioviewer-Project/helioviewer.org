@@ -105,7 +105,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             scaleX       : Helioviewer.userSettings.get("state.scaleX"),
             scaleY       : Helioviewer.userSettings.get("state.scaleY"),
             format       : this._manager.format,
-            size         : 0
+            size         : 0,
+            movieIcons   : 0
         };
 
         // Add ROI and start and end dates
@@ -125,18 +126,22 @@ var MovieManagerUI = MediaManagerUI.extend(
             if (frameRate < 1 || frameRate > 30) {
                 throw "Frame-rate must be between 1 and 30.";
             }
-            baseParams['frameRate'] = formParams['framerate'];
+            params['frameRate'] = parseInt(formParams['framerate']);
         }
         else {
-            if (formParams['movie-length'] < 5 ||
-                formParams['movie-length'] > 100) {
+            if (formParams['framerate'] < 5 ||
+                formParams['framerate'] > 100) {
                 throw "Movie length must be between 5 and 100 seconds.";
             }
-            baseParams['movieLength'] = formParams['movie-length'];
+            params['movieLength'] = parseInt(formParams['framerate']);
         }
         
         if(typeof formParams['size'] != 'undefined' && (parseInt(formParams['size']) >=0 || parseInt(formParams['size']) <=5)){
 	        params['size'] = parseInt(formParams['size']);
+        }
+        
+        if(typeof formParams['movie-icons'] != 'undefined' && parseInt(formParams['movie-icons']) >0){
+	        params['movieIcons'] = true;
         }
 
         // Submit request
@@ -209,11 +214,13 @@ var MovieManagerUI = MediaManagerUI.extend(
 	        $('.movie-duration-box').hide();
             $('.movie-time-box').show();
             $('.movie-format-box').show();
+            $('.movie-icons').show();
 	        $('.movie-settings-more-btn').hide();
             $('.movie-settings-less-btn').show();
         }else{
 	        $('.movie-time-box').hide();
             $('.movie-format-box').hide();
+            $('.movie-icons').hide();
             $('.movie-duration-box').show();
             $('.movie-settings-less-btn').hide();
 	        $('.movie-settings-more-btn').show();
@@ -461,6 +468,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             $('.movie-duration-box').hide();
             $('.movie-time-box').show();
             $('.movie-format-box').show();
+            $('.movie-icon-box').show();
 	        $('.movie-settings-more-btn').hide();
             $('.movie-settings-less-btn').show();
             Helioviewer.userSettings.set("options.movies.dialog", 'advanced');
@@ -470,6 +478,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         $(".movie-settings-less-btn").click(function (e) {
             $('.movie-time-box').hide();
             $('.movie-format-box').hide();
+            $('.movie-icon-box').hide();
             $('.movie-duration-box').show();
             $('.movie-settings-less-btn').hide();
 	        $('.movie-settings-more-btn').show();
@@ -502,6 +511,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                 var endTimeVal = $('#movie-end-date').val().replace(/\//g, '-') + 'T' + $('#movie-end-time').val() + '.000Z';
                 var sizeVal = $('#movie-size').val();
                 var durationVal = $('#movie-duration').val();
+                var movieIcons = $('#movie-icons').is(':checked') ? 1 : 0;
                 
                 var formSettings = [
 		            {name : 'speed-method', value : speedMethodVal},
@@ -509,6 +519,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 		            {name : 'startTime', value : startTimeVal},
 		            {name : 'endTime', value : endTimeVal},
 		            {name : 'size', value : sizeVal},
+		            {name : 'movie-icons', value : movieIcons}
 	            ];
                 
                 if(Helioviewer.userSettings.get("options.movies.dialog") !== 'advanced'){
