@@ -123,3 +123,32 @@ img.user-video-thumbnail {
 	padding:5px;
 	cursor:pointer;
 }
+
+.movie-viewport-icon{
+	position:absolute;
+	z-index: 3;
+	text-decoration:none;
+}
+.movie-viewport-icon i{
+	font-size: 20px;
+}
+.movie-viewport-icon:hover {
+    background-color: rgba(24, 24, 24, 0.95);
+    z-index: 1000;
+}
+
+.movie-viewport-box{
+	display:none;
+	position:absolute;
+	z-index: 2;
+	border:1px solid #fff;
+	border-radius: 5px;
+	/*background: repeating-linear-gradient(
+	  45deg,
+	  rgba(0, 0, 0, 0.2),
+	  rgba(0, 0, 0, 0.2) 10px,
+	  rgba(0, 0, 0, 0.3) 10px,
+	  rgba(0, 0, 0, 0.3) 20px
+	);*/
+	background-image: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255,255,255,.3) 15px, rgba(255,255,255,.3) 30px);
+}

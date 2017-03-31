@@ -52,7 +52,8 @@ var SettingsLoader = (
                     format: "mp4"
                 },
                 autorefresh: false,
-                movieautoplay: false
+                movieautoplay: false,
+                showinviewport: false
             },
             // Saved movie and screenshots
             history: {

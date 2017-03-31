@@ -3,7 +3,7 @@
 	$debug = false;
 	
 	//Force debug mode. Set it to true to always force debug mode.
-	$forceDebug = false;
+	$forceDebug = true;
 	
 	//check if URL have debug parameter
 	if (isset($_GET['debug']) || $forceDebug) {
@@ -307,6 +307,7 @@
 						<div class="section">
 							<!-- User-Submitted Videos -->
 							<div id="user-video-gallery-current" class="ui-widget ui-widget-content ui-corner-all">
+								<label for="movies-show-in-viewport"><input type="checkbox" id="movies-show-in-viewport"/> Show in Viewport</label>
 								<div id="user-video-gallery-main-current">
 									<span id="user-video-gallery-spinner-current"></span>
 								</div>
@@ -438,6 +439,12 @@
 											<option value='3'>1440p (2560 x 1440, Quad HD)</option>
 											<option value='4'>2160p (3840 x 2160, 4K or Ultra HD)</option>
 										</select>
+									</fieldset>
+	
+									<!-- Display Shared YouTube movies -->
+									<fieldset style='padding: 0px; margin: 5px 0px 8px;' class="movie-icon-box">
+										<label for='movie-icons' style='width: 160px; font-style: italic;'>Display YouTube movies icons</label>
+										<input type="checkbox" name="movie-icons" id="movie-icons" value="1" />
 									</fieldset>
 									
 								</div>
@@ -1220,6 +1227,9 @@
 		
 		$( document ).ready(function(){
 			settingsJSON = {
+				'back_end'             		: "http://api.hv.org/",
+		        'web_root_url'         		: "http://hv.org",
+		        'user_video_feed'       	: "http://api.hv.org/"
 				//'back_end'             	: "https://api.helioviewer.org/",
 		        //'web_root_url'         	: "https://helioviewer.org",
 			    //'build_num'             	: 700,

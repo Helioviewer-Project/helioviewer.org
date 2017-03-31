@@ -709,7 +709,7 @@ _:-ms-fullscreen, :root .accordion select option{
 }
 
 /* Text-icon buttons */
-a.text-btn, div.text-btn, div.text-btn a {
+div.text-btn, div.text-btn a {
    cursor: pointer;
    text-decoration: none;
    display: inline-block;
@@ -718,7 +718,6 @@ a.text-btn, div.text-btn, div.text-btn a {
    margin: 0 5px;
 }
 
-a.text-btn:hover, 
 div.text-btn:hover,
 div.text-btn:hover a:hover {
    color: yellow;
@@ -965,7 +964,7 @@ span.ui-icon-hover, div.ui-icon-hover {
    background-color: white;
 }
 .social-btns .text-btn:active {
-    color: rgba(175,0,255,1) !important;
+    color: rgba(175,0,255,1);
     border: 1px solid rgba(175,0,255,1);
 }
 

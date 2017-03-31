@@ -356,11 +356,12 @@ var TimelineEvents = Class.extend({
 									var id = this.kb_archivid;
 									id = id.replace(/\(|\)|\.|\+|\:/g, "");
 									if($("#marker_" + id).length != 0) {
-										$("#event-container .event-layer > div[id!='marker_"+id+"']").css({'opacity':'0.2'});
-										$("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'0.2'});
+										$("#event-container .event-layer > div[id!='marker_"+id+"']").css({'opacity':'0'});
+										$("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'0'});
 										$("#event-container .event-layer > div[id='marker_"+id+"']").parent().css({'opacity':'1'});
 										$("#event-container .event-layer > div[id='marker_"+id+"']").css({'z-index':'1000'}); 
 										$("#event-container .event-layer > div[id='region_"+id+"']").css({'opacity':'1'});
+										$('.movie-viewport-icon').hide();
 									}
 								}
 							},
@@ -375,6 +376,7 @@ var TimelineEvents = Class.extend({
 										id = id.replace(/\(|\)|\.|\+|\:/g, "");
 										$("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'1'});
 									 	$("#event-container .event-layer > div").css({'opacity':'1.0', 'z-index':'997'});
+									 	$('.movie-viewport-icon').show();
 								 	}
 								}	
 							}
