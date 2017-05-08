@@ -230,6 +230,7 @@ var EventTree = Class.extend({
     hoverOff: function (event) {
         $("#event-container > div.event-layer").css({'opacity':'1.0'});
 		$(".highcharts-series > rect").show();
+		$('.movie-viewport-icon').show();
     },
 
     hoverOnFRM: function (event) {
