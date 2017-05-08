@@ -443,8 +443,14 @@
 	
 									<!-- Display Shared YouTube movies -->
 									<fieldset style='padding: 0px; margin: 5px 0px 8px;' class="movie-icon-box">
-										<label for='movie-icons' style='width: 160px; font-style: italic;'>Display YouTube movies icons</label>
 										<input type="checkbox" name="movie-icons" id="movie-icons" value="1" />
+										<label for='movie-icons' style='width: 200px; font-style: italic;'>Display YouTube movies icons</label>
+									</fieldset>
+	
+									<!-- Rotate field of view of movie with Sun -->
+									<fieldset style='padding: 0px; margin: 5px 0px 8px;' class="movie-follow-viewport-box">
+										<input type="checkbox" name="follow-viewport" id="follow-viewport" value="1"/>
+										<label for='follow-viewport' style='width: 200px; font-style: italic;'>Rotate field of view of movie with Sun</label>
 									</fieldset>
 									
 								</div>

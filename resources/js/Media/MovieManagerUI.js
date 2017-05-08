@@ -106,7 +106,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             scaleY       : Helioviewer.userSettings.get("state.scaleY"),
             format       : this._manager.format,
             size         : 0,
-            movieIcons   : 0
+            movieIcons   : 0,
+            followViewport   : 0
         };
 
         // Add ROI and start and end dates
@@ -142,6 +143,10 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         if(typeof formParams['movie-icons'] != 'undefined' && parseInt(formParams['movie-icons']) >0){
 	        params['movieIcons'] = true;
+        }
+        
+        if(typeof formParams['followViewport'] != 'undefined' && parseInt(formParams['followViewport']) >0){
+	        params['followViewport'] = true;
         }
 
         // Submit request
@@ -214,13 +219,15 @@ var MovieManagerUI = MediaManagerUI.extend(
 	        $('.movie-duration-box').hide();
             $('.movie-time-box').show();
             $('.movie-format-box').show();
-            $('.movie-icons').show();
+            $('.movie-icons-box').show();
+            $('.movie-follow-viewport-box').show();
 	        $('.movie-settings-more-btn').hide();
             $('.movie-settings-less-btn').show();
         }else{
 	        $('.movie-time-box').hide();
             $('.movie-format-box').hide();
-            $('.movie-icons').hide();
+            $('.movie-icons-box').hide();
+            $('.movie-follow-viewport-box').hide();
             $('.movie-duration-box').show();
             $('.movie-settings-less-btn').hide();
 	        $('.movie-settings-more-btn').show();
@@ -469,6 +476,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             $('.movie-time-box').show();
             $('.movie-format-box').show();
             $('.movie-icon-box').show();
+            $('.movie-follow-viewport-box').show();
 	        $('.movie-settings-more-btn').hide();
             $('.movie-settings-less-btn').show();
             Helioviewer.userSettings.set("options.movies.dialog", 'advanced');
@@ -479,6 +487,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             $('.movie-time-box').hide();
             $('.movie-format-box').hide();
             $('.movie-icon-box').hide();
+            $('.movie-follow-viewport-box').hide();
             $('.movie-duration-box').show();
             $('.movie-settings-less-btn').hide();
 	        $('.movie-settings-more-btn').show();
@@ -512,6 +521,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                 var sizeVal = $('#movie-size').val();
                 var durationVal = $('#movie-duration').val();
                 var movieIcons = $('#movie-icons').is(':checked') ? 1 : 0;
+                var followViewport = $('#follow-viewport').is(':checked') ? 1 : 0;
                 
                 var formSettings = [
 		            {name : 'speed-method', value : speedMethodVal},
@@ -519,7 +529,8 @@ var MovieManagerUI = MediaManagerUI.extend(
 		            {name : 'startTime', value : startTimeVal},
 		            {name : 'endTime', value : endTimeVal},
 		            {name : 'size', value : sizeVal},
-		            {name : 'movie-icons', value : movieIcons}
+		            {name : 'movie-icons', value : movieIcons},
+		            {name : 'followViewport', value : followViewport}
 	            ];
                 
                 if(Helioviewer.userSettings.get("options.movies.dialog") !== 'advanced'){
