@@ -714,16 +714,22 @@ var EventMarker = Class.extend(
         if ( this.event_peaktime != null && this.event_peaktime != '') {
             content += '<div class="container">'+"\n"
                     +      "\t"+'<div class="param-container"><div class="param-label user-selectable">Peak Time:</div></div>'+"\n"
-                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_peaktime.replace('T',' ')+'</div><div class="ui-icon ui-icon-arrowstop-1-n" title="Jump to Event Peak Time"></div></div>'+"\n"
+                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_peaktime.replace('T',' ')
+                    +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_peaktime.replace('T',' ')+'">UTC</span>'
+                    +		'</div><div class="ui-icon ui-icon-arrowstop-1-n" title="Jump to Event Peak Time"></div></div>'+"\n"
                     +  '</div>'+"\n";
         }
         content     += '<div class="container">'+"\n"
                     +      "\t"+'<div class="param-container"><div class="param-label user-selectable">Start Time: </div></div>'+"\n"
-                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_starttime.replace('T',' ')+'</div><div class="ui-icon ui-icon-arrowstop-1-w" title="Jump to Event Start Time"></div></div>'+"\n"
+                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_starttime.replace('T',' ')
+                    +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_starttime.replace('T',' ')+'">UTC</span>'
+                    +'</div><div class="ui-icon ui-icon-arrowstop-1-w" title="Jump to Event Start Time"></div></div>'+"\n"
                     +  '</div>'+"\n"
                     +  '<div class="container">'+"\n"
                     +      "\t"+'<div class="param-container"><div class="param-label user-selectable">End Time: </div></div>'+"\n"
-                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_endtime.replace('T',' ')+'</div><div class="ui-icon ui-icon-arrowstop-1-e" title="Jump to Event End Time"></div>'+"\n"
+                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_endtime.replace('T',' ')
+                    +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_endtime.replace('T',' ')+'">UTC</span>'
+                    +'</div><div class="ui-icon ui-icon-arrowstop-1-e" title="Jump to Event End Time"></div>'+"\n"
                     +  '</div>'+"\n";
 
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
@@ -834,6 +840,7 @@ var EventMarker = Class.extend(
         this.eventPopupDomNode.find("h1, .param-label, .param-value").enableSelection();
 
         this.parentFRM.domNode.append(this.eventPopupDomNode);
+        helioviewer._timeSelector = new TimeSelector();
     },
     
     fixTitles: function(s){

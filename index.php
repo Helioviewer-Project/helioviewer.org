@@ -41,7 +41,7 @@
 	<link rel="stylesheet" href="resources/lib/yui-2.8.2r1/reset-fonts.css" />
 	<link rel="stylesheet" href="resources/lib/jquery-ui-1.12.0/jquery-ui.min.css" />	
 	<link rel="stylesheet" href="resources/lib/jquery.jgrowl-1.4.5/jquery.jgrowl.min.css" />
-	<link rel="stylesheet" href="resources/lib/jquery.qTip2/jquery.qtip.min.css" />
+	<link rel="stylesheet" href="resources/lib/jquery.qTip3/jquery.qtip.min.css" />
 	<link rel="stylesheet" href="resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
 	<link rel="stylesheet" href="resources/lib/DatetimePicker/jquery.datetimepicker.css"/ >
 	<link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.min.css"/ >
@@ -219,7 +219,7 @@
 	
 									<input id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
 	
-									<div class="suffix">UTC</div>
+									<div class="suffix dateSelector" data-tip-pisition="right" data-date-field="date" data-time-field="time">UTC</div>
 	
 									<div id="timeNowBtn" class="fa fa-clock-o right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the most recent available image's for the currently loaded layer(s).">
 										<span class="ui-icon-label">NEWEST</span>
@@ -561,7 +561,7 @@
 	
 										<input id="vso-start-time" name="vso-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
 	
-										<div class="suffix">UTC</div>
+										<div class="suffix dateSelector" data-tip-pisition="left" data-date-field="vso-start-date" data-time-field="vso-start-time">UTC</div>
 									</div>
 								</div>
 	
@@ -572,7 +572,8 @@
 	
 										<input id="vso-end-time" name="vso-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
 	
-										<div class="suffix inactive">UTC</div></div>
+										<div class="suffix inactive dateSelector" data-tip-pisition="left" data-date-field="vso-end-date" data-time-field="vso-end-time">UTC</div>
+									</div>
 								</div>
 	
 								<div class="row">
@@ -609,7 +610,7 @@
 	
 										<input id="sdo-start-time" name="sdo-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
 	
-										<div class="suffix inactive">UTC</div>
+										<div class="suffix inactive dateSelector" data-tip-pisition="left" data-date-field="sdo-start-date" data-time-field="sdo-start-time">UTC</div>
 									</div>
 								</div>
 	
@@ -620,7 +621,7 @@
 	
 										<input id="sdo-end-time" name="sdo-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
 	
-										<div class="suffix inactive">UTC</div></div>
+										<div class="suffix inactive dateSelector" data-tip-pisition="left" data-date-field="sdo-end-date" data-time-field="sdo-end-time">UTC</div></div>
 								</div>
 	
 								<br />
@@ -1085,8 +1086,7 @@
 	<script src="resources/lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.mousewheel/jquery.mousewheel.3.1.13.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.browser/dist/jquery.browser.min.js" type="text/javascript" language="javascript"></script>
-	<script src="resources/lib/jquery.qTip2/jquery.qtip.min.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery.qTip2/imagesloaded.pkg.min.js" type="text/javascript"></script>
+	<script src="resources/lib/jquery.qTip3/jquery.qtip.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery-number-master/jquery.number.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.json-2.3/jquery.json-2.3.min.js" type="text/javascript" ></script>
 	<script src="resources/lib/jquery.cookie/jquery.cookie.min.js" type="text/javascript" ></script>
@@ -1129,6 +1129,7 @@
 		<script src="resources/js/UI/ImageScale.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/Timeline.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/TimelineEvents.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/TimeSelector.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Utility/InputValidator.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Utility/SettingsLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Utility/UserSettings.js?v=<?=$debugTime?>" type="text/javascript"></script>

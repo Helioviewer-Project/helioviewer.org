@@ -180,7 +180,8 @@ var TimelineEvents = Class.extend({
 			},
 
 			title: {
-				text: ''
+				text: '',
+				useHTML: true
 			},
 
 			credits: {
@@ -1534,7 +1535,13 @@ var TimelineEvents = Class.extend({
 			}
 		}
 		
-		chart.setTitle({ text: Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+' - '+ Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC',e.max) });
+		chart.setTitle({ 
+			text: 
+				Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min) +' - ' + Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.max)
+				+' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+'"'
+				+' data-date-time-end="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.max)+'">UTC</span>' });
+		
+		helioviewer._timeSelector = new TimeSelector();
 		
 		return e;
 	},

@@ -259,8 +259,11 @@ var EventLayerAccordion = Layer.extend(
         // For HEK events, we can _always_ use the exact same date as the requestDate
         $("#EventLayerAccordion-Container .timestamp").each(function (i, item) {
             domNode = $(this);
-            domNode.html(self._date.toUTCDateString() + " " + self._date.toUTCTimeString())
-                   .css("color", self._chooseTimeStampColor(0, 0, 0, 0));
+            domNode.html(self._date.toUTCDateString() + " " + self._date.toUTCTimeString() 
+           		 +" <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+self._date.toUTCDateString() + " " + self._date.toUTCTimeString()+"\">UTC</span>")
+                    .css("color", self._chooseTimeStampColor(0, 0, 0, 0));
+
+            //helioviewer._timeSelector = new TimeSelector();
         });
     },
 
@@ -286,8 +289,11 @@ var EventLayerAccordion = Layer.extend(
 
         var weight = this._getScaledTimeDifference(date, this._date);
 
-        $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString())
-                   .css("color", this._chooseTimeStampColor(weight, 0, 0, 0));
+        $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString()
+        		+" <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+date.toUTCDateString() + " " + date.toUTCTimeString()+"\">UTC</span>")
+					.css("color", this._chooseTimeStampColor(weight, 0, 0, 0));
+					
+		//helioviewer._timeSelector = new TimeSelector();
     },
 
     /**
