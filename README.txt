@@ -39,7 +39,7 @@ following software:
 INSTALLATION:
 
 Instructions for installing Helioviewer.org are available online at
-http://wiki.helioviewer.org/wiki/index.php?title=Installing_Helioviewer.org
+http://wiki.helioviewer.org/wiki/Installing_Helioviewer.org
 
 LICENSE:
 
