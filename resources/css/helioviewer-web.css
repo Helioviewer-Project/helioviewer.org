@@ -571,7 +571,7 @@ html, body {
    display: inline-block;
    text-align: left;
 }
-.accordion input[type=text] {
+.timeSelectorDialog input[type=text], .accordion input[type=text] {
    background-color: rgba(255,255,255,0.2);
    border: 1px solid rgba(255,255,255,0.6);
    -webkit-border-radius: 0.2em;
@@ -595,6 +595,28 @@ html, body {
    font-weight: 200;
    padding: 0.3em 0.5em;
    vertical-align: middle;
+}
+
+.timeSelectorDialog .text-btn {
+    color: rgba(255,255,255,1);
+    background-color: transparent;
+    border: 1px solid rgba(255,255,255,1);
+    -o-border-radius: 1em;
+    -moz-border-radius: 1em;
+    -webkit-border-radius: 1em;
+    border-radius: 1em;
+    padding: 0.1em 0.4em;
+    font-weight: 400;
+    font-size: 1.2em;
+    float:right;
+}
+.timeSelectorDialog .text-btn:hover {
+    color: rgba(255,255,0,1);
+    border: 1px solid rgba(255,255,0,1);
+}
+.timeSelectorDialog .text-btn:active {
+    color: yellow;
+    border: 1px solid yellow;
 }
 
 _:-ms-fullscreen, :root .accordion select option{

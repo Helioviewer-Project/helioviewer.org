@@ -295,6 +295,10 @@ var UserVideoGallery = Class.extend(
 			var title = vid.keywords;
 			title = vid.title.substring(0, vid.title.indexOf('('));
 			
+			var vidTitle = '<span class="qtip-left user-video-label" data-time="'+videoMiddleDate.getTime()+'" title="Set observation date to '+videoMiddleDate.toDateString()+' '+videoMiddleDate.toTimeString()+' UTC">'+title+' ('+vid.startDate+' '+vid.endDate+'</span>'
+							+' <span class="dateSelector" data-tip-pisition="left" data-date-time="'+vid.startDate+'"'
+							+' data-date-time-end="'+vid.endDate+'">UTC</span>)';
+			
 			self._moviesContainer.append('<a id="youtube-movie-viewport-icon-'+vid.id+'" class="movie-viewport-icon event-label"\
 					href="'+ vid.url +'" target="_blank"\
 					data-id="'+vid.id+'" data-scale="'+vid.imageScale+'" data-top="'+((vid.roi.top + vid.roi.bottom)/2)+'" data-left="'+((vid.roi.right + vid.roi.left)/2)+'" \
@@ -339,7 +343,7 @@ var UserVideoGallery = Class.extend(
                     	<a target='_blank' href='" + vid.url + "' " + "alt='video thumbnail' id='youtube-movie-current-"+vid.id+"'>\
 							<img class='user-video-thumbnail' src='" + img + "' alt='user video thumbnail' />\
                     	</a>\
-                    	<div style='text-align: center;padding:0px 10px; cursor:pointer' class='qtip-left user-video-label' data-time='"+videoMiddleDate.getTime()+"' title='Set observation date to "+videoMiddleDate.toDateString()+" "+videoMiddleDate.toTimeString()+" UTC'>" + vid.title + "</div>\
+                    	<div style='text-align: center;padding:0px 10px; cursor:pointer' >" + vidTitle + "</div>\
                     </div>";
             
                     
@@ -370,6 +374,8 @@ var UserVideoGallery = Class.extend(
 	        });
 	        count++;
         });
+        
+        helioviewer._timeSelector = new TimeSelector();
         
 		if($('.user-video-thumbnail-container-current').length == 0){
 			this._containerCurrent.append('<p><br/>No shared movies found.</p>');

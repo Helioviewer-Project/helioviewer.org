@@ -130,6 +130,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this._glossary = new VisualGlossary(this._setupDialog);
 
+        this._timeSelector      = new TimeSelector();
+
         this._setupDialogs();
         this._initEventHandlers();
         this._setupSettingsUI();
@@ -1042,7 +1044,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         
         html = '<a href="' + url + '" target="_blank">'
              + nickname + ' ' + sDate
-             + ' UTC <i class="fa fa-external-link-square fa-fw"></i></a>';
+             + ' <span class="dateSelector" data-date-time="'+sDate+'" data-tip-pisition="left">UTC</span> <i class="fa fa-external-link-square fa-fw"></i></a>';
 
         return html;
     },
@@ -1148,6 +1150,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				vsoLinks.append(
                     self._vsoLink(globalStartDate, globalEndDate, nickname)
                 );
+                helioviewer._timeSelector = new TimeSelector();
                 
                 vsoPreviews.append(
                     self._vsoThumbnail(startDate, endDate, nickname, sourceId)
@@ -2256,7 +2259,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             setTimeout(function () {
                 $(document).trigger('update-external-datasource-integration');
                 $(document).trigger('observation-time-layers-changed');
-            }, 50);
+            }, 500);
         }
 
         return;

@@ -108,7 +108,7 @@ var TileLayerAccordion = Layer.extend(
              +         name
              +     '</div>'
              +     '<div class="right">'
-             +         '<span class="timestamp user-selectable"></span>'
+             +         '<span class="timestamp"></span>'
              +         visibilityBtn
              +         removeBtn
              +     '</div>'
@@ -482,6 +482,7 @@ var TileLayerAccordion = Layer.extend(
             weight = self._getScaledTimeDifference(actualDate, requestDate);
             domNode.css("color", self._chooseTimeStampColor(weight, 0, 0, 0));
         });
+        helioviewer._timeSelector = new TimeSelector();
     },
 
     /**
@@ -535,8 +536,11 @@ var TileLayerAccordion = Layer.extend(
     _updateTimeStamp: function (id, date) {
         var weight = this._getScaledTimeDifference(date, this._observationDate);
 
-        $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString())
+        $("#" + id).find('.timestamp').html(date.toUTCDateString() 
+        	+ " " + date.toUTCTimeString() 
+        	+ " <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+date.toUTCDateString() + " " + date.toUTCTimeString()+"\">UTC</span>")
                    .css("color", this._chooseTimeStampColor(weight, 0, 0, 0));
+        helioviewer._timeSelector = new TimeSelector();
     },
 
     /**
