@@ -107,7 +107,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             format       : this._manager.format,
             size         : 0,
             movieIcons   : 0,
-            followViewport   : 0
+            followViewport   : 0,
+            reqObservationDate   : new Date(Helioviewer.userSettings.get("state.date")).toISOString()
         };
 
         // Add ROI and start and end dates
