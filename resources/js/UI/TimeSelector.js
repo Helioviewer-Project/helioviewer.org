@@ -217,16 +217,16 @@ var TimeSelector = Class.extend({
 					+  '<div class="container">'+"\n"
                     +      "\t"+'<div class="param-container" style="width: 80px;"><div class="param-label" style="float:left;padding:5px 0px">UTC:</div></div>'+"\n"
                     +      "\t"+'<div class="value-container"><div class="param-value" style="float:left;padding:5px 0px">'
-                    +  		'<input type="text" value="'+times.date+'" class="dateSelectorUTC" maxlength="10" class="hasDatepicker">&nbsp;'
-                    +		'<input type="text" value="'+times.time+'" class="timeSelectorUTC" maxlength="8"> UTC</div></div></div>'+"\n"
+                    +  		'<input type="text" value="'+times.date+'" class="dateSelectorUTC" maxlength="10" class="hasDatepicker" style="width: 75px;">&nbsp;'
+                    +		'<input type="text" value="'+times.time+'" class="timeSelectorUTC" maxlength="8" style="width: 75px;"> UTC</div></div></div>'+"\n"
                     +  '</div>'+"\n"
 					+  '<div class="container">'+"\n"
                     +      "\t"+'<div class="param-container" style="width: 80px;"><div class="param-label" style="float:left;padding:5px 0px">Julian Day:</div></div>'+"\n"
-                    +      "\t"+'<div class="value-container"><div class="param-value" style="float:left;padding:5px 0px"><input type="text" value="'+times.julian+'" maxlength="13" class="timeSelectorJulian" style="width: 150px;"></div></div>'+"\n"
+                    +      "\t"+'<div class="value-container"><div class="param-value" style="float:left;padding:5px 0px"><input type="text" value="'+times.julian+'" maxlength="13" class="timeSelectorJulian" style="width: 169px;"></div></div>'+"\n"
                     +  '</div>'+"\n"
 					+  '<div class="container">'+"\n"
                     +      "\t"+'<div class="param-container" style="width: 80px;"><div class="param-label" style="float:left;padding:5px 0px">Carrington:</div></div>'+"\n"
-                    +      "\t"+'<div class="value-container"><div class="param-value" style="float:left;padding:5px 0px"><input type="text" value="'+times.carrington+'" class="timeSelectorCarrington" style="width: 150px;"></div></div>'+"\n"
+                    +      "\t"+'<div class="value-container"><div class="param-value" style="float:left;padding:5px 0px"><input type="text" value="'+times.carrington+'" class="timeSelectorCarrington" style="width: 169px;"></div></div>'+"\n"
                     +  '</div>'+"\n"
 					+  '<div class="container" style="padding:10px;">'+"\n"
                     +		"\t"+'<input type="hidden" value="'+$el.attr('data-date-field')+'" class="convertDateField">'+"\n"
