@@ -1117,7 +1117,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 nickname = $(accordion).find('.tile-accordion-header-left').html();
                 sourceId = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
                 var date     = $(accordion).find('.timestamp').html();
-				var timestamp = new Date(date).getTime();
+                var dateArr = date.split(" ");
+				var timestamp = new Date(dateArr[0]+' '+dateArr[1]).getTime();
 				
 				
 				if(sTimestamp == 0 || timestamp < sTimestamp){
@@ -1304,7 +1305,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 imageLayer = '['+sourceId+',1,100]';
 				
 				var date     = $(accordion).find('.timestamp').html();
-				var timestamp = new Date(date).getTime();
+				var dateArr = date.split(" ");
+				var timestamp = new Date(dateArr[0]+' '+dateArr[1]).getTime();
 				
 				if(global){
 					if(sTimestamp == 0 || timestamp < sTimestamp){
