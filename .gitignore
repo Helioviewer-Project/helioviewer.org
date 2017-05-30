@@ -41,3 +41,4 @@ robots.txt
 statistics/milestones.txt
 status/movieId.php
 log
+resources/compressed/*
