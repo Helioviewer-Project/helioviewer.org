@@ -2526,6 +2526,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $('#vso-end-time').TimePickerAlone('setValue', $('#vso-end-time').val());
         $('#sdo-start-time').TimePickerAlone('setValue', $('#sdo-start-time').val());
         $('#sdo-end-time').TimePickerAlone('setValue', $('#sdo-end-time').val());
+
+        if($('#vso-start-date').val() == 'NaN/NaN/NaN'){
+	        setTimeout(function(){ self.updateExternalDataSourceIntegration(true,this); }, 500);
+        }
     },
 
 
