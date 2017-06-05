@@ -13,6 +13,88 @@ var zoomTickTime = 0;
 var timelineStartDate = 0;
 var timelineEndDate = 0;
 
+
+$(function () {
+    
+    
+    /**
+     * Highcharts plugin for setting a lower opacity for other series than the one that is hovered
+     * in the legend
+     */
+    (function (Highcharts) {
+        var each = Highcharts.each;
+        
+        Highcharts.wrap(Highcharts.Legend.prototype, 'renderItem', function (proceed, item) {
+            
+            proceed.call(this, item);
+            
+            
+            var isPoint = !!item.series,
+                collection = isPoint ? item.series.points : this.chart.series,
+                chart = this.chart,
+                groups = isPoint ? ['graphic'] : ['group', 'markerGroup'],
+                element = item.legendGroup.element;
+            
+            element.onmouseover = function () {
+               var itemToShow = false;
+               each(collection, function (seriesItem) {
+                    if (seriesItem !== item) {
+                        each(groups, function (group) {
+                            //Highlight
+                            seriesItem[group].animate({
+                                opacity: 0
+                            }, {
+                                duration: 150
+                            });
+                        });
+                        
+                        //seriesItem.setVisible(false, false);
+                    }else{
+	                    if(typeof seriesItem.options.data_type != 'undefined'){
+	                    	itemToShow = seriesItem.options.data_type;
+	                    }
+                    }
+                });
+                
+                if(itemToShow != false){
+                    $("#event-container > div").css({'opacity':'0'});
+					$("#event-container > div[id^='"+itemToShow+"__']").css({'z-index':'1000'}); 
+					$("#event-container > div[id^='"+itemToShow+"__']").css({'opacity':'1'});
+					$('.movie-viewport-icon').hide();
+                }
+                //chart.redraw();
+            }
+            element.onmouseout = function () {
+               each(collection, function (seriesItem) {
+                    if (seriesItem !== item) {
+                        each(groups, function (group) {
+                            //Highlight
+                            seriesItem[group].animate({
+                                opacity: 1
+                            }, {
+                                duration: 50
+                            });
+                            //Hide
+                            //seriesItem[group].setVisible(true, true);
+                        });
+                        
+                        if(typeof seriesItem.options.data_type != 'undefined'){
+	                        var dataType = seriesItem.options.data_type;
+						 	$("#event-container > div").css({'opacity':'1.0', 'z-index':'997'});
+						 	$('.movie-viewport-icon').show();
+                        }
+                        
+                        //seriesItem.setVisible(true, false);
+                    }
+                });
+                //chart.redraw();
+            }           
+            
+        });
+    }(Highcharts));
+
+});
+
 var Timeline = Class.extend({
 	
 	minNavDate:0,
@@ -655,8 +737,6 @@ var Timeline = Class.extend({
         $(document).on('observation-time-changed', $.proxy(this._updateTimelineDate, this));
         $(document).on('update-external-datasource-integration', $.proxy(this._updateTimeline, this));
         $("#hv-drawer-timeline-logarithmic").on('click', $.proxy(this._updateTimeline, this));
-        
-        
     },
     
     btnZoomIn: function() {

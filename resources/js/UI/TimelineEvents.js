@@ -1443,6 +1443,7 @@ var TimelineEvents = Class.extend({
 				chart.addSeries({
 					name: (typeof _eventsSeries[series.event_type] == 'undefined' ? series['name']: _eventsSeries[series.event_type].name ),
 					data: series['data'],
+					data_type: series['event_type'],
 					showInLegend: series['showInLegend'],
 					color: _eventsSeries[series.event_type].color
 				}, false, false);
