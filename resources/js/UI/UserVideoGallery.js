@@ -375,7 +375,9 @@ var UserVideoGallery = Class.extend(
 	        count++;
         });
         
-        helioviewer._timeSelector = new TimeSelector();
+        if(typeof helioviewer !== 'undefined'){
+	        helioviewer._timeSelector = new TimeSelector();
+        }
         
 		if($('.user-video-thumbnail-container-current').length == 0){
 			this._containerCurrent.append('<p><br/>No shared movies found.</p>');

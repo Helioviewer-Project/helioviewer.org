@@ -1,8 +1,8 @@
 /* Zoom Level Slider */
 #zoomControls {
     position: absolute;
-    left: 2.5em;
-    top: 2em;
+    left: 15px;
+    top: 15px;
     z-index:20;
 }
 
@@ -20,7 +20,7 @@
 #zoomSliderContainer {
     position: absolute;
 	left:8px;
-	top:22px;
+	top:57px;
 	height:212px;
 	width:4px;
     background-color: rgba(255,255,255,0.5);
@@ -46,8 +46,7 @@
 	font-weight:bold;
 	z-index: 10000;
 }
-
-#zoomControlZoomOut, #zoomControlZoomIn {
+#zoomControls #zoom-in-button, #zoomControls #zoom-out-button{
     position: absolute;
 	background-color: rgba(230,230,230,1);
 	color: black;
@@ -55,7 +54,7 @@
     border-radius: 2em;
     -moz-border-radius-bottomleft: 2em;
     -webkit-border-bottom-left-radius: 2em;
-	left: 0px;
+	left: -2px;
 	cursor:pointer;
 	text-align: center;
 	font-size: 2em;
@@ -72,20 +71,75 @@
     user-select: none;
 }
 
-#zoomControlZoomOut {
-    top:235px;
+#zoomControls #zoom-out-button {
+    top:270px;
     line-height: 0.66em;
 }
-#zoomControlZoomIn  {
-    top: 0px;
+#zoomControls #zoom-in-button  {
+    top: 35px;
 }
 
-#zoomControlZoomOut:hover, #zoomControlZoomIn:hover, #zoomControlSlider > .ui-slider-handle:hover {
+#zoomControls #center-button {
+                position: relative;
+                 display: inline-block;
+                   width: 1em;
+                  height: 1em;
+                  margin: -1px 0 0 0;
+                 padding: 4pt;
+        background-color: rgba(230,230,230,1);
+                   color: black;
+                  border: 2px solid rgba(0,0,0,1);
+               font-size: 12pt;
+              text-align: center;
+          vertical-align: middle;
+             line-height: 1em;
+        -o-border-radius: 16px;
+      -moz-border-radius: 16px;
+   -webkit-border-radius: 16px;
+           border-radius: 16px;
+                  cursor: pointer;
+                  left: -2px;
+}
+
+#zoomControls #center-button:hover, #zoomControls #zoom-out-button:hover, #zoomControls #zoom-in-button:hover, #zoomControlSlider > .ui-slider-handle:hover {
     background-color: rgba(255,255,255,1);
     border: 2px solid rgba(0,0,0,1);
 }
 
-#zoomControlZoomOut:active, #zoomControlZoomIn:active, #zoomControlSlider > .ui-slider-handle:active {
+#zoomControls #center-button:active, #zoomControls #zoom-out-button:active, #zoomControls #zoom-in-button:active, #zoomControlSlider > .ui-slider-handle:active {
     background-color: yellow;
     border: 2px solid rgba(0,0,0,1);
 }
+
+
+/* Header Buttons */
+/*#zoomControls .viewport-action {
+                position: relative;
+                 display: inline-block;
+                   width: 1em;
+                  height: 1em;
+                  margin: -1px 0 0 0;
+                 padding: 4pt;
+        background-color: rgba(255,255,255,0.75);
+                   color: black;
+                  border: 2px solid rgba(0,0,0,1);
+               font-size: 12pt;
+              text-align: center;
+          vertical-align: middle;
+             line-height: 1em;
+        -o-border-radius: 16px;
+      -moz-border-radius: 16px;
+   -webkit-border-radius: 16px;
+           border-radius: 16px;
+                  cursor: pointer;
+}
+#zoomControls .viewport-action:hover {
+              color: rgba(255,255,255,0.75);
+       border-color: rgba(255,255,255,0.75);
+   background-color: rgba(0,0,0,0.75);
+}
+#zoomControls .viewport-action:active {
+              color: #cb2027;
+       border-color: #cb2027;
+   background-color: black;
+}*/
