@@ -715,21 +715,21 @@ var EventMarker = Class.extend(
             content += '<div class="container">'+"\n"
                     +      "\t"+'<div class="param-container"><div class="param-label user-selectable">Peak Time:</div></div>'+"\n"
                     +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_peaktime.replace('T',' ')
-                    +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_peaktime.replace('T',' ')+'">UTC</span>'
-                    +		'</div><div class="ui-icon ui-icon-arrowstop-1-n" title="Jump to Event Peak Time"></div></div>'+"\n"
+                    +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_peaktime.replace('T',' ')+'">UTC</span></div>'
+                    +		(embedView ? '' : '<div class="ui-icon ui-icon-arrowstop-1-n" title="Jump to Event Peak Time"></div></div>')+"\n"
                     +  '</div>'+"\n";
         }
         content     += '<div class="container">'+"\n"
                     +      "\t"+'<div class="param-container"><div class="param-label user-selectable">Start Time: </div></div>'+"\n"
                     +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_starttime.replace('T',' ')
-                    +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_starttime.replace('T',' ')+'">UTC</span>'
-                    +'</div><div class="ui-icon ui-icon-arrowstop-1-w" title="Jump to Event Start Time"></div></div>'+"\n"
+                    +	   ' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_starttime.replace('T',' ')+'">UTC</span></div>'
+                    +		(embedView ? '' : '<div class="ui-icon ui-icon-arrowstop-1-w" title="Jump to Event Start Time"></div></div>')+"\n"
                     +  '</div>'+"\n"
                     +  '<div class="container">'+"\n"
                     +      "\t"+'<div class="param-container"><div class="param-label user-selectable">End Time: </div></div>'+"\n"
                     +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_endtime.replace('T',' ')
-                    +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_endtime.replace('T',' ')+'">UTC</span>'
-                    +'</div><div class="ui-icon ui-icon-arrowstop-1-e" title="Jump to Event End Time"></div>'+"\n"
+                    +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_endtime.replace('T',' ')+'">UTC</span></div>'
+                    +		(embedView ? '' : '<div class="ui-icon ui-icon-arrowstop-1-e" title="Jump to Event End Time"></div>')+"\n"
                     +  '</div>'+"\n";
 
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
@@ -754,11 +754,11 @@ var EventMarker = Class.extend(
         content     += '<div class="btn-container">'+"\n"
                     +       "\t"+'<div class="btn-label btn event-info text-btn"><i class="fa fa-info-circle fa-fw"></i> View HEK data</div>'+"\n"
                     + 		"<div style=\"clear:both\"></div>\n"
-                    +       "\t"+'<div class="btn-label btn event-create-movie text-btn" data-start="'+this.event_starttime+'" data-end="'+this.event_endtime+'"><i class="fa fa-video-camera fa-fw"></i> Make movie using event times and current field of view</div>'+"\n"
+                    +       "\t"+(embedView ? '' : '<div class="btn-label btn event-create-movie text-btn" data-start="'+this.event_starttime+'" data-end="'+this.event_endtime+'"><i class="fa fa-video-camera fa-fw"></i> Make movie using event times and current field of view</div>')+"\n"
                     + 		"<div style=\"clear:both\"></div>\n"
                     //+       "\t"+'<div class="ui-icon ui-icon-copy btn copy-to-data" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"></div>'
                     +		noaaSearch
-                    +		"\t"+'<div class="btn-label btn copy-to-data text-btn" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>'+"\n"
+                    +		"\t"+(embedView ? '' : '<div class="btn-label btn copy-to-data text-btn" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>')+"\n"
 //                    +       "\t"+'<div class="ui-icon ui-icon-video btn event-movie"></div><div class="btn-label btn event-movie">Generate Movie</div>'+"\n"
                     +  '</div>'+"\n";
 

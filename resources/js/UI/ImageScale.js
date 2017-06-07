@@ -236,15 +236,17 @@ var ImageScale = Class.extend(
              Helioviewer.userSettings.get("state.containerY") <= $('#hv-header').height() ||
              Helioviewer.userSettings.get("state.containerY") >= this.container.parent().height()-this.container.height()
             ) {
-
-            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.container.width()/2;
-            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
-
-            this.container.css({
-                'position' : 'absolute',
-                'top'      : this.containerY+'px',
-                'left'     : this.containerX+'px'
-            });
+			
+			if ( $('#earth-button').length ) {
+	            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.container.width()/2;
+	            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
+	
+	            this.container.css({
+	                'position' : 'absolute',
+	                'top'      : this.containerY+'px',
+	                'left'     : this.containerX+'px'
+	            });
+	        }
         }
 
         scaleXY = coords.computeMouseCoords(

@@ -1351,3 +1351,15 @@ span.ui-icon-hover, div.ui-icon-hover {
 
 /* FIX jQuery Dialog position */
 .ui-front { z-index: 9998 !important; } .ui-dialog { z-index: 9999 !important; }
+
+
+#watermark {
+    background-image: url('../../resources/images/logos/watermark_embed.svg');
+    position: absolute;
+    cursor: pointer;
+    display: none;
+    width: 140px;
+    height: 35px;
+    left: 20px;
+    bottom: 20px;
+}

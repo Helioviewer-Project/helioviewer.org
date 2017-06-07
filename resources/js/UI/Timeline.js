@@ -1113,7 +1113,7 @@ var Timeline = Class.extend({
 		timelineStartDate = Math.round(newMin);
         timelineEndDate = Math.round(newMax);
 		
-		if($('#hv-drawer-timeline-events').is(":visible") != true){
+		if($('#data-coverage-timeline').is(":visible") != true){
 			return;
 		}
 

@@ -14,6 +14,13 @@
 	if($debug){
 		$debugTime = time();
 	}
+	
+	//check if URL have output parameter
+	$embed = false;
+	if (isset($_GET['output']) && $_GET['output'] == 'embed') {
+		$embed = true;
+	}
+	
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,6 +101,7 @@
 	
 </head>
 <body>
+	<?php if(!$embed){ ?>
 	<div class="user-select-none" style="width: 100%; margin: 0; padding: 0; text-align: center; z-index: 9;">
 		<!-- Image area select tool -->
 		<div id='image-area-select-buttons'>
@@ -111,10 +119,10 @@
 	
 		</div>
 	</div>
-	
+	<?php } ?>
 	
 	<div style="width: 100%; height: 100%; margin: 0; padding: 0;">
-	
+		<?php if(!$embed){ ?>
 		<div id="hv-header" class="user-select-none">
 	
 			<div id="loading">
@@ -1058,6 +1066,26 @@
 				<div id='upload-error-console-container'><div id='upload-error-console'>...</div></div>
 			</div>
 		</div>
+		<?php } else { ?>
+			<div id="zoom" style="width:70px;height:400px;">
+				<!--  Zoom Controls -->
+				<div id="zoomControls">
+					<div id="center-button" class="viewport-action fa fa-crosshairs" title="Center the Sun in the Viewport"></div>
+					<div id="zoom-in-button" title="Zoom in.">+</div>
+					<div id="zoomSliderContainer">
+						<div id="zoomControlSlider"></div>
+					</div>
+					<div id="zoom-out-button" title="Zoom out.">-</div>
+				</div>
+	
+				<!--<div id="center-button" class="viewport-action fa fa-crosshairs" title="Center the Sun in the Viewport"></div>
+	
+				<div id="zoom-out-button" class="viewport-action fa fa-search-minus" title="Zoom Out"></div>
+	
+				<div id="zoom-in-button" class="viewport-action fa fa-search-plus" title="Zoom In"></div>-->
+	
+			</div>
+		<?php } ?>
 	</div>
 	
 	
@@ -1171,8 +1199,10 @@
 	
 	<!-- Launch Helioviewer -->
 	<script type="text/javascript">
-		var serverSettings, settingsJSON, urlSettings, debug, scrollLock = false;
-		
+		var serverSettings, settingsJSON, urlSettings, debug, scrollLock = false, embedView = false;
+		<?php if($embed){ ?>
+		embedView = true;
+		<?php } ?>
 		function getUrlParameters() {
 			var sPageURL = decodeURIComponent(decodeURIComponent(window.location.search.substring(1))),
 				sURLVariables = sPageURL.split('&'),
@@ -1233,24 +1263,12 @@
 		};
 		
 		$( document ).ready(function(){
-			settingsJSON = {
-				//'back_end'             	: "https://api.helioviewer.org/",
-		        //'web_root_url'         	: "https://helioviewer.org",
-			    //'build_num'             	: 700,
-		        //'default_image_scale'   	: 4.8408817,
-		        //'min_image_scale'       	: 0.60511022,
-		        //'max_image_scale'       	: 154.90822,
-		        //'max_tile_layers'       	: 5,
-		        //'prefetch_size'        	: 0,
-		        //'news_url'             	: "http://blog.helioviewer.org/",
-		        //'user_video_feed'       	: "https://api.helioviewer.org/",
-		        //'contact_email'        	: "contact@helioviewer.org"
-			};
+			settingsJSON = {'web_root_url': "https://beta3.helioviewer.org"};
 			serverSettings = new Config(settingsJSON).toArray();
 			zoomLevels = [0.60511022,1.21022044,2.42044088,4.84088176,9.68176352,19.36352704,38.72705408,77.45410816,154.90821632];
 
 			urlSettings = getUrlParameters();
-	
+			
 			// Initialize Helioviewer.org
 			helioviewer = new HelioviewerWebClient(urlSettings, serverSettings, zoomLevels);
 
@@ -1260,6 +1278,12 @@
 			}
 		});
 	</script>
-	
+	<?php
+		if($embed && (!isset($_GET['hideWatermark']) || $_GET['hideWatermark'] != 'true')){
+			$link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("output=embed", "", $_SERVER['REQUEST_URI']));
+			echo '<a href="'.$link.'" target="_blank"><div id="watermark" style="width: 140px; height: 35px; display: block;"></div></a>';
+		}
+		
+	?>	
 </body>
 </html>
