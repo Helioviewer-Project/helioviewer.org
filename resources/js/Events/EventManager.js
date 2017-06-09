@@ -34,6 +34,7 @@ var EventManager = Class.extend({
         this._treeContainer  = $("#eventJSTree");
         this._jsTreeData     = [];
         this._date           = date;
+        this._queEvents      = false;
         this._eventLabelsVis = Helioviewer.userSettings.get("state.eventLabels");
         this._eventGlossary  = eventGlossary;
 
@@ -109,6 +110,7 @@ var EventManager = Class.extend({
         var params = {
             "action"     : "getDefaultEventTypes"
         };
+        this._queEvents = false;
         $.get(Helioviewer.api, params, $.proxy(this._parseEventFRMs, this), "json");
     },
 
@@ -124,6 +126,7 @@ var EventManager = Class.extend({
                 "startTime"  : new Date(this._date.getTime()).toISOString(),
                 "ar_filter"  : true
             };
+            this._queEvents = true;
             $.get(Helioviewer.api, params, $.proxy(this._parseEventFRMs, this), "json");
         }
     },
@@ -133,7 +136,7 @@ var EventManager = Class.extend({
      * creating the EventTypes and EventFeatureRecognitionMethods from the JSON
      * data and then calling generateTreeData to build the jsTree.
      */
-    _parseEventFRMs: function (result) {
+    _parseEventFRMs: function (result, queryEvents) {
         var self = this, domNode, eventAbbr, settings;
 
         $("#event-container").empty();
@@ -163,7 +166,9 @@ var EventManager = Class.extend({
         this._generateTreeData(result);
 
         // Fetch events for any selected event_type/frm_name pairs
-        this._queryEvents();
+        if(this._queEvents){
+	        this._queryEvents();
+        }
     },
 
     /**
