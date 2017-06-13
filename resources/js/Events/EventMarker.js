@@ -59,10 +59,32 @@ var EventMarker = Class.extend(
             'rel' : id,
             'id' : 'marker_'+id
         });
-        this.pos = {
-            x: ( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) -12,
-            y: (-this.hv_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale) -38
-        };
+        if ( this.hpc_boundcc != '') {
+	        var polygonCenterX = (this.hv_poly_width_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
+	        var polygonCenterY = (this.hv_poly_height_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
+
+	        var scaledMarkerX = this.hv_marker_offset_x *( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale );
+	        var scaledMarkerY = this.hv_marker_offset_y *( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale );
+	       
+	        var polygonPosX = ( this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale);
+	        var polygonPosY = ( this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale);
+
+	        var markerX = Math.round(polygonPosX + polygonCenterX + scaledMarkerX);
+	        var markerY = Math.round(polygonPosY + polygonCenterY + scaledMarkerY);
+	        
+	        this.pos = {
+	            x: markerX - 12,
+	            y: markerY - 38
+	        };
+        }else{
+	        this.pos = {
+	            x: Math.round( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) -12,
+	            y: Math.round(-this.hv_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale) -38
+	        };
+        }
+        
+        
+        
         markerURL = serverSettings['rootURL']+'/resources/images/eventMarkers/'+this.event_type.toUpperCase()+'@2x'+'.png';
         this.eventMarkerDomNode.css({
                          'left' :  this.pos.x + 'px',
@@ -181,10 +203,30 @@ var EventMarker = Class.extend(
     refresh: function () {
 
         // Re-position Event Marker pin
-        this.pos = {
-            x: ( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) -12,
-            y: (-this.hv_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale) -38
-        };
+        if ( this.hpc_boundcc != '') {
+	        var polygonCenterX = (this.hv_poly_width_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
+	        var polygonCenterY = (this.hv_poly_height_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
+
+	        var scaledMarkerX = this.hv_marker_offset_x *( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale );
+	        var scaledMarkerY = this.hv_marker_offset_y *( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale );
+	       
+	        var polygonPosX = this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale;
+	        var polygonPosY = this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale;
+	        
+	        var markerX = Math.round(polygonPosX + polygonCenterX + scaledMarkerX);
+	        var markerY = Math.round(polygonPosY + polygonCenterY + scaledMarkerY);
+	        
+	        this.pos = {
+	            x: markerX - 12,
+	            y: markerY - 38
+	        };
+        }else{
+	        this.pos = {
+	            x: Math.round( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) -12,
+	            y: Math.round(-this.hv_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale) -38
+	        };
+        }
+
         this.eventMarkerDomNode.css({
             'left': this.pos.x + 'px',
             'top' : this.pos.y + 'px'
