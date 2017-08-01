@@ -234,9 +234,9 @@ var Timeline = Class.extend({
 			        formatter: function () {
 			        	var dateTimeLabelFormats = {
 			                millisecond: '%H:%M:%S.%L',
-			                second: '%H:%M:%S',
-			                minute: '%H:%M',
-			                hour: '%H:%M',
+			                second: '%Y/%m/%d<br/>%H:%M:%S',
+			                minute: '%Y/%m/%d<br/>%H:%M',
+			                hour: '%Y/%m/%d<br/>%H:%M',
 			                day: '%e. %b',
 			                week: '%e. %b',
 			                month: '%b \'%y',
