@@ -13,10 +13,11 @@ var JP2Image = Class.extend(
     /**
      * @constructs
      */
-    init: function (hierarchy, sourceId, date, onChange) {
+    init: function (hierarchy, sourceId, date, difference, onChange) {     
         this.hierarchy   = hierarchy;
         this.sourceId    = sourceId;
         this.requestDate = date;
+        this.difference  = difference;
         this._onChange   = onChange;
 
         this._requestImage();
@@ -31,7 +32,8 @@ var JP2Image = Class.extend(
         params = {
             action:   'getClosestImage',
             sourceId: this.sourceId,
-            date:     this.requestDate.toISOString()
+            date:     this.requestDate.toISOString(),
+            difference:this.difference
         };
         $.get(Helioviewer.api, params, $.proxy(this._onImageLoad, this), Helioviewer.dataType);
     },
@@ -39,9 +41,10 @@ var JP2Image = Class.extend(
     /**
      * Changes image data source
      */
-    updateDataSource: function (hierarchy, sourceId) {
+    updateDataSource: function (hierarchy, sourceId, difference) {
         this.hierarchy = hierarchy;
         this.sourceId  = sourceId;
+        this.difference= difference;
 
         this._requestImage();
     },
@@ -71,9 +74,9 @@ var JP2Image = Class.extend(
 	        //$(document).trigger("message-console-log", [result.error, jGrowlOpts, true, true]);
 	        return;
         }
-        if (this.id === result.id) {
-            return;
-        }
+        //if (this.id === result.id && this.difference == 0) {
+        //    return;
+        //}
         $.extend(this, result);
 
         // Reference pixel offset at the original JP2 image scale (with respect to top-left origin)

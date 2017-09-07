@@ -328,14 +328,12 @@ var UserSettings = Class.extend(
             this.set("state.centerY", parseFloat(urlSettings.centerY));
         }
 
-        if (urlSettings.imageLayers) {
-            this.set("state.tileLayers",
-                     this._parseURLStringLayers(urlSettings.imageLayers));
+        if (typeof urlSettings.imageLayers != 'undefined' && urlSettings.imageLayers != '') {
+            this.set("state.tileLayers", this._parseURLStringLayers(urlSettings.imageLayers));
         }
 
         if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
-            this.set("state.eventLayers",
-                     this._parseURLStringEvents(urlSettings.eventLayers));
+            this.set("state.eventLayers", this._parseURLStringEvents(urlSettings.eventLayers));
         }
 
         // Event labels are ON by default
@@ -387,7 +385,36 @@ var UserSettings = Class.extend(
             }else{
 	            layerString += parseInt(layerObj.layeringOrder) + ",";
             }
-            layerString += parseInt(layerObj.opacity);
+            layerString += parseInt(layerObj.opacity) + ",";
+            
+            if(typeof layerObj.difference != 'undefined'){
+	            layerString += parseInt(layerObj.difference) + ",";
+            }else{
+	            layerString += "0,";
+            }
+            
+            if(typeof layerObj.diffCount != 'undefined'){
+	            layerString += parseInt(layerObj.diffCount) + ",";
+            }else{
+	            layerString += "0,";
+            }
+            
+            if(typeof layerObj.diffTime != 'undefined'){
+	            layerString += parseInt(layerObj.diffTime) + ",";
+            }else{
+	            layerString += "0,";
+            }
+            
+            if(typeof layerObj.baseDiffTime != 'undefined'){
+	            var layerDateStr = layerObj.baseDiffTime;
+	            if(typeof layerDateStr == 'number' || layerDateStr == null){
+					var baseDiffTime = $('#date').val()+' '+$('#time').val();
+				}
+				
+	            layerString += layerDateStr.replace(' ', 'T').replace(/\//g, '-') + '.000Z';
+            }else{
+	            layerString += "";
+            }
 
             layerString += "],";
         });

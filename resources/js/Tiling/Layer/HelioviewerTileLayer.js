@@ -30,13 +30,13 @@ var HelioviewerTileLayer = TileLayer.extend(
      * </div>
      */
     init: function (index, date, tileSize, viewportScale, tileVisibilityRange,
-        hierarchy, sourceId, name, visible, opacity, layeringOrder, order) {
+        hierarchy, sourceId, name, visible, opacity, difference, diffCount, diffTime, baseDiffTime, layeringOrder, order) {
 		
 		// Create a random id which can be used to link tile layer with its corresponding tile layer accordion entry
         var id = "tile-layer-" + new Date().getTime();
 		
         this._super(index, date, tileSize, viewportScale, tileVisibilityRange,
-            name, visible, opacity, id);
+            name, visible, opacity, difference, diffCount, diffTime, baseDiffTime, id);
 		
         this.id = id;
         this.order = order;
@@ -45,14 +45,15 @@ var HelioviewerTileLayer = TileLayer.extend(
 
         $(document).trigger("create-tile-layer-accordion-entry",
             [index, this.id, name, sourceId, hierarchy, date, true, opacity, visible,
-             $.proxy(this.setOpacity, this)
+             $.proxy(this.setOpacity, this), 
+             this.difference, this.diffCount, this.diffTime, this.baseDiffTime,
+             $.proxy(this.setDifference, this), $.proxy(this.setDiffCount, this), $.proxy(this.setDiffTime, this), $.proxy(this.setDiffDate, this)
             ]
         );
 
         this.tileLoader = new TileLoader(this.domNode, tileSize, tileVisibilityRange);
 
-        this.image = new JP2Image(hierarchy, sourceId, date,
-            $.proxy(this.onLoadImage, this));
+        this.image = new JP2Image(hierarchy, sourceId, date, difference, $.proxy(this.onLoadImage, this));
     },
 
     /**
@@ -76,20 +77,31 @@ var HelioviewerTileLayer = TileLayer.extend(
                             [this.id, this.name, this.image.getSourceId(),
                              this.opacity,
                              new Date(getUTCTimestamp(this.image.date)),
-                             this.image.id, this.image.hierarchy,
-                             this.image.name]);
+                             this.image.id, this.image.hierarchy, this.image.name,
+                             this.difference, this.diffCount, this.diffTime, this.baseDiffTime]);
     },
 
     /**
      * Returns a formatted string representing a query for a single tile
      */
     getTileURL: function (x, y) {
+        var baseDiffTimeStr = this.baseDiffTime;
+        if(typeof baseDiffTimeStr == 'number' || baseDiffTimeStr == null){
+			baseDiffTimeStr = $('#date').val()+' '+$('#time').val();
+		}
+		
+        baseDiffTimeStr = baseDiffTimeStr.replace(' ', 'T').replace(/\//g, '-') + '.000Z';
+        
         var params = {
             "action"      : "getTile",
             "id"          : this.image.id,
             "imageScale"  : this.viewportScale,
             "x"           : x,
-            "y"           : y
+            "y"           : y,
+            "difference"  : this.difference, 
+            "diffCount"   : this.diffCount, 
+            "diffTime"    : this.diffTime, 
+            "baseDiffTime": baseDiffTimeStr
         };
 
         return Helioviewer.api + "?" + $.param(params);
@@ -108,9 +120,17 @@ var HelioviewerTileLayer = TileLayer.extend(
                                                   'name' : obj['name'] };
             return_array[obj['label']] = obj['name'];
         });
-
+		
+		if(typeof this.baseDiffTime == 'number' || this.baseDiffTime == null){
+			this.baseDiffTime = $('#date').val()+' '+$('#time').val();
+		}
+		
         return_array['visible']  = this.visible;
         return_array['opacity']  = this.opacity;
+        return_array['difference'] = this.difference;
+        return_array['diffCount'] = this.diffCount;
+        return_array['diffTime']  = this.diffTime;
+        return_array['baseDiffTime']  = this.baseDiffTime;
 
         return return_array;
     },

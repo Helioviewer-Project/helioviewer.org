@@ -22,14 +22,18 @@ var TileLayer = Layer.extend(
     defaultOptions: {
         type        : 'TileLayer',
         opacity     : 100,
-        sharpen     : false
+        sharpen     : false,
+        difference  : 0,
+        diffCount   : 60,
+        diffTime    : 1,
+        baseDiffTime : null
     },
 
     /**
      * @constructs
      * @description Creates a new TileLayer
      */
-    init: function (index, date, tileSize, viewportScale, tileVisibilityRange, name, visible, opacity, id) {
+    init: function (index, date, tileSize, viewportScale, tileVisibilityRange, name, visible, opacity, difference, diffCount, diffTime, baseDiffTime, id) {
         $.extend(this, this.defaultOptions);
         this._super();
 
@@ -43,6 +47,11 @@ var TileLayer = Layer.extend(
         this.tileSize      = tileSize;
         this.visible       = visible;
         this.opacity       = opacity;
+        this.difference    = (typeof difference == 'undefined' ? 0 : parseInt(difference));
+        this.diffCount     = (typeof diffCount == 'undefined' ? 60 : parseInt(diffCount));
+        this.diffTime      = (typeof diffTime == 'undefined' ? 1 : parseInt(diffTime));
+        var dateDiff 	   = new Date(+new Date() - 60*60*1000);
+        this.baseDiffTime  = (typeof baseDiffTime == 'undefined' ? $('#date').val()+' '+$('#time').val() : baseDiffTime);
         this.name          = name;
     },
 
@@ -76,7 +85,12 @@ var TileLayer = Layer.extend(
      * @return string String representation of the tile layer
      */
     serialize: function () {
-        return this.image.getLayerName() + "," + (this.visible ? this.layeringOrder : "0") + "," + this.opacity;
+	    var layerDateStr = this.baseDiffTime;
+	    if(typeof layerDateStr == 'number' || layerDateStr == null){
+			layerDateStr = $('#date').val()+' '+$('#time').val();
+		} 
+	    layerDateStr = layerDateStr.replace(' ', 'T').replace(/\//g, '-') + '.000Z';
+        return this.image.getLayerName() + "," + (this.visible ? this.layeringOrder : "0") + "," + this.opacity + "," + this.difference + "," + this.diffCount + "," + this.diffTime + "," + layerDateStr;
     },
 
     toggleVisibility: function (event, id) {
@@ -163,6 +177,45 @@ var TileLayer = Layer.extend(
         else {
             $(this.domNode).css("opacity", opacity / 100);
         }
+    },
+
+    /**
+     * @description Update the tile difference type
+     * @param {int} Percent opacity to use
+     */
+    setDifference: function (difference) {
+        this.difference = parseInt(difference);
+        //this.tileLoader.reloadTiles(true);
+    },
+
+    /**
+     * @description Update the tile difference time step count
+     * @param {int} Percent opacity to use
+     */
+    setDiffCount: function (diffCount) {
+        this.diffCount = parseInt(diffCount);
+        //this.tileLoader.reloadTiles(true);
+    },
+
+    /**
+     * @description Update the tile difference time step
+     * @param {int} Percent opacity to use
+     */
+    setDiffTime: function (diffTime) {
+        this.diffTime = parseInt(diffTime);
+        //this.tileLoader.reloadTiles(true);
+    },
+
+    /**
+     * @description Update the tile base difference type
+     * @param {int} Percent opacity to use
+     */
+    setDiffDate: function (baseDiffTime) {
+	    if(typeof baseDiffTime == 'number' || baseDiffTime == null){
+			baseDiffTime = $('#date').val()+' '+$('#time').val();
+		}
+        this.baseDiffTime = baseDiffTime;
+        //this.tileLoader.reloadTiles(true);
     },
 
     /**

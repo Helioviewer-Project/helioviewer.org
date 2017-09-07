@@ -20,8 +20,7 @@ var TileLayerManager = LayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (observationDate, dataSources, tileSize, viewportScale,
-        maxTileLayers, savedLayers, urlLayers) {
+    init: function (observationDate, dataSources, tileSize, viewportScale, maxTileLayers, savedLayers, urlLayers) {
 
         this._super();
 
@@ -53,7 +52,11 @@ var TileLayerManager = LayerManager.extend(
      *              cookies
      */
     save: function () {
-        Helioviewer.userSettings.set("state.tileLayers", this.toJSON());
+	    var jsonObj = this.toJSON();
+	    if(jsonObj.length < 1){
+		    return;
+	    }
+        Helioviewer.userSettings.set("state.tileLayers", jsonObj);
         $(document).trigger('update-external-datasource-integration');
     },
 
@@ -75,7 +78,11 @@ var TileLayerManager = LayerManager.extend(
                 layerHierarchy[i]['visible'] = true;
                 layerHierarchy[i]['opacity'] = $("#opacity-slider-track-" + idBase).slider("value");
                 layerHierarchy[i]['uiLabels'] = [];
-                
+                layerHierarchy[i]['difference'] = parseInt($('#'+idBase+' .layer-select-difference').val());
+                layerHierarchy[i]['diffCount'] = parseInt($('#'+idBase+' .layer-select-difference-period-count').val());
+                layerHierarchy[i]['diffTime'] = parseInt($('#'+idBase+' .layer-select-difference-period').val());
+                layerHierarchy[i]['baseDiffTime'] = $('#'+idBase+' .diffdate').val()+' '+$('#'+idBase+' .difftime').val();
+
                 if ( $(accordion).find('.visible').hasClass('hidden') ) {
                     layerHierarchy[i]['visible'] = false;
                 }
@@ -211,8 +218,7 @@ var TileLayerManager = LayerManager.extend(
         $.each(layers, function (index, params) {
             layer = new TileLayer(index, self._observationDate, self.tileSize, self.viewportScale,
                                   self.tileVisibilityRange, params.nickname, params.visible,
-                                  params.opacity, true);
-
+                                  params.opacity, opacity, params.difference, params.diffCount, params.diffTime, params.baseDiffTime, true);
             self.addLayer(layer);
         });
     },

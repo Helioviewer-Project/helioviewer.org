@@ -129,7 +129,7 @@ var LayerManager = Class.extend(
         $.each(this._layers, function () {
             layers.push(this.toJSON());
         });
-        
+
         return layers;       
     }
 });

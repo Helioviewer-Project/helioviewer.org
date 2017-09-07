@@ -40,7 +40,8 @@ var SettingsLoader = (
     _getDefaultSettings: function (serverSettings) {
         // Use current date (UTC) for default observation time
         var date = new Date(+new Date());
-
+		var dateDiff = new Date(+new Date() - 60*60*1000);
+		
         return {
             // Default settings
             options: {
@@ -167,6 +168,10 @@ var SettingsLoader = (
                 "tileLayers" : [{
                     "visible"    : true,
                     "opacity"    : 100,
+                    "difference" : 0,//0 - normal, 1 - running difference, 2 - base difference
+                    "diffCount"  : 60,
+                    "diffTime"   : 1,// 0-seconds, 1-minutes, 2-hours, 3-days, 4-weeks, 5-month, 6-years
+                    "baseDiffTime" : dateDiff.toDateString()+' '+dateDiff.toTimeString(),
                     "uiLabels"   : [ {'label':'Observatory',
                                     'name' :'SDO'},
                                    {'label':'Instrument',
