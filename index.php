@@ -1256,7 +1256,9 @@
 						data['eventLabels'] = false;
 					}
 				}else{
-					data[sParameterName[0]] = sParameterName[1];
+					if(sParameterName[0] != ''){
+						data[sParameterName[0]] = sParameterName[1];
+					}
 				}
 			}
 			return data;

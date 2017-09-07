@@ -264,8 +264,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                     '#eventLayerAccordion', eventTypes, date);
         });
 
-        this._super("#helioviewer-viewport-container-outer", date,
-            marginTop, marginBottom);
+        this._super("#helioviewer-viewport-container-outer", date, marginTop, marginBottom);
     },
 
     /**

@@ -19,8 +19,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (observationDate, dataSources, tileSize, viewportScale,
-      maxTileLayers, startingLayers, urlLayers) {
+    init: function (observationDate, dataSources, tileSize, viewportScale, maxTileLayers, startingLayers, urlLayers) {
 
         this._super(observationDate, dataSources, tileSize, viewportScale, maxTileLayers, startingLayers, urlLayers);
 
@@ -105,7 +104,10 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         // Pull off the next layer on the queue
         while (!queueChoiceIsValid) {
             next = queue[i] || defaultLayer;
-            params = parseLayerString(next + ",1,100");
+            var date = new Date(+new Date());
+            var dateDiffObj = new Date($('#date').val() +' '+$('#time').val());
+			var dateDiff = new Date(dateDiffObj - 60*60*1000);
+            params = parseLayerString(next + ',1,100,0,60,1,'+dateDiff.toDateString()+' '+dateDiff.toTimeString());
 
             if (this.checkDataSource(params.uiLabels)) {
                 queueChoiceIsValid = true;
@@ -147,7 +149,8 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
                     this._observationDate, this.tileSize, this.viewportScale,
                     this.tileVisibilityRange, params.uiLabels,
                     params.sourceId, params.nickname, params.visible,
-                    opacity, params.layeringOrder, this._layers.length)
+                    opacity, params.difference, params.diffCount, params.diffTime, params.baseDiffTime,
+                    params.layeringOrder, this._layers.length)
         );
 
         this.save();
@@ -184,11 +187,12 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
 			        ];
 				}
 			}
-			
+
             layer = new HelioviewerTileLayer(index, self._observationDate,
                 self.tileSize, self.viewportScale, self.tileVisibilityRange,
                 params.uiLabels, params.sourceId, params.nickname,
-                params.visible, params.opacity, params.layeringOrder, j);
+                params.visible, params.opacity, params.difference, params.diffCount, params.diffTime, params.baseDiffTime,
+                params.layeringOrder, j);
 
             self.addLayer(layer);
             j++;
@@ -215,8 +219,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
     /**
      * Changes data source and fetches image for new source
      */
-    _updateDataSource: function (event, id, hierarchySelected, sourceId, name,
-        layeringOrder) {
+    _updateDataSource: function (event, id, hierarchySelected, sourceId, name, layeringOrder, difference) {
 
         var opacity, layer;
 
@@ -235,7 +238,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         layer.domNode.css("z-index", -10 - parseInt(this.order, 10));//parseInt(layer.layeringOrder, 10) - 10
 
         // Update associated JPEG 2000 image
-        layer.image.updateDataSource(hierarchySelected, sourceId );
+        layer.image.updateDataSource(hierarchySelected, sourceId, difference);
 		$(document).trigger("save-tile-layers");
         // Update opacity (also triggers save-tile-layers event)
         //opacity = this._computeLayerStartingOpacity(layer.layeringOrder, true);

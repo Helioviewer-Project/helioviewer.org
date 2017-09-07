@@ -369,7 +369,7 @@ var parseLayerString = function (str) {
 	var lastName = '';
 	var count = 0;
 	
-    for (var i=0; i<params.length-2; i++) {
+    for (var i=0; i<params.length-6; i++) {
         if(params[i] != lastName){
 	        uiLabels[count] = { 'label' : '', 'name'  : params[i] };
 	        count++;
@@ -379,8 +379,12 @@ var parseLayerString = function (str) {
 
     return {
         uiLabels    : uiLabels,
-        visible     : params[params.length-2],
-        opacity     : params[params.length-1]
+        visible     : params[params.length-6],
+        opacity     : params[params.length-5],
+        difference  : params[params.length-4], 
+        diffCount   : params[params.length-3], 
+        diffTime    : params[params.length-2], 
+        baseDiffTime : params[params.length-1]
     };
 };
 
