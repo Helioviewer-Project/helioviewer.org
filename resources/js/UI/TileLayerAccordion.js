@@ -188,6 +188,35 @@ var TileLayerAccordion = Layer.extend(
      */
 	_initDifference: function (id, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, name, sourceId, hierarchy){
 		var self = this;
+
+		if(difference == 1){
+			$('#'+id+' .layer-select-difference').val('1');
+			$('#'+id+' .difference-type2-block').hide();
+			$('#'+id+' .difference-type1-block').show();
+			$('#'+id+' .layer-select-difference-period-count').val(diffCount);//.change();
+			
+			if(diffTime < 0 || diffTime > 6){
+				diffTime = 0;
+			}
+			$('#'+id+' .layer-select-difference-period').val(diffTime);//.change();
+		}else if(difference == 2){
+			$('#'+id+' .layer-select-difference').val('2');
+			$('#'+id+' .difference-type1-block').hide();
+			$('#'+id+' .difference-type2-block').show();
+			if(typeof baseDiffTime == 'number' || baseDiffTime == null){
+				var baseDiffTime = $('#date').val()+' '+$('#time').val();
+			}
+			var diffDate = baseDiffTime.toString().split(" ");
+			
+			$('#'+id+' .diffdate').val(diffDate[0]);//.change();
+			$('#'+id+' .difftime').val(diffDate[1]);//.change();
+			//$('#'+id+' .difftime').TimePickerAlone('setValue', diffDate[1]);
+		}else{
+			$('#'+id+' .layer-select-difference').val('0');
+			$('#'+id+' .difference-type1-block').hide();
+			$('#'+id+' .difference-type2-block').hide();
+		}
+		
 		//Difference
 		$('#'+id+' .layer-select-difference').change(function(){
 			var difference = parseInt($(this).val());
@@ -261,35 +290,11 @@ var TileLayerAccordion = Layer.extend(
 				self._reloadLayerTiles(id, name, sourceId, hierarchy);
 			}
 		});
-		
-
-		if(difference == 1){
-			$('#'+id+' .layer-select-difference').val('1');
-			$('#'+id+' .difference-type2-block').hide();
-			$('#'+id+' .difference-type1-block').show();
-			$('#'+id+' .layer-select-difference-period-count').val(diffCount);//.change();
-			
-			if(diffTime < 0 || diffTime > 6){
-				diffTime = 0;
-			}
-			$('#'+id+' .layer-select-difference-period').val(diffTime);//.change();
-		}else if(difference == 2){
-			$('#'+id+' .layer-select-difference').val('2');
-			$('#'+id+' .difference-type1-block').hide();
-			$('#'+id+' .difference-type2-block').show();
-			if(typeof baseDiffTime == 'number' || baseDiffTime == null){
-				var baseDiffTime = $('#date').val()+' '+$('#time').val();
-			}
-			var diffDate = baseDiffTime.toString().split(" ");
-			
-			$('#'+id+' .diffdate').val(diffDate[0]);//.change();
-			$('#'+id+' .difftime').val(diffDate[1]);//.change();
-			//$('#'+id+' .difftime').TimePickerAlone('setValue', diffDate[1]);
-		}else{
-			$('#'+id+' .layer-select-difference').val('0');
-			$('#'+id+' .difference-type1-block').hide();
-			$('#'+id+' .difference-type2-block').hide();
-		}
+		$('#'+id+' .difftime').change(function(){
+			onDiffDate($('#'+id+' .diffdate').val()+' '+$(this).val());
+			$(document).trigger("save-tile-layers");
+			self._reloadLayerTiles(id, name, sourceId, hierarchy);
+		});
 		
 	},
 	
