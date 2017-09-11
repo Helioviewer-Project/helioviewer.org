@@ -1265,7 +1265,7 @@
 		};
 		
 		$( document ).ready(function(){
-			settingsJSON = {'web_root_url': "https://beta3.helioviewer.org"};
+			settingsJSON = {};
 			serverSettings = new Config(settingsJSON).toArray();
 			zoomLevels = [0.60511022,1.21022044,2.42044088,4.84088176,9.68176352,19.36352704,38.72705408,77.45410816,154.90821632];
 
