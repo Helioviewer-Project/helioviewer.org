@@ -416,8 +416,8 @@ var TileLayerAccordion = Layer.extend(
              + jp2
              + info
              + opacitySlide
-             + diffHTML
              + popups
+             + diffHTML
              + '</div>';
 
         return (body);
