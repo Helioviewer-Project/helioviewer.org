@@ -2383,6 +2383,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
     reopenAccordions: function(drawer) {
+	    if(drawer.attr('id') == 'undefined' || typeof drawer.attr('id') == 'undefined'){
+		    return;
+	    }
         var self = this,
             accordions = drawer.find('.accordion'),
             accordionUserSettings = Helioviewer.userSettings.get("state.drawers.#"+drawer.attr('id')+".accordions"),
