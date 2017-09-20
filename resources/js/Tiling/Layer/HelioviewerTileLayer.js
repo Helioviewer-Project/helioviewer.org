@@ -90,7 +90,7 @@ var HelioviewerTileLayer = TileLayer.extend(
 			baseDiffTimeStr = $('#date').val()+' '+$('#time').val();
 		}
 		
-        baseDiffTimeStr = baseDiffTimeStr.replace(' ', 'T').replace(/\//g, '-') + '.000Z';
+        baseDiffTimeStr = baseDiffTimeStr.replace(' ', 'T').replace(/\//g, '-').replace('.000Z', '') + '.000Z';
         
         var params = {
             "action"      : "getTile",
