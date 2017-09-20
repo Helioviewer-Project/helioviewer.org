@@ -979,8 +979,17 @@ var Timeline = Class.extend({
 	        self.drawPlotLine('column');
 	        self.drawCarringtonLines(startDate, endDate, 'column');
 	        
+	        if(typeof $('#data-coverage-timeline').highcharts() == 'undefined'){
+		        return;
+	        }
+	        
 	        $('#data-coverage-timeline').highcharts().xAxis[0].setExtremes(startDate, endDate);
 	        var chart = $('#data-coverage-timeline').highcharts();
+	        
+	        if(typeof chart == 'undefined'){
+		        return;
+	        }
+	        
 		    chart.pointer.cmd = chart.pointer.onContainerMouseDown;
 		    chart.pointer.onContainerMouseDown = function (a){
 		        this.zoomX=this.zoomHor=this.hasZoom=a.shiftKey;
@@ -1004,7 +1013,11 @@ var Timeline = Class.extend({
         }
         
         var chart = $('#data-coverage-timeline').highcharts();
-
+		
+		if(typeof chart == 'undefined'){
+	        return;
+        }
+		
 		if(chartTypeX == 'scatter'){
 			var offset = 0;
 		}else{
@@ -1058,6 +1071,10 @@ var Timeline = Class.extend({
         
         var chart = $('#data-coverage-timeline').highcharts();
         
+        if(typeof chart == 'undefined'){
+	        return;
+        }
+
         //Get current HV time
 		if(chartTypeX == 'scatter'){
 			var date = Helioviewer.userSettings.get("state.date");
