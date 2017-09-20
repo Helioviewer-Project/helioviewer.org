@@ -18,6 +18,15 @@
 	//check if URL have output parameter
 	$embed = false;
 	if (isset($_GET['output']) && $_GET['output'] == 'embed') {
+        //Load Config
+        include_once "../api.helioviewer.org/src/Config.php";
+        $config = new Config("../api.helioviewer.org/settings/Config.ini");
+        
+        //Log Statistic
+		include_once HV_ROOT_DIR.'/../src/Database/Statistics.php';
+        $statistics = new Database_Statistics();
+        $statistics->log('embed');
+        
 		$embed = true;
 	}
 	
