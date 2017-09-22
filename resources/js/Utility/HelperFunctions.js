@@ -369,7 +369,28 @@ var parseLayerString = function (str) {
 	var lastName = '';
 	var count = 0;
 	
-    for (var i=0; i<params.length-6; i++) {
+	var dateDiff = new Date(+new Date() - 60*60*1000);
+	var defaultDiffTime = dateDiff.toDateString()+' '+dateDiff.toTimeString();
+	var baseDiffTime	= defaultDiffTime;//default 1 hour difference
+	var diffTime 		= 1;
+	var diffCount 		= 60;
+	var difference 		= 0;
+	var opacity 		= 100;
+	var visible 		= 1;
+	
+	if (params.length >= 8) {
+        baseDiffTime    = params.pop();
+		diffTime 		= params.pop();
+		diffCount 		= params.pop();
+		difference 		= params.pop();
+		opacity 		= params.pop();
+		visible 		= params.pop();
+    }else{
+        opacity       	= params.pop();
+		visible 		= params.pop();
+    }
+
+    for (var i=0; i<params.length; i++) {
         if(params[i] != lastName){
 	        uiLabels[count] = { 'label' : '', 'name'  : params[i] };
 	        count++;
@@ -379,12 +400,12 @@ var parseLayerString = function (str) {
 
     return {
         uiLabels    : uiLabels,
-        visible     : params[params.length-6],
-        opacity     : params[params.length-5],
-        difference  : params[params.length-4], 
-        diffCount   : params[params.length-3], 
-        diffTime    : params[params.length-2], 
-        baseDiffTime : params[params.length-1]
+        visible     : visible,
+        opacity     : opacity,
+        difference  : difference, 
+        diffCount   : diffCount, 
+        diffTime    : diffTime, 
+        baseDiffTime: baseDiffTime
     };
 };
 
