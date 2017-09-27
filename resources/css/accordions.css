@@ -73,6 +73,10 @@ select.layer-select {
     border: 1px solid #5c5c5c;
     margin: 2px 0px 0px 1px;
     padding: 0;
+    background-color: #4c4c4c;
+}
+select.layer-select option{
+    background-color: #4c4c4c;
 }
 
 .image-download-btn {
