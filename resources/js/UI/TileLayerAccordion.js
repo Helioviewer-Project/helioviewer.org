@@ -34,6 +34,7 @@ var TileLayerAccordion = Layer.extend(
         this._setupUI();
 
         // Initialize accordion
+        $('#TileLayerAccordion-Container').empty();
         this.domNode = $('#TileLayerAccordion-Container');
         this.domNode.dynaccordion({startClosed: false});
 

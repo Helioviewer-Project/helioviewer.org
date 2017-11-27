@@ -10,6 +10,10 @@
     font-size: 10.5px;
 }
 
+#EventLayerAccordion-Container {
+	padding-bottom: 30px;
+}
+
 .tile-accordion-header-left {
     float: left;
     line-height: 1.65em;

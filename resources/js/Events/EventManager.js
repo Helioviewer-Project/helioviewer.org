@@ -39,7 +39,8 @@ var EventManager = Class.extend({
         this._eventGlossary  = eventGlossary;
 
         scale = new ImageScale();
-
+        
+		$("#event-container").remove();
         $('<div id="event-container"></div>').appendTo("#moving-container");
 
         visState = Helioviewer.userSettings.get("state.eventLayerVisible");

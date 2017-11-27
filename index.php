@@ -261,7 +261,20 @@
 				<div id="accordion-images" class="accordion">
 					<div class="header">
 						<div class="disclosure-triangle closed">►</div>
-						<h1>Images</h1>
+						<h1>Images 
+							
+							<div class="dropdown-holder layersPresetsList" style="display:inline-block;">
+							    <ul class="clearfix">
+							        <li class="dropdown-main" style="width:30px">
+							            <a href="#" id="images-presets-dropdown" class="text-button" title="Images presets" style="font-size:0.75em;width:15px"><span class="fa fa-th"></span> <!--fa-server fa-bars--></a>
+							            <ul class="sub-menu">
+
+							            </ul>
+							        </li>
+							    </ul>
+							</div>
+							
+						</h1>
 						<div class="right fa fa-question-circle contextual-help" style="margin-right: 15px;" title="Up to five (5) independent image layers may be viewed simultaneously."></div>
 						<div class="accordion-header">
 							<a href="#" id="add-new-tile-layer-btn" class="text-button" title="Click to add an image data layer to the Viewport."><span class="fa fa-plus-circle"></span> Add Layer</a>
@@ -1198,6 +1211,7 @@
 		<script src="resources/js/UI/UserVideoGallery.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/Glossary.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/jquery.ui.dynaccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/ImagePresets.js?v=<?=$debugTime?>" type="text/javascript"></script>
 	<?php
 	} else {	
 	?>
@@ -1282,7 +1296,8 @@
 			
 			// Initialize Helioviewer.org
 			helioviewer = new HelioviewerWebClient(urlSettings, serverSettings, zoomLevels);
-
+			$(document).trigger("helioviewer-ready", [true]);
+			
 			// Play movie if id is specified
 			if (urlSettings.movieId) {
 				helioviewer.loadMovie(urlSettings.movieId);

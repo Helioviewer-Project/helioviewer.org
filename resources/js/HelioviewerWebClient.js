@@ -131,6 +131,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this._glossary = new VisualGlossary(this._setupDialog);
 
         this._timeSelector      = new TimeSelector();
+        
+        this._userLayersPresets = new UserLayersPresets();
 
         this._setupDialogs();
         this._initEventHandlers();
@@ -253,7 +255,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      */
     _initViewport: function (date, marginTop, marginBottom) {
         var self = this;
-
+		
         $(document).bind("datasources-initialized", function (e, dataSources) {
             self._tileLayerAccordion = new TileLayerAccordion(
                    '#tileLayerAccordion', dataSources, date);

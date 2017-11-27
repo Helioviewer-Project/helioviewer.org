@@ -48,9 +48,9 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         this._layersLoaded = 0;
         this._finishedLoading = false;
 
-        $(document).bind("viewport-max-dimensions-updated",
+        $(document).unbind("viewport-max-dimensions-updated").bind("viewport-max-dimensions-updated",
                         $.proxy(this._onViewportUpdated, this))
-                   .bind("tile-layer-data-source-changed",
+                   .unbind("tile-layer-data-source-changed").bind("tile-layer-data-source-changed",
                         $.proxy(this._updateDataSource, this));
     },
 

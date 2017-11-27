@@ -104,13 +104,16 @@ var LayerManager = Class.extend(
             index = this.indexOf(id), 
             layer = this._layers[index];
         
-        layer.domNode.remove();
-        this._layers = $.grep(this._layers, function (e, i) {
-            return (e.id !== layer.id);
-        });
-        layer = null;
+        if(typeof layer != 'undefined'){
+	        layer.domNode.remove();
+	        this._layers = $.grep(this._layers, function (e, i) {
+	            return (e.id !== layer.id);
+	        });
+	        layer = null;
+	        
+	        this.refreshMaxDimensions(type);
+        }
         
-        this.refreshMaxDimensions(type);
     },
     
     /**
