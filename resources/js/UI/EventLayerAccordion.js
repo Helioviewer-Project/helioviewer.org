@@ -39,8 +39,8 @@ var EventLayerAccordion = Layer.extend(
         this.domNode.dynaccordion({startClosed: true});
 
         // Event-handlers
-        $(document).bind("create-event-layer-accordion-entry", $.proxy(this.addLayer, this))
-                   .bind("update-event-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this))
+        $(document).unbind("create-event-layer-accordion-entry").bind("create-event-layer-accordion-entry", $.proxy(this.addLayer, this))
+                   .unbind("update-event-layer-accordion-entry").bind("update-event-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this))
                    .bind("observation-time-changed",           $.proxy(this._onObservationTimeChange, this));
 
 
@@ -231,7 +231,7 @@ var EventLayerAccordion = Layer.extend(
             e.stopPropagation();
         };
 
-        visibilityBtn.bind('click', this, toggleVisibility);
+        visibilityBtn.unbind('click').bind('click', this, toggleVisibility);
     },
 
 

@@ -33,15 +33,15 @@ var TileLayerManager = LayerManager.extend(
 
         this._observationDate = observationDate;
 
-        $(document).bind("tile-layer-finished-loading",
+        $(document).unbind("tile-layer-finished-loading").bind("tile-layer-finished-loading",
                         $.proxy(this.updateMaxDimensions, this))
-                   .bind("save-tile-layers",
+                   .unbind("save-tile-layers").bind("save-tile-layers",
                         $.proxy(this.save, this))
-                   .bind("save-tile-layers-from-accordion",
+                   .unbind("save-tile-layers-from-accordion").bind("save-tile-layers-from-accordion",
                         $.proxy(this.saveFromAccordion, this))
-                   .bind("add-new-tile-layer",
+                   .unbind("add-new-tile-layer").bind("add-new-tile-layer",
                         $.proxy(this.addNewLayer, this))
-                   .bind("remove-tile-layer",
+                   .unbind("remove-tile-layer").bind("remove-tile-layer",
                         $.proxy(this._onLayerRemove, this))
                    .bind("observation-time-changed",
                         $.proxy(this.updateRequestTime, this));

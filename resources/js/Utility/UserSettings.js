@@ -332,7 +332,9 @@ var UserSettings = Class.extend(
             this.set("state.tileLayers", this._parseURLStringLayers(urlSettings.imageLayers));
         }
 
-        if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
+        if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers == 'None') {
+            this.set("state.eventLayers", []);
+        }else if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
             this.set("state.eventLayers", this._parseURLStringEvents(urlSettings.eventLayers));
         }
 

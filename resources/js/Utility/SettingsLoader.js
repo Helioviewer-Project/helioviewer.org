@@ -179,6 +179,7 @@ var SettingsLoader = (
                                    {'label':'Measurement',
                                     'name' :'304'} ]
                 }],
+                "userTileLayers": [],
                 "timeStep"   : 86400
             },
             version: serverSettings.version
