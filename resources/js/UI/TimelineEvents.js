@@ -221,6 +221,7 @@ var TimelineEvents = Class.extend({
 				type: 'datetime',
 				plotLines: [],
 				ordinal: false,
+				gridLineWidth:0,
 				events : {
 					afterSetExtremes : function (e) {
 						timelineExtremesChanged = true;
@@ -248,14 +249,25 @@ var TimelineEvents = Class.extend({
 					formatter: function () {
 						var dateTimeLabelFormats = {
 							millisecond: '%H:%M:%S.%L',
-			                second: '%Y/%m/%d<br/>%H:%M:%S',
-			                minute: '%Y/%m/%d<br/>%H:%M',
-			                hour: '%Y/%m/%d<br/>%H:%M',
+			                second: '%e. %b<br/>%H:%M:%S',
+			                minute: '%e. %b<br/>%H:%M',
+			                hour: '%e. %b<br/>%H:%M',
 			                day: '%e. %b',
 			                week: '%e. %b',
 			                month: '%b \'%y',
 			                year: '%Y'
 						};
+			            
+			            //Add new grid lines (boundaries)
+			            var minutes = new Date(this.value+this.axis.minPointOffset).getMinutes()
+			            if(minutes == 0){
+				            this.chart.xAxis[0].addPlotLine({
+					            value: this.value,
+					            width: 0.5,
+					            color: '#C0C0C0',
+					            zIndex: 1
+					        });
+			            }
 						
 						if(timelineRes == 'm'){
 							return Highcharts.dateFormat(dateTimeLabelFormats[timelineTick], this.value);
@@ -1405,6 +1417,10 @@ var TimelineEvents = Class.extend({
 		
 		var _url = Helioviewer.api+'?action=getDataCoverage&eventLayers='+ eventLayersStr +'&currentDate='+ date +'&startDate='+ Math.round(e.min) +'&endDate='+ Math.round(e.max) +'&callback=?';
 		$.getJSON(_url, function(data) {
+		
+			//Remove previosly generated plot lines
+			chart.xAxis[0].removePlotBand();
+			
 			var seriesVisability = [];
 			
 			if(typeof data.error != 'undefined'){
