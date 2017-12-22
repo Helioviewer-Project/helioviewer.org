@@ -182,7 +182,12 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         if (!this._validateRequest(roi, layers)) {
             return;
         }
-
+		
+		var switchSources = false;
+		if(outputType == 'minimal'){
+			switchSources = true;
+		}
+		
         params = $.extend({
             action        : "takeScreenshot",
             imageScale    : imageScale,
@@ -195,7 +200,8 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             scaleY        : Helioviewer.userSettings.get("state.scaleY"),
             movieIcons    : Helioviewer.userSettings.get("options.showinviewport"),
             date          : helioviewer.getDate().toISOString(),
-            display       : false
+            display       : false,
+            switchSources : switchSources 
         }, this._toArcsecCoords(roi, imageScale));
 
         // AJAX Responder

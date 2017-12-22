@@ -1695,6 +1695,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         if (!Helioviewer.userSettings.get("notifications.welcome")) {
             return;
         }
+        
+        if(outputType != false){
+	        return;
+        }
 
         $(document).trigger("message-console-info",
             ["<b>Welcome to Helioviewer.org</b>, a solar data browser. First time here? Be sure to complete our " +

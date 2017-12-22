@@ -597,7 +597,8 @@ html, body {
    text-align: center;
 }
 .accordion select {
-   background-color: rgba(255,255,255,0.2);
+   /*background-color: rgba(255,255,255,0.2);*/
+   background-color: #4c4c4c;
    border: 1px solid rgba(255,255,255,0.6);
    -moz-border-radius: 0.2em;
    -webkit-border-radius: 0.2em;
@@ -609,7 +610,8 @@ html, body {
    vertical-align: middle;
 }
 .accordion select option {
-   background-color: rgba(255,255,255,0.2);
+   /*background-color: rgba(255,255,255,0.2);*/
+   background-color: #4c4c4c;
    color: rgba(255,255,255,1);
    font-family: 'Courier New', Courier, monospace;
    font-weight: 200;
@@ -1409,7 +1411,7 @@ span.ui-icon-hover, div.ui-icon-hover {
     background:rgba(0, 0, 0, 0.9);
     position:absolute;
     left:0;
-    top:20px; /* make this equal to the line-height of the links (specified below) */
+    top:17px; /* make this equal to the line-height of the links (specified below) */
     width:200px;
     z-index:5;
     border:1px solid #2e2e2e;

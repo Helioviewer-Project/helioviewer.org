@@ -40,6 +40,15 @@ var UserLayersPresets = Class.extend({
             }
         );
         
+        $( '.dropdown-main' ).hover(
+            function(event){
+                $(this).children('.sub-menu').slideDown(200);
+            },
+            function(event){
+                $(this).children('.sub-menu').slideUp(200);
+            }
+        );
+        
         $( '.dropdown' ).hover(
             function(event){
                 $(this).children('.sub-menu').slideDown(200);
@@ -138,89 +147,16 @@ var UserLayersPresets = Class.extend({
 	        self.init();
         });
         
-        $('.item-list').click(function(event){
+        $('#image-layer-select').change(function(event){
 	        event.stopPropagation();
-	        var id = $(this).data('id');
-	        var name = $(this).data('name');
-	        var date = $(this).data('date');
-	        var layers = $(this).data('layers');
-	        var events = $(this).data('events');
-	        var settings = {};
-			
-			if(typeof date != 'undefined' && date != ''){
-				helioviewer.timeControls.setDate(Date.parseUTCDate(date), true);
-	        }else{
-		        helioviewer.timeControls._onDateChange();
-	        }
-			
-	        if(typeof layers != 'undefined' && layers != ''){
-		        layers = layers.slice(1, -1);
-				settings['imageLayers'] = layers.split("],[");
-				
-				helioviewer.viewport._tileLayerManager.each(function(){
-			        $(document).trigger("remove-tile-layer", [this.id]);
-			        $("#" + this.id + " *[oldtitle]").qtip("destroy");
-					$('#TileLayerAccordion-Container').dynaccordion('removeSection', {id: this.id});
-					
-					//$(document).trigger("save-tile-layers");
-		            //$(document).trigger("save-tile-layers-from-accordion");
-		            //e.stopPropagation();
-			    });
-			    //$(document).trigger("save-tile-layers-from-accordion");
-			    
-			    Helioviewer.userSettings._processURLSettings(settings);
-			    helioviewer.viewport.tileLayers = Helioviewer.userSettings.get('state.tileLayers');
-			    //$('#TileLayerAccordion-Container').dynaccordion();
-			    //helioviewer.viewport._tileLayerManager._layers = [];
-			    //helioviewer.viewport._tileLayerManager._loadStartingLayers(helioviewer.viewport.tileLayers);
-			    //helioviewer.viewport.loadDataSources();
-			    
-			    helioviewer.viewport._tileLayerManager = new HelioviewerTileLayerManager(
-			    	helioviewer.viewport.requestDate, 
-			    	helioviewer.viewport.dataSources, 
-			    	helioviewer.viewport.tileSize, 
-			    	helioviewer.viewport.imageScale, 
-			    	helioviewer.viewport.maxTileLayers, 
-			    	Helioviewer.userSettings.get('state.tileLayers')
-			    );
-			    
-			    $(document).trigger("save-tile-layers");
-			    $(document).trigger("save-tile-layers-from-accordion");
-			    //_updateTimeStamp(id, date);
-			    //console.log(helioviewer.timeControls.getDate());
-			    //helioviewer._initViewport(helioviewer.timeControls.getDate(), 0, 0);
-			    
-			    $(document).trigger("update-viewport");
-			    //helioviewer._tileLayerAccordion._initTreeSelect(id, hierarchy);
-	        }
+	        var optionSelected = $("option:selected", this);
+	        self._loadData(optionSelected);
+        });
+        
+        $('.item-list, .image-layer-switch').click(function(event){
+	        event.stopPropagation();
+	        self._loadData(this);
 	        
-	        
-	        if(typeof events != 'undefined' && events != ''){
-		        
-				if(events == 'None'){
-					settings['eventLayers'] = 'None';
-				}else{
-					events = events.slice(1, -1);
-					settings['eventLayers'] = events.split("],[");
-				}
-				
-				Helioviewer.userSettings._processURLSettings(settings);
-				$(document).trigger("reinit-events-list", [helioviewer.timeControls.getDate()]);
-	        }
-	        
-	        if(typeof date != 'undefined' && date != ''){
-				helioviewer.timeControls.setDate(Date.parseUTCDate(date), true);
-	        }else{
-		        helioviewer.timeControls._onDateChange();
-	        }
-	        
-			//$(document).trigger("observation-time-changed", [new Date(Helioviewer.userSettings.get("state.date"))]);
-	        
-	        
-	        $(this).qtip('api').toggle(false);
-	        $('.dropdown-main').children('.sub-menu').slideUp(200);
-            $('.item-add-form').hide();
-			$('.userlist-add-item').show();
         });
         
         $('.item-list').hover(
@@ -261,6 +197,110 @@ var UserLayersPresets = Class.extend({
 				//$(this).qtip('destroy', true);
 			}
 		);
+		
+		if(outputType == 'minimal'){
+	        var selectValue = Helioviewer.userSettings.get('state.dropdownLayerSelectID');
+	        if(typeof selectValue == 'undefined' || $('#image-layer-select').length < selectValue){
+		        selectValue = 0;
+		        Helioviewer.userSettings.set('state.dropdownLayerSelectID', 0)
+	        }
+
+	        $("#image-layer-select").val(selectValue);
+        }
+		
+	},
+	
+	_loadData: function(el){
+		var id = $(el).data('id');
+        var name = $(el).data('name');
+        var date = $(el).data('date');
+        var layers = $(el).data('layers');
+        var events = $(el).data('events');
+        var settings = {};
+        
+        if(outputType == 'minimal'){
+	        var selectValue = parseInt($(el).val());
+	        Helioviewer.userSettings.set('state.dropdownLayerSelectID', selectValue);
+        }
+		
+		if(typeof date != 'undefined' && date != ''){
+			helioviewer.timeControls.setDate(Date.parseUTCDate(date), true);
+        }else{
+	        helioviewer.timeControls._onDateChange();
+        }
+
+        if(typeof layers != 'undefined' && layers != ''){
+	        layers = layers.slice(1, -1);
+			settings['imageLayers'] = layers.split("],[");
+			
+			helioviewer.viewport._tileLayerManager.each(function(){
+		        $(document).trigger("remove-tile-layer", [this.id]);
+		        $("#" + this.id + " *[oldtitle]").qtip("destroy");
+				$('#TileLayerAccordion-Container').dynaccordion('removeSection', {id: this.id});
+				
+				//$(document).trigger("save-tile-layers");
+	            //$(document).trigger("save-tile-layers-from-accordion");
+	            //e.stopPropagation();
+		    });
+		    //$(document).trigger("save-tile-layers-from-accordion");
+		    
+		    Helioviewer.userSettings._processURLSettings(settings);
+		    helioviewer.viewport.tileLayers = Helioviewer.userSettings.get('state.tileLayers');
+		    //$('#TileLayerAccordion-Container').dynaccordion();
+		    //helioviewer.viewport._tileLayerManager._layers = [];
+		    //helioviewer.viewport._tileLayerManager._loadStartingLayers(helioviewer.viewport.tileLayers);
+		    //helioviewer.viewport.loadDataSources();
+		    
+		    helioviewer.viewport._tileLayerManager = new HelioviewerTileLayerManager(
+		    	helioviewer.viewport.requestDate, 
+		    	helioviewer.viewport.dataSources, 
+		    	helioviewer.viewport.tileSize, 
+		    	helioviewer.viewport.imageScale, 
+		    	helioviewer.viewport.maxTileLayers, 
+		    	Helioviewer.userSettings.get('state.tileLayers')
+		    );
+		    
+		    $(document).trigger("save-tile-layers");
+		    if(outputType != 'minimal'){
+			    $(document).trigger("save-tile-layers-from-accordion");
+		    }
+		    //_updateTimeStamp(id, date);
+		    //console.log(helioviewer.timeControls.getDate());
+		    //helioviewer._initViewport(helioviewer.timeControls.getDate(), 0, 0);
+		    
+		    $(document).trigger("update-viewport");
+		    //helioviewer._tileLayerAccordion._initTreeSelect(id, hierarchy);
+        }
+        
+        
+        if(typeof events != 'undefined' && events != ''){
+	        
+			if(events == 'None'){
+				settings['eventLayers'] = 'None';
+			}else{
+				events = events.slice(1, -1);
+				settings['eventLayers'] = events.split("],[");
+			}
+			
+			Helioviewer.userSettings._processURLSettings(settings);
+			$(document).trigger("reinit-events-list", [helioviewer.timeControls.getDate()]);
+        }
+        
+        if(typeof date != 'undefined' && date != ''){
+			helioviewer.timeControls.setDate(Date.parseUTCDate(date), true);
+        }else{
+	        helioviewer.timeControls._onDateChange();
+        }
+        
+		//$(document).trigger("observation-time-changed", [new Date(Helioviewer.userSettings.get("state.date"))]);
+        
+        if($(el).qtip('api')){
+	        $(el).qtip('api').toggle(false);
+        }
+        
+        $('.dropdown-main').children('.sub-menu').slideUp(200);
+        $('.item-add-form').hide();
+		$('.userlist-add-item').show();	
 	},
 	
 	setName: function(){
@@ -497,7 +537,7 @@ var UserLayersPresets = Class.extend({
         
 
         
-        var screenshotUrl = Helioviewer.api+'?action=takeScreenshot&imageScale='+imageScale+'&layers='+urlLayers+'&events='+urlEvents+'&eventLabels='+eventLabels+'&scale=false&scaleType=earth&scaleX=0&scaleY=0&date='+urlDate+'&x1='+x1+'&x2='+x2+'&y1='+y1+'&y2='+y2+'&display=true&watermark=false';
+        var screenshotUrl = Helioviewer.api+'?action=takeScreenshot&imageScale='+imageScale+'&layers='+urlLayers+'&events='+urlEvents+'&eventLabels='+eventLabels+'&scale=false&scaleType=earth&scaleX=0&scaleY=0&date='+urlDate+'&x1='+x1+'&x2='+x2+'&y1='+y1+'&y2='+y2+'&display=true&watermark=false&switchSources=true';
         var html = '<div style="text-align: center;">\
             		<img style="width:200px;" src="'+screenshotUrl+'" alt="preview thumbnail" class="screenshot-preview" />\
             	</div>\
@@ -570,5 +610,29 @@ var SystemLayersPresets = [
 				'layers':''
 			}
 		]
-	}*/
+	},*/
+	{
+		'name':'NOAA flares and active regions',
+		'observationDate':'',
+		'events':'[AR,NOAA_SWPC_Observer,1],[FL,SWPC,1]',
+		'layers':'[SDO,AIA,171,1,100,0,60,1,2017-11-16T09:02:20.000Z]'
+	},
+	{
+		'name':'Eruption Monitor',
+		'observationDate':'',
+		'events':'[CE,all,1],[ER,all,1],[FI,all,1],[FA,all,1],[FE,all,1]',
+		'layers':'[SDO,AIA,304,1,100,0,60,1,2017-11-16T09:02:20.000Z],[SOHO,LASCO,C2,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z],[SOHO,LASCO,C3,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z]'
+	},
+	{
+		'name':'Magnetic flux Monitor',
+		'observationDate':'',
+		'events':'[EF,all,1],[SS,all,1]',
+		'layers':'[SDO,HMI,magnetogram,1,100,0,60,1,2017-11-16T09:02:20.000Z]'
+	},
+	{
+		'name':'Coronal hole Monitor',
+		'observationDate':'',
+		'events':'[CH,all,1]',
+		'layers':'[SDO,AIA,211,1,100,0,60,1,2017-11-16T09:02:20.000Z]'
+	}
 ];

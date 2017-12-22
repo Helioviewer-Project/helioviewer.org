@@ -180,6 +180,7 @@ var SettingsLoader = (
                                     'name' :'304'} ]
                 }],
                 "userTileLayers": [],
+                "dropdownLayerSelectID": 0,
                 "timeStep"   : 86400
             },
             version: serverSettings.version

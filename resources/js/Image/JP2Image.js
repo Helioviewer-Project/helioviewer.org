@@ -27,13 +27,19 @@ var JP2Image = Class.extend(
      * Loads the closest image in time to that requested
      */
     _requestImage: function () {
-        var params, dataType;
-
+        var params, dataType, source_id;
+        
+        var switchSources = false;
+		if(outputType == 'minimal'){
+			switchSources = true;
+		}
+        
         params = {
             action:   'getClosestImage',
             sourceId: this.sourceId,
             date:     this.requestDate.toISOString(),
-            difference:this.difference
+            difference:this.difference,
+            switchSources:switchSources
         };
         $.get(Helioviewer.api, params, $.proxy(this._onImageLoad, this), Helioviewer.dataType);
     },
