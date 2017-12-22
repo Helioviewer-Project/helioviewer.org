@@ -114,7 +114,14 @@ var TimeControls = Class.extend(
                     });
                 }
             );
-
+            
+            if(layerHierarchy.length == 0){
+	            var savedLayers = Helioviewer.userSettings.get('state.tileLayers');
+	            $.each( savedLayers, function (i, layer) {
+		            layerHierarchy.push(layer.uiLabels);
+	            });
+            }
+            
             // For each data tile-layer accordion, get the data source "end"
             // date (which is the date/time of the most current piece of data
             // for that source).  Keep the overall most current "end" date.

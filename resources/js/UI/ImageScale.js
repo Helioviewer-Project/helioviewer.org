@@ -240,13 +240,16 @@ var ImageScale = Class.extend(
 			if ( $('#earth-button').length ) {
 	            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.container.width()/2;
 	            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
-	
-	            this.container.css({
-	                'position' : 'absolute',
-	                'top'      : this.containerY+'px',
-	                'left'     : this.containerX+'px'
-	            });
+	        }else{
+		        this.containerX = this.container.parent().width() - 150;
+		        this.containerY = this.container.parent().height() - 100;
 	        }
+	        
+	        this.container.css({
+                'position' : 'absolute',
+                'top'      : this.containerY+'px',
+                'left'     : this.containerX+'px'
+            });
         }
 
         scaleXY = coords.computeMouseCoords(
@@ -293,10 +296,19 @@ var ImageScale = Class.extend(
 
         if ( parseInt(Helioviewer.userSettings.get("state.scaleX")) == 0 ||
              parseInt(Helioviewer.userSettings.get("state.scaleY")) == 0 ) {
-
-            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.container.width()/2;
-            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
-            this.scale = false;
+			
+			
+			if ( $('#earth-button').length ) {
+			
+	            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.container.width()/2;
+	            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
+	            this.scale = false;
+	            
+	        }else{
+		        this.containerX = this.container.parent().width() - 150;
+		        this.containerY = this.container.parent().height() - 100;
+		        this.scale = true;
+	        }
         }
 
         this.scaleContainerDragTo(this.containerX, this.containerY);

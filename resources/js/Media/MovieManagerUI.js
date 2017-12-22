@@ -93,6 +93,11 @@ var MovieManagerUI = MediaManagerUI.extend(
 	        this._movieEventsLabels = helioviewer.getEventsLabels();
 	    }*/    
 		
+		var switchSources = false;
+		if(outputType == 'minimal'){
+			switchSources = true;
+		}
+		
         // Movie request parameters
         baseParams = {
             action       : "queueMovie",
@@ -108,7 +113,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             size         : 0,
             movieIcons   : 0,
             followViewport   : 0,
-            reqObservationDate   : new Date(Helioviewer.userSettings.get("state.date")).toISOString()
+            reqObservationDate   : new Date(Helioviewer.userSettings.get("state.date")).toISOString(),
+            switchSources   : switchSources
         };
 
         // Add ROI and start and end dates
@@ -563,7 +569,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         movie = this._manager.get(id);
 		
 		dateRequested = Date.parseUTCDate(movie.dateRequested);
-        if((new Date) - dateRequested >= 90 * 24 * 60 * 60 * 1000 || movie.status === 3){
+        if((new Date) - dateRequested >= 180 * 24 * 60 * 60 * 1000 || movie.status === 3){
 			this._rebuildItem(movie);
 			return false;
         }
@@ -605,7 +611,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 		
 		dateRequested = Date.parseUTCDate(movie.dateRequested);
 		
-        if (movie.status === 2 && (new Date) - dateRequested <= 90 * 24 * 60 * 60 * 1000) {
+        if (movie.status === 2 && (new Date) - dateRequested <= 180 * 24 * 60 * 60 * 1000) {
             thumbnail = movie.thumbnail;
 
             html += "<div style='text-align: center;'>" +
@@ -1088,7 +1094,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             // For completed entries, display elapsed time
             if (item.status === 2) {
                 dateRequested = Date.parseUTCDate(item.dateRequested);
-                if((new Date) - dateRequested >= 90 * 24 * 60 * 60 * 1000){
+                if((new Date) - dateRequested >= 180 * 24 * 60 * 60 * 1000){
 					statusMsg = '<span class="rebuild-item" data-id="'+item.id+'" title="Regenerate movie"> regenerate <span class="fa fa-refresh"></span></span>';
                 }else{
 	                statusMsg = dateRequested.getElapsedTime();

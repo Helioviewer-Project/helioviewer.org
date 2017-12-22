@@ -1,0 +1,255 @@
+/*
+	Minimal View CSS
+*/
+
+.helioviewer-view-type-minimal #image-area-select-buttons{
+	height:4em;
+}
+
+.helioviewer-view-type-minimal #loading {
+           z-index: 9999;
+          position: absolute;
+               top: 0;
+             width: 100%;
+            height: 100%;
+            margin: 0 auto;
+           padding: 0.65em 0;
+        text-align: center;
+    vertical-align: middle;
+             color: rgba(255,255,255,0.8);
+         font-size: 1.2em;
+       font-weight: 400;
+}
+
+.helioviewer-view-type-minimal #loading > span {
+        background-color: rgba(64,64,64,1);
+                 padding: 0.2em 0.25em 0.25em 0.25em;
+        -o-border-radius: 4pt;
+      -moz-border-radius: 4pt;
+   -webkit-border-radius: 4pt;
+           border-radius: 4pt;
+}
+.helioviewer-view-type-minimal #loading .fa-circle-o-notch {
+   vertical-align: 0.05em;
+}
+
+.helioviewer-view-type-minimal #youtube-button,
+.helioviewer-view-type-minimal #movies-button,
+.helioviewer-view-type-minimal #screenshots-button{
+	color:rgba(255, 255, 255, 0.8);
+	cursor:pointer;
+}
+
+
+/* YOUTUBE */
+.helioviewer-view-type-minimal #youtube-button:hover,
+.helioviewer-view-type-minimal #youtube-button.opened {
+   color: rgba(187,0,0,1);  /* youtube logo red */
+   background-color: white;
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+   right:90px;
+}
+.helioviewer-view-type-minimal #youtube-button.opened:hover {
+   color: rgba(187,0,0,1);
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+}
+.helioviewer-view-type-minimal #youtube-button:active {
+   color: rgba(187,0,0,0.75);
+}
+
+
+/* MOVIES */
+.helioviewer-view-type-minimal #movies-button:hover,
+.helioviewer-view-type-minimal #movies-button.opened {
+   color: rgba(175,0,255,1);
+   background-color: white;
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+   
+}
+.helioviewer-view-type-minimal #movies-button.opened:hover {
+   color: rgba(175,0,255,1);
+   background-color: rgba(255,255,255,1);
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+}
+.helioviewer-view-type-minimal #movies-button:active {
+   color: rgba(175,0,255,0.75);
+}
+
+
+/* SCREENSHOTS */
+.helioviewer-view-type-minimal #screenshots-button:hover,
+.helioviewer-view-type-minimal #screenshots-button.opened {
+   color: rgba(0,191,143,1);
+   background-color: white;
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+}
+.helioviewer-view-type-minimal #screenshots-button.opened:hover {
+   color: rgba(0,191,143,1);
+   background-color: rgba(255,255,255,1);
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+}
+.helioviewer-view-type-minimal #screenshots-button:active {
+   color: rgba(0,191,143,0.75);
+}
+
+
+.helioviewer-view-type-minimal .social-button {
+   font-size: 30px;
+   padding: 0.15em;
+   position:fixed;
+   top:10px;
+   right:10px;
+   z-index:999;
+}
+
+.helioviewer-view-type-minimal .social-button:hover {
+   background-color: white;
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+   /*cursor: pointer;*/
+}
+
+.helioviewer-view-type-minimal #youtube-button{right:120px !important;}
+.helioviewer-view-type-minimal #movies-button{right:65px;}
+
+
+/*
+	ZOOM
+*/
+.helioviewer-view-type-minimal #zoom{
+	margin-top:35px;
+	margin-left: 2px;
+	z-index: 3;
+	position:absolute;
+	bottom:10px;
+	right:10px;
+	width:30px;
+	height: 300px;
+}
+
+.helioviewer-view-type-minimal #zoomControls{
+	position: relative;
+    left: 0px;
+    top: 0px;
+}
+
+/*
+	layersPresetsList
+*/
+
+.helioviewer-view-type-minimal .layersPresetsList{
+	position:fixed;
+	top:10px;
+	left:10px;
+	z-index:4;
+}
+
+.helioviewer-view-type-minimal #images-presets-dropdown{
+	color:rgba(255, 255, 255, 0.8);
+	cursor:pointer;
+	font-size:30px !important;
+	padding: 0em 0.15em;
+	line-height: 30px;
+	width:30px;
+	height:30px;
+	text-align:center;
+	vertical-align: middle;
+}
+
+.helioviewer-view-type-minimal #images-presets-dropdown:hover,
+.helioviewer-view-type-minimal #images-presets-dropdown.opened {
+   color: rgba(64,64,64,1);
+   background-color: white;
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+   right:90px;
+}
+.helioviewer-view-type-minimal #images-presets-dropdown.opened:hover {
+   color: rgba(64,64,64,1);
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+}
+.helioviewer-view-type-minimal #images-presets-dropdown:active {
+   color: rgba(64,64,64,1);
+}
+
+.helioviewer-view-type-minimal .dropdown-holder li ul{
+	top:35px;
+}
+
+.helioviewer-view-type-minimal .dropdown-holder li ul li:last-child{
+	display:none;
+}
+
+.helioviewer-view-type-minimal .dropdown-holder .item-list-remove{
+	display:none !important;
+}
+
+
+
+/*
+	DRAWERS
+*/
+.helioviewer-view-type-minimal .hv-drawer-right{
+	top: 5em;
+	right:5px;
+	border-radius: 4pt;
+	-o-border-radius: 4pt;
+   -moz-border-radius: 4pt;
+   -webkit-border-radius: 4pt;
+   border-radius: 4pt;
+   -moz-box-shadow:   0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
+   -webkit-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
+   box-shadow:       0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
+}
+
+.helioviewer-view-type-minimal .drawer-contents > div{
+	margin-top:0px;
+}
+
+.helioviewer-view-type-minimal .drawer-contents .content{
+	padding:0px;
+}
+
+
+.helioviewer-view-type-minimal .hv-drawer-date{
+	display:block !important;
+	left:10px;
+	top:10px;
+	position:absolute;
+	height: auto;
+	overflow: hidden;
+}
