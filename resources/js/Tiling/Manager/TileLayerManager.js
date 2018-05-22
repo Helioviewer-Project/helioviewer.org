@@ -218,7 +218,7 @@ var TileLayerManager = LayerManager.extend(
         $.each(layers, function (index, params) {
             layer = new TileLayer(index, self._observationDate, self.tileSize, self.viewportScale,
                                   self.tileVisibilityRange, params.nickname, params.visible,
-                                  params.opacity, opacity, params.difference, params.diffCount, params.diffTime, params.baseDiffTime, true);
+                                  params.opacity, params.difference, params.diffCount, params.diffTime, params.baseDiffTime, true);
             self.addLayer(layer);
         });
     },
