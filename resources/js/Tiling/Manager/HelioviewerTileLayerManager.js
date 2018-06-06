@@ -141,7 +141,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
 			           {"label":"Measurement","name":params.measurement}
 			        ];
 				}
-		}
+		    }
 
         // Add the layer
         this.addLayer(
@@ -186,7 +186,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
 			           {"label":"Measurement","name":params.measurement}
 			        ];
 				}
-			}
+            }
 
             layer = new HelioviewerTileLayer(index, self._observationDate,
                 self.tileSize, self.viewportScale, self.tileVisibilityRange,
