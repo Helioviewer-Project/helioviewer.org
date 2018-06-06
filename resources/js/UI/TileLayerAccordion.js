@@ -77,9 +77,10 @@ var TileLayerAccordion = Layer.extend(
         }
 
         this._createAccordionEntry(index, id, name, sourceId, visible, startOpened);
-        this._initTreeSelect(id, hierarchy);
+        //this._initTreeSelect(id, hierarchy);
+        this._initTreeSelect(id, sourceId, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, name, hierarchy);
         this._initOpacitySlider(id, opacity, onOpacityChange);
-		this._initDifference(id, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, name, sourceId, hierarchy);
+		this._initDifference(id, sourceId, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, name, hierarchy);
         this._setupEventHandlers(id);
         //this._updateTimeStamp(id, date);
     },
@@ -132,8 +133,9 @@ var TileLayerAccordion = Layer.extend(
     /**
      *
      */
-    _initTreeSelect: function (id, hierarchy) {
-        var ids      = new Array(),
+    //_initTreeSelect: function (id, hierarchy) {
+    _initTreeSelect: function(id, sourceId, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, name, hierarchy) {
+            var ids      = new Array(),
             selected = new Array(),
             letters  = ['a','b','c','d','e'],
             self     = this;
@@ -156,7 +158,8 @@ var TileLayerAccordion = Layer.extend(
                         'label': obj['label'],
                         'name' : obj['name'] };
                 });
-
+                difference = parseInt($('#'+id+' .layer-select-difference').val());
+                self._initDifference(id, leaf.sourceId, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, leaf.nickname, leaf.uiLabels);
                 $(document).trigger("tile-layer-data-source-changed",
                     [id, hierarchySelected, leaf.sourceId, leaf.nickname,
                      leaf.layeringOrder]);
@@ -187,8 +190,13 @@ var TileLayerAccordion = Layer.extend(
 	/**
      *
      */
-	_initDifference: function (id, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, name, sourceId, hierarchy){
-		var self = this;
+	_initDifference: function (id, sourceId, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, name, hierarchy){
+        var self = this;
+
+        //unbind previously initialized change listeners
+        $('#'+id+' .layer-select-difference').unbind('change');
+        $('#'+id+' .layer-select-difference-period-count').unbind('change');
+        $('#'+id+' .difftime').unbind('change');
 
 		if(difference == 1){
 			$('#'+id+' .layer-select-difference').val('1');
@@ -217,7 +225,7 @@ var TileLayerAccordion = Layer.extend(
 			$('#'+id+' .difference-type1-block').hide();
 			$('#'+id+' .difference-type2-block').hide();
 		}
-		
+        
 		//Difference
 		$('#'+id+' .layer-select-difference').change(function(){
 			var difference = parseInt($(this).val());
@@ -236,19 +244,19 @@ var TileLayerAccordion = Layer.extend(
 				$('#'+id+' .difference-type1-block').hide();
 				$('#'+id+' .difference-type2-block').hide();
 			}
-			
-			$(document).trigger("save-tile-layers");
+            
+            $(document).trigger("save-tile-layers");
 			self._reloadLayerTiles(id, name, sourceId, hierarchy);
 		});
 		//Difference Count
 		$('#'+id+' .layer-select-difference-period-count').change(function(){
-			onDiffCount($(this).val());
+            onDiffCount($(this).val());
 			$(document).trigger("save-tile-layers");
 			self._reloadLayerTiles(id, name, sourceId, hierarchy);
 		});
 		//Difference Time
 		$('#'+id+' .layer-select-difference-period').change(function(){
-			onDiffTime($(this).val());
+            onDiffTime($(this).val());
 			$(document).trigger("save-tile-layers");
 			self._reloadLayerTiles(id, name, sourceId, hierarchy);
 		});
@@ -262,7 +270,7 @@ var TileLayerAccordion = Layer.extend(
 			format:'Y/m/d',
 			theme:'dark',
 			onChangeDateTime:function(dp,$input){
-				onDiffDate($input.val()+' '+$('#'+id+' .difftime').val());
+                onDiffDate($input.val()+' '+$('#'+id+' .difftime').val());
 				$(document).trigger("save-tile-layers");
 				self._reloadLayerTiles(id, name, sourceId, hierarchy);
 			}
@@ -287,13 +295,13 @@ var TileLayerAccordion = Layer.extend(
 			onChange: function (str, $input) {
 				time = str;
 				onDiffDate($('#'+id+' .diffdate').val()+' '+str);
-				$(document).trigger("save-tile-layers");
+                $(document).trigger("save-tile-layers");
 				self._reloadLayerTiles(id, name, sourceId, hierarchy);
 			}
 		});
 		$('#'+id+' .difftime').change(function(){
 			onDiffDate($('#'+id+' .diffdate').val()+' '+$(this).val());
-			$(document).trigger("save-tile-layers");
+            $(document).trigger("save-tile-layers");
 			self._reloadLayerTiles(id, name, sourceId, hierarchy);
 		});
 		
@@ -321,10 +329,10 @@ var TileLayerAccordion = Layer.extend(
 		        layerOrder = k;
 	        }
         });
-        
+
         $(document).trigger("tile-layer-data-source-changed", [id, selected, sourceId, name, layerOrder, difference]);
-	},
-	
+    },
+    
     /**
      * @description Builds the body section of a single TileLayerAccordion entry. NOTE: width and height
      * must be hardcoded for slider to function properly.
@@ -668,6 +676,8 @@ var TileLayerAccordion = Layer.extend(
      *
      */
     _updateAccordionEntry: function (event, id, name, sourceId, opacity, date, imageId, hierarchy, imageName, difference, diffCount, diffTime, baseDiffTime) {
+        console.log('_updateAccordionEntry',sourceId);
+
 
         var entry=$("#"+id), self=this, letters=['a','b','c','d','e'],
             label, select;
