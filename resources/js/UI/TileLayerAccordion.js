@@ -76,11 +76,15 @@ var TileLayerAccordion = Layer.extend(
             index = 1000;
         }
 
-        this._createAccordionEntry(index, id, name, sourceId, visible, startOpened);
-        //this._initTreeSelect(id, hierarchy);
-        this._initTreeSelect(id, sourceId, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, name, hierarchy);
-        this._initOpacitySlider(id, opacity, onOpacityChange);
-		this._initDifference(id, sourceId, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, name, hierarchy);
+        // store tile layer params in bundle object
+        var tileLayerData = new TileLayerData(id, sourceId, difference, diffCount, 
+            diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate,
+            hierarchy, index, name, visible, startOpened, opacity, onOpacityChange);
+
+        this._createAccordionEntry(tileLayerData);
+        this._initTreeSelect(tileLayerData);
+        this._initOpacitySlider(tileLayerData);
+		this._initDifference(tileLayerData);
         this._setupEventHandlers(id);
         //this._updateTimeStamp(id, date);
     },
@@ -88,8 +92,14 @@ var TileLayerAccordion = Layer.extend(
     /**
      *
      */
-    _createAccordionEntry: function (index, id, name, sourceId, visible, startOpened) {
-        var visibilityBtn, removeBtn, hidden, head, body;
+    _createAccordionEntry: function (tileLayerData) {
+        var visibilityBtn, removeBtn, hidden, head, body,
+        index       = tileLayerData.index,
+        id          = tileLayerData.id,
+        name        = tileLayerData.name,
+        sourceId    = tileLayerData.sourceId,
+        visible     = tileLayerData.visible,
+        startOpened = tileLayerData.startOpened;
 
         // initial visibility
         hidden = (visible ? "fa fa-eye fa-fw layerManagerBtn visible" : "fa fa-eye-slash fa-fw layerManagerBtn visible hidden");
@@ -133,12 +143,13 @@ var TileLayerAccordion = Layer.extend(
     /**
      *
      */
-    //_initTreeSelect: function (id, hierarchy) {
-    _initTreeSelect: function(id, sourceId, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, name, hierarchy) {
-            var ids      = new Array(),
-            selected = new Array(),
-            letters  = ['a','b','c','d','e'],
-            self     = this;
+    _initTreeSelect: function(tileLayerData) {
+            var ids     = new Array(),
+            selected    = new Array(),
+            letters     = ['a','b','c','d','e'],
+            self        = this,
+            id          = tileLayerData.id,
+            hierarchy   = tileLayerData.hierarchy;
 
         $.each( letters, function (i, letter) {
             ids.push('#'+letter+'-select-'+id);
@@ -158,8 +169,15 @@ var TileLayerAccordion = Layer.extend(
                         'label': obj['label'],
                         'name' : obj['name'] };
                 });
-                difference = parseInt($('#'+id+' .layer-select-difference').val());
-                self._initDifference(id, leaf.sourceId, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, leaf.nickname, leaf.uiLabels);
+
+                //update the tile layer data
+                tileLayerData.difference = parseInt($('#'+id+' .layer-select-difference').val());
+                tileLayerData.sourceId = leaf.sourceId;
+                tileLayerData.name = leaf.nickname;
+                tileLayerData.hierarchy = leaf.uiLabels;
+                //re-init the callbacks
+                self._initDifference(tileLayerData);
+
                 $(document).trigger("tile-layer-data-source-changed",
                     [id, hierarchySelected, leaf.sourceId, leaf.nickname,
                      leaf.layeringOrder]);
@@ -170,7 +188,11 @@ var TileLayerAccordion = Layer.extend(
     /**
      *
      */
-    _initOpacitySlider: function (id, opacity, onOpacityChange) {
+    _initOpacitySlider: function (tileLayerData) {
+        var id          = tileLayerData.id,
+        opacity         = tileLayerData.opacity,
+        onOpacityChange = tileLayerData.onOpacityChange;
+
         $("#opacity-slider-track-" + id).slider({
             value: opacity,
             min  : 0,
@@ -190,8 +212,22 @@ var TileLayerAccordion = Layer.extend(
 	/**
      *
      */
-	_initDifference: function (id, sourceId, date, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, name, hierarchy){
-        var self = this;
+    _initDifference: function (tileLayerData){
+        
+        //extract necessary params from data object
+        var self        = this,
+        id              = tileLayerData.id,
+        sourceId        = tileLayerData.sourceId,
+        difference      = tileLayerData.difference,
+        diffCount       = tileLayerData.diffCount,
+        diffTime        = tileLayerData.diffTime,
+        baseDiffTime    = tileLayerData.baseDiffTime,
+        onDifference    = tileLayerData.onDifference,
+        onDiffCount     = tileLayerData.onDiffCount,
+        onDiffTime      = tileLayerData.onDiffTime,
+        onDiffDate      = tileLayerData.onDiffDate,
+        name            = tileLayerData.name,
+        hierarchy       = tileLayerData.hierarchy;
 
         //unbind previously initialized change listeners
         $('#'+id+' .layer-select-difference').unbind('change');
@@ -676,8 +712,6 @@ var TileLayerAccordion = Layer.extend(
      *
      */
     _updateAccordionEntry: function (event, id, name, sourceId, opacity, date, imageId, hierarchy, imageName, difference, diffCount, diffTime, baseDiffTime) {
-        console.log('_updateAccordionEntry',sourceId);
-
 
         var entry=$("#"+id), self=this, letters=['a','b','c','d','e'],
             label, select;
