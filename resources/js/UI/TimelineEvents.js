@@ -594,11 +594,11 @@ var TimelineEvents = Class.extend({
 					}
 					var x = this.chart.mouseCoords.x;
 					var y = this.chart.mouseCoords.y;
-					var xOffset = 5;
+					var xOffset = 18;
 					var yOffset = -130;
 					
 					if (x + 350 > this.chart.plotWidth) {
-						tooltipX = x - 350;
+						tooltipX = x - 350 - xOffset;
 					} else {
 						tooltipX = x;
 					}
