@@ -210,8 +210,9 @@ var EventManager = Class.extend({
                 );
             }
         });
-
-        this._toggleEvents();
+        if(outputType != 'minimal'){
+            this._toggleEvents();
+        }
     },
 
     /**

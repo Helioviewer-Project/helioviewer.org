@@ -149,8 +149,8 @@ var UserLayersPresets = Class.extend({
         
         $('#image-layer-select').change(function(event){
 	        event.stopPropagation();
-	        var optionSelected = $("option:selected", this);
-	        self._loadData(optionSelected);
+			var optionSelected = $("option:selected", this);
+			self._loadData(optionSelected);
         });
         
         $('.item-list, .image-layer-switch').click(function(event){
@@ -202,10 +202,10 @@ var UserLayersPresets = Class.extend({
 	        var selectValue = Helioviewer.userSettings.get('state.dropdownLayerSelectID');
 	        if(typeof selectValue == 'undefined' || $('#image-layer-select').length < selectValue){
 		        selectValue = 0;
-		        Helioviewer.userSettings.set('state.dropdownLayerSelectID', 0)
+				Helioviewer.userSettings.set('state.dropdownLayerSelectID', 0);
 	        }
 
-	        $("#image-layer-select").val(selectValue);
+			$("#image-layer-select").val(selectValue);
         }
 		
 	},
