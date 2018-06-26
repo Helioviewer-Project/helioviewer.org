@@ -238,7 +238,7 @@ var ImageScale = Class.extend(
             ) {
 			
 			if ( $('#earth-button').length ) {
-	            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.container.width()/2;
+	            this.containerX = this.container.parent().width()/2 - this.container.width()/2; //center the earth container
 	            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
 	        }else{
 		        this.containerX = this.container.parent().width() - 150;
@@ -300,7 +300,7 @@ var ImageScale = Class.extend(
 			
 			if ( $('#earth-button').length ) {
 			
-	            this.containerX = $('#earth-button').position().left + $('#scale').position().left - this.container.width()/2;
+	            this.containerX = this.container.parent().width()/2 - this.container.width()/2; //center the earth container
 	            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
 	            this.scale = false;
 	            
