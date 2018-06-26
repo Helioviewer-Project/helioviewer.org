@@ -592,21 +592,24 @@ var TimelineEvents = Class.extend({
 					){
 						return {x: 0, y: 0}
 					}
+
 					var x = this.chart.mouseCoords.x;
 					var y = this.chart.mouseCoords.y;
-					var xOffset = 18;
-					var yOffset = -130;
-					
-					if (x + 350 > this.chart.plotWidth) {
-						tooltipX = x - 350 - xOffset;
+					var xOffset = 32;
+					var eventPopUpWidth = 350;
+					var eventPopUpHeight = 150;
+					var timelineRectHeight = 20;
+
+					if (x + xOffset + eventPopUpWidth > this.chart.plotWidth) {
+						tooltipX = x - eventPopUpWidth - xOffset;
 					} else {
-						tooltipX = x;
+						tooltipX = x + (xOffset/2);
 					}
 
-					if(y < 150){
-						tooltipY = y - 75;
+					if(y < eventPopUpHeight){
+						tooltipY = y - (eventPopUpHeight/2);
 					}else{
-						tooltipY = y - 130;
+						tooltipY = y - (eventPopUpHeight - timelineRectHeight);
 					}
 					
 					if(isShared){
