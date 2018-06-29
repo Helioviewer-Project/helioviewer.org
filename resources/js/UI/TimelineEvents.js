@@ -595,7 +595,7 @@ var TimelineEvents = Class.extend({
 
 					var x = this.chart.mouseCoords.x;
 					var y = this.chart.mouseCoords.y;
-					var xOffset = 32;
+					var xOffset = 12;
 					var eventPopUpWidth = 350;
 					var eventPopUpHeight = 150;
 					var timelineRectHeight = 20;
@@ -603,7 +603,7 @@ var TimelineEvents = Class.extend({
 					if (x + xOffset + eventPopUpWidth > this.chart.plotWidth) {
 						tooltipX = x - eventPopUpWidth - xOffset;
 					} else {
-						tooltipX = x + (xOffset/2);
+						tooltipX = x;
 					}
 
 					if(y < eventPopUpHeight){

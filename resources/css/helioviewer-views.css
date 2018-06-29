@@ -250,6 +250,7 @@
 	left:10px;
 	top:10px;
 	position:absolute;
-	height: auto;
+    height: auto;
+    width: 27em;
 	overflow: hidden;
 }
