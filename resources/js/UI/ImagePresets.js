@@ -634,5 +634,11 @@ var SystemLayersPresets = [
 		'observationDate':'',
 		'events':'[CH,all,1]',
 		'layers':'[SDO,AIA,211,1,100,0,60,1,2017-11-16T09:02:20.000Z]'
-	}
+	},
+	{
+		'name':'Sunspots',
+		'observationDate':'',
+		'events':'[SS,all,1]',
+		'layers':'[SDO,HMI,continuum,1,100,0,60,1,2017-11-16T09:02:20.000Z]'
+	},
 ];

@@ -157,6 +157,15 @@
     text-align: left;
 }
 
+#k12-accordion-date .row .label {
+    width: 20%;
+    text-align: right;
+}
+#k12-accordion-date .row .field {
+    width: 75%;
+    text-align: left;
+}
+
 .drawer-contents .row .label {
     width: 30%;
     text-align: right;
