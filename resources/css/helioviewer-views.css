@@ -251,6 +251,43 @@
 	top:10px;
 	position:absolute;
     height: auto;
-    width: 27em;
+    width: 28em;
 	overflow: hidden;
+}
+
+
+/*
+*
+*   k12 specific style changes
+*
+*/
+
+.k12-timeNowBtn {
+    margin-top: -3.4em;
+    vertical-align: top;
+    border: 1px solid #cccccc;
+    border-radius: 1.0em;
+    padding: 0.4em;
+}
+
+.k12-timeNowBtn:hover{
+    border: 1px solid yellow;
+}
+
+.k12-eventsVisBtn {
+    display: block;
+    margin-top: -2em;
+    margin-left: 22.3em;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    font-size: 0.9em;
+    border: 1px solid #cccccc;
+    border-radius: 1.0em;
+}
+
+.k12-eventsVisBtn:hover{
+    border: 1px solid yellow;
+    color: yellow;
 }
