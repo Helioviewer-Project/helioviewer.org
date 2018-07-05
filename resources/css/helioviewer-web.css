@@ -1523,21 +1523,3 @@ span.ui-icon-hover, div.ui-icon-hover {
 
 .dropdown-holder .item-list:hover .item-list-remove { display:block; }
 
-
-/*
-*
-*   k12 specific style changes
-*
-*/
-
-.k12-timeNowBtn {
-    /*margin-top: -3.3em;*/
-    margin-top: -6.9em;
-    border: 1px solid #cccccc;
-    border-radius: 1.0em;
-    padding: 0.4em;
-}
-
-.k12-timeNowBtn:hover{
-    border: 1px solid yellow;
-}

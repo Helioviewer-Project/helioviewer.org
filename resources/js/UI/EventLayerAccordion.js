@@ -35,7 +35,11 @@ var EventLayerAccordion = Layer.extend(
         this._setupUI();
 
         // Initialize accordion
-        this.domNode = $('#EventLayerAccordion-Container');
+        if(outputType != 'minimal'){
+            this.domNode = $('#EventLayerAccordion-Container');
+        }else{
+            this.domNode = $('#image-layer-select-container');
+        }
         this.domNode.dynaccordion({startClosed: true});
 
         // Event-handlers
@@ -66,9 +70,15 @@ var EventLayerAccordion = Layer.extend(
      * @param {Object} layer The new layer to add
      */
     addLayer: function (event, index, id, name, date, startOpened, markersVisible, labelsVisible) {
-        this._createAccordionEntry(index, id, name, markersVisible, labelsVisible, startOpened);
-        this._setupEventHandlers(id);
-        this._updateTimeStamp(id, date);
+        if(outputType!='minimal'){
+            this._createAccordionEntry(index, id, name, markersVisible, labelsVisible, startOpened);
+            this._setupEventHandlers(id);
+            this._updateTimeStamp(id, date);
+        }else{
+            this._createK12VisibilityBtn(index, id, name, markersVisible, labelsVisible, startOpened);
+            this._setupK12EventHandlers(id);
+            //this._updateTimeStamp(id, date);
+        }
     },
 
     /**
@@ -173,6 +183,51 @@ var EventLayerAccordion = Layer.extend(
 
     },
 
+    _createK12VisibilityBtn: function(index, id, name, markersVisible, labelsVisible, startOpened) {
+        var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, eventsDiv, self=this;
+		
+		var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
+        if ( typeof visState == 'undefined') {
+            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
+            visState = true;
+        }
+
+        // initial visibility
+        markersHidden = (markersVisible ? "" : " hidden");
+        labelsHidden  = ( labelsVisible ? "" : " hidden");
+        availableHidden  = ( visState ? "" : " hidden");
+		
+        visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
+                      + markersHidden + '" '
+                      + 'id="visibilityBtn-' + id + '" '
+                      + 'title="Toggle visibility of event marker pins" '
+                      + '></span>';
+
+        eventsDiv = '<div id="k12-events-visibility-btn-'+id+'" class="k12-eventsVisBtn" title="Toggle visibility of event marker pins">'
+                    + visibilityBtn
+                    + ' EVENTS</div>';
+
+        //Add to accordion
+        this.domNode.append(eventsDiv);
+
+        this.getEventGlossary();
+
+        //this.domNode.find("#visibilityAvailableBtn-"+id).click( function(e) {
+        this.domNode.find("#k12-events-visibility-btn-"+id).click( function(e) {
+            var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
+            if(visState == true){
+	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
+	            $(this).addClass('hidden');
+				$('#eventJSTree .empty-element').hide();
+            }else{
+	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
+	            $(this).removeClass('hidden');
+	            $('#eventJSTree .empty-element').show();
+            }
+            e.stopPropagation();
+        });
+    },
+
 
     /**
      * Queries data to build the EventType and EventFeatureRecognitionMethod
@@ -206,6 +261,41 @@ var EventLayerAccordion = Layer.extend(
     _setupEventHandlers: function (id) {
         var toggleVisibility, opacityHandle, removeLayer, visState, self = this,
             visibilityBtn = $("#visibilityBtn-" + id)/*,
+            removeBtn     = $("#removeBtn-" + id)*/;
+
+        // Function for toggling layer visibility
+        toggleVisibility = function (e) {
+            var domNode;
+
+            domNode = $(document).find("#event-container");
+            if ( domNode.css('display') == 'none') {
+                domNode.show();
+                Helioviewer.userSettings.set("state.eventLayerVisible", true);
+                $("#visibilityBtn-" + id).removeClass('hidden');
+                $("#visibilityBtn-" + id).removeClass('fa-eye-slash');
+                $("#visibilityBtn-" + id).addClass('fa-eye');
+            }
+            else {
+                domNode.hide();
+                Helioviewer.userSettings.set("state.eventLayerVisible", false);
+                $("#visibilityBtn-" + id).addClass('hidden');
+                $("#visibilityBtn-" + id).removeClass('fa-eye');
+                $("#visibilityBtn-" + id).addClass('fa-eye-slash');
+            }
+
+            e.stopPropagation();
+        };
+
+        visibilityBtn.unbind('click').bind('click', this, toggleVisibility);
+    },
+
+    /**
+     * @description Sets up event-handlers for a EventLayerAccordion entry
+     * @param {String} id
+     */
+    _setupK12EventHandlers: function (id) {
+        var toggleVisibility, opacityHandle, removeLayer, visState, self = this,
+            visibilityBtn = $("#k12-events-visibility-btn-" + id)/*,
             removeBtn     = $("#removeBtn-" + id)*/;
 
         // Function for toggling layer visibility
