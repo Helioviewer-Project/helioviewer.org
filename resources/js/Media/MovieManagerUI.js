@@ -671,8 +671,13 @@ var MovieManagerUI = MediaManagerUI.extend(
         dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
 
         // Movie player HTML
-        html = self.getVideoPlayerHTML(movie, dimensions.width,
-                                       dimensions.height);
+        if(outputType!='minimal'){
+            //regular helioviewer video player
+            html = self.getVideoPlayerHTML(movie, dimensions.width, dimensions.height);
+        }else{
+            //k12 helioviewer video player
+            html = self.getK12VideoPlayerHTML(movie, dimensions.width, dimensions.height);
+        }
 
         // Movie player dialog
         dialog = $(
@@ -1056,6 +1061,73 @@ var MovieManagerUI = MediaManagerUI.extend(
 							youtubeBtn + linkBtn + downloadLink + gifLink + 
 						'</div>\
 						<div style="float:right;">' + facebookBtn + tweetBtn + '</div>\
+					</div>';
+		   	
+
+        /*}
+
+        // Fallback (flash player)
+        else {
+            var url = Helioviewer.api + '?action=playMovie&id=' + movie.id +
+                  '&width=' + width + "&height=" + height +
+                  '&format=flv';
+
+            return '<div id="movie-player-' + movie.id + '">' +
+                       '<iframe id="movie-player-iframe" src="' + url + '" width="' + width +
+                       '" height="' + height + '" marginheight="0" marginwidth="0" ' +
+                       'scrolling="no" frameborder="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"/>' +
+                   '</div>' +
+                   '<div style="width:100%;">' +
+                       '<div style="float:left;" class="video-links">' +
+                        youtubeBtn + linkBtn + downloadLink + gifLink +
+                   '</div>' +
+                   '<div style="float:right;">' + facebookBtn + tweetBtn +
+                   '</div>';
+        }*/
+    },
+
+    /**
+     * Decides how to display video and returns HTML corresponding to that
+     * method
+     */
+    getK12VideoPlayerHTML: function (movie, width, height) {
+        var downloadURL, downloadLink;
+
+        // Download
+        downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
+                      "&format=mp4&hq=true";
+
+        downloadLink = "<div style='float:left;'><a target='_parent' href='" + downloadURL +
+            "' title='Download high-quality video'>" +
+            "<img style='width:93px; height:32px;' class='video-download-icon' " +
+            "src='resources/images/download_93x32.png' /></a></div>";
+
+        // HTML5 Video (H.264 or WebM)
+        //if ($.support.vp8 || $.support.h264) {
+            // Work-around: use relative paths to simplify debugging
+			var url = movie.url.substr(movie.url.search("cache"));
+			var fileNameIndex = url.lastIndexOf("/") + 1;
+			var filename = url.substr(fileNameIndex);
+			var filenameHQ = filename.replace('.mp4', '-hq.mp4');
+			var filenameWebM = filename.replace('.mp4', '-.webm');
+			var filePath = url.substring(0, url.lastIndexOf("/"));
+			var autoplay = (Helioviewer.userSettings.get("options.movieautoplay") ? 'autoplay="autoplay"' : '');
+			
+			return '<style>.mejs-container .mejs-controls {bottom: -20px;}.mejs-container.mejs-container-fullscreen .mejs-controls{bottom: 0px;}</style>\
+				    <div>\
+						<video id="movie-player-' + movie.id + '" width="'+(width - 15)+'" height="'+(height - 20)+'" poster="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" controls="controls" preload="none" '+autoplay+'>\
+						    <source type="video/mp4" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameHQ+'" />\
+						    <source type="video/webm" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameWebM+'" />\
+						    <object width="'+width+'" height="'+(height - 20)+'" type="application/x-shockwave-flash" data="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf">\
+						        <param name="movie" value="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf" />\
+						        <param name="flashvars" value="controls=true&amp;poster='+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png&amp;file='+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filename+'" />\
+						        <img src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" width="'+width+'" height="'+height+'" title="No video playback capabilities" />\
+						    </object>\
+						</video>\
+					</div>\
+					<div style="width:100%;padding-top: 25px;">\
+						<div style="float:left;" class="video-links">' + downloadLink + 
+						'</div>\
 					</div>';
 		   	
 
