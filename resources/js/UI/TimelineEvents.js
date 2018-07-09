@@ -595,7 +595,7 @@ var TimelineEvents = Class.extend({
 
 					var x = this.chart.mouseCoords.x;
 					var y = this.chart.mouseCoords.y;
-					var xOffset = 12;
+					var xOffset = 16;
 					var eventPopUpWidth = 350;
 					var eventPopUpHeight = 150;
 					var timelineRectHeight = 20;
