@@ -411,6 +411,7 @@ var TimelineEvents = Class.extend({
 			tooltip: {
 				pointFormat: '<span style="color:{series.color}; font-weight: bold;">{series.name}:</span> {point.y} images<br/>',
 				valueDecimals: 0,
+				hideDelay: 100,
 				crosshairs: false,
 				followPointer: false,
 				enabled: true,
@@ -423,8 +424,10 @@ var TimelineEvents = Class.extend({
 				borderWidth: 0,
 				shadow: false,
 				xDateFormat: "%A, %b %e, %H:%M UTC",
+				outside: true,
+				myID: 'eventTimeline-tooltip-'+Date.now(),
 				formatter: function(e) {
-					var str = '<div class="event-popup" style="border:1px solid #80ffff; background:#000;padding:5px;z-index:999;">';
+					var str = '<div id='+this.myID+' class="event-popup" style="border:1px solid #80ffff; background:#000;padding:5px;z-index:999;">';
 
 					if(typeof this.points != "undefined"){
 						var from = this.x;
@@ -595,27 +598,38 @@ var TimelineEvents = Class.extend({
 
 					var x = this.chart.mouseCoords.x;
 					var y = this.chart.mouseCoords.y;
-					var xOffset = 16;
+					//var containerTop = $('#data-coverage-timeline-events').position().top;
+					var xOffset = 15;
 					var eventPopUpWidth = 350;
-					var eventPopUpHeight = 150;
+					//var eventPopUpHeight = 150;
+					var eventPopUpHeight = $('#'+this.myID).outerHeight(true);
+					//console.log(eventPopUpHeight);
 					var timelineRectHeight = 20;
+					var chartGridTop = $('.highcharts-grid').position().top;
 
 					if (x + xOffset + eventPopUpWidth > this.chart.plotWidth) {
 						tooltipX = x - eventPopUpWidth - xOffset;
 					} else {
-						tooltipX = x;
+						tooltipX = x-5;
 					}
 
-					if(y < eventPopUpHeight){
+					if(y < this.chart.plotHeight){
 						tooltipY = y - (eventPopUpHeight/2);
 					}else{
-						tooltipY = y - (eventPopUpHeight - timelineRectHeight);
+						tooltipY = y - (eventPopUpHeight - timelineRectHeight) - 19;
 					}
 					
 					if(isShared){
 						tooltipY = 17;
 					}
-					
+
+					/*
+					console.log(containerTop);
+					return {
+						x: this.chart.plotWidth - eventPopUpWidth,
+						y: containerTop - eventPopUpHeight
+					};
+					*/
 					return {
 						x: tooltipX,
 						y: tooltipY
