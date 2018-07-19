@@ -201,11 +201,12 @@ var EventLayerAccordion = Layer.extend(
                       + markersHidden + '" '
                       + 'id="visibilityBtn-' + id + '" '
                       + 'title="Toggle visibility of event marker pins" '
+                      + 'style="margin-top: 0.5em;"'
                       + '></span>';
 
-        eventsDiv = '<div id="k12-events-visibility-btn-'+id+'" class="k12-eventsVisBtn" title="Toggle visibility of event marker pins">'
+        eventsDiv = '<div id="k12-events-visibility-btn-'+id+'" class="k12-eventsVisBtn" title="Toggle visibility of event marker pins" style="display: flex">'
                     + visibilityBtn
-                    + ' EVENTS</div>';
+                    + '<p id="k12-events-btn-text" style="margin-left:0.3em;">EVENTS ARE ON<p></div>';
 
         //Add to accordion
         this.domNode.append(eventsDiv);
@@ -217,11 +218,11 @@ var EventLayerAccordion = Layer.extend(
             var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
             if(visState == true){
 	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
-	            $(this).addClass('hidden');
+                $(this).addClass('hidden');
 				$('#eventJSTree .empty-element').hide();
             }else{
 	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
-	            $(this).removeClass('hidden');
+                $(this).removeClass('hidden');
 	            $('#eventJSTree .empty-element').show();
             }
             e.stopPropagation();
@@ -309,6 +310,7 @@ var EventLayerAccordion = Layer.extend(
                 $("#visibilityBtn-" + id).removeClass('hidden');
                 $("#visibilityBtn-" + id).removeClass('fa-eye-slash');
                 $("#visibilityBtn-" + id).addClass('fa-eye');
+                $("#k12-events-btn-text").text("EVENTS ARE ON");
             }
             else {
                 domNode.hide();
@@ -316,6 +318,7 @@ var EventLayerAccordion = Layer.extend(
                 $("#visibilityBtn-" + id).addClass('hidden');
                 $("#visibilityBtn-" + id).removeClass('fa-eye');
                 $("#visibilityBtn-" + id).addClass('fa-eye-slash');
+                $("#k12-events-btn-text").text("EVENTS ARE OFF");
             }
 
             e.stopPropagation();
