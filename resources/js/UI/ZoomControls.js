@@ -66,9 +66,11 @@ var ZoomControls = Class.extend(
         this.zoomSlider.slider({
             slide: function (event, slider) {
                 self._onSlide(slider.value);
+                //slider.handle = slider.value;
             },
             min: 0,
             max: this.increments.length - 1,
+            step: 1,
             orientation: 'vertical',
             value: $.inArray(this.imageScale, this.increments)
         });

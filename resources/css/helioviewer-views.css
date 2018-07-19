@@ -148,8 +148,8 @@
 	margin-left: 2px;
 	z-index: 3;
 	position:absolute;
-	bottom:10px;
-	right:10px;
+	bottom:1em;
+	left:18px;
 	width:30px;
 	height: 300px;
 }
@@ -276,7 +276,7 @@
 
 .k12-eventsVisBtn {
     display: block;
-    margin-top: -2em;
+    margin-top: -3em;
     margin-left: 22.4em;
     padding-top: 0.3em;
     padding-bottom: 0.3em;
@@ -291,3 +291,112 @@
     border: 1px solid yellow;
     color: yellow;
 }
+
+ /* Header Buttons */
+ #k12-scale .viewport-action, #hv-drawer-timeline .viewport-action, #hv-drawer-timeline-events .viewport-action {
+    position: relative;
+     display: inline-block;
+       width: 1em;
+      height: 1em;
+      margin: -1px 0 0 0;
+     padding: 4pt;
+background-color: rgba(255,255,255,0.75);
+       color: black;
+      border: 2px solid rgba(0,0,0,1);
+   font-size: 12pt;
+  text-align: center;
+vertical-align: middle;
+ line-height: 1em;
+-o-border-radius: 16px;
+-moz-border-radius: 16px;
+-webkit-border-radius: 16px;
+border-radius: 16px;
+      cursor: pointer;
+}
+#k12-scale .viewport-action:hover, #hv-drawer-timeline .viewport-action:hover, #hv-drawer-timeline-events .viewport-action:hover {
+  color: rgba(255,255,255,0.75);
+border-color: rgba(255,255,255,0.75);
+background-color: rgba(0,0,0,0.75);
+/* -moz-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
+-webkit-box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);
+box-shadow: 0pt 0pt 4pt 1pt rgba(255,255,255,0.75);*/
+}
+#k12-scale .viewport-action:active, #hv-drawer-timeline .viewport-action:active, #hv-drawer-timeline-events .viewport-action:active {
+  color: #cb2027;
+border-color: #cb2027;
+background-color: black;
+}
+#k12-scale .viewport-action.active {
+  color: #cb2027;
+border-color: #cb2027;
+background-color: white;
+}
+#k12-scale .viewport-action.active:hover {
+  color: rgba(255,255,255,0.75);
+border-color: rgba(255,255,255,0.75);
+background-color: rgba(0,0,0,0.75);
+}
+#k12-scale .viewport-action.active:active {
+  color: #cb2027;
+border-color: #cb2027;
+background-color: black;
+}
+
+#k12-scale .viewport-action.segmented-left {
+-o-border-radius: 12px 0 0 12px;
+-moz-border-radius: 12px 0 0 12px;
+-webkit-border-radius: 12px 0 0 12px;
+border-radius: 12px 0 0 12px;
+      border: 2px 0px 2px 2px;
+border-right-color: black;
+}
+#k12-scale .viewport-action.segmented-left:hover,
+#k12-scale .viewport-action.segmented-left:active,
+#k12-scale .viewport-action.segmented-left.active:active {
+border-right-color: black;
+}
+#k12-scale .viewport-action.segmented-left.active:hover {
+    color: rgba(255,255,255,0.75);
+border-color: rgba(255,255,255,0.75);
+border-right-color: rgba(0,0,0,0.75);
+background-color: rgba(0,0,0,0.75);
+}
+#k12-scale .viewport-action.segmented-middle {
+-o-border-radius: 0;
+-moz-border-radius: 0;
+-webkit-border-radius: 0;
+border-radius: 0;
+      border: 2px 0;
+}
+#k12-scale .viewport-action.segmented-right {
+ margin-left: -1px;
+-o-border-radius: 0 12px 12px 0;
+-moz-border-radius: 0 12px 12px 0;
+-webkit-border-radius: 0 12px 12px 0;
+border-radius: 0 12px 12px 0;
+      border: 2px 2px 2px 0px;
+}
+#k12-scale .viewport-action.segmented-right:hover,
+#k12-scale .viewport-action.segmented-right:active,
+#k12-scale .viewport-action.segmented-right.active:active {
+border-left-color: black;
+}
+#k12-scale .viewport-action.segmented-right.active:hover {
+    color: rgba(255,255,255,0.75);
+border-color: rgba(255,255,255,0.75);
+border-left-color: rgba(0,0,0,0.75);
+background-color: rgba(0,0,0,0.75);
+}
+
+#k12-scale {
+    position: absolute;
+   min-width: 1024px;
+       width: 100%;
+  min-height: 3em;
+      height: 3em;
+  max-height: 3em;
+     z-index: 1;
+      bottom: 1.1em;
+       color: rgba(255,255,255,0.9);
+}
+

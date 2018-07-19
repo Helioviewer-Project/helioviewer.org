@@ -229,20 +229,23 @@ var ImageScale = Class.extend(
         var scaleXY, coords;
 
         coords = new HelioviewerMouseCoordinates(Helioviewer.userSettings.get("state.imageScale"), 959.705, false);
-
+        console.log(this.container.parent().width()-this.container.width(),this.container.parent().height()-this.container.height(),$('#hv-header').height() || 0);
         // Snap back to default position if dragged outside of Viewport bounds
         if ( Helioviewer.userSettings.get("state.containerX") <= 0 ||
              Helioviewer.userSettings.get("state.containerX") >= this.container.parent().width()-this.container.width() ||
-             Helioviewer.userSettings.get("state.containerY") <= $('#hv-header').height() ||
+             Helioviewer.userSettings.get("state.containerY") <= ( $('#hv-header').height() || 0 ) ||
              Helioviewer.userSettings.get("state.containerY") >= this.container.parent().height()-this.container.height()
             ) {
 			
-			if ( $('#earth-button').length ) {
-	            this.containerX = this.container.parent().width()/2 - this.container.width()/2; //center the earth container
+			if (outputType != 'minimal'){
+	            this.containerX = this.container.parent().width()*0.66 - this.container.width()/2; //center the earth container
 	            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
 	        }else{
-		        this.containerX = this.container.parent().width() - 150;
-		        this.containerY = this.container.parent().height() - 100;
+                var sc = $('#scale');
+                this.containerX = sc.position().left + (sc.outerWidth()/2) - this.container.width()/2; //center the earth container
+	            this.containerY = sc.position().top - this.container.height() - 3;
+		        //this.containerX = this.container.parent().width() - 150;
+		        //this.containerY = this.container.parent().height() - 100;
 	        }
 	        
 	        this.container.css({
@@ -298,15 +301,18 @@ var ImageScale = Class.extend(
              parseInt(Helioviewer.userSettings.get("state.scaleY")) == 0 ) {
 			
 			
-			if ( $('#earth-button').length ) {
+            if (outputType != 'minimal'){
 			
-	            this.containerX = this.container.parent().width()/2 - this.container.width()/2; //center the earth container
+	            this.containerX = this.container.parent().width()*0.66 - this.container.width()/2; //center the earth container
 	            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
 	            this.scale = false;
 	            
 	        }else{
-		        this.containerX = this.container.parent().width() - 150;
-		        this.containerY = this.container.parent().height() - 100;
+                var sc = $('#scale');
+                this.containerX = sc.position().left + (sc.outerWidth()/2) - this.container.width()/2; //center the earth container
+	            this.containerY = sc.position().top - this.container.height() - 3;
+		        //this.containerX = this.container.parent().width() - 150;
+		        //this.containerY = this.container.parent().height() - 100;
 		        this.scale = true;
 	        }
         }
