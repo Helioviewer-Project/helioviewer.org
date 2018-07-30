@@ -369,7 +369,6 @@ var EventManager = Class.extend({
         var newState, checkedEventTypes = [], checkedFRMs = {}, self = this;
 
         newState = Helioviewer.userSettings.get("state.eventLayers");
-        console.log('newState',newState);
         // Populate checkedEventTypes and checkedFRMs to make it easier to
         // compare the state of the checkbox hierarchy with the all stored
         // event type / frm DOM nodes.
