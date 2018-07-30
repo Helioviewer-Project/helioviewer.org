@@ -248,6 +248,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 at: "top middle"
             }
         });
+
+        $(".qtip-topright").qtip({
+            position: {
+                my: "bottom left",
+                at: "top middle"
+            }
+        });
     },
 
     /**
@@ -1703,7 +1710,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $(document).trigger("message-console-info",
             ["<b>Welcome to Helioviewer.org</b>, a solar data browser. First time here? Be sure to complete our " +
              "<a href=\"javascript:void(0);\" class=\"message-console-link\" onclick=\"startTutorial();\"> Interactive Tutorial</a>.</br>", 
-             {"sticky": true}]
+             {"sticky": true,"group":"tutorial-greeting"}]
         );
 
         Helioviewer.userSettings.set("notifications.welcome", false);

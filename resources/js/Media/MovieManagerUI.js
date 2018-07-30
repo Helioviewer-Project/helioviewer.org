@@ -588,6 +588,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                 this._createMoviePlayerDialog(movie);
             }
         }
+        //console.log("movie-status:",movie.status);
         return false;
     },
 
