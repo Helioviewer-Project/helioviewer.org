@@ -56,4 +56,6 @@ function startTutorial(){
 		delay:0
 	});
 	
+	$('.tutorial-greeting').jGrowl("close");
+
 }

@@ -95,7 +95,7 @@
 /* SCREENSHOTS */
 .helioviewer-view-type-minimal #screenshots-button:hover,
 .helioviewer-view-type-minimal #screenshots-button.opened {
-   color: rgba(0,191,143,1);
+   color: rgba(0, 167, 125, 0.75);
    background-color: white;
    -o-border-radius: 0.2em;
    -moz-border-radius: 0.2em;
@@ -104,7 +104,7 @@
    border-color: black;
 }
 .helioviewer-view-type-minimal #screenshots-button.opened:hover {
-   color: rgba(0,191,143,1);
+   color: rgba(0, 167, 125, 0.75);
    background-color: rgba(255,255,255,1);
    -o-border-radius: 0.2em;
    -moz-border-radius: 0.2em;
@@ -113,7 +113,24 @@
    border-color: black;
 }
 .helioviewer-view-type-minimal #screenshots-button:active {
-   color: rgba(0,191,143,0.75);
+   color: rgba(0, 167, 125, 0.75);
+}
+
+/* HELP */
+.helioviewer-view-type-minimal #help-button:hover {
+   color: rgba(191, 0, 0, 0.75);
+   background-color: white;
+   -o-border-radius: 0.2em;
+   -moz-border-radius: 0.2em;
+   -webkit-border-radius: 0.2em;
+   border-radius: 0.2em;
+   border-color: black;
+}
+.helioviewer-view-type-minimal #help-button:active {
+   color: rgba(191, 0, 0, 0.75);
+}
+.helioviewer-view-type-minimal #help-anchor {
+    color: #cccccc;
 }
 
 
@@ -136,9 +153,9 @@
    /*cursor: pointer;*/
 }
 
-.helioviewer-view-type-minimal #youtube-button{right:120px !important;}
-.helioviewer-view-type-minimal #movies-button{right:65px;}
-
+.helioviewer-view-type-minimal #movies-button{right:155px;}
+.helioviewer-view-type-minimal #screenshots-button{right:90px; }
+.helioviewer-view-type-minimal #help-button{right:30px; }
 
 /*
 	ZOOM

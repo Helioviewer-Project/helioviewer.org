@@ -73,7 +73,7 @@ var SettingsLoader = (
                 "date"       : date.getTime(),
                 "drawers": {
                     "#hv-drawer-left": {
-                        "open": true,
+                        "open": false,
                         "accordions": {
                             "#accordion-date": {
                                 "open": true
@@ -95,7 +95,7 @@ var SettingsLoader = (
                         }
                     },
                     "#hv-drawer-youtube": {
-                        "open": true,
+                        "open": false,
                         "accordions": {
                             "#accordion-youtube": {
                                 "open": true

@@ -1,8 +1,8 @@
 //container object for params used during tile layer creation and mutation
-class TileLayerData {
-    constructor(id, sourceId, difference, diffCount, diffTime, baseDiffTime, 
+var TileLayerData = Class.extend({
+    init: function(id, sourceId, difference, diffCount, diffTime, baseDiffTime, 
         onDifference, onDiffCount, onDiffTime, onDiffDate, hierarchy, 
-        index, name, visible, startOpened, opacity, onOpacityChange){
+        index, name, visible, startOpened, opacity, onOpacityChange) {
         
             this.id = id;
             this.sourceId = sourceId;
@@ -23,4 +23,4 @@ class TileLayerData {
             this.onOpacityChange = onOpacityChange;
 
     }
-}
+});
