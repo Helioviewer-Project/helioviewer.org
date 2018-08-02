@@ -573,22 +573,32 @@ var MovieManagerUI = MediaManagerUI.extend(
 			this._rebuildItem(movie);
 			return false;
         }
-		
-        // If the movie is ready, open movie player
-        if (movie.status === 2) {
-            dialog = $("movie-player-" + id);
+        
+        if(helioviewer.keyboard.ctrlPressed){//ctrl + click to copy movie link
+            // copy the link to the clipboard by creating a placeholder textinput
+            var $temp = $('<input>');
+            $('body').append($temp);
+            if(outputType==minimal)
+            $temp.val('http://' + document.domain + '/?movieId=' + movie.id).select();
+            document.execCommand("copy");//perform copy
+            $temp.remove();
+        }else{
+            // If the movie is ready, open movie player
+            if (movie.status === 2) {
+                dialog = $("movie-player-" + id);
 
-            // If the dialog has already been created, toggle display
-            if (dialog.length > 0) {
-                action = dialog.dialog('isOpen') ? "close" : "open";
-                dialog.dialog(action);
+                // If the dialog has already been created, toggle display
+                if (dialog.length > 0) {
+                    action = dialog.dialog('isOpen') ? "close" : "open";
+                    dialog.dialog(action);
 
-            // Otherwise create and display the movie player dialog
-            } else {
-                this._createMoviePlayerDialog(movie);
+                // Otherwise create and display the movie player dialog
+                } else {
+                    this._createMoviePlayerDialog(movie);
+                }
             }
         }
-        //console.log("movie-status:",movie.status);
+        
         return false;
     },
 
@@ -656,6 +666,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             "<tr><td><b>Dimensions:</b></td><td>" + width +
             "x" + height +
             " px</td></tr>" +
+            "<tr><td>Control + Click to Copy Link to Movie</td></tr>" +
             "</table>";
 
         return html;
