@@ -73,15 +73,21 @@ var KeyboardManager = Class.extend(
         }
 
         $(document).keydown(function(e){
-            if(e.which == 17){//ctrl
-                self.ctrlPressed = true;
+            if( e.which == 17 && !self.ctrlPressed ){//ctrl && flag not set
+                self.ctrlPressed = true;//set flag
+                //prevent stuck keys by releasing the flag after 7s
+                self.ctrlReset = setTimeout(function(){
+                        self.ctrlPressed = false;//reset flag
+                },5000);
             }
         });
 
         $(document).keyup(function(){
+            clearTimeout(self.ctrlReset);
             self.ctrlPressed = false;
         });
 
+        this.ctrlReset = false;
         this.ctrlPressed = false;
     },
 
