@@ -71,6 +71,18 @@ var KeyboardManager = Class.extend(
                 }
             });
         }
+
+        $(document).keydown(function(e){
+            if(e.which == 17){//ctrl
+                self.ctrlPressed = true;
+            }
+        });
+
+        $(document).keyup(function(){
+            self.ctrlPressed = false;
+        });
+
+        this.ctrlPressed = false;
     },
 
     /**
