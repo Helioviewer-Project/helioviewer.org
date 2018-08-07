@@ -666,7 +666,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             "<tr><td><b>Dimensions:</b></td><td>" + width +
             "x" + height +
             " px</td></tr>" +
-            "<tr><td>Control + Click to Copy Link to Movie</td></tr>" +
+            "<tr><td><b><i>Control + Click</i>:</b></td><td><i>Copy Link to Movie</i></td></tr>" +
             "</table>";
 
         return html;
