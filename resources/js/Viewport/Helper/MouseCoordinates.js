@@ -88,9 +88,11 @@ var MouseCoordinates = Class.extend(
     _checkWarning: function () {
         // Warn once
         if (this.warnMouseCoords === true) {
+            /*
             var warning = "<b>Note:</b> Mouse coordinates should not be used " +
                           "for operations.";
             $(document).trigger("message-console-log", [warning, {"sticky": false, "life": 1000}]);
+            */
             Helioviewer.userSettings.set("notifications.coordinates", false);
             this.warnMouseCoords = false;
         }
