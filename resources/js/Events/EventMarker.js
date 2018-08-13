@@ -785,11 +785,11 @@ var EventMarker = Class.extend(
         }
 		
 		var noaaSearch = '';
-		if( this.frm_name == "NOAA SWPC Observer"){
+        if( this.frm_name == "NOAA SWPC Observer" || this.frm_name == "HMI SHARP"){
 			var eventName = this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
 			noaaSearch = '<div class="btn-label btn event-search-external text-btn" data-url=\'https://ui.adsabs.harvard.edu/#search/q="'+eventName+'"&sort=date desc\' target="_blank"><i class="fa fa-search fa-fw"></i>ADS search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
 						<div style=\"clear:both\"></div>\
-						<div class="btn-label btn event-search-external text-btn" data-url="http://search.arxiv.org:8081/?query='+eventName+'&in=" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
+						<div class="btn-label btn event-search-external text-btn" data-url="https://arxiv.org/search/?query='+eventName+'" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
 						<div style=\"clear:both\"></div>';
 		}
         
