@@ -506,7 +506,7 @@ var TimelineEvents = Class.extend({
 							var eventName = point.hv_labels_formatted[Object.keys(point.hv_labels_formatted)[0]];
 							noaaSearch = '<div class="btn-label btn event-search-external text-btn" style="line-height: 14px;" data-url=\'https://ui.adsabs.harvard.edu/#search/q="'+eventName+'"&sort=date desc\' target="_blank"><i class="fa fa-search fa-fw"></i>ADS search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
 										<div style=\"clear:both\"></div>\
-										<div class="btn-label btn event-search-external text-btn" style="line-height: 14px;" data-url="https://arxiv.org/search/?query='+eventName+'" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
+										<div class="btn-label btn event-search-external text-btn" style="line-height: 14px;" data-url="https://arxiv.org/search/?query='+eventName+'&searchtype=all" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
 										<div style=\"clear:both\"></div>';
 						}
 						
