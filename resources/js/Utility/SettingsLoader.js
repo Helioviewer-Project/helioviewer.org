@@ -83,6 +83,9 @@ var SettingsLoader = (
                             },
                             "#accordion-events": {
                                 "open": true
+                            },
+                            "#accordion-bodies": {
+                                "open": true
                             }
                         }
                     },

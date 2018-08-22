@@ -134,6 +134,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         
         this._userLayersPresets = new UserLayersPresets();
 
+        this._celestialBodies = new CelestialBodiesSatellites();
+
         this._setupDialogs();
         this._initEventHandlers();
         this._setupSettingsUI();
