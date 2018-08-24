@@ -7,10 +7,11 @@ var CelestialBodiesSatellites = Class.extend(
         this.mercuryReceivedPos = { x: 0, y: 0 };
         this._initEventListeners();
         this._buildDOM();
-        //this._onTimeChanged();
     },
     _initEventListeners: function(){
+        $(document).bind("helioviewer-ready", $.proxy(this._onTimeChanged,this));
         $(document).bind("observation-time-changed", $.proxy(this._onTimeChanged,this));
+        $(document).bind("replot-celestial-objects", $.proxy(this._replotCoordinates,this));
         $(document).bind("replot-event-markers",   $.proxy(this._refresh, this));
     },
     _buildDOM: function() {
@@ -19,21 +20,15 @@ var CelestialBodiesSatellites = Class.extend(
         this.bodiesContainer.attr('id','bodies-container');
         this.bodiesContainer.css({'position' : 'absolute'});
         this.movingContainer.append(this.bodiesContainer);
-        this.mercuryContainer = $('<div/>');
-        this.mercuryContainer.attr('id','mercury-container');
-        this.bodiesContainer.append(this.mercuryContainer);
     },
     _onTimeChanged: function(){
         if(this.getMercuryData){
             var currentTime = helioviewer.timeControls.getTimestamp();
-            //console.log(currentTime);
-
             var params = {
                 "action"    : "getSolarBodies",
-                "body"      : "mercury",
                 "time"      : currentTime
             };
-            $.get(Helioviewer.api, params, $.proxy(this._outputCoordinates, this, 'mercury'), "json");
+            $.get(Helioviewer.api, params, $.proxy(this._outputCoordinates, this), "json");
         }else{
             this._outputCoordinates(null,null);
         }
@@ -41,42 +36,53 @@ var CelestialBodiesSatellites = Class.extend(
     _refresh: function() {
 
     },
-    _outputCoordinates: function(solarObject,coordinates){
-        //console.log(solarObject);
-        //console.log(coordinates);
-        if(solarObject == 'mercury' && this.getMercuryData){
-            this.mercuryCoordinates = coordinates;
-            this.getMercuryData = false;
-        }
-        var dates = Object.keys(this.mercuryCoordinates['mercury']['earth']);
-        //console.log(dates);
-        //console.log(new Date(dates[0]));
-        var currentTimeSelectorJsDate = helioviewer.timeControls.getDate();
-        for(date of dates){
-            var dateJs = new Date();
-            dateJs.setTime(date * 1000);//requires millis 
-            //console.log(dateJs.getTime(),helioviewer.timeControls.getTimestamp());
-            //console.log(date,dateJs,currentTimeSelectorJsDate);
-            if(currentTimeSelectorJsDate.getTime() == dateJs.getTime()){
-                //console.log('matching date');
-                this.mercuryReceivedPos = this.mercuryCoordinates['mercury']['earth'][date];
+    _outputCoordinates: function(coordinates){
+        this.coordinates = coordinates;
+        var observers = Object.keys(coordinates);
+        for(var observer of observers){
+            var bodies = Object.keys(coordinates[observer]);
+            for(var body of bodies){
+                var containerName = body+"-container";
+                if($('#'+containerName).length == 0){//label container div does not exist yet
+                    var labelContainer = $('<div/>');//make a new div
+                    labelContainer.attr('id',body+"-container");//set the id
+                    this.bodiesContainer.append(labelContainer);//append it to the bodiesContainer div
+                }else{//label ontainer div exists
+                    var labelContainer = $('#'+containerName);//locate the container div
+                }
+                var correctedCoordinates = {
+                    x: Math.round( coordinates[observer][body].x / Helioviewer.userSettings.settings.state.imageScale),
+                    y: Math.round( -coordinates[observer][body].y / Helioviewer.userSettings.settings.state.imageScale)
+                };
+                //TODO: store all names as we want them to appear on the site
+                labelContainer.text(body.charAt(0).toUpperCase() + body.substr(1));
+                labelContainer.css({
+                    'position'  : 'absolute',
+                    'left'      :  correctedCoordinates.x + 'px',
+                    'top'       :  correctedCoordinates.y + 'px',
+                    'z-index'   :  1000,
+                    'text-shadow'   : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000'
+                });
             }
         }
-        //var mercuryReceivedPos = coordinates['mercury']['earth'][dates[0]];
-        //console.log(coordinates['mercury']['earth'][dates[0]]);
-        //console.log(Helioviewer.userSettings.settings.state.imageScale);
+    },
 
-        this.mercuryCorrectedPos = {
-            x: Math.round( this.mercuryReceivedPos.x / Helioviewer.userSettings.settings.state.imageScale),
-            y: Math.round( -this.mercuryReceivedPos.y / Helioviewer.userSettings.settings.state.imageScale)
-        };
-
-        this.mercuryContainer.text('Mercury');
-        this.mercuryContainer.css({
-            'position'  : 'absolute',
-            'left'      :  this.mercuryCorrectedPos.x + 'px',
-            'top'       :  this.mercuryCorrectedPos.y + 'px',
-            'z-index'   :  1000,
-        });
+    _replotCoordinates: function(){
+        var observers = Object.keys(this.coordinates);
+        for(var observer of observers){
+            var bodies = Object.keys(this.coordinates[observer]);
+            for(var body of bodies){
+                var containerName = body+"-container";
+                var labelContainer = $('#'+containerName);//locate the container div
+                var correctedCoordinates = {
+                    x: Math.round( this.coordinates[observer][body].x / Helioviewer.userSettings.settings.state.imageScale),
+                    y: Math.round( -this.coordinates[observer][body].y / Helioviewer.userSettings.settings.state.imageScale)
+                };
+                labelContainer.css({
+                    'left'      :  correctedCoordinates.x + 'px',
+                    'top'       :  correctedCoordinates.y + 'px'
+                });
+            }
+        }
     }
 });
