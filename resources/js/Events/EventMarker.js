@@ -350,7 +350,7 @@ var EventMarker = Class.extend(
         }
 
         if ( this._popupVisible ) {
-            this.eventPopupDomNode.hide();
+            this.eventPopupDomNode.hide("fast");
             this.eventMarkerDomNode.css('z-index', this._zIndex);
         }
         else {
@@ -368,7 +368,7 @@ var EventMarker = Class.extend(
                 // Additional styles found in events.css
             });
             this.eventMarkerDomNode.css('z-index', '998');
-            this.eventPopupDomNode.show();
+            this.eventPopupDomNode.show("fast");
         }
 
         this._popupVisible = !this._popupVisible;

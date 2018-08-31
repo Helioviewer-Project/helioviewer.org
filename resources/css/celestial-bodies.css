@@ -1,0 +1,161 @@
+#eventJSTree {
+    white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#eventJSTree a {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    font-weight: 400;
+    overflow: ellipsis;
+    color: white;
+}
+#eventJSTree a:hover {
+    background-color: black;
+    border: 1px solid black;
+}
+#eventJSTree a .checkbox {
+    margin-right: 0.4em;
+}
+
+.event-marker {
+    background-repeat: no-repeat;
+    background-size: 23px 39px;
+    height: 39px;
+    position: absolute;
+    width: 23px;
+}
+.event-label, .event-label-hover {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    left: 23px;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    text-shadow: 1px  0px 1px black,
+                 0px  1px 1px black,
+                -1px  0px 1px black,
+                 0px -1px 1px black;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    padding: 2px;
+    top: 4px;
+    white-space: nowrap;
+}
+.event-label-hover {
+    background-color: rgba(24, 24, 24, 0.95);
+    z-index: 1000;
+}
+.event-region {
+    background-repeat: no-repeat;
+    position: absolute;
+}
+.body-popup {
+    background-color: rgba(24, 24, 24, 0.9);
+    border: 2px solid black;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    box-shadow: 0 0 12px black;
+    color: white;
+    font-size: 11px;
+    overflow: hidden;
+    padding: 5px 5px 0;
+    position: absolute;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 300px;
+}
+.body-popup h1 {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    margin: -3px 0 6px 0;
+}
+.body-popup .hr {
+    margin: 3px 0 6px 0;
+    padding: 0;
+    height: 1px;
+    color: #666;
+    background-color: #444;
+}
+.body-popup .close-button {
+    position: absolute;
+    right: 2px;
+    top: 0;
+}
+.body-popup .container {
+    color: #DDDDDD;
+    font-family: Arial,Helvetica,sans-serif;
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+}
+.body-popup .param-container {
+    position: relative;
+    text-align: right;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.body-popup .param-label {
+    float: right;
+    text-align: right;
+    font-weight: bold;
+}
+.body-popup .value-container {
+    position: relative;
+    top: 1px;
+    left: 3px;
+    padding-right: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.body-popup .plane-position-container {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    font-style: italic;
+    float: right;
+}
+.value-container .ui-icon {
+    float: left;
+    margin-left: 4px;
+}
+.body-popup .param-value {
+    float: left;
+    text-align: left;
+    font-family: monospace;
+}
+.body-popup .btn-container {
+    color: #DDDDDD;
+    margin: 7px 0 3px -3px;
+    position: relative;
+}
+.body-popup .btn-label {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 17px;
+    text-align: left;
+    margin: 0 1px 0 1px;
+    float: right;
+}
+.btn-container .btn {
+    float: right;
+}
+
+.event-header-tag {
+    font-weight: bold;
+}
+.event-header-tag[title]
+{
+    cursor: help;
+}
+.event-header-value {
+    font-family: monospace;
+}
