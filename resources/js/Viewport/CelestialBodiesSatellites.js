@@ -4,18 +4,20 @@ var CelestialBodiesSatellites = Class.extend(
 {
     init: function(){
         this.domNode = $('#SolarBodiesAccordion-Container');
-        this.getMercuryData = true;
+        this.getSolarBodies = true;
         this.mercuryReceivedPos = { x: 0, y: 0 };
         this.currentTime = 0;
         this._initEventListeners();
         this._buildDOM();
     },
+
     _initEventListeners: function(){
         $(document).bind("helioviewer-ready", $.proxy(this._hvReady,this));
         $(document).bind("observation-time-changed", $.proxy(this._onTimeChanged,this));
         $(document).bind("replot-celestial-objects", $.proxy(this._replotCoordinates,this));
         $(document).bind("replot-event-markers",   $.proxy(this._refresh, this));
     },
+
     _buildDOM: function() {
         this.movingContainer = $("#moving-container");
         this.bodiesContainer = $('<div/>');
@@ -23,12 +25,14 @@ var CelestialBodiesSatellites = Class.extend(
         this.bodiesContainer.css({'position' : 'absolute'});
         this.movingContainer.append(this.bodiesContainer);
     },
+
     _hvReady: function() {
         this._onTimeChanged();
         this._buildSidebarTemplate(1,"bodies-container-"+this.currentTime,"Planets",true,true,true);
     },
+
     _onTimeChanged: function(){
-        if(this.getMercuryData){
+        if(this.getSolarBodies){
             this.currentTime = helioviewer.timeControls.getTimestamp();
             var params = {
                 "action"    : "getSolarBodies",
@@ -36,9 +40,52 @@ var CelestialBodiesSatellites = Class.extend(
             };
             $.get(Helioviewer.api, params, $.proxy(this._outputCoordinates, this), "json");
         }else{
-            this._outputCoordinates(null,null);
+            this._outputCoordinates(null);
+        }
+        this.currentTime = helioviewer.timeControls.getTimestamp();
+        var params = {
+            "action"    : "getTrajectories",
+            "time"      : this.currentTime
+        };
+        $.get(Helioviewer.api, params, $.proxy(this._outputTrajectories, this), "json");
+    },
+
+    _outputTrajectories: function(trajectories){
+        this.trajectories = trajectories;
+        var observers = Object.keys(trajectories);
+        for(var observer of observers){
+            var bodies = Object.keys(trajectories[observer]);
+            for(var body of bodies){
+                var containerName = body+"-trajectory";
+                if($('#'+containerName).length == 0){//label container div does not exist yet
+                    var trajectoryContainer = $('<div/>');//make a new div
+                    trajectoryContainer.attr('id',containerName);//set the id
+                    this.bodiesContainer.append(trajectoryContainer);//append it to the bodiesContainer div
+                }else{//label ontainer div exists
+                    var trajectoryContainer = $('#'+containerName);//locate the container div
+                    trajectoryContainer.empty();
+                }
+                var coordinates = Object.keys(trajectories[observer][body]);
+                for(var point of coordinates){
+                    var correctedCoordinates = {
+                        x: Math.round( trajectories[observer][body][point].x / Helioviewer.userSettings.settings.state.imageScale),
+                        y: Math.round( -trajectories[observer][body][point].y / Helioviewer.userSettings.settings.state.imageScale)
+                    };
+                    var trajectoryPoint = $('<div/>');
+                    trajectoryPoint.text('*');
+                    trajectoryPoint.css({
+                        'position'  : 'absolute',
+                        'left'      :  correctedCoordinates.x + 'px',
+                        'top'       :  correctedCoordinates.y + 'px',
+                        'z-index'   :  25,
+                        'text-shadow'   : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000'
+                    });
+                    trajectoryContainer.append(trajectoryPoint);
+                }
+            }
         }
     },
+
     _outputCoordinates: function(coordinates){
         this.coordinates = coordinates;
         var observers = Object.keys(coordinates);
@@ -48,7 +95,7 @@ var CelestialBodiesSatellites = Class.extend(
                 var containerName = body+"-container";
                 if($('#'+containerName).length == 0){//label container div does not exist yet
                     var labelContainer = $('<div/>');//make a new div
-                    labelContainer.attr('id',body+"-container");//set the id
+                    labelContainer.attr('id',containerName);//set the id
                     this.bodiesContainer.append(labelContainer);//append it to the bodiesContainer div
                 }else{//label ontainer div exists
                     var labelContainer = $('#'+containerName);//locate the container div
@@ -117,7 +164,7 @@ var CelestialBodiesSatellites = Class.extend(
                     +  '<h1 class="user-selectable">'+bodyCapitalized+' as seen from '+observerCapitalized+'</h1>'+"\n";
         if(displayDistances){
             content += '<div class="container">'+"\n"
-                    +   "\t"+'<div class="param-container"><div class="param-label user-selectable">Distance to Sun:</div></div>'+"\n"
+                    +   "\t"+'<div class="param-container"><div class="param-label user-selectable">Distance from '+ bodyCapitalized +' to Sun:</div></div>'+"\n"
                     +   "\t"+'<div class="value-container"><div class="param-value user-selectable">'+distance_body_to_sun_au_rounded+' AU</div></div>'
                     +   '</div>'+"\n";
             content += '<div class="container">'+"\n"
@@ -292,9 +339,6 @@ var CelestialBodiesSatellites = Class.extend(
             e.stopPropagation();
         });
 
-        
-    
     }
-
 
 });
