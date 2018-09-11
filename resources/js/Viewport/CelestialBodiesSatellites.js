@@ -7,6 +7,18 @@ var CelestialBodiesSatellites = Class.extend(
         this.getSolarBodies = true;
         this.mercuryReceivedPos = { x: 0, y: 0 };
         this.currentTime = 0;
+        this.pointSizes = {
+            small: 2.5,
+            large: 4.5
+        }
+        this.colors = {
+            behind: "Gray",
+            front: "#BEBEBE",
+            current: "white",
+            black: "black",
+        }
+        this.strokeColor = this.colors.behind;
+        this.fillColor = "black";
         this._initEventListeners();
         this._buildDOM();
     },
@@ -51,6 +63,7 @@ var CelestialBodiesSatellites = Class.extend(
     },
 
     _outputTrajectories: function(trajectories){
+        var currentRequestTime = helioviewer.timeControls.getTimestamp();
         this.trajectories = trajectories;
         var observers = Object.keys(trajectories);
         for(var observer of observers){
@@ -66,21 +79,77 @@ var CelestialBodiesSatellites = Class.extend(
                     trajectoryContainer.empty();
                 }
                 var coordinates = Object.keys(trajectories[observer][body]);
-                for(var point of coordinates){
-                    var correctedCoordinates = {
+                var numCoordinates = coordinates.length;
+                for(var point in coordinates){
+                    var currentPositionCoordinateTime = trajectories[observer][body][point].t;
+                    var currentPoint = {
                         x: Math.round( trajectories[observer][body][point].x / Helioviewer.userSettings.settings.state.imageScale),
                         y: Math.round( -trajectories[observer][body][point].y / Helioviewer.userSettings.settings.state.imageScale)
                     };
-                    var trajectoryPoint = $('<div/>');
-                    trajectoryPoint.text('*');
-                    trajectoryPoint.css({
+                    //create points for the trajectory
+                    if(currentRequestTime == currentPositionCoordinateTime){
+                        var pointRadius = this.pointSizes.large;
+                        this.fillColor = this.colors.current;
+                    }else{
+                        var pointRadius = this.pointSizes.small;
+                        this.fillColor = this.colors.behind;
+                    }
+                    var pointBorderDiameter = 20;
+                    var pointBoundingBox = pointRadius*2 + pointBorderDiameter;
+                    var svgPointContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
+                        id : containerName+'-svg-point-'+point,
+                        width : pointBoundingBox,
+                        height : pointBoundingBox
+                    }).css({
                         'position'  : 'absolute',
-                        'left'      :  correctedCoordinates.x + 'px',
-                        'top'       :  correctedCoordinates.y + 'px',
-                        'z-index'   :  25,
-                        'text-shadow'   : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000'
-                    });
-                    trajectoryContainer.append(trajectoryPoint);
+                        'left'      :  ( currentPoint.x - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
+                        'top'       :  ( currentPoint.y - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
+                        'z-index'   :  25+(pointRadius*2)
+                    }).appendTo(trajectoryContainer);
+                    $(document.createElementNS('http://www.w3.org/2000/svg','circle')).attr({
+                        id:containerName+'-point-'+point,
+                        cx: Math.floor(pointBoundingBox/2),
+                        cy: Math.floor(pointBoundingBox/2),
+                        r: pointRadius,
+                        "stroke": this.strokeColor,
+                        "stroke-width": currentRequestTime == currentPositionCoordinateTime ? 2 : 1,
+                        "fill": this.fillColor
+                    }).appendTo(svgPointContainer);
+                    //assemble lines for the trajectory
+                    if(point < numCoordinates - 1){
+                        var loc = parseInt(point) + 1;
+                        var nextPoint = {
+                            x: Math.round( trajectories[observer][body][loc].x / Helioviewer.userSettings.settings.state.imageScale),
+                            y: Math.round( -trajectories[observer][body][loc].y / Helioviewer.userSettings.settings.state.imageScale)
+                        };
+                        var svgLine = {
+                            width: (nextPoint.x - currentPoint.x),
+                            height: (nextPoint.y - currentPoint.y)
+                        }
+                        var line = {//normalize line to local coordinate for svg
+                            x1: Math.sign(svgLine.width)==1 ? 1 : Math.abs(svgLine.width)+1,
+                            y1: Math.sign(svgLine.height)==1 ? 1 : Math.abs(svgLine.height)+1,
+                            x2: Math.sign(svgLine.width)==1 ? svgLine.width+1 : 1,
+                            y2: Math.sign(svgLine.height)==1 ? svgLine.height+1 : 1
+                        }
+                        var svgLineContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
+                            id:containerName+'-svg-line-'+point,
+                            width: Math.abs(svgLine.width)+2,
+                            height: Math.abs(svgLine.height)+2
+                        }).css({
+                            'position'  : 'absolute',
+                            'left'      :  Math.sign(svgLine.width)==1 ? (currentPoint.x) + 'px' :  (currentPoint.x + svgLine.width) + 'px',
+                            'top'       :  Math.sign(svgLine.height)==1 ? (currentPoint.y) + 'px' : (currentPoint.y + svgLine.height) + 'px'
+                        }).appendTo(trajectoryContainer);
+                        $(document.createElementNS('http://www.w3.org/2000/svg','line')).attr({
+                            id:containerName+'-line-'+point,
+                            x1:line.x1,
+                            y1:line.y1,
+                            x2:line.x2,
+                            y2:line.y2,
+                            "stroke":this.strokeColor
+                        }).appendTo(svgLineContainer);
+                    }
                 }
             }
         }
@@ -111,7 +180,7 @@ var CelestialBodiesSatellites = Class.extend(
                     'position'  : 'absolute',
                     'left'      :  correctedCoordinates.x + 'px',
                     'top'       :  correctedCoordinates.y + 'px',
-                    'z-index'   :  30,
+                    'z-index'   :  100,
                     'text-shadow'   : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000'
                 });
                 this._buildPopupTemplate(observer,body,labelContainer);
@@ -120,6 +189,7 @@ var CelestialBodiesSatellites = Class.extend(
     },
 
     _replotCoordinates: function(){
+        var currentRequestTime = helioviewer.timeControls.getTimestamp();
         var observers = Object.keys(this.coordinates);
         for(var observer of observers){
             var bodies = Object.keys(this.coordinates[observer]);
@@ -135,6 +205,81 @@ var CelestialBodiesSatellites = Class.extend(
                     'top'       :  correctedCoordinates.y + 'px'
                 });
                 this._buildPopupTemplate(observer,body,labelContainer);
+                var coordinates = Object.keys(this.trajectories[observer][body]);
+                var trajectoryContainer = $('#'+body+'-trajectory');
+                trajectoryContainer.empty();
+                var numCoordinates = coordinates.length;
+                for(var point in coordinates){
+                    var currentPositionCoordinateTime = this.trajectories[observer][body][point].t;
+                    var currentPoint = {
+                        x: Math.round( this.trajectories[observer][body][point].x / Helioviewer.userSettings.settings.state.imageScale),
+                        y: Math.round( -this.trajectories[observer][body][point].y / Helioviewer.userSettings.settings.state.imageScale)
+                    };
+                    //create points for the trajectory
+                    if(currentRequestTime == currentPositionCoordinateTime){
+                        var pointRadius = this.pointSizes.large;
+                        this.fillColor = this.colors.current;
+                    }else{
+                        var pointRadius = this.pointSizes.small;
+                        this.fillColor = this.colors.behind;
+                    }
+                    var pointBorderDiameter = 20;
+                    var pointBoundingBox = pointRadius*2 + pointBorderDiameter;
+                    var svgPointContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
+                        id : containerName+'-svg-point-'+point,
+                        width : pointBoundingBox,
+                        height : pointBoundingBox
+                    }).css({
+                        'position'  : 'absolute',
+                        'left'      :  ( currentPoint.x - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
+                        'top'       :  ( currentPoint.y - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
+                        'z-index'   :  25
+                    }).appendTo(trajectoryContainer);
+                    $(document.createElementNS('http://www.w3.org/2000/svg','circle')).attr({
+                        id:containerName+'-point-'+point,
+                        cx: Math.floor(pointBoundingBox/2),
+                        cy: Math.floor(pointBoundingBox/2),
+                        r: pointRadius,
+                        "stroke": this.strokeColor,
+                        "stroke-width": currentRequestTime == currentPositionCoordinateTime ? 1 : 2,
+                        "fill": this.fillColor
+                    }).appendTo(svgPointContainer);
+                    
+                    if(point < numCoordinates - 1){
+                        var loc = parseInt(point) + 1;
+                        var nextPoint = {
+                            x: Math.round( this.trajectories[observer][body][loc].x / Helioviewer.userSettings.settings.state.imageScale),
+                            y: Math.round( -this.trajectories[observer][body][loc].y / Helioviewer.userSettings.settings.state.imageScale)
+                        };
+                        var svg = {
+                            width: (nextPoint.x - currentPoint.x),
+                            height: (nextPoint.y - currentPoint.y)
+                        }
+                        var line = {//normalize line to local coordinate for svg
+                            x1: Math.sign(svg.width)==1 ? 1 : Math.abs(svg.width)+1,
+                            y1: Math.sign(svg.height)==1 ? 1 : Math.abs(svg.height)+1,
+                            x2: Math.sign(svg.width)==1 ? svg.width+1 : 1,
+                            y2: Math.sign(svg.height)==1 ? svg.height+1 : 1
+                        }
+                        var svgContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
+                            id:containerName+'-svg-'+point,
+                            width: Math.abs(svg.width)+2,
+                            height: Math.abs(svg.height)+2
+                        }).css({
+                            'position'  : 'absolute',
+                            'left'      :  Math.sign(svg.width)==1 ? (currentPoint.x) + 'px' :  (currentPoint.x + svg.width) + 'px',
+                            'top'       :  Math.sign(svg.height)==1 ? (currentPoint.y) + 'px' : (currentPoint.y + svg.height) + 'px'
+                        }).appendTo(trajectoryContainer);
+                        $(document.createElementNS('http://www.w3.org/2000/svg','line')).attr({
+                            id:containerName+'-line-'+point,
+                            x1:line.x1,
+                            y1:line.y1,
+                            x2:line.x2,
+                            y2:line.y2,
+                            "stroke":this.strokeColor
+                        }).appendTo(svgContainer);
+                    }
+                }
             }
         }
 
