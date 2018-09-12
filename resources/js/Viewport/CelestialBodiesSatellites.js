@@ -8,7 +8,8 @@ var CelestialBodiesSatellites = Class.extend(
         this.mercuryReceivedPos = { x: 0, y: 0 };
         this.currentTime = 0;
         this.pointSizes = {
-            small: 2.5,
+            small: 1.5,
+            medium: 2.5,
             large: 4.5
         }
         this.colors = {
@@ -63,6 +64,7 @@ var CelestialBodiesSatellites = Class.extend(
     },
 
     _outputTrajectories: function(trajectories){
+        var self = this;
         var currentRequestTime = helioviewer.timeControls.getTimestamp();
         this.trajectories = trajectories;
         var observers = Object.keys(trajectories);
@@ -94,7 +96,7 @@ var CelestialBodiesSatellites = Class.extend(
                         var pointRadius = this.pointSizes.small;
                         this.fillColor = this.colors.behind;
                     }
-                    var pointBorderDiameter = 20;
+                    var pointBorderDiameter = 10;
                     var pointBoundingBox = pointRadius*2 + pointBorderDiameter;
                     var svgPointContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
                         id : containerName+'-svg-point-'+point,
@@ -106,6 +108,13 @@ var CelestialBodiesSatellites = Class.extend(
                         'top'       :  ( currentPoint.y - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
                         'z-index'   :  25+(pointRadius*2)
                     }).appendTo(trajectoryContainer);
+                    if(currentRequestTime != currentPositionCoordinateTime){
+                        svgPointContainer.bind('mouseenter',function(){
+                            $( this ).children().attr({ r: 3 , 'fill' : self.colors.current});
+                        }).bind('mouseleave',function(){
+                            $( this ).children().attr({ r: 1.5 , 'fill' : self.colors.behind});
+                        })
+                    }
                     $(document.createElementNS('http://www.w3.org/2000/svg','circle')).attr({
                         id:containerName+'-point-'+point,
                         cx: Math.floor(pointBoundingBox/2),
@@ -189,6 +198,7 @@ var CelestialBodiesSatellites = Class.extend(
     },
 
     _replotCoordinates: function(){
+        var self = this;
         var currentRequestTime = helioviewer.timeControls.getTimestamp();
         var observers = Object.keys(this.coordinates);
         for(var observer of observers){
@@ -223,7 +233,7 @@ var CelestialBodiesSatellites = Class.extend(
                         var pointRadius = this.pointSizes.small;
                         this.fillColor = this.colors.behind;
                     }
-                    var pointBorderDiameter = 20;
+                    var pointBorderDiameter = 10;
                     var pointBoundingBox = pointRadius*2 + pointBorderDiameter;
                     var svgPointContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
                         id : containerName+'-svg-point-'+point,
@@ -235,13 +245,20 @@ var CelestialBodiesSatellites = Class.extend(
                         'top'       :  ( currentPoint.y - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
                         'z-index'   :  25
                     }).appendTo(trajectoryContainer);
+                    if(currentRequestTime != currentPositionCoordinateTime){
+                        svgPointContainer.bind('mouseenter',function(){
+                            $( this ).children().attr({ r: 3 , 'fill' : self.colors.current });
+                        }).bind('mouseleave',function(){
+                            $( this ).children().attr({ r: 1.5 , 'fill' : self.colors.behind });
+                        })
+                    }
                     $(document.createElementNS('http://www.w3.org/2000/svg','circle')).attr({
                         id:containerName+'-point-'+point,
                         cx: Math.floor(pointBoundingBox/2),
                         cy: Math.floor(pointBoundingBox/2),
                         r: pointRadius,
                         "stroke": this.strokeColor,
-                        "stroke-width": currentRequestTime == currentPositionCoordinateTime ? 1 : 2,
+                        "stroke-width": currentRequestTime == currentPositionCoordinateTime ? 2 : 1,
                         "fill": this.fillColor
                     }).appendTo(svgPointContainer);
                     
