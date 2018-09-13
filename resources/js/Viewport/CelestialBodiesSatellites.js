@@ -101,7 +101,8 @@ var CelestialBodiesSatellites = Class.extend(
                     var svgPointContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
                         id : containerName+'-svg-point-'+point,
                         width : pointBoundingBox,
-                        height : pointBoundingBox
+                        height : pointBoundingBox,
+                        'time' : currentPositionCoordinateTime
                     }).css({
                         'position'  : 'absolute',
                         'left'      :  ( currentPoint.x - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
@@ -113,7 +114,13 @@ var CelestialBodiesSatellites = Class.extend(
                             $( this ).children().attr({ r: 3 , 'fill' : self.colors.current});
                         }).bind('mouseleave',function(){
                             $( this ).children().attr({ r: 1.5 , 'fill' : self.colors.behind});
-                        })
+                        }).bind('click',function(){
+                            var newDate = new Date();
+                            newDate.setTime( $( this ).attr('time') );
+                            helioviewer.timeControls.setDate(newDate);
+                            $( this ).children().attr({ r: 6 , 'fill' : self.colors.current, 'stroke-width' : 2});
+                            $( this ).unbind('mouseleave');
+                        });
                     }
                     $(document.createElementNS('http://www.w3.org/2000/svg','circle')).attr({
                         id:containerName+'-point-'+point,
@@ -182,7 +189,6 @@ var CelestialBodiesSatellites = Class.extend(
                     x: Math.round( coordinates[observer][body].x / Helioviewer.userSettings.settings.state.imageScale),
                     y: Math.round( -coordinates[observer][body].y / Helioviewer.userSettings.settings.state.imageScale)
                 };
-                //TODO: store all names as we want them to appear on the site
                 var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
                 labelContainer.text(bodyCapitalized);
                 labelContainer.css({
@@ -238,7 +244,8 @@ var CelestialBodiesSatellites = Class.extend(
                     var svgPointContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
                         id : containerName+'-svg-point-'+point,
                         width : pointBoundingBox,
-                        height : pointBoundingBox
+                        height : pointBoundingBox,
+                        'time' : currentPositionCoordinateTime
                     }).css({
                         'position'  : 'absolute',
                         'left'      :  ( currentPoint.x - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
@@ -250,7 +257,13 @@ var CelestialBodiesSatellites = Class.extend(
                             $( this ).children().attr({ r: 3 , 'fill' : self.colors.current });
                         }).bind('mouseleave',function(){
                             $( this ).children().attr({ r: 1.5 , 'fill' : self.colors.behind });
-                        })
+                        }).bind('click',function(){
+                            var newDate = new Date();
+                            newDate.setTime( $( this ).attr('time') );
+                            helioviewer.timeControls.setDate(newDate);
+                            $( this ).children().attr({ r: 6 , 'fill' : self.colors.current, 'stroke-width' : 2});
+                            $( this ).unbind('mouseleave');
+                        });
                     }
                     $(document.createElementNS('http://www.w3.org/2000/svg','circle')).attr({
                         id:containerName+'-point-'+point,
