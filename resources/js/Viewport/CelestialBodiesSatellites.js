@@ -13,13 +13,14 @@ var CelestialBodiesSatellites = Class.extend(
             large: 4.5
         }
         this.colors = {
-            behind: "Gray",
-            front: "#BEBEBE",
-            current: "white",
-            black: "black",
+            behind: '#808080',
+            front: '#A0A0A0',
+            current: 'white',
+            black: 'black',
         }
         this.strokeColor = this.colors.behind;
-        this.fillColor = "black";
+        this.fillColor = 'black';
+        this.dashSize = '3 2';
         this._initEventListeners();
         this._buildDOM();
     },
@@ -29,6 +30,7 @@ var CelestialBodiesSatellites = Class.extend(
         $(document).bind("observation-time-changed", $.proxy(this._onTimeChanged,this));
         $(document).bind("replot-celestial-objects", $.proxy(this._replotCoordinates,this));
         $(document).bind("replot-event-markers",   $.proxy(this._refresh, this));
+        $(document).bind("toggle-trajectory-checkboxes-to-state", $.proxy(this._treeToggleAllToState, this));
     },
 
     _buildDOM: function() {
@@ -49,7 +51,6 @@ var CelestialBodiesSatellites = Class.extend(
 
     _hvReady: function() {
         this._onTimeChanged();
-        this._buildSidebarTemplate(1,"bodies-container-"+this.currentTime,"Planets",true,true,true);
     },
 
     _onTimeChanged: function(){
@@ -59,9 +60,9 @@ var CelestialBodiesSatellites = Class.extend(
                 "action"    : "getSolarBodies",
                 "time"      : this.currentTime
             };
-            $.get(Helioviewer.api, params, $.proxy(this._outputCoordinates, this), "json");
+            $.get(Helioviewer.api, params, $.proxy(this._outputLabels, this), "json");
         }else{
-            this._outputCoordinates(null);
+            this._outputLabels(null);
         }
         this.currentTime = helioviewer.timeControls.getTimestamp();
         var params = {
@@ -75,7 +76,9 @@ var CelestialBodiesSatellites = Class.extend(
         var self = this;
         var currentRequestTime = helioviewer.timeControls.getTimestamp();
         this.trajectories = trajectories;
-
+        if($('#celestial-bodies-sidebar').length == 0){
+            this._buildSidebarTemplate(1,"celestial-bodies-sidebar","Planets",true,true,true);
+        }
         //create or find the svgUnderlineContainer DOM Object
         if($('#point-date-underline-container').length == 0){//svgUnderlineContainer does not exist yet
             this._buildUnderlineSVG();
@@ -94,23 +97,24 @@ var CelestialBodiesSatellites = Class.extend(
                 if($('#'+containerName).length == 0){//label container div does not exist yet
                     var trajectoryContainer = $('<div/>');//make a new div
                     trajectoryContainer.attr('id',containerName);//set the id
-                    this.bodiesContainer.append(trajectoryContainer);//append it to the bodiesContainer div
+                    this.trajectoriesContainer.append(trajectoryContainer);//append it to the bodiesContainer div
                 }else{//label ontainer div exists
                     var trajectoryContainer = $('#'+containerName);//locate the container div
-                    trajectoryContainer.empty();
+                    trajectoryContainer.empty();//empty the container, remove all child nodes
                 }
                 var coordinates = Object.keys(trajectories[observer][body]);
                 var numCoordinates = coordinates.length;
                 
-
                 for(var point in coordinates){
                     var currentPositionCoordinateTime = trajectories[observer][body][point].t;
                     var currentPoint = {
                         x: Math.round( trajectories[observer][body][point].x / Helioviewer.userSettings.settings.state.imageScale),
-                        y: Math.round( -trajectories[observer][body][point].y / Helioviewer.userSettings.settings.state.imageScale)
+                        y: Math.round( -trajectories[observer][body][point].y / Helioviewer.userSettings.settings.state.imageScale),
+                        b: trajectories[observer][body][point].b == 'True',
+                        t: currentRequestTime == currentPositionCoordinateTime
                     };
                     //create points for the trajectory
-                    if(currentRequestTime == currentPositionCoordinateTime){
+                    if(currentPoint.t){
                         var pointRadius = this.pointSizes.large;
                         this.fillColor = this.colors.current;
                     }else{
@@ -124,7 +128,8 @@ var CelestialBodiesSatellites = Class.extend(
                         width : pointBoundingBox,
                         height : pointBoundingBox,
                         'time' : currentPositionCoordinateTime,
-                        'target':'#'+containerName+'-hover-date-'+point 
+                        'target':'#'+containerName+'-hover-date-'+point,
+                        'behind':currentPoint.b
                     }).css({
                         'position'  : 'absolute',
                         'left'      :  ( currentPoint.x - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
@@ -148,7 +153,7 @@ var CelestialBodiesSatellites = Class.extend(
                         'bottom'            : -currentPoint.y + 'px',
                         'color'             : 'white',
                         'font-family'       : 'monospace',
-                        'z-index'           :  300,
+                        'z-index'           :  275,
                         'text-shadow'       : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000',
                         'background-color'  : 'rgba(0,0,0,0.6)',
                         'padding-bottom'    : '14px',
@@ -165,9 +170,9 @@ var CelestialBodiesSatellites = Class.extend(
                         cx: Math.floor(pointBoundingBox/2),
                         cy: Math.floor(pointBoundingBox/2),
                         r: pointRadius,
-                        "stroke": this.strokeColor,
-                        "stroke-width": currentRequestTime == currentPositionCoordinateTime ? 2 : 1,
-                        "fill": this.fillColor
+                        "stroke": (currentPoint.b ? this.colors.behind : this.colors.front) ,
+                        "stroke-width": (currentPoint.t ? 2 : 1),
+                        "fill": (currentPoint.t ? this.colors.current : (currentPoint.b ? this.colors.behind : this.colors.front))
                     }).appendTo(svgPointContainer);
                     //bind events
                     if(currentRequestTime != currentPositionCoordinateTime){
@@ -180,7 +185,7 @@ var CelestialBodiesSatellites = Class.extend(
                                 'bottom': target.css('bottom')
                             }).show();
                         }).bind('mouseleave',function(){
-                            $( this ).children().attr({ r: 1.5 , 'fill' : self.colors.behind});
+                            $( this ).children().attr({ r: 1.5 , 'fill' : ( $( this ).attr('behind')=='true' ? self.colors.behind : self.colors.front)});
                             $( $(this).attr('target') ).hide();
                             svgUnderlineContainer.hide();
                         }).bind('click',function(){
@@ -190,13 +195,26 @@ var CelestialBodiesSatellites = Class.extend(
                             $( this ).children().attr({ r: 6 , 'fill' : self.colors.current, 'stroke-width' : 2});
                             $( this ).unbind('mouseleave');
                         });
+                    }else{
+                        svgPointContainer.bind('mouseenter',function(){
+                            var  target = $( $(this).attr('target') );
+                            target.show();
+                            svgUnderlineContainer.css({
+                                'left'  : target.css('left'),
+                                'bottom': target.css('bottom')
+                            }).show();
+                        }).bind('mouseleave',function(){
+                            $( $(this).attr('target') ).hide();
+                            svgUnderlineContainer.hide();
+                        });
                     }
                     //assemble lines for the trajectory
                     if(point < numCoordinates - 1){
                         var loc = parseInt(point) + 1;
                         var nextPoint = {
                             x: Math.round( trajectories[observer][body][loc].x / Helioviewer.userSettings.settings.state.imageScale),
-                            y: Math.round( -trajectories[observer][body][loc].y / Helioviewer.userSettings.settings.state.imageScale)
+                            y: Math.round( -trajectories[observer][body][loc].y / Helioviewer.userSettings.settings.state.imageScale),
+                            b: trajectories[observer][body][loc].b == 'True'
                         };
                         var svgLine = {
                             width: (nextPoint.x - currentPoint.x),
@@ -223,17 +241,20 @@ var CelestialBodiesSatellites = Class.extend(
                             y1:line.y1,
                             x2:line.x2,
                             y2:line.y2,
-                            "stroke":this.strokeColor
+                            "stroke" : nextPoint.b ? this.colors.behind : this.colors.front,
+                            "stroke-dasharray" : (nextPoint.b ? this.dashSize : '0')
                         }).appendTo(svgLineContainer);
                     }
                 }
             }
         }
+        
     },
 
-    _outputCoordinates: function(coordinates){
+    _outputLabels: function(coordinates){
+        var firstRun = true;
         this.coordinates = coordinates;
-        this.labelsContainer.empty();
+        var currentTime = Date.now();
         var observers = Object.keys(coordinates);
         for(var observer of observers){
             var bodies = Object.keys(coordinates[observer]);
@@ -241,27 +262,43 @@ var CelestialBodiesSatellites = Class.extend(
                 var containerName = body+"-container";
                 if($('#'+containerName).length == 0){//label container div does not exist yet
                     var labelContainer = $('<div/>');//make a new div
-                    labelContainer.attr('id',containerName);//set the id
+                    labelContainer.attr({'id':containerName, 'time':currentTime});//set the id
+                    labelContainer.css({
+                        'position'  : 'absolute',
+                        'z-index'   :  100,
+                        'text-shadow'   : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000'
+                    });
                     this.labelsContainer.append(labelContainer);//append it to the bodiesContainer div
                 }else{//label ontainer div exists
+                    firstRun = false;
                     var labelContainer = $('#'+containerName);//locate the container div
+                    labelContainer.attr({'time': currentTime});
+                    var labelContainerVisible = labelContainer.is(":visible");
                 }
                 var correctedCoordinates = {
                     x: Math.round( coordinates[observer][body].x / Helioviewer.userSettings.settings.state.imageScale),
                     y: Math.round( -coordinates[observer][body].y / Helioviewer.userSettings.settings.state.imageScale)
                 };
+                //console.log(correctedCoordinates.x,correctedCoordinates.y);
                 var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
                 labelContainer.text(bodyCapitalized);
                 labelContainer.css({
-                    'position'  : 'absolute',
                     'left'      :  correctedCoordinates.x + 'px',
-                    'top'       :  correctedCoordinates.y + 'px',
-                    'z-index'   :  100,
-                    'text-shadow'   : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000'
+                    'top'       :  correctedCoordinates.y + 'px'
                 });
                 this._buildPopupTemplate(observer,body,labelContainer);
             }
+            
+            
         }
+        if(!firstRun){
+            this._treeChangedState();
+        }
+        this.labelsContainer.children().each(function(){
+            if($(this).attr('time') != currentTime){
+                $(this).hide();
+            }
+        });
         this._closeOldPopups(this.currentTime);
     },
 
@@ -269,7 +306,7 @@ var CelestialBodiesSatellites = Class.extend(
         var self = this;
         var currentRequestTime = helioviewer.timeControls.getTimestamp();
 
-        //create unline svg
+        //create underline svg
         var svgUnderlineContainer = $("#point-date-underline-container");
         svgUnderlineContainer.hide();
 
@@ -289,21 +326,30 @@ var CelestialBodiesSatellites = Class.extend(
                     'top'       :  correctedCoordinates.y + 'px'
                 });
                 this._buildPopupTemplate(observer,body,labelContainer);
+            }
+        }
+        this._treeChangedState();
+
+        var observers = Object.keys(this.trajectories);
+        for(var observer of observers){
+            var bodies = Object.keys(this.trajectories[observer]);
+            for(var body of bodies){
+                var containerName = body+"-container";
                 var coordinates = Object.keys(this.trajectories[observer][body]);
                 var trajectoryContainer = $('#'+body+'-trajectory');
                 trajectoryContainer.empty();
                 var numCoordinates = coordinates.length;
 
-                
-                
                 for(var point in coordinates){
                     var currentPositionCoordinateTime = this.trajectories[observer][body][point].t;
                     var currentPoint = {
                         x: Math.round( this.trajectories[observer][body][point].x / Helioviewer.userSettings.settings.state.imageScale),
-                        y: Math.round( -this.trajectories[observer][body][point].y / Helioviewer.userSettings.settings.state.imageScale)
+                        y: Math.round( -this.trajectories[observer][body][point].y / Helioviewer.userSettings.settings.state.imageScale),
+                        b: this.trajectories[observer][body][point].b == 'True',
+                        t: currentRequestTime == currentPositionCoordinateTime
                     };
                     //create points for the trajectory
-                    if(currentRequestTime == currentPositionCoordinateTime){
+                    if(currentPoint.t){
                         var pointRadius = this.pointSizes.large;
                         this.fillColor = this.colors.current;
                     }else{
@@ -317,12 +363,13 @@ var CelestialBodiesSatellites = Class.extend(
                         width : pointBoundingBox,
                         height : pointBoundingBox,
                         'time' : currentPositionCoordinateTime,
-                        'target':'#'+containerName+'-hover-date-'+point 
+                        'target':'#'+containerName+'-hover-date-'+point,
+                        'behind': currentPoint.b 
                     }).css({
                         'position'  : 'absolute',
                         'left'      :  ( currentPoint.x - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
                         'top'       :  ( currentPoint.y - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
-                        'z-index'   :  25
+                        'z-index'   :  210+(pointRadius*2)
                     }).appendTo(trajectoryContainer);
                     var textDate = new Date();
                     textDate.setTime(currentPositionCoordinateTime);
@@ -341,7 +388,7 @@ var CelestialBodiesSatellites = Class.extend(
                         'bottom'            : -currentPoint.y + 'px',
                         'color'             : 'white',
                         'font-family'       : 'monospace',
-                        'z-index'           :  200,
+                        'z-index'           :  275,
                         'text-shadow'       : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000',
                         'background-color'  : 'rgba(0,0,0,0.6)',
                         'padding-bottom'    : '14px',
@@ -359,7 +406,7 @@ var CelestialBodiesSatellites = Class.extend(
                                 'bottom': target.css('bottom')
                             }).show();
                         }).bind('mouseleave',function(){
-                            $( this ).children().attr({ r: 1.5 , 'fill' : self.colors.behind });
+                            $( this ).children().attr({ r: 1.5 , 'fill' : ($( this ).attr('behind')=='true' ? self.colors.behind : self.colors.front) });
                             $( $(this).attr('target') ).hide();
                             svgUnderlineContainer.hide();
                         }).bind('click',function(){
@@ -369,22 +416,36 @@ var CelestialBodiesSatellites = Class.extend(
                             $( this ).children().attr({ r: 6 , 'fill' : self.colors.current, 'stroke-width' : 2});
                             $( this ).unbind('mouseleave');
                         });
+                    }else{
+                        svgPointContainer.bind('mouseenter',function(){
+                            var  target = $( $(this).attr('target') );
+                            target.show();
+                            svgUnderlineContainer.css({
+                                'left'  : target.css('left'),
+                                'bottom': target.css('bottom')
+                            }).show();
+                        }).bind('mouseleave',function(){
+                            $( $(this).attr('target') ).hide();
+                            svgUnderlineContainer.hide();
+                        });
                     }
+                    
                     $(document.createElementNS('http://www.w3.org/2000/svg','circle')).attr({
                         id:containerName+'-point-'+point,
                         cx: Math.floor(pointBoundingBox/2),
                         cy: Math.floor(pointBoundingBox/2),
                         r: pointRadius,
-                        "stroke": this.strokeColor,
-                        "stroke-width": currentRequestTime == currentPositionCoordinateTime ? 2 : 1,
-                        "fill": this.fillColor
+                        "stroke": (currentPoint.b ? this.colors.behind : this.colors.front) ,
+                        "stroke-width": (currentPoint.t ? 2 : 1 ),
+                        "fill": (currentPoint.t ? this.colors.current : (currentPoint.b ? this.colors.behind : this.colors.front))
                     }).appendTo(svgPointContainer);
                     
                     if(point < numCoordinates - 1){
                         var loc = parseInt(point) + 1;
                         var nextPoint = {
                             x: Math.round( this.trajectories[observer][body][loc].x / Helioviewer.userSettings.settings.state.imageScale),
-                            y: Math.round( -this.trajectories[observer][body][loc].y / Helioviewer.userSettings.settings.state.imageScale)
+                            y: Math.round( -this.trajectories[observer][body][loc].y / Helioviewer.userSettings.settings.state.imageScale),
+                            b: this.trajectories[observer][body][loc].b == 'True' 
                         };
                         var svg = {
                             width: (nextPoint.x - currentPoint.x),
@@ -411,13 +472,13 @@ var CelestialBodiesSatellites = Class.extend(
                             y1:line.y1,
                             x2:line.x2,
                             y2:line.y2,
-                            "stroke":this.strokeColor
+                            'stroke':(nextPoint.b ? this.colors.behind : this.colors.front),
+                            'stroke-dasharray' : (nextPoint.b ? this.dashSize : '0')
                         }).appendTo(svgContainer);
                     }
                 }
             }
         }
-
     },
 
     _buildPopupTemplate: function(observer,body,labelContainer){
@@ -452,7 +513,7 @@ var CelestialBodiesSatellites = Class.extend(
                     +   "\t"+'<div class="value-container"><div class="param-value user-selectable">'+distance_observer_to_body_au_rounded+' AU</div></div>'
                     +   '</div>'+"\n";
             content += '<div class"container">'+"\n"
-                    +   "\t"+'<div class="plane-position-container" '+(behind_plane_of_sun ? 'style="color: Silver"' : 'style="color: Gainsboro')+'>'
+                    +   "\t"+'<div class="plane-position-container" '+(behind_plane_of_sun ? 'style="color: Silver"' : 'style="color: Gainsboro"')+'>'
                     +   bodyCapitalized+' is '+(behind_plane_of_sun ? ' behind ' : ' in front of ')+' the plane of the sun.'
                     +   '</div></div>'+"\n";
         }
@@ -538,7 +599,7 @@ var CelestialBodiesSatellites = Class.extend(
             'position'  : 'absolute',
             'left'      : '0px',
             'bottom'    : '0px',
-            'z-index'   : 300
+            'z-index'   : 200
         }).hide().appendTo(this.bodiesContainer);
         //vertical line
         $(document.createElementNS('http://www.w3.org/2000/svg','line')).attr({
@@ -586,13 +647,13 @@ var CelestialBodiesSatellites = Class.extend(
         visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
                         + markersHidden + '" '
                         + 'id="visibilityBtn-' + id + '" '
-                        + 'title="Toggle visibility of event marker pins" '
+                        + 'title="Toggle visibility of Celestial Body Trajectories" '
                         + '></span>';
 
         labelsBtn = '<span class="fa fa-tags fa-fw labelsBtn'
                     + labelsHidden + '" '
                     + 'id="labelsBtn-' + id + '" '
-                    + 'title="Toggle Visibility of Feature and Event Text Labels" '
+                    + 'title="Toggle Visibility of Celestial Body Text Labels" '
                     + '></span>';
 
         head = '<div class="layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all">'
@@ -610,7 +671,7 @@ var CelestialBodiesSatellites = Class.extend(
         // Create accordion entry body
         body  = '<div class="row" style="text-align: left;"><div class="buttons"><div id="checkboxBtn-On-'+id+'" title="Toggle All Event Checkboxes On" class="text-button inline-block"><div class="fa fa-check-square fa-fw"></div>check all</div>';
         body += '<div id="checkboxBtn-Off-'+id+'" title="Toggle All Event Checkboxes Off" class="text-button inline-block"><div class="fa fa-square fa-fw"></div>check none</div></div>';
-        body += '<div id="eventJSTree" style="margin-bottom: 5px;"></div></div>';
+        body += '<div id="trajectory-jstree" style="margin-bottom: 5px;" class="jstree-focused"></div></div>';
 
         
         //Add to accordion
@@ -626,19 +687,19 @@ var CelestialBodiesSatellites = Class.extend(
         //this.getEventGlossary();
 
         this.domNode.find("#checkboxBtn-"+id).click( function() {
-            $(document).trigger("toggle-checkboxes");
+            $(document).trigger("toggle-trajectory-checkboxes");
         });
 
         this.domNode.find("#checkboxBtn-On-"+id).click( function() {
-            $(document).trigger("toggle-checkboxes-to-state", ['on']);
+            $(document).trigger("toggle-trajectory-checkboxes-to-state", ['on']);
         });
 
         this.domNode.find("#checkboxBtn-Off-"+id).click( function() {
-            $(document).trigger("toggle-checkboxes-to-state", ['off']);
+            $(document).trigger("toggle-trajectory-checkboxes-to-state", ['off']);
         });
 
         this.domNode.find("#labelsBtn-"+id).click( function(e) {
-            $(document).trigger("toggle-event-labels", [$("#labelsBtn-"+id)]);
+            $(document).trigger("toggle-trajectory-event-labels", [$("#labelsBtn-"+id)]);
             e.stopPropagation();
         });
 
@@ -660,8 +721,116 @@ var CelestialBodiesSatellites = Class.extend(
             e.stopPropagation();
         });
 
+        this._buildSidebarTree();
+    },
 
+    _buildSidebarTree: function(){
+        var treeData = this._buildJSTreeData(this.trajectories);
 
+        this.trajectoryTree = $('#trajectory-jstree');
+        this.trajectoryTree.jstree({
+            "json_data" : { "data": treeData },
+            "core" : { "data": treeData },
+            "themes"    : { "theme":"default", "dots":true, "icons":false },
+            "plugins"   : [ "json_data", "themes", "ui", "checkbox" ],
+        });
+        this.trajectoryTree.jstree("check_all");
+        this.trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this));
+        /*
+        this.trajectoryTree.bind("change_state.jstree", function(e,data) {
+            $('#'+data.rslt[0].attributes[1].nodeValue).toggle();
+        });*/
+    },
+
+    _treeChangedState: function(e, data){
+        //hide all the layers
+        this.labelsContainer.children().each(function(){
+            $(this).hide();
+        });
+        this.trajectoriesContainer.children().each(function(){
+            $(this).hide();
+        });
+        /*for(var body of this.treeBodies){
+            $('#'+body+'-trajectory').hide();
+            $('#'+body+'-container').hide();
+        }*/
+        //show all the checked layers
+        this.trajectoryTree.jstree("get_checked",null,false).each(
+            function(){
+                var myTarget = $(this).attr('target');
+                var myType = $(this).attr('type');
+                if(myType == "leaf"){
+                    $('#'+myTarget).show();
+                }else if(myType == "branch"){
+                    $(this).find("[type='leaf']").each(
+                        function(){
+                            var myTarget = $(this).attr('target');
+                            $('#'+myTarget).show();
+                        }
+                    );
+                }
+            }
+        );
+    },
+
+    _treeToggleAllToState: function(e,state){
+        if(state == "on"){
+            //this.trajectoryTree.unbind("change_state.jstree");
+            this.trajectoryTree.jstree("check_all",null,true);
+            //this.trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this));
+        }else if(state == "off"){
+            //this.trajectoryTree.unbind("change_state.jstree");
+            this.trajectoryTree.jstree("uncheck_all",null,true);
+            //this.trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this));
+        }
+    },
+
+    _treeToggleLabels: function(){
+        console.log("toggle labels");
+    },
+
+    _treeToggleTrajectories: function(){
+        console.log("toggle trajectories");
+    },
+
+    _buildJSTreeData: function(trajectories){
+        var trajectoryTreeData = [];
+        var observers = Object.keys(trajectories);
+        this.treeObservers = observers;
+        for(var observer of observers){
+            var observerCapitalized = observer.charAt(0).toUpperCase() + observer.substr(1);
+            var observerObject = Object();
+            observerObject.attr = { id: observer+"-tree-branch", target: observer, type: "branch" };
+            observerObject.data = observerCapitalized + " Perspective";
+            observerObject.state = "open"; 
+            observerObject.children = [];
+            var bodies = Object.keys(trajectories[observer]);
+            this.treeBodies = bodies;
+            for(var body of bodies){
+                var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
+                var bodyObject = Object();
+                var attributeID = {
+                    id: body+"-tree-branch",
+                    target: body,
+                    type: "branch"
+                }
+                bodyObject.attr = attributeID;
+                bodyObject.data = bodyCapitalized;
+                bodyObject.state = "open";
+                bodyObject.children = [];
+                var labelObject = Object();
+                var trajectoryObject = Object();
+                labelObject.attr = { id : body+"-tree-label", target: body+"-container", type: "leaf"};
+                trajectoryObject.attr = { id : body+"-tree-trajectory", target: body+"-trajectory", type: "leaf"};
+                labelObject.data = "Label";
+                trajectoryObject.data = "Trajectory";
+                bodyObject.children.push(labelObject);
+                bodyObject.children.push(trajectoryObject);
+                observerObject.children.push(bodyObject);
+            }
+            trajectoryTreeData.push(observerObject);
+        }
+        return trajectoryTreeData;
     }
 
 });
