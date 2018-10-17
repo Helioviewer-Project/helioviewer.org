@@ -31,6 +31,8 @@ var CelestialBodiesSatellites = Class.extend(
         $(document).bind("replot-celestial-objects", $.proxy(this._replotCoordinates,this));
         $(document).bind("replot-event-markers",   $.proxy(this._refresh, this));
         $(document).bind("toggle-trajectory-checkboxes-to-state", $.proxy(this._treeToggleAllToState, this));
+        $(document).bind("toggle-all-labels", $.proxy(this._treeToggleLabels, this));
+        $(document).bind("toggle-all-trajectories", $.proxy(this._treeToggleTrajectories, this));
     },
 
     _buildDOM: function() {
@@ -669,13 +671,13 @@ var CelestialBodiesSatellites = Class.extend(
         
         visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
                         + markersHidden + '" '
-                        + 'id="visibilityBtn-' + id + '" '
+                        + 'id="visibilityTrajectories-' + id + '" '
                         + 'title="Toggle visibility of Celestial Body Trajectories" '
                         + '></span>';
 
         labelsBtn = '<span class="fa fa-tags fa-fw labelsBtn'
                     + labelsHidden + '" '
-                    + 'id="labelsBtn-' + id + '" '
+                    + 'id="visibilityLabels-' + id + '" '
                     + 'title="Toggle Visibility of Celestial Body Text Labels" '
                     + '></span>';
 
@@ -721,21 +723,26 @@ var CelestialBodiesSatellites = Class.extend(
             $(document).trigger("toggle-trajectory-checkboxes-to-state", ['off']);
         });
 
-        this.domNode.find("#labelsBtn-"+id).click( function(e) {
-            $(document).trigger("toggle-trajectory-event-labels", [$("#labelsBtn-"+id)]);
+        this.domNode.find("#visibilityLabels-"+id).click( function(e) {
+            $(document).trigger("toggle-all-labels", [$("#visibilityLabels-"+id)]);
             e.stopPropagation();
         });
+
+        this.domNode.find("#visibilityTrajectories-"+id ).click( function(e){
+            $(document).trigger("toggle-all-trajectories",[$("#visibilityTrajectories-"+id)]);
+            e.stopPropagation();
+        })
 
         this.domNode.find("#visibilityAvailableBtn-"+id).click( function(e) {
             var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
             if(visState == true){
                 Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
                 $(this).addClass('hidden');
-                $('#eventJSTree .empty-element').hide();
+                $('#trajectory-jstree .empty-element').hide();
             }else{
                 Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
                 $(this).removeClass('hidden');
-                $('#eventJSTree .empty-element').show();
+                $('#trajectory-jstree .empty-element').show();
             }
             e.stopPropagation();
         });
@@ -812,12 +819,16 @@ var CelestialBodiesSatellites = Class.extend(
         }
     },
 
-    _treeToggleLabels: function(){
-        console.log("toggle labels");
+    _treeToggleLabels: function(buttonElementReference){
+        $("[id$='-tree-label'] .checkbox").each(function(){
+            $(this).click();
+        });
     },
 
-    _treeToggleTrajectories: function(){
-        console.log("toggle trajectories");
+    _treeToggleTrajectories: function(buttonElementReference){
+        $("[id$='-tree-trajectory'] .checkbox").each(function(){
+            $(this).click();
+        });
     },
 
     _buildJSTreeData: function(data){
@@ -870,7 +881,7 @@ var CelestialBodiesSatellites = Class.extend(
         var trajectories = data['trajectories'];
         var labels = data['labels'];
 
-        this.trajectoryTree.unbind("change_state.jstree");
+        //this.trajectoryTree.unbind("change_state.jstree");
 
         var labelObservers = Object.keys(labels);
         for(var observer of labelObservers){
@@ -878,8 +889,8 @@ var CelestialBodiesSatellites = Class.extend(
             for(var body of bodies){
                 if(labels[observer][body] == null){
                     //console.log("disabling: "+body+"-tree-label");
-                    $('#'+body+"-tree-label").css({'opacity':'0.5'});
-                    $('#'+body+"-tree-label").addClass('empty-element');
+                    var treeLabel = $('#'+body+"-tree-label");
+                    treeLabel.css({'opacity':'0.5'}).addClass('empty-element');
                 }
             }
         }
@@ -891,12 +902,11 @@ var CelestialBodiesSatellites = Class.extend(
                 if(trajectories[observer][body].length == 0){
                     //console.log("disabling: "+body+"-tree-trajectory");
                     var treeTrajectory = $('#'+body+"-tree-trajectory");
-                    treeTrajectory.css({'opacity':'0.5'});
-                    treeTrajectory.addClass('empty-element');
+                    treeTrajectory.css({'opacity':'0.5'}).addClass('empty-element');
                 }
             }
         }
-        this.trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this));
+        //this.trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this));
     }
 
 });
