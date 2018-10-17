@@ -54,30 +54,27 @@ var CelestialBodiesSatellites = Class.extend(
     },
 
     _onTimeChanged: function(){
-        if(this.getSolarBodies){
-            this.currentTime = helioviewer.timeControls.getTimestamp();
-            var params = {
-                "action"    : "getSolarBodies",
-                "time"      : this.currentTime
-            };
-            $.get(Helioviewer.api, params, $.proxy(this._outputLabels, this), "json");
-        }else{
-            this._outputLabels(null);
-        }
         this.currentTime = helioviewer.timeControls.getTimestamp();
         var params = {
-            "action"    : "getTrajectories",
+            "action"    : "getSolarBodies",
             "time"      : this.currentTime
         };
-        $.get(Helioviewer.api, params, $.proxy(this._outputTrajectories, this), "json");
+        $.get(Helioviewer.api, params, $.proxy(this._outputSolarBodies, this, true), "json");
     },
 
-    _outputTrajectories: function(trajectories){
+    _outputTrajectories: function(ajax,data){
         var self = this;
         var currentRequestTime = helioviewer.timeControls.getTimestamp();
-        this.trajectories = trajectories;
+        if(ajax){
+            var trajectories = data['trajectories'];
+            this.trajectories = trajectories;
+        }else{
+            var trajectories = this.trajectories;
+        }
         if($('#celestial-bodies-sidebar').length == 0){
-            this._buildSidebarTemplate(1,"celestial-bodies-sidebar","Planets",true,true,true);
+            this._buildSidebarTemplate(1,"celestial-bodies-sidebar","Planets",true,true,true,data);
+        }else{
+            this._disableTreeItems(data);
         }
         //create or find the svgUnderlineContainer DOM Object
         if($('#point-date-underline-container').length == 0){//svgUnderlineContainer does not exist yet
@@ -104,155 +101,156 @@ var CelestialBodiesSatellites = Class.extend(
                 }
                 var coordinates = Object.keys(trajectories[observer][body]);
                 var numCoordinates = coordinates.length;
-                
-                for(var point in coordinates){
-                    var currentPositionCoordinateTime = trajectories[observer][body][point].t;
-                    var currentPoint = {
-                        x: Math.round( trajectories[observer][body][point].x / Helioviewer.userSettings.settings.state.imageScale),
-                        y: Math.round( -trajectories[observer][body][point].y / Helioviewer.userSettings.settings.state.imageScale),
-                        b: trajectories[observer][body][point].b == 'True',
-                        t: currentRequestTime == currentPositionCoordinateTime
-                    };
-                    //create points for the trajectory
-                    if(currentPoint.t){
-                        var pointRadius = this.pointSizes.large;
-                        this.fillColor = this.colors.current;
-                    }else{
-                        var pointRadius = this.pointSizes.small;
-                        this.fillColor = this.colors.behind;
-                    }
-                    var pointBorderDiameter = 10;
-                    var pointBoundingBox = pointRadius*2 + pointBorderDiameter;
-                    var svgPointContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
-                        id : containerName+'-svg-point-'+point,
-                        width : pointBoundingBox,
-                        height : pointBoundingBox,
-                        'time' : currentPositionCoordinateTime,
-                        'target':'#'+containerName+'-hover-date-'+point,
-                        'behind':currentPoint.b
-                    }).css({
-                        'position'  : 'absolute',
-                        'left'      :  ( currentPoint.x - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
-                        'top'       :  ( currentPoint.y - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
-                        'z-index'   :  210+(pointRadius*2)
-                    }).appendTo(trajectoryContainer);
-                    var textDate = new Date();
-                    textDate.setTime(currentPositionCoordinateTime);
-                    textDate = textDate.toUTCString().slice(5);
-                    textDate = textDate.slice(0,textDate.length-3);
-                    textDate += "UTC";
-                    var bodyTextDate = bodyCapitalized + ' on <br/>' + textDate; 
-                    var hoverDateContainer = $('<div/>').attr({
-                        'id' : containerName+'-hover-date-'+point
-                    }).css({
-                        'transform'         : 'translateY(-90px) translateX(-45px) rotate(-45deg)',
-                        'position'          : 'absolute',
-                        'width'             : '210px',
-                        'height'            : '20px',
-                        'left'              : currentPoint.x + 'px',
-                        'bottom'            : -currentPoint.y + 'px',
-                        'color'             : 'white',
-                        'font-family'       : 'monospace',
-                        'z-index'           :  275,
-                        'text-shadow'       : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000',
-                        'background-color'  : 'rgba(0,0,0,0.6)',
-                        'padding-bottom'    : '14px',
-                        'padding-left'      : '3px'
-                    }).html(bodyTextDate).hide().appendTo(trajectoryContainer);
-                    /*var svgHoverDateContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
-                        id : containerName+'-svg-date-'+point,
-                        width : pointBoundingBox,
-                        height : '100px',
-                        'time' : currentPositionCoordinateTime
-                    }).appendTo(hoverDateContainer);*/
-                    $(document.createElementNS('http://www.w3.org/2000/svg','circle')).attr({
-                        id:containerName+'-point-'+point,
-                        cx: Math.floor(pointBoundingBox/2),
-                        cy: Math.floor(pointBoundingBox/2),
-                        r: pointRadius,
-                        "stroke": (currentPoint.b ? this.colors.behind : this.colors.front) ,
-                        "stroke-width": (currentPoint.t ? 2 : 1),
-                        "fill": (currentPoint.t ? this.colors.current : (currentPoint.b ? this.colors.behind : this.colors.front))
-                    }).appendTo(svgPointContainer);
-                    //bind events
-                    if(currentRequestTime != currentPositionCoordinateTime){
-                        svgPointContainer.bind('mouseenter',function(){
-                            $( this ).children().attr({ r: 3 , 'fill' : self.colors.current});
-                            var  target = $( $(this).attr('target') );
-                            target.show();
-                            svgUnderlineContainer.css({
-                                'left'  : target.css('left'),
-                                'bottom': target.css('bottom')
-                            }).show();
-                        }).bind('mouseleave',function(){
-                            $( this ).children().attr({ r: 1.5 , 'fill' : ( $( this ).attr('behind')=='true' ? self.colors.behind : self.colors.front)});
-                            $( $(this).attr('target') ).hide();
-                            svgUnderlineContainer.hide();
-                        }).bind('click',function(){
-                            var newDate = new Date();
-                            newDate.setTime( $( this ).attr('time') );
-                            helioviewer.timeControls.setDate(newDate);
-                            $( this ).children().attr({ r: 6 , 'fill' : self.colors.current, 'stroke-width' : 2});
-                            $( this ).unbind('mouseleave');
-                        });
-                    }else{
-                        svgPointContainer.bind('mouseenter',function(){
-                            var  target = $( $(this).attr('target') );
-                            target.show();
-                            svgUnderlineContainer.css({
-                                'left'  : target.css('left'),
-                                'bottom': target.css('bottom')
-                            }).show();
-                        }).bind('mouseleave',function(){
-                            $( $(this).attr('target') ).hide();
-                            svgUnderlineContainer.hide();
-                        });
-                    }
-                    //assemble lines for the trajectory
-                    if(point < numCoordinates - 1){
-                        var loc = parseInt(point) + 1;
-                        var nextPoint = {
-                            x: Math.round( trajectories[observer][body][loc].x / Helioviewer.userSettings.settings.state.imageScale),
-                            y: Math.round( -trajectories[observer][body][loc].y / Helioviewer.userSettings.settings.state.imageScale),
-                            b: trajectories[observer][body][loc].b == 'True'
+                if(numCoordinates != 0){
+                    for(var point in coordinates){
+                        var currentPositionCoordinateTime = trajectories[observer][body][point].t;
+                        var currentPoint = {
+                            x: Math.round( trajectories[observer][body][point].x / Helioviewer.userSettings.settings.state.imageScale),
+                            y: Math.round( -trajectories[observer][body][point].y / Helioviewer.userSettings.settings.state.imageScale),
+                            b: trajectories[observer][body][point].b == 'True',
+                            t: currentRequestTime == currentPositionCoordinateTime
                         };
-                        var svgLine = {
-                            width: (nextPoint.x - currentPoint.x),
-                            height: (nextPoint.y - currentPoint.y)
+                        //create points for the trajectory
+                        if(currentPoint.t){
+                            var pointRadius = this.pointSizes.large;
+                            this.fillColor = this.colors.current;
+                        }else{
+                            var pointRadius = this.pointSizes.small;
+                            this.fillColor = this.colors.behind;
                         }
-                        var line = {//normalize line to local coordinate for svg
-                            x1: Math.sign(svgLine.width)==1 ? 1 : Math.abs(svgLine.width) + 1,
-                            y1: Math.sign(svgLine.height)==1 ? 1 : Math.abs(svgLine.height) + 1,
-                            x2: Math.sign(svgLine.width)==1 ? svgLine.width+1 : 1,
-                            y2: Math.sign(svgLine.height)==1 ? svgLine.height+1 : 1
-                        }
-                        var svgLineContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
-                            id:containerName+'-svg-line-'+point,
-                            width: Math.abs(svgLine.width)+2,
-                            height: Math.abs(svgLine.height)+2
+                        var pointBorderDiameter = 10;
+                        var pointBoundingBox = pointRadius*2 + pointBorderDiameter;
+                        var svgPointContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
+                            id : containerName+'-svg-point-'+point,
+                            width : pointBoundingBox,
+                            height : pointBoundingBox,
+                            'time' : currentPositionCoordinateTime,
+                            'target':'#'+containerName+'-hover-date-'+point,
+                            'behind':currentPoint.b
                         }).css({
                             'position'  : 'absolute',
-                            'left'      :  Math.sign(svgLine.width)==1 ? (currentPoint.x) + 'px' :  (currentPoint.x + svgLine.width) + 'px',
-                            'top'       :  Math.sign(svgLine.height)==1 ? (currentPoint.y) + 'px' : (currentPoint.y + svgLine.height) + 'px'
+                            'left'      :  ( currentPoint.x - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
+                            'top'       :  ( currentPoint.y - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
+                            'z-index'   :  210+(pointRadius*2)
                         }).appendTo(trajectoryContainer);
-                        $(document.createElementNS('http://www.w3.org/2000/svg','line')).attr({
-                            id:containerName+'-line-'+point,
-                            x1:line.x1,
-                            y1:line.y1,
-                            x2:line.x2,
-                            y2:line.y2,
-                            "stroke" : nextPoint.b ? this.colors.behind : this.colors.front,
-                            "stroke-dasharray" : (nextPoint.b ? this.dashSize : '0')
-                        }).appendTo(svgLineContainer);
-                    }
-                }
+                        var textDate = new Date();
+                        textDate.setTime(currentPositionCoordinateTime);
+                        textDate = textDate.toUTCString().slice(5);
+                        textDate = textDate.slice(0,textDate.length-3);
+                        textDate += "UTC";
+                        var bodyTextDate = bodyCapitalized + ' on <br/>' + textDate; 
+                        var hoverDateContainer = $('<div/>').attr({
+                            'id' : containerName+'-hover-date-'+point
+                        }).css({
+                            'transform'         : 'translateY(-90px) translateX(-45px) rotate(-45deg)',
+                            'position'          : 'absolute',
+                            'width'             : '210px',
+                            'height'            : '20px',
+                            'left'              : currentPoint.x + 'px',
+                            'bottom'            : -currentPoint.y + 'px',
+                            'color'             : 'white',
+                            'font-family'       : 'monospace',
+                            'z-index'           :  275,
+                            'text-shadow'       : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000',
+                            'background-color'  : 'rgba(0,0,0,0.6)',
+                            'padding-bottom'    : '14px',
+                            'padding-left'      : '3px'
+                        }).html(bodyTextDate).hide().appendTo(trajectoryContainer);
+                        /*var svgHoverDateContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
+                            id : containerName+'-svg-date-'+point,
+                            width : pointBoundingBox,
+                            height : '100px',
+                            'time' : currentPositionCoordinateTime
+                        }).appendTo(hoverDateContainer);*/
+                        $(document.createElementNS('http://www.w3.org/2000/svg','circle')).attr({
+                            id:containerName+'-point-'+point,
+                            cx: Math.floor(pointBoundingBox/2),
+                            cy: Math.floor(pointBoundingBox/2),
+                            r: pointRadius,
+                            "stroke": (currentPoint.b ? this.colors.behind : this.colors.front) ,
+                            "stroke-width": (currentPoint.t ? 2 : 1),
+                            "fill": (currentPoint.t ? this.colors.current : (currentPoint.b ? this.colors.behind : this.colors.front))
+                        }).appendTo(svgPointContainer);
+                        //bind events
+                        if(currentRequestTime != currentPositionCoordinateTime){
+                            svgPointContainer.bind('mouseenter',function(){
+                                $( this ).children().attr({ r: 3 , 'fill' : self.colors.current});
+                                var  target = $( $(this).attr('target') );
+                                target.show();
+                                svgUnderlineContainer.css({
+                                    'left'  : target.css('left'),
+                                    'bottom': target.css('bottom')
+                                }).show();
+                            }).bind('mouseleave',function(){
+                                $( this ).children().attr({ r: 1.5 , 'fill' : ( $( this ).attr('behind')=='true' ? self.colors.behind : self.colors.front)});
+                                $( $(this).attr('target') ).hide();
+                                svgUnderlineContainer.hide();
+                            }).bind('click',function(){
+                                var newDate = new Date();
+                                newDate.setTime( $( this ).attr('time') );
+                                helioviewer.timeControls.setDate(newDate);
+                                $( this ).children().attr({ r: 6 , 'fill' : self.colors.current, 'stroke-width' : 2});
+                                $( this ).unbind('mouseleave');
+                            });
+                        }else{
+                            svgPointContainer.bind('mouseenter',function(){
+                                var  target = $( $(this).attr('target') );
+                                target.show();
+                                svgUnderlineContainer.css({
+                                    'left'  : target.css('left'),
+                                    'bottom': target.css('bottom')
+                                }).show();
+                            }).bind('mouseleave',function(){
+                                $( $(this).attr('target') ).hide();
+                                svgUnderlineContainer.hide();
+                            });
+                        }
+                        //assemble lines for the trajectory
+                        if(point < numCoordinates - 1){
+                            var loc = parseInt(point) + 1;
+                            var nextPoint = {
+                                x: Math.round( trajectories[observer][body][loc].x / Helioviewer.userSettings.settings.state.imageScale),
+                                y: Math.round( -trajectories[observer][body][loc].y / Helioviewer.userSettings.settings.state.imageScale),
+                                b: trajectories[observer][body][loc].b == 'True'
+                            };
+                            var svgLine = {
+                                width: (nextPoint.x - currentPoint.x),
+                                height: (nextPoint.y - currentPoint.y)
+                            }
+                            var line = {//normalize line to local coordinate for svg
+                                x1: Math.sign(svgLine.width)==1 ? 1 : Math.abs(svgLine.width) + 1,
+                                y1: Math.sign(svgLine.height)==1 ? 1 : Math.abs(svgLine.height) + 1,
+                                x2: Math.sign(svgLine.width)==1 ? svgLine.width+1 : 1,
+                                y2: Math.sign(svgLine.height)==1 ? svgLine.height+1 : 1
+                            }
+                            var svgLineContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
+                                id:containerName+'-svg-line-'+point,
+                                width: Math.abs(svgLine.width)+2,
+                                height: Math.abs(svgLine.height)+2
+                            }).css({
+                                'position'  : 'absolute',
+                                'left'      :  Math.sign(svgLine.width)==1 ? (currentPoint.x) + 'px' :  (currentPoint.x + svgLine.width) + 'px',
+                                'top'       :  Math.sign(svgLine.height)==1 ? (currentPoint.y) + 'px' : (currentPoint.y + svgLine.height) + 'px'
+                            }).appendTo(trajectoryContainer);
+                            $(document.createElementNS('http://www.w3.org/2000/svg','line')).attr({
+                                id:containerName+'-line-'+point,
+                                x1:line.x1,
+                                y1:line.y1,
+                                x2:line.x2,
+                                y2:line.y2,
+                                "stroke" : nextPoint.b ? this.colors.behind : this.colors.front,
+                                "stroke-dasharray" : (nextPoint.b ? this.dashSize : '0')
+                            }).appendTo(svgLineContainer);
+                        }
+                    }//end for each coordinate
+                }//end if numCoords != 0
             }
         }
-        
     },
 
-    _outputLabels: function(coordinates){
+    _outputSolarBodies: function(ajax,data){
         var firstRun = true;
+        var coordinates = data['labels'];
         this.coordinates = coordinates;
         var currentTime = Date.now();
         var observers = Object.keys(coordinates);
@@ -275,22 +273,38 @@ var CelestialBodiesSatellites = Class.extend(
                     labelContainer.attr({'time': currentTime});
                     var labelContainerVisible = labelContainer.is(":visible");
                 }
-                var correctedCoordinates = {
-                    x: Math.round( coordinates[observer][body].x / Helioviewer.userSettings.settings.state.imageScale),
-                    y: Math.round( -coordinates[observer][body].y / Helioviewer.userSettings.settings.state.imageScale)
-                };
-                //console.log(correctedCoordinates.x,correctedCoordinates.y);
-                var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
-                labelContainer.text(bodyCapitalized);
-                labelContainer.css({
-                    'left'      :  correctedCoordinates.x + 'px',
-                    'top'       :  correctedCoordinates.y + 'px'
-                });
-                this._buildPopupTemplate(observer,body,labelContainer);
+                if(coordinates[observer][body] != null){//values exist
+                    var correctedCoordinates = {
+                        x: Math.round( coordinates[observer][body].x / Helioviewer.userSettings.settings.state.imageScale),
+                        y: Math.round( -coordinates[observer][body].y / Helioviewer.userSettings.settings.state.imageScale)
+                    };
+                    //console.log(correctedCoordinates.x,correctedCoordinates.y);
+                    var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
+                    labelContainer.text(bodyCapitalized);
+                    labelContainer.css({
+                        'left'      :  correctedCoordinates.x + 'px',
+                        'top'       :  correctedCoordinates.y + 'px'
+                    });
+                    this._buildPopupTemplate(observer,body,labelContainer);
+                }else{//values don't exist, move offscreen.
+                    var correctedCoordinates = {
+                        x: -99999,
+                        y: -99999
+                    };
+                    //console.log(correctedCoordinates.x,correctedCoordinates.y);
+                    var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
+                    labelContainer.text(bodyCapitalized);
+                    labelContainer.css({
+                        'left'      :  correctedCoordinates.x + 'px',
+                        'top'       :  correctedCoordinates.y + 'px'
+                    });
+                    this._buildPopupTemplate(observer,body,labelContainer);
+                }
             }
             
             
         }
+        this._outputTrajectories(ajax,data);
         if(!firstRun){
             this._treeChangedState();
         }
@@ -314,18 +328,26 @@ var CelestialBodiesSatellites = Class.extend(
         for(var observer of observers){
             var bodies = Object.keys(this.coordinates[observer]);
             for(var body of bodies){
-                var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
-                var containerName = body+"-container";
-                var labelContainer = $('#'+containerName);//locate the container div
-                var correctedCoordinates = {
-                    x: Math.round( this.coordinates[observer][body].x / Helioviewer.userSettings.settings.state.imageScale),
-                    y: Math.round( -this.coordinates[observer][body].y / Helioviewer.userSettings.settings.state.imageScale)
-                };
-                labelContainer.css({
-                    'left'      :  correctedCoordinates.x + 'px',
-                    'top'       :  correctedCoordinates.y + 'px'
-                });
-                this._buildPopupTemplate(observer,body,labelContainer);
+                if(this.coordinates[observer][body] != null){
+                    var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
+                    var containerName = body+"-container";
+                    var labelContainer = $('#'+containerName);//locate the container div
+                    var correctedCoordinates = {
+                        x: Math.round( this.coordinates[observer][body].x / Helioviewer.userSettings.settings.state.imageScale),
+                        y: Math.round( -this.coordinates[observer][body].y / Helioviewer.userSettings.settings.state.imageScale)
+                    };
+                    labelContainer.css({
+                        'left'      :  correctedCoordinates.x + 'px',
+                        'top'       :  correctedCoordinates.y + 'px'
+                    });
+                    this._buildPopupTemplate(observer,body,labelContainer);
+                }else{
+                    var labelContainer = $('#'+containerName);//locate the container div
+                    labelContainer.css({
+                        'left'      :  99999 + 'px',
+                        'top'       :  99999 + 'px'
+                    });
+                }
             }
         }
         this._treeChangedState();
@@ -489,86 +511,87 @@ var CelestialBodiesSatellites = Class.extend(
             var previousInstanceClosed = true;//default start hidden
         }
         previousInstance.remove();
-        var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
-        var observerCapitalized = observer.charAt(0).toUpperCase() + observer.substr(1);
-        var raw_distance_body_to_sun_au = this.coordinates[observer][body].distance_body_to_sun_au;
-        var raw_distance_observer_to_body_au = this.coordinates[observer][body].distance_observer_to_body_au;
-        var displayDistances = false;
-        if(raw_distance_body_to_sun_au != null || raw_distance_observer_to_body_au != null){
-            var distance_body_to_sun_au_rounded = this.coordinates[observer][body].distance_body_to_sun_au.toFixed(8);
-            var distance_observer_to_body_au_rounded = this.coordinates[observer][body].distance_observer_to_body_au.toFixed(8);
-            var behind_plane_of_sun = (this.coordinates[observer][body].behind_plane_of_sun == "True");
-            displayDistances = true;
+        if(this.coordinates[observer][body] != null){
+            var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
+            var observerCapitalized = observer.charAt(0).toUpperCase() + observer.substr(1);
+            var raw_distance_body_to_sun_au = this.coordinates[observer][body].distance_body_to_sun_au;
+            var raw_distance_observer_to_body_au = this.coordinates[observer][body].distance_observer_to_body_au;
+            var displayDistances = false;
+            if(raw_distance_body_to_sun_au != null || raw_distance_observer_to_body_au != null){
+                var distance_body_to_sun_au_rounded = this.coordinates[observer][body].distance_body_to_sun_au.toFixed(8);
+                var distance_observer_to_body_au_rounded = this.coordinates[observer][body].distance_observer_to_body_au.toFixed(8);
+                var behind_plane_of_sun = (this.coordinates[observer][body].behind_plane_of_sun == "True");
+                displayDistances = true;
+            }
+            var content = '';
+            content     += '<div class="close-button ui-icon ui-icon-closethick" title="Close PopUp Window"></div>'+"\n"
+                        +  '<h1 class="user-selectable">'+bodyCapitalized+' as seen from '+observerCapitalized+'</h1>'+"\n";
+            if(displayDistances){
+                content += '<div class="container">'+"\n"
+                        +   "\t"+'<div class="param-container"><div class="param-label user-selectable">Distance from '+ bodyCapitalized +' to Sun:</div></div>'+"\n"
+                        +   "\t"+'<div class="value-container"><div class="param-value user-selectable">'+distance_body_to_sun_au_rounded+' AU</div></div>'
+                        +   '</div>'+"\n";
+                content += '<div class="container">'+"\n"
+                        +   "\t"+'<div class="param-container"><div class="param-label user-selectable">Distance from '+observerCapitalized+' to '+bodyCapitalized+':</div></div>'+"\n"
+                        +   "\t"+'<div class="value-container"><div class="param-value user-selectable">'+distance_observer_to_body_au_rounded+' AU</div></div>'
+                        +   '</div>'+"\n";
+                content += '<div class"container">'+"\n"
+                        +   "\t"+'<div class="plane-position-container" '+(behind_plane_of_sun ? 'style="color: Silver"' : 'style="color: Gainsboro"')+'>'
+                        +   bodyCapitalized+' is '+(behind_plane_of_sun ? ' behind ' : ' in front of ')+' the plane of the sun.'
+                        +   '</div></div>'+"\n";
+            }
+            content += '<div class="btn-label btn event-search-external text-btn" data-url=\'https://solarsystem.nasa.gov/planets/'+body+'/overview/\' target="_blank"><i class="fa fa-search fa-fw"></i>Learn more about '+bodyCapitalized+'<i class="fa fa-external-link fa-fw"></i></div>\
+                        <div style=\"clear:both\"></div>'
+            var eventPopupDomNode = $('<div/>');
+
+            if(previousInstanceClosed){
+                eventPopupDomNode.hide();
+            }
+            eventPopupDomNode.attr({
+                'id' : observer + '_' + body + '_popup',
+                'class' : "body-popup",
+                'time' : this.currentTime
+            });
+            eventPopupDomNode.css({
+                'left' : labelContainer.css('left'),
+                'top' : labelContainer.css('top'),
+                'z-index' : 1000
+            });
+
+            eventPopupDomNode.html(content);
+
+            this.popupsContainer.append(eventPopupDomNode);
+
+            eventPopupDomNode.find('.close-button').bind('click', $.proxy(this._toggleBodyInfoPopup, this, eventPopupDomNode));
+            
+            eventPopupDomNode.bind("mousedown", function () { return false; });
+            eventPopupDomNode.bind('dblclick', function () { return false; });
+            eventPopupDomNode.draggable();
+
+            //make links work
+            eventPopupDomNode.find(".event-search-external").bind('click', function() {
+                var url = $(this).data('url');
+                window.open(url, '_blank');
+            });
+
+            // Allow text selection (prevent drag where text exists)
+            eventPopupDomNode.find("h1, .param-label, .param-value, .btn-container .btn").click(function(event){
+                event.stopImmediatePropagation();
+            });
+            eventPopupDomNode.find("h1, .param-label, .param-value, .btn-container .btn").mousedown(function(event){
+                event.stopImmediatePropagation();
+            });
+            eventPopupDomNode.find("h1, .param-label, .param-value, .btn-container .btn").dblclick(function(event){
+                event.stopImmediatePropagation();
+            });
+            eventPopupDomNode.find("h1, .param-label, .param-value").enableSelection(); 
+
+            eventPopupDomNode.click(function(event){
+                event.stopImmediatePropagation();
+            });
+
+            labelContainer.bind('click', $.proxy(this._toggleBodyInfoPopup, this, eventPopupDomNode));
         }
-        var content = '';
-        content     += '<div class="close-button ui-icon ui-icon-closethick" title="Close PopUp Window"></div>'+"\n"
-                    +  '<h1 class="user-selectable">'+bodyCapitalized+' as seen from '+observerCapitalized+'</h1>'+"\n";
-        if(displayDistances){
-            content += '<div class="container">'+"\n"
-                    +   "\t"+'<div class="param-container"><div class="param-label user-selectable">Distance from '+ bodyCapitalized +' to Sun:</div></div>'+"\n"
-                    +   "\t"+'<div class="value-container"><div class="param-value user-selectable">'+distance_body_to_sun_au_rounded+' AU</div></div>'
-                    +   '</div>'+"\n";
-            content += '<div class="container">'+"\n"
-                    +   "\t"+'<div class="param-container"><div class="param-label user-selectable">Distance from '+observerCapitalized+' to '+bodyCapitalized+':</div></div>'+"\n"
-                    +   "\t"+'<div class="value-container"><div class="param-value user-selectable">'+distance_observer_to_body_au_rounded+' AU</div></div>'
-                    +   '</div>'+"\n";
-            content += '<div class"container">'+"\n"
-                    +   "\t"+'<div class="plane-position-container" '+(behind_plane_of_sun ? 'style="color: Silver"' : 'style="color: Gainsboro"')+'>'
-                    +   bodyCapitalized+' is '+(behind_plane_of_sun ? ' behind ' : ' in front of ')+' the plane of the sun.'
-                    +   '</div></div>'+"\n";
-        }
-        content += '<div class="btn-label btn event-search-external text-btn" data-url=\'https://solarsystem.nasa.gov/planets/'+body+'/overview/\' target="_blank"><i class="fa fa-search fa-fw"></i>Learn more about '+bodyCapitalized+'<i class="fa fa-external-link fa-fw"></i></div>\
-                    <div style=\"clear:both\"></div>'
-        var eventPopupDomNode = $('<div/>');
-
-        if(previousInstanceClosed){
-            eventPopupDomNode.hide();
-        }
-        eventPopupDomNode.attr({
-            'id' : observer + '_' + body + '_popup',
-            'class' : "body-popup",
-            'time' : this.currentTime
-        });
-        eventPopupDomNode.css({
-            'left' : labelContainer.css('left'),
-            'top' : labelContainer.css('top'),
-            'z-index' : 1000
-        });
-
-        eventPopupDomNode.html(content);
-
-        this.popupsContainer.append(eventPopupDomNode);
-
-        eventPopupDomNode.find('.close-button').bind('click', $.proxy(this._toggleBodyInfoPopup, this, eventPopupDomNode));
-        
-        eventPopupDomNode.bind("mousedown", function () { return false; });
-        eventPopupDomNode.bind('dblclick', function () { return false; });
-        eventPopupDomNode.draggable();
-
-        //make links work
-        eventPopupDomNode.find(".event-search-external").bind('click', function() {
-            var url = $(this).data('url');
-            window.open(url, '_blank');
-        });
-
-        // Allow text selection (prevent drag where text exists)
-        eventPopupDomNode.find("h1, .param-label, .param-value, .btn-container .btn").click(function(event){
-            event.stopImmediatePropagation();
-        });
-        eventPopupDomNode.find("h1, .param-label, .param-value, .btn-container .btn").mousedown(function(event){
-            event.stopImmediatePropagation();
-        });
-        eventPopupDomNode.find("h1, .param-label, .param-value, .btn-container .btn").dblclick(function(event){
-            event.stopImmediatePropagation();
-        });
-        eventPopupDomNode.find("h1, .param-label, .param-value").enableSelection(); 
-
-        eventPopupDomNode.click(function(event){
-            event.stopImmediatePropagation();
-        })
-
-        labelContainer.bind('click', $.proxy(this._toggleBodyInfoPopup, this, eventPopupDomNode));
-        
     },
 
     _closeOldPopups: function(currentTime){
@@ -619,7 +642,7 @@ var CelestialBodiesSatellites = Class.extend(
         }).appendTo(svgUnderlineContainer);
     },
 
-    _buildSidebarTemplate: function (index, id, name, markersVisible, labelsVisible, startOpened) {
+    _buildSidebarTemplate: function (index, id, name, markersVisible, labelsVisible, startOpened, data) {
 
         //console.log("index:",index, "id:",id, "name:",name, "markersVisible:",markersVisible, "labelsVisible:", labelsVisible, "startOpened:", startOpened);
 
@@ -721,13 +744,15 @@ var CelestialBodiesSatellites = Class.extend(
             e.stopPropagation();
         });
 
-        this._buildSidebarTree();
+        this._buildSidebarTree(data);
     },
 
-    _buildSidebarTree: function(){
-        var treeData = this._buildJSTreeData(this.trajectories);
+    _buildSidebarTree: function(data){
+        var self = this;
+        var treeData = this._buildJSTreeData(data);
 
         this.trajectoryTree = $('#trajectory-jstree');
+        this.trajectoryTree.empty();
         this.trajectoryTree.jstree({
             "json_data" : { "data": treeData },
             "core" : { "data": treeData },
@@ -736,6 +761,8 @@ var CelestialBodiesSatellites = Class.extend(
         });
         this.trajectoryTree.jstree("check_all");
         this.trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this));
+
+        this._disableTreeItems(data);
         /*
         this.trajectoryTree.bind("change_state.jstree", function(e,data) {
             $('#'+data.rslt[0].attributes[1].nodeValue).toggle();
@@ -793,8 +820,10 @@ var CelestialBodiesSatellites = Class.extend(
         console.log("toggle trajectories");
     },
 
-    _buildJSTreeData: function(trajectories){
+    _buildJSTreeData: function(data){
         var trajectoryTreeData = [];
+        var trajectories = data['trajectories'];
+        var labels = data['labels'];
         var observers = Object.keys(trajectories);
         this.treeObservers = observers;
         for(var observer of observers){
@@ -831,6 +860,43 @@ var CelestialBodiesSatellites = Class.extend(
             trajectoryTreeData.push(observerObject);
         }
         return trajectoryTreeData;
+    },
+
+    _disableTreeItems: function(data){
+        $('#trajectory-jstree .empty-element').each(function(){
+            $(this).removeClass('empty-element');
+            $(this).css({'opacity':'1.0'});
+        });
+        var trajectories = data['trajectories'];
+        var labels = data['labels'];
+
+        this.trajectoryTree.unbind("change_state.jstree");
+
+        var labelObservers = Object.keys(labels);
+        for(var observer of labelObservers){
+            var bodies = Object.keys(labels[observer]);
+            for(var body of bodies){
+                if(labels[observer][body] == null){
+                    //console.log("disabling: "+body+"-tree-label");
+                    $('#'+body+"-tree-label").css({'opacity':'0.5'});
+                    $('#'+body+"-tree-label").addClass('empty-element');
+                }
+            }
+        }
+
+        var trajectoryObservers = Object.keys(trajectories);
+        for(var observer of trajectoryObservers){
+            var bodies = Object.keys(trajectories[observer]);
+            for(var body of bodies){
+                if(trajectories[observer][body].length == 0){
+                    //console.log("disabling: "+body+"-tree-trajectory");
+                    var treeTrajectory = $('#'+body+"-tree-trajectory");
+                    treeTrajectory.css({'opacity':'0.5'});
+                    treeTrajectory.addClass('empty-element');
+                }
+            }
+        }
+        this.trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this));
     }
 
 });
