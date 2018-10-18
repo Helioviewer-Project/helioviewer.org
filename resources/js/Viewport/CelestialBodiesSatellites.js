@@ -652,9 +652,9 @@ var CelestialBodiesSatellites = Class.extend(
 
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, head, body, self=this;
         
-        var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
+        var visState = Helioviewer.userSettings.get("state.celestialBodiesAvailableVisible");
         if ( typeof visState == 'undefined') {
-            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
+            Helioviewer.userSettings.set("state.celestialBodiesAvailableVisible", true);
             visState = true;
         }
 
@@ -697,7 +697,6 @@ var CelestialBodiesSatellites = Class.extend(
         body  = '<div class="row" style="text-align: left;"><div class="buttons"><div id="checkboxBtn-On-'+id+'" title="Toggle All Event Checkboxes On" class="text-button inline-block"><div class="fa fa-check-square fa-fw"></div>check all</div>';
         body += '<div id="checkboxBtn-Off-'+id+'" title="Toggle All Event Checkboxes Off" class="text-button inline-block"><div class="fa fa-square fa-fw"></div>check none</div></div>';
         body += '<div id="trajectory-jstree" style="margin-bottom: 5px;" class="jstree-focused"></div></div>';
-
         
         //Add to accordion
         this.domNode.dynaccordion("addSection", {
@@ -734,13 +733,13 @@ var CelestialBodiesSatellites = Class.extend(
         })
 
         this.domNode.find("#visibilityAvailableBtn-"+id).click( function(e) {
-            var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
+            var visState = Helioviewer.userSettings.get("state.celestialBodiesAvailableVisible");
             if(visState == true){
-                Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
+                Helioviewer.userSettings.set("state.celestialBodiesAvailableVisible", false);
                 $(this).addClass('hidden');
                 $('#trajectory-jstree .empty-element').hide();
             }else{
-                Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
+                Helioviewer.userSettings.set("state.celestialBodiesAvailableVisible", true);
                 $(this).removeClass('hidden');
                 $('#trajectory-jstree .empty-element').show();
             }
@@ -874,14 +873,14 @@ var CelestialBodiesSatellites = Class.extend(
     },
 
     _disableTreeItems: function(data){
+        var visState = Helioviewer.userSettings.get("state.celestialBodiesAvailableVisible");
         $('#trajectory-jstree .empty-element').each(function(){
+            $(this).show();
             $(this).removeClass('empty-element');
             $(this).css({'opacity':'1.0'});
         });
         var trajectories = data['trajectories'];
         var labels = data['labels'];
-
-        //this.trajectoryTree.unbind("change_state.jstree");
 
         var labelObservers = Object.keys(labels);
         for(var observer of labelObservers){
@@ -906,7 +905,13 @@ var CelestialBodiesSatellites = Class.extend(
                 }
             }
         }
-        //this.trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this));
-    }
 
+        if(visState == false){
+            $(this).addClass('hidden');
+            $('#trajectory-jstree .empty-element').hide();
+        }else{
+            $(this).removeClass('hidden');
+            $('#trajectory-jstree .empty-element').show();
+        }
+    }
 });
