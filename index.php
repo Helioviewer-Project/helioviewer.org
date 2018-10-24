@@ -10,7 +10,7 @@
 	$outputType = false;
 	
 	//Disable debug mode by default
-	$debug = false;
+	$debug = true;
 	
 	//Force debug mode. Set it to true to always force debug mode.
 	$forceDebug = false;
@@ -35,7 +35,7 @@
 		
 		if($outputType){
 			//Load Config
-	        include_once "../api.helioviewer.org/src/Config.php";
+			include_once "../api.helioviewer.org/src/Config.php";
 	        $config = new Config("../api.helioviewer.org/settings/Config.ini");
 	        
 	        //Log Statistic
@@ -74,9 +74,9 @@
 	<link rel="stylesheet" href="resources/lib/jquery.jgrowl-1.4.5/jquery.jgrowl.min.css" />
 	<link rel="stylesheet" href="resources/lib/jquery.qTip3/jquery.qtip.min.css" />
 	<link rel="stylesheet" href="resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
-	<link rel="stylesheet" href="resources/lib/DatetimePicker/jquery.datetimepicker.css"/ >
-	<link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.min.css"/ >
-	<link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.timepicker.css"/ >
+	<link rel="stylesheet" href="resources/lib/DatetimePicker/jquery.datetimepicker.css" />
+	<link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.min.css" />
+	<link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.timepicker.css" />
 	<link rel="stylesheet" href="resources/lib/boneVojage/bonevojage.css">
 	<link rel="stylesheet" href="resources/lib/mediaelement-2.22.0/build/mediaelementplayer.min.css">
 
@@ -101,6 +101,7 @@
 		<link rel="stylesheet" href="resources/css/youtube.css" />
 		<link rel="stylesheet" href="resources/css/font-awesome.min.css" />
 		<link rel="stylesheet" href="resources/css/helioviewer-views.css" />
+		<link rel="stylesheet" href="resources/css/celestial-bodies.css" />
 	<?php
 	} else {
 	?>
@@ -314,6 +315,20 @@
 						</div>
 					</div>
 				</div>
+				<?php if($debug){ ?>
+				<div id="accordion-bodies" class="accordion">
+					<div class="header">
+						<div class="disclosure-triangle closed">►</div>
+						<h1>Celestial Bodies</h1>
+						<div class="right fa fa-question-circle contextual-help" style="margin-right: 15px;" title="Celestial Bodies - Planets orbiting in the solar system."></div>
+					</div>
+					<div class="content">
+						<div id="solarBodiesAccordion">
+							<div id="SolarBodiesAccordion-Container"></div>
+						</div>
+					</div>
+				</div>
+				<?php } ?>
 			</div>
 		</div>
 		<div id="hv-drawer-tab-left" class="drawer-tab drawer-tab-left user-select-none">Data Sources</div>
@@ -1110,10 +1125,21 @@
 					<span class="fa fa-circle-o-notch fa-spin"></span>
 				</span>
 			</div>
+			<div id="k12-scale" class="" style="display: flex;">
+					<div id="scale" class="" style="position: fixed; left: 3.5em;">
 			
+						<div id="earth-button" class="viewport-action segmented-left fa fa-globe qtip-topright" title="Toggle Earth-Scale Indicator."></div><div id="scalebar-button" class="viewport-action segmented-right fa fa-arrows-h qtip-topright" style="border-left: 0;" title="Toggle Length scale indicator."></div>
+			
+					</div>
+
+			
+					<div>
 			<!--<div id="youtube-button" class="fa fa-youtube fa-fw qtip-left social-button" title="View Helioviewer Movies Shared to YouTube."></div>-->
 			<div id="movies-button" class="fa fa-file-video-o fa-fw qtip-left social-button" title="Create a Helioviewer Movie."></div>
 			<div id="screenshots-button" class="fa fa-file-picture-o fa-fw qtip-left social-button" title="Download a screenshot of the current Helioviewer Viewport."></div>
+						<a id= "help-anchor" target="_blank" href="https://helioviewer.org"><div id="help-button" class="fa fa-question fa-fw qtip-left social-button" title="Get Help with Helioviewer."></div></a>
+					</div>
+			</div>
 			
 			<div id="zoom">
 				<!--  Zoom Controls -->
@@ -1123,13 +1149,13 @@
 					<div id="zoomSliderContainer">
 						<div id="zoomControlSlider"></div>
 					</div>
-					<div id="zoom-out-button" title="Zoom out.">-</div>
+					<div id="zoom-out-button" class="qtip-topright" title="Zoom out.">-</div>
 				</div>
 			</div>
 			
-			<div class="hv-drawer-right user-select-none hv-drawer-date" style="height:auto">
+			<div class="hv-drawer-right user-select-none hv-drawer-date">
 				<div class="drawer-contents" style="display: block;">
-					<div id="accordion-date" class="accordion">
+					<div id="k12-accordion-date" class="accordion">
 						<!--<div class="header">
 							<div class="disclosure-triangle-alway-open opened">►</div>
 							<h1>Observation Date</h1>
@@ -1146,36 +1172,36 @@
 							<div id='date-manager-container' class='date-manager-container'>
 								<div class="section">
 									<div id="observation-controls" class="row">
-										<div class="label">Date:</div>
+										<div class="label" style="margin-top: 0.1em">Date</div>
 										<div class="field">
 											<input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
 											<input id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
-											<div class="suffix" data-tip-pisition="right">UTC</div>
+											<div class="suffix" data-tip-pisition="right" title="Coordinated Universal Time">UTC </div>
 											
 										</div>
 									</div>
 									<div class="row">
-										<div class="label">Jump:</div>
+										<div class="label">Time Step</div>
 										<div class="field">
 											<select id="timestep-select" name="time-step"></select>
 											<div id="timeBackBtn" class="inline fa fa-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
 											<div id="timeForwardBtn" class="inline fa fa-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
+											<div id="timeNowBtn" class="inline fa fa-clock-o right k12-timeNowBtn" style="font-size: 1em;" title="Jump to the most recent available image's for the currently loaded layer(s).">
+												<span class="ui-icon-label">NEWEST</span>
+										</div>
 										</div>
 									</div>
 									<div class="row">
-										<div class="label">Image Source:</div>
-										<div class="field" style="margin-top:7px;">
-											<select id="image-layer-select" name="image-select-layers" style="width:150px;">
-												<option value="0" class="image-layer-switch" data-id="0" data-name="NOAA flares and active regions" data-date="" data-layers="[SDO,AIA,171,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[AR,NOAA_SWPC_Observer,1],[FL,SWPC,1]">NOAA flares and active regions</option>
-												<option value="1" class="image-layer-switch" data-id="1" data-name="Eruption Monitor" data-date="" data-layers="[SDO,AIA,304,1,100,0,60,1,2017-11-16T09:02:20.000Z],[SOHO,LASCO,C2,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z],[SOHO,LASCO,C3,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z]" data-events="[CE,all,1],[ER,all,1],[FI,all,1],[FA,all,1],[FE,all,1]">Eruption Monitor</option>
-												<option value="2" class="image-layer-switch" data-id="2" data-name="Magnetic flux Monitor" data-date="" data-layers="[SDO,HMI,magnetogram,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[EF,all,1],[SS,all,1]">Magnetic flux Monitor</option>
-												<option value="3" class="image-layer-switch" data-id="3" data-name="Coronal hole Monitor" data-date="" data-layers="[SDO,AIA,211,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[CH,all,1]">Coronal hole Monitor</option>
+										<div class="label" style="margin-top:0.4em;">Make an Observation</div>
+										<div id="image-layer-select-container" class="field" style="margin-top:0.95em; padding-bottom:0.5em;">
+											<select id="image-layer-select" name="image-select-layers" style="width:18.5em;">
+												<option value="0" class="image-layer-switch" data-id="0" data-name="NOAA flares and active regions" data-date="" data-layers="[SDO,AIA,171,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[AR,NOAA_SWPC_Observer,1],[FL,SWPC,1]">Flares and Active Regions</option>
+												<option value="1" class="image-layer-switch" data-id="1" data-name="Eruption Monitor" data-date="" data-layers="[SDO,AIA,304,1,100,0,60,1,2017-11-16T09:02:20.000Z],[SOHO,LASCO,C2,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z],[SOHO,LASCO,C3,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z]" data-events="[CE,all,1],[ER,all,1],[FI,all,1],[FA,all,1],[FE,all,1]">Eruptions and CMEs</option>
+												<option value="2" class="image-layer-switch" data-id="2" data-name="Magnetic flux Monitor" data-date="" data-layers="[SDO,HMI,magnetogram,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[EF,all,1]">Magnetic Field</option>
+												<option value="3" class="image-layer-switch" data-id="3" data-name="Coronal hole Monitor" data-date="" data-layers="[SDO,AIA,211,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[CH,all,1]">Coronal Holes</option>
+												<option value="4" class="image-layer-switch" data-id="4" data-name="Sunspots" data-date="" data-layers="[SDO,HMI,continuum,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[SS,all,1]">Sunspots</option>
 											</select>
-											
-											<div id="timeNowBtn" class="fa fa-clock-o right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the most recent available image's for the currently loaded layer(s).">
-												<span class="ui-icon-label">NEWEST</span>
 											</div>
-										</div>
 										<div class="clear clearfix" style="display:block;clear:both;"></div>
 									</div>
 								</div>
@@ -1191,8 +1217,8 @@
 					<div id="accordion-movies" class="accordion">
 						<div class="header">
 							<div class="disclosure-triangle-alway-open opened">►</div>
-							<h1>Generate a Movie</h1>
-							<div class="right fa fa-question-circle contextual-help qtip-left" title="Generate a custom move from up to three (3) image layers plus solar feature and event marker pins, labels, and extended region polygons."></div>
+							<h1>Make a Movie</h1>
+							<div class="right fa fa-question-circle contextual-help qtip-left" title="Make a movie from what you currently see on your screen."></div>
 						</div>
 						<div class="content" style="display:block;">
 							<div class="section">
@@ -1203,7 +1229,7 @@
 										<div style="width: 70%; margin: 0 auto;">
 											<div id='movie-manager-full-viewport' class='text-btn qtip-left' title='Create a movie using the entire viewport.'>
 												<span class='fa fa-arrows-alt fa-fw'></span>
-												<span style='line-height: 1.6em'>Full Viewport</span>
+												<span style='line-height: 1.6em'>Full Screen</span>
 											</div>
 											<div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a movie of a sub-region of the viewport.'>
 												<span class='fa fa-crop fa-fw'></span>
@@ -1238,7 +1264,7 @@
 										
 										<!-- Movie duration -->
 										<fieldset style='padding: 0px; margin: 5px 0px 8px' class="movie-duration-box">
-											<label for='movie-duration' style='margin-right: 5px; font-style: italic;'>Duration</label>
+											<label for='movie-duration' style='width: 60px; font-style: italic;'>Duration</label>
 											<select id='movie-duration' name='movie-duration'>
 												<option value='3600'>1 hour</option>
 												<option value='10800'>3 hours</option>
@@ -1253,52 +1279,55 @@
 										
 										<!-- Movie Start/End Time -->
 										<fieldset style='padding: 0px; margin: 5px 0px 8px' class="movie-time-box">
-											<label for='movie-start-date' style='width: 40px; font-style: italic;'>Start </label>
+											<label for='movie-start-date' style='width: 55px; font-style: italic;'>Start </label>
 											<input type="text" id="movie-start-date" name="movie-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
 											<input id="movie-start-time" name="movie-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/> UTC<br/>
 											
-											<label for='movie-end-date' style='width: 40px; font-style: italic;'>End </label>
+											<label for='movie-end-date' style='width: 55px; font-style: italic;'>End </label>
 											<input type="text" id="movie-end-date" name="movie-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
 											<input id="movie-end-time" name="movie-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/> UTC<br/>
 										</fieldset>
 		
 										<!-- Movie Speed -->
-										<fieldset id='movie-settings-speed'>
-											<legend>Speed</legend>
-											<div style='padding:10px;'>
+										<fieldset id='movie-settings-speed' style='padding: 15px 0px 10px 0px; margin: 5px 0px 8px;'>
+											<!--<div style='padding: 0px; margin: 5px 0px 8px;'>
 												<input type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
 												<label for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
 												<input id='frame-rate' maxlength='2' size='3' type="text" name="framerate" min="1" max="30" value="15" pattern='^(0?[1-9]|[1-2][0-9]|30)$' />(1-30)<br />
+												-->
+												<input type="hidden" name="speed-method" id="speed-method-l" value="length" checked="checked" />
+												<label for="speed-method-l" style='width: 55px; font-style: italic;'>Length (s)</label>
+												<input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$'  />(10-100)<br />
 		
-												<input type="radio" name="speed-method" id="speed-method-l" value="length" />
-												<label for="speed-method-l" style='width: 62px;'>Length (s)</label>
-												<input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
-											</div>
 										</fieldset>
 		
 										<!-- Movie Start/End Time -->
-										<fieldset style='padding: 0px; margin: 5px 0px 8px;' class="movie-format-box">
+										<fieldset style='padding: 0px 0px 10px 0px; margin: 5px 0px 8px; display: -ms-flexbox; display: flex;' class="movie-format-box">
 											<label for='movie-size' style='width: 40px; font-style: italic;'>Size</label>
-											<select id='movie-size' name='movie-size' style="width:190px;">
-												<option value='0' selected="selected">Original</option>
-												<option value='1'>720p (1280 x 720, HD Ready)</option>
-												<option value='2'>1080p (1920 x 1080, Full HD)</option>
+											<h2 style="position: relative; top:5px; left: 21px">720p (1280 x 720)</h2>
+											<!--<select id='movie-size' name='movie-size' style="width:190px;" disabled='disabled'>-->
+												<!--<option value='0' selected="selected">Original</option>-->
+												<!--<option value='1' selected="selected">720p (1280 x 720)</option>-->
+												<!--<option value='2'>1080p (1920 x 1080, Full HD)</option>
 												<option value='3'>1440p (2560 x 1440, Quad HD)</option>
-												<option value='4'>2160p (3840 x 2160, 4K or Ultra HD)</option>
-											</select>
+												<option value='4'>2160p (3840 x 2160, 4K or Ultra HD)</option>-->
+											<!--</select>-->
+											<input type='hidden' id='movie-size' name='movie-size' value='1' selected="selected" />
 										</fieldset>
 		
-										<!-- Display Shared YouTube movies -->
+										<!-- Display Shared YouTube movies 
 										<fieldset style='padding: 0px; margin: 5px 0px 8px;' class="movie-icon-box">
 											<input type="checkbox" name="movie-icons" id="movie-icons" value="1" />
 											<label for='movie-icons' style='width: 200px; font-style: italic;'>Display YouTube movies icons</label>
 										</fieldset>
+										-->
 		
-										<!-- Rotate field of view of movie with Sun -->
+										<!-- Rotate field of view of movie with Sun 
 										<fieldset style='padding: 0px; margin: 5px 0px 8px;' class="movie-follow-viewport-box">
 											<input type="checkbox" name="follow-viewport" id="follow-viewport" value="1"/>
 											<label for='follow-viewport' style='width: 200px; font-style: italic;'>Rotate field of view of movie with Sun</label>
 										</fieldset>
+										-->
 										
 									</div>
 		
@@ -1319,7 +1348,7 @@
 										<p>The duration of time that the movie should span, centered about your current observation time.</p><br />
 		
 										<b>Speed</b><br /><br />
-										<p>Movie speed can be controlled either by specifying a desired frame-rate (the number of frames displayed each second) or a length in seconds.</p><br />
+										<p>Movie speed can be controlled by specifying a length in seconds.</p><br />
 									</div>
 		
 									<!-- Movie settings validation console -->
@@ -1342,7 +1371,7 @@
 					<div id="accordion-screenshots" class="accordion">
 						<div class="header">
 							<div class="disclosure-triangle-alway-open opened">►</div>
-							<h1>Generate a Screenshot</h1>
+							<h1>Take a Picture</h1>
 							<div class="right fa fa-question-circle contextual-help qtip-left" title="Download a custom screenshot matching the state of your Helioviewer session, minus the user-interface."></div>
 						</div>
 						<div class="content" style="display:block;">
@@ -1353,11 +1382,11 @@
 								<div class="section">
 									<div id='screenshot-manager-build-btns' class='media-manager-build-btns'>
 										<div style="width: 70%; margin: 0 auto;">
-											<div id='screenshot-manager-full-viewport' class='text-btn qtip-left' title='Create a screenshot using the entire viewport.'>
+											<div id='screenshot-manager-full-viewport' class='text-btn qtip-left' title='Take a picture using the entire screen.'>
 												<span class='fa fa-arrows-alt fa-fw'></span>
-												<span style='line-height: 1.6em'>Full Viewport</span>
+												<span style='line-height: 1.6em'>Full Screen</span>
 											</div>
-											<div id='screenshot-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a screenshot of a sub-region of the viewport.'>
+											<div id='screenshot-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Take a picture of a sub-region of the screen.'>
 												<span class='fa fa-crop fa-fw'></span>
 												<span style='line-height: 1.6em'>Select Area</span>
 											</div>
@@ -1365,8 +1394,8 @@
 									</div>
 		
 									<div id='screenshot-history-title'>
-										Screenshot History:
-										<div id='screenshot-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all screenshots from the history.'>
+										Picture History:
+										<div id='screenshot-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all pictures from the history.'>
 											<span style='font-weight: 200;'>clear history</span>
 											<span class='fa fa-trash-o'></span>
 										</div>
@@ -1500,6 +1529,8 @@
 		<script src="resources/js/UI/Glossary.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/jquery.ui.dynaccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/ImagePresets.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/TileLayerData.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/CelestialBodiesSatellites.js?v=<?=debugTime?>" type="text/javascript"></script>
 	<?php
 	} else {	
 	?>
@@ -1592,12 +1623,11 @@
 			}
 		});
 	</script>
-	<?php
-		if($outputType && (!isset($_GET['hideWatermark']) || $_GET['hideWatermark'] != 'true')){
+	<?php /*
+		if($outputType!='minimal' && (!isset($_GET['hideWatermark']) || $_GET['hideWatermark'] != 'true')){
 			$link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("output=embed", "", $_SERVER['REQUEST_URI']));
 			echo '<a href="'.$link.'" target="_blank"><div id="watermark" style="width: 140px; height: 35px; display: block;"></div></a>';
-		}
-		
+		} */
 	?>	
 </body>
 </html>
