@@ -3,9 +3,7 @@
 var CelestialBodiesSatellites = Class.extend(
 {
     init: function(){
-        this.domNode = $('#SolarBodiesAccordion-Container');
-        this.getSolarBodies = true;
-        this.mercuryReceivedPos = { x: 0, y: 0 };
+        this.domNode = $('#SolarBodiesAccordion-Container');//php index template dom node
         this.currentTime = 0;
         this.pointSizes = {
             small: 2,
@@ -18,9 +16,9 @@ var CelestialBodiesSatellites = Class.extend(
             current: 'white',
             black: 'black',
         }
-        this.strokeColor = this.colors.behind;
         this.fillColor = 'black';
         this.dashSize = '3 2';
+
         this._initEventListeners();
         this._buildDOM();
     },
@@ -36,18 +34,18 @@ var CelestialBodiesSatellites = Class.extend(
     },
 
     _buildDOM: function() {
-        this.movingContainer = $("#moving-container");
+        this.movingContainer = $("#moving-container");//upper level dom node that supports dragging
         
-        this.bodiesContainer = $('<div/>');
+        this.bodiesContainer = $('<div/>');//new container for the solar bodies
         this.bodiesContainer.attr('id','bodies-container').css({'position' : 'absolute'}).appendTo(this.movingContainer);
 
-        this.labelsContainer = $('<div/>');
+        this.labelsContainer = $('<div/>');//new container for the labels
         this.labelsContainer.attr('id','labels-container').css({'position' : 'absolute', 'z-index' : '250'}).appendTo(this.bodiesContainer);
 
-        this.trajectoriesContainer = $('<div/>');
+        this.trajectoriesContainer = $('<div/>');//new container for the trajectories
         this.trajectoriesContainer.attr('id','trajectories-container').css({'position' : 'absolute'}).appendTo(this.bodiesContainer);
 
-        this.popupsContainer = $('<div/>');
+        this.popupsContainer = $('<div/>');//new container for info popups
         this.popupsContainer.attr('id','popups-container').css({'position' : 'absolute', 'z-index' : '350'}).appendTo(this.bodiesContainer);
     },
 
@@ -57,20 +55,22 @@ var CelestialBodiesSatellites = Class.extend(
 
     _onTimeChanged: function(){
         this.currentTime = helioviewer.timeControls.getTimestamp();
+        //assemble the request parameters
         var params = {
             "action"    : "getSolarBodies",
             "time"      : this.currentTime
         };
+        //request data from the api
         $.get(Helioviewer.api, params, $.proxy(this._outputSolarBodies, this, true), "json");
     },
 
     _outputTrajectories: function(ajax,data){
         var self = this;
         var currentRequestTime = helioviewer.timeControls.getTimestamp();
-        if(ajax){
+        if(ajax){//this was a response from the api
             var trajectories = data['trajectories'];
             this.trajectories = trajectories;
-        }else{
+        }else{//this was a local response to refresh
             var trajectories = this.trajectories;
         }
         if($('#celestial-bodies-sidebar').length == 0){
@@ -78,7 +78,10 @@ var CelestialBodiesSatellites = Class.extend(
         }else{
             this._disableTreeItems(data);
         }
-        //create or find the svgUnderlineContainer DOM Object
+        /**
+         * create or find the svgUnderlineContainer DOM Object
+         * this underline object is reused and its coordinates updated to move around the page
+        */
         if($('#point-date-underline-container').length == 0){//svgUnderlineContainer does not exist yet
             this._buildUnderlineSVG();
             var svgUnderlineContainer = $('#point-date-underline-container');
@@ -143,20 +146,9 @@ var CelestialBodiesSatellites = Class.extend(
                         var bodyTextDate = bodyCapitalized + ' on <br/>' + textDate; 
                         var hoverDateContainer = $('<div/>').attr({
                             'id' : containerName+'-hover-date-'+point
-                        }).css({
-                            'transform'         : 'translateY(-90px) translateX(-45px) rotate(-45deg)',
-                            'position'          : 'absolute',
-                            'width'             : '210px',
-                            'height'            : '20px',
+                        }).addClass('hover-date-container').css({
                             'left'              : currentPoint.x + 'px',
-                            'bottom'            : -currentPoint.y + 'px',
-                            'color'             : 'white',
-                            'font-family'       : 'monospace',
-                            'z-index'           :  275,
-                            'text-shadow'       : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000',
-                            'background-color'  : 'rgba(0,0,0,0.6)',
-                            'padding-bottom'    : '14px',
-                            'padding-left'      : '3px'
+                            'bottom'            : -currentPoint.y + 'px'
                         }).html(bodyTextDate).hide().appendTo(trajectoryContainer);
                         /*var svgHoverDateContainer = $(document.createElementNS('http://www.w3.org/2000/svg','svg')).attr({
                             id : containerName+'-svg-date-'+point,
@@ -175,7 +167,7 @@ var CelestialBodiesSatellites = Class.extend(
                         }).appendTo(svgPointContainer);
                         //bind events
                         if(currentRequestTime != currentPositionCoordinateTime){
-                            svgPointContainer.bind('mouseenter',function(){
+                            svgPointContainer.bind('mouseenter',function(){//mouse enter event
                                 $( this ).children().attr({ r: 3 , 'fill' : self.colors.current});
                                 var  target = $( $(this).attr('target') );
                                 target.show();
@@ -183,11 +175,11 @@ var CelestialBodiesSatellites = Class.extend(
                                     'left'  : target.css('left'),
                                     'bottom': target.css('bottom')
                                 }).show();
-                            }).bind('mouseleave',function(){
+                            }).bind('mouseleave',function(){//mouse leave event
                                 $( this ).children().attr({ r: 1.5 , 'fill' : ( $( this ).attr('behind')=='true' ? self.colors.behind : self.colors.front)});
                                 $( $(this).attr('target') ).hide();
                                 svgUnderlineContainer.hide();
-                            }).bind('click',function(){
+                            }).bind('click',function(){//click event
                                 var newDate = new Date();
                                 newDate.setTime( $( this ).attr('time') );
                                 helioviewer.timeControls.setDate(newDate);
@@ -249,25 +241,26 @@ var CelestialBodiesSatellites = Class.extend(
             }
         }
     },
-
+    /**
+     * Main callback on receiving data from the api. Can be called locally with the use of the ajax boolean flag
+     * 
+     * Input:   @data - (object) all the data from the api
+     * 
+     */
     _outputSolarBodies: function(ajax,data){
         var firstRun = true;
-        var coordinates = data['labels'];
+        var coordinates = data['labels'];//extract labels data
         this.coordinates = coordinates;
         var currentTime = Date.now();
-        var observers = Object.keys(coordinates);
+        var observers = Object.keys(coordinates);//extract observer names
         for(var observer of observers){
-            var bodies = Object.keys(coordinates[observer]);
+            var bodies = Object.keys(coordinates[observer]);//extract body names (planets + satellites)
             for(var body of bodies){
                 var containerName = body+"-container";
                 if($('#'+containerName).length == 0){//label container div does not exist yet
                     var labelContainer = $('<div/>');//make a new div
                     labelContainer.attr({'id':containerName, 'time':currentTime});//set the id
-                    labelContainer.css({
-                        'position'  : 'absolute',
-                        'z-index'   :  100,
-                        'text-shadow'   : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000'
-                    });
+                    labelContainer.addClass('celestial-bodies-label');
                     this.labelsContainer.append(labelContainer);//append it to the bodiesContainer div
                 }else{//label ontainer div exists
                     firstRun = false;
@@ -390,7 +383,7 @@ var CelestialBodiesSatellites = Class.extend(
                         'target':'#'+containerName+'-hover-date-'+point,
                         'behind': currentPoint.b 
                     }).css({
-                        'position'  : 'absolute',
+                        'position'  :   'absolute',
                         'left'      :  ( currentPoint.x - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
                         'top'       :  ( currentPoint.y - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
                         'z-index'   :  210+(pointRadius*2)
@@ -403,20 +396,9 @@ var CelestialBodiesSatellites = Class.extend(
                     var bodyTextDate = bodyCapitalized + ' on <br/>' + textDate; 
                     var hoverDateContainer = $('<div/>').attr({
                         'id' : containerName+'-hover-date-'+point
-                    }).css({
-                        'transform'         : 'translateY(-90px) translateX(-45px) rotate(-45deg)',
-                        'position'          : 'absolute',
-                        'width'             : '210px',
-                        'height'            : '20px',
+                    }).addClass('hover-date-container').css({
                         'left'              : currentPoint.x + 'px',
-                        'bottom'            : -currentPoint.y + 'px',
-                        'color'             : 'white',
-                        'font-family'       : 'monospace',
-                        'z-index'           :  275,
-                        'text-shadow'       : '0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000',
-                        'background-color'  : 'rgba(0,0,0,0.6)',
-                        'padding-bottom'    : '14px',
-                        'padding-left'      : '3px'
+                        'bottom'            : -currentPoint.y + 'px'
                     }).html(bodyTextDate).hide().appendTo(trajectoryContainer);
                     //bind events
                     //TODO: make a method to reduce code duplication
@@ -620,12 +602,7 @@ var CelestialBodiesSatellites = Class.extend(
             id      : "point-date-underline-container",
             width   : '200',
             height  : '200',
-        }).css({
-            'position'  : 'absolute',
-            'left'      : '0px',
-            'bottom'    : '0px',
-            'z-index'   : 200
-        }).hide().appendTo(this.bodiesContainer);
+        }).addClass('svg-underline').hide().appendTo(this.bodiesContainer);
         //vertical line
         $(document.createElementNS('http://www.w3.org/2000/svg','line')).attr({
             x1: 1,

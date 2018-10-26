@@ -1,3 +1,30 @@
+.celestial-bodies-label {
+    position: absolute;
+    z-index:  100;
+    text-shadow: 0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000;
+}
+
+.hover-date-container {
+    transform         : translateY(-90px) translateX(-45px) rotate(-45deg);
+    position          : absolute;
+    width             : 210px;
+    height            : 20px;
+    color             : white;
+    font-family       : monospace;
+    z-index           : 275;
+    text-shadow       : 0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000;
+    background-color  : rgba(0,0,0,0.6);
+    padding-bottom    : 14px;
+    padding-left      : 3px;
+}
+
+.svg-underline {
+    position  : absolute;
+    left      : 0px;
+    bottom    : 0px;
+    z-index   : 200;
+}
+
 #trajectory-jstree {
     white-space: nowrap;
 	overflow: hidden;
