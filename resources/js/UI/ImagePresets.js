@@ -291,10 +291,12 @@ var UserLayersPresets = Class.extend({
 		    	Helioviewer.userSettings.get('state.tileLayers')
 		    );
 		    
-		    $(document).trigger("save-tile-layers");
+		    
 		    if(outputType != 'minimal'){
 			    $(document).trigger("save-tile-layers-from-accordion");
-		    }
+		    }else{
+				$(document).trigger("save-tile-layers");
+			}
 		    //_updateTimeStamp(id, date);
 		    //console.log(helioviewer.timeControls.getDate());
 		    //helioviewer._initViewport(helioviewer.timeControls.getDate(), 0, 0);
