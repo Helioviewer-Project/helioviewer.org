@@ -1623,11 +1623,11 @@
 			}
 		});
 	</script>
-	<?php /*
-		if($outputType!='minimal' && (!isset($_GET['hideWatermark']) || $_GET['hideWatermark'] != 'true')){
+	<?php 
+		if($outputType=='embed' && (!isset($_GET['hideWatermark']) || $_GET['hideWatermark'] != 'true')){
 			$link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("output=embed", "", $_SERVER['REQUEST_URI']));
 			echo '<a href="'.$link.'" target="_blank"><div id="watermark" style="width: 140px; height: 35px; display: block;"></div></a>';
-		} */
+		} 
 	?>	
 </body>
 </html>
