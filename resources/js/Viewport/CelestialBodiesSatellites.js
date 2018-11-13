@@ -323,9 +323,9 @@ var CelestialBodiesSatellites = Class.extend(
         for(var observer of observers){
             var bodies = Object.keys(this.coordinates[observer]);
             for(var body of bodies){
+                var containerName = body+"-container";
                 if(this.coordinates[observer][body] != null){
                     var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
-                    var containerName = body+"-container";
                     var labelContainer = $('#'+containerName);//locate the container div
                     var correctedCoordinates = {
                         x: Math.round( this.coordinates[observer][body].x / Helioviewer.userSettings.settings.state.imageScale),
