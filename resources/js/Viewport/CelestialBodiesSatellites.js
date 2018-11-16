@@ -776,39 +776,6 @@ var CelestialBodiesSatellites = Class.extend(
         this._buildJSTree(glossary);
     },
 
-    _buildSidebarTree: function(data){
-        var self = this;
-        var treeData = this._buildJSTreeDataOld(data);
-
-        this.trajectoryTree = $('#trajectory-jstree');
-        this.trajectoryTree.empty();
-        this.trajectoryTree.jstree({
-            "json_data" : { "data": treeData },
-            "core" : { "data": treeData },
-            "themes"    : { "theme":"default", "dots":true, "icons":false },
-            "plugins"   : [ "json_data", "themes", "ui", "checkbox" ],
-        });
-        
-        //this.trajectoryTree.jstree("check_all");
-        var savedState = Helioviewer.userSettings.get("state.celestialBodiesChecked");
-        if(savedState == null){//new visitor all checked
-            this.trajectoryTree.jstree("check_all");
-        }else{
-            $.each(savedState, function(i, bodyNode){
-                var node = '#'+bodyNode;
-                self.trajectoryTree.jstree("check_node",node);
-            });
-        }
-
-        this.trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this));
-
-        this._disableTreeItemsOld(data);
-        /*
-        this.trajectoryTree.bind("change_state.jstree", function(e,data) {
-            $('#'+data.rslt[0].attributes[1].nodeValue).toggle();
-        });*/
-    },
-
     _buildJSTree: function(glossary){
         var self = this;
         var treeData = this._buildJSTreeData(glossary);
@@ -956,49 +923,6 @@ var CelestialBodiesSatellites = Class.extend(
                 bodyObject.children.push(labelObject);
                 bodyObject.children.push(trajectoryObject);
                 //end trajectories+labels block
-                trajectoryTreeData.push(bodyObject);
-            }
-            //trajectoryTreeData.push(observerObject);
-        }
-        return trajectoryTreeData;
-    },
-
-    _buildJSTreeDataOld: function(data){
-        var trajectoryTreeData = [];
-        var trajectories = data['trajectories'];
-        var labels = data['labels'];
-        var observers = Object.keys(trajectories);
-        this.treeObservers = observers;
-        for(var observer of observers){
-            /*var observerCapitalized = observer.charAt(0).toUpperCase() + observer.substr(1);
-            var observerObject = Object();
-            observerObject.attr = { id: observer+"-tree-branch", target: observer, type: "branch" };
-            observerObject.data = observerCapitalized + " Perspective";
-            observerObject.state = "open"; 
-            observerObject.children = [];*/
-            var bodies = Object.keys(trajectories[observer]);
-            this.treeBodies = bodies;
-            for(var body of bodies){
-                var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
-                var bodyObject = Object();
-                var attributeID = {
-                    id: body+"-tree-label",//revert to "-tree-branch" later
-                    target: body+"-container",//revert to body only later
-                    type: "leaf"
-                }
-                bodyObject.attr = attributeID;
-                bodyObject.data = bodyCapitalized;
-                /*bodyObject.state = "open";
-                bodyObject.children = [];
-                var labelObject = Object();
-                var trajectoryObject = Object();
-                labelObject.attr = { id : body+"-tree-label", target: body+"-container", type: "leaf"};
-                trajectoryObject.attr = { id : body+"-tree-trajectory", target: body+"-trajectory", type: "leaf"};
-                labelObject.data = "Label";
-                trajectoryObject.data = "Trajectory";
-                bodyObject.children.push(labelObject);
-                bodyObject.children.push(trajectoryObject);
-                */
                 trajectoryTreeData.push(bodyObject);
             }
             //trajectoryTreeData.push(observerObject);
