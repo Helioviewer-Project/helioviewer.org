@@ -688,7 +688,7 @@ var CelestialBodiesSatellites = Class.extend(
 
         head = '<div class="layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all">'
                 +     '<div class="left">'
-                +        name
+                +        name + ' [' + Object.keys(glossary)[0].toUpperCase() + ']'
                 +     '</div>'
                 +     '<div class="right">'
                 +        '<span class="timestamp user-selectable"></span>'
