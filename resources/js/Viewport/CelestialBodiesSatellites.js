@@ -361,7 +361,7 @@ var CelestialBodiesSatellites = Class.extend(
             }
         }
         this._treeChangedState();
-
+        
         var observers = Object.keys(this.trajectories);
         for(var observer of observers){
             var bodies = Object.keys(this.trajectories[observer]);
@@ -374,7 +374,7 @@ var CelestialBodiesSatellites = Class.extend(
                 var previousPositionCoordinateTime = 0;
                 for(var point of coordinates){
                     var currentPositionCoordinateTime = point;
-                    if(Math.abs(currentPositionCoordinateTime-previousPositionCoordinateTime) > 86400000){
+                    if(Math.abs(currentPositionCoordinateTime-previousPositionCoordinateTime) >= 86400000 || point == coordinates[coordinates.length-1]){
                         var currentPoint = {
                             x: Math.round( this.trajectories[observer][body][point].x / Helioviewer.userSettings.settings.state.imageScale),
                             y: Math.round( -this.trajectories[observer][body][point].y / Helioviewer.userSettings.settings.state.imageScale),
@@ -671,7 +671,7 @@ var CelestialBodiesSatellites = Class.extend(
         availableBtn = '<span class="fa fa-bullseye fa-fw layerAvailableBtn visible'
                         + availableHidden + '" '
                         + 'id="visibilityAvailableBtn-' + id + '" '
-                        + 'title="Toggle visibility of empty elements inside Celestial Bodies list" '
+                        + 'title="Toggle visibility of checkboxes for planets not currently in viewport" '
                         + '></span>';
         
         visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
@@ -693,7 +693,7 @@ var CelestialBodiesSatellites = Class.extend(
                 +     '<div class="right">'
                 +        '<span class="timestamp user-selectable"></span>'
                 +        availableBtn
-                +		  visibilityBtn
+                //+		  visibilityBtn
                 +        labelsBtn
                 +     '</div>'
                 + '</div>';
@@ -891,27 +891,27 @@ var CelestialBodiesSatellites = Class.extend(
         var observers = Object.keys(glossary);
         this.treeObservers = observers;
         for(var observer of observers){
-            //trajectories+labels grouping block
+            /*//trajectories+labels grouping block
             var observerCapitalized = observer.charAt(0).toUpperCase() + observer.substr(1);
             var observerObject = Object();
             observerObject.attr = { id: observer+"-tree-branch", target: observer, type: "branch" };
             observerObject.data = observerCapitalized + " Perspective";
             observerObject.state = "open"; 
             observerObject.children = [];
-            //end trajectories+labels grouping block
+            *///end trajectories+labels grouping block
             var bodies = glossary[observer];
             this.treeBodies = bodies;
             for(var body of bodies){
                 var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
                 var bodyObject = Object();
                 var attributeID = {
-                    id: body+"-tree-branch",//revert to "-tree-label" later for labels only
-                    target: body,//revert to "body+'-container'"" for labels only
-                    type: "branch"//revert to leaf for labels only
+                    id: body+"-tree-label",//revert to "-tree-branch" later for trajectories
+                    target: body+'-container',//revert to body for trajectories
+                    type: "leaf"//revert to branch for trajectories
                 }
                 bodyObject.attr = attributeID;
                 bodyObject.data = bodyCapitalized;
-                //trajectories+labels block
+                /*//trajectories+labels block
                 bodyObject.state = "open";
                 bodyObject.children = [];
                 var labelObject = Object();
@@ -922,7 +922,7 @@ var CelestialBodiesSatellites = Class.extend(
                 trajectoryObject.data = "Trajectory";
                 bodyObject.children.push(labelObject);
                 bodyObject.children.push(trajectoryObject);
-                //end trajectories+labels block
+                *///end trajectories+labels block
                 trajectoryTreeData.push(bodyObject);
             }
             //trajectoryTreeData.push(observerObject);
@@ -951,7 +951,7 @@ var CelestialBodiesSatellites = Class.extend(
                 }
             }
         }
-
+        
         var trajectoryObservers = Object.keys(trajectories);
         for(var observer of trajectoryObservers){
             var bodies = Object.keys(trajectories[observer]);
@@ -963,7 +963,7 @@ var CelestialBodiesSatellites = Class.extend(
                 }
             }
         }
-
+        
         if(visState == false){
             $(this).addClass('hidden');
             $('#trajectory-jstree .empty-element').hide();
