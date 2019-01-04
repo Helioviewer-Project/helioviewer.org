@@ -1744,6 +1744,24 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     getEvents: function () {
         return this.viewport.serializeEvents();
     },
+    
+    /**
+     * Returns the currently selected celestial bodies labels from the sidebar
+     * 
+     * @return {String} Serialized celestial bodies labels string
+     */
+    getCelestialBodiesLabels: function() {
+        return this._celestialBodies.serializeCelestialBodiesLabels();
+    },
+
+    /**
+     * Returns the currently selected celestial bodies trajectories from the sidebar
+     * 
+     * @return {String} Serialized celestial bodies trajectories string
+     */
+    getCelestialBodiesTrajectories: function() {
+        return this._celestialBodies.serializeCelestialBodiesTrajectories();
+    },
 
     /**
      * Returns the currently selected event layers

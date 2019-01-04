@@ -163,7 +163,8 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
      * viewport roi
      */
     _takeScreenshot: function (roi) {
-        var params, dataType, imageScale, layers, events, eventLabels, scale, scaleType, scaleX, scaleY, screenshot, self = this;
+        var params, dataType, imageScale, layers, events, eventLabels, celestialBodiesLabels,
+            scale, scaleType, scaleX, scaleY, screenshot, self = this;
 
         if (typeof roi === "undefined") {
             roi = helioviewer.getViewportRegionOfInterest();
@@ -172,6 +173,8 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         imageScale  = helioviewer.getImageScale();
         layers      = helioviewer.getVisibleLayers(roi);
         events      = helioviewer.getEvents();
+        celestialBodiesLabels = helioviewer.getCelestialBodiesLabels();
+        //celestialBodiesTrajectories = helioviewer.getCelestialBodiesTrajectories();
 
         if ( Helioviewer.userSettings.get("state.eventLayerVisible") === false ) {
             events = '';
@@ -201,7 +204,9 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             movieIcons    : Helioviewer.userSettings.get("options.showinviewport"),
             date          : helioviewer.getDate().toISOString(),
             display       : false,
-            switchSources : switchSources 
+            switchSources : switchSources,
+            celestialBodiesLabels : celestialBodiesLabels
+            //celestialBodiesTrajectories : celestialBodiesTrajectories
         }, this._toArcsecCoords(roi, imageScale));
 
         // AJAX Responder

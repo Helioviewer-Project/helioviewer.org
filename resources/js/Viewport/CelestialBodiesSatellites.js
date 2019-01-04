@@ -23,6 +23,39 @@ var CelestialBodiesSatellites = Class.extend(
         this._buildDOM();
     },
 
+    /**
+     *  Returns a string of available celestial bodies
+     * 
+     *  @return {String} currently selected celestial bodies from the sidebar
+     */ 
+    serializeCelestialBodiesLabels: function(){
+        var savedState = Helioviewer.userSettings.get("state.celestialBodiesChecked");
+        var serializedString = '';
+        for(var body of savedState){
+            var indexOfLabel = body.indexOf('-tree-label');
+            if(indexOfLabel != -1){
+                var bodyName = body.slice(0,indexOfLabel);
+                serializedString += bodyName+',';
+            }
+        }
+        serializedString = serializedString.slice(0,-1);
+        serializedString = '['+serializedString+']';
+        console.log(serializedString);
+        return serializedString;
+    },
+
+    /**
+     *  Returns a string of available celestial bodies
+     * 
+     *  @return {String} currently selected celestial bodies from the sidebar
+     */ 
+    // TO DO: parse and serialize trajectory string
+    serializeCelestialBodiesTrajectories: function(){
+        var savedState = Helioviewer.userSettings.get("state.celestialBodiesChecked");
+        console.log(savedState);
+        return 'serialized state goes here';
+    },
+
     _initEventListeners: function(){
         $(document).bind("helioviewer-ready", $.proxy(this._hvReady,this));
         $(document).bind("observation-time-changed", $.proxy(this._onTimeChanged,this));
