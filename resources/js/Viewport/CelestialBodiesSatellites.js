@@ -3,6 +3,8 @@
 var CelestialBodiesSatellites = Class.extend(
 {
     init: function(){
+        this.disableTrajectories = false;//toggle this to enable/disable trajectories
+
         this.domNode = $('#SolarBodiesAccordion-Container');//php index template dom node
         this.currentTime = 0;
         this.pointSizes = {
@@ -30,11 +32,16 @@ var CelestialBodiesSatellites = Class.extend(
      */ 
     serializeCelestialBodiesLabels: function(){
         var savedState = Helioviewer.userSettings.get("state.celestialBodiesChecked");
+        console.log(savedState);
         var serializedString = '';
         for(var body of savedState){
             var indexOfLabel = body.indexOf('-tree-label');
+            var indexOfBranch = body.indexOf('-tree-branch');
             if(indexOfLabel != -1){
                 var bodyName = body.slice(0,indexOfLabel);
+                serializedString += bodyName+',';
+            }else if(indexOfBranch != -1){
+                var bodyName = body.slice(0,indexOfBranch);
                 serializedString += bodyName+',';
             }
         }
@@ -52,8 +59,22 @@ var CelestialBodiesSatellites = Class.extend(
     // TO DO: parse and serialize trajectory string
     serializeCelestialBodiesTrajectories: function(){
         var savedState = Helioviewer.userSettings.get("state.celestialBodiesChecked");
-        console.log(savedState);
-        return 'serialized state goes here';
+        var serializedString = '';
+        for(var body of savedState){
+            var indexOfLabel = body.indexOf('-tree-trajectory');
+            var indexOfBranch = body.indexOf('-tree-branch');
+            if(indexOfLabel != -1){
+                var bodyName = body.slice(0,indexOfLabel);
+                serializedString += bodyName+',';
+            }else if(indexOfBranch != -1){
+                var bodyName = body.slice(0,indexOfBranch);
+                serializedString += bodyName+',';
+            }
+        }
+        serializedString = serializedString.slice(0,-1);
+        serializedString = '['+serializedString+']';
+        console.log(serializedString);
+        return serializedString;
     },
 
     _initEventListeners: function(){
@@ -920,45 +941,88 @@ var CelestialBodiesSatellites = Class.extend(
     },
 
     _buildJSTreeData: function(glossary){
-        var trajectoryTreeData = [];
-        var observers = Object.keys(glossary);
-        this.treeObservers = observers;
-        for(var observer of observers){
-            /*//trajectories+labels grouping block
-            var observerCapitalized = observer.charAt(0).toUpperCase() + observer.substr(1);
-            var observerObject = Object();
-            observerObject.attr = { id: observer+"-tree-branch", target: observer, type: "branch" };
-            observerObject.data = observerCapitalized + " Perspective";
-            observerObject.state = "open"; 
-            observerObject.children = [];
-            *///end trajectories+labels grouping block
-            var bodies = glossary[observer];
-            this.treeBodies = bodies;
-            for(var body of bodies){
-                var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
-                var bodyObject = Object();
-                var attributeID = {
-                    id: body+"-tree-label",//revert to "-tree-branch" later for trajectories
-                    target: body+'-container',//revert to body for trajectories
-                    type: "leaf"//revert to branch for trajectories
+        if(this.disableTrajectories){
+            var trajectoryTreeData = [];
+            var observers = Object.keys(glossary);
+            this.treeObservers = observers;
+            for(var observer of observers){
+                /*//trajectories+labels grouping block
+                var observerCapitalized = observer.charAt(0).toUpperCase() + observer.substr(1);
+                var observerObject = Object();
+                observerObject.attr = { id: observer+"-tree-branch", target: observer, type: "branch" };
+                observerObject.data = observerCapitalized + " Perspective";
+                observerObject.state = "open"; 
+                observerObject.children = [];
+                *///end trajectories+labels grouping block
+                var bodies = glossary[observer];
+                this.treeBodies = bodies;
+                for(var body of bodies){
+                    var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
+                    var bodyObject = Object();
+                    var attributeID = {
+                        id: body+"-tree-label",//revert to "-tree-branch" later for trajectories
+                        target: body+'-container',//revert to body for trajectories
+                        type: "leaf"//revert to branch for trajectories
+                    }
+                    bodyObject.attr = attributeID;
+                    bodyObject.data = bodyCapitalized;
+                    /*//trajectories+labels block
+                    bodyObject.state = "open";
+                    bodyObject.children = [];
+                    var labelObject = Object();
+                    var trajectoryObject = Object();
+                    labelObject.attr = { id : body+"-tree-label", target: body+"-container", type: "leaf"};
+                    trajectoryObject.attr = { id : body+"-tree-trajectory", target: body+"-trajectory", type: "leaf"};
+                    labelObject.data = "Label";
+                    trajectoryObject.data = "Trajectory";
+                    bodyObject.children.push(labelObject);
+                    bodyObject.children.push(trajectoryObject);
+                    *///end trajectories+labels block
+                    trajectoryTreeData.push(bodyObject);
                 }
-                bodyObject.attr = attributeID;
-                bodyObject.data = bodyCapitalized;
-                /*//trajectories+labels block
-                bodyObject.state = "open";
-                bodyObject.children = [];
-                var labelObject = Object();
-                var trajectoryObject = Object();
-                labelObject.attr = { id : body+"-tree-label", target: body+"-container", type: "leaf"};
-                trajectoryObject.attr = { id : body+"-tree-trajectory", target: body+"-trajectory", type: "leaf"};
-                labelObject.data = "Label";
-                trajectoryObject.data = "Trajectory";
-                bodyObject.children.push(labelObject);
-                bodyObject.children.push(trajectoryObject);
-                *///end trajectories+labels block
-                trajectoryTreeData.push(bodyObject);
+                //trajectoryTreeData.push(observerObject);
             }
-            //trajectoryTreeData.push(observerObject);
+        }else{
+            var trajectoryTreeData = [];
+            var observers = Object.keys(glossary);
+            this.treeObservers = observers;
+            for(var observer of observers){
+                //trajectories+labels grouping block
+                var observerCapitalized = observer.charAt(0).toUpperCase() + observer.substr(1);
+                var observerObject = Object();
+                observerObject.attr = { id: observer+"-tree-branch", target: observer, type: "branch" };
+                observerObject.data = observerCapitalized + " Perspective";
+                observerObject.state = "open"; 
+                observerObject.children = [];
+                //end trajectories+labels grouping block
+                var bodies = glossary[observer];
+                this.treeBodies = bodies;
+                for(var body of bodies){
+                    var bodyCapitalized = body.charAt(0).toUpperCase() + body.substr(1);
+                    var bodyObject = Object();
+                    var attributeID = {
+                        id: body+"-tree-branch",//revert to "-tree-branch" later for trajectories
+                        target: body,//revert to body for trajectories
+                        type: "branch"//revert to branch for trajectories
+                    }
+                    bodyObject.attr = attributeID;
+                    bodyObject.data = bodyCapitalized;
+                    //trajectories+labels block
+                    bodyObject.state = "open";
+                    bodyObject.children = [];
+                    var labelObject = Object();
+                    var trajectoryObject = Object();
+                    labelObject.attr = { id : body+"-tree-label", target: body+"-container", type: "leaf"};
+                    trajectoryObject.attr = { id : body+"-tree-trajectory", target: body+"-trajectory", type: "leaf"};
+                    labelObject.data = "Label";
+                    trajectoryObject.data = "Trajectory";
+                    bodyObject.children.push(labelObject);
+                    bodyObject.children.push(trajectoryObject);
+                    //end trajectories+labels block
+                    trajectoryTreeData.push(bodyObject);
+                }
+                //trajectoryTreeData.push(observerObject);
+            }
         }
         return trajectoryTreeData;
     },

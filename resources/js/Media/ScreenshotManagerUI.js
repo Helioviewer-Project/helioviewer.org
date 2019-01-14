@@ -164,7 +164,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
      */
     _takeScreenshot: function (roi) {
         var params, dataType, imageScale, layers, events, eventLabels, celestialBodiesLabels,
-            scale, scaleType, scaleX, scaleY, screenshot, self = this;
+        celestialBodiesTrajectories, scale, scaleType, scaleX, scaleY, screenshot, self = this;
 
         if (typeof roi === "undefined") {
             roi = helioviewer.getViewportRegionOfInterest();
@@ -174,7 +174,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         layers      = helioviewer.getVisibleLayers(roi);
         events      = helioviewer.getEvents();
         celestialBodiesLabels = helioviewer.getCelestialBodiesLabels();
-        //celestialBodiesTrajectories = helioviewer.getCelestialBodiesTrajectories();
+        celestialBodiesTrajectories = helioviewer.getCelestialBodiesTrajectories();
 
         if ( Helioviewer.userSettings.get("state.eventLayerVisible") === false ) {
             events = '';
@@ -205,7 +205,8 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             date          : helioviewer.getDate().toISOString(),
             display       : false,
             switchSources : switchSources,
-            celestialBodiesLabels : celestialBodiesLabels
+            celestialBodiesLabels : celestialBodiesLabels,
+            celestialBodiesTrajectories : celestialBodiesTrajectories
             //celestialBodiesTrajectories : celestialBodiesTrajectories
         }, this._toArcsecCoords(roi, imageScale));
 
