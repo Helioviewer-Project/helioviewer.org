@@ -59,7 +59,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * user click to view it in a popup.
      */
     _buildMovieRequest: function (serializedFormParams) {
-        var formParams, baseParams, params, frameRate;
+        var formParams, baseParams, params, frameRate, celestialBodiesLabels, celestialBodiesTrajectories;
 
         // Convert to an associative array for easier processing
         formParams = {};
@@ -96,7 +96,10 @@ var MovieManagerUI = MediaManagerUI.extend(
 		var switchSources = false;
 		if(outputType == 'minimal'){
 			switchSources = true;
-		}
+        }
+        
+        celestialBodiesLabels = helioviewer.getCelestialBodiesLabels();
+        celestialBodiesTrajectories = helioviewer.getCelestialBodiesTrajectories();
 		
         // Movie request parameters
         baseParams = {
@@ -114,7 +117,9 @@ var MovieManagerUI = MediaManagerUI.extend(
             movieIcons   : 0,
             followViewport   : 0,
             reqObservationDate   : new Date(Helioviewer.userSettings.get("state.date")).toISOString(),
-            switchSources   : switchSources
+            switchSources   : switchSources,
+            celestialBodiesLabels : celestialBodiesLabels,
+            celestialBodiesTrajectories : celestialBodiesTrajectories
         };
 
         // Add ROI and start and end dates

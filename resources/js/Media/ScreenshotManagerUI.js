@@ -207,7 +207,6 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             switchSources : switchSources,
             celestialBodiesLabels : celestialBodiesLabels,
             celestialBodiesTrajectories : celestialBodiesTrajectories
-            //celestialBodiesTrajectories : celestialBodiesTrajectories
         }, this._toArcsecCoords(roi, imageScale));
 
         // AJAX Responder

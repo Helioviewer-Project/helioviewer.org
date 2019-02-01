@@ -46,7 +46,7 @@ var CelestialBodiesSatellites = Class.extend(
             }
         }
         serializedString = serializedString.slice(0,-1);
-        serializedString = '['+serializedString+']';
+        serializedString = serializedString;
         console.log(serializedString);
         return serializedString;
     },
@@ -72,7 +72,7 @@ var CelestialBodiesSatellites = Class.extend(
             }
         }
         serializedString = serializedString.slice(0,-1);
-        serializedString = '['+serializedString+']';
+        serializedString = serializedString;
         console.log(serializedString);
         return serializedString;
     },
@@ -322,9 +322,11 @@ var CelestialBodiesSatellites = Class.extend(
         this.coordinates = coordinates;
         var currentTime = Date.now();
         var observers = Object.keys(coordinates);//extract observer names
-        for(var observer of observers){
+        var backToFrontObservers = observers.reverse();
+        for(var observer of backToFrontObservers){
             var bodies = Object.keys(coordinates[observer]);//extract body names (planets + satellites)
-            for(var body of bodies){
+            var backToFrontBodies = bodies.reverse();
+            for(var body of backToFrontBodies){
                 var containerName = body+"-container";
                 if($('#'+containerName).length == 0){//label container div does not exist yet
                     var labelContainer = $('<div/>');//make a new div
@@ -747,7 +749,7 @@ var CelestialBodiesSatellites = Class.extend(
                 +     '<div class="right">'
                 +        '<span class="timestamp user-selectable"></span>'
                 +        availableBtn
-                //+		  visibilityBtn
+                +		  visibilityBtn
                 +        labelsBtn
                 +     '</div>'
                 + '</div>';
