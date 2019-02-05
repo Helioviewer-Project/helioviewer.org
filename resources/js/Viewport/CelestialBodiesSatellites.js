@@ -1036,8 +1036,10 @@ var CelestialBodiesSatellites = Class.extend(
             $(this).removeClass('empty-element');
             $(this).css({'opacity':'1.0'});
         });
+        
         var trajectories = data['trajectories'];
         var labels = data['labels'];
+        var treeLabelBodies = [];
 
         var labelObservers = Object.keys(labels);
         for(var observer of labelObservers){
@@ -1047,6 +1049,7 @@ var CelestialBodiesSatellites = Class.extend(
                     //console.log("disabling: "+body+"-tree-label");
                     var treeLabel = $('#'+body+"-tree-label");
                     treeLabel.css({'opacity':'0.5'}).addClass('empty-element');
+                    treeLabelBodies.push(body);
                 }
             }
         }
@@ -1057,8 +1060,15 @@ var CelestialBodiesSatellites = Class.extend(
             for(var body of bodies){
                 if(trajectories[observer][body].length == 0){
                     //console.log("disabling: "+body+"-tree-trajectory");
-                    var treeTrajectory = $('#'+body+"-tree-trajectory");
-                    treeTrajectory.css({'opacity':'0.5'}).addClass('empty-element');
+                    if(treeLabelBodies.includes(body)){
+                        var treeBranch = $('#'+body+"-tree-branch");
+                        treeBranch.css({'opacity':'0.5'}).addClass('empty-element');
+                        var treeLabel = $('#'+body+"-tree-label");
+                        treeLabel.css({'opacity':'1.0'}).removeClass('empty-element');
+                    }else{
+                        var treeTrajectory = $('#'+body+"-tree-trajectory");
+                        treeTrajectory.css({'opacity':'0.5'}).addClass('empty-element');
+                    }
                 }
             }
         }
