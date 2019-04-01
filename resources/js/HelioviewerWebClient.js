@@ -1812,13 +1812,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         
         // URL parameters
         var params = {
-            "date"        : this.viewport._tileLayerManager.getRequestDateAsISOString(),
-            "imageScale"  : this.viewport.getImageScale(),
-            "centerX"     : Helioviewer.userSettings.get("state.centerX"),
-            "centerY"     : Helioviewer.userSettings.get("state.centerY"),
-            "imageLayers" : encodeURI(this.viewport.serialize()),
-            "eventLayers" : encodeURI(this.viewport.serializeEvents()),
-            "eventLabels" : Helioviewer.userSettings.get("state.eventLabels")
+            "date"              : this.viewport._tileLayerManager.getRequestDateAsISOString(),
+            "imageScale"        : this.viewport.getImageScale(),
+            "centerX"           : Helioviewer.userSettings.get("state.centerX"),
+            "centerY"           : Helioviewer.userSettings.get("state.centerY"),
+            "imageLayers"       : encodeURI(this.viewport.serialize()),
+            "eventLayers"       : encodeURI(this.viewport.serializeEvents()),
+            "eventLabels"       : Helioviewer.userSettings.get("state.eventLabels"),
+            "celestialBodies"   : JSON.stringify(Helioviewer.userSettings.get("state.celestialBodiesChecked"))
         };
 
         return this.serverSettings.rootURL + "/?" + decodeURIComponent($.param(params));

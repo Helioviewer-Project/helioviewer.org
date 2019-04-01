@@ -184,7 +184,12 @@ var SettingsLoader = (
                 }],
                 "userTileLayers": [],
                 "dropdownLayerSelectID": 0,
-                "timeStep"   : 86400
+                "timeStep"   : 86400,
+                "celestialBodiesChecked" : {},
+                "celestialBodiesAccordionOpen" : {},
+                "celestialBodiesAvailableVisible" : {},
+                "celestialBodiesLabelsVisible" : {},
+                "celestialBodiesTrajectoriesVisible" : {}
             },
             version: serverSettings.version
         };

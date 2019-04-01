@@ -1597,6 +1597,11 @@
 					if ( typeof sParameterName[1] != 'undefined' && (sParameterName[1] == false  || sParameterName[1] == 'false' ) ) {
 						data['eventLabels'] = false;
 					}
+				}else if (sParameterName[0] === 'celestialBodies'){
+					// Process Celestial bodies labels seperately if set
+					if(sParameterName[1] != '') {
+						data['celestialBodiesChecked'] = sParameterName[1];
+					}
 				}else{
 					if(sParameterName[0] != ''){
 						data[sParameterName[0]] = sParameterName[1];

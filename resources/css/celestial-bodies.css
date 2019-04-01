@@ -2,6 +2,16 @@
     position: absolute;
     z-index:  100;
     text-shadow: 0px 0px 2px #000, 0px 0px 4px #000, 0px 0px 6px #000;
+    white-space: nowrap;
+}
+
+.celestial-bodies-label:hover {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.celestial-pointer:hover{
+    cursor: pointer;
 }
 
 .hover-date-container {
@@ -25,25 +35,44 @@
     z-index   : 200;
 }
 
-#trajectory-jstree {
+.observer-jstree {
     white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-#trajectory-jstree a {
+.observer-jstree a {
     font-family: 'Courier New', Courier, monospace;
     font-size: 1em;
     font-weight: 400;
     overflow: ellipsis;
     color: white;
 }
-#trajectory-jstree a:hover{
+.observer-jstree a:hover{
     background-color: black;
     border: 1px solid black;
 }
-#trajectory-jstree a .checkbox {
+.observer-jstree a .checkbox {
     margin-right: 0.4em;
+}
+.observer-jstree span.button {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    font-weight: 400;
+    overflow: ellipsis;
+    color: white;
+    border: 1px solid transparent;
+}
+.observer-jstree span:hover.button{
+    background-color: black;
+    border: 1px solid black;
+}
+.observer-jstree span.decoration{
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    font-weight: 400;
+    overflow: ellipsis;
+    color: white;
 }
 
 .event-marker {
@@ -95,7 +124,7 @@
     position: absolute;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 300px;
+    width: auto;
 }
 .body-popup h1 {
     display: inline-block;
