@@ -534,10 +534,11 @@ var CelestialBodiesSatellites = Class.extend(
                         }
                     }
                     var labelContainer = $('#'+containerName);//locate the container div
-                    var correctedCoordinates = {
-                        x: Math.round( this.coordinates[observer][body].x / Helioviewer.userSettings.settings.state.imageScale),
-                        y: Math.round( -this.coordinates[observer][body].y / Helioviewer.userSettings.settings.state.imageScale)
-                    };
+                    var correctedCoordinates = this._convertHPCtoHCC(this.coordinates[observer][body],body,true);
+                    // var correctedCoordinates = {
+                    //     x: Math.round( this.coordinates[observer][body].x / Helioviewer.userSettings.settings.state.imageScale),
+                    //     y: Math.round( -this.coordinates[observer][body].y / Helioviewer.userSettings.settings.state.imageScale)
+                    // };
                     labelContainer.css({
                         'left'      :  correctedCoordinates.x + 'px',
                         'top'       :  correctedCoordinates.y + 'px'
@@ -575,12 +576,20 @@ var CelestialBodiesSatellites = Class.extend(
                         temporalCadence = this.glossaryMods[body].cadence;
                     }
                     if(Math.abs(currentPositionCoordinateTime-previousPositionCoordinateTime) >= temporalCadence || point == coordinates[coordinates.length-1]){
+                        var correctedCoordinates = this._convertHPCtoHCC(this.trajectories[observer][body][point],body,true);
                         var currentPoint = {
-                            x: Math.round( this.trajectories[observer][body][point].x / Helioviewer.userSettings.settings.state.imageScale),
-                            y: Math.round( -this.trajectories[observer][body][point].y / Helioviewer.userSettings.settings.state.imageScale),
+                            x: Math.round( correctedCoordinates.x ),
+                            y: Math.round( correctedCoordinates.y ),
                             b: this.trajectories[observer][body][point].behind_plane_of_sun == 'True',
                             t: Math.abs(currentPositionCoordinateTime-currentRequestTime) <= 1000
                         };
+                        // var currentPoint = {
+                        //     x: Math.round( this.trajectories[observer][body][point].x / Helioviewer.userSettings.settings.state.imageScale),
+                        //     y: Math.round( -this.trajectories[observer][body][point].y / Helioviewer.userSettings.settings.state.imageScale),
+                        //     b: this.trajectories[observer][body][point].behind_plane_of_sun == 'True',
+                        //     t: Math.abs(currentPositionCoordinateTime-currentRequestTime) <= 1000
+                        // };
+
                         //create points for the trajectory
                         if(currentPoint.t){
                             var pointRadius = this.pointSizes.large;
@@ -672,11 +681,17 @@ var CelestialBodiesSatellites = Class.extend(
                         //draw the line
                         if(previousPositionCoordinateTime>0){
                             var loc = previousPositionCoordinateTime;
+                            var previousCorrectedCoordinates = this._convertHPCtoHCC(this.trajectories[observer][body][loc],body,true);
                             var previousPoint = {
-                                x: Math.round( this.trajectories[observer][body][loc].x / Helioviewer.userSettings.settings.state.imageScale),
-                                y: Math.round( -this.trajectories[observer][body][loc].y / Helioviewer.userSettings.settings.state.imageScale),
+                                x: Math.round( previousCorrectedCoordinates.x ),
+                                y: Math.round( previousCorrectedCoordinates.y ),
                                 b: this.trajectories[observer][body][loc].behind_plane_of_sun == 'True'
                             };
+                            // var previousPoint = {
+                            //     x: Math.round( this.trajectories[observer][body][loc].x / Helioviewer.userSettings.settings.state.imageScale),
+                            //     y: Math.round( -this.trajectories[observer][body][loc].y / Helioviewer.userSettings.settings.state.imageScale),
+                            //     b: this.trajectories[observer][body][loc].behind_plane_of_sun == 'True'
+                            // };
                             var svgLine = {
                                 width: (currentPoint.x - previousPoint.x),
                                 height: (currentPoint.y - previousPoint.y)
@@ -992,11 +1007,19 @@ var CelestialBodiesSatellites = Class.extend(
 
             this.domNode.find("#checkboxBtn-On-"+observer).click( function() {
                 var myObserver = $(this).attr('observer');
+                $('#visibilityLabels-'+myObserver).removeClass('hidden');
+                $("#visibilityTrajectories-"+myObserver).removeClass('hidden');
+                Helioviewer.userSettings.set("state.celestialBodiesLabelsVisible."+myObserver, true);
+                Helioviewer.userSettings.set("state.celestialBodiesTrajectoriesVisible."+myObserver, true);
                 $(document).trigger("toggle-checkboxes-to-state", [myObserver,'on']);
             });
 
             this.domNode.find("#checkboxBtn-Off-"+observer).click( function() {
                 var myObserver = $(this).attr('observer');
+                $('#visibilityLabels-'+myObserver).addClass('hidden');
+                $("#visibilityTrajectories-"+myObserver).addClass('hidden');
+                Helioviewer.userSettings.set("state.celestialBodiesLabelsVisible."+myObserver, false);
+                Helioviewer.userSettings.set("state.celestialBodiesTrajectoriesVisible."+myObserver, false);
                 $(document).trigger("toggle-checkboxes-to-state", [myObserver,'off']);
             });
 
