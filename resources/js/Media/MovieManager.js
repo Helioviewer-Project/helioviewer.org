@@ -198,6 +198,30 @@ var MovieManager = MediaManager.extend(
         // Create the jGrowl notification.
         $(document).trigger("message-console-log",
                             [message, jGrowlOpts, true, true]);
+
+        // Create "Web Notificaions API" notification
+        if("Notification" in window){//browser supports notifications
+            if (Notification.permission === "granted") {
+                // If it's okay let's create a notification
+                var title = "Movie Complete!"
+                var options = {
+                    body: "Your " + movie.name + " movie is ready!\n\nClick here to open the movie player.",
+                    icon: movie.thumbnail
+
+                };
+                var notification = new Notification(title, options);
+                notification.onclick = function(event){
+                    if (movie.status === 2) {
+                        var dialog = $("#movie-player-" + movie.id);
+                        // If the movie player dialog does not exist, create one
+                        if (dialog.length == 0) {
+                            helioviewer._movieManagerUI._createMoviePlayerDialog(movie);
+                        }
+                    }
+                }
+            }
+        }
+        // End "Web Notifications UI" notification
     },
 
     /**

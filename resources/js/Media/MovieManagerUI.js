@@ -297,6 +297,13 @@ var MovieManagerUI = MediaManagerUI.extend(
             self._refresh();
         };
 
+        // Notification Permission
+        if("Notification" in window){//if browser supports notifications
+            if (Notification.permission !== "denied"){//if the user has not denied the notification
+                Notification.requestPermission();//get notification permission
+            }
+        }
+
         // Make request
         $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
     },
@@ -590,8 +597,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         }else{
             // If the movie is ready, open movie player
             if (movie.status === 2) {
-                dialog = $("movie-player-" + id);
-
+                dialog = $("#movie-player-" + id);
                 // If the dialog has already been created, toggle display
                 if (dialog.length > 0) {
                     action = dialog.dialog('isOpen') ? "close" : "open";
