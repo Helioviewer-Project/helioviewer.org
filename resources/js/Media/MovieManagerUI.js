@@ -299,8 +299,19 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         // Notification Permission
         if("Notification" in window){//if browser supports notifications
-            if (Notification.permission !== "denied"){//if the user has not denied the notification
-                Notification.requestPermission();//get notification permission
+            var savedMovieNotificationsState = Helioviewer.userSettings.get("options.movieNotifications");
+            if (savedMovieNotificationsState == undefined || savedMovieNotificationsState == null || savedMovieNotificationsState !== Notification.permission){
+                if (Notification.permission !== "denied"){//if the user has not denied the notification
+                    Notification.requestPermission();//get notification permission
+                }
+                if(Notification.permission == "denied" || Notification.permission == "granted"){
+                    var notifParams = {
+                        action: 'logNotificationStatistics',
+                        notifications: Notification.permission
+                    }
+                    $.get(Helioviewer.api, notifParams, null , "json");
+                    Helioviewer.userSettings.set("options.movieNotifications", Notification.permission);
+                }
             }
         }
 

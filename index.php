@@ -25,24 +25,30 @@
 		$debugTime = time();
 	}
 	
-	//check if URL have output parameter or if $hv_output enabled
-	if(isset($_GET['output']) || $hv_output){
-		if($hv_output == 'embed' || $hv_output == 'minimal'){
-			$outputType = $hv_output;
-		}else if(isset($_GET['output']) && ($_GET['output'] == 'embed' || $_GET['output'] == 'minimal')){
-			$outputType = $_GET['output'];
-		}
+	if($hv_output == 'embed' || $hv_output == 'minimal'){
+		$outputType = $hv_output;
+	}else if(isset($_GET['output']) && ($_GET['output'] == 'embed' || $_GET['output'] == 'minimal')){
+		$outputType = $_GET['output'];
+	}
+	
+	if($outputType){ // minimal and embed statistic
+		//Load Config
+		include_once "../api.helioviewer.org/src/Config.php";
+		$config = new Config("../api.helioviewer.org/settings/Config.ini");
 		
-		if($outputType){
-			//Load Config
-			include_once "../api.helioviewer.org/src/Config.php";
-	        $config = new Config("../api.helioviewer.org/settings/Config.ini");
-	        
-	        //Log Statistic
-			include_once HV_ROOT_DIR.'/../src/Database/Statistics.php';
-	        $statistics = new Database_Statistics();
-	        $statistics->log($outputType);
-		}
+		//Log Statistic
+		include_once HV_ROOT_DIR.'/../src/Database/Statistics.php';
+		$statistics = new Database_Statistics();
+		$statistics->log($outputType);
+	}else{ // standard mode statistic
+		//Load Config
+		include_once "../api.helioviewer.org/src/Config.php";
+		$config = new Config("../api.helioviewer.org/settings/Config.ini");
+		
+		//Log Statistic
+		include_once HV_ROOT_DIR.'/../src/Database/Statistics.php';
+		$statistics = new Database_Statistics();
+		$statistics->log("standard");
 	}
 	
 ?><!DOCTYPE html>
@@ -1053,6 +1059,9 @@
 						<option value='2419200'>28 days</option>
 					</select>
 				</div>
+				<div style='padding-left: 10px; padding-top:10px;' id='settings-movie-notification-status'>
+					Movie Notification Status
+				</div>
 				</fieldset>
 			</form>
 		</div>
@@ -1131,8 +1140,15 @@
 						<div id="earth-button" class="viewport-action segmented-left fa fa-globe qtip-topright" title="Toggle Earth-Scale Indicator."></div><div id="scalebar-button" class="viewport-action segmented-right fa fa-arrows-h qtip-topright" style="border-left: 0;" title="Toggle Length scale indicator."></div>
 			
 					</div>
-
-			
+					<!--
+					<div id="mouse-coords-box" style="">
+						<div id="mouse-cartesian" style="margin-top:4px;" class="viewport-action segmented-left fa fa-cube" title="Toggle Mouse Coordinates (Cartesian)"></div><div id="mouse-polar" class="viewport-action segmented-right fa fa-dot-circle-o" style="border-left: 0;margin-top:4px;" title="Toggle Mouse Coordinates (Polar)"></div>
+						<div id="mouse-coords" style="left: 16em; margin-top: 1.2em;">
+							<div id="mouse-coords-x"></div>
+							<div id="mouse-coords-y"></div>
+						</div>
+					</div>
+					-->
 					<div>
 			<!--<div id="youtube-button" class="fa fa-youtube fa-fw qtip-left social-button" title="View Helioviewer Movies Shared to YouTube."></div>-->
 			<div id="movies-button" class="fa fa-file-video-o fa-fw qtip-left social-button" title="Create a Helioviewer Movie."></div>

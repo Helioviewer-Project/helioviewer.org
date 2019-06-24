@@ -384,14 +384,15 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * initializes event-handlers
      */
     _setupSettingsUI: function () {
-        var form, dateLatest, datePrevious, autorefresh, autoplay, duration, self = this;
+        var form, dateLatest, datePrevious, autorefresh, autoplay, duration, notifications, notificationResetButton, movieNotificationStatus, self = this;
 
-        form         = $("#helioviewer-settings");
-        dateLatest   = $("#settings-date-latest");
-        datePrevious = $("#settings-date-previous");
-        autorefresh  = $("#settings-latest-image");
-        autoplay     = $("#settings-movie-play-automatic");
-        duration     = $("#settings-movie-duration");
+        form          = $("#helioviewer-settings");
+        dateLatest    = $("#settings-date-latest");
+        datePrevious  = $("#settings-date-previous");
+        autorefresh   = $("#settings-latest-image");
+        autoplay      = $("#settings-movie-play-automatic");
+        duration      = $("#settings-movie-duration");
+        notifications = $("#settings-movie-notification-status");
 
         // Starting date
         if (Helioviewer.userSettings.get("options.date") === "latest") {
@@ -418,6 +419,16 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         // Default movie duration
         duration.val(Helioviewer.userSettings.get("options.movies.duration"));
+
+        // Notifications Status Indicator
+        movieNotificationStatus = Notification.permission;
+        if(movieNotificationStatus == 'denied'){
+            notifications.text("Movie notifications blocked. Please reset them in your browser if you wish to receive desktop notifications.");
+        }else if(movieNotificationStatus == 'granted'){
+            notifications.text("Movie notifications granted.");
+        }else if(movieNotificationStatus == 'default'){
+            notifications.text("Movie notifications request was dismissed.");
+        }
 
         // Event-handlers
         dateLatest.change(function (e) {
