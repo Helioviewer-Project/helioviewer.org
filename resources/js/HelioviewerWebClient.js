@@ -1830,7 +1830,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             "imageLayers"       : encodeURI(this.viewport.serialize()),
             "eventLayers"       : encodeURI(this.viewport.serializeEvents()),
             "eventLabels"       : Helioviewer.userSettings.get("state.eventLabels"),
-            "celestialBodies"   : JSON.stringify(Helioviewer.userSettings.get("state.celestialBodiesChecked"))
+            "celestialBodies"   : encodeURI(JSON.stringify(Helioviewer.userSettings.get("state.celestialBodiesChecked")))
         };
 
         return this.serverSettings.rootURL + "/?" + decodeURIComponent($.param(params));
