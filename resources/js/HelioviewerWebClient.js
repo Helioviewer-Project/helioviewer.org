@@ -2544,6 +2544,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             sdoButtons      = $('#sdo-buttons'),
             sdoGlobal 		= global,
             vsoGlobal 		= global,
+            self            = this,
             vport, imageScale;
 
         if ( typeof this.viewport._tileLayerManager == 'undefined' ) {
