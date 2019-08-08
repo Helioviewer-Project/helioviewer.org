@@ -146,7 +146,11 @@ var CelestialBodiesSatellites = Class.extend(
         //checks to make sure user settings exist based on glossary received and creates them if they do not.
         var observers = Object.keys(glossary['observers']);
         var celestialBodiesCheckedState = Helioviewer.userSettings.get('state.celestialBodiesChecked');
-        if( celestialBodiesCheckedState === {} || Array.isArray(celestialBodiesCheckedState) || celestialBodiesCheckedState === null ){
+        var stateVersion = "state.celestialBodiesVersion";
+        var savedVersion =  Helioviewer.userSettings.get(stateVersion);
+        var resetFromVersionChange = parseInt(glossary.version) != parseInt(savedVersion);
+
+        if( celestialBodiesCheckedState === {} || Array.isArray(celestialBodiesCheckedState) || celestialBodiesCheckedState === null || resetFromVersionChange){
             Helioviewer.userSettings.set('state.celestialBodiesChecked',{});
             for( var observer of observers ){
                 var newSetting = "state.celestialBodiesChecked."+observer;
@@ -162,16 +166,24 @@ var CelestialBodiesSatellites = Class.extend(
             }
         }
         var celestialBodiesAvailableVisibleState = Helioviewer.userSettings.get('state.celestialBodiesAvailableVisible');
-        if( celestialBodiesAvailableVisibleState === {} || typeof(celestialBodiesAvailableVisibleState) === typeof(true) ){
+        if( celestialBodiesAvailableVisibleState === {} || typeof(celestialBodiesAvailableVisibleState) === typeof(true) || resetFromVersionChange){
             Helioviewer.userSettings.set('state.celestialBodiesAvailableVisible',{});
         }
         var celestialBodiesLabelsVisibleState = Helioviewer.userSettings.get('state.celestialBodiesLabelsVisible');
-        if( celestialBodiesLabelsVisibleState === {} || typeof(celestialBodiesLabelsVisibleState) === typeof(true) ){
+        if( celestialBodiesLabelsVisibleState === {} || typeof(celestialBodiesLabelsVisibleState) === typeof(true) || resetFromVersionChange){
             Helioviewer.userSettings.set('state.celestialBodiesLabelsVisible',{});
         }
         var celestialBodiesTrajectoriesVisibleState = Helioviewer.userSettings.get('state.celestialBodiesTrajectoriesVisible');
-        if( celestialBodiesTrajectoriesVisibleState === {} || typeof(celestialBodiesTrajectoriesVisibleState) === typeof(true) ){
+        if( celestialBodiesTrajectoriesVisibleState === {} || typeof(celestialBodiesTrajectoriesVisibleState) === typeof(true) || resetFromVersionChange){
             Helioviewer.userSettings.set('state.celestialBodiesTrajectoriesVisible',{});
+        }
+        var celestialBodiesAccordionOpen = Helioviewer.userSettings.get("state.celestialBodiesAccordionOpen");
+        if( celestialBodiesAccordionOpen === {} || typeof(celestialBodiesAccordionOpen) === typeof(true) || resetFromVersionChange){
+            Helioviewer.userSettings.set('state.celestialBodiesAccordionOpen',{});
+        }
+        var celestialBodiesVersion = savedVersion;
+        if( celestialBodiesVersion === undefined ){
+            Helioviewer.userSettings.set('state.celestialBodiesVersion',0);
         }
     },
 
@@ -903,31 +915,35 @@ var CelestialBodiesSatellites = Class.extend(
         var index = 0;
         var idDescriptor = "-dynaccordion";
         //console.log("index:",index, "id:",id, "name:",name, "markersVisible:",markersVisible, "labelsVisible:", labelsVisible, "startOpened:", startOpened);
-        this.domNode.dynaccordion({startClosed: true});
+        this.domNode.dynaccordion({startClosed: false});
 
         var observers = Object.keys(glossary['observers']);
         for(var observer of observers){
             var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, trajectoriesHidden, labelsHidden, availableHidden, head, body,checkboxBtnOn, checkboxBtnOff,jsTreeDiv, self=this;
             
+            var stateVersion = "state.celestialBodiesVersion";
+            var savedVersion =  Helioviewer.userSettings.get(stateVersion);
+            var resetFromVersionChange = parseInt(glossary.version) != parseInt(savedVersion);
+
             var availableVisible = Helioviewer.userSettings.get("state.celestialBodiesAvailableVisible."+observer);
-            if ( typeof availableVisible == 'undefined' ) {
-                Helioviewer.userSettings.set("state.celestialBodiesAvailableVisible."+observer, true);
+            if ( typeof availableVisible == 'undefined' || resetFromVersionChange) {
                 availableVisible = true;
+                Helioviewer.userSettings.set("state.celestialBodiesAvailableVisible."+observer, availableVisible);
             }
             var labelsVisible = Helioviewer.userSettings.get("state.celestialBodiesLabelsVisible."+observer);
-            if ( typeof labelsVisible == 'undefined' ) {
-                Helioviewer.userSettings.set("state.celestialBodiesLabelsVisible."+observer, true);
-                labelsVisible = true;
+            if ( typeof labelsVisible == 'undefined' || resetFromVersionChange) {
+                labelsVisible = false;
+                Helioviewer.userSettings.set("state.celestialBodiesLabelsVisible."+observer, labelsVisible);
             }
             var trajectoriesVisible = Helioviewer.userSettings.get("state.celestialBodiesTrajectoriesVisible."+observer);
-            if ( typeof trajectoriesVisible == 'undefined' ) {
-                Helioviewer.userSettings.set("state.celestialBodiesTrajectoriesVisible."+observer, true);
-                trajectoriesVisible = true;
+            if ( typeof trajectoriesVisible == 'undefined' || resetFromVersionChange) {
+                trajectoriesVisible = false;
+                Helioviewer.userSettings.set("state.celestialBodiesTrajectoriesVisible."+observer, trajectoriesVisible);
             }
             var accordionOpen = Helioviewer.userSettings.get("state.celestialBodiesAccordionOpen."+observer);
-            if( typeof accordionOpen == 'undefined' ){
-                Helioviewer.userSettings.set("state.celestialBodiesAccordionOpen."+observer, false);
-                accordionOpen = false;
+            if( typeof accordionOpen == 'undefined' || resetFromVersionChange){
+                accordionOpen = true;
+                Helioviewer.userSettings.set("state.celestialBodiesAccordionOpen."+observer, accordionOpen);
             }
 
             // initial visibility
@@ -958,7 +974,7 @@ var CelestialBodiesSatellites = Class.extend(
 
             head = '<div class="layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all">'
                     +     '<div class="left">'
-                    +      ' [' + observer.toUpperCase() + ']'
+                    +       observer.toUpperCase()
                     +     '</div>'
                     +     '<div class="right">'
                     +        '<span class="timestamp user-selectable"></span>'
@@ -1076,6 +1092,7 @@ var CelestialBodiesSatellites = Class.extend(
 
             index++;
         }
+        Helioviewer.userSettings.set("state.celestialBodiesVersion",glossary.version);
         this._onTimeChanged();
     },
 
@@ -1092,12 +1109,14 @@ var CelestialBodiesSatellites = Class.extend(
             "plugins"   : [ "json_data", "themes", "ui", "checkbox" ],
         });
         
-        //this.trajectoryTree.jstree("check_all");
         //restore tree state
         var stateObserver = "state.celestialBodiesChecked."+observer;
         var savedState = Helioviewer.userSettings.get(stateObserver);
-        if(savedState == null){//new visitor all checked
-            trajectoryTree.jstree("check_all");
+        var stateVersion = "state.celestialBodiesVersion";
+        var savedVersion =  Helioviewer.userSettings.get(stateVersion);
+        var resetFromVersionChange = parseInt(glossary.version) != parseInt(savedVersion);
+        if(savedState == null || resetFromVersionChange ){//new visitor all unchecked
+            trajectoryTree.jstree("uncheck_all");
         }else{
             $.each(savedState, function(i, bodyNode){
                 var node = '#'+bodyNode;
