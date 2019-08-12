@@ -1137,7 +1137,7 @@ var CelestialBodiesSatellites = Class.extend(
                 self._requestNextOrLastTrajectoryTime(currentDomNode, 'next');
             });
             var slashDomNode = $('<span/>').addClass("decoration").text("/");
-            var lastTrajectoryDomNode = $('<span/>').addClass("button").text("↩Last").attr({
+            var lastTrajectoryDomNode = $('<span/>').addClass("button").text("↩Previous").attr({
                 "request-observer": observer,
                 "request-body": body
             }).bind('click',function(){
