@@ -316,7 +316,6 @@
 						</div>
 					</div>
 				</div>
-				<?php if($debug){ ?>
 				<div id="accordion-bodies" class="accordion">
 					<div class="header">
 						<div class="disclosure-triangle closed">►</div>
@@ -329,7 +328,6 @@
 						</div>
 					</div>
 				</div>
-				<?php } ?>
 			</div>
 		</div>
 		<div id="hv-drawer-tab-left" class="drawer-tab drawer-tab-left user-select-none">Data Sources</div>
