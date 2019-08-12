@@ -1203,7 +1203,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     _updateVSObuttons: function (startDate, endDate, sourceIDs, instruments, waves) {
 	
-        var x1=0, y1=0, x2=0, y2=0, url, body, imageScale,
+        var x1=0, y1=0, x2=0, y2=0, url, body, imageScale, SunPyStartDate, SunPyEndDate,
             vport = this.viewport.getViewportInformation();
 
         imageScale = vport['imageScale'];  // arcseconds per pixel
@@ -1214,6 +1214,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         y1 = vport['coordinates']['top']    * imageScale;
         y2 = vport['coordinates']['bottom'] * imageScale;
 
+        //SunPy date
+        SunPyStartDate = $('#vso-start-date').val() + 'T'
+                       + $('#vso-start-time').val() + 'Z';
+        SunPyEndDate   = $('#vso-end-date').val()   + 'T'
+                       + $('#vso-end-time').val()   + 'Z';
+
         // VSO SunPy Script Button
         $('#vso-sunpy').removeClass('inactive');
         $('#vso-sunpy').bind('click', function (e) {
@@ -1221,9 +1227,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                  + '?action=getSciDataScript'
                  + '&imageScale=' + imageScale
                  + '&sourceIds=[' + sourceIDs.join(',')+']'
-                 + '&startDate='  + startDate.replace(/\//g, '-')
-                 + '&endDate='    +   endDate.replace(/\//g, '-')
-                 + '&lang=sunpy'
+                 + '&startDate='  + SunPyStartDate
+                 + '&endDate='    + SunPyEndDate
+                 + '&lang=SunPy'
                  + '&provider=vso';
             body = '<a href="' + url + '">'
                  +     'Your Python/SunPy script for requesting science data '

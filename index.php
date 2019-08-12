@@ -10,7 +10,7 @@
 	$outputType = false;
 	
 	//Disable debug mode by default
-	$debug = true;
+	$debug = false;
 	
 	//Force debug mode. Set it to true to always force debug mode.
 	$forceDebug = false;
@@ -31,23 +31,18 @@
 		$outputType = $_GET['output'];
 	}
 	
+	//Load Config
+	include_once "../api.helioviewer.org/src/Config.php";
+	$config = new Config("../api.helioviewer.org/settings/Config.ini");
+
+	//Prepare Statistics
+	include_once HV_ROOT_DIR.'/../src/Database/Statistics.php';
+	$statistics = new Database_Statistics();
+
+	//Log Statistic
 	if($outputType){ // minimal and embed statistic
-		//Load Config
-		include_once "../api.helioviewer.org/src/Config.php";
-		$config = new Config("../api.helioviewer.org/settings/Config.ini");
-		
-		//Log Statistic
-		include_once HV_ROOT_DIR.'/../src/Database/Statistics.php';
-		$statistics = new Database_Statistics();
 		$statistics->log($outputType);
 	}else{ // standard mode statistic
-		//Load Config
-		include_once "../api.helioviewer.org/src/Config.php";
-		$config = new Config("../api.helioviewer.org/settings/Config.ini");
-		
-		//Log Statistic
-		include_once HV_ROOT_DIR.'/../src/Database/Statistics.php';
-		$statistics = new Database_Statistics();
 		$statistics->log("standard");
 	}
 	
@@ -326,7 +321,7 @@
 					<div class="header">
 						<div class="disclosure-triangle closed">►</div>
 						<h1>Celestial Bodies</h1>
-						<div class="right fa fa-question-circle contextual-help" style="margin-right: 15px;" title="Celestial Bodies - Planets orbiting in the solar system."></div>
+						<div class="right fa fa-question-circle contextual-help" style="margin-right: 15px;" title="Celestial Bodies - Satellites orbiting in the solar system."></div>
 					</div>
 					<div class="content">
 						<div id="solarBodiesAccordion">
@@ -648,7 +643,7 @@
 	
 								<div class="row">
 									<div id="vso-buttons"  class="buttons">
-										<div id="vso-sunpy" style="display:none;" class="text-button fa fa-download inactive qtip-left" title="Download a Python SunPy script that will request from the Virtual Solar Observatory the data set specified above."> SunPy Script</div>
+										<div id="vso-sunpy" class="text-button fa fa-download inactive qtip-left" title="Download a Python SunPy script that will request from the Virtual Solar Observatory the data set specified above."> SunPy Script</div>
 										<div id="vso-ssw" class="text-button fa fa-download inactive qtip-left" title="Download an IDL SolarSoft script that will request from the Virtual Solar Observatory the data set specified above."> SSW Script</div>
 										<a id="vso-www" class="text-button fa fa-external-link-square inactive qtip-left" title="Launch a Virtual Solar Observatory web page that will request the data set specified above." target="_blank"> VSO Website</a>
 									</div>
