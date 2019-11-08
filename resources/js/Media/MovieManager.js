@@ -262,7 +262,7 @@ var MovieManager = MediaManager.extend(
                     }
                     
                     // Otherwise continue to monitor
-                    self._monitorQueuedMovie(id, dateRequested, token, 60);
+                    self._monitorQueuedMovie(id, dateRequested, token, 10);
                     
                     $('#movie-'+id+' .status').html(status);
                 } else if (response.error) {
@@ -297,7 +297,7 @@ var MovieManager = MediaManager.extend(
             };
             $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
         };
-        setTimeout(queryMovieStatus, Math.max(eta, 5) * 1000);
+        setTimeout(queryMovieStatus, Math.min(eta, 10) * 1000);
     },
 
     /**
