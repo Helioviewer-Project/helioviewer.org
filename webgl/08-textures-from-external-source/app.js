@@ -1,6 +1,6 @@
 const coordinates = new CoordinateSystemsHelper();
 var input = {
-    x: 940.0,
+    x: 944.4,
     y: 0.0,
     utc: "2017-07-26T00:00:00.000Z",
     //utc: new Date().toISOString(),

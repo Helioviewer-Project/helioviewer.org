@@ -26,12 +26,12 @@ class CoordinateSystemsHelper {
             theta_y: ( inputBody.y / 3600 )
         };
         console.log("HelioProjective:",helioprojectiveCartesian);
-        var distanceToSurfaceFromCenter = this.make_3d(inputBody.x, inputBody.y);
-        console.log("distanceToSurfaceFromCenter",distanceToSurfaceFromCenter);
+        var distanceToSunSurface = this.make_3d(helioprojectiveCartesian.x, helioprojectiveCartesian.y, distanceInMeters);
+        console.log("distanceToSurfaceFromCenter",distanceToSunSurface);
         var helioCentricCartesian = {
-            x: distanceInMeters*Math.cos( helioprojectiveCartesian.y )*Math.sin( helioprojectiveCartesian.x ),
-            y: distanceInMeters*Math.sin( helioprojectiveCartesian.y ),
-            z: distanceInMeters - ( distanceInMeters*Math.cos( helioprojectiveCartesian.y )*Math.cos( helioprojectiveCartesian.x ) )
+            x: distanceToSunSurface*Math.cos( helioprojectiveCartesian.y )*Math.sin( helioprojectiveCartesian.x ),
+            y: distanceToSunSurface*Math.sin( helioprojectiveCartesian.y ),
+            z: distanceInMeters - ( distanceToSunSurface*Math.cos( helioprojectiveCartesian.y )*Math.cos( helioprojectiveCartesian.x ) )
         }
         console.log("helioCentricCartesian:",helioCentricCartesian);
         return helioCentricCartesian;
@@ -51,14 +51,17 @@ class CoordinateSystemsHelper {
         return result;
     }
 
-    make_3d(lat,lon){
-        let radius = 0.0;//6378.137;
+    make_3d(lat,lon,dist){
+        let radius = dist;//6378.137;
+        console.log("radius",radius);
         let rsun = 695700;//solar radius km
         let alpha = Math.acos(Math.cos(lat) * Math.cos(lon));
-        let c = radius**2 - rsun**2
+        console.log("alpha", alpha);
+        let c = radius**2 - rsun**2;
+        console.log("c",c)
         let b = -2 * radius * Math.cos(alpha);
         let d = ((-1*b) - Math.sqrt((b**2) - (4*c))) / 2;
-        console.log(d);
+        console.log("d",d);
         return d;
     }
 }
