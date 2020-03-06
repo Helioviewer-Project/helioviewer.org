@@ -89,6 +89,7 @@ class RenderSourceLayer {
             this.sphereBuffer = twgl.primitives.createSphereBufferInfo(this.gl, this.RSUN_OBS, 128, 64, 0, Math.PI, Math.PI, 2 * Math.PI); // only create half of the sphere
         }
         this.planeBuffer = twgl.primitives.createPlaneBufferInfo(this.gl,this.planeWidth,this.planeWidth);
+
     }
 
     createViewMatricesAndObjects(cameraDist){
@@ -112,6 +113,7 @@ class RenderSourceLayer {
             planeShader: true,
             uAlpha: this.alpha,
             uProjection: this.drawSphere,
+            uReversePlane: false,
             uXOffset: this.planeOffsetX,
             uYOffset: this.planeOffsetY
         }
@@ -238,8 +240,28 @@ class RenderSourceLayer {
         twgl.drawObjectList(this.gl, this.drawInfo[0]);
     }
 
+    drawReversePlanes(){
+        if(!this.drawSphere){
+            //rotate and draw reverse plane
+            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.degreesToRad(90), [1,0,0]);
+            this.drawInfo[0][0].uniforms.uReversePlane = true;
+            twgl.drawObjectList(this.gl, this.drawInfo[0]);
+            //restore standard plane
+            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.degreesToRad(-90), [1,0,0]);
+            this.drawInfo[0][0].uniforms.uReversePlane = false;
+        }
+    }
+
     drawSpheres(){
         if(this.drawSphere){
+            //draw coronal reverse planes
+            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.degreesToRad(90), [1,0,0]);
+            this.drawInfo[0][0].uniforms.uReversePlane = true;
+            twgl.drawObjectList(this.gl, this.drawInfo[0]);
+            //restore standard plane
+            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.degreesToRad(-90), [1,0,0]);
+            this.drawInfo[0][0].uniforms.uReversePlane = false;
+
             this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
             this.gl.enable(this.gl.BLEND);
             this.gl.disable(this.gl.DEPTH_TEST);

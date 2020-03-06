@@ -105,6 +105,7 @@ class WebGLClientRenderer {
         uniform bool uProjection;
         uniform float uXOffset;
         uniform float uYOffset;
+        uniform bool uReversePlane;
 
         void main()
         {
@@ -115,9 +116,15 @@ class WebGLClientRenderer {
                 vec2 texPosOffset = vec2((texPos.x)*scale + 0.5, 1.0 - (texPos.y*scale + 0.5));
                 fragTexCoord = texPosOffset.xy;
             }else{
-                vec4 pos = mProj * mView * mWorld * mPlane * vec4(position.x+uXOffset,position.y,position.z-uYOffset, 1.0);
-                gl_Position = pos;
-                fragTexCoord = vec2(1.0 - texcoord.x, 1.0 - texcoord.y);
+                if(uReversePlane){
+                    vec4 pos = mProj * mView * mWorld * mPlane * vec4(position.x+uXOffset,position.y,position.z+uYOffset, 1.0);
+                    gl_Position = pos;
+                    fragTexCoord = vec2(1.0 - texcoord.x, texcoord.y);
+                }else{
+                    vec4 pos = mProj * mView * mWorld * mPlane * vec4(position.x+uXOffset,position.y,position.z-uYOffset, 1.0);
+                    gl_Position = pos;
+                    fragTexCoord = vec2(1.0 - texcoord.x, 1.0 - texcoord.y);
+                }
             }
         }`;
 
@@ -135,14 +142,15 @@ class WebGLClientRenderer {
             vec4 sunColor = texture2D(sunSampler, fragTexCoord);
             if(planeShader){
                 vec4 texColor =  texture2D(colorSampler, sunColor.xx);
-                if(sunColor.x <= 0.05){
-                    gl_FragColor = vec4(texColor.x,texColor.y,texColor.z,0.0);
-                    gl_FragColor.rgb *= uAlpha;
-                }else{
-                    gl_FragColor = vec4(texColor.x,texColor.y,texColor.z,texColor.w * uAlpha);
-                    gl_FragColor.rgb *= uAlpha;
-                }
-                
+                gl_FragColor = vec4(texColor.x,texColor.y,texColor.z,0.0);
+                gl_FragColor.rgb *= uAlpha;
+                // if(sunColor.x <= 0.05){
+                //     gl_FragColor = vec4(texColor.x,texColor.y,texColor.z,0.0*uAlpha);
+                //     gl_FragColor.rgb *= uAlpha;
+                // }else{
+                //     gl_FragColor = vec4(texColor.x,texColor.y,texColor.z,texColor.w * uAlpha);
+                //     gl_FragColor.rgb *= uAlpha;
+                // }
             }else{
                 vec4 fragColor = texture2D(colorSampler, sunColor.xx);
                 gl_FragColor =  vec4(fragColor.x, fragColor.y, fragColor.z, fragColor.w * uAlpha);
@@ -285,14 +293,21 @@ class WebGLClientRenderer {
 
         this.updateGlobalFrameCounter();
 
+        //draw planes
         for(let source of this.layerSources){
             this.imageLayers[source].updateFrameCounter(this.frameNumber,this.camera);//update frame counter, used for choosing texture
             this.imageLayers[source].bindTextures();
             this.imageLayers[source].drawPlanes();
         }
+        //draw spheres
         for(let source of this.layerSources){
             this.imageLayers[source].bindTextures();
             this.imageLayers[source].drawSpheres();
+        }
+        //draw reverse planes
+        for(let source of this.layerSources){
+            this.imageLayers[source].bindTextures();
+            this.imageLayers[source].drawReversePlanes();
         }
         
         //update frame counter

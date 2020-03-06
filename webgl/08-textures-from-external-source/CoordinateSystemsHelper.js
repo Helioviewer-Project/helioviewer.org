@@ -17,23 +17,18 @@ class CoordinateSystemsHelper {
         console.log(inputBody);
         //var distanceInMeters = await this.getDistance(inputBody.utc.slice(0,-1), inputBody.observer, inputBody.target);
         var distanceInMeters = 151942709.93212602;
-        console.log("dist from swhv service:", distanceInMeters);
+        console.log("dist from swhv service(cached):", distanceInMeters);
         var metersPerArcsecond = 724910;  //695500000 / 959.705;
         var helioprojectiveCartesian = {
             x: ( inputBody.x / 3600 ) * ( Math.PI/180 ) ,
-            y: ( inputBody.y / 3600 ) * ( Math.PI/180 ),
-            theta_x: ( inputBody.x / 3600 ) ,
-            theta_y: ( inputBody.y / 3600 )
+            y: ( inputBody.y / 3600 ) * ( Math.PI/180 ) ,
         };
-        console.log("HelioProjective:",helioprojectiveCartesian);
         var distanceToSunSurface = this.make_3d(helioprojectiveCartesian.x, helioprojectiveCartesian.y, distanceInMeters);
-        console.log("distanceToSurfaceFromCenter",distanceToSunSurface);
         var helioCentricCartesian = {
             x: distanceToSunSurface*Math.cos( helioprojectiveCartesian.y )*Math.sin( helioprojectiveCartesian.x ),
             y: distanceToSunSurface*Math.sin( helioprojectiveCartesian.y ),
             z: distanceInMeters - ( distanceToSunSurface*Math.cos( helioprojectiveCartesian.y )*Math.cos( helioprojectiveCartesian.x ) )
         }
-        console.log("helioCentricCartesian:",helioCentricCartesian);
         return helioCentricCartesian;
     }
     
@@ -52,16 +47,12 @@ class CoordinateSystemsHelper {
     }
 
     make_3d(lat,lon,dist){
-        let radius = dist;//6378.137;
-        console.log("radius",radius);
+        let radius = dist;
         let rsun = 695700;//solar radius km
         let alpha = Math.acos(Math.cos(lat) * Math.cos(lon));
-        console.log("alpha", alpha);
         let c = radius**2 - rsun**2;
-        console.log("c",c)
         let b = -2 * radius * Math.cos(alpha);
         let d = ((-1*b) - Math.sqrt((b**2) - (4*c))) / 2;
-        console.log("d",d);
         return d;
     }
 }
