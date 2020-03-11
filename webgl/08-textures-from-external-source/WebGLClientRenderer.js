@@ -136,14 +136,20 @@ class WebGLClientRenderer {
         uniform sampler2D colorSampler;
         uniform bool planeShader;
         uniform float uAlpha;
+        uniform bool uReversePlane;
 
         void main()
         {
             vec4 sunColor = texture2D(sunSampler, fragTexCoord);
             if(planeShader){
-                vec4 texColor =  texture2D(colorSampler, sunColor.xx);
-                gl_FragColor = vec4(texColor.x,texColor.y,texColor.z,0.0);
-                gl_FragColor.rgb *= uAlpha;
+                if(uReversePlane){
+                    gl_FragColor = vec4(sunColor.x,sunColor.y,sunColor.z,0.0);
+                    gl_FragColor.rgb *= uAlpha;
+                }else{
+                    vec4 texColor =  texture2D(colorSampler, sunColor.xx);
+                    gl_FragColor = vec4(texColor.x,texColor.y,texColor.z,0.0);
+                    gl_FragColor.rgb *= uAlpha;
+                }
                 // if(sunColor.x <= 0.05){
                 //     gl_FragColor = vec4(texColor.x,texColor.y,texColor.z,0.0*uAlpha);
                 //     gl_FragColor.rgb *= uAlpha;
