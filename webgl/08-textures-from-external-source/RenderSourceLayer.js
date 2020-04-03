@@ -18,6 +18,7 @@ class RenderSourceLayer {
         this.alpha = 1.0;
 
         this.playMovieState = true;
+        this.sourceName = this.setSourceNameForGeometryService();
     }
 
     async setColorTable(){
@@ -40,8 +41,10 @@ class RenderSourceLayer {
         var colorTableFolder = "color-tables/";
         switch(this.sourceId){
             case 4:
+                //SOHO LASCO C2
                 return colorTableFolder + "Red_Temperature.png";
             case 5:
+                //SOHO LASCO C3
                 return colorTableFolder + "Blue_White_Linear.png";
             case 10:
                 return colorTableFolder + "SDO_AIA_171.png";
@@ -49,8 +52,36 @@ class RenderSourceLayer {
                 return colorTableFolder + "SDO_AIA_193.png";
             case 13:
                 return colorTableFolder + "SDO_AIA_304.png";
+            case 29:
+                //STEREO-A COR2
+                return colorTableFolder + "Red_Temperature.png";
             default:
                 return colorTableFolder + "Gray.png";
+        }
+    }
+
+    setSourceNameForGeometryService(){
+        switch(this.sourceId){
+            case 4:
+                //LASCO C2
+                return "SOHO";
+            case 5:
+                //LASCO C3
+                return "SOHO";
+            case 10:
+                //AIA 171
+                return "SDO";
+            case 11: 
+                //AIA 193
+                return "SDO";
+            case 13:
+                //AIA 304
+                return "SDO";
+            case 29:
+                //STEREO-A COR2
+                return "STEREO Ahead";
+            default:
+                return "SDO";
         }
     }
 
@@ -96,17 +127,20 @@ class RenderSourceLayer {
         //
         // CREATE OBJECT MATRICES AND OFFSETS
         //
-        this.sdoViewMatrix = new Float32Array(16);
+        this.spacecraftViewMatrix = new Float32Array(16);
         this.planeViewMatrix = new Float32Array(16);
-        glMatrix.mat4.identity(this.sdoViewMatrix);
+        glMatrix.mat4.identity(this.spacecraftViewMatrix);
         glMatrix.mat4.identity(this.planeViewMatrix);
-        glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.degreesToRad(-90), [1,0,0]);
+
+        this.planeRotateUpVector = [1,0,0];
+        this.planeRotateRadians = this.degreesToRad(-90);
+        glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.planeRotateRadians, this.planeRotateUpVector);
 
         const uniformsPlane = {
             mWorld: this.worldMatrix,
             mView: this.viewMatrix,
             mProj: this.projMatrix,
-            mSdo: this.identityMatrix,
+            mSpacecraft: this.spacecraftViewMatrix,
             mPlane: this.planeViewMatrix,
             scale: this.solarProjectionScale*cameraDist,
             colorSampler: this.colorTable,
@@ -125,7 +159,7 @@ class RenderSourceLayer {
             mWorld: this.worldMatrix,
             mView: this.viewMatrix,
             mProj: this.projMatrix,
-            mSdo: this.sdoViewMatrix,
+            mSpacecraft: this.spacecraftViewMatrix,
             mPlane: this.identityMatrix,
             scale: this.solarProjectionScale*cameraDist,
             colorSampler: this.colorTable,
@@ -152,6 +186,7 @@ class RenderSourceLayer {
         });
 
         this.drawInfo = [planeObject, sphereObject];
+        this.look();
     }
 
     setMatrices(matrices){
@@ -174,6 +209,16 @@ class RenderSourceLayer {
         this.drawInfo[0][0].uniforms.mProj = projMatrix;
         this.drawInfo[1][0].uniforms.scale = this.solarProjectionScale * cameraDist;
         this.drawInfo[1][0].uniforms.mProj = projMatrix;
+    }
+
+    async look(){
+        let origin = glMatrix.vec3.fromValues(0,0,0);
+        let up = glMatrix.vec3.fromValues(0,1,0);
+        let input = this.prepareInputBeforeFrames();
+        let utc = new Date(input.timeStart * 1000).toISOString();
+        let outCoords = await coordinates.getPositionHCC(utc, this.sourceName, "SUN");
+        let targetCoords = glMatrix.vec3.fromValues(outCoords.x,outCoords.y,outCoords.z);
+        glMatrix.mat4.lookAt(this.spacecraftViewMatrix, origin, targetCoords, up );
     }
 
     async fetchTextures(){
@@ -243,11 +288,11 @@ class RenderSourceLayer {
     drawReversePlanes(){
         if(!this.drawSphere){
             //rotate and draw reverse plane
-            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.degreesToRad(90), [1,0,0]);
+            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, -this.planeRotateRadians, this.planeRotateUpVector);
             this.drawInfo[0][0].uniforms.uReversePlane = true;
             twgl.drawObjectList(this.gl, this.drawInfo[0]);
             //restore standard plane
-            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.degreesToRad(-90), [1,0,0]);
+            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.planeRotateRadians, this.planeRotateUpVector);
             this.drawInfo[0][0].uniforms.uReversePlane = false;
         }
     }
@@ -255,11 +300,11 @@ class RenderSourceLayer {
     drawSpheres(){
         if(this.drawSphere){
             //draw coronal reverse planes
-            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.degreesToRad(90), [1,0,0]);
+            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, -this.planeRotateRadians, this.planeRotateUpVector);
             this.drawInfo[0][0].uniforms.uReversePlane = true;
             twgl.drawObjectList(this.gl, this.drawInfo[0]);
             //restore standard plane
-            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.degreesToRad(-90), [1,0,0]);
+            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.planeRotateRadians, this.planeRotateUpVector);
             this.drawInfo[0][0].uniforms.uReversePlane = false;
 
             this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);

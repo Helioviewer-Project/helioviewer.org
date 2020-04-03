@@ -46,6 +46,44 @@ class CoordinateSystemsHelper {
         return result;
     }
 
+    async getPositionHCC(dateISOString,observer,target){
+        let utc = dateISOString.slice(0,-1);
+        let requestURL = "http://swhv.oma.be/position?utc="+utc+"&observer="+observer+"&target="+target+"&ref=HEEQ";
+        let result;
+        let result_au;
+
+        let au_in_km = 149598000.0;
+
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+        xhr.open("GET",requestURL,true);
+        await new Promise((resolve,reject) => {
+            xhr.onload = function () {
+                let status = xhr.status;
+                if (status == 200) {
+                    let data = xhr.response;
+                    //we must swap y and z coordinates from HEEQ to GL coordinates
+                    result = {
+                        x: data.result[0][utc][0],//extract x distance HCC for time from result json payload
+                        y: data.result[0][utc][2],//extract y distance HCC for time from result json payload
+                        z: data.result[0][utc][1]//extract z distance HCC for time from result json payload
+                    };
+                    //convert kms to AU
+                    result_au = {
+                        x: result.x / au_in_km,//extract x distance HCC for time from result json payload
+                        y: result.y / au_in_km,//extract x distance HCC for time from result json payload
+                        z: result.z / au_in_km//extract x distance HCC for time from result json payload
+                    };
+                    resolve();
+                }else{
+                    reject();
+                }
+            };
+            xhr.send();
+        });
+        return result_au;
+    }
+
     make_3d(lat,lon,dist){
         let radius = dist;
         let rsun = 695700;//solar radius km
