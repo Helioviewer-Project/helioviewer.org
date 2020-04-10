@@ -85,6 +85,7 @@ class RenderSourceLayer {
         }
     }
 
+    //Gets information for image centering and scale
     //TODO:
     // This is a mess, maybe extract into a helper file
     async setSourceParams(sourceId){
@@ -101,8 +102,8 @@ class RenderSourceLayer {
                 //if the source is SDO AIA/HMI draw a sphere
                 this.drawSphere = true;
                 this.planeWidth = this.arcSecondRatio*this.maxResPixels*this.arcSecPerPix / 1000;
-            }else if(sourceId == 4 || sourceId == 5){
-                //if the source is SOHO LASCO C2/C3 don't draw a sphere
+            }else if(sourceId == 4 || sourceId == 5 || sourceId == 29){
+                //if the source is SOHO LASCO C2/C3 or STEREO-A don't draw a sphere
                 this.drawSphere = false;
                 this.planeWidth = this.arcSecondRatio*this.maxResPixels*this.arcSecPerPix / 1000;
                 this.solarProjectionScale /= this.planeWidth/2.5;
@@ -140,6 +141,7 @@ class RenderSourceLayer {
             mWorld: this.worldMatrix,
             mView: this.viewMatrix,
             mProj: this.projMatrix,
+            mCamera: this.cameraMatrix,
             mSpacecraft: this.spacecraftViewMatrix,
             mPlane: this.planeViewMatrix,
             scale: this.solarProjectionScale*cameraDist,
@@ -159,6 +161,7 @@ class RenderSourceLayer {
             mWorld: this.worldMatrix,
             mView: this.viewMatrix,
             mProj: this.projMatrix,
+            mCamera: this.cameraMatrix,
             mSpacecraft: this.spacecraftViewMatrix,
             mPlane: this.identityMatrix,
             scale: this.solarProjectionScale*cameraDist,
@@ -194,6 +197,7 @@ class RenderSourceLayer {
         this.worldMatrix = matrices.worldMatrix;
         this.viewMatrix = matrices.viewMatrix;
         this.projMatrix = matrices.projMatrix;
+        this.cameraMatrix = matrices.cameraMatrix;
     }
     
     updateFrameCounter(frameNumber){

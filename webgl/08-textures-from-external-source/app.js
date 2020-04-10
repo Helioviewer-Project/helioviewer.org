@@ -10,6 +10,7 @@ var input = {
 
 const client = new WebGLClientRenderer(coordinates);
 const apiURL = "http://api.hv.org";
+const apiAuth = "31337";
 
 var InitDemo = async function () {
     client.start();

@@ -51,7 +51,7 @@ class WebGLClientRenderer {
         this.mouseSensitivity = 0.15;
         this.zoomSensitivity = 0.05;
         this.translateSensitivity = 0.002;
-        this.cameraDist= 1.2;
+        this.cameraDist= 2;
 
         this.clearLuminance = 0.0;
         this.layerSources = [10,5,4,29];
@@ -99,6 +99,7 @@ class WebGLClientRenderer {
         uniform mat4 mWorld;
         uniform mat4 mView;
         uniform mat4 mProj;
+        uniform mat4 mCamera;
         uniform mat4 mSpacecraft;
         uniform mat4 mPlane;
         uniform float scale;
@@ -110,18 +111,18 @@ class WebGLClientRenderer {
         void main()
         {
             if(uProjection){
-                vec4 pos = mProj * mView * mWorld * mSpacecraft * mPlane * vec4(position, 1.0);
+                vec4 pos = mCamera * mView * mWorld * mSpacecraft * mPlane * vec4(position, 1.0);
                 gl_Position = pos;
                 vec4 texPos = mProj * mView * mPlane * vec4(position, 1.0);
                 vec2 texPosOffset = vec2((texPos.x)*scale + 0.5, 1.0 - (texPos.y*scale + 0.5));
                 fragTexCoord = texPosOffset.xy;
             }else{
                 if(uReversePlane){
-                    vec4 pos = mProj * mView * mWorld * mSpacecraft * mPlane * vec4(position.x+uXOffset,position.y,position.z+uYOffset, 1.0);
+                    vec4 pos = mCamera * mView * mWorld * mSpacecraft * mPlane * vec4(position.x+uXOffset,position.y,position.z+uYOffset, 1.0);
                     gl_Position = pos;
                     fragTexCoord = vec2(1.0 - texcoord.x, texcoord.y);
                 }else{
-                    vec4 pos = mProj * mView * mWorld * mSpacecraft * mPlane * vec4(position.x+uXOffset,position.y,position.z-uYOffset, 1.0);
+                    vec4 pos = mCamera * mView * mWorld * mSpacecraft * mPlane * vec4(position.x+uXOffset,position.y,position.z-uYOffset, 1.0);
                     gl_Position = pos;
                     fragTexCoord = vec2(1.0 - texcoord.x, 1.0 - texcoord.y);
                 }
@@ -241,8 +242,10 @@ class WebGLClientRenderer {
         this.worldMatrix = new Float32Array(16);
         this.viewMatrix = new Float32Array(16);
         this.projMatrix = new Float32Array(16);
+        this.cameraMatrix = new Float32Array(16);
         glMatrix.mat4.identity(this.identityMatrix);
         glMatrix.mat4.identity(this.worldMatrix);
+        glMatrix.mat4.identity(this.cameraMatrix);
         glMatrix.mat4.lookAt(this.viewMatrix, [0,0,-100], [0,0,0], [0,1,0]);
         glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.1, 100000.0);
 
@@ -275,7 +278,8 @@ class WebGLClientRenderer {
                 identityMatrix  : this.identityMatrix,
                 worldMatrix     : this.worldMatrix,
                 viewMatrix      : this.viewMatrix,
-                projMatrix      : this.projMatrix
+                projMatrix      : this.projMatrix,
+                cameraMatrix    : this.cameraMatrix
             });
             this.imageLayers[source].createViewMatricesAndObjects(this.cameraDist);
             baseLayer = false;
@@ -290,6 +294,9 @@ class WebGLClientRenderer {
     }
 
     renderLoop() {
+        //resize viewport
+        this.resizeCameraView();
+
         //clear the screen
         this.gl.clearColor(this.clearLuminance,this.clearLuminance,this.clearLuminance,1.0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
@@ -316,14 +323,33 @@ class WebGLClientRenderer {
             this.imageLayers[source].drawReversePlanes();
         }
         
-        //update frame counter
-        //this.frameCounterDOM.innerText = this.frameNumber;
         //request new frame
         requestAnimationFrame(()=>{this.renderLoop();});
     };
 
+    resizeCameraView(){
+        twgl.resizeCanvasToDisplaySize(this.gl.canvas);
+        this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+        
+        //width > height
+        if(this.gl.canvas.clientWidth > this.gl.canvas.clientHeight){
+            //height is fixed, width distances calculated
+            const aspectRatio = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
+            const left = -(this.cameraDist * aspectRatio) ;
+            const right = (this.cameraDist * aspectRatio) ;
+            glMatrix.mat4.ortho(this.cameraMatrix, left, right, -this.cameraDist, this.cameraDist, 0.1, 100000.0);
+        }else{//height > width
+            //width is fixed, height distance is calculated
+            const aspectRatio = this.gl.canvas.clientHeight / this.gl.canvas.clientWidth;
+            const bottom = -(this.cameraDist * aspectRatio) / 2;
+            const top = (this.cameraDist * aspectRatio) / 2;
+            glMatrix.mat4.ortho(this.cameraMatrix, -this.cameraDist, this.cameraDist, bottom, top, 0.1, 100000.0);
+        }
+        glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.1, 100000.0);
+
+    }
+
     rotateWorld(){
-        glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.1, 1000.0);
         for(let source of this.layerSources){
             this.imageLayers[source].setCameraDistScale(this.cameraDist,this.projMatrix);
         }

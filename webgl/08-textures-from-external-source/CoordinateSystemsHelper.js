@@ -1,6 +1,6 @@
 class CoordinateSystemsHelper {
     constructor(){
-        
+
     }
 
     /**
@@ -15,9 +15,8 @@ class CoordinateSystemsHelper {
      */
     async _convertHPCtoHCC(inputBody){
         console.log(inputBody);
-        //var distanceInMeters = await this.getDistance(inputBody.utc.slice(0,-1), inputBody.observer, inputBody.target);
-        var distanceInMeters = 151942709.93212602;
-        console.log("dist from swhv service(cached):", distanceInMeters);
+        var distanceInMeters = await this.getDistance(inputBody.utc.slice(0,-1), inputBody.observer, inputBody.target);
+        console.log("dist from swhv service:", distanceInMeters);
         var metersPerArcsecond = 724910;  //695500000 / 959.705;
         var helioprojectiveCartesian = {
             x: ( inputBody.x / 3600 ) * ( Math.PI/180 ) ,
@@ -33,8 +32,8 @@ class CoordinateSystemsHelper {
     }
     
     async getDistance(utc,observer,target){
-        var requestURL = "http://swhv.oma.be/position?utc="+utc+"&observer="+observer+"&target="+target+"&ref=HEEQ&kind=latitudinal";
-        console.log(requestURL);
+        let requestURL = apiURL+"/?action=getGeometryServiceData&auth="+apiAuth+"&type=distance&utc="+utc+"&observer="+observer+"&target="+target;
+        console.log("distance",requestURL);
         var result;
         await fetch(requestURL,{
             method: "GET",
@@ -48,7 +47,7 @@ class CoordinateSystemsHelper {
 
     async getPositionHCC(dateISOString,observer,target){
         let utc = dateISOString.slice(0,-1);
-        let requestURL = "http://swhv.oma.be/position?utc="+utc+"&observer="+observer+"&target="+target+"&ref=HEEQ";
+        let requestURL = apiURL+"/?action=getGeometryServiceData&auth="+apiAuth+"&type=position&utc="+utc+"&observer="+observer+"&target="+target;
         let result;
         let result_au;
 
