@@ -17,6 +17,8 @@ class RenderSourceLayer {
         }
         this.alpha = 1.0;
 
+        this.drawSphere = false;
+
         this.playMovieState = true;
         this.sourceName = this.setSourceNameForGeometryService();
     }
@@ -25,35 +27,128 @@ class RenderSourceLayer {
         const colorTableName = this.setColorTableName();
 
         const textureOptions = {
-            src: "./"+colorTableName,
+            src: colorTableName,
             internalFormat: this.gl.RGB,
             format: this.gl.RGB,
             mag: this.gl.LINEAR,
             min: this.gl.LINEAR,
             wrapS: this.gl.CLAMP_TO_EDGE,
-            wrapT: this.gl.CLAMP_TO_EDGE,
+            wrapT: this.gl.CLAMP_TO_EDGE
         }
 
         await new Promise(r => {this.colorTable = twgl.createTexture(this.gl,textureOptions,r)});
     }
 
     setColorTableName(){
-        var colorTableFolder = "color-tables/";
+        var colorTableFolder = apiURL + "/resources/images/color-tables/";
         switch(this.sourceId){
+            case 0:
+                this.drawSphere = true;
+                return colorTableFolder + "SOHO_EIT_171.png";
+            case 1:
+                this.drawSphere = true;
+                return colorTableFolder + "SOHO_EIT_195.png";
+            case 2:
+                this.drawSphere = true;
+                return colorTableFolder + "SOHO_EIT_284.png";
+            case 3:
+                this.drawSphere = true;
+                return colorTableFolder + "SOHO_EIT_304.png";
             case 4:
                 //SOHO LASCO C2
                 return colorTableFolder + "Red_Temperature.png";
             case 5:
                 //SOHO LASCO C3
                 return colorTableFolder + "Blue_White_Linear.png";
+            case 6:
+                this.drawSphere = true;
+                //MDI Mag
+                return colorTableFolder + "Gray.png";
+            case 7:
+                this.drawSphere = true;
+                //MDI Int
+                return colorTableFolder + "Gray.png";
+            case 8:
+                this.drawSphere = true;
+                return colorTableFolder + "SDO_AIA_94.png";
+            case 9:
+                this.drawSphere = true;
+                return colorTableFolder + "SDO_AIA_131.png";
             case 10:
+                this.drawSphere = true;
                 return colorTableFolder + "SDO_AIA_171.png";
             case 11: 
+                this.drawSphere = true;
                 return colorTableFolder + "SDO_AIA_193.png";
+            case 12:
+                this.drawSphere = true;
+                return colorTableFolder + "SDO_AIA_211.png";
             case 13:
+                this.drawSphere = true;
                 return colorTableFolder + "SDO_AIA_304.png";
+            case 14:
+                this.drawSphere = true;
+                return colorTableFolder + "SDO_AIA_335.png";
+            case 15:
+                this.drawSphere = true;
+                return colorTableFolder + "SDO_AIA_1600.png";
+            case 16:
+                this.drawSphere = true;
+                return colorTableFolder + "SDO_AIA_1700.png";
+            case 17:
+                this.drawSphere = true;
+                return colorTableFolder + "SDO_AIA_4500.png";
+            case 18: 
+                //HMI Int
+                this.drawSphere = true;
+                return colorTableFolder + "Gray.png";
+            case 19:
+                //HMI Mag
+                this.drawSphere = true;
+                return colorTableFolder + "Gray.png";
+            case 20:
+                //STEREO-A EUVI
+                this.drawSphere = true;
+                return colorTableFolder + "STEREO_EUVI_171.png";
+            case 21:
+                //STEREO-A EUVI
+                this.drawSphere = true;
+                return colorTableFolder + "STEREO_EUVI_195.png";
+            case 22:
+                //STEREO-A EUVI
+                this.drawSphere = true;
+                return colorTableFolder + "STEREO_EUVI_284.png";
+            case 23:
+                //STEREO-A EUVI
+                this.drawSphere = true;
+                return colorTableFolder + "STEREO_EUVI_304.png";
+            case 24:
+                //STEREO-B EUVI
+                this.drawSphere = true;
+                return colorTableFolder + "STEREO_EUVI_171.png";
+            case 25:
+                //STEREO-B EUVI
+                this.drawSphere = true;
+                return colorTableFolder + "STEREO_EUVI_195.png";
+            case 26:
+                //STEREO-B EUVI
+                this.drawSphere = true;
+                return colorTableFolder + "STEREO_EUVI_284.png";
+            case 27:
+                //STEREO-B EUVI
+                this.drawSphere = true;
+                return colorTableFolder + "STEREO_EUVI_304.png";
+            case 28:
+                //STEREO-A COR1
+                return colorTableFolder + "Green-White_Linear.png";
             case 29:
                 //STEREO-A COR2
+                return colorTableFolder + "Red_Temperature.png";
+            case 30:
+                //STEREO-B COR1
+                return colorTableFolder + "Green-White_Linear.png";
+            case 31:
+                //STEREO-B COR2
                 return colorTableFolder + "Red_Temperature.png";
             default:
                 return colorTableFolder + "Gray.png";
@@ -145,6 +240,7 @@ class RenderSourceLayer {
             mSpacecraft: this.spacecraftViewMatrix,
             mPlane: this.planeViewMatrix,
             scale: this.solarProjectionScale*cameraDist,
+            sunSampler: this.colorTable,
             colorSampler: this.colorTable,
             planeShader: true,
             uAlpha: this.alpha,
@@ -165,6 +261,7 @@ class RenderSourceLayer {
             mSpacecraft: this.spacecraftViewMatrix,
             mPlane: this.identityMatrix,
             scale: this.solarProjectionScale*cameraDist,
+            sunSampler: this.colorTable,
             colorSampler: this.colorTable,
             planeShader: false,
             uAlpha: this.alpha,
@@ -259,7 +356,7 @@ class RenderSourceLayer {
         var reduceInput = parseInt(document.getElementById('reduceInput').value);
 
         //do not scale down SOHO LASCO C2/C3
-        if(this.sourceId == 4 || this.sourceId == 5){
+        if(this.sourceId == 4 || this.sourceId == 5 || this.sourceId == 29){
             reduceInput = 0;
         }
 
@@ -276,10 +373,12 @@ class RenderSourceLayer {
     }
 
     bindTextures(){
-        this.gl.activeTexture(this.gl.TEXTURE0);
-        this.gl.bindTexture(this.gl.TEXTURE_2D, this.textures[this.frameCounter-1]);
-        this.gl.activeTexture(this.gl.TEXTURE1);
-        this.gl.bindTexture(this.gl.TEXTURE_2D, this.colorTable);
+        this.drawInfo[0][0].uniforms.sunSampler = this.textures[this.frameCounter-1];
+        this.drawInfo[1][0].uniforms.sunSampler = this.textures[this.frameCounter-1];
+        // this.gl.activeTexture(this.gl.TEXTURE0);
+        // this.gl.bindTexture(this.gl.TEXTURE_2D, this.textures[this.frameCounter-1]);
+        // this.gl.activeTexture(this.gl.TEXTURE1);
+        // this.gl.bindTexture(this.gl.TEXTURE_2D, this.colorTable);
     }
 
     drawPlanes(){

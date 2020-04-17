@@ -308,17 +308,19 @@ class WebGLClientRenderer {
 
         //draw planes
         for(let source of this.layerSources){
-            this.imageLayers[source].updateFrameCounter(this.frameNumber,this.camera);//update frame counter, used for choosing texture
+            this.imageLayers[source].updateFrameCounter(this.frameNumber);//update frame counter, used for choosing texture
             this.imageLayers[source].bindTextures();
             this.imageLayers[source].drawPlanes();
         }
         //draw spheres
         for(let source of this.layerSources){
+            this.imageLayers[source].updateFrameCounter(this.frameNumber);
             this.imageLayers[source].bindTextures();
             this.imageLayers[source].drawSpheres();
         }
         //draw reverse planes
         for(let source of this.layerSources){
+            this.imageLayers[source].updateFrameCounter(this.frameNumber);
             this.imageLayers[source].bindTextures();
             this.imageLayers[source].drawReversePlanes();
         }
@@ -341,8 +343,8 @@ class WebGLClientRenderer {
         }else{//height > width
             //width is fixed, height distance is calculated
             const aspectRatio = this.gl.canvas.clientHeight / this.gl.canvas.clientWidth;
-            const bottom = -(this.cameraDist * aspectRatio) / 2;
-            const top = (this.cameraDist * aspectRatio) / 2;
+            const bottom = -(this.cameraDist * aspectRatio);
+            const top = (this.cameraDist * aspectRatio);
             glMatrix.mat4.ortho(this.cameraMatrix, -this.cameraDist, this.cameraDist, bottom, top, 0.1, 100000.0);
         }
         glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.1, 100000.0);
