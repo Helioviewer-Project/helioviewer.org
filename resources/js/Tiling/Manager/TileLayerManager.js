@@ -58,6 +58,9 @@ var TileLayerManager = LayerManager.extend(
 	    }
         Helioviewer.userSettings.set("state.tileLayers", jsonObj);
         $(document).trigger('update-external-datasource-integration');
+        //webgl request new textures
+        var event = new CustomEvent('request-new-textures', {bubbles: true, cancelable: true});
+        window.dispatchEvent(event);
     },
 
     /**
@@ -239,6 +242,9 @@ var TileLayerManager = LayerManager.extend(
             this.updateRequestTime(date);
         });
         $(document).trigger('update-external-datasource-integration');
+        //webgl request new textures
+        var event = new CustomEvent('request-new-textures', {bubbles: true, cancelable: true});
+        window.dispatchEvent(event);
     },
 
     getRequestDateAsISOString: function () {

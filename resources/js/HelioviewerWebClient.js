@@ -136,13 +136,18 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this._celestialBodies = new CelestialBodiesSatellites();
 
+        //init webgl client
+        this._coordinateSystemsHelper = new CoordinateSystemsHelper();
+        this._webGLClient = new WebGLClientRenderer(this._coordinateSystemsHelper);
+        this._webGLClient.start();
+
         this._setupDialogs();
         this._initEventHandlers();
         this._setupSettingsUI();
 
         this._displayGreeting();
 		
-        $('#mouse-cartesian').click();
+        //$('#mouse-cartesian').click();
 
         this.drawerUserSettings = Helioviewer.userSettings.get("state.drawers");
         $.each(this.drawerUserSettings, function(drawerSelector, drawerObj) {
@@ -472,7 +477,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	        if ( $('.helioviewer-url-input-box').is(':visible') ) {
 	        	$(".helioviewer-url-input-box").attr('value', self.toURL());
 				$(".helioviewer-url-shorten").removeAttr("checked");
-			}
+            }
         });
         $(document).on('observation-time-changed', function(e){
 	        if ( $('.helioviewer-url-input-box').is(':visible') ) {

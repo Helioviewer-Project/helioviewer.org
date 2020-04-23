@@ -10,7 +10,7 @@
 	$outputType = false;
 	
 	//Disable debug mode by default
-	$debug = false;
+	$debug = true;
 	
 	//Force debug mode. Set it to true to always force debug mode.
 	$forceDebug = false;
@@ -103,6 +103,7 @@
 		<link rel="stylesheet" href="resources/css/font-awesome.min.css" />
 		<link rel="stylesheet" href="resources/css/helioviewer-views.css" />
 		<link rel="stylesheet" href="resources/css/celestial-bodies.css" />
+		<link rel="stylesheet" href="resources/css/webgl-style.css">
 	<?php
 	} else {
 	?>
@@ -211,18 +212,21 @@
 	
 			<div id="scale">
 				
+				<span id="loading-status"></span>
+				<span id="frame-counter" style="display: block;"></span>
+				<div id="enable-webgl" class="viewport-action fa fa-power-off" title="Enable WebGL Experimental Renderer"></div>
 				<div id="earth-button" class="viewport-action segmented-left fa fa-globe" title="Toggle Earth-Scale Indicator."></div><div id="scalebar-button" class="viewport-action segmented-right fa fa-arrows-h" style="border-left: 0;" title="Toggle Length scale indicator."></div>
 	
 			</div>
 	
 			<!-- Mouse coordinates display -->
-			<div id="mouse-coords-box">
+			<!--<div id="mouse-coords-box">
 				<div id="mouse-coords">
 					<div id="mouse-coords-x"></div>
 					<div id="mouse-coords-y"></div>
 				</div>
 				<div id="mouse-cartesian" style="margin-top:4px;" class="viewport-action segmented-left fa fa-cube" title="Toggle Mouse Coordinates (Cartesian)"></div><div id="mouse-polar" class="viewport-action segmented-right fa fa-dot-circle-o" style="border-left: 0;margin-top:4px;" title="Toggle Mouse Coordinates (Polar)"></div>
-			</div>
+			</div>-->
 	
 		</div>
 	
@@ -1440,6 +1444,9 @@
 	<!-- Viewport -->
 	<div id="helioviewer-viewport-container-outer" class="user-select-none">
 		<div id="helioviewer-viewport-container-inner">
+				<canvas id="draw-surface">
+					Your browser does not support HTML5 :[
+				</canvas>
 			<div id="helioviewer-viewport">
 	
 				<!-- Movement sandbox -->
@@ -1479,6 +1486,8 @@
 	<script src="resources/lib/period_picker.2.7.8.pro/jquery.timepicker.js" type="text/javascript" language="javascript"></script>
 	<script src="resources/lib/boneVojage/jquery.bonevojage.js" type="text/javascript" language="javascript"></script>
 	<script src="resources/lib/mediaelement-2.22.0/build/mediaelement-and-player.min.js" type="text/javascript" language="javascript"></script>
+	<script src="resources/lib/WebGL/twgl-full.min.js" type="text/javascript" language="javascript"></script>
+	<script src="resources/lib/WebGL/gl-matrix.js" type="text/javascript" language="javascript"></script>
 
 	<!-- Helioviewer JavaScript -->
 	<?php
@@ -1540,6 +1549,9 @@
 		<script src="resources/js/UI/ImagePresets.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/TileLayerData.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/CelestialBodiesSatellites.js?v=<?=debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/WebGL/CoordinateSystemsHelper.js?v=<?=debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/WebGL/RenderSourceLayer.js?v=<?=debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/WebGL/WebGLClientRenderer.js?v=<?=debugTime?>" type="text/javascript"></script>
 	<?php
 	} else {	
 	?>
