@@ -72,6 +72,9 @@ var HelioviewerViewport = Class.extend(
             self._tileLayerManager = new HelioviewerTileLayerManager(self.requestDate, self.dataSources, self.tileSize, self.imageScale, self.maxTileLayers, self.tileLayers);
 
             $(document).trigger("update-viewport");
+            // Vanilla JS Helioviewer Ready event trigger
+            readyEvent = new CustomEvent("tile-layers-ready", { bubbles:true, cancelable:true });
+            window.dispatchEvent(readyEvent);
         };
         $.get(Helioviewer.api, {action: "getDataSources"}, callback, Helioviewer.dataType);
     },

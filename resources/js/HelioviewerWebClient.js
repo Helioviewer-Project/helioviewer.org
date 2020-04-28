@@ -139,7 +139,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         //init webgl client
         this._coordinateSystemsHelper = new CoordinateSystemsHelper();
         this._webGLClient = new WebGLClientRenderer(this._coordinateSystemsHelper);
-        this._webGLClient.start();
 
         this._setupDialogs();
         this._initEventHandlers();

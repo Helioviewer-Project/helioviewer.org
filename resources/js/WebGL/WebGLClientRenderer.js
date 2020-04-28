@@ -3,6 +3,9 @@ class WebGLClientRenderer {
     constructor(coordinates){
         this.playMovieState = true;
         this.coordinates = coordinates;
+        window.addEventListener('tile-layers-ready',function(){
+            helioviewer._webGLClient.start();
+        });
     }
 
     async start(){
@@ -11,12 +14,13 @@ class WebGLClientRenderer {
         this.setUpInputEventListeners(this.canvas);
         this.createShaders();
         this.createWorldViewMatrices();
+        this.layerSources = this.getUIImageLayers();
         await this.createImageLayers();
         this.subscribePlayPause();
 
         //fetch the initial textures and start the render loop
-        for(let source of this.layerSources){
-            this.imageLayers[source].fetchTextures().then(() => {
+        for(let layer of this.loadingImageLayerKeys){
+            this.loadingImageLayers[layer].fetchTextures().then(() => {
                 console.log("starting");
                 requestAnimationFrame(()=>{this.renderLoop();});
             });
@@ -54,8 +58,14 @@ class WebGLClientRenderer {
         this.cameraDist= 2;
 
         this.clearLuminance = 0.0;
-        this.layerSources = [10,5,4,29];
+
+        this.layerSources = [];
+        // image layers in the render loop must be seperate from loading image layers.
+        this.imageLayerKeys = [];
         this.imageLayers = {};
+        this.loadingImageLayerKeys = [];
+        this.loadingImageLayers = {};
+        this.imageLayersLoaded = false;
     }
 
     initGL(){
@@ -273,31 +283,41 @@ class WebGLClientRenderer {
         var baseLayer = true;
         var layerAlpha = 1 / (this.layerSources.length);
         //console.log(layerAlpha);
+        let layerIndex = 0;
+        console.log(this.layerSources);
         for(let source of this.layerSources){
-            this.imageLayers[source] = new RenderSourceLayer(this.gl,this.programInfo,source,baseLayer,layerAlpha);
-            await this.imageLayers[source].setSourceParams(source);
-            this.imageLayers[source].setColorTable();
-            this.imageLayers[source].createShapeVertexBuffers();
-            this.imageLayers[source].setMatrices({
+            this.loadingImageLayers[layerIndex] = new RenderSourceLayer(this.gl,this.programInfo,source,baseLayer,layerAlpha);
+            await this.loadingImageLayers[layerIndex].setSourceParams(source);
+            this.loadingImageLayers[layerIndex].setColorTable();
+            this.loadingImageLayers[layerIndex].createShapeVertexBuffers();
+            this.loadingImageLayers[layerIndex].setMatrices({
                 identityMatrix  : this.identityMatrix,
                 worldMatrix     : this.worldMatrix,
                 viewMatrix      : this.viewMatrix,
                 projMatrix      : this.projMatrix,
                 cameraMatrix    : this.cameraMatrix
             });
-            this.imageLayers[source].createViewMatricesAndObjects(this.cameraDist);
+            this.loadingImageLayers[layerIndex].createViewMatricesAndObjects(this.cameraDist);
             baseLayer = false;
+            this.loadingImageLayerKeys.push(layerIndex);
+            layerIndex++;
         }
-        //console.log(this.imageLayers);
+        this.imageLayersLoaded = true;
+        console.log("createImageLayers loadingImageLayers",this.loadingImageLayers);
     }
 
     subscribePlayPause() {
-        for(let source of this.layerSources){
-            this.imageLayers[source].updatePlayPause(this.playMovieState);
+        for(let layer of this.imageLayerKeys){
+            this.imageLayers[layer].updatePlayPause(this.playMovieState);
         }
     }
 
     renderLoop() {
+        if(this.imageLayersLoaded){
+            this.changeToNewImageLayers();
+            this.imageLayersLoaded = false;
+        }
+
         //resize viewport
         this.resizeCameraView();
 
@@ -311,27 +331,34 @@ class WebGLClientRenderer {
         this.updateGlobalFrameCounter();
 
         //draw planes
-        for(let source of this.layerSources){
-            this.imageLayers[source].updateFrameCounter(this.frameNumber);//update frame counter, used for choosing texture
-            this.imageLayers[source].bindTextures();
-            this.imageLayers[source].drawPlanes();
+        for(let layer of this.imageLayerKeys){
+            this.imageLayers[layer].updateFrameCounter(this.frameNumber);//update frame counter, used for choosing texture
+            this.imageLayers[layer].bindTextures();
+            this.imageLayers[layer].drawPlanes();
         }
         //draw spheres
-        for(let source of this.layerSources){
-            this.imageLayers[source].updateFrameCounter(this.frameNumber);
-            this.imageLayers[source].bindTextures();
-            this.imageLayers[source].drawSpheres();
+        for(let layer of this.imageLayerKeys){
+            this.imageLayers[layer].updateFrameCounter(this.frameNumber);
+            this.imageLayers[layer].bindTextures();
+            this.imageLayers[layer].drawSpheres();
         }
         //draw reverse planes
-        for(let source of this.layerSources){
-            this.imageLayers[source].updateFrameCounter(this.frameNumber);
-            this.imageLayers[source].bindTextures();
-            this.imageLayers[source].drawReversePlanes();
+        for(let layer of this.imageLayerKeys){
+            this.imageLayers[layer].updateFrameCounter(this.frameNumber);
+            this.imageLayers[layer].bindTextures();
+            this.imageLayers[layer].drawReversePlanes();
         }
         
         //request new frame
         requestAnimationFrame(()=>{this.renderLoop();});
     };
+
+    changeToNewImageLayers(){
+        this.imageLayers = {...this.loadingImageLayers};
+        this.imageLayerKeys = [...this.loadingImageLayerKeys];
+        this.loadingImageLayers = {};
+        this.loadingImageLayerKeys = [];
+    }
 
     resizeCameraView(){
         twgl.resizeCanvasToDisplaySize(this.gl.canvas);
@@ -356,8 +383,8 @@ class WebGLClientRenderer {
     }
 
     rotateWorld(){
-        for(let source of this.layerSources){
-            this.imageLayers[source].setCameraDistScale(this.cameraDist,this.projMatrix);
+        for(let layer of this.imageLayerKeys){
+            this.imageLayers[layer].setCameraDistScale(this.cameraDist,this.projMatrix);
         }
         if(this.rightMouseDown){
             glMatrix.mat4.rotate(this.yRotationMatrix, this.identityMatrix, this.degreesToRad(this.mouseRotationOffset.x * this.mouseSensitivity) , [0,1,0]);//rotating around y-axis uses offset from input on x-axis
@@ -375,8 +402,8 @@ class WebGLClientRenderer {
     look(){
         //let target = glMatrix.vec3.fromValues(-this.mouseTranslationOffset.x * this.translateSensitivity,this.mouseTranslationOffset.y * this.translateSensitivity,0);
         let origin = glMatrix.vec3.fromValues(0,0,0);
-        for(let source of this.layerSources){
-            this.imageLayers[source].look(origin);
+        for(let layer of this.imageLayerKeys){
+            this.imageLayers[layer].look(origin);
         }
     }
 
@@ -418,30 +445,31 @@ class WebGLClientRenderer {
     async requestMovieButton(){
         //basic input validation
         //this.validateUIRequestInput();
-        /*
-        console.log("layerSourcesBefore",this.layerSources);
-        let accordionLayerSources = [];
-        let hvTileLayerKeys = Object.keys(helioviewer.viewport.tileLayers);
-        console.log("hvTileLayerKeys",hvTileLayerKeys);
-        for(let objKey of hvTileLayerKeys){
-            accordionLayerSources.push(helioviewer.viewport.tileLayers[objKey].sourceId);
-        }
-
-        console.log("accordionLayerSources",accordionLayerSources);
         
+        console.log("layerSourcesBefore",this.layerSources);
         //pause all layers
-        for(let source of this.layerSources){
-            this.imageLayers[source].updatePlayPause(false);//set play movie state to false
+        for(let layer of this.imageLayerKeys){
+            this.imageLayers[layer].updatePlayPause(false);//set play movie state to false
         }
         //set new layer sources
-        this.layerSources = accordionLayerSources;
+        this.layerSources = this.getUIImageLayers();
         console.log("layerSourcesAfter", this.layerSources);
         await this.createImageLayers();
-        */
-        for(let source of this.layerSources){
-            this.imageLayers[source].fetchTextures(this.gl);
+        
+        for(let layer of this.loadingImageLayerKeys){
+            this.loadingImageLayers[layer].fetchTextures(this.gl);
         }
         
+    }
+
+    getUIImageLayers(){
+        let accordionLayerSources = [];
+        //let hvTileLayerKeys = Object.keys(helioviewer.viewport._tileLayerManager._layers);
+        for(let layer of helioviewer.viewport._tileLayerManager._layers){
+            accordionLayerSources.push(layer.image.sourceId);
+        }
+        //set new layer sources
+        return accordionLayerSources;
     }
     
     validateUIRequestInput(){
@@ -479,8 +507,8 @@ class WebGLClientRenderer {
         this.playMovieState = !this.playMovieState;
         var playPauseButtonText = this.playMovieState ? "Pause" : "Play"
         document.getElementById("webgl-play-pause-button").innerText = playPauseButtonText;
-        for(let source of this.layerSources){
-            this.imageLayers[source].updatePlayPause(this.playMovieState);
+        for(let layer of this.imageLayerKeys){
+            this.imageLayers[layer].updatePlayPause(this.playMovieState);
         }
     }
 
