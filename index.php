@@ -208,13 +208,11 @@
 				</div>
 	
 			</div>
-	
-	
+			
 			<div id="scale">
-				
-				<span id="loading-status"></span>
-				<span id="frame-counter" style="display: block;"></span>
-				<div id="enable-webgl" class="viewport-action fa fa-power-off" title="Enable WebGL Experimental Renderer"></div>
+				<div id="loading-status" class="loading-status"></div>
+				<div id="enable-webgl" class="viewport-action fa fa-power-off active" title="Enable WebGL Experimental Renderer"></div>
+			
 				<div id="earth-button" class="viewport-action segmented-left fa fa-globe" title="Toggle Earth-Scale Indicator."></div><div id="scalebar-button" class="viewport-action segmented-right fa fa-arrows-h" style="border-left: 0;" title="Toggle Length scale indicator."></div>
 	
 			</div>
@@ -1444,7 +1442,7 @@
 	<!-- Viewport -->
 	<div id="helioviewer-viewport-container-outer" class="user-select-none">
 		<div id="helioviewer-viewport-container-inner">
-				<canvas id="draw-surface">
+				<canvas id="draw-surface" class="draw-surface">
 					Your browser does not support HTML5 :[
 				</canvas>
 			<div id="helioviewer-viewport">

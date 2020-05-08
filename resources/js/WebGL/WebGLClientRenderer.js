@@ -33,11 +33,12 @@ class WebGLClientRenderer {
         // CONSTANTS
         //
         //this.solarProjectionScale = 0.388;
-        this.frameCounterDOM = document.getElementById("frame-counter");
+        //this.frameCounterDOM = document.getElementById("frame-counter");
         this.frameRateCounter = setInterval(()=>{this.countFPS();},1000);
 
         this.sunTextures = [];
         this.render = false;
+        this.enableWebGL = true;
 
         this.targetFps = 35;
         this.targetFrameTime = 1000/this.targetFps;
@@ -242,6 +243,13 @@ class WebGLClientRenderer {
         canvas.addEventListener('contextmenu', evt =>{
             evt.preventDefault();
         });
+        document.getElementById('enable-webgl').addEventListener('click',function(){
+            console.log('toggling canvas');
+            document.getElementById("loading-status").classList.toggle('display-none');
+            canvas.classList.toggle('display-none');
+            canvas.classList.toggle('draw-surface');
+            this.classList.toggle('active');
+        });
         window.addEventListener('request-new-textures',function(){
             console.log("caught request-new-textures")
             helioviewer._webGLClient.requestMovieButton();
@@ -435,7 +443,7 @@ class WebGLClientRenderer {
     countFPS(){
         this.currentFPS = this.frameNumber - this.lastFrameNumber
         this.lastFrameNumber = this.frameNumber;
-        this.frameCounterDOM.innerText = this.currentFPS + "fps";
+        //this.frameCounterDOM.innerText = this.currentFPS + "fps";
     }
 
     degreesToRad(deg){
