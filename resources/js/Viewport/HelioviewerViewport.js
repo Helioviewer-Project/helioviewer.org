@@ -73,7 +73,7 @@ var HelioviewerViewport = Class.extend(
 
             $(document).trigger("update-viewport");
             // Vanilla JS Helioviewer Ready event trigger
-            readyEvent = new CustomEvent("tile-layers-ready", { bubbles:true, cancelable:true });
+            var readyEvent = new CustomEvent("tile-layers-ready", { bubbles:true, cancelable:true });
             window.dispatchEvent(readyEvent);
         };
         $.get(Helioviewer.api, {action: "getDataSources"}, callback, Helioviewer.dataType);

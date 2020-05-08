@@ -193,13 +193,11 @@ class RenderSourceLayer {
             this.arcSecPerPix = data.scale;
             this.centerPixelX = data.refPixelX;
             this.centerPixelY = data.refPixelY;
-            if(sourceId >= 8 && sourceId <= 19){
+            if(this.drawSphere){
                 //if the source is SDO AIA/HMI draw a sphere
-                this.drawSphere = true;
                 this.planeWidth = this.arcSecondRatio*this.maxResPixels*this.arcSecPerPix / 1000;
-            }else if(sourceId == 4 || sourceId == 5 || sourceId == 29){
+            }else{
                 //if the source is SOHO LASCO C2/C3 or STEREO-A don't draw a sphere
-                this.drawSphere = false;
                 this.planeWidth = this.arcSecondRatio*this.maxResPixels*this.arcSecPerPix / 1000;
                 this.solarProjectionScale /= this.planeWidth/2.5;
                 this.planeOffsetX = (this.centerPixelX - (this.maxResPixels * 0.5) ) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
@@ -354,11 +352,11 @@ class RenderSourceLayer {
         var startDate = parseInt(new Date(dateTimeString).getTime() / 1000);
         var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400;//+24hrs
         var numFramesInput = parseInt(30);
-        var reduceInput = parseInt(2);
+        var reduceInput = parseInt(0);
 
         //do not scale down SOHO LASCO C2/C3
-        if(this.sourceId == 4 || this.sourceId == 5 || this.sourceId == 29){
-            reduceInput = 0;
+        if(this.sourceId >=8 && this.sourceId <= 19){
+            reduceInput = 2;
         }
 
         var unixTimeStart = startDate;

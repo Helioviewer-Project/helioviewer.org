@@ -32,7 +32,7 @@ class CoordinateSystemsHelper {
     }
     
     async getDistance(utc,observer,target){
-        let requestURL = Helioviewer.api+"/?action=getGeometryServiceData&auth="+this.apiAuth+"&type=distance&utc="+utc+"&observer="+observer+"&target="+target;
+        let requestURL = Helioviewer.api+"?action=getGeometryServiceData&auth="+this.apiAuth+"&type=distance&utc="+utc+"&observer="+observer+"&target="+target;
         console.log("distance",requestURL);
         var result;
         await fetch(requestURL,{
@@ -47,7 +47,7 @@ class CoordinateSystemsHelper {
 
     async getPositionHCC(dateISOString,observer,target){
         let utc = dateISOString.slice(0,-1);
-        let requestURL = Helioviewer.api+"/?action=getGeometryServiceData&auth="+this.apiAuth+"&type=position&utc="+utc+"&observer="+observer+"&target="+target;
+        let requestURL = Helioviewer.api+"?action=getGeometryServiceData&auth="+this.apiAuth+"&type=position&utc="+utc+"&observer="+observer+"&target="+target;
         let result;
         let result_au;
 
