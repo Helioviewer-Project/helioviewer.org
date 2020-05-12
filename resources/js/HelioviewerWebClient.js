@@ -305,7 +305,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         // About dialog
         this._setupDialog("#help-links-about", "#about-dialog", {
             "title"  : "Helioviewer - About",
-            "height" : 400
+            "height" : 520
         });
 
         // Keyboard shortcuts dialog
@@ -2181,7 +2181,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
     drawerYoutubeClick: function(openNow) {
-        var self = this, buttonId = "#youtube-button";
+        var self = this, buttonId = "#youtube-button", iconId = "#yt-icon";
 
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerYoutube.attr('id'));
 
@@ -2193,6 +2193,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerYoutube.css('padding', 0);
             this.drawerYoutube.css({'display':'none'});
             $(buttonId).removeClass('opened');
+            $(iconId).removeClass('opened');
             Helioviewer.userSettings.set("state.drawers.#hv-drawer-youtube.open", false);
         }
         else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
@@ -2205,6 +2206,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 self.drawerYoutube.css('transition', '');
             }, this.drawerSpeed);
             $(buttonId).addClass('opened');
+            $(iconId).addClass('opened');
             Helioviewer.userSettings.set("state.drawers.#hv-drawer-youtube.open", true);
             this._userVideos._checkForNewMovies();
             this._userVideos._fetchCurrentVideos();

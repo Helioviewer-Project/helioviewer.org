@@ -832,7 +832,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         $("#upload-dialog").dialog({
             "title" : "Upload video to YouTube",
             "width" : 550,
-            "height": 440
+            "height": 500
         });
     },
 
@@ -1049,8 +1049,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Upload to YouTube
         youtubeBtn = '<div style="float:left;"><a id="youtube-upload-' + movie.id + '" href="#" ' +
             'target="_blank"><img class="youtube-icon" ' +
-            'title="Upload video to YouTube" style="width:79px;height:32px;" ' +
-            'src="resources/images/youtube_79x32.png" /></a></div>';
+            'title="Upload video to YouTube" style="width:124px;height:32px;" ' +
+            'src="resources/images/yt_upload_logo_rgb_light.png" /></a></div>';
 
         // Link
         linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
