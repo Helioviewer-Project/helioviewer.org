@@ -601,7 +601,6 @@ var MovieManagerUI = MediaManagerUI.extend(
             // copy the link to the clipboard by creating a placeholder textinput
             var $temp = $('<input>');
             $('body').append($temp);
-            if(outputType==minimal)
             $temp.val('http://' + document.domain + '/?movieId=' + movie.id).select();
             document.execCommand("copy");//perform copy
             $temp.remove();
