@@ -121,10 +121,10 @@ class WebGLClientRenderer {
 
         void main()
         {
-            if(uProjection){
-                vec4 pos = mCamera * mView * mWorld * mSpacecraft * mPlane * vec4(position, 1.0);
+            if(uProjection && !uReversePlane){
+                vec4 pos = mCamera * mView * mWorld * mSpacecraft * mPlane * vec4(position, 1.0);;
                 gl_Position = pos;
-                vec4 texPos = mProj * mView * mPlane * vec4(position, 1.0);
+                vec4 texPos = mProj * mView * vec4(position.x-uXOffset,position.y+uYOffset,position.z, 1.0);
                 vec2 texPosOffset = vec2((texPos.x)*scale + 0.5, 1.0 - (texPos.y*scale + 0.5));
                 fragTexCoord = texPosOffset.xy;
             }else{
@@ -338,6 +338,12 @@ class WebGLClientRenderer {
 
         this.updateGlobalFrameCounter();
 
+        //draw reverse planes
+        for(let layer of this.imageLayerKeys){
+            this.imageLayers[layer].updateFrameCounter(this.frameNumber);
+            this.imageLayers[layer].bindTextures();
+            this.imageLayers[layer].drawReversePlanes();
+        }
         //draw planes
         for(let layer of this.imageLayerKeys){
             this.imageLayers[layer].updateFrameCounter(this.frameNumber);//update frame counter, used for choosing texture
@@ -349,12 +355,6 @@ class WebGLClientRenderer {
             this.imageLayers[layer].updateFrameCounter(this.frameNumber);
             this.imageLayers[layer].bindTextures();
             this.imageLayers[layer].drawSpheres();
-        }
-        //draw reverse planes
-        for(let layer of this.imageLayerKeys){
-            this.imageLayers[layer].updateFrameCounter(this.frameNumber);
-            this.imageLayers[layer].bindTextures();
-            this.imageLayers[layer].drawReversePlanes();
         }
         
         //request new frame

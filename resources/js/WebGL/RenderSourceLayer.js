@@ -5,7 +5,7 @@ class RenderSourceLayer {
         this.sourceId = sourceId;
         this.textures = [];
         this.colorTable;
-        this.solarProjectionScale = 0.3985;//0.388 rough esitmate for projection when RSUN_OBS=1;
+        //this.solarProjectionScale = 0.3985;//0.388 rough esitmate for projection when RSUN_OBS=1;
         this.RSUN_OBS = 0.97358455;//sun radius in arcseconds / 1000
         this.arcSecondRatio = 1.0 / this.RSUN_OBS;
         this.baseLayer = baseLayer;
@@ -17,15 +17,15 @@ class RenderSourceLayer {
         }
         this.alpha = 1.0;
 
-        this.drawSphere = false;
+        this.sourceName = new SourceLayerHelper(sourceId);
+        this.drawSphere = this.sourceName.drawSphere;
 
         this.playMovieState = true;
-        this.sourceName = this.setSourceNameForGeometryService();
     }
 
     async setColorTable(){
-        const colorTableName = this.setColorTableName();
-
+        const colorTableName = this.sourceName.colorTableName;
+        console.log('setcolortable',colorTableName);
         const textureOptions = {
             src: colorTableName,
             internalFormat: this.gl.RGB,
@@ -37,147 +37,6 @@ class RenderSourceLayer {
         }
 
         await new Promise(r => {this.colorTable = twgl.createTexture(this.gl,textureOptions,r)});
-    }
-
-    setColorTableName(){
-        var colorTableFolder = Helioviewer.api + "/resources/images/color-tables/";
-        switch(this.sourceId){
-            case 0:
-                this.drawSphere = true;
-                return colorTableFolder + "SOHO_EIT_171.png";
-            case 1:
-                this.drawSphere = true;
-                return colorTableFolder + "SOHO_EIT_195.png";
-            case 2:
-                this.drawSphere = true;
-                return colorTableFolder + "SOHO_EIT_284.png";
-            case 3:
-                this.drawSphere = true;
-                return colorTableFolder + "SOHO_EIT_304.png";
-            case 4:
-                //SOHO LASCO C2
-                return colorTableFolder + "Red_Temperature.png";
-            case 5:
-                //SOHO LASCO C3
-                return colorTableFolder + "Blue_White_Linear.png";
-            case 6:
-                this.drawSphere = true;
-                //MDI Mag
-                return colorTableFolder + "Gray.png";
-            case 7:
-                this.drawSphere = true;
-                //MDI Int
-                return colorTableFolder + "Gray.png";
-            case 8:
-                this.drawSphere = true;
-                return colorTableFolder + "SDO_AIA_94.png";
-            case 9:
-                this.drawSphere = true;
-                return colorTableFolder + "SDO_AIA_131.png";
-            case 10:
-                this.drawSphere = true;
-                return colorTableFolder + "SDO_AIA_171.png";
-            case 11: 
-                this.drawSphere = true;
-                return colorTableFolder + "SDO_AIA_193.png";
-            case 12:
-                this.drawSphere = true;
-                return colorTableFolder + "SDO_AIA_211.png";
-            case 13:
-                this.drawSphere = true;
-                return colorTableFolder + "SDO_AIA_304.png";
-            case 14:
-                this.drawSphere = true;
-                return colorTableFolder + "SDO_AIA_335.png";
-            case 15:
-                this.drawSphere = true;
-                return colorTableFolder + "SDO_AIA_1600.png";
-            case 16:
-                this.drawSphere = true;
-                return colorTableFolder + "SDO_AIA_1700.png";
-            case 17:
-                this.drawSphere = true;
-                return colorTableFolder + "SDO_AIA_4500.png";
-            case 18: 
-                //HMI Int
-                this.drawSphere = true;
-                return colorTableFolder + "Gray.png";
-            case 19:
-                //HMI Mag
-                this.drawSphere = true;
-                return colorTableFolder + "Gray.png";
-            case 20:
-                //STEREO-A EUVI
-                this.drawSphere = true;
-                return colorTableFolder + "STEREO_EUVI_171.png";
-            case 21:
-                //STEREO-A EUVI
-                this.drawSphere = true;
-                return colorTableFolder + "STEREO_EUVI_195.png";
-            case 22:
-                //STEREO-A EUVI
-                this.drawSphere = true;
-                return colorTableFolder + "STEREO_EUVI_284.png";
-            case 23:
-                //STEREO-A EUVI
-                this.drawSphere = true;
-                return colorTableFolder + "STEREO_EUVI_304.png";
-            case 24:
-                //STEREO-B EUVI
-                this.drawSphere = true;
-                return colorTableFolder + "STEREO_EUVI_171.png";
-            case 25:
-                //STEREO-B EUVI
-                this.drawSphere = true;
-                return colorTableFolder + "STEREO_EUVI_195.png";
-            case 26:
-                //STEREO-B EUVI
-                this.drawSphere = true;
-                return colorTableFolder + "STEREO_EUVI_284.png";
-            case 27:
-                //STEREO-B EUVI
-                this.drawSphere = true;
-                return colorTableFolder + "STEREO_EUVI_304.png";
-            case 28:
-                //STEREO-A COR1
-                return colorTableFolder + "Green-White_Linear.png";
-            case 29:
-                //STEREO-A COR2
-                return colorTableFolder + "Red_Temperature.png";
-            case 30:
-                //STEREO-B COR1
-                return colorTableFolder + "Green-White_Linear.png";
-            case 31:
-                //STEREO-B COR2
-                return colorTableFolder + "Red_Temperature.png";
-            default:
-                return colorTableFolder + "Gray.png";
-        }
-    }
-
-    setSourceNameForGeometryService(){
-        switch(this.sourceId){
-            case 4:
-                //LASCO C2
-                return "SOHO";
-            case 5:
-                //LASCO C3
-                return "SOHO";
-            case 10:
-                //AIA 171
-                return "SDO";
-            case 11: 
-                //AIA 193
-                return "SDO";
-            case 13:
-                //AIA 304
-                return "SDO";
-            case 29:
-                //STEREO-A COR2
-                return "STEREO Ahead";
-            default:
-                return "SDO";
-        }
     }
 
     //Gets information for image centering and scale
@@ -193,15 +52,12 @@ class RenderSourceLayer {
             this.arcSecPerPix = data.scale;
             this.centerPixelX = data.refPixelX;
             this.centerPixelY = data.refPixelY;
-            if(this.drawSphere){
-                //if the source is SDO AIA/HMI draw a sphere
-                this.planeWidth = this.arcSecondRatio*this.maxResPixels*this.arcSecPerPix / 1000;
-            }else{
-                //if the source is SOHO LASCO C2/C3 or STEREO-A don't draw a sphere
-                this.planeWidth = this.arcSecondRatio*this.maxResPixels*this.arcSecPerPix / 1000;
+            this.planeWidth = this.arcSecondRatio*this.maxResPixels*this.arcSecPerPix / 1000;
+            this.solarProjectionScale = this.RSUN_OBS / this.planeWidth;
+            this.planeOffsetX = (this.centerPixelX - (this.maxResPixels * 0.5) ) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
+            this.planeOffsetY = (this.centerPixelY - (this.maxResPixels * 0.5)) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
+            if(!this.drawSphere){
                 this.solarProjectionScale /= this.planeWidth/2.5;
-                this.planeOffsetX = (this.centerPixelX - (this.maxResPixels * 0.5) ) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
-                this.planeOffsetY = (this.centerPixelY - (this.maxResPixels * 0.5)) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
             }
         });
     }
@@ -227,7 +83,7 @@ class RenderSourceLayer {
         glMatrix.mat4.identity(this.planeViewMatrix);
 
         this.planeRotateUpVector = [1,0,0];
-        this.planeRotateRadians = this.degreesToRad(-90);
+        this.planeRotateRadians = this.degreesToRad(-90);//by default this plane looks at the solar north pole
         glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.planeRotateRadians, this.planeRotateUpVector);
 
         const uniformsPlane = {
@@ -242,7 +98,7 @@ class RenderSourceLayer {
             colorSampler: this.colorTable,
             planeShader: true,
             uAlpha: this.alpha,
-            uProjection: this.drawSphere,
+            uProjection: false,
             uReversePlane: false,
             uXOffset: this.planeOffsetX,
             uYOffset: this.planeOffsetY
@@ -263,7 +119,10 @@ class RenderSourceLayer {
             colorSampler: this.colorTable,
             planeShader: false,
             uAlpha: this.alpha,
-            uProjection: this.drawSphere
+            uProjection: true,
+            uReversePlane: false,
+            uXOffset: this.planeOffsetX,
+            uYOffset: this.planeOffsetY
         }
 
         // CREATE OBJECTS
@@ -304,8 +163,10 @@ class RenderSourceLayer {
     }
 
     setCameraDistScale(cameraDist,projMatrix){
+        //plane object uniforms
         this.drawInfo[0][0].uniforms.scale = this.solarProjectionScale * cameraDist;
         this.drawInfo[0][0].uniforms.mProj = projMatrix;
+        //sphere object uniforms
         this.drawInfo[1][0].uniforms.scale = this.solarProjectionScale * cameraDist;
         this.drawInfo[1][0].uniforms.mProj = projMatrix;
     }
@@ -315,7 +176,8 @@ class RenderSourceLayer {
         let up = glMatrix.vec3.fromValues(0,1,0);
         let input = this.prepareInputBeforeFrames();
         let utc = new Date(input.timeStart * 1000).toISOString();
-        let outCoords = await helioviewer._coordinateSystemsHelper.getPositionHCC(utc, this.sourceName, "SUN");
+        console.log(this.sourceId, this.sourceName.satelliteName);
+        let outCoords = await helioviewer._coordinateSystemsHelper.getPositionHCC(utc, this.sourceName.satelliteName, "SUN");
         let targetCoords = glMatrix.vec3.fromValues(outCoords.x,outCoords.y,outCoords.z);
         glMatrix.mat4.lookAt(this.spacecraftViewMatrix, origin, targetCoords, up );
     }
@@ -350,7 +212,7 @@ class RenderSourceLayer {
     prepareInputBeforeFrames(){
         var dateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
         var startDate = parseInt(new Date(dateTimeString).getTime() / 1000);
-        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400;//+24hrs
+        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400*2;//+24hrs
         var numFramesInput = parseInt(30);
         var reduceInput = parseInt(0);
 
@@ -388,19 +250,21 @@ class RenderSourceLayer {
     }
 
     drawReversePlanes(){
-        if(!this.drawSphere){
-            //rotate and draw reverse plane
-            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, -this.planeRotateRadians, this.planeRotateUpVector);
-            this.drawInfo[0][0].uniforms.uReversePlane = true;
-            twgl.drawObjectList(this.gl, this.drawInfo[0]);
-            //restore standard plane
-            glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.planeRotateRadians, this.planeRotateUpVector);
-            this.drawInfo[0][0].uniforms.uReversePlane = false;
-        }
+        this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
+        this.gl.enable(this.gl.BLEND);
+        this.gl.disable(this.gl.DEPTH_TEST);
+        //rotate and draw reverse plane
+        glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, -this.planeRotateRadians, this.planeRotateUpVector);
+        this.drawInfo[0][0].uniforms.uReversePlane = true;
+        twgl.drawObjectList(this.gl, this.drawInfo[0]);
+        //restore standard plane
+        glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.planeRotateRadians, this.planeRotateUpVector);
+        this.drawInfo[0][0].uniforms.uReversePlane = false;
     }
 
     drawSpheres(){
         if(this.drawSphere){
+            /*
             //draw coronal reverse planes
             glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, -this.planeRotateRadians, this.planeRotateUpVector);
             this.drawInfo[0][0].uniforms.uReversePlane = true;
@@ -408,7 +272,7 @@ class RenderSourceLayer {
             //restore standard plane
             glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.planeRotateRadians, this.planeRotateUpVector);
             this.drawInfo[0][0].uniforms.uReversePlane = false;
-
+            */
             this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
             this.gl.enable(this.gl.BLEND);
             this.gl.disable(this.gl.DEPTH_TEST);

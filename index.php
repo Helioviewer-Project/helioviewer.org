@@ -1562,6 +1562,7 @@
 		<script src="resources/js/UI/TileLayerData.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/CelestialBodiesSatellites.js?v=<?=debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/WebGL/CoordinateSystemsHelper.js?v=<?=debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/WebGL/SourceLayerHelper.js?v=<?=debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/WebGL/RenderSourceLayer.js?v=<?=debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/WebGL/WebGLClientRenderer.js?v=<?=debugTime?>" type="text/javascript"></script>
 	<?php
