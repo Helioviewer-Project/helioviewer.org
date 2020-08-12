@@ -84,62 +84,64 @@ var TimeSelector = Class.extend({
 	
     onHover: function () {
         var self = this;
-        // Create a preview tooltip
-		$('.dateSelector').on('mouseenter', function(event){
-			var tipPosition = $(this).attr('data-tip-pisition');
-			
-			
-			var times = self.getTime($(this));
-			
-			var tcEnd = '';
-			var tjEnd = '';
-			if(typeof times.dateObjEnd !== 'undefined'){
-				tcEnd = ' - '+times.carringtonEnd;
-				tjEnd = ' - '+times.julianEnd;
-			}
-			
-			var html = "<table class='preview-tooltip'>" +
-	            	"<tr><td><b>Julian Day:</b></td><td>" + times.julian + tjEnd + "</td></tr>" +
-					"<tr><td><b>Carrington:</b></td><td>"   + times.carrington + tcEnd + "</td></tr>" +
-	            "</table>";
-	            
-			var tipObj = {
-				overwrite: false,
-				show: {
-					ready: true,
-					event: 'mouseover',
-					delay: 500
-				},
-				hide: {
-					event: 'mouseleave',
-					delay: 500
-				},
-			    events: {
-			        hide: function(event, api) {
-			            $(this).qtip('destroy');
-			            api.destroy(true);
-						$(this).removeAttr('data-hasqtip');
-						$(this).removeAttr('aria-describedby');
-			        }
-			    }
-			};
-			
-			if(tipPosition == 'right'){
-				tipObj.position = {
-		                my: "center left",
-		                at: "center right"
-		            };
+		// Create a preview tooltip
+		if(outputType != "minimal"){
+			$('.dateSelector').on('mouseenter', function(event){
+				var tipPosition = $(this).attr('data-tip-pisition');
 				
-			}else{
-				tipObj.position = {
-		                my: "center right",
-		                at: "center left"
-		            };
-			}
-			
-			$(this).attr('title', html).qtip(tipObj, event);
+				
+				var times = self.getTime($(this));
+				
+				var tcEnd = '';
+				var tjEnd = '';
+				if(typeof times.dateObjEnd !== 'undefined'){
+					tcEnd = ' - '+times.carringtonEnd;
+					tjEnd = ' - '+times.julianEnd;
+				}
+				
+				var html = "<table class='preview-tooltip'>" +
+						"<tr><td><b>Julian Day:</b></td><td>" + times.julian + tjEnd + "</td></tr>" +
+						"<tr><td><b>Carrington:</b></td><td>"   + times.carrington + tcEnd + "</td></tr>" +
+					"</table>";
+					
+				var tipObj = {
+					overwrite: false,
+					show: {
+						ready: true,
+						event: 'mouseover',
+						delay: 500
+					},
+					hide: {
+						event: 'mouseleave',
+						delay: 500
+					},
+					events: {
+						hide: function(event, api) {
+							$(this).qtip('destroy');
+							api.destroy(true);
+							$(this).removeAttr('data-hasqtip');
+							$(this).removeAttr('aria-describedby');
+						}
+					}
+				};
+				
+				if(tipPosition == 'right'){
+					tipObj.position = {
+							my: "center left",
+							at: "center right"
+						};
+					
+				}else{
+					tipObj.position = {
+							my: "center right",
+							at: "center left"
+						};
+				}
+				
+				$(this).attr('title', html).qtip(tipObj, event);
 
-		});
+			});
+		}
     },
 
     buildDialog: function (event, $el) {
