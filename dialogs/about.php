@@ -38,6 +38,8 @@ For more information, please visit our <a href="http://helioviewer.org/wiki/Main
         <a href="https://www.browserstack.com/" target="_blank">BrowserStack</a> - Cross Browser Testing Tool.<br/>
         <a href="http://www.highcharts.com/" target="_blank">Highcharts</a> - Interactive JavaScript charts for your webpage.<br/>
         <a href="https://sunpy.org/" target="_blank">SunPy</a> - Solar data analysis environment for Python. <br/>
+        <a href="https://github.com/nikolaposa/rate-limit" target="_blank">Rate-Limit</a> - API level rate-limiting by Nikola Poša. <br/>
+        <a href="https://redis.io/" target="_blank">Redis</a> - Open source (BSD licensed), in-memory data structure store. <br/>
     </span>
     <br/>
     <span style="margin-left:auto; margin-right: auto;">
