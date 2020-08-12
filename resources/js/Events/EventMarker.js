@@ -345,33 +345,38 @@ var EventMarker = Class.extend(
     },
 
     toggleEventPopUp: function () {
-        if ( !this.eventPopupDomNode ) {
-            this._populatePopup();
-        }
+        var studentExclude = ["Coronal Hole", "Sunspot"];
+        if(outputType == "minimal" && !studentExclude.includes(this.concept.trim()) ){
 
-        if ( this._popupVisible ) {
-            this.eventPopupDomNode.hide("fast");
-            this.eventMarkerDomNode.css('z-index', this._zIndex);
-        }
-        else {
-            this.popup_pos = {
-                x: ( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) +12,
-                y: (-this.hv_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale) -38
-            };
-            if ( this.hv_hpc_x_final > 400 ) {
-                this.popup_pos.x -= this.eventPopupDomNode.width() + 38;
+            if ( !this.eventPopupDomNode ) {
+                this._populatePopup();
             }
-            this.eventPopupDomNode.css({
-                   'left' :  this.popup_pos.x + 'px',
-                    'top' :  this.popup_pos.y + 'px',
-                'z-index' : '1000'
-                // Additional styles found in events.css
-            });
-            this.eventMarkerDomNode.css('z-index', '998');
-            this.eventPopupDomNode.show("fast");
-        }
 
-        this._popupVisible = !this._popupVisible;
+            if ( this._popupVisible ) {
+                this.eventPopupDomNode.hide("fast");
+                this.eventMarkerDomNode.css('z-index', this._zIndex);
+            }
+            else {
+                this.popup_pos = {
+                    x: ( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) +12,
+                    y: (-this.hv_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale) -38
+                };
+                if ( this.hv_hpc_x_final > 400 ) {
+                    this.popup_pos.x -= this.eventPopupDomNode.width() + 38;
+                }
+                this.eventPopupDomNode.css({
+                    'left' :  this.popup_pos.x + 'px',
+                        'top' :  this.popup_pos.y + 'px',
+                    'z-index' : '1000'
+                    // Additional styles found in events.css
+                });
+                this.eventMarkerDomNode.css('z-index', '998');
+                this.eventPopupDomNode.show("fast");
+            }
+
+            this._popupVisible = !this._popupVisible;
+        
+        }
         return true;
     },
 
@@ -752,27 +757,30 @@ var EventMarker = Class.extend(
 
         content     += '<div class="close-button ui-icon ui-icon-closethick" title="Close PopUp Window"></div>'+"\n"
                     +  '<h1 class="user-selectable">'+headingText+'</h1>'+"\n";
-
-        if ( this.event_peaktime != null && this.event_peaktime != '') {
-            content += '<div class="container">'+"\n"
-                    +      "\t"+'<div class="param-container"><div class="param-label user-selectable">Peak Time:</div></div>'+"\n"
-                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_peaktime.replace('T',' ')
-                    +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_peaktime.replace('T',' ')+'">UTC</span></div>'
-                    +		(embedView ? '' : '<div class="ui-icon ui-icon-arrowstop-1-n" title="Jump to Event Peak Time"></div></div>')+"\n"
-                    +  '</div>'+"\n";
+        
+        var studentExcludeConcepts = ["Active Region"]; // remove start/end/peak times in student helioviewer for Active Region
+        if( outputType!='minimal' || (outputType=='minimal' && !studentExcludeConcepts.includes(this.concept.trim())) ){ 
+            if ( this.event_peaktime != null && this.event_peaktime != '') {
+                content += '<div class="container">'+"\n"
+                        +      "\t"+'<div class="param-container"><div class="param-label user-selectable">Peak Time:</div></div>'+"\n"
+                        +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_peaktime.replace('T',' ')
+                        +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_peaktime.replace('T',' ')+'">UTC</span></div>'
+                        +		(embedView ? '' : '<div class="ui-icon ui-icon-arrowstop-1-n" title="Jump to Event Peak Time"></div></div>')+"\n"
+                        +  '</div>'+"\n";
+            }
+            content     += '<div class="container">'+"\n"
+                        +      "\t"+'<div class="param-container"><div class="param-label user-selectable">Start Time: </div></div>'+"\n"
+                        +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_starttime.replace('T',' ')
+                        +	   ' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_starttime.replace('T',' ')+'">UTC</span></div>'
+                        +		(embedView ? '' : '<div class="ui-icon ui-icon-arrowstop-1-w" title="Jump to Event Start Time"></div></div>')+"\n"
+                        +  '</div>'+"\n"
+                        +  '<div class="container">'+"\n"
+                        +      "\t"+'<div class="param-container"><div class="param-label user-selectable">End Time: </div></div>'+"\n"
+                        +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_endtime.replace('T',' ')
+                        +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_endtime.replace('T',' ')+'">UTC</span></div>'
+                        +		(embedView ? '' : '<div class="ui-icon ui-icon-arrowstop-1-e" title="Jump to Event End Time"></div>')+"\n"
+                        +  '</div>'+"\n";
         }
-        content     += '<div class="container">'+"\n"
-                    +      "\t"+'<div class="param-container"><div class="param-label user-selectable">Start Time: </div></div>'+"\n"
-                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_starttime.replace('T',' ')
-                    +	   ' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_starttime.replace('T',' ')+'">UTC</span></div>'
-                    +		(embedView ? '' : '<div class="ui-icon ui-icon-arrowstop-1-w" title="Jump to Event Start Time"></div></div>')+"\n"
-                    +  '</div>'+"\n"
-                    +  '<div class="container">'+"\n"
-                    +      "\t"+'<div class="param-container"><div class="param-label user-selectable">End Time: </div></div>'+"\n"
-                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_endtime.replace('T',' ')
-                    +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_endtime.replace('T',' ')+'">UTC</span></div>'
-                    +		(embedView ? '' : '<div class="ui-icon ui-icon-arrowstop-1-e" title="Jump to Event End Time"></div>')+"\n"
-                    +  '</div>'+"\n";
 
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
             $.each( this.hv_labels_formatted, function (param, value) {
@@ -793,7 +801,7 @@ var EventMarker = Class.extend(
 						<div style=\"clear:both\"></div>';
 		}
         
-        //Only add buttons to main site event pop-ups, remove buttons from k12
+        //remove buttons from student helioviewer, only add buttons to main site event pop-ups
         if(outputType!='minimal'){
             content     += '<div class="btn-container">'+"\n"
                         +       "\t"+'<div class="btn-label btn event-info text-btn"><i class="fa fa-info-circle fa-fw"></i> View HEK data</div>'+"\n"
