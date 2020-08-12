@@ -35,15 +35,22 @@
 	include_once "../api.helioviewer.org/src/Config.php";
 	$config = new Config("../api.helioviewer.org/settings/Config.ini");
 
-	//Prepare Statistics
-	include_once HV_ROOT_DIR.'/../src/Database/Statistics.php';
-	$statistics = new Database_Statistics();
+	try{
+		//Prepare Statistics
+		include_once HV_ROOT_DIR.'/../src/Database/Statistics.php';
+		$statistics = new Database_Statistics();
 
-	//Log Statistic
-	if($outputType){ // minimal and embed statistic
-		$statistics->log($outputType);
-	}else{ // standard mode statistic
-		$statistics->log("standard");
+		//Log Statistic
+		if($outputType){ // minimal and embed statistic
+			//$statistics->log($outputType);
+			$statistics->logRedis("standard");
+		}else{ // standard mode statistic
+			//$statistics->log("standard");
+			$statistics->logRedis("standard");
+		}
+	}catch (Exception $e){
+		//Unable to log statistics because redis is down
+		//Gracefully load the rest of the page
 	}
 	
 ?><!DOCTYPE html>
@@ -1476,7 +1483,7 @@
 	</div>
 	
 	<!-- Library JavaScript -->
-	<script src="resources/lib/jquery/jquery-3.1.0.min.js" type="text/javascript"></script>
+	<script src="resources/lib/jquery/jquery-3.5.1.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery-ui-1.12.0/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.mousewheel/jquery.mousewheel.3.1.13.min.js" type="text/javascript"></script>
@@ -1563,7 +1570,9 @@
 		<script src="resources/js/Viewport/CelestialBodiesSatellites.js?v=<?=debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/WebGL/CoordinateSystemsHelper.js?v=<?=debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/WebGL/SourceLayerHelper.js?v=<?=debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/WebGL/RenderSourceLayer.js?v=<?=debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/WebGL/Render/RenderReel.js?v=<?=debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/WebGL/Render/RenderFrame.js?v=<?=debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/WebGL/Render/RenderSourceLayer.js?v=<?=debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/WebGL/WebGLClientRenderer.js?v=<?=debugTime?>" type="text/javascript"></script>
 	<?php
 	} else {	
