@@ -11,7 +11,7 @@ class WebGLClientRenderer {
     async start(){
         this.initConstants();
         this.initGL();
-        this.setUpInputEventListeners(this.canvas);
+        this.initInputEventListeners(this.canvas);
         this.createShaders();
         this.createWorldViewMatrices();
         this.layerSources = this.getUIImageLayers();
@@ -22,6 +22,7 @@ class WebGLClientRenderer {
         for(let layer of this.loadingImageLayerKeys){
             this.loadingImageLayers[layer].fetchTextures().then(() => {
                 console.log("starting");
+                this.imageLayersLoaded = true;
                 requestAnimationFrame(()=>{this.renderLoop();});
             });
         }
@@ -181,7 +182,7 @@ class WebGLClientRenderer {
         this.gl.useProgram(this.programInfo.program);
     }
 
-    setUpInputEventListeners(canvas){
+    initInputEventListeners(canvas){
         //Mouse events
         canvas.addEventListener('mousemove', evt => {
             if(this.rightMouseDown){
@@ -295,9 +296,9 @@ class WebGLClientRenderer {
         console.log(this.layerSources);
         for(let source of this.layerSources){
             this.loadingImageLayers[layerIndex] = new RenderSourceLayer(this.gl,this.programInfo,source,baseLayer,layerAlpha);
-            await this.loadingImageLayers[layerIndex].setSourceParams(source);
             this.loadingImageLayers[layerIndex].setColorTable();
-            this.loadingImageLayers[layerIndex].createShapeVertexBuffers();
+            //await this.loadingImageLayers[layerIndex].setSourceParams(source);
+            this.loadingImageLayers[layerIndex].createShapeVertexBuffers();//Needs to be per frame
             this.loadingImageLayers[layerIndex].setMatrices({
                 identityMatrix  : this.identityMatrix,
                 worldMatrix     : this.worldMatrix,
@@ -305,12 +306,12 @@ class WebGLClientRenderer {
                 projMatrix      : this.projMatrix,
                 cameraMatrix    : this.cameraMatrix
             });
-            this.loadingImageLayers[layerIndex].createViewMatricesAndObjects(this.cameraDist);
+            this.loadingImageLayers[layerIndex].createViewMatricesAndObjects(this.cameraDist);//Needs to be per frame
             baseLayer = false;
             this.loadingImageLayerKeys.push(layerIndex);
             layerIndex++;
         }
-        this.imageLayersLoaded = true;
+        //this.imageLayersLoaded = true;
         console.log("createImageLayers loadingImageLayers",this.loadingImageLayers);
     }
 
@@ -341,19 +342,19 @@ class WebGLClientRenderer {
         //draw reverse planes
         for(let layer of this.imageLayerKeys){
             this.imageLayers[layer].updateFrameCounter(this.frameNumber);
-            this.imageLayers[layer].bindTextures();
+            this.imageLayers[layer].bindTexturesAndUniforms();
             this.imageLayers[layer].drawReversePlanes();
         }
         //draw planes
         for(let layer of this.imageLayerKeys){
             this.imageLayers[layer].updateFrameCounter(this.frameNumber);//update frame counter, used for choosing texture
-            this.imageLayers[layer].bindTextures();
+            this.imageLayers[layer].bindTexturesAndUniforms();
             this.imageLayers[layer].drawPlanes();
         }
         //draw spheres
         for(let layer of this.imageLayerKeys){
             this.imageLayers[layer].updateFrameCounter(this.frameNumber);
-            this.imageLayers[layer].bindTextures();
+            this.imageLayers[layer].bindTexturesAndUniforms();
             this.imageLayers[layer].drawSpheres();
         }
         
@@ -461,7 +462,6 @@ class WebGLClientRenderer {
         }
         //set new layer sources
         this.layerSources = this.getUIImageLayers();
-        console.log("layerSourcesAfter", this.layerSources);
         await this.createImageLayers();
         
         for(let layer of this.loadingImageLayerKeys){
@@ -472,7 +472,6 @@ class WebGLClientRenderer {
 
     getUIImageLayers(){
         let accordionLayerSources = [];
-        //let hvTileLayerKeys = Object.keys(helioviewer.viewport._tileLayerManager._layers);
         for(let layer of helioviewer.viewport._tileLayerManager._layers){
             accordionLayerSources.push(layer.image.sourceId);
         }

@@ -3,7 +3,7 @@ class RenderSourceLayer {
         this.gl = gl;
         this.programInfo = programInfo;
         this.sourceId = sourceId;
-        this.textures = [];
+        this.renderReel = []; //formerly this.textures
         this.colorTable;
         //this.solarProjectionScale = 0.3985;//0.388 rough esitmate for projection when RSUN_OBS=1;
         this.RSUN_OBS = 0.97358455;//sun radius in arcseconds / 1000
@@ -62,6 +62,7 @@ class RenderSourceLayer {
         });
     }
 
+    //Needs to be per frame
     createShapeVertexBuffers(){
         //
         // CREATE SHAPE VERTEX BUFFERS
@@ -70,13 +71,17 @@ class RenderSourceLayer {
             this.sphereBuffer = twgl.primitives.createSphereBufferInfo(this.gl, this.RSUN_OBS, 128, 64, 0, Math.PI, Math.PI, 2 * Math.PI); // only create half of the sphere
         }
         this.planeBuffer = twgl.primitives.createPlaneBufferInfo(this.gl,this.planeWidth,this.planeWidth);
-
     }
-
+    
+    //called with createImageLayers
+    //Needs to be per frame
     createViewMatricesAndObjects(cameraDist){
         //
         // CREATE OBJECT MATRICES AND OFFSETS
         //
+        this.origin = glMatrix.vec3.fromValues(0,0,0);
+        this.up = glMatrix.vec3.fromValues(0,1,0);
+
         this.spacecraftViewMatrix = new Float32Array(16);
         this.planeViewMatrix = new Float32Array(16);
         glMatrix.mat4.identity(this.spacecraftViewMatrix);
@@ -143,10 +148,10 @@ class RenderSourceLayer {
         });
 
         this.drawInfo = [planeObject, sphereObject];
-        this.look();
     }
 
     setMatrices(matrices){
+        this.matrices = matrices;
         this.identityMatrix = matrices.identityMatrix;
         this.worldMatrix = matrices.worldMatrix;
         this.viewMatrix = matrices.viewMatrix;
@@ -156,41 +161,44 @@ class RenderSourceLayer {
     
     updateFrameCounter(frameNumber){
         if(this.playMovieState){
-            this.frameCounter = (frameNumber % this.textures.length) + 1;;
+            this.frameCounter = (frameNumber % this.renderReel.length) + 1;;
             //this.frameCounter = Math.floor((performance.now() / 1000 * 30 )% this.textures.length) + 1;
         }
         //glMatrix.mat4.ortho(this.projMatrix, -camera.cameraDist, camera.cameraDist, -camera.cameraDist, camera.cameraDist, 0.1, 1000.0);
     }
 
     setCameraDistScale(cameraDist,projMatrix){
+        this.cameraDist = cameraDist;
         //plane object uniforms
-        this.drawInfo[0][0].uniforms.scale = this.solarProjectionScale * cameraDist;
+        //this.drawInfo[0][0].uniforms.scale = this.solarProjectionScale * cameraDist;
         this.drawInfo[0][0].uniforms.mProj = projMatrix;
         //sphere object uniforms
-        this.drawInfo[1][0].uniforms.scale = this.solarProjectionScale * cameraDist;
+        //this.drawInfo[1][0].uniforms.scale = this.solarProjectionScale * cameraDist;
         this.drawInfo[1][0].uniforms.mProj = projMatrix;
     }
 
+    /*
     async look(){
+        const currentFrame = this.renderReel[this.frameCounter-1];
         let origin = glMatrix.vec3.fromValues(0,0,0);
         let up = glMatrix.vec3.fromValues(0,1,0);
         let input = this.prepareInputBeforeFrames();
         let utc = new Date(input.timeStart * 1000).toISOString();
         console.log(this.sourceId, this.sourceName.satelliteName);
-        let outCoords = await helioviewer._coordinateSystemsHelper.getPositionHCC(utc, this.sourceName.satelliteName, "SUN");
+        let outCoords = await helioviewer._coordinateSystemsHelper.getPositionHCC(currentFrame.timestamp, this.sourceName.satelliteName, "SUN");
         let targetCoords = glMatrix.vec3.fromValues(outCoords.x,outCoords.y,outCoords.z);
         glMatrix.mat4.lookAt(this.spacecraftViewMatrix, origin, targetCoords, up );
-    }
+    }*/
 
     async fetchTextures(){
-        var newTextures = [];
-        var input = this.prepareInputBeforeFrames();
+        var newRenderReel = [];
+        this.inputTemporalParams = this.prepareInputBeforeFrames();
         var loadingStatusDOM = document.getElementById("loading-status");
-        for(var i=1;i<input.numFrames+1;i++){
+        for(var i=1;i<this.inputTemporalParams.numFrames+1;i++){
             //build the texture options
-            var reqTime = input.timeStart + (input.timeIncrement * (i-1));
+            var reqTime = this.inputTemporalParams.timeStart + (this.inputTemporalParams.timeIncrement * (i-1));
             var textureOptions = {
-                src: Helioviewer.api + "/?action=getTexture&unixTime="+reqTime+"&sourceId="+this.sourceId+"&reduce="+input.reduceResolutionLevel,
+                src: Helioviewer.api + "/?action=getTexture&unixTime="+reqTime+"&sourceId="+this.sourceId+"&reduce="+this.inputTemporalParams.reduceResolutionLevel,
                 internalFormat: this.gl.LUMINANCE,
                 format: this.gl.LUMINANCE,
                 mag: this.gl.NEAREST,
@@ -199,14 +207,19 @@ class RenderSourceLayer {
                 wrapT: this.gl.CLAMP_TO_EDGE,
             }
             var frameTexture;
-            loadingStatusDOM.innerText = "Loading frame "+i+"/"+input.numFrames+" from source "+this.sourceId;
+            loadingStatusDOM.innerText = "Loading frame "+i+"/"+this.inputTemporalParams.numFrames+" from source "+this.sourceId;
             //load the texture
             await new Promise(r => {frameTexture = twgl.createTexture(this.gl, textureOptions,r);});
+            //instantiate render frame object
+            var renderFrame = new RenderFrame(frameTexture, reqTime, this.sourceId);
+            await renderFrame.setFrameParams();//getClosestImage params
+            await renderFrame.getSatellitePosition(this.sourceName.satelliteName);//geometry service position
+            console.log(renderFrame);
             //add texture to pool
-            newTextures.push(frameTexture);
+            newRenderReel.push(renderFrame);
         }
-        loadingStatusDOM.innerText = "Loaded " + input.numFrames + " frames"
-        this.textures = newTextures;
+        loadingStatusDOM.innerText = "Loaded " + this.inputTemporalParams.numFrames + " frames"
+        this.renderReel = newRenderReel;
     }
 
     prepareInputBeforeFrames(){
@@ -216,7 +229,7 @@ class RenderSourceLayer {
         var numFramesInput = parseInt(30);
         var reduceInput = parseInt(0);
 
-        //do not scale down SOHO LASCO C2/C3
+        //scale down 4k SDO images in half, twice, down to 1k
         if(this.sourceId >=8 && this.sourceId <= 19){
             reduceInput = 2;
         }
@@ -233,13 +246,24 @@ class RenderSourceLayer {
         };
     }
 
-    bindTextures(){
-        this.drawInfo[0][0].uniforms.sunSampler = this.textures[this.frameCounter-1];
-        this.drawInfo[1][0].uniforms.sunSampler = this.textures[this.frameCounter-1];
-        // this.gl.activeTexture(this.gl.TEXTURE0);
-        // this.gl.bindTexture(this.gl.TEXTURE_2D, this.textures[this.frameCounter-1]);
-        // this.gl.activeTexture(this.gl.TEXTURE1);
-        // this.gl.bindTexture(this.gl.TEXTURE_2D, this.colorTable);
+    bindTexturesAndUniforms(){
+        const currentFrame = this.renderReel[this.frameCounter-1];
+        this.drawInfo[0][0].uniforms.sunSampler = currentFrame.texture;
+        this.drawInfo[1][0].uniforms.sunSampler = currentFrame.texture;
+
+        this.drawInfo[0][0].uniforms.scale = currentFrame.solarProjectionScale*this.cameraDist;
+        this.drawInfo[1][0].uniforms.scale = currentFrame.solarProjectionScale*this.cameraDist;
+
+        this.drawInfo[0][0].uniforms.uXOffset = currentFrame.planeOffsetX;
+        this.drawInfo[1][0].uniforms.uXOffset = currentFrame.planeOffsetX;
+
+        this.drawInfo[0][0].uniforms.uYOffset = currentFrame.planeOffsetY;
+        this.drawInfo[1][0].uniforms.uYOffset = currentFrame.planeOffsetY;
+
+        glMatrix.mat4.lookAt(this.spacecraftViewMatrix, this.origin, currentFrame.satellitePositionMatrix, this.up );
+
+        this.drawInfo[0][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
+        this.drawInfo[1][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
     }
 
     drawPlanes(){
