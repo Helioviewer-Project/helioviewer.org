@@ -22,7 +22,7 @@ class WebGLClientRenderer {
         for(let layer of this.loadingImageLayerKeys){
             this.loadingImageLayers[layer].fetchTextures().then(() => {
                 console.log("starting");
-                this.imageLayersLoaded = true;
+                this.switchToNewImageLayers = true;
                 requestAnimationFrame(()=>{this.renderLoop();});
             });
         }
@@ -67,7 +67,7 @@ class WebGLClientRenderer {
         this.imageLayers = {};
         this.loadingImageLayerKeys = [];
         this.loadingImageLayers = {};
-        this.imageLayersLoaded = false;
+        this.switchToNewImageLayers = false;
     }
 
     initGL(){
@@ -311,7 +311,7 @@ class WebGLClientRenderer {
             this.loadingImageLayerKeys.push(layerIndex);
             layerIndex++;
         }
-        //this.imageLayersLoaded = true;
+        this.switchToNewImageLayers = true;
         console.log("createImageLayers loadingImageLayers",this.loadingImageLayers);
     }
 
@@ -322,45 +322,61 @@ class WebGLClientRenderer {
     }
 
     renderLoop() {
-        if(this.imageLayersLoaded){
-            this.changeToNewImageLayers();
-            this.imageLayersLoaded = false;
+        if(this.isAllReady()){
+            this.render = true;
         }
+        if(this.render){
+            //resize viewport
+            this.resizeCameraView();
 
-        //resize viewport
-        this.resizeCameraView();
+            //clear the screen
+            this.gl.clearColor(this.clearLuminance,this.clearLuminance,this.clearLuminance,1.0);
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-        //clear the screen
-        this.gl.clearColor(this.clearLuminance,this.clearLuminance,this.clearLuminance,1.0);
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+            //rotate world transforms
+            this.rotateWorld();
 
-        //rotate world transforms
-        this.rotateWorld();
+            this.updateGlobalFrameCounter();
 
-        this.updateGlobalFrameCounter();
-
-        //draw reverse planes
-        for(let layer of this.imageLayerKeys){
-            this.imageLayers[layer].updateFrameCounter(this.frameNumber);
-            this.imageLayers[layer].bindTexturesAndUniforms();
-            this.imageLayers[layer].drawReversePlanes();
+            //draw reverse planes
+            for(let layer of this.imageLayerKeys){
+                this.imageLayers[layer].updateFrameCounter(this.frameNumber);
+                this.imageLayers[layer].bindTexturesAndUniforms();
+                this.imageLayers[layer].drawReversePlanes();
+            }
+            //draw planes
+            for(let layer of this.imageLayerKeys){
+                this.imageLayers[layer].updateFrameCounter(this.frameNumber);//update frame counter, used for choosing texture
+                this.imageLayers[layer].bindTexturesAndUniforms();
+                this.imageLayers[layer].drawPlanes();
+            }
+            //draw spheres
+            for(let layer of this.imageLayerKeys){
+                this.imageLayers[layer].updateFrameCounter(this.frameNumber);
+                this.imageLayers[layer].bindTexturesAndUniforms();
+                this.imageLayers[layer].drawSpheres();
+            }
         }
-        //draw planes
-        for(let layer of this.imageLayerKeys){
-            this.imageLayers[layer].updateFrameCounter(this.frameNumber);//update frame counter, used for choosing texture
-            this.imageLayers[layer].bindTexturesAndUniforms();
-            this.imageLayers[layer].drawPlanes();
-        }
-        //draw spheres
-        for(let layer of this.imageLayerKeys){
-            this.imageLayers[layer].updateFrameCounter(this.frameNumber);
-            this.imageLayers[layer].bindTexturesAndUniforms();
-            this.imageLayers[layer].drawSpheres();
-        }
-        
         //request new frame
         requestAnimationFrame(()=>{this.renderLoop();});
     };
+
+    isAllReady(){
+        //each layer will set its own layerReady flag
+        var allLayersReady = this.loadingImageLayerKeys.length > 0 ? true : false;
+        for(let layer of this.loadingImageLayerKeys){
+            if(!this.loadingImageLayers[layer].layerReady){
+                allLayersReady = false;
+                //console.log(this.loadingImageLayers[layer].layerReady);
+            }
+        }
+        //switchToNewImageLayers ensures only one switch happens and is set when a new set of layers is defined
+        if(this.switchToNewImageLayers && allLayersReady){
+            this.changeToNewImageLayers();
+            this.switchToNewImageLayers = false;
+        }
+        return allLayersReady;
+    }
 
     changeToNewImageLayers(){
         this.imageLayers = {...this.loadingImageLayers};
@@ -457,15 +473,15 @@ class WebGLClientRenderer {
         
         console.log("layerSourcesBefore",this.layerSources);
         //pause all layers
-        for(let layer of this.imageLayerKeys){
+        /*for(let layer of this.imageLayerKeys){
             this.imageLayers[layer].updatePlayPause(false);//set play movie state to false
-        }
+        }*/
         //set new layer sources
         this.layerSources = this.getUIImageLayers();
         await this.createImageLayers();
         
         for(let layer of this.loadingImageLayerKeys){
-            this.loadingImageLayers[layer].fetchTextures(this.gl);
+            this.loadingImageLayers[layer].fetchTextures();
         }
         
     }

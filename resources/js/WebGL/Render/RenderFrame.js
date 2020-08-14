@@ -3,8 +3,7 @@
  */
 
 class RenderFrame {
-    constructor(texture, timestamp, sourceId){
-        this.texture = texture;
+    constructor(timestamp, sourceId){
         this.timestamp = timestamp;
         this.sourceId = sourceId;
         this.satellitePositionMatrix;
@@ -12,12 +11,22 @@ class RenderFrame {
         //this is a constant for now
         this.RSUN_OBS = 0.97358455;//sun radius in arcseconds / 1000
         this.arcSecondRatio = 1.0 / this.RSUN_OBS;
+        this.ready = { texture: false, position: false, params: false, all: false}
+    }
+
+    setTexture(texture,callback){
+        this.texture = texture;
+    }
+
+    textureReady(callback){
+        this.ready.texture = true;
+        this.isReady(callback);
     }
 
     //Gets information for image centering and scale
     //TODO:
     // This is a mess, maybe extract into a helper file
-    async setFrameParams(){
+    async setFrameParams(callback){
         var getClosestImageURL = Helioviewer.api + "/?action=getClosestImage&sourceId="+this.sourceId+"&date="+new Date(this.timestamp * 1000).toISOString();
         await fetch(getClosestImageURL).then(res => {return res.json()}).then(data => {
             //console.log(data);
@@ -34,12 +43,23 @@ class RenderFrame {
                 this.solarProjectionScale /= this.planeWidth/2.5;
             }
         });
+        this.ready.params = true;
+        this.isReady(callback);
     }
 
-    async getSatellitePosition(satelliteName) {
+    async getSatellitePosition(satelliteName,callback) {
         let utc = new Date(this.timestamp * 1000).toISOString();
         const outCoords = await helioviewer._coordinateSystemsHelper.getPositionHCC(utc, satelliteName, "SUN");
         this.satellitePositionMatrix = glMatrix.vec3.fromValues(outCoords.x,outCoords.y,outCoords.z);
+        this.ready.position = true;
+        this.isReady(callback);
+    }
+
+    isReady(callback){
+        if( this.ready.all == false && this.ready.texture == true && this.ready.position == true && this.ready.params == true ){
+            this.ready.all = true;
+            callback(this.timestamp);
+        }
     }
 
     //Needs to be per frame

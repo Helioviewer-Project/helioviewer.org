@@ -21,6 +21,7 @@ class RenderSourceLayer {
         this.drawSphere = this.sourceName.drawSphere;
 
         this.playMovieState = true;
+        this.layerReady = false;
     }
 
     async setColorTable(){
@@ -194,6 +195,31 @@ class RenderSourceLayer {
         var newRenderReel = [];
         this.inputTemporalParams = this.prepareInputBeforeFrames();
         var loadingStatusDOM = document.getElementById("loading-status");
+
+        //create callback to check all frames are ready
+        const isReady = (time) => {
+            console.log('fetchTextures-isReady-callback',time);
+            var ready = true;
+            //console.log(newRenderReel);
+            if(newRenderReel.length == this.inputTemporalParams.numFrames){
+                for(var frame of newRenderReel){
+                    if(frame.ready.all == false){
+                        ready = false;
+                    }
+                }
+                if(ready == true){
+                    loadingStatusDOM.innerText = "Loaded " + this.inputTemporalParams.numFrames + " frames"
+                    this.renderReel = newRenderReel;
+                    this.layerReady = true;
+                    console.log("fetchTextures-isReady-actually ready, should fire once per layer",time);
+                }
+            }
+        }
+
+        const textureReady = (renderFrame,texture) =>{
+            renderFrame.setTexture(texture,isReady);
+        }
+        //this.getSatellitePositions();
         for(var i=1;i<this.inputTemporalParams.numFrames+1;i++){
             //build the texture options
             var reqTime = this.inputTemporalParams.timeStart + (this.inputTemporalParams.timeIncrement * (i-1));
@@ -209,24 +235,26 @@ class RenderSourceLayer {
             var frameTexture;
             loadingStatusDOM.innerText = "Loading frame "+i+"/"+this.inputTemporalParams.numFrames+" from source "+this.sourceId;
             //load the texture
-            await new Promise(r => {frameTexture = twgl.createTexture(this.gl, textureOptions,r);});
+            
             //instantiate render frame object
-            var renderFrame = new RenderFrame(frameTexture, reqTime, this.sourceId);
-            await renderFrame.setFrameParams();//getClosestImage params
-            await renderFrame.getSatellitePosition(this.sourceName.satelliteName);//geometry service position
-            console.log(renderFrame);
+            var renderFrame = new RenderFrame(reqTime, this.sourceId);
+            renderFrame.setFrameParams(isReady);//getClosestImage params
+            renderFrame.getSatellitePosition(this.sourceName.satelliteName, isReady);//geometry service position
+            //frameTexture = twgl.createTexture(this.gl, textureOptions,textureReady(renderFrame,frameTexture));
+            renderFrame.setTexture(twgl.createTexture(this.gl, textureOptions,renderFrame.textureReady(isReady)));
+            //await new Promise(r => { renderFrame.setTexture(twgl.createTexture(this.gl, textureOptions,r)) ;} );
+            //console.log(renderFrame);
             //add texture to pool
             newRenderReel.push(renderFrame);
         }
-        loadingStatusDOM.innerText = "Loaded " + this.inputTemporalParams.numFrames + " frames"
-        this.renderReel = newRenderReel;
+        
     }
 
     prepareInputBeforeFrames(){
         var dateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
         var startDate = parseInt(new Date(dateTimeString).getTime() / 1000);
-        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400*2;//+24hrs
-        var numFramesInput = parseInt(30);
+        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400;//+24hrs
+        var numFramesInput = parseInt(24);
         var reduceInput = parseInt(0);
 
         //scale down 4k SDO images in half, twice, down to 1k
@@ -244,6 +272,12 @@ class RenderSourceLayer {
             timeIncrement: unixTimeIncrement,
             reduceResolutionLevel: reduceInput
         };
+    }
+
+    async getSatellitePositions( satelliteName ) {
+        let utc = new Date(this.timestamp * 1000).toISOString();
+        const outCoords = await helioviewer._coordinateSystemsHelper.getPositionHCC(utc, satelliteName, "SUN");
+        this.satellitePositionMatrix = glMatrix.vec3.fromValues(outCoords.x,outCoords.y,outCoords.z);
     }
 
     bindTexturesAndUniforms(){
