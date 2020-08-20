@@ -119,7 +119,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this.earthScale = new ImageScale();
 
-        this.displayBlogFeed(8, false);
+        this.displayBlogFeed(7, true);
 
         this._userVideos = new UserVideoGallery(this.serverSettings.videoFeed);
 
@@ -1624,7 +1624,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     /**
      * Displays recent news from the Helioviewer Project blog
      */
-    displayBlogFeed: function (n, showDescription, descriptionWordLength) {
+    displayBlogFeed: function (descriptionWordLength, showDescription) {
         var url, dtype, html = "";
 
         url = this.serverSettings.newsURL;
@@ -1646,16 +1646,22 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             dataType: dtype,
             success: function (feed) {
                 var link, date, more, description, newNewsAmount = 0;
-				
-				$(feed).find('item').each(function(){
-					var $item = $(this);
-					var title = $item.find('title').text();
-					var description = $item.find('description').text();
-					var updated = $item.find('pubDate').text();
-					var link = $item.find('link').text();
+				console.log("feed",feed);
+				$(feed).find('entry').each(function(){
+                    var $item = $(this);
+                    console.log("entry",$item);
+                    var title = $item.find('title').text();
+                    console.log("title",title);
+                    var description = $item.find('summary').text();
+                    console.log("description",description);
+                    var updated = $item.find('published').text();
+                    updated = updated.split("+")[0].split("T").join(" ");//format to iso date like "2020-08-20 00:00:00"
+                    console.log("updated",updated);
+                    var link = $item.find('link').attr("href");
+                    console.log("link",link);
 					
 					link = "<a href='" + link + "' alt='" + title + "' target='_blank'>" + title + "</a><br />";
-                    date = "<div class='article-date'>" + updated.slice(0, 26) + "UTC</div>";
+                    date = "<div class='article-date'>" + updated + " UTC</div>";
                     html += "<div class='blog-entry'>" + link + date;
 					
 					//Check for notification
@@ -1670,7 +1676,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                     if (showDescription) {
                         // Shorten if requested
                         if (typeof descriptionWordLength === "number") {
-                            description = description.split(" ").slice(0, descriptionWordLength).join(" ") + " [...]";
+                            description = description.split(" ").slice(0, descriptionWordLength).join(" ") + "...";
                         }
                         html += "<div class='article-desc'>" + description + "</div>";
                     }
