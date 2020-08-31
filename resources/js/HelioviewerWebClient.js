@@ -1646,19 +1646,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             dataType: dtype,
             success: function (feed) {
                 var link, date, more, description, newNewsAmount = 0;
-				console.log("feed",feed);
 				$(feed).find('entry').each(function(){
                     var $item = $(this);
-                    console.log("entry",$item);
                     var title = $item.find('title').text();
-                    console.log("title",title);
                     var description = $item.find('summary').text();
-                    console.log("description",description);
                     var updated = $item.find('published').text();
                     updated = updated.split("+")[0].split("T").join(" ");//format to iso date like "2020-08-20 00:00:00"
-                    console.log("updated",updated);
                     var link = $item.find('link').attr("href");
-                    console.log("link",link);
 					
 					link = "<a href='" + link + "' alt='" + title + "' target='_blank'>" + title + "</a><br />";
                     date = "<div class='article-date'>" + updated + " UTC</div>";
