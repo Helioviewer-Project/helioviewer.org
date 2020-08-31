@@ -3,15 +3,16 @@
  */
 
 class RenderFrame {
-    constructor(timestamp, sourceId){
+    constructor(timestamp, sourceId, drawSphere, gl){
+        this.gl = gl;
         this.timestamp = timestamp;
         this.sourceId = sourceId;
+        this.drawSphere = drawSphere;
         this.satellitePositionMatrix;
         this.offset;
         //this is a constant for now
         this.RSUN_OBS = 0.97358455;//sun radius in arcseconds / 1000
-        this.arcSecondRatio = 1.0 / this.RSUN_OBS;
-        this.ready = { texture: false, position: false, params: false, all: false}
+        this.ready = { texture: false, vertices: false, position: false, params: false,  all: false}
     }
 
     setTexture(texture,callback){
@@ -24,27 +25,53 @@ class RenderFrame {
     }
 
     //Gets information for image centering and scale
-    //TODO:
-    // This is a mess, maybe extract into a helper file
     async setFrameParams(callback){
+        await this.getClosestImageParams();
+        await this.getRSUN_OBSFromHeader();
+        //compute the remaining params after retrieving metadata
+        
+        this.planeWidth = this.maxResPixels*this.IMSCL_MP / 1000;
+        this.planeOffsetX = (this.centerPixelX - (this.maxResPixels * 0.5) ) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
+        this.planeOffsetY = (this.centerPixelY - (this.maxResPixels * 0.5)) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
+        this.solarProjectionScale = this.RSUN_OBS / this.planeWidth;
+        console.log("sourceId",this.sourceId);
+        console.log("planeWidth",this.planeWidth);
+        console.log("planeOffsetX",this.planeOffsetX);
+        console.log("planeOffsetY",this.planeOffsetY);
+        console.log("solarProjectionScale",this.solarProjectionScale);
+        console.log("RSUN_OBS",this.RSUN_OBS);
+        if(!this.drawSphere){
+            this.solarProjectionScale /= this.planeWidth;
+        }
+        this.ready.params = true;
+        this.createShapeVertexBuffers(callback);
+        this.isReady(callback);
+    }
+
+    async getRSUN_OBSFromHeader(){
+        var getJP2HeaderURL = Helioviewer.api + "/?action=getJP2Header&id=" + this.imageID;
+        await fetch(getJP2HeaderURL).then(res => {return res.text()}).then(xmlString => {
+            var parser = new DOMParser();
+            var xml = parser.parseFromString(xmlString,"text/xml");
+            var rsun_obs = xml.getElementsByTagName("RSUN_OBS")[0].textContent;
+            var IMSCL_MP = xml.getElementsByTagName("IMSCL_MP")[0].textContent;
+            this.RSUN_OBS = rsun_obs / 1000;
+            this.IMSCL_MP = IMSCL_MP;
+            console.log("IMSCL_MP",this.IMSCL_MP);
+            console.log(this.RSUN_OBS);
+        });
+    }
+
+    async getClosestImageParams(){
         var getClosestImageURL = Helioviewer.api + "/?action=getClosestImage&sourceId="+this.sourceId+"&date="+new Date(this.timestamp * 1000).toISOString();
         await fetch(getClosestImageURL).then(res => {return res.json()}).then(data => {
-            //console.log(data);
+            //console.log("getClosestImageData", data);
             this.imageID = data.id;
             this.maxResPixels = data.width;
             this.arcSecPerPix = data.scale;
             this.centerPixelX = data.refPixelX;
             this.centerPixelY = data.refPixelY;
-            this.planeWidth = this.arcSecondRatio*this.maxResPixels*this.arcSecPerPix / 1000;
-            this.solarProjectionScale = this.RSUN_OBS / this.planeWidth;
-            this.planeOffsetX = (this.centerPixelX - (this.maxResPixels * 0.5) ) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
-            this.planeOffsetY = (this.centerPixelY - (this.maxResPixels * 0.5)) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
-            if(!this.drawSphere){
-                this.solarProjectionScale /= this.planeWidth/2.5;
-            }
         });
-        this.ready.params = true;
-        this.isReady(callback);
     }
 
     async getSatellitePosition(satelliteName,callback) {
@@ -55,15 +82,7 @@ class RenderFrame {
         this.isReady(callback);
     }
 
-    isReady(callback){
-        if( this.ready.all == false && this.ready.texture == true && this.ready.position == true && this.ready.params == true ){
-            this.ready.all = true;
-            callback(this.timestamp);
-        }
-    }
-
-    //Needs to be per frame
-    createShapeVertexBuffers(){
+    createShapeVertexBuffers(callback){
         //
         // CREATE SHAPE VERTEX BUFFERS
         //
@@ -71,6 +90,15 @@ class RenderFrame {
             this.sphereBuffer = twgl.primitives.createSphereBufferInfo(this.gl, this.RSUN_OBS, 128, 64, 0, Math.PI, Math.PI, 2 * Math.PI); // only create half of the sphere
         }
         this.planeBuffer = twgl.primitives.createPlaneBufferInfo(this.gl,this.planeWidth,this.planeWidth);
+        this.ready.vertices = true;
+        this.isReady(callback);
+    }
+
+    isReady(callback){
+        if( !this.ready.all && this.ready.texture && this.ready.vertices && this.ready.position && this.ready.params){
+            this.ready.all = true;
+            callback(this.timestamp);
+        }
     }
 
     //Needs to be per frame

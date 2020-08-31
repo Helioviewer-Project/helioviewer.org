@@ -43,7 +43,7 @@ class RenderSourceLayer {
     //Gets information for image centering and scale
     //TODO:
     // This is a mess, maybe extract into a helper file
-    async setSourceParams(sourceId){
+    /*async setSourceParams(sourceId){
         var input = this.prepareInputBeforeFrames();
         var getClosestImageURL = Helioviewer.api + "/?action=getClosestImage&sourceId="+this.sourceId+"&date="+new Date(input.timeStart * 1000).toISOString();
         await fetch(getClosestImageURL).then(res => {return res.json()}).then(data => {
@@ -61,7 +61,7 @@ class RenderSourceLayer {
                 this.solarProjectionScale /= this.planeWidth/2.5;
             }
         });
-    }
+    }*/
 
     //Needs to be per frame
     createShapeVertexBuffers(){
@@ -74,7 +74,7 @@ class RenderSourceLayer {
         this.planeBuffer = twgl.primitives.createPlaneBufferInfo(this.gl,this.planeWidth,this.planeWidth);
     }
     
-    //called with createImageLayers
+    //called with WebGLClientRenderer createImageLayers
     //Needs to be per frame
     createViewMatricesAndObjects(cameraDist){
         //
@@ -237,7 +237,7 @@ class RenderSourceLayer {
             //load the texture
             
             //instantiate render frame object
-            var renderFrame = new RenderFrame(reqTime, this.sourceId);
+            var renderFrame = new RenderFrame(reqTime, this.sourceId, this.drawSphere, this.gl);
             renderFrame.setFrameParams(isReady);//getClosestImage params
             renderFrame.getSatellitePosition(this.sourceName.satelliteName, isReady);//geometry service position
             //frameTexture = twgl.createTexture(this.gl, textureOptions,textureReady(renderFrame,frameTexture));
@@ -252,9 +252,9 @@ class RenderSourceLayer {
 
     prepareInputBeforeFrames(){
         var dateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
-        var startDate = parseInt(new Date(dateTimeString).getTime() / 1000);
-        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400;//+24hrs
-        var numFramesInput = parseInt(24);
+        var startDate = parseInt(new Date(dateTimeString).getTime() / 1000) - 86400 * 2;//-48hrs
+        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000);
+        var numFramesInput = parseInt(20);
         var reduceInput = parseInt(0);
 
         //scale down 4k SDO images in half, twice, down to 1k
@@ -298,6 +298,9 @@ class RenderSourceLayer {
 
         this.drawInfo[0][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
         this.drawInfo[1][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
+
+        this.drawInfo[0][0].bufferInfo = currentFrame.planeBuffer;
+        this.drawInfo[1][0].bufferInfo = currentFrame.sphereBuffer;
     }
 
     drawPlanes(){
