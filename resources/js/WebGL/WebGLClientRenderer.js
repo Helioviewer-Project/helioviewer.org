@@ -15,7 +15,7 @@ class WebGLClientRenderer {
         this.createShaders();
         this.createWorldViewMatrices();
         this.layerSources = this.getUIImageLayers();
-        await this.createImageLayers();
+        await this.createImageLayers(this.getUIImageLayers());
         this.subscribePlayPause();
 
         //fetch the initial textures and start the render loop
@@ -115,6 +115,7 @@ class WebGLClientRenderer {
         uniform mat4 mSpacecraft;
         uniform mat4 mPlane;
         uniform float scale;
+        uniform float planeWidth;
         uniform bool uProjection;
         uniform float uXOffset;
         uniform float uYOffset;
@@ -123,9 +124,12 @@ class WebGLClientRenderer {
         void main()
         {
             if(uProjection && !uReversePlane){
-                vec4 pos = mCamera * mView * mWorld * mSpacecraft * mPlane * vec4(position, 1.0);;
+                vec4 pos = mCamera * mView * mWorld * mSpacecraft * mPlane * vec4(position, 1.0);
                 gl_Position = pos;
-                vec4 texPos = mProj * mView * vec4(position.x-uXOffset,position.y+uYOffset,position.z, 1.0);
+                float texPosX = (position.x-uXOffset) / scale / planeWidth;
+                float texPosY = (position.y+uYOffset)/ scale / planeWidth;
+                float texPosZ = position.z / scale / planeWidth;
+                vec4 texPos = mView * vec4(texPosX, texPosY, texPosZ, 1.0);
                 vec2 texPosOffset = vec2((texPos.x)*scale + 0.5, 1.0 - (texPos.y*scale + 0.5));
                 fragTexCoord = texPosOffset.xy;
             }else{
@@ -287,14 +291,15 @@ class WebGLClientRenderer {
         glMatrix.mat4.identity(this.worldTranslateMatrix);
     }
 
-    async createImageLayers(){
+    async createImageLayers(newLayerSourceIdArray){
         //mark base layer for 100% opacity application.
         var baseLayer = true;
-        var layerAlpha = 1 / (this.layerSources.length);
+        var layerAlpha = 1 / (newLayerSourceIdArray.length);
         //console.log(layerAlpha);
-        let layerIndex = 0;
-        console.log(this.layerSources);
-        for(let source of this.layerSources){
+        //select last imageLayerKey in the list as the index else reset with 0
+        let layerIndex = this.imageLayerKeys.length ? parseInt(this.imageLayerKeys[this.imageLayerKeys.length-1])+1 : 0;
+        console.log("layerIndex",layerIndex);
+        for(let source of newLayerSourceIdArray){
             this.loadingImageLayers[layerIndex] = new RenderSourceLayer(this.gl,this.programInfo,source,baseLayer,layerAlpha);
             this.loadingImageLayers[layerIndex].setColorTable();
             //await this.loadingImageLayers[layerIndex].setSourceParams(source);
@@ -311,7 +316,6 @@ class WebGLClientRenderer {
             this.loadingImageLayerKeys.push(layerIndex);
             layerIndex++;
         }
-        this.switchToNewImageLayers = true;
         console.log("createImageLayers loadingImageLayers",this.loadingImageLayers);
     }
 
@@ -322,6 +326,7 @@ class WebGLClientRenderer {
     }
 
     renderLoop() {
+        //console.log(this.render);
         if(this.isAllReady()){
             this.render = true;
         }
@@ -379,10 +384,29 @@ class WebGLClientRenderer {
     }
 
     changeToNewImageLayers(){
-        this.imageLayers = {...this.loadingImageLayers};
-        this.imageLayerKeys = [...this.loadingImageLayerKeys];
+        console.log("---changeToNewImageLayers---")
+        console.log("before: imageLayers", this.imageLayers);
+        console.log("before: imageLayerKeys", this.imageLayerKeys);
+        console.log("before: loadingImageLayers", this.loadingImageLayers);
+        console.log("before: loadingImageLayerKeys", this.loadingImageLayerKeys);
+        this.tempImageLayers = {...this.imageLayers, ...this.loadingImageLayers};
+        console.log("tempImageLayers",this.tempImageLayers);
+        //this.imageLayerKeys = [...this.imageLayerKeys, ...this.loadingImageLayerKeys];
+        this.imageLayers = {};
+        this.imageLayerKeys = [];
+        for(let source of this.layerSources){
+            for(let layerKey of Object.keys(this.tempImageLayers)){
+                if(this.tempImageLayers[layerKey].sourceId == source){
+                    this.imageLayers[layerKey] = this.tempImageLayers[layerKey];
+                    this.imageLayerKeys.push(layerKey);
+                    break;
+                }
+            }
+        }
         this.loadingImageLayers = {};
         this.loadingImageLayerKeys = [];
+        console.log("after: imageLayers", this.imageLayers);
+        console.log("after: imageLayerKeys", this.imageLayerKeys);
     }
 
     resizeCameraView(){
@@ -409,6 +433,7 @@ class WebGLClientRenderer {
 
     rotateWorld(){
         for(let layer of this.imageLayerKeys){
+            //console.log(layer);
             this.imageLayers[layer].setCameraDistScale(this.cameraDist,this.projMatrix);
         }
         if(this.rightMouseDown){
@@ -477,22 +502,63 @@ class WebGLClientRenderer {
             this.imageLayers[layer].updatePlayPause(false);//set play movie state to false
         }*/
         //set new layer sources
-        this.layerSources = this.getUIImageLayers();
-        await this.createImageLayers();
+        this.UILayerSources = this.getUIImageLayers();
+        const newLayerSourceIdArray = this.compareLayerSources(this.UILayerSources);
+        
+        if(newLayerSourceIdArray.length){
+            await this.createImageLayers(newLayerSourceIdArray);
+        }
         
         for(let layer of this.loadingImageLayerKeys){
             this.loadingImageLayers[layer].fetchTextures();
         }
+        this.layerSources = this.UILayerSources;
+        console.log("layerSourcesAfter",this.layerSources);
+        console.log("imageLayers", this.imageLayers);
         
     }
 
     getUIImageLayers(){
-        let accordionLayerSources = [];
+        let newAccordionLayerSources = [];
         for(let layer of helioviewer.viewport._tileLayerManager._layers){
-            accordionLayerSources.push(layer.image.sourceId);
+            newAccordionLayerSources.push(layer.image.sourceId);
         }
         //set new layer sources
-        return accordionLayerSources;
+        return newAccordionLayerSources;
+    }
+
+    compareLayerSources(UILayerSources){
+        //determine which sourceIds were added
+        let addedSourceIds = UILayerSources.filter((source)=>{
+            if(!this.layerSources.includes(source)){
+                return source;
+            }
+        });
+        console.log("addedSourceIds",addedSourceIds);
+        //determine which sourceIds were removed
+        let removedSourceIds = this.layerSources.filter((source)=>{
+            if(!UILayerSources.includes(source)){
+                return source;
+            }
+        });
+        console.log("removedSourceIds",removedSourceIds);
+        //toggle flag to switch once layers load
+        if(addedSourceIds.length){
+            this.switchToNewImageLayers = true;
+        }
+        //drop the layers now
+        if(removedSourceIds.length){
+
+            for(let layer of this.imageLayerKeys){
+                if(removedSourceIds.includes(this.imageLayers[layer].sourceId)){
+                    delete this.imageLayers[layer];
+                }
+            }
+            console.log("imageLayerKeys before:", this.imageLayerKeys);
+            this.imageLayerKeys = Object.keys(this.imageLayers);
+            console.log("imageLayerKeys after:", this.imageLayerKeys);
+        }
+        return addedSourceIds;
     }
     
     validateUIRequestInput(){
