@@ -100,6 +100,7 @@ class RenderSourceLayer {
             mSpacecraft: this.spacecraftViewMatrix,
             mPlane: this.planeViewMatrix,
             scale: this.solarProjectionScale*cameraDist,
+            planeWidth: this.planeWidth,
             sunSampler: this.colorTable,
             colorSampler: this.colorTable,
             planeShader: true,
@@ -121,6 +122,7 @@ class RenderSourceLayer {
             mSpacecraft: this.spacecraftViewMatrix,
             mPlane: this.identityMatrix,
             scale: this.solarProjectionScale*cameraDist,
+            planeWidth: this.planeWidth,
             sunSampler: this.colorTable,
             colorSampler: this.colorTable,
             planeShader: false,
@@ -252,9 +254,9 @@ class RenderSourceLayer {
 
     prepareInputBeforeFrames(){
         var dateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
-        var startDate = parseInt(new Date(dateTimeString).getTime() / 1000) - 86400 * 2;//-48hrs
+        var startDate = parseInt(new Date(dateTimeString).getTime() / 1000) - 86400 * 30 * 6;//-48hrs
         var endDate = parseInt(new Date(dateTimeString).getTime() / 1000);
-        var numFramesInput = parseInt(20);
+        var numFramesInput = parseInt(1);
         var reduceInput = parseInt(0);
 
         //scale down 4k SDO images in half, twice, down to 1k
@@ -294,13 +296,16 @@ class RenderSourceLayer {
         this.drawInfo[0][0].uniforms.uYOffset = currentFrame.planeOffsetY;
         this.drawInfo[1][0].uniforms.uYOffset = currentFrame.planeOffsetY;
 
-        glMatrix.mat4.lookAt(this.spacecraftViewMatrix, this.origin, currentFrame.satellitePositionMatrix, this.up );
+        //glMatrix.mat4.lookAt(this.spacecraftViewMatrix, this.origin, currentFrame.satellitePositionMatrix, this.up );
 
-        this.drawInfo[0][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
-        this.drawInfo[1][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
+        //this.drawInfo[0][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
+        //this.drawInfo[1][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
 
         this.drawInfo[0][0].bufferInfo = currentFrame.planeBuffer;
         this.drawInfo[1][0].bufferInfo = currentFrame.sphereBuffer;
+
+        this.drawInfo[0][0].uniforms.planeWidth = currentFrame.planeWidth;
+        this.drawInfo[1][0].uniforms.planeWidth = currentFrame.planeWidth;
     }
 
     drawPlanes(){
