@@ -27,19 +27,21 @@ class RenderFrame {
     //Gets information for image centering and scale
     async setFrameParams(callback){
         await this.getClosestImageParams();
-        await this.getRSUN_OBSFromHeader();
+        await this.getJP2HeaderMetadata();
         //compute the remaining params after retrieving metadata
         
+        this.planeWidth = this.maxResPixels*this.arcSecPerPix / 1000;
         this.planeWidth = this.maxResPixels*this.IMSCL_MP / 1000;
         this.planeOffsetX = (this.centerPixelX - (this.maxResPixels * 0.5) ) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
         this.planeOffsetY = (this.centerPixelY - (this.maxResPixels * 0.5)) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
         this.solarProjectionScale = this.RSUN_OBS / this.planeWidth;
-        console.log("sourceId",this.sourceId);
-        console.log("planeWidth",this.planeWidth);
-        console.log("planeOffsetX",this.planeOffsetX);
-        console.log("planeOffsetY",this.planeOffsetY);
-        console.log("solarProjectionScale",this.solarProjectionScale);
-        console.log("RSUN_OBS",this.RSUN_OBS);
+        // console.log("sourceId",this.sourceId);
+        // console.log("planeWidth",this.planeWidth);
+        // console.log("planeOffsetX",this.planeOffsetX);
+        // console.log("planeOffsetY",this.planeOffsetY);
+        // console.log("solarProjectionScale",this.solarProjectionScale);
+        // console.log("RSUN_OBS",this.RSUN_OBS);
+        // console.log("IMSCL_MP",this.IMSCL_MP);
         if(!this.drawSphere){
             this.solarProjectionScale /= this.planeWidth;
         }
@@ -48,17 +50,29 @@ class RenderFrame {
         this.isReady(callback);
     }
 
-    async getRSUN_OBSFromHeader(){
+    async getJP2HeaderMetadata(){
         var getJP2HeaderURL = Helioviewer.api + "/?action=getJP2Header&id=" + this.imageID;
         await fetch(getJP2HeaderURL).then(res => {return res.text()}).then(xmlString => {
             var parser = new DOMParser();
             var xml = parser.parseFromString(xmlString,"text/xml");
-            var rsun_obs = xml.getElementsByTagName("RSUN_OBS")[0].textContent;
-            var IMSCL_MP = xml.getElementsByTagName("IMSCL_MP")[0].textContent;
+            var rsun_obs_element = xml.getElementsByTagName("RSUN_OBS");
+            var rsun_element = xml.getElementsByTagName("RSUN");
+            console.log(this.sourceId, rsun_obs_element, rsun_element);
+            if(rsun_obs_element.length){
+                var rsun_obs = rsun_obs_element[0].textContent;
+            }else if(rsun_element.length){
+                var rsun_obs = rsun_element[0].textContent;
+            }
+            var IMSCL_MP_element = xml.getElementsByTagName("IMSCL_MP");
+            if(IMSCL_MP_element.length){
+                var IMSCL_MP = IMSCL_MP_element[0].textContent;
+            }else{
+                var IMSCL_MP = this.arcSecPerPix;
+            }
+            //console.log("IMSCL_MP_element",IMSCL_MP_element);
+
             this.RSUN_OBS = rsun_obs / 1000;
             this.IMSCL_MP = IMSCL_MP;
-            console.log("IMSCL_MP",this.IMSCL_MP);
-            console.log(this.RSUN_OBS);
         });
     }
 
