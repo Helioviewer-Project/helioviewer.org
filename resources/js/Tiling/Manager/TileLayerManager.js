@@ -101,6 +101,10 @@ var TileLayerManager = LayerManager.extend(
                 });
             }
         );
+
+        //console.log("idOrder",idOrder);
+        let updateLayerOrderEvent = new CustomEvent('update-layer-order',{bubbles: true, cancelable: true, detail: { layerOrder: Object.values(idOrder) }});
+        window.dispatchEvent(updateLayerOrderEvent);
         
         //change Layers Order
         var startZIndex = -11;
@@ -125,6 +129,7 @@ var TileLayerManager = LayerManager.extend(
         //save order
         Helioviewer.userSettings.set("state.tileLayers", layerHierarchy);
         $(document).trigger('update-external-datasource-integration');
+        console.log('update-external-datasource-integration');
     },
 
     /**

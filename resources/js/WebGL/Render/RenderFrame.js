@@ -57,7 +57,7 @@ class RenderFrame {
             var xml = parser.parseFromString(xmlString,"text/xml");
             var rsun_obs_element = xml.getElementsByTagName("RSUN_OBS");
             var rsun_element = xml.getElementsByTagName("RSUN");
-            console.log(this.sourceId, rsun_obs_element, rsun_element);
+            //console.log(this.sourceId, rsun_obs_element, rsun_element);
             if(rsun_obs_element.length){
                 var rsun_obs = rsun_obs_element[0].textContent;
             }else if(rsun_element.length){

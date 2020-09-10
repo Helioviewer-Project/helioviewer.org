@@ -14,8 +14,9 @@ class WebGLClientRenderer {
         this.initInputEventListeners(this.canvas);
         this.createShaders();
         this.createWorldViewMatrices();
-        this.layerSources = this.getUIImageLayers();
-        await this.createImageLayers(this.getUIImageLayers());
+        this.UIAccordionLayers = this.getUIAccordionLayers();
+        this.layerSources = this.UIAccordionLayers.map(layer => layer.id);
+        await this.createImageLayers(this.determineAddedLayers());
         this.subscribePlayPause();
 
         //fetch the initial textures and start the render loop
@@ -61,6 +62,7 @@ class WebGLClientRenderer {
 
         this.clearLuminance = 0.0;
 
+        this.dateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
         this.layerSources = [];
         // image layers in the render loop must be seperate from loading image layers.
         this.imageLayerKeys = [];
@@ -255,10 +257,34 @@ class WebGLClientRenderer {
             canvas.classList.toggle('draw-surface');
             this.classList.toggle('active');
         });
-        window.addEventListener('request-new-textures',function(){
+        window.addEventListener('request-new-textures',e=>{
             console.log("caught request-new-textures")
             helioviewer._webGLClient.requestMovieButton();
         });
+        window.addEventListener('update-data-source',e=>{
+            helioviewer._webGLClient.changeLayerDataSource(e.detail.id, e.detail.sourceId);
+        });
+        window.addEventListener('update-layer-order',e=>{
+            helioviewer._webGLClient.updateLayerOrder(e.detail.layerOrder);
+        })
+    }
+
+    updateLayerOrder(newLayerOrder){
+        this.imageLayerKeys = newLayerOrder;
+    }
+
+    async changeLayerDataSource(id, sourceId){
+        this.UIAccordionLayers = this.getUIAccordionLayers();
+        let layerToChange = this.UIAccordionLayers.filter(layer=>layer.id == id);
+
+        console.log('layerToChange',layerToChange);
+        if(layerToChange.length){
+            await this.createImageLayers(layerToChange);
+        }
+        
+        for(let layer of this.loadingImageLayerKeys){
+            this.loadingImageLayers[layer].fetchTextures();
+        }
     }
 
     createWorldViewMatrices(){
@@ -291,31 +317,31 @@ class WebGLClientRenderer {
         glMatrix.mat4.identity(this.worldTranslateMatrix);
     }
 
-    async createImageLayers(newLayerSourceIdArray){
+    async createImageLayers(newLayers){
         //mark base layer for 100% opacity application.
         var baseLayer = true;
-        var layerAlpha = 1 / (newLayerSourceIdArray.length);
         //console.log(layerAlpha);
         //select last imageLayerKey in the list as the index else reset with 0
-        let layerIndex = this.imageLayerKeys.length ? parseInt(this.imageLayerKeys[this.imageLayerKeys.length-1])+1 : 0;
-        console.log("layerIndex",layerIndex);
-        for(let source of newLayerSourceIdArray){
-            this.loadingImageLayers[layerIndex] = new RenderSourceLayer(this.gl,this.programInfo,source,baseLayer,layerAlpha);
-            this.loadingImageLayers[layerIndex].setColorTable();
+        //let layerIndex = this.imageLayerKeys.length ? parseInt(this.imageLayerKeys[this.imageLayerKeys.length-1])+1 : 0;
+        //console.log("layerIndex",layerIndex);
+        for(let layer of newLayers){
+            this.loadingImageLayers[layer.id] = new RenderSourceLayer(this.gl, this.programInfo, layer.id, layer.image.sourceId, baseLayer, layer.opacity);
+            this.loadingImageLayers[layer.id].setColorTable();
             //await this.loadingImageLayers[layerIndex].setSourceParams(source);
-            this.loadingImageLayers[layerIndex].createShapeVertexBuffers();//Needs to be per frame
-            this.loadingImageLayers[layerIndex].setMatrices({
+            this.loadingImageLayers[layer.id].createShapeVertexBuffers();//Needs to be per frame
+            this.loadingImageLayers[layer.id].setMatrices({
                 identityMatrix  : this.identityMatrix,
                 worldMatrix     : this.worldMatrix,
                 viewMatrix      : this.viewMatrix,
                 projMatrix      : this.projMatrix,
                 cameraMatrix    : this.cameraMatrix
             });
-            this.loadingImageLayers[layerIndex].createViewMatricesAndObjects(this.cameraDist);//Needs to be per frame
+            this.loadingImageLayers[layer.id].createViewMatricesAndObjects(this.cameraDist);//Needs to be per frame
             baseLayer = false;
-            this.loadingImageLayerKeys.push(layerIndex);
-            layerIndex++;
+            this.loadingImageLayerKeys.push(layer.id);
+            //layerIndex++;
         }
+        this.switchToNewImageLayers = true;
         console.log("createImageLayers loadingImageLayers",this.loadingImageLayers);
     }
 
@@ -391,12 +417,13 @@ class WebGLClientRenderer {
         console.log("before: loadingImageLayerKeys", this.loadingImageLayerKeys);
         this.tempImageLayers = {...this.imageLayers, ...this.loadingImageLayers};
         console.log("tempImageLayers",this.tempImageLayers);
+        console.log("layerSources",this.layerSources);
         //this.imageLayerKeys = [...this.imageLayerKeys, ...this.loadingImageLayerKeys];
         this.imageLayers = {};
         this.imageLayerKeys = [];
-        for(let source of this.layerSources){
+        for(let id of this.layerSources){
             for(let layerKey of Object.keys(this.tempImageLayers)){
-                if(this.tempImageLayers[layerKey].sourceId == source){
+                if(this.tempImageLayers[layerKey].id == id){
                     this.imageLayers[layerKey] = this.tempImageLayers[layerKey];
                     this.imageLayerKeys.push(layerKey);
                     break;
@@ -405,6 +432,7 @@ class WebGLClientRenderer {
         }
         this.loadingImageLayers = {};
         this.loadingImageLayerKeys = [];
+        this.tempImageLayers = {};
         console.log("after: imageLayers", this.imageLayers);
         console.log("after: imageLayerKeys", this.imageLayerKeys);
     }
@@ -495,70 +523,89 @@ class WebGLClientRenderer {
     async requestMovieButton(){
         //basic input validation
         //this.validateUIRequestInput();
-        
+        console.log("this.dateTimeString",this.dateTimeString);
+
         console.log("layerSourcesBefore",this.layerSources);
         //pause all layers
         /*for(let layer of this.imageLayerKeys){
             this.imageLayers[layer].updatePlayPause(false);//set play movie state to false
         }*/
         //set new layer sources
-        this.UILayerSources = this.getUIImageLayers();
-        const newLayerSourceIdArray = this.compareLayerSources(this.UILayerSources);
-        
-        if(newLayerSourceIdArray.length){
-            await this.createImageLayers(newLayerSourceIdArray);
+        this.UILayerSources = this.getUIImageSources();
+        this.UIAccordionLayers = this.getUIAccordionLayers();
+        let addedLayers = this.determineAddedLayers();
+        this.determineRemovedLayersAndRemoveThem();
+        console.log("added layers: ", addedLayers);
+        if(addedLayers.length){
+            await this.createImageLayers(addedLayers);
         }
         
         for(let layer of this.loadingImageLayerKeys){
             this.loadingImageLayers[layer].fetchTextures();
         }
-        this.layerSources = this.UILayerSources;
+
+        this.layerSources = this.UIAccordionLayers.map(layer => layer.id);
         console.log("layerSourcesAfter",this.layerSources);
         console.log("imageLayers", this.imageLayers);
         
     }
 
-    getUIImageLayers(){
+    getUIAccordionLayers(){
         let newAccordionLayerSources = [];
         for(let layer of helioviewer.viewport._tileLayerManager._layers){
-            newAccordionLayerSources.push(layer.image.sourceId);
+            newAccordionLayerSources.push(layer);
         }
         //set new layer sources
         return newAccordionLayerSources;
     }
 
-    compareLayerSources(UILayerSources){
-        //determine which sourceIds were added
-        let addedSourceIds = UILayerSources.filter((source)=>{
-            if(!this.layerSources.includes(source)){
-                return source;
-            }
-        });
-        console.log("addedSourceIds",addedSourceIds);
-        //determine which sourceIds were removed
-        let removedSourceIds = this.layerSources.filter((source)=>{
-            if(!UILayerSources.includes(source)){
-                return source;
-            }
-        });
-        console.log("removedSourceIds",removedSourceIds);
-        //toggle flag to switch once layers load
-        if(addedSourceIds.length){
-            this.switchToNewImageLayers = true;
+    getUIImageSources(){
+        let newAccordionLayerSources = [];
+        for(let layer of helioviewer.viewport._tileLayerManager._layers){
+            newAccordionLayerSources.push(layer);
         }
-        //drop the layers now
-        if(removedSourceIds.length){
+        //set new layer sources
+        return newAccordionLayerSources.map(layer => layer.image.sourceId);
+    }
 
+    determineAddedLayers() {
+        let addedLayers = [];
+        let newDateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
+        //when the time doesn't change we must determine which layers were added
+        if(newDateTimeString == this.dateTimeString){
+            console.log("time same: finding and loading necessary new layers if any");
+            let UIIdArray = this.UIAccordionLayers.map(val => val.id);
+            let RenderIdArray = Object.values(this.imageLayers).map(val => val.id);
+            let addedUIIdsArray = UIIdArray.filter(id => !RenderIdArray.includes(id));
+            if(addedUIIdsArray.length){
+                for(let layer of this.UIAccordionLayers){
+                    if(addedUIIdsArray.includes(layer.id)){
+                        addedLayers.push(layer);
+                    }
+                }
+                this.switchToNewImageLayers = true;
+            }
+            return addedLayers;
+        }else{//otherwise when the time changes we need to reload all layers.
+            console.log("time changed: loading all layers")
+            this.switchToNewImageLayers = true;
+            this.dateTimeString = newDateTimeString;
+            return this.UIAccordionLayers;
+        }
+    }
+
+    determineRemovedLayersAndRemoveThem() {
+        let UIIdArray = this.UIAccordionLayers.map(val => val.id);
+        let RenderIdArray = Object.values(this.imageLayers).map(val => val.id);
+        let removedUIIdsArray = RenderIdArray.filter(id => !UIIdArray.includes(id));
+        if(removedUIIdsArray.length){
             for(let layer of this.imageLayerKeys){
-                if(removedSourceIds.includes(this.imageLayers[layer].sourceId)){
+                if(removedUIIdsArray.includes(this.imageLayers[layer].id)){
                     delete this.imageLayers[layer];
                 }
             }
-            console.log("imageLayerKeys before:", this.imageLayerKeys);
             this.imageLayerKeys = Object.keys(this.imageLayers);
-            console.log("imageLayerKeys after:", this.imageLayerKeys);
         }
-        return addedSourceIds;
     }
     
     validateUIRequestInput(){

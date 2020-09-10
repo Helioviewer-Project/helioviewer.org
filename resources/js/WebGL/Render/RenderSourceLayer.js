@@ -1,7 +1,8 @@
 class RenderSourceLayer {
-    constructor(gl,programInfo,sourceId,baseLayer,alpha){
+    constructor(gl,programInfo,id,sourceId,baseLayer,alpha){
         this.gl = gl;
         this.programInfo = programInfo;
+        this.id = id;
         this.sourceId = sourceId;
         this.renderReel = []; //formerly this.textures
         this.colorTable;
@@ -26,7 +27,7 @@ class RenderSourceLayer {
 
     async setColorTable(){
         const colorTableName = this.sourceName.colorTableName;
-        console.log('setcolortable',colorTableName);
+        //console.log('setcolortable',colorTableName);
         const textureOptions = {
             src: colorTableName,
             internalFormat: this.gl.RGB,
@@ -39,29 +40,6 @@ class RenderSourceLayer {
 
         await new Promise(r => {this.colorTable = twgl.createTexture(this.gl,textureOptions,r)});
     }
-
-    //Gets information for image centering and scale
-    //TODO:
-    // This is a mess, maybe extract into a helper file
-    /*async setSourceParams(sourceId){
-        var input = this.prepareInputBeforeFrames();
-        var getClosestImageURL = Helioviewer.api + "/?action=getClosestImage&sourceId="+this.sourceId+"&date="+new Date(input.timeStart * 1000).toISOString();
-        await fetch(getClosestImageURL).then(res => {return res.json()}).then(data => {
-            console.log(data);
-            this.imageID = data.id;
-            this.maxResPixels = data.width;
-            this.arcSecPerPix = data.scale;
-            this.centerPixelX = data.refPixelX;
-            this.centerPixelY = data.refPixelY;
-            this.planeWidth = this.arcSecondRatio*this.maxResPixels*this.arcSecPerPix / 1000;
-            this.solarProjectionScale = this.RSUN_OBS / this.planeWidth;
-            this.planeOffsetX = (this.centerPixelX - (this.maxResPixels * 0.5) ) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
-            this.planeOffsetY = (this.centerPixelY - (this.maxResPixels * 0.5)) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
-            if(!this.drawSphere){
-                this.solarProjectionScale /= this.planeWidth/2.5;
-            }
-        });
-    }*/
 
     //Needs to be per frame
     createShapeVertexBuffers(){
@@ -194,13 +172,14 @@ class RenderSourceLayer {
     }*/
 
     async fetchTextures(){
+        console.log("fetching textures for: ",this);
         var newRenderReel = [];
         this.inputTemporalParams = this.prepareInputBeforeFrames();
         var loadingStatusDOM = document.getElementById("loading-status");
 
         //create callback to check all frames are ready
         const isReady = (time) => {
-            console.log('fetchTextures-isReady-callback',time);
+            //console.log('fetchTextures-isReady-callback',time);
             var ready = true;
             //console.log(newRenderReel);
             if(newRenderReel.length == this.inputTemporalParams.numFrames){
@@ -213,7 +192,7 @@ class RenderSourceLayer {
                     loadingStatusDOM.innerText = "Loaded " + this.inputTemporalParams.numFrames + " frames"
                     this.renderReel = newRenderReel;
                     this.layerReady = true;
-                    console.log("fetchTextures-isReady-actually ready, should fire once per layer",time);
+                    console.log("fetchTextures-isReady-actually ready, should fire once per layer",time,this);
                 }
             }
         }
@@ -254,8 +233,8 @@ class RenderSourceLayer {
 
     prepareInputBeforeFrames(){
         var dateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
-        var startDate = parseInt(new Date(dateTimeString).getTime() / 1000) - 86400 * 30 * 6;//-48hrs
-        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000);
+        var startDate = parseInt(new Date(dateTimeString).getTime() / 1000);//-48hrs
+        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000)+ 86400 * 2;
         var numFramesInput = parseInt(1);
         var reduceInput = parseInt(0);
 
@@ -352,7 +331,7 @@ class RenderSourceLayer {
 
     updatePlayPause(playMovieState){
         this.playMovieState = playMovieState;
-        console.log("Layer " + this.sourceId + " movie playing state changed to: " + this.playMovieState);
+        //console.log("Layer " + this.sourceId + " movie playing state changed to: " + this.playMovieState);
     }
 
     degreesToRad(deg){

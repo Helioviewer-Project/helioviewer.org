@@ -239,7 +239,18 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
 
         // Update associated JPEG 2000 image
         layer.image.updateDataSource(hierarchySelected, sourceId, difference);
-		$(document).trigger("save-tile-layers");
+        $(document).trigger("save-tile-layers");
+        
+        console.log('update-data-source');
+        var args = {
+            id: id,
+            sourceId: sourceId,
+            name: name,
+            layeringOrder: layeringOrder,
+            difference: difference
+        }
+        var updateDataSourceEvent = new CustomEvent('update-data-source', {bubbles: true, cancelable: true, detail: args});
+        window.dispatchEvent(updateDataSourceEvent);
         // Update opacity (also triggers save-tile-layers event)
         //opacity = this._computeLayerStartingOpacity(layer.layeringOrder, true);
         //$("#opacity-slider-track-" + id).slider("value", opacity);

@@ -367,6 +367,7 @@ var TileLayerAccordion = Layer.extend(
         });
 
         $(document).trigger("tile-layer-data-source-changed", [id, selected, sourceId, name, layerOrder, difference]);
+        
     },
     
     /**
