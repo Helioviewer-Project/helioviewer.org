@@ -266,6 +266,7 @@ class WebGLClientRenderer {
 
     updateLayerOrder(newLayerOrder){
         this.imageLayerKeys = newLayerOrder;
+        this.setBaseLayer();
     }
 
     async changeLayerDataSource(id, sourceId){
