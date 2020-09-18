@@ -86,17 +86,12 @@ class WebGLClientRenderer {
             console.log("your browser does not support webgl :[");
         }
 
-        // if you need to change size do both of these to inform gl
-        // canvas.width = window.innerWidth;
-        // canvas.height = window.innerHeight;
-        // gl.viewport(0,0, window.innerWidth, window.innerHeight);
-
         this.gl.clearColor(this.clearLuminance,this.clearLuminance,this.clearLuminance,1.0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
         
         this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE);
         this.gl.enable(this.gl.BLEND);
-        //gl.enable(gl.DEPTH_TEST); // will perform a depth test on the raster for every pixel in the fragment
+        //this.gl.enable(this.gl.DEPTH_TEST); // will perform a depth test on the raster for every pixel in the fragment
         this.gl.enable(this.gl.CULL_FACE); // removes a face from being rastered
         this.gl.frontFace(this.gl.CCW); // counter clockwise ordering of vertices determiens the front face
         this.gl.cullFace(this.gl.BACK); // explicitly performs the cull on the back faces, can be used on the front
@@ -259,7 +254,7 @@ class WebGLClientRenderer {
         });
         window.addEventListener('request-new-textures',e=>{
             console.log("caught request-new-textures")
-            helioviewer._webGLClient.requestMovieButton();
+            helioviewer._webGLClient.requestMovie();
         });
         window.addEventListener('update-data-source',e=>{
             helioviewer._webGLClient.changeLayerDataSource(e.detail.id, e.detail.sourceId);
@@ -320,12 +315,8 @@ class WebGLClientRenderer {
     async createImageLayers(newLayers){
         //mark base layer for 100% opacity application.
         var baseLayer = true;
-        //console.log(layerAlpha);
-        //select last imageLayerKey in the list as the index else reset with 0
-        //let layerIndex = this.imageLayerKeys.length ? parseInt(this.imageLayerKeys[this.imageLayerKeys.length-1])+1 : 0;
-        //console.log("layerIndex",layerIndex);
         for(let layer of newLayers){
-            this.loadingImageLayers[layer.id] = new RenderSourceLayer(this.gl, this.programInfo, layer.id, layer.image.sourceId, baseLayer, layer.opacity);
+            this.loadingImageLayers[layer.id] = new RenderSourceLayer(this.gl, this.programInfo, layer.id, layer.image.sourceId, baseLayer, layer.opacity, layer.visible);
             this.loadingImageLayers[layer.id].setColorTable();
             //await this.loadingImageLayers[layerIndex].setSourceParams(source);
             this.loadingImageLayers[layer.id].createShapeVertexBuffers();//Needs to be per frame
@@ -435,6 +426,21 @@ class WebGLClientRenderer {
         this.tempImageLayers = {};
         console.log("after: imageLayers", this.imageLayers);
         console.log("after: imageLayerKeys", this.imageLayerKeys);
+        this.setBaseLayer();
+    }
+
+    setBaseLayer(){
+        let baseLayerSet = false;
+        for(let layerKey of this.imageLayerKeys){
+            const layer = this.imageLayers[layerKey];
+            if(!baseLayerSet && layer.visible && layer.alpha > 0){
+                layer.baseLayer = true;
+                baseLayerSet = true;
+            }
+            else{
+                layer.baseLayer = false;
+            }
+        }
     }
 
     resizeCameraView(){
@@ -520,7 +526,7 @@ class WebGLClientRenderer {
         return deg * Math.PI/180;
     }
     
-    async requestMovieButton(){
+    async requestMovie(){
         //basic input validation
         //this.validateUIRequestInput();
         console.log("this.dateTimeString",this.dateTimeString);
@@ -545,9 +551,22 @@ class WebGLClientRenderer {
         }
 
         this.layerSources = this.UIAccordionLayers.map(layer => layer.id);
+
+        //requestMovie is caught when opacity or visibility on any given layer changes.
+        this.changeLayerOpacityAndVisibility();
         console.log("layerSourcesAfter",this.layerSources);
         console.log("imageLayers", this.imageLayers);
         
+    }
+
+    changeLayerOpacityAndVisibility(){
+        for(let layer of this.UIAccordionLayers){
+            if(typeof(this.imageLayers[layer.id]) != undefined){
+                this.imageLayers[layer.id].setAlpha(layer.opacity);
+                this.imageLayers[layer.id].setVisible(layer.visible);
+            }
+        }
+        this.setBaseLayer();
     }
 
     getUIAccordionLayers(){
@@ -588,6 +607,8 @@ class WebGLClientRenderer {
             return addedLayers;
         }else{//otherwise when the time changes we need to reload all layers.
             console.log("time changed: loading all layers")
+            this.loadingImageLayers = {};
+            this.loadingImageLayerKeys = [];
             this.switchToNewImageLayers = true;
             this.dateTimeString = newDateTimeString;
             return this.UIAccordionLayers;

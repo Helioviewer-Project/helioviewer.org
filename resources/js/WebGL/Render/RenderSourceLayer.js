@@ -1,28 +1,40 @@
 class RenderSourceLayer {
-    constructor(gl,programInfo,id,sourceId,baseLayer,alpha){
+    constructor(gl,programInfo,id,sourceId,baseLayer,alpha,visible){
         this.gl = gl;
         this.programInfo = programInfo;
         this.id = id;
         this.sourceId = sourceId;
         this.renderReel = []; //formerly this.textures
         this.colorTable;
+        this.blackTexture;//used for drawing a black half-dome which prevents image phasing due to transparency of the half dome texture.
+        this.currentFrame;//RenderFrame object reference to current frame
         //this.solarProjectionScale = 0.3985;//0.388 rough esitmate for projection when RSUN_OBS=1;
         this.RSUN_OBS = 0.97358455;//sun radius in arcseconds / 1000
         this.arcSecondRatio = 1.0 / this.RSUN_OBS;
         this.baseLayer = baseLayer;
 
-        if(baseLayer){
-            this.alpha = 1.0;
-        }else{
-            this.alpha = alpha;
-        }
-        this.alpha = 1.0;
+        this.alpha = alpha/100.0;
+        
+        this.visible = (visible == true);//visible can be "1", "0", true, or false from the UI input;
 
         this.sourceName = new SourceLayerHelper(sourceId);
         this.drawSphere = this.sourceName.drawSphere;
 
         this.playMovieState = true;
         this.layerReady = false;
+
+        console.log(this.sourceName,"alpha:"+this.alpha);
+    }
+
+    setAlpha(newOpacity){
+        this.alpha = newOpacity / 100.0;
+        this.drawInfo[0][0].uniforms.uAlpha = this.alpha;
+        this.drawInfo[1][0].uniforms.uAlpha = this.alpha;
+    }
+    
+    setVisible(newVisible){
+        //newVisible can be "1", "0", true, or false from the UI input;
+        this.visible = (newVisible == true);
     }
 
     async setColorTable(){
@@ -39,6 +51,18 @@ class RenderSourceLayer {
         }
 
         await new Promise(r => {this.colorTable = twgl.createTexture(this.gl,textureOptions,r)});
+        await this.createBlackTexture();
+    }
+
+    async createBlackTexture(){
+        const textureOptions = {
+            src: [0,0,0,255],
+            mag: this.gl.NEAREST,
+            min: this.gl.NEAREST,
+            wrapS: this.gl.CLAMP_TO_EDGE,
+            wrapT: this.gl.CLAMP_TO_EDGE
+        }
+        await new Promise(r => {this.blackTexture = twgl.createTexture(this.gl,textureOptions,r)});
     }
 
     //Needs to be per frame
@@ -141,9 +165,11 @@ class RenderSourceLayer {
     }
     
     updateFrameCounter(frameNumber){
-        if(this.playMovieState){
-            this.frameCounter = (frameNumber % this.renderReel.length) + 1;;
-            //this.frameCounter = Math.floor((performance.now() / 1000 * 30 )% this.textures.length) + 1;
+        if(this.visible){
+            if(this.playMovieState){
+                this.frameCounter = (frameNumber % this.renderReel.length) + 1;;
+                //this.frameCounter = Math.floor((performance.now() / 1000 * 30 )% this.textures.length) + 1;
+            }
         }
         //glMatrix.mat4.ortho(this.projMatrix, -camera.cameraDist, camera.cameraDist, -camera.cameraDist, camera.cameraDist, 0.1, 1000.0);
     }
@@ -233,9 +259,9 @@ class RenderSourceLayer {
 
     prepareInputBeforeFrames(){
         var dateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
-        var startDate = parseInt(new Date(dateTimeString).getTime() / 1000);//-48hrs
-        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000)+ 86400 * 2;
-        var numFramesInput = parseInt(1);
+        var startDate = parseInt(new Date(dateTimeString).getTime() / 1000);
+        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400 ;
+        var numFramesInput = parseInt(10);
         var reduceInput = parseInt(0);
 
         //scale down 4k SDO images in half, twice, down to 1k
@@ -262,66 +288,85 @@ class RenderSourceLayer {
     }
 
     bindTexturesAndUniforms(){
-        const currentFrame = this.renderReel[this.frameCounter-1];
-        this.drawInfo[0][0].uniforms.sunSampler = currentFrame.texture;
-        this.drawInfo[1][0].uniforms.sunSampler = currentFrame.texture;
+        if(this.visible){
+            this.currentFrame = this.renderReel[this.frameCounter-1];
+            this.drawInfo[0][0].uniforms.sunSampler = this.currentFrame.texture;
+            this.drawInfo[1][0].uniforms.sunSampler = this.currentFrame.texture;
 
-        this.drawInfo[0][0].uniforms.scale = currentFrame.solarProjectionScale*this.cameraDist;
-        this.drawInfo[1][0].uniforms.scale = currentFrame.solarProjectionScale*this.cameraDist;
+            this.drawInfo[0][0].uniforms.scale = this.currentFrame.solarProjectionScale*this.cameraDist;
+            this.drawInfo[1][0].uniforms.scale = this.currentFrame.solarProjectionScale*this.cameraDist;
 
-        this.drawInfo[0][0].uniforms.uXOffset = currentFrame.planeOffsetX;
-        this.drawInfo[1][0].uniforms.uXOffset = currentFrame.planeOffsetX;
+            this.drawInfo[0][0].uniforms.uXOffset = this.currentFrame.planeOffsetX;
+            this.drawInfo[1][0].uniforms.uXOffset = this.currentFrame.planeOffsetX;
 
-        this.drawInfo[0][0].uniforms.uYOffset = currentFrame.planeOffsetY;
-        this.drawInfo[1][0].uniforms.uYOffset = currentFrame.planeOffsetY;
+            this.drawInfo[0][0].uniforms.uYOffset = this.currentFrame.planeOffsetY;
+            this.drawInfo[1][0].uniforms.uYOffset = this.currentFrame.planeOffsetY;
 
-        //glMatrix.mat4.lookAt(this.spacecraftViewMatrix, this.origin, currentFrame.satellitePositionMatrix, this.up );
+            //glMatrix.mat4.lookAt(this.spacecraftViewMatrix, this.origin, currentFrame.satellitePositionMatrix, this.up );
 
-        //this.drawInfo[0][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
-        //this.drawInfo[1][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
+            //this.drawInfo[0][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
+            //this.drawInfo[1][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
 
-        this.drawInfo[0][0].bufferInfo = currentFrame.planeBuffer;
-        this.drawInfo[1][0].bufferInfo = currentFrame.sphereBuffer;
+            this.drawInfo[0][0].bufferInfo = this.currentFrame.planeBuffer;
+            this.drawInfo[1][0].bufferInfo = this.currentFrame.sphereBuffer;
 
-        this.drawInfo[0][0].uniforms.planeWidth = currentFrame.planeWidth;
-        this.drawInfo[1][0].uniforms.planeWidth = currentFrame.planeWidth;
+            this.drawInfo[0][0].uniforms.planeWidth = this.currentFrame.planeWidth;
+            this.drawInfo[1][0].uniforms.planeWidth = this.currentFrame.planeWidth;
+        }
     }
 
     drawPlanes(){
-        this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
-        this.gl.enable(this.gl.BLEND);
-        this.gl.disable(this.gl.DEPTH_TEST);
-        twgl.drawObjectList(this.gl, this.drawInfo[0]);
+        if(this.visible){
+            this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
+            this.gl.enable(this.gl.BLEND);
+            this.gl.disable(this.gl.DEPTH_TEST);
+            twgl.drawObjectList(this.gl, this.drawInfo[0]);
+        }
     }
 
     drawReversePlanes(){
-        this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
-        this.gl.enable(this.gl.BLEND);
-        this.gl.disable(this.gl.DEPTH_TEST);
-        //rotate and draw reverse plane
-        glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, -this.planeRotateRadians, this.planeRotateUpVector);
-        this.drawInfo[0][0].uniforms.uReversePlane = true;
-        twgl.drawObjectList(this.gl, this.drawInfo[0]);
-        //restore standard plane
-        glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.planeRotateRadians, this.planeRotateUpVector);
-        this.drawInfo[0][0].uniforms.uReversePlane = false;
-    }
-
-    drawSpheres(){
-        if(this.drawSphere){
-            /*
-            //draw coronal reverse planes
+        if(this.visible){
+            this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
+            this.gl.enable(this.gl.BLEND);
+            this.gl.disable(this.gl.DEPTH_TEST);
+            //rotate and draw reverse plane
             glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, -this.planeRotateRadians, this.planeRotateUpVector);
             this.drawInfo[0][0].uniforms.uReversePlane = true;
             twgl.drawObjectList(this.gl, this.drawInfo[0]);
             //restore standard plane
             glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.planeRotateRadians, this.planeRotateUpVector);
             this.drawInfo[0][0].uniforms.uReversePlane = false;
-            */
-            this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
-            this.gl.enable(this.gl.BLEND);
-            this.gl.disable(this.gl.DEPTH_TEST);
-            twgl.drawObjectList(this.gl, this.drawInfo[1]);
+        }
+    }
+
+    drawSpheres(){
+        if(this.visible){
+            if(this.drawSphere){
+                /*
+                //draw coronal reverse planes
+                glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, -this.planeRotateRadians, this.planeRotateUpVector);
+                this.drawInfo[0][0].uniforms.uReversePlane = true;
+                twgl.drawObjectList(this.gl, this.drawInfo[0]);
+                //restore standard plane
+                glMatrix.mat4.rotate(this.planeViewMatrix, this.identityMatrix, this.planeRotateRadians, this.planeRotateUpVector);
+                this.drawInfo[0][0].uniforms.uReversePlane = false;
+                */
+                //draw a black half-dome to fix phasing caused by non-100% opacity selection of layer.
+                if(this.baseLayer){
+                    this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
+                    this.gl.enable(this.gl.BLEND);
+                    //this.gl.disable(this.gl.DEPTH_TEST);
+                    this.drawInfo[1][0].uniforms.sunSampler = this.blackTexture;
+                    this.drawInfo[1][0].uniforms.uAlpha = 1.0;
+                    twgl.drawObjectList(this.gl, this.drawInfo[1]);
+                    this.drawInfo[1][0].uniforms.sunSampler = this.currentFrame.texture;
+                    this.drawInfo[1][0].uniforms.uAlpha = this.alpha;
+                }
+                this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
+                this.gl.enable(this.gl.BLEND);
+                this.gl.disable(this.gl.DEPTH_TEST);
+                twgl.drawObjectList(this.gl, this.drawInfo[1]);
+            }
         }
     }
 
