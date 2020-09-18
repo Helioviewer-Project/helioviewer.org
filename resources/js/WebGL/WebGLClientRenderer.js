@@ -537,7 +537,6 @@ class WebGLClientRenderer {
             this.imageLayers[layer].updatePlayPause(false);//set play movie state to false
         }*/
         //set new layer sources
-        this.UILayerSources = this.getUIImageSources();
         this.UIAccordionLayers = this.getUIAccordionLayers();
         let addedLayers = this.determineAddedLayers();
         this.determineRemovedLayersAndRemoveThem();
@@ -575,16 +574,7 @@ class WebGLClientRenderer {
             newAccordionLayerSources.push(layer);
         }
         //set new layer sources
-        return newAccordionLayerSources;
-    }
-
-    getUIImageSources(){
-        let newAccordionLayerSources = [];
-        for(let layer of helioviewer.viewport._tileLayerManager._layers){
-            newAccordionLayerSources.push(layer);
-        }
-        //set new layer sources
-        return newAccordionLayerSources.map(layer => layer.image.sourceId);
+        return newAccordionLayerSources.reverse();
     }
 
     determineAddedLayers() {

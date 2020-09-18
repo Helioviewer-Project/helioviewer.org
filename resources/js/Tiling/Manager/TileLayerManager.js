@@ -103,7 +103,7 @@ var TileLayerManager = LayerManager.extend(
         );
 
         //console.log("idOrder",idOrder);
-        let updateLayerOrderEvent = new CustomEvent('update-layer-order',{bubbles: true, cancelable: true, detail: { layerOrder: Object.values(idOrder) }});
+        let updateLayerOrderEvent = new CustomEvent('update-layer-order',{bubbles: true, cancelable: true, detail: { layerOrder: Object.values(idOrder).reverse() }});
         window.dispatchEvent(updateLayerOrderEvent);
         
         //change Layers Order
