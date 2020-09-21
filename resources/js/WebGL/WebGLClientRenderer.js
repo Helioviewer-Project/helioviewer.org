@@ -126,7 +126,7 @@ class WebGLClientRenderer {
                 float texPosX = (position.x-uXOffset) / scale / planeWidth;
                 float texPosY = (position.y+uYOffset)/ scale / planeWidth;
                 float texPosZ = position.z / scale / planeWidth;
-                vec4 texPos = mView * vec4(texPosX, texPosY, texPosZ, 1.0);
+                vec4 texPos = vec4(texPosX, texPosY, texPosZ, 1.0);
                 vec2 texPosOffset = vec2((texPos.x)*scale + 0.5, 1.0 - (texPos.y*scale + 0.5));
                 fragTexCoord = texPosOffset.xy;
             }else{
@@ -295,8 +295,8 @@ class WebGLClientRenderer {
         glMatrix.mat4.identity(this.identityMatrix);
         glMatrix.mat4.identity(this.worldMatrix);
         glMatrix.mat4.identity(this.cameraMatrix);
-        glMatrix.mat4.lookAt(this.viewMatrix, [0,0,-100], [0,0,0], [0,1,0]);
-        glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.1, 100000.0);
+        glMatrix.mat4.lookAt(this.viewMatrix, [0,0,-100], [0,0,0], [0,1,0]);// out matrix, eye loc, look at loc, up vector 
+        glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.1, 1000000.0);
 
         this.xRotationMatrix = new Float32Array(16);
         this.yRotationMatrix = new Float32Array(16);
@@ -311,6 +311,9 @@ class WebGLClientRenderer {
         this.worldTranslateMatrix = new Float32Array(16);
         glMatrix.mat4.identity(this.worldRotateMatrix);
         glMatrix.mat4.identity(this.worldTranslateMatrix);
+
+        this.rotateAxisY = glMatrix.vec3.fromValues(0,1,0);
+        this.rotateAxisX = glMatrix.vec3.fromValues(1,0,0);
     }
 
     async createImageLayers(newLayers){
@@ -361,12 +364,6 @@ class WebGLClientRenderer {
 
             this.updateGlobalFrameCounter();
 
-            //draw reverse planes
-            for(let layer of this.imageLayerKeys){
-                this.imageLayers[layer].updateFrameCounter(this.frameNumber);
-                this.imageLayers[layer].bindTexturesAndUniforms();
-                this.imageLayers[layer].drawReversePlanes();
-            }
             //draw planes
             for(let layer of this.imageLayerKeys){
                 this.imageLayers[layer].updateFrameCounter(this.frameNumber);//update frame counter, used for choosing texture
@@ -378,6 +375,12 @@ class WebGLClientRenderer {
                 this.imageLayers[layer].updateFrameCounter(this.frameNumber);
                 this.imageLayers[layer].bindTexturesAndUniforms();
                 this.imageLayers[layer].drawSpheres();
+            }
+            //draw reverse planes
+            for(let layer of this.imageLayerKeys){
+                this.imageLayers[layer].updateFrameCounter(this.frameNumber);
+                this.imageLayers[layer].bindTexturesAndUniforms();
+                this.imageLayers[layer].drawReversePlanes();
             }
         }
         //request new frame
@@ -434,7 +437,7 @@ class WebGLClientRenderer {
         let baseLayerSet = false;
         for(let layerKey of this.imageLayerKeys){
             const layer = this.imageLayers[layerKey];
-            if(!baseLayerSet && layer.visible && layer.alpha > 0){
+            if(!baseLayerSet && layer.visible && layer.drawSphere && layer.alpha > 0){
                 layer.baseLayer = true;
                 baseLayerSet = true;
             }
@@ -471,17 +474,29 @@ class WebGLClientRenderer {
             //console.log(layer);
             this.imageLayers[layer].setCameraDistScale(this.cameraDist,this.projMatrix);
         }
+        //do the rotation and translation based on input
+
         if(this.rightMouseDown){
-            glMatrix.mat4.rotate(this.yRotationMatrix, this.identityMatrix, this.degreesToRad(this.mouseRotationOffset.x * this.mouseSensitivity) , [0,1,0]);//rotating around y-axis uses offset from input on x-axis
-            glMatrix.mat4.rotate(this.xRotationMatrix, this.identityMatrix, this.degreesToRad(this.mouseRotationOffset.y * this.mouseSensitivity) , [1,0,0]);//rotating around x-axis uses offset from input on y-axis
+            glMatrix.mat4.rotate(this.yRotationMatrix, this.identityMatrix, this.degreesToRad(this.mouseRotationOffset.x * this.mouseSensitivity) , this.rotateAxisY);//rotating around y-axis uses offset from input on x-axis
+            glMatrix.mat4.rotate(this.xRotationMatrix, this.identityMatrix, this.degreesToRad(this.mouseRotationOffset.y * this.mouseSensitivity) , this.rotateAxisX);//rotating around x-axis uses offset from input on y-axis
+            this.mouseRotationOffset.x = 0.0;
+            this.mouseRotationOffset.y = 0.0;
         }else if(this.leftMouseDown){
             glMatrix.mat4.translate(this.yTranslationMatrix, this.identityMatrix, glMatrix.vec3.fromValues(0,this.mouseTranslationOffset.y * this.translateSensitivity,0));
             glMatrix.mat4.translate(this.xTranslationMatrix, this.identityMatrix, glMatrix.vec3.fromValues(-this.mouseTranslationOffset.x * this.translateSensitivity,0,0));
+            this.mouseTranslationOffset.x = 0.0;
+            this.mouseTranslationOffset.y = 0.0;
         }
+        //join the x/y matrices
         glMatrix.mat4.mul(this.worldRotateMatrix, this.yRotationMatrix, this.xRotationMatrix);
         glMatrix.mat4.mul(this.worldTranslateMatrix, this.yTranslationMatrix, this.xTranslationMatrix);
-        glMatrix.mat4.mul(this.worldMatrix, this.worldTranslateMatrix, this.worldRotateMatrix);
-
+        //apply the rotation and translation to the view matrix
+        glMatrix.mat4.mul(this.viewMatrix, this.viewMatrix, this.worldRotateMatrix);
+        this.mouseRotationOffset.x = 0.0;
+        this.mouseRotationOffset.y = 0.0;
+        glMatrix.mat4.mul(this.viewMatrix, this.viewMatrix, this.worldTranslateMatrix);
+        this.mouseTranslationOffset.x = 0.0;
+        this.mouseTranslationOffset.y = 0.0;
     }
 
     look(){
