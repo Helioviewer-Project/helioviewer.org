@@ -58,7 +58,10 @@ class WebGLClientRenderer {
         this.mouseSensitivity = 0.15;
         this.zoomSensitivity = 0.05;
         this.translateSensitivity = 0.002;
-        this.cameraDist= 2;
+        this.cameraDist = 2;
+        this.viewLocationEye = new Float32Array(3);
+        this.viewLocationCenter = new Float32Array(3);
+        this.up = [0,1,0];
 
         this.clearLuminance = 0.0;
 
@@ -70,6 +73,10 @@ class WebGLClientRenderer {
         this.loadingImageLayerKeys = [];
         this.loadingImageLayers = {};
         this.switchToNewImageLayers = false;
+
+        this.screenCoords = {};
+        this.screenCoords.clipSpace = {};
+        this.screenCoords.worldSpace = {};
     }
 
     initGL(){
@@ -123,7 +130,7 @@ class WebGLClientRenderer {
             if(uProjection && !uReversePlane){
                 vec4 pos = mCamera * mView * mWorld * mSpacecraft * mPlane * vec4(position, 1.0);
                 gl_Position = pos;
-                float texPosX = (position.x-uXOffset) / scale / planeWidth;
+                float texPosX = (position.x-uXOffset) / -scale / planeWidth;
                 float texPosY = (position.y+uYOffset)/ scale / planeWidth;
                 float texPosZ = position.z / scale / planeWidth;
                 vec4 texPos = vec4(texPosX, texPosY, texPosZ, 1.0);
@@ -188,6 +195,7 @@ class WebGLClientRenderer {
         canvas.addEventListener('mousemove', evt => {
             if(this.rightMouseDown){
                 var mousePosition = this.getMousePos(canvas, evt);
+                //this.mouseClipSpacePosition = this.normalizeMousePos(canvas, mousePosition);
                 this.mouseDelta.x = mousePosition.x - this.lastMousePosition.x;
                 this.mouseDelta.y = this.lastMousePosition.y - mousePosition.y;
     
@@ -214,9 +222,12 @@ class WebGLClientRenderer {
             if(evt.button == 2){// right mouse button
                 this.rightMouseDown = true;
                 this.lastMousePosition = this.getMousePos(canvas, evt);
+                this.setViewRotationAxes();
+                //this.mouseClipSpacePosition = this.normalizeMousePos(canvas, this.lastMousePosition);
             }else if(evt.button == 0){// left mouse button
                 this.leftMouseDown = true;
                 this.lastMousePosition = this.getMousePos(canvas, evt);
+                //this.mouseClipSpacePosition = this.normalizeMousePos(canvas, this.lastMousePosition);
             }
         }, false);
         canvas.addEventListener('mouseup', evt => {
@@ -295,8 +306,10 @@ class WebGLClientRenderer {
         glMatrix.mat4.identity(this.identityMatrix);
         glMatrix.mat4.identity(this.worldMatrix);
         glMatrix.mat4.identity(this.cameraMatrix);
-        glMatrix.mat4.lookAt(this.viewMatrix, [0,0,-100], [0,0,0], [0,1,0]);// out matrix, eye loc, look at loc, up vector 
-        glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.1, 1000000.0);
+        this.viewLocationEye = glMatrix.vec3.fromValues(0,0,-100);
+        this.viewLocationCenter = glMatrix.vec3.fromValues(0,0,0);
+        glMatrix.mat4.lookAt(this.viewMatrix, this.viewLocationEye, this.viewLocationCenter, this.up);// out matrix, eye loc, look at loc, up vector 
+        glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.01, 1495980000.0);
 
         this.xRotationMatrix = new Float32Array(16);
         this.yRotationMatrix = new Float32Array(16);
@@ -312,8 +325,14 @@ class WebGLClientRenderer {
         glMatrix.mat4.identity(this.worldRotateMatrix);
         glMatrix.mat4.identity(this.worldTranslateMatrix);
 
-        this.rotateAxisY = glMatrix.vec3.fromValues(0,1,0);
-        this.rotateAxisX = glMatrix.vec3.fromValues(1,0,0);
+        this.screenCoords.clipSpace.top = glMatrix.vec3.fromValues(0.0,1.0,-1.0);
+        this.screenCoords.clipSpace.right = glMatrix.vec3.fromValues(1.0,0.0,-1.0);
+        this.screenCoords.clipSpace.center = glMatrix.vec3.fromValues(0.0,0.0,-1.0);
+        this.screenCoords.worldSpace.top = glMatrix.vec3.create();
+        this.screenCoords.worldSpace.right = glMatrix.vec3.create();
+        this.screenCoords.worldSpace.center = glMatrix.vec3.create();
+        this.viewYAxis = glMatrix.vec3.create();//resulting y axis vector perpendicular to view direction
+        this.viewXAxis = glMatrix.vec3.create();//resulting x axis vector perpendicular to view direction
     }
 
     async createImageLayers(newLayers){
@@ -352,6 +371,7 @@ class WebGLClientRenderer {
             this.render = true;
         }
         if(this.render){
+            
             //resize viewport
             this.resizeCameraView();
 
@@ -465,7 +485,7 @@ class WebGLClientRenderer {
             const top = (this.cameraDist * aspectRatio);
             glMatrix.mat4.ortho(this.cameraMatrix, -this.cameraDist, this.cameraDist, bottom, top, 0.1, 100000.0);
         }
-        glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.1, 100000.0);
+        //glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.1, 100000.0);
 
     }
 
@@ -477,8 +497,20 @@ class WebGLClientRenderer {
         //do the rotation and translation based on input
 
         if(this.rightMouseDown){
-            glMatrix.mat4.rotate(this.yRotationMatrix, this.identityMatrix, this.degreesToRad(this.mouseRotationOffset.x * this.mouseSensitivity) , this.rotateAxisY);//rotating around y-axis uses offset from input on x-axis
-            glMatrix.mat4.rotate(this.xRotationMatrix, this.identityMatrix, this.degreesToRad(this.mouseRotationOffset.y * this.mouseSensitivity) , this.rotateAxisX);//rotating around x-axis uses offset from input on y-axis
+            let scaledViewXAxis = glMatrix.vec3.create();
+            let scaledViewYAxis = glMatrix.vec3.create();
+            glMatrix.vec3.scale(scaledViewXAxis, this.viewXAxis, Math.sin(this.degreesToRad(this.mouseRotationOffset.y * this.mouseSensitivity)));
+            let qY = glMatrix.quat.fromValues(scaledViewXAxis[0],scaledViewXAxis[1],scaledViewXAxis[2],Math.cos(this.degreesToRad(this.mouseRotationOffset.y * this.mouseSensitivity)));
+            let qYMat4 = glMatrix.mat4.create();
+            glMatrix.mat4.fromQuat(qYMat4,qY);
+            glMatrix.mat4.mul(this.viewMatrix, this.viewMatrix, qYMat4);
+
+            glMatrix.vec3.scale(scaledViewYAxis, this.viewYAxis, Math.sin(this.degreesToRad(this.mouseRotationOffset.x * this.mouseSensitivity)));
+            let qX = glMatrix.quat.fromValues(scaledViewYAxis[0],scaledViewYAxis[1],scaledViewYAxis[2],Math.cos(this.degreesToRad(this.mouseRotationOffset.x * this.mouseSensitivity)));
+            let qXMat4 = glMatrix.mat4.create();
+            glMatrix.mat4.fromQuat(qXMat4,qX);
+            glMatrix.mat4.mul(this.viewMatrix, this.viewMatrix, qXMat4);
+            
             this.mouseRotationOffset.x = 0.0;
             this.mouseRotationOffset.y = 0.0;
         }else if(this.leftMouseDown){
@@ -487,11 +519,10 @@ class WebGLClientRenderer {
             this.mouseTranslationOffset.x = 0.0;
             this.mouseTranslationOffset.y = 0.0;
         }
-        //join the x/y matrices
-        glMatrix.mat4.mul(this.worldRotateMatrix, this.yRotationMatrix, this.xRotationMatrix);
+        //glMatrix.mat4.mul(this.worldRotateMatrix, this.yRotationMatrix, this.xRotationMatrix);
         glMatrix.mat4.mul(this.worldTranslateMatrix, this.yTranslationMatrix, this.xTranslationMatrix);
         //apply the rotation and translation to the view matrix
-        glMatrix.mat4.mul(this.viewMatrix, this.viewMatrix, this.worldRotateMatrix);
+        //glMatrix.mat4.mul(this.viewMatrix, this.viewMatrix, this.worldRotateMatrix);
         this.mouseRotationOffset.x = 0.0;
         this.mouseRotationOffset.y = 0.0;
         glMatrix.mat4.mul(this.viewMatrix, this.viewMatrix, this.worldTranslateMatrix);
@@ -505,6 +536,27 @@ class WebGLClientRenderer {
         for(let layer of this.imageLayerKeys){
             this.imageLayers[layer].look(origin);
         }
+    }
+
+    setViewRotationAxes(){
+        let cameraViewMatrix = glMatrix.mat4.create();
+        let inverseCameraViewMatrix = glMatrix.mat4.create();
+        glMatrix.mat4.mul(cameraViewMatrix,this.cameraMatrix,this.viewMatrix);
+        glMatrix.mat4.invert(inverseCameraViewMatrix,cameraViewMatrix);
+        
+        //transform static screen positions into world space
+        glMatrix.vec3.transformMat4(this.screenCoords.worldSpace.top,this.screenCoords.clipSpace.top,inverseCameraViewMatrix);
+        glMatrix.vec3.transformMat4(this.screenCoords.worldSpace.right,this.screenCoords.clipSpace.right,inverseCameraViewMatrix);
+        glMatrix.vec3.transformMat4(this.screenCoords.worldSpace.center,this.screenCoords.clipSpace.center,inverseCameraViewMatrix);
+
+        //create axes from cross products
+        glMatrix.vec3.cross(this.viewXAxis, this.screenCoords.worldSpace.center,this.screenCoords.worldSpace.top);
+        glMatrix.vec3.cross(this.viewYAxis, this.screenCoords.worldSpace.center,this.screenCoords.worldSpace.right);
+
+        // console.log("X",this.viewXAxis);
+        // console.log("Y",this.viewYAxis);
+        glMatrix.vec3.normalize(this.viewYAxis, this.viewYAxis);
+        glMatrix.vec3.normalize(this.viewXAxis, this.viewXAxis);
     }
 
     updateGlobalFrameCounter(){
@@ -659,11 +711,23 @@ class WebGLClientRenderer {
     }
     
     getMousePos(canvas, evt) {
-        var rect = canvas.getBoundingClientRect();
+        let rect = canvas.getBoundingClientRect();
         return {
             x: evt.clientX - rect.left,
             y: evt.clientY - rect.top
         };
+    }
+
+    //transforms screen coordinates to clip space coordinates
+    //in range of -1 to 1
+    normalizeMousePos(canvas, pos){
+        let rect = canvas.getBoundingClientRect();
+        let halfScreenWidth = rect.width / 2;
+        let halfScreenHeight = rect.height / 2;
+        return {
+            x: (pos.x - halfScreenWidth) / halfScreenWidth,
+            y: (halfScreenHeight - pos.y) / halfScreenHeight
+        }
     }
 
     playPauseButtonPressed() {

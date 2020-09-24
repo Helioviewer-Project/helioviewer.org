@@ -219,6 +219,13 @@ class RenderSourceLayer {
                     this.renderReel = newRenderReel;
                     this.layerReady = true;
                     console.log("fetchTextures-isReady-actually ready, should fire once per layer",time,this);
+                    // this.currentFrame = this.renderReel[0];
+                    // let reverseSatellitePos = [this.currentFrame.satellitePositionMatrix[0]*-1,this.currentFrame.satellitePositionMatrix[1]*-1,this.currentFrame.satellitePositionMatrix[2]*-1];
+                    // glMatrix.mat4.lookAt(this.viewMatrix, reverseSatellitePos, this.origin, this.up );
+                    // console.log(this.currentFrame.satellitePositionMatrix);
+                    // console.log(reverseSatellitePos);
+                    // this.drawInfo[0][0].uniforms.viewMatrix = this.viewMatrix;
+                    // this.drawInfo[1][0].uniforms.viewMatrix = this.viewMatrix;
                 }
             }
         }
@@ -260,8 +267,8 @@ class RenderSourceLayer {
     prepareInputBeforeFrames(){
         var dateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
         var startDate = parseInt(new Date(dateTimeString).getTime() / 1000);
-        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400 ;
-        var numFramesInput = parseInt(10);
+        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400 * 1 ;
+        var numFramesInput = parseInt(1);
         var reduceInput = parseInt(0);
 
         //scale down 4k SDO images in half, twice, down to 1k
@@ -302,16 +309,20 @@ class RenderSourceLayer {
             this.drawInfo[0][0].uniforms.uYOffset = this.currentFrame.planeOffsetY;
             this.drawInfo[1][0].uniforms.uYOffset = this.currentFrame.planeOffsetY;
 
-            //glMatrix.mat4.lookAt(this.spacecraftViewMatrix, this.origin, currentFrame.satellitePositionMatrix, this.up );
+            glMatrix.mat4.lookAt(this.spacecraftViewMatrix, this.origin, this.currentFrame.satellitePositionMatrix, this.up );
 
-            //this.drawInfo[0][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
-            //this.drawInfo[1][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
+            this.drawInfo[0][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
+            this.drawInfo[1][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
 
             this.drawInfo[0][0].bufferInfo = this.currentFrame.planeBuffer;
             this.drawInfo[1][0].bufferInfo = this.currentFrame.sphereBuffer;
 
             this.drawInfo[0][0].uniforms.planeWidth = this.currentFrame.planeWidth;
             this.drawInfo[1][0].uniforms.planeWidth = this.currentFrame.planeWidth;
+
+            // glMatrix.mat4.lookAt(this.viewMatrix, this.currentFrame.PSPPosition, this.origin, this.up );
+            // this.drawInfo[0][0].uniforms.viewMatrix = this.viewMatrix;
+            // this.drawInfo[1][0].uniforms.viewMatrix = this.viewMatrix;
         }
     }
 
