@@ -55,7 +55,7 @@ class WebGLClientRenderer {
         this.mouseDelta = { x: 0, y: 0};
         this.mouseRotationOffset = { x: 0, y: 0};
         this.mouseTranslationOffset = { x: 0, y: 0};
-        this.mouseSensitivity = 0.15;
+        this.mouseSensitivity = 0.1;
         this.zoomSensitivity = 0.05;
         this.translateSensitivity = 0.002;
         this.cameraDist = 2;
@@ -227,6 +227,7 @@ class WebGLClientRenderer {
             }else if(evt.button == 0){// left mouse button
                 this.leftMouseDown = true;
                 this.lastMousePosition = this.getMousePos(canvas, evt);
+                this.setViewRotationAxes();
                 //this.mouseClipSpacePosition = this.normalizeMousePos(canvas, this.lastMousePosition);
             }
         }, false);
@@ -262,6 +263,9 @@ class WebGLClientRenderer {
             canvas.classList.toggle('display-none');
             canvas.classList.toggle('draw-surface');
             this.classList.toggle('active');
+        });
+        document.getElementById('center-button').addEventListener('click',e=>{
+            helioviewer._webGLClient.centerViewButtonClicked();
         });
         window.addEventListener('request-new-textures',e=>{
             console.log("caught request-new-textures")
@@ -306,7 +310,7 @@ class WebGLClientRenderer {
         glMatrix.mat4.identity(this.identityMatrix);
         glMatrix.mat4.identity(this.worldMatrix);
         glMatrix.mat4.identity(this.cameraMatrix);
-        this.viewLocationEye = glMatrix.vec3.fromValues(0,0,-100);
+        this.viewLocationEye = glMatrix.vec3.fromValues(100,0,0);
         this.viewLocationCenter = glMatrix.vec3.fromValues(0,0,0);
         glMatrix.mat4.lookAt(this.viewMatrix, this.viewLocationEye, this.viewLocationCenter, this.up);// out matrix, eye loc, look at loc, up vector 
         glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.01, 1495980000.0);
@@ -321,9 +325,9 @@ class WebGLClientRenderer {
         glMatrix.mat4.identity(this.yTranslationMatrix);
 
         this.worldRotateMatrix = new Float32Array(16);
-        this.worldTranslateMatrix = new Float32Array(16);
+        this.viewTranslateMatrix = new Float32Array(16);
         glMatrix.mat4.identity(this.worldRotateMatrix);
-        glMatrix.mat4.identity(this.worldTranslateMatrix);
+        glMatrix.mat4.identity(this.viewTranslateMatrix);
 
         this.screenCoords.clipSpace.top = glMatrix.vec3.fromValues(0.0,1.0,-1.0);
         this.screenCoords.clipSpace.right = glMatrix.vec3.fromValues(1.0,0.0,-1.0);
@@ -499,33 +503,57 @@ class WebGLClientRenderer {
         if(this.rightMouseDown){
             let scaledViewXAxis = glMatrix.vec3.create();
             let scaledViewYAxis = glMatrix.vec3.create();
+            //QUATERNION WIZARDRY BELOW
+            //Pure rotation using quaternions:
+            //quaternion (x,y,z,w) results in counterclockwise rotation around vector (x,y,z) by "d" degrees
+            //quaternion defined as ( sin(d)*(x,y,z) , cos(d) )
+            //this avoids gimbal lock associated with euler angle rotation around fixed world axes.
+            //
+            //Rotate pitch using screen space Y input around screen relative X axisD
+            //
+            //premultiply view axis vector by desired rotation
             glMatrix.vec3.scale(scaledViewXAxis, this.viewXAxis, Math.sin(this.degreesToRad(this.mouseRotationOffset.y * this.mouseSensitivity)));
+            //define quaternion with previously scaled vector and set W to desired rotation
             let qY = glMatrix.quat.fromValues(scaledViewXAxis[0],scaledViewXAxis[1],scaledViewXAxis[2],Math.cos(this.degreesToRad(this.mouseRotationOffset.y * this.mouseSensitivity)));
+            //create 4d matrix from quaternion to make multiplication easier with this library.
             let qYMat4 = glMatrix.mat4.create();
             glMatrix.mat4.fromQuat(qYMat4,qY);
+            //rotate the view around the X axis using input from the Y axis
             glMatrix.mat4.mul(this.viewMatrix, this.viewMatrix, qYMat4);
-
+            //
+            //Rotate yaw using screen space X input around screen relative Y axis
+            //
+            //premultiply view axis vector by desired rotation
             glMatrix.vec3.scale(scaledViewYAxis, this.viewYAxis, Math.sin(this.degreesToRad(this.mouseRotationOffset.x * this.mouseSensitivity)));
+            //define quaternion with previously scaled vector and set W to desired rotation
             let qX = glMatrix.quat.fromValues(scaledViewYAxis[0],scaledViewYAxis[1],scaledViewYAxis[2],Math.cos(this.degreesToRad(this.mouseRotationOffset.x * this.mouseSensitivity)));
+            //create 4d matrix from quaternion to make multiplication easier with this library.
             let qXMat4 = glMatrix.mat4.create();
             glMatrix.mat4.fromQuat(qXMat4,qX);
+            //rotate the view around the Y axis using input from the X axis
             glMatrix.mat4.mul(this.viewMatrix, this.viewMatrix, qXMat4);
-            
+            //reset input offset
             this.mouseRotationOffset.x = 0.0;
             this.mouseRotationOffset.y = 0.0;
         }else if(this.leftMouseDown){
-            glMatrix.mat4.translate(this.yTranslationMatrix, this.identityMatrix, glMatrix.vec3.fromValues(0,this.mouseTranslationOffset.y * this.translateSensitivity,0));
-            glMatrix.mat4.translate(this.xTranslationMatrix, this.identityMatrix, glMatrix.vec3.fromValues(-this.mouseTranslationOffset.x * this.translateSensitivity,0,0));
+            let xTranslationVector = glMatrix.vec3.create();
+            let yTranslationVector = glMatrix.vec3.create();
+            //determine translation magnitude from input
+            glMatrix.vec3.scale(xTranslationVector, this.viewXAxis, -this.mouseTranslationOffset.x * this.translateSensitivity);
+            glMatrix.vec3.scale(yTranslationVector, this.viewYAxis, this.mouseTranslationOffset.y * this.translateSensitivity);
+            //translate individual axes
+            glMatrix.mat4.translate(this.xTranslationMatrix, this.identityMatrix, xTranslationVector);
+            glMatrix.mat4.translate(this.yTranslationMatrix, this.identityMatrix, yTranslationVector);
+            //combine the individual translations into one matrix
+            glMatrix.mat4.mul(this.viewTranslateMatrix, this.yTranslationMatrix, this.xTranslationMatrix);
+            //translate the view
+            glMatrix.mat4.mul(this.viewMatrix, this.viewMatrix, this.viewTranslateMatrix);
+            //reset input offset
             this.mouseTranslationOffset.x = 0.0;
             this.mouseTranslationOffset.y = 0.0;
         }
-        //glMatrix.mat4.mul(this.worldRotateMatrix, this.yRotationMatrix, this.xRotationMatrix);
-        glMatrix.mat4.mul(this.worldTranslateMatrix, this.yTranslationMatrix, this.xTranslationMatrix);
-        //apply the rotation and translation to the view matrix
-        //glMatrix.mat4.mul(this.viewMatrix, this.viewMatrix, this.worldRotateMatrix);
         this.mouseRotationOffset.x = 0.0;
         this.mouseRotationOffset.y = 0.0;
-        glMatrix.mat4.mul(this.viewMatrix, this.viewMatrix, this.worldTranslateMatrix);
         this.mouseTranslationOffset.x = 0.0;
         this.mouseTranslationOffset.y = 0.0;
     }
@@ -557,6 +585,23 @@ class WebGLClientRenderer {
         // console.log("Y",this.viewYAxis);
         glMatrix.vec3.normalize(this.viewYAxis, this.viewYAxis);
         glMatrix.vec3.normalize(this.viewXAxis, this.viewXAxis);
+    }
+
+    centerViewButtonClicked(){
+        if(this.imageLayerKeys.length){
+            if(this.imageLayers[this.imageLayerKeys[0]] != undefined){
+                if(this.imageLayers[this.imageLayerKeys[0]].renderReel.length){
+                    if(this.imageLayers[this.imageLayerKeys[0]].renderReel[0].ready.position){
+                        glMatrix.vec3.copy(this.viewLocationEye, this.imageLayers[this.imageLayerKeys[0]].renderReel[0].satellitePositionMatrix);
+                        glMatrix.vec3.scale(this.viewLocationEye, this.viewLocationEye, -3);
+                        let upRelativeToSatellite = glMatrix.vec3.create();
+                        glMatrix.vec3.cross(upRelativeToSatellite,this.viewLocationEye,this.up);
+                        glMatrix.vec3.cross(upRelativeToSatellite,upRelativeToSatellite,this.viewLocationEye);
+                        glMatrix.mat4.lookAt(this.viewMatrix, this.viewLocationEye, this.viewLocationCenter, upRelativeToSatellite);
+                    }
+                }
+            }
+        }
     }
 
     updateGlobalFrameCounter(){
@@ -628,7 +673,7 @@ class WebGLClientRenderer {
 
     changeLayerOpacityAndVisibility(){
         for(let layer of this.UIAccordionLayers){
-            if(typeof(this.imageLayers[layer.id]) != undefined){
+            if(this.imageLayers[layer.id] != undefined){
                 this.imageLayers[layer.id].setAlpha(layer.opacity);
                 this.imageLayers[layer.id].setVisible(layer.visible);
             }
@@ -738,5 +783,6 @@ class WebGLClientRenderer {
             this.imageLayers[layer].updatePlayPause(this.playMovieState);
         }
     }
+
 
 }
