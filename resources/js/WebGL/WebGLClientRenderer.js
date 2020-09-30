@@ -74,6 +74,8 @@ class WebGLClientRenderer {
         this.loadingImageLayers = {};
         this.switchToNewImageLayers = false;
 
+        this.loadingStatusDOM = document.getElementById("loading-status");
+
         this.screenCoords = {};
         this.screenCoords.clipSpace = {};
         this.screenCoords.worldSpace = {};
@@ -370,6 +372,7 @@ class WebGLClientRenderer {
     }
 
     renderLoop() {
+        this.updateLoadingText();
         //console.log(this.render);
         if(this.isAllReady()){
             this.render = true;
@@ -410,6 +413,30 @@ class WebGLClientRenderer {
         //request new frame
         requestAnimationFrame(()=>{this.renderLoop();});
     };
+
+    updateLoadingText(){
+        if(Object.values(this.loadingImageLayers).length){
+            let numReady = 0;
+            let numTotal = 0;
+            for(let layer of Object.values(this.loadingImageLayers)){
+                for(let frame of layer.newRenderReel){
+                    if(frame.ready.all){
+                        numReady+=4;
+                    }else{
+                        for(let ready of Object.values(frame.ready)){
+                            if(ready){
+                                numReady++;
+                            }
+                        }
+                    }
+                    numTotal+=4;
+                }
+            }
+            if(numTotal>0){
+                this.loadingStatusDOM.innerText = ((numReady / numTotal) * 100.0).toFixed(1) + "%" ;
+            }
+        }
+    }
 
     isAllReady(){
         //each layer will set its own layerReady flag
@@ -592,12 +619,17 @@ class WebGLClientRenderer {
             if(this.imageLayers[this.imageLayerKeys[0]] != undefined){
                 if(this.imageLayers[this.imageLayerKeys[0]].renderReel.length){
                     if(this.imageLayers[this.imageLayerKeys[0]].renderReel[0].ready.position){
-                        glMatrix.vec3.copy(this.viewLocationEye, this.imageLayers[this.imageLayerKeys[0]].renderReel[0].satellitePositionMatrix);
-                        glMatrix.vec3.scale(this.viewLocationEye, this.viewLocationEye, -3);
-                        let upRelativeToSatellite = glMatrix.vec3.create();
-                        glMatrix.vec3.cross(upRelativeToSatellite,this.viewLocationEye,this.up);
-                        glMatrix.vec3.cross(upRelativeToSatellite,upRelativeToSatellite,this.viewLocationEye);
-                        glMatrix.mat4.lookAt(this.viewMatrix, this.viewLocationEye, this.viewLocationCenter, upRelativeToSatellite);
+                        let satX = this.imageLayers[this.imageLayerKeys[0]].renderReel[0].satellitePositionMatrix[0];
+                        let satY = this.imageLayers[this.imageLayerKeys[0]].renderReel[0].satellitePositionMatrix[1];
+                        let satZ = this.imageLayers[this.imageLayerKeys[0]].renderReel[0].satellitePositionMatrix[2];
+                        this.viewLocationEye = glMatrix.vec3.fromValues(satX, satY, satZ);
+                        glMatrix.vec3.scale(this.viewLocaitonEye, this.viewLocationEye, -3);
+                        console.log(this.viewLocationEye);
+                        // let upRelativeToSatellite = glMatrix.vec3.create();
+                        // glMatrix.vec3.cross(upRelativeToSatellite,this.viewLocationEye,this.up);
+                        // glMatrix.vec3.cross(upRelativeToSatellite,upRelativeToSatellite,this.viewLocationEye);
+                        glMatrix.mat4.lookAt(this.viewMatrix, this.viewLocationEye, this.viewLocationCenter, this.up);
+                        //glMatrix.mat4.invert(this.viewMatrix, this.viewMatrix);
                     }
                 }
             }

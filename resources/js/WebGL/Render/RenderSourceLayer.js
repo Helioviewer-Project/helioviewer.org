@@ -5,6 +5,7 @@ class RenderSourceLayer {
         this.id = id;
         this.sourceId = sourceId;
         this.renderReel = []; //formerly this.textures
+        this.newRenderReel = [];
         this.colorTable;
         this.blackTexture;//used for drawing a black half-dome which prevents image phasing due to transparency of the half dome texture.
         this.currentFrame;//RenderFrame object reference to current frame
@@ -199,24 +200,24 @@ class RenderSourceLayer {
 
     async fetchTextures(){
         console.log("fetching textures for: ",this);
-        var newRenderReel = [];
+        this.newRenderReel = [];
         this.inputTemporalParams = this.prepareInputBeforeFrames();
-        var loadingStatusDOM = document.getElementById("loading-status");
+        //var loadingStatusDOM = document.getElementById("loading-status");
 
         //create callback to check all frames are ready
         const isReady = (time) => {
             //console.log('fetchTextures-isReady-callback',time);
             var ready = true;
             //console.log(newRenderReel);
-            if(newRenderReel.length == this.inputTemporalParams.numFrames){
-                for(var frame of newRenderReel){
+            if(this.newRenderReel.length == this.inputTemporalParams.numFrames){
+                for(var frame of this.newRenderReel){
                     if(frame.ready.all == false){
                         ready = false;
                     }
                 }
                 if(ready == true){
-                    loadingStatusDOM.innerText = "Loaded " + this.inputTemporalParams.numFrames + " frames"
-                    this.renderReel = newRenderReel;
+                    //loadingStatusDOM.innerText = "Loaded " + this.inputTemporalParams.numFrames + " frames"
+                    this.renderReel = this.newRenderReel;
                     this.layerReady = true;
                     console.log("fetchTextures-isReady-actually ready, should fire once per layer",time,this);
                     // this.currentFrame = this.renderReel[0];
@@ -247,7 +248,7 @@ class RenderSourceLayer {
                 wrapT: this.gl.CLAMP_TO_EDGE,
             }
             var frameTexture;
-            loadingStatusDOM.innerText = "Loading frame "+i+"/"+this.inputTemporalParams.numFrames+" from source "+this.sourceId;
+            //loadingStatusDOM.innerText = "Loading frame "+i+"/"+this.inputTemporalParams.numFrames+" from source "+this.sourceId;
             //load the texture
             
             //instantiate render frame object
@@ -259,9 +260,8 @@ class RenderSourceLayer {
             //await new Promise(r => { renderFrame.setTexture(twgl.createTexture(this.gl, textureOptions,r)) ;} );
             //console.log(renderFrame);
             //add texture to pool
-            newRenderReel.push(renderFrame);
+            this.newRenderReel.push(renderFrame);
         }
-        
     }
 
     prepareInputBeforeFrames(){
