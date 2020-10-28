@@ -62,9 +62,10 @@ class CoordinateSystemsHelper {
                 if (status == 200) {
                     let data = xhr.response;
                     //we must swap y and z coordinates from HEEQ to GL coordinates
+                    //we must invert x and y as well
                     result = {
-                        x: data.result[0][utc][0],//extract x distance HCC for time from result json payload
-                        y: data.result[0][utc][2],//extract y distance HCC for time from result json payload
+                        x: -data.result[0][utc][0],//extract x distance HCC for time from result json payload
+                        y: -data.result[0][utc][2],//extract y distance HCC for time from result json payload
                         z: data.result[0][utc][1]//extract z distance HCC for time from result json payload
                     };
                     //convert kms to AU

@@ -20,6 +20,7 @@ class RenderSourceLayer {
 
         this.sourceName = new SourceLayerHelper(sourceId);
         this.drawSphere = this.sourceName.drawSphere;
+        this.rsun_sourceId = 13;
 
         this.playMovieState = true;
         this.layerReady = false;
@@ -64,17 +65,6 @@ class RenderSourceLayer {
             wrapT: this.gl.CLAMP_TO_EDGE
         }
         await new Promise(r => {this.blackTexture = twgl.createTexture(this.gl,textureOptions,r)});
-    }
-
-    //Needs to be per frame
-    createShapeVertexBuffers(){
-        //
-        // CREATE SHAPE VERTEX BUFFERS
-        //
-        if(this.drawSphere){
-            this.sphereBuffer = twgl.primitives.createSphereBufferInfo(this.gl, this.RSUN_OBS, 128, 64, 0, Math.PI, Math.PI, 2 * Math.PI); // only create half of the sphere
-        }
-        this.planeBuffer = twgl.primitives.createPlaneBufferInfo(this.gl,this.planeWidth,this.planeWidth);
     }
     
     //called with WebGLClientRenderer createImageLayers
@@ -256,7 +246,7 @@ class RenderSourceLayer {
             //load the texture
             
             //instantiate render frame object
-            var renderFrame = new RenderFrame(reqTime, this.sourceId, this.drawSphere, this.gl);
+            var renderFrame = new RenderFrame(reqTime, this.sourceId, this.sourceName, this.drawSphere, this.gl);
             renderFrame.setFrameParams(isReady);//getClosestImage params
             renderFrame.getSatellitePosition(this.sourceName.satelliteName, isReady);//geometry service position
             //frameTexture = twgl.createTexture(this.gl, textureOptions,textureReady(renderFrame,frameTexture));
@@ -272,7 +262,7 @@ class RenderSourceLayer {
         var dateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
         var startDate = parseInt(new Date(dateTimeString).getTime() / 1000);
         var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400 * 2 ;
-        var numFramesInput = parseInt(30);
+        var numFramesInput = parseInt(1);
         var reduceInput = parseInt(0);
 
         //scale down 4k SDO images in half, twice, down to 1k
@@ -307,7 +297,7 @@ class RenderSourceLayer {
             this.drawInfo[0][0].uniforms.uYOffset = this.currentFrame.planeOffsetY;
             this.drawInfo[1][0].uniforms.uYOffset = this.currentFrame.planeOffsetY;
 
-            glMatrix.mat4.targetTo(this.spacecraftViewMatrix,  this.origin, this.currentFrame.satellitePositionMatrix, this.up );
+            glMatrix.mat4.targetTo(this.spacecraftViewMatrix, this.origin, this.currentFrame.satellitePositionMatrix, this.up );
 
             this.drawInfo[0][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
             this.drawInfo[1][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
@@ -367,9 +357,11 @@ class RenderSourceLayer {
                     //this.gl.disable(this.gl.DEPTH_TEST);
                     this.drawInfo[1][0].uniforms.sunSampler = this.blackTexture;
                     this.drawInfo[1][0].uniforms.uAlpha = 1.0;
+                    this.drawInfo[1][0].uniforms.bufferInfo = this.currentFrame.blackSphereBuffer;
                     twgl.drawObjectList(this.gl, this.drawInfo[1]);
                     this.drawInfo[1][0].uniforms.sunSampler = this.currentFrame.texture;
                     this.drawInfo[1][0].uniforms.uAlpha = this.alpha;
+                    this.drawInfo[1][0].uniforms.bufferInfo = this.currentFrame.sphereBuffer;
                 }
                 this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA);
                 this.gl.enable(this.gl.BLEND);

@@ -349,7 +349,7 @@ class WebGLClientRenderer {
             this.loadingImageLayers[layer.id] = new RenderSourceLayer(this.gl, this.programInfo, layer.id, layer.image.sourceId, baseLayer, layer.opacity, layer.visible);
             this.loadingImageLayers[layer.id].setColorTable();
             //await this.loadingImageLayers[layerIndex].setSourceParams(source);
-            this.loadingImageLayers[layer.id].createShapeVertexBuffers();//Needs to be per frame
+            //this.loadingImageLayers[layer.id].createShapeVertexBuffers();//Needs to be per frame
             this.loadingImageLayers[layer.id].setMatrices({
                 identityMatrix  : this.identityMatrix,
                 worldMatrix     : this.worldMatrix,
@@ -357,7 +357,7 @@ class WebGLClientRenderer {
                 projMatrix      : this.projMatrix,
                 cameraMatrix    : this.cameraMatrix
             });
-            this.loadingImageLayers[layer.id].createViewMatricesAndObjects(this.cameraDist);//Needs to be per frame
+            this.loadingImageLayers[layer.id].createViewMatricesAndObjects(this.cameraDist);//Create Base drawInfo which is mutated per frame
             baseLayer = false;
             this.loadingImageLayerKeys.push(layer.id);
             //layerIndex++;
@@ -376,8 +376,10 @@ class WebGLClientRenderer {
         this.updateLoadingText();
         //decide when to shift to rendering new loaded layers and kick off first render
         if(this.isAllReady()){
-            this.render = true;
-            this.centerViewButtonClicked();
+            if(!this.render){
+                this.centerViewButtonClicked();
+                this.render = true;
+            }
         }
         if(this.render){
             
@@ -399,18 +401,21 @@ class WebGLClientRenderer {
                 this.imageLayers[layer].bindTexturesAndUniforms();
                 this.imageLayers[layer].drawPlanes();
             }
-            //draw spheres
-            for(let layer of this.imageLayerKeys){
-                this.imageLayers[layer].updateFrameCounter(this.frameNumber);
-                this.imageLayers[layer].bindTexturesAndUniforms();
-                this.imageLayers[layer].drawSpheres();
-            }
+
             //draw reverse planes
             for(let layer of this.imageLayerKeys){
                 this.imageLayers[layer].updateFrameCounter(this.frameNumber);
                 this.imageLayers[layer].bindTexturesAndUniforms();
                 this.imageLayers[layer].drawReversePlanes();
             }
+
+            //draw spheres
+            for(let layer of this.imageLayerKeys){
+                this.imageLayers[layer].updateFrameCounter(this.frameNumber);
+                this.imageLayers[layer].bindTexturesAndUniforms();
+                this.imageLayers[layer].drawSpheres();
+            }
+            
         }
         //request new frame
         requestAnimationFrame(()=>{this.renderLoop();});
@@ -510,13 +515,13 @@ class WebGLClientRenderer {
             const aspectRatio = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
             const left = -(this.cameraDist * aspectRatio) ;
             const right = (this.cameraDist * aspectRatio) ;
-            glMatrix.mat4.ortho(this.projMatrix, left, right, -this.cameraDist, this.cameraDist, 0.1, 100000.0);
+            glMatrix.mat4.ortho(this.projMatrix, left, right, -this.cameraDist, this.cameraDist, 0.1, 100000000000.0);
         }else{//height > width
             //width is fixed, height distance is calculated
             const aspectRatio = this.gl.canvas.clientHeight / this.gl.canvas.clientWidth;
             const bottom = -(this.cameraDist * aspectRatio);
             const top = (this.cameraDist * aspectRatio);
-            glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, bottom, top, 0.1, 100000.0);
+            glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, bottom, top, 0.1, 100000000000.0);
         }
         //glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.1, 100000.0);
 
@@ -625,7 +630,7 @@ class WebGLClientRenderer {
                         let satY = this.imageLayers[this.imageLayerKeys[0]].renderReel[0].satellitePositionMatrix[1];
                         let satZ = this.imageLayers[this.imageLayerKeys[0]].renderReel[0].satellitePositionMatrix[2];
                         this.viewLocationEye = glMatrix.vec3.fromValues(satX, satY, satZ);
-                        glMatrix.vec3.scale(this.viewLocationEye, this.viewLocationEye, 3);
+                        glMatrix.vec3.scale(this.viewLocationEye, this.viewLocationEye, 100);
                         console.log(this.viewLocationEye);
                         // let upRelativeToSatellite = glMatrix.vec3.create();
                         // glMatrix.vec3.cross(upRelativeToSatellite,this.viewLocationEye,this.up);

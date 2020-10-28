@@ -3,15 +3,17 @@
  */
 
 class RenderFrame {
-    constructor(timestamp, sourceId, drawSphere, gl){
+    constructor(timestamp, sourceId, sourceName, drawSphere, gl){
         this.gl = gl;
         this.timestamp = timestamp;
         this.sourceId = sourceId;
+        this.sourceName = sourceName;
         this.drawSphere = drawSphere;
         this.satellitePositionMatrix;
         this.offset;
         //this is a constant for now
         this.RSUN_OBS = 0.97358455;//sun radius in arcseconds / 1000
+        //    rsun / arcsecPerPix
         this.ready = { texture: false, vertices: false, position: false, params: false,  all: false}
     }
 
@@ -31,7 +33,7 @@ class RenderFrame {
         //compute the remaining params after retrieving metadata
         
         this.planeWidth = this.maxResPixels*this.arcSecPerPix / 1000;
-        this.planeWidth = this.maxResPixels*this.IMSCL_MP / 1000;
+        //this.planeWidth = this.maxResPixels*this.IMSCL_MP / 1000;
         this.planeOffsetX = (this.centerPixelX - (this.maxResPixels * 0.5) ) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
         this.planeOffsetY = (this.centerPixelY - (this.maxResPixels * 0.5)) / (this.maxResPixels * 0.5) * this.planeWidth * 0.5;
         this.solarProjectionScale = this.RSUN_OBS / this.planeWidth;
@@ -73,11 +75,31 @@ class RenderFrame {
 
             this.RSUN_OBS = rsun_obs / 1000;
             this.IMSCL_MP = IMSCL_MP;
+
+            //console.log(this.RSUN_OBS, this.IMSCL_MP);
         });
+
+        if(this.drawSphere && !this.sourceName.satelliteName.includes("SDO")){//get AIA 304 closest image rsun value if not AIA source
+            var getJP2HeaderURL = Helioviewer.api + "/?action=getJP2Header&id=" + this.rsunSourceImageId;
+            await fetch(getJP2HeaderURL).then(res => {return res.text()}).then(xmlString => {
+                var parser = new DOMParser();
+                var xml = parser.parseFromString(xmlString,"text/xml");
+                var rsun_obs_element = xml.getElementsByTagName("RSUN_OBS");
+                //console.log(this.sourceId, rsun_obs_element, rsun_element);
+                if(rsun_obs_element.length){
+                    var rsun_obs = rsun_obs_element[0].textContent;
+                }
+                //console.log("IMSCL_MP_element",IMSCL_MP_element);
+
+                this.RSUN_OBS = rsun_obs / 1000;
+
+                //console.log(this.RSUN_OBS, this.IMSCL_MP);
+            });
+        }
     }
 
     async getClosestImageParams(){
-        var getClosestImageURL = Helioviewer.api + "/?action=getClosestImage&sourceId="+this.sourceId+"&date="+new Date(this.timestamp * 1000).toISOString();
+        let getClosestImageURL = Helioviewer.api + "/?action=getClosestImage&sourceId="+this.sourceId+"&date="+new Date(this.timestamp * 1000).toISOString();
         await fetch(getClosestImageURL).then(res => {return res.json()}).then(data => {
             //console.log("getClosestImageData", data);
             this.imageID = data.id;
@@ -85,6 +107,12 @@ class RenderFrame {
             this.arcSecPerPix = data.scale;
             this.centerPixelX = data.refPixelX;
             this.centerPixelY = data.refPixelY;
+        });
+        let AIA304 = "13";
+        getClosestImageURL = Helioviewer.api + "/?action=getClosestImage&sourceId="+AIA304+"&date="+new Date(this.timestamp * 1000).toISOString();
+        await fetch(getClosestImageURL).then(res => {return res.json()}).then(data => {
+            //console.log("getClosestImageData", data);
+            this.rsunSourceImageId = data.id;
         });
     }
 
@@ -105,6 +133,7 @@ class RenderFrame {
         //
         if(this.drawSphere){
             this.sphereBuffer = twgl.primitives.createSphereBufferInfo(this.gl, this.RSUN_OBS, 128, 64, 0, Math.PI, Math.PI, 2 * Math.PI); // only create half of the sphere
+            this.blackSphereBuffer = twgl.primitives.createSphereBufferInfo(this.gl, this.RSUN_OBS, 128, 64, 0, Math.PI * 2, 0 , 2 * Math.PI);
         }
         this.planeBuffer = twgl.primitives.createPlaneBufferInfo(this.gl,this.planeWidth,this.planeWidth);
         this.ready.vertices = true;
