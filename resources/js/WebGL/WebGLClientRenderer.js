@@ -119,6 +119,7 @@ class WebGLClientRenderer {
         uniform mat4 mProj;
         uniform mat4 mCamera;
         uniform mat4 mSpacecraft;
+        uniform mat4 mSpacecraftInv;
         uniform mat4 mPlane;
         uniform float scale;
         uniform float planeWidth;
@@ -130,21 +131,21 @@ class WebGLClientRenderer {
         void main()
         {
             if(uProjection && !uReversePlane){
-                vec4 pos = mCamera * mView * mWorld * mSpacecraft * mPlane * vec4(position, 1.0);
+                vec4 pos = mProj * mView * mSpacecraft * vec4(position, 1.0);
                 gl_Position = pos;
                 float texPosX = (position.x-uXOffset) / -scale / planeWidth;
                 float texPosY = (position.y+uYOffset)/ scale / planeWidth;
                 float texPosZ = position.z / scale / planeWidth;
-                vec4 texPos = vec4(texPosX, texPosY, texPosZ, 1.0);
+                vec4 texPos =  vec4(texPosX, texPosY, texPosZ, 1.0);
                 vec2 texPosOffset = vec2((texPos.x)*scale + 0.5, 1.0 - (texPos.y*scale + 0.5));
                 fragTexCoord = texPosOffset.xy;
             }else{
                 if(uReversePlane){
-                    vec4 pos = mCamera * mView * mWorld * mSpacecraft * mPlane * vec4(position.x+uXOffset,position.y,position.z+uYOffset, 1.0);
+                    vec4 pos = mProj * mView * mSpacecraft * mPlane * vec4(position.x+uXOffset,position.y,position.z+uYOffset, 1.0);
                     gl_Position = pos;
                     fragTexCoord = vec2(1.0 - texcoord.x, texcoord.y);
                 }else{
-                    vec4 pos = mCamera * mView * mWorld * mSpacecraft * mPlane * vec4(position.x+uXOffset,position.y,position.z-uYOffset, 1.0);
+                    vec4 pos = mProj * mView * mSpacecraft * mPlane * vec4(position.x+uXOffset,position.y,position.z-uYOffset, 1.0);
                     gl_Position = pos;
                     fragTexCoord = vec2(1.0 - texcoord.x, 1.0 - texcoord.y);
                 }
@@ -312,7 +313,7 @@ class WebGLClientRenderer {
         glMatrix.mat4.identity(this.identityMatrix);
         glMatrix.mat4.identity(this.worldMatrix);
         glMatrix.mat4.identity(this.cameraMatrix);
-        this.viewLocationEye = glMatrix.vec3.fromValues(100,0,0);
+        this.viewLocationEye = glMatrix.vec3.fromValues(0,0,-10);
         this.viewLocationCenter = glMatrix.vec3.fromValues(0,0,0);
         glMatrix.mat4.lookAt(this.viewMatrix, this.viewLocationEye, this.viewLocationCenter, this.up);// out matrix, eye loc, look at loc, up vector 
         glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.01, 1495980000.0);
@@ -373,9 +374,10 @@ class WebGLClientRenderer {
 
     renderLoop() {
         this.updateLoadingText();
-        //console.log(this.render);
+        //decide when to shift to rendering new loaded layers and kick off first render
         if(this.isAllReady()){
             this.render = true;
+            this.centerViewButtonClicked();
         }
         if(this.render){
             
@@ -508,13 +510,13 @@ class WebGLClientRenderer {
             const aspectRatio = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
             const left = -(this.cameraDist * aspectRatio) ;
             const right = (this.cameraDist * aspectRatio) ;
-            glMatrix.mat4.ortho(this.cameraMatrix, left, right, -this.cameraDist, this.cameraDist, 0.1, 100000.0);
+            glMatrix.mat4.ortho(this.projMatrix, left, right, -this.cameraDist, this.cameraDist, 0.1, 100000.0);
         }else{//height > width
             //width is fixed, height distance is calculated
             const aspectRatio = this.gl.canvas.clientHeight / this.gl.canvas.clientWidth;
             const bottom = -(this.cameraDist * aspectRatio);
             const top = (this.cameraDist * aspectRatio);
-            glMatrix.mat4.ortho(this.cameraMatrix, -this.cameraDist, this.cameraDist, bottom, top, 0.1, 100000.0);
+            glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, bottom, top, 0.1, 100000.0);
         }
         //glMatrix.mat4.ortho(this.projMatrix, -this.cameraDist, this.cameraDist, -this.cameraDist, this.cameraDist, 0.1, 100000.0);
 
@@ -623,13 +625,13 @@ class WebGLClientRenderer {
                         let satY = this.imageLayers[this.imageLayerKeys[0]].renderReel[0].satellitePositionMatrix[1];
                         let satZ = this.imageLayers[this.imageLayerKeys[0]].renderReel[0].satellitePositionMatrix[2];
                         this.viewLocationEye = glMatrix.vec3.fromValues(satX, satY, satZ);
-                        glMatrix.vec3.scale(this.viewLocaitonEye, this.viewLocationEye, -3);
+                        glMatrix.vec3.scale(this.viewLocationEye, this.viewLocationEye, 3);
                         console.log(this.viewLocationEye);
                         // let upRelativeToSatellite = glMatrix.vec3.create();
                         // glMatrix.vec3.cross(upRelativeToSatellite,this.viewLocationEye,this.up);
                         // glMatrix.vec3.cross(upRelativeToSatellite,upRelativeToSatellite,this.viewLocationEye);
                         glMatrix.mat4.lookAt(this.viewMatrix, this.viewLocationEye, this.viewLocationCenter, this.up);
-                        //glMatrix.mat4.invert(this.viewMatrix, this.viewMatrix);
+                        //glMatrix.mat4.invert(this.viewMatrix, this.imageLayers[this.imageLayerKeys[0]].spacecraftViewMatrix);
                     }
                 }
             }

@@ -87,8 +87,10 @@ class RenderSourceLayer {
         this.up = glMatrix.vec3.fromValues(0,1,0);
 
         this.spacecraftViewMatrix = new Float32Array(16);
+        this.spacecraftInverseViewMatrix = new Float32Array(16);
         this.planeViewMatrix = new Float32Array(16);
         glMatrix.mat4.identity(this.spacecraftViewMatrix);
+        glMatrix.mat4.identity(this.spacecraftInverseViewMatrix);
         glMatrix.mat4.identity(this.planeViewMatrix);
 
         this.planeRotateUpVector = [1,0,0];
@@ -101,6 +103,7 @@ class RenderSourceLayer {
             mProj: this.projMatrix,
             mCamera: this.cameraMatrix,
             mSpacecraft: this.spacecraftViewMatrix,
+            mSpacecraftInv: this.spacecraftInverseViewMatrix,
             mPlane: this.planeViewMatrix,
             scale: this.solarProjectionScale*cameraDist,
             planeWidth: this.planeWidth,
@@ -123,6 +126,7 @@ class RenderSourceLayer {
             mProj: this.projMatrix,
             mCamera: this.cameraMatrix,
             mSpacecraft: this.spacecraftViewMatrix,
+            mSpacecraftInv: this.spacecraftInverseViewMatrix,
             mPlane: this.identityMatrix,
             scale: this.solarProjectionScale*cameraDist,
             planeWidth: this.planeWidth,
@@ -234,7 +238,7 @@ class RenderSourceLayer {
         const textureReady = (renderFrame,texture) =>{
             renderFrame.setTexture(texture,isReady);
         }
-        //this.getSatellitePositions();
+
         for(var i=1;i<this.inputTemporalParams.numFrames+1;i++){
             //build the texture options
             var reqTime = this.inputTemporalParams.timeStart + (this.inputTemporalParams.timeIncrement * (i-1));
@@ -267,8 +271,8 @@ class RenderSourceLayer {
     prepareInputBeforeFrames(){
         var dateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
         var startDate = parseInt(new Date(dateTimeString).getTime() / 1000);
-        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400 * 1 ;
-        var numFramesInput = parseInt(1);
+        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400 * 2 ;
+        var numFramesInput = parseInt(30);
         var reduceInput = parseInt(0);
 
         //scale down 4k SDO images in half, twice, down to 1k
@@ -288,12 +292,6 @@ class RenderSourceLayer {
         };
     }
 
-    async getSatellitePositions( satelliteName ) {
-        let utc = new Date(this.timestamp * 1000).toISOString();
-        const outCoords = await helioviewer._coordinateSystemsHelper.getPositionHCC(utc, satelliteName, "SUN");
-        this.satellitePositionMatrix = glMatrix.vec3.fromValues(outCoords.x,outCoords.y,outCoords.z);
-    }
-
     bindTexturesAndUniforms(){
         if(this.visible){
             this.currentFrame = this.renderReel[this.frameCounter-1];
@@ -309,7 +307,7 @@ class RenderSourceLayer {
             this.drawInfo[0][0].uniforms.uYOffset = this.currentFrame.planeOffsetY;
             this.drawInfo[1][0].uniforms.uYOffset = this.currentFrame.planeOffsetY;
 
-            glMatrix.mat4.lookAt(this.spacecraftViewMatrix, this.origin, this.currentFrame.satellitePositionMatrix, this.up );
+            glMatrix.mat4.targetTo(this.spacecraftViewMatrix,  this.origin, this.currentFrame.satellitePositionMatrix, this.up );
 
             this.drawInfo[0][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;
             this.drawInfo[1][0].uniforms.mSpacecraft = this.spacecraftViewMatrix;

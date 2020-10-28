@@ -92,6 +92,7 @@ class RenderFrame {
         let utc = new Date(this.timestamp * 1000).toISOString();
         const outCoords = await helioviewer._coordinateSystemsHelper.getPositionHCC(utc, satelliteName, "SUN");
         this.satellitePositionMatrix = glMatrix.vec3.fromValues(outCoords.x,outCoords.y,outCoords.z);
+        console.log("satellitePositionMatrix",this.satellitePositionMatrix);
         // const outCoordsPSP = await helioviewer._coordinateSystemsHelper.getPositionHCC(utc, "Parker%20Solar%20Probe", "SUN");
         // this.PSPPosition = glMatrix.vec3.fromValues(-outCoordsPSP.x,-outCoordsPSP.y,outCoordsPSP.z);
         this.ready.position = true;
