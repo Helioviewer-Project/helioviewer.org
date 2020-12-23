@@ -56,7 +56,7 @@ class WebGLClientRenderer {
         this.mouseRotationOffset = { x: 0, y: 0};
         this.mouseTranslationOffset = { x: 0, y: 0};
         this.mouseSensitivity = 0.1;
-        this.zoomSensitivity = 0.05;
+        this.zoomSensitivity = 0.025;
         this.translateSensitivity = 0.002;
         this.cameraDist = 2;
         this.viewLocationEye = new Float32Array(3);
@@ -65,7 +65,11 @@ class WebGLClientRenderer {
 
         this.clearLuminance = 0.0;
 
-        this.dateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
+        this.dateTime = {
+            start: null,
+            end: null,
+            numFrames: null
+        };
         this.layerSources = [];
         // image layers in the render loop must be seperate from loading image layers.
         this.imageLayerKeys = [];
@@ -194,6 +198,7 @@ class WebGLClientRenderer {
     }
 
     initInputEventListeners(canvas){
+        this.UIHelper = new WebGLUIHelper(canvas);
         //Mouse events
         canvas.addEventListener('mousemove', evt => {
             if(this.rightMouseDown){
@@ -260,25 +265,36 @@ class WebGLClientRenderer {
         canvas.addEventListener('contextmenu', evt =>{
             evt.preventDefault();
         });
-        document.getElementById('enable-webgl').addEventListener('click',function(){
-            console.log('toggling canvas');
-            document.getElementById("loading-status").classList.toggle('display-none');
-            canvas.classList.toggle('display-none');
-            canvas.classList.toggle('draw-surface');
-            this.classList.toggle('active');
-        });
         document.getElementById('center-button').addEventListener('click',e=>{
             helioviewer._webGLClient.centerViewButtonClicked();
         });
-        window.addEventListener('request-new-textures',e=>{
-            console.log("caught request-new-textures")
+        document.getElementById('webgl-movie-settings-request-btn').addEventListener('click',e=>{
+            console.log("Request Movie Clicked!");
             helioviewer._webGLClient.requestMovie();
+            //hide error dialog warning
+            document.getElementById('webgl-movie-settings-error-dialog').classList.add('display-none');
+        })
+
+        window.addEventListener('request-new-textures',e=>{
+            console.log("caught request-new-textures");
+            //show the error dialog warning to user
+            document.getElementById('webgl-movie-settings-error-dialog').classList.remove('display-none');
+            //helioviewer._webGLClient.requestMovie();
         });
+        
         window.addEventListener('update-data-source',e=>{
-            helioviewer._webGLClient.changeLayerDataSource(e.detail.id, e.detail.sourceId);
+            //helioviewer._webGLClient.changeLayerDataSource(e.detail.id, e.detail.sourceId);
+            
+            //layer data source changed, show error dialog to user
+            //console.log("layer datasource changed");
+            //document.getElementById('webgl-movie-settings-error-dialog').classList.remove('display-none');
         });
         window.addEventListener('update-layer-order',e=>{
-            helioviewer._webGLClient.updateLayerOrder(e.detail.layerOrder);
+            //helioviewer._webGLClient.updateLayerOrder(e.detail.layerOrder);
+
+            //layer order changed, show error dialog to user
+            //console.log("layer order changed");
+            //document.getElementById('webgl-movie-settings-error-dialog').classList.remove('display-none');
         })
     }
 
@@ -346,7 +362,7 @@ class WebGLClientRenderer {
         //mark base layer for 100% opacity application.
         var baseLayer = true;
         for(let layer of newLayers){
-            this.loadingImageLayers[layer.id] = new RenderSourceLayer(this.gl, this.programInfo, layer.id, layer.image.sourceId, baseLayer, layer.opacity, layer.visible);
+            this.loadingImageLayers[layer.id] = new RenderSourceLayer(this.gl, this.programInfo, layer.id, layer.image.sourceId, baseLayer, layer.opacity, layer.visible, this.dateTime);
             this.loadingImageLayers[layer.id].setColorTable();
             //await this.loadingImageLayers[layerIndex].setSourceParams(source);
             //this.loadingImageLayers[layer.id].createShapeVertexBuffers();//Needs to be per frame
@@ -374,7 +390,7 @@ class WebGLClientRenderer {
 
     renderLoop() {
         this.updateLoadingText();
-        //decide when to shift to rendering new loaded layers and kick off first render
+        //Decide when to shift to rendering new loaded layers and kick off first render
         if(this.isAllReady()){
             if(!this.render){
                 this.centerViewButtonClicked();
@@ -421,6 +437,8 @@ class WebGLClientRenderer {
         requestAnimationFrame(()=>{this.renderLoop();});
     };
 
+    //Loading progress indicator
+    //Display a percentage loading total from all assets to be loaded.
     updateLoadingText(){
         if(Object.values(this.loadingImageLayers).length){
             let numReady = 0;
@@ -445,6 +463,7 @@ class WebGLClientRenderer {
         }
     }
 
+    //Loading layers checked every frame for existence and completion of loading
     isAllReady(){
         //each layer will set its own layerReady flag
         var allLayersReady = this.loadingImageLayerKeys.length > 0 ? true : false;
@@ -462,6 +481,7 @@ class WebGLClientRenderer {
         return allLayersReady;
     }
 
+    // Swaps over to new loaded image layers once they have completed loading.
     changeToNewImageLayers(){
         console.log("---changeToNewImageLayers---")
         console.log("before: imageLayers", this.imageLayers);
@@ -471,7 +491,6 @@ class WebGLClientRenderer {
         this.tempImageLayers = {...this.imageLayers, ...this.loadingImageLayers};
         console.log("tempImageLayers",this.tempImageLayers);
         console.log("layerSources",this.layerSources);
-        //this.imageLayerKeys = [...this.imageLayerKeys, ...this.loadingImageLayerKeys];
         this.imageLayers = {};
         this.imageLayerKeys = [];
         for(let id of this.layerSources){
@@ -681,7 +700,6 @@ class WebGLClientRenderer {
     async requestMovie(){
         //basic input validation
         //this.validateUIRequestInput();
-        console.log("this.dateTimeString",this.dateTimeString);
 
         console.log("layerSourcesBefore",this.layerSources);
         //pause all layers
@@ -730,11 +748,35 @@ class WebGLClientRenderer {
     }
 
     determineAddedLayers() {
-        let addedLayers = [];
-        let newDateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
+        let addedLayers = [], newDateTimeString
+        let newDateTime = {
+            start: null,
+            end: null,
+            numFrames: null
+        };
+
+        //UI management for initializing movie settings dateTime
+        if(this.dateTime.start == null || this.dateTime.end == null){
+            console.log("one of the datetime values are null");
+            var observationDateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
+            newDateTime.start = observationDateTimeString;
+            newDateTime.end = observationDateTimeString;
+            document.getElementById('webgl-movie-start-date').value = observationDateTimeString.slice(0,-1).split("T")[0];
+            document.getElementById('webgl-movie-start-time').value = observationDateTimeString.slice(0,-1).split("T")[1];
+            document.getElementById('webgl-movie-end-date').value = observationDateTimeString.slice(0,-1).split("T")[0];
+            document.getElementById('webgl-movie-end-time').value = observationDateTimeString.slice(0,-1).split("T")[1];
+            newDateTime.numFrames = parseInt(document.getElementById('webgl-movie-settings-num-frames').value);
+        }else{
+            console.log("datetime values exist using UI values");
+            newDateTime.start = document.getElementById('webgl-movie-start-date').value.split('/').join("-") +"T"+ document.getElementById('webgl-movie-start-time').value+"Z";
+            newDateTime.end = document.getElementById('webgl-movie-end-date').value.split('/').join("-") +"T"+ document.getElementById('webgl-movie-end-time').value+"Z";
+            newDateTime.numFrames = parseInt(document.getElementById('webgl-movie-settings-num-frames').value);
+        }
+
         //when the time doesn't change we must determine which layers were added
-        if(newDateTimeString == this.dateTimeString){
-            console.log("time same: finding and loading necessary new layers if any");
+        if(newDateTime.start == this.dateTime.start && newDateTime.end == this.dateTime.end && newDateTime.numFrames == this.dateTime.numFrames){
+            console.log("movie settings same: finding and loading necessary new layers if any");
+            //extract UI ID values from helioviewer accordion
             let UIIdArray = this.UIAccordionLayers.map(val => val.id);
             let RenderIdArray = Object.values(this.imageLayers).map(val => val.id);
             let addedUIIdsArray = UIIdArray.filter(id => !RenderIdArray.includes(id));
@@ -748,11 +790,17 @@ class WebGLClientRenderer {
             }
             return addedLayers;
         }else{//otherwise when the time changes we need to reload all layers.
-            console.log("time changed: loading all layers")
+            console.log("movie settings changed: loading all layers");
+            // console.log(this.dateTime.start, newDateTime.start);
+            // console.log(this.dateTime.end, newDateTime.end);
+            // console.log(this.dateTime.numFrames, newDateTime.numFrames);
             this.loadingImageLayers = {};
             this.loadingImageLayerKeys = [];
             this.switchToNewImageLayers = true;
-            this.dateTimeString = newDateTimeString;
+            this.dateTime.start = newDateTime.start;
+            this.dateTime.end = newDateTime.end;
+            this.dateTime.numFrames = newDateTime.numFrames;
+            
             return this.UIAccordionLayers;
         }
     }
@@ -822,6 +870,5 @@ class WebGLClientRenderer {
             this.imageLayers[layer].updatePlayPause(this.playMovieState);
         }
     }
-
 
 }

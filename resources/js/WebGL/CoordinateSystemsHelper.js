@@ -46,7 +46,7 @@ class CoordinateSystemsHelper {
     }
 
     async getPositionHCC(dateISOString,observer,target){
-        let utc = dateISOString.slice(0,-1);
+        let utc = dateISOString.slice(0,-4)+"000";
         let requestURL = Helioviewer.api+"?action=getGeometryServiceData&auth="+this.apiAuth+"&type=position&utc="+utc+"&observer="+observer+"&target="+target;
         let result;
         let result_au;
@@ -63,6 +63,7 @@ class CoordinateSystemsHelper {
                     let data = xhr.response;
                     //we must swap y and z coordinates from HEEQ to GL coordinates
                     //we must invert x and y as well
+                    console.log("expectedUTC",utc,"payload",data.result[0]);
                     result = {
                         x: -data.result[0][utc][0],//extract x distance HCC for time from result json payload
                         y: -data.result[0][utc][2],//extract y distance HCC for time from result json payload

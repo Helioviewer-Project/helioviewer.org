@@ -552,6 +552,61 @@
 						</div>
 					</div>
 				</div>
+
+
+				<div id="accordion-webgl-movies" class="accordion">
+					<div class="header">
+						<div class="disclosure-triangle-alway-open opened">►</div>
+						<h1>Request a WebGL Movie</h1>
+						<div class="right fa fa-question-circle contextual-help qtip-left" title="Generate a custom move from up to three (3) image layers plus solar feature and event marker pins, labels, and extended region polygons."></div>
+					</div>
+					<div class="content" style="display:block;">
+						<div class="section">
+	
+							<!-- Movie Settings -->
+							<div id="webgl-movie-settings-outer-container" class="webgl-media-manager-container">
+								<div class="webgl-movie-settings-inner-container">
+									<div class="webgl-movie-setting-block">
+										<span class="webgl-movie-settings-title">Start Date:</span>
+										<div>
+											<input type="date" id="webgl-movie-start-date" class="webgl-movie-datetime">
+											<input type="time" id="webgl-movie-start-time" class="webgl-movie-datetime" step="1">
+										</div>
+									</div>
+									<div class="webgl-movie-setting-block">
+										<span class="webgl-movie-settings-title">End Date:</span>
+										<div>
+											<input type="date" id="webgl-movie-end-date" class="webgl-movie-datetime">
+											<input type="time" id="webgl-movie-end-time" class="webgl-movie-datetime" step="1">
+										</div>
+									</div>
+									<div class="webgl-movie-setting-block">
+										<span class="webgl-movie-settings-title">Number of Frames to Request:</span>
+										<div>
+											<input id="webgl-movie-settings-num-frames" type="text" pattern='^([01]?[0-9]?[0-9]|2[0-9][0-9]|300)$' min="1" max="300" value="1">
+										</div>
+									</div>
+									
+								</div>
+								
+								<!-- Movie request submit button -->
+								<div id='webgl-movie-settings-submit'>
+									<input type="button" id='webgl-movie-settings-request-btn' class="ui-button ui-corner-all ui-widget" value="Request" />
+								</div>
+
+								<div class="webgl-movie-setting-block">
+									<div id="webgl-movie-settings-error-dialog" class="webgl-movie-settings-error-dialog display-none">
+										Image Layers Altered!
+										<br>
+										Request a new movie to sync with observation parameters!
+									</div>
+								</div>
+
+							</div>
+	
+						</div>
+					</div>
+				</div>
 	
 			</div>
 		</div>
@@ -1570,10 +1625,10 @@
 		<script src="resources/js/Viewport/CelestialBodiesSatellites.js?v=<?=debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/WebGL/CoordinateSystemsHelper.js?v=<?=debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/WebGL/SourceLayerHelper.js?v=<?=debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/WebGL/Render/RenderReel.js?v=<?=debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/WebGL/Render/RenderFrame.js?v=<?=debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/WebGL/Render/RenderSourceLayer.js?v=<?=debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/WebGL/WebGLClientRenderer.js?v=<?=debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/WebGL/WebGLUIHelper.js?v=<?=debugTime?>" type="text/javascript"></script>
 	<?php
 	} else {	
 	?>

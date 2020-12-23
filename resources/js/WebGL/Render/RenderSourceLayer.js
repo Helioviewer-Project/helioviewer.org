@@ -1,5 +1,5 @@
 class RenderSourceLayer {
-    constructor(gl,programInfo,id,sourceId,baseLayer,alpha,visible){
+    constructor(gl,programInfo,id,sourceId,baseLayer,alpha,visible,dateTime){
         this.gl = gl;
         this.programInfo = programInfo;
         this.id = id;
@@ -24,6 +24,12 @@ class RenderSourceLayer {
 
         this.playMovieState = true;
         this.layerReady = false;
+
+        this.dateTime = {
+            start: dateTime.start,
+            end: dateTime.end,
+            numFrames: dateTime.numFrames
+        }
 
         console.log(this.sourceName,"alpha:"+this.alpha);
     }
@@ -256,13 +262,30 @@ class RenderSourceLayer {
             //add texture to pool
             this.newRenderReel.push(renderFrame);
         }
+        if(this.inputTemporalParams.numFrames > 1 && this.dateTime.start != this.dateTime.end){
+            fetch(Helioviewer.api + "/?action=logWebGLMovieStatistics&sourceId=" + this.sourceId + "&numFrames=" + this.inputTemporalParams.numFrames + "&startDateTime=" + this.dateTime.start + "&endDateTime=" + this.dateTime.end );
+        }
     }
 
     prepareInputBeforeFrames(){
-        var dateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
-        var startDate = parseInt(new Date(dateTimeString).getTime() / 1000);
-        var endDate = parseInt(new Date(dateTimeString).getTime() / 1000) + 86400 * 2 ;
-        var numFramesInput = parseInt(1);
+        var numFramesInput;
+        //initialize datetime with main observation date/time
+        if(this.dateTime.start == null || this.dateTime.end == null){
+            var observationDateTimeString = document.getElementById('date').value.split('/').join("-") +"T"+ document.getElementById('time').value+"Z";
+            startDateTimeString = observationDateTimeString;
+            endDateTimeString = observationDateTimeString;
+            this.dateTime.start = startDateTimeString;
+            this.dateTime.end = endDateTimeString;
+            numFramesInput = parseInt(1);
+            console.log("end-time",observationDateTimeString.slice(0,-1).split("T")[1]);
+        }else{
+            this.dateTime.start = document.getElementById('webgl-movie-start-date').value.split('/').join("-") +"T"+ document.getElementById('webgl-movie-start-time').value+"Z";
+            this.dateTime.end = document.getElementById('webgl-movie-end-date').value.split('/').join("-") +"T"+ document.getElementById('webgl-movie-end-time').value+"Z";
+            numFramesInput = parseInt(document.getElementById('webgl-movie-settings-num-frames').value);
+            console.log("new number of frames:",numFramesInput);
+        }
+        var startDate = parseInt(new Date(this.dateTime.start).getTime() / 1000);
+        var endDate = parseInt(new Date(this.dateTime.end).getTime() / 1000);
         var reduceInput = parseInt(0);
 
         //scale down 4k SDO images in half, twice, down to 1k
@@ -278,7 +301,7 @@ class RenderSourceLayer {
             numFrames: numFramesInput,
             timeStart: unixTimeStart,
             timeIncrement: unixTimeIncrement,
-            reduceResolutionLevel: reduceInput
+            reduceResolutionLevel: reduceInput,
         };
     }
 
