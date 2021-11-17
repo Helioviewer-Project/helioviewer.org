@@ -9,10 +9,6 @@ To request a new feature or to report a bug, visit
   
     https://github.com/Helioviewer-Project
 
-For the most up-to-date documentation on Helioviewer.org and related efforts,
-see the official wiki at
-  
-    http://wiki.helioviewer.org/wiki/
 
 ======================================================================
 
@@ -39,7 +35,7 @@ following software:
 INSTALLATION:
 
 Instructions for installing Helioviewer.org are available online at
-http://wiki.helioviewer.org/wiki/index.php?title=Installing_Helioviewer.org
+https://helioviewer-project.github.io/install/
 
 LICENSE:
 
