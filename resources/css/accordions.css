@@ -5,12 +5,14 @@
 }
 
 #TileLayerAccordion-Container,
-#EventLayerAccordion-Container {
+#EventLayerAccordion-Container,
+#SolarBodiesAccordion-Container  {
     margin-top: 2px;
     font-size: 10.5px;
 }
 
-#EventLayerAccordion-Container {
+#EventLayerAccordion-Container,
+#SolarBodiesAccordion-Container  {
 	padding-bottom: 30px;
 }
 
@@ -102,13 +104,15 @@ select.layer-select option{
 
 
 #TileLayerAccordion-Container .ui-widget-content,
-#EventLayerAccordion-Container .ui-widget-content {
+#EventLayerAccordion-Container .ui-widget-content,
+#SolarBodiesAccordion-Container .ui-widget-content {
     background-image: none;
     background-color: transparent;
 }
 
 #TileLayerAccordion-Container .dynaccordion-section,
-#EventLayerAccordion-Container .dynaccordion-section {
+#EventLayerAccordion-Container .dynaccordion-section,
+#SolarBodiesAccordion-Container .dynaccordion-section {
     margin: 0;
     padding: 0.55em 0.125em 0.1em 1em;
     background: -o-linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0));
@@ -118,14 +122,16 @@ select.layer-select option{
 }
 
 #TileLayerAccordion-Container .dynaccordion-cell,
-#EventLayerAccordion-Container .dynaccordion-cell {
+#EventLayerAccordion-Container .dynaccordion-cell,
+#SolarBodiesAccordion-Container .dynaccordion-cell {
     border: none;
     padding: 0;
     margin: 0;
 }
 
 #TileLayerAccordion-Container .ui-accordion-header,
-#EventLayerAccordion-Container .ui-accordion-header {
+#EventLayerAccordion-Container .ui-accordion-header,
+#SolarBodiesAccordion-Container .ui-accordion-header {
     background-image: none;
     background-color: transparent;
     border: none;
@@ -212,10 +218,12 @@ select.layer-select {
 }
 
 
-#accordion-events .buttons {
+#accordion-events .buttons,
+#accordion-bodies .buttons {
     text-align: center;
 }
-#accordion-events .text-button {
+#accordion-events .text-button,
+#accordion-bodies .text-button {
     font-size: 0.75em;
     padding: 0.25em 0.5em;
     font-weight: 400;

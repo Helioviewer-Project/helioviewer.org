@@ -59,7 +59,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * user click to view it in a popup.
      */
     _buildMovieRequest: function (serializedFormParams) {
-        var formParams, baseParams, params, frameRate;
+        var formParams, baseParams, params, frameRate, celestialBodiesLabels, celestialBodiesTrajectories;
 
         // Convert to an associative array for easier processing
         formParams = {};
@@ -96,7 +96,10 @@ var MovieManagerUI = MediaManagerUI.extend(
 		var switchSources = false;
 		if(outputType == 'minimal'){
 			switchSources = true;
-		}
+        }
+        
+        celestialBodiesLabels = helioviewer.getCelestialBodiesLabels();
+        celestialBodiesTrajectories = helioviewer.getCelestialBodiesTrajectories();
 		
         // Movie request parameters
         baseParams = {
@@ -114,7 +117,9 @@ var MovieManagerUI = MediaManagerUI.extend(
             movieIcons   : 0,
             followViewport   : 0,
             reqObservationDate   : new Date(Helioviewer.userSettings.get("state.date")).toISOString(),
-            switchSources   : switchSources
+            switchSources   : switchSources,
+            celestialBodiesLabels : celestialBodiesLabels,
+            celestialBodiesTrajectories : celestialBodiesTrajectories
         };
 
         // Add ROI and start and end dates
@@ -291,6 +296,24 @@ var MovieManagerUI = MediaManagerUI.extend(
             $(document).trigger("message-console-info", msg);
             self._refresh();
         };
+
+        // Notification Permission
+        if("Notification" in window){//if browser supports notifications
+            var savedMovieNotificationsState = Helioviewer.userSettings.get("options.movieNotifications");
+            if (savedMovieNotificationsState == undefined || savedMovieNotificationsState == null || savedMovieNotificationsState !== Notification.permission){
+                if (Notification.permission !== "denied"){//if the user has not denied the notification
+                    Notification.requestPermission();//get notification permission
+                }
+                if(Notification.permission == "denied" || Notification.permission == "granted"){
+                    var notifParams = {
+                        action: 'logNotificationStatistics',
+                        notifications: Notification.permission
+                    }
+                    $.get(Helioviewer.api, notifParams, null , "json");
+                    Helioviewer.userSettings.set("options.movieNotifications", Notification.permission);
+                }
+            }
+        }
 
         // Make request
         $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
@@ -578,15 +601,13 @@ var MovieManagerUI = MediaManagerUI.extend(
             // copy the link to the clipboard by creating a placeholder textinput
             var $temp = $('<input>');
             $('body').append($temp);
-            if(outputType==minimal)
             $temp.val('http://' + document.domain + '/?movieId=' + movie.id).select();
             document.execCommand("copy");//perform copy
             $temp.remove();
         }else{
             // If the movie is ready, open movie player
             if (movie.status === 2) {
-                dialog = $("movie-player-" + id);
-
+                dialog = $("#movie-player-" + id);
                 // If the dialog has already been created, toggle display
                 if (dialog.length > 0) {
                     action = dialog.dialog('isOpen') ? "close" : "open";
@@ -810,7 +831,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         $("#upload-dialog").dialog({
             "title" : "Upload video to YouTube",
             "width" : 550,
-            "height": 440
+            "height": 500
         });
     },
 
@@ -1027,8 +1048,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Upload to YouTube
         youtubeBtn = '<div style="float:left;"><a id="youtube-upload-' + movie.id + '" href="#" ' +
             'target="_blank"><img class="youtube-icon" ' +
-            'title="Upload video to YouTube" style="width:79px;height:32px;" ' +
-            'src="resources/images/youtube_79x32.png" /></a></div>';
+            'title="Upload video to YouTube" style="width:124px;height:32px;" ' +
+            'src="resources/images/yt_upload_logo_rgb_light.png" /></a></div>';
 
         // Link
         linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;

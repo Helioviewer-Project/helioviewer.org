@@ -348,6 +348,10 @@ var UserSettings = Class.extend(
 
             this.set("state.eventLabels", false);
         }
+
+        if(typeof urlSettings.celestialBodiesChecked != 'undefined' && urlSettings.celestialBodiesChecked != ''){
+            this.set("state.celestialBodiesChecked", JSON.parse(urlSettings.celestialBodiesChecked));
+        }
     },
 
     /**

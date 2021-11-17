@@ -37,6 +37,16 @@ For more information, please visit our <a href="http://helioviewer.org/wiki/Main
         <b>Helioviewer.org makes use of the following tools:</b><br />
         <a href="https://www.browserstack.com/" target="_blank">BrowserStack</a> - Cross Browser Testing Tool.<br/>
         <a href="http://www.highcharts.com/" target="_blank">Highcharts</a> - Interactive JavaScript charts for your webpage.<br/>
-
+	<a href="https://sunpy.org/" target="_blank">SunPy</a> - Solar data analysis environment for Python. <br/>
+        <a href="https://github.com/nikolaposa/rate-limit" target="_blank">Rate-Limit</a> - API level rate-limiting by Nikola Posa. <br/>
+        <a href="https://redis.io/" target="_blank">Redis</a> - Open source (BSD licensed), in-memory data structure store. <br/>
+    </span>
+    <br/>
+    <span style="margin-left:auto; margin-right: auto;">
+        <b>YouTube API Client Acknowledgements:</b><br />
+        <a href="https://www.youtube.com/terms" target="_blank">YouTube Terms of Service (ToS)</a> <br/>
+        <a href="https://policies.google.com/privacy" target="_blank">Google Privacy Policy</a> <br/>
+        <a href="https://security.google.com/settings/security/permissions" target="_blank">Revoke YouTube API Access for Helioviewer.org</a> <br/>
+    
     </span>
 </div>

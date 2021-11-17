@@ -247,6 +247,7 @@ var TimeControls = Class.extend(
             {numSecs: 43200,    txt: "12&nbsp;Hours"},
             {numSecs: 86400,    txt: "1&nbsp;Day"},
             {numSecs: 604800,   txt: "1&nbsp;Week"},
+            {numSecs: 2356583,  txt: "Carrington&nbsp;rotation"},
             {numSecs: 2419200,  txt: "28&nbsp;Days"},
             {numSecs: 31556926, txt: "1&nbsp;Year"}
         ];
