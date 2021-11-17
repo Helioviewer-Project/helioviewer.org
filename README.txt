@@ -43,3 +43,19 @@ Helioviewer.org is licensed under the Mozilla Public License. Software
 libraries used by Helioviewer.org and included with this distribution may
 include their own licenses. Please consult the documentation of the particular
 dependency for the details of it's licensing.
+
+CREDITS:
+
+Helioviewer.org is part of the Helioviewer Project, an open-source project
+for the visualization of solar and heliospheric data.  The Helioviewer
+Project is funded by ESA and NASA.
+
+Helioviewer.org acknowledges the support of the following instrument teams,
+mission teams and institutions - SDO(NASA), SOHO(ESA/NASA), STEREO(NASA),
+PROBA2(ESA), Yohkoh(JAXA/NASA/PPARC), NASA GSFC, Royal Observatory of
+Belgium, LMSAL, SDAC, Stanford University, Montana State University/FFT
+
+Helioviewer.org acknowledges the use of the following tools:
+ - www.browserstack.com, for testing the web application on multiple browsers
+   and OSs,
+ - www.highcharts.com, for interactive JavaScript charts.
