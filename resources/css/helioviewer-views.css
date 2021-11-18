@@ -95,7 +95,7 @@
 /* SCREENSHOTS */
 .helioviewer-view-type-minimal #screenshots-button:hover,
 .helioviewer-view-type-minimal #screenshots-button.opened {
-   color: rgba(0, 167, 125, 0.75);
+   color: rgba(0,167,125,1);
    background-color: white;
    -o-border-radius: 0.2em;
    -moz-border-radius: 0.2em;
@@ -104,7 +104,7 @@
    border-color: black;
 }
 .helioviewer-view-type-minimal #screenshots-button.opened:hover {
-   color: rgba(0, 167, 125, 0.75);
+   color: rgba(0,167,125,1);
    background-color: rgba(255,255,255,1);
    -o-border-radius: 0.2em;
    -moz-border-radius: 0.2em;
@@ -113,7 +113,7 @@
    border-color: black;
 }
 .helioviewer-view-type-minimal #screenshots-button:active {
-   color: rgba(0, 167, 125, 0.75);
+   color: rgba(0,167,125,0.75);
 }
 
 /* HELP */
@@ -132,7 +132,6 @@
 .helioviewer-view-type-minimal #help-anchor {
     color: #cccccc;
 }
-
 
 .helioviewer-view-type-minimal .social-button {
    font-size: 30px;
@@ -165,7 +164,7 @@
 	margin-left: 2px;
 	z-index: 3;
 	position:absolute;
-	bottom:1em;
+	bottom:1.0em;
 	left:18px;
 	width:30px;
 	height: 300px;
@@ -267,8 +266,8 @@
 	left:10px;
 	top:10px;
 	position:absolute;
-    height: auto;
-    width: 28.5em;
+    	height: auto;
+    	width: 28.5em;
 	overflow: hidden;
 }
 
@@ -308,6 +307,8 @@
     border: 1px solid yellow;
     color: yellow;
 }
+
+
 
  /* Header Buttons */
  #k12-scale .viewport-action, #hv-drawer-timeline .viewport-action, #hv-drawer-timeline-events .viewport-action {
@@ -416,4 +417,5 @@ background-color: rgba(0,0,0,0.75);
       bottom: 1.1em;
        color: rgba(255,255,255,0.9);
 }
+
 

@@ -9,10 +9,6 @@ To request a new feature or to report a bug, visit
   
     https://github.com/Helioviewer-Project
 
-For the most up-to-date documentation on Helioviewer.org and related efforts,
-see the official wiki at
-  
-    http://wiki.helioviewer.org/wiki/
 
 ======================================================================
 
@@ -39,7 +35,7 @@ following software:
 INSTALLATION:
 
 Instructions for installing Helioviewer.org are available online at
-http://wiki.helioviewer.org/wiki/Installing_Helioviewer.org
+https://helioviewer-project.github.io/install/
 
 LICENSE:
 
@@ -52,8 +48,7 @@ CREDITS:
 
 Helioviewer.org is part of the Helioviewer Project, an open-source project
 for the visualization of solar and heliospheric data.  The Helioviewer
-Project is funded by ESA and NASA.  For more information, please see the
-wiki above.
+Project is funded by ESA and NASA.
 
 Helioviewer.org acknowledges the support of the following instrument teams,
 mission teams and institutions - SDO(NASA), SOHO(ESA/NASA), STEREO(NASA),

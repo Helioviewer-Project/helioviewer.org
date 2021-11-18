@@ -1054,28 +1054,23 @@ span.ui-icon-hover, div.ui-icon-hover {
 
 
 /* YOUTUBE */
-#hv-header #youtube-button:hover,
-#hv-header #youtube-button.opened {
-   color: rgba(187,0,0,1);  /* youtube logo red */
-   background-color: white;
-   -o-border-radius: 0.2em;
-   -moz-border-radius: 0.2em;
-   -webkit-border-radius: 0.2em;
-   border-radius: 0.2em;
-   border-color: black;
+#youtube-button {
+   background-image: url("../images/yt_icon_mono_dark.png");
+   background-size:100%;
+   background-repeat: no-repeat;
+   width: 33px;
+   height: 23px;
 }
-#hv-header #youtube-button.opened:hover {
-   color: rgba(187,0,0,1);
-   -o-border-radius: 0.2em;
-   -moz-border-radius: 0.2em;
-   -webkit-border-radius: 0.2em;
-   border-radius: 0.2em;
-   border-color: black;
+#youtube-button:hover {
+   background-image: url("../images/yt_icon_rgb.png");
 }
-#hv-header #youtube-button:active {
-   color: rgba(187,0,0,0.75);
+#youtube-button.opened{
+   background-image: url("../images/yt_icon_rgb.png");
+   background-size:100%;
+   background-repeat: no-repeat;
+   width: 33px;
+   height: 23px;
 }
-
 
 /* MOVIES */
 #hv-header #movies-button:hover,
