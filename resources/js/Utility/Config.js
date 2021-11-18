@@ -22,7 +22,7 @@ var Config = Class.extend(
         'max_image_scale'       : 154.90822,
         'max_tile_layers'       : 5,
         'prefetch_size'        	: 0,
-        'news_url'             	: "https://blog.helioviewer.org/",
+        'news_url'             	: "https://helioviewer-project.github.io/",
         'user_video_feed'       : "https://api.helioviewer.org/",
         'contact_email'        	: "contact@helioviewer.org"
      },

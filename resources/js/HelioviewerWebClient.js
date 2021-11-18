@@ -119,7 +119,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this.earthScale = new ImageScale();
 
-        this.displayBlogFeed(8, false);
+        this.displayBlogFeed(7, true);
 
         this._userVideos = new UserVideoGallery(this.serverSettings.videoFeed);
 
@@ -133,6 +133,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this._timeSelector      = new TimeSelector();
         
         this._userLayersPresets = new UserLayersPresets();
+
+        this._celestialBodies = new CelestialBodiesSatellites();
 
         this._setupDialogs();
         this._initEventHandlers();
@@ -299,7 +301,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         // About dialog
         this._setupDialog("#help-links-about", "#about-dialog", {
             "title"  : "Helioviewer - About",
-            "height" : 400
+            "height" : 520
         });
 
         // Keyboard shortcuts dialog
@@ -1601,7 +1603,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     /**
      * Displays recent news from the Helioviewer Project blog
      */
-    displayBlogFeed: function (n, showDescription, descriptionWordLength) {
+    displayBlogFeed: function (descriptionWordLength, showDescription) {
         var url, dtype, html = "";
 
         url = this.serverSettings.newsURL;
@@ -1623,16 +1625,16 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             dataType: dtype,
             success: function (feed) {
                 var link, date, more, description, newNewsAmount = 0;
-				
-				$(feed).find('item').each(function(){
-					var $item = $(this);
-					var title = $item.find('title').text();
-					var description = $item.find('description').text();
-					var updated = $item.find('pubDate').text();
-					var link = $item.find('link').text();
+				$(feed).find('entry').each(function(){
+                    var $item = $(this);
+                    var title = $item.find('title').text();
+                    var description = $item.find('summary').text();
+                    var updated = $item.find('published').text();
+                    updated = updated.split("+")[0].split("T").join(" ");//format to iso date like "2020-08-20 00:00:00"
+                    var link = $item.find('link').attr("href");
 					
 					link = "<a href='" + link + "' alt='" + title + "' target='_blank'>" + title + "</a><br />";
-                    date = "<div class='article-date'>" + updated.slice(0, 26) + "UTC</div>";
+                    date = "<div class='article-date'>" + updated + " UTC</div>";
                     html += "<div class='blog-entry'>" + link + date;
 					
 					//Check for notification
@@ -1647,7 +1649,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                     if (showDescription) {
                         // Shorten if requested
                         if (typeof descriptionWordLength === "number") {
-                            description = description.split(" ").slice(0, descriptionWordLength).join(" ") + " [...]";
+                            description = description.split(" ").slice(0, descriptionWordLength).join(" ") + "...";
                         }
                         html += "<div class='article-desc'>" + description + "</div>";
                     }
@@ -1742,6 +1744,24 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     getEvents: function () {
         return this.viewport.serializeEvents();
     },
+    
+    /**
+     * Returns the currently selected celestial bodies labels from the sidebar
+     * 
+     * @return {String} Serialized celestial bodies labels string
+     */
+    getCelestialBodiesLabels: function() {
+        return this._celestialBodies.serializeCelestialBodiesLabels();
+    },
+
+    /**
+     * Returns the currently selected celestial bodies trajectories from the sidebar
+     * 
+     * @return {String} Serialized celestial bodies trajectories string
+     */
+    getCelestialBodiesTrajectories: function() {
+        return this._celestialBodies.serializeCelestialBodiesTrajectories();
+    },
 
     /**
      * Returns the currently selected event layers
@@ -1792,13 +1812,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         
         // URL parameters
         var params = {
-            "date"        : this.viewport._tileLayerManager.getRequestDateAsISOString(),
-            "imageScale"  : this.viewport.getImageScale(),
-            "centerX"     : Helioviewer.userSettings.get("state.centerX"),
-            "centerY"     : Helioviewer.userSettings.get("state.centerY"),
-            "imageLayers" : encodeURI(this.viewport.serialize()),
-            "eventLayers" : encodeURI(this.viewport.serializeEvents()),
-            "eventLabels" : Helioviewer.userSettings.get("state.eventLabels")
+            "date"              : this.viewport._tileLayerManager.getRequestDateAsISOString(),
+            "imageScale"        : this.viewport.getImageScale(),
+            "centerX"           : Helioviewer.userSettings.get("state.centerX"),
+            "centerY"           : Helioviewer.userSettings.get("state.centerY"),
+            "imageLayers"       : encodeURI(this.viewport.serialize()),
+            "eventLayers"       : encodeURI(this.viewport.serializeEvents()),
+            "eventLabels"       : Helioviewer.userSettings.get("state.eventLabels"),
+            "celestialBodies"   : encodeURI(JSON.stringify(Helioviewer.userSettings.get("state.celestialBodiesChecked")))
         };
 
         return this.serverSettings.rootURL + "/?" + decodeURIComponent($.param(params));
@@ -2512,6 +2533,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             sdoButtons      = $('#sdo-buttons'),
             sdoGlobal 		= global,
             vsoGlobal 		= global,
+	    self 		= this,
             vport, imageScale;
 
         if ( typeof this.viewport._tileLayerManager == 'undefined' ) {

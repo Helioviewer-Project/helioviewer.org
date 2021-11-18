@@ -1,0 +1,3068 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<api xmlns="http://mashape.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://mashape.com http://www.mashape.com/schema/mashape-4.0.xsd">
+    <group name="JPEG2000">
+        <description>&lt;p class=&quot;description&quot;&gt;Helioviewer.org and JHelioviewer operate off of JPEG2000 formatted image data generated from science-quality FITS files.  Use the APIs below to interact directly with these intermediary JPEG2000 files.&lt;/p&gt;</description>
+    </group>
+    <group name="Movies">
+        <description>
+            &lt;p class=&quot;description&quot;&gt;The movie APIs can be used to generate custom
+            videos of up to three image datasource layers composited together.
+            Solar feature/event markers pins, extended region polygons, associated
+            text labels, and a size-of-earth scale indicator can optionally be
+            overlayed onto a movie.&lt;/p&gt;
+
+            &lt;p class=&quot;description&quot;&gt;Movie generation is performed asynchronously due
+            to the amount of resources required to complete each video.  Movie
+            requests are queued and then processed (in the order in which they are
+            received) by one of several worker processes operating in parallel.&lt;/p&gt;
+
+            &lt;p class=&quot;description&quot;&gt;As a user of the API, begin by sending a
+            &#039;&lt;a class=&quot;endpoint&quot; href=&quot;#queueMovie&quot;&gt;queueMovie&lt;/a&gt;&#039; request.  If
+            your request is successfully added to the queue, you will receive a
+            response containing a unique movie identifier.  This identifier can be
+            used to monitor the status of your movie via &#039;&lt;a class=&quot;endpoint&quot;
+            href=&quot;#getMovieStatus&quot;&gt;getMovieStatus&lt;/a&gt;&#039; and then download or play it
+            (via &#039;&lt;a class=&quot;endpoint&quot; href=&quot;#downloadMovie&quot;&gt;downloadMovie&lt;/a&gt;&#039; or
+            &#039;&lt;a class=&quot;endpoint&quot; href=&quot;#playMovie&quot;&gt;playMovie&lt;/a&gt;&#039;) once its status
+            marked as completed.&lt;/p&gt;
+
+            &lt;p class=&quot;description&quot;&gt;Movies may contain between 10 and 300 frames. The
+            movie frames are chosen by matching the closest image available at
+            each step within the specified range of dates, and are automatically
+            selected by the API. The region to be included in the movie may be
+            specified using either the top-left and bottom-right coordinates in
+            arc-seconds, or a center point in arc-seconds and a width and
+            height in pixels. See the &lt;a class=&quot;appendix&quot; href=&quot;#appendix_coordinates&quot;&gt;
+            Coordinates Appendix&lt;/a&gt; for more infomration about working with the
+            coordinates used by Helioviewer.org.&lt;/p&gt;</description>
+    </group>
+    <group name="Screenshots">
+        <description>
+            &lt;p class=&quot;description&quot;&gt;The screenshot APIs can be used to generate custom videos of up to three image datasource layers composited together. Solar feature/event markers pins, extended region polygons, associated text labels, and a size-of-earth scale indicator can optionally be overlayed onto a movie.&lt;/p&gt;
+        </description>
+    </group>
+    <group name="Solar Features and Events">
+        <description>
+            &lt;p class=&quot;description&quot;&gt;Helioviewer.org&#039;s solar features and events annotation layer is powered by the &lt;a href=&quot;http://www.lmsal.com/hek/&quot; target=&quot;_blank&quot;&gt;Heliophysics Events Knowledgebase&lt;/a&gt; (HEK) provided by the &lt;a href=&quot;http://www.lmsal.com/&quot; target=&quot;_blank&quot;&gt;Lockheed Martin Solar &amp;amp; Astrophysics Laboratory&lt;/a&gt; (LMSAL).&lt;/p&gt;
+
+            &lt;p class=&quot;description&quot;&gt;Consult LMSAL&#039;s &lt;a href=&quot;http://www.lmsal.com/hek/api.html&quot; target=&quot;_blank&quot;&gt;HEK API Documentation&lt;/a&gt; for more information.&lt;/p&gt;
+        </description>
+    </group>
+    <group name="YouTube">
+        <description></description>
+    </group>
+    <group name="Official Clients">
+        <description></description>
+    </group>
+    <group name="Web Site">
+        <description></description>
+    </group>
+    <endpoint name="checkYouTubeAuth" group="YouTube" http="GET">
+        <route>/v1/checkYouTubeAuth/</route>
+        <description><![CDATA[Check to see if Helioveiwer.org is authorized to interact with a user's YouTube account via the current browser session.]]></description>
+        <parameters>
+            <parameter type="string" optional="true" name="callback">
+                <description><![CDATA[Wrap the response object in a function call of your choosing.]]></description>
+                <example></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="string" subtype="Boolean">
+            <example query_string="?"><![CDATA[false]]></example>
+        </response>
+    </endpoint>
+    <endpoint name="queueMovie" group="Movies" http="GET">
+        <route>/v1/queueMovie/</route>
+        <description><![CDATA[Create a custom movie by submitting a request to the movie generation queue.  The response returned will provide you with a unique Movie ID that can be used to check on the status of your movie (via `getMovieStatus`) and to download your movie (via `downloadMovie`).]]></description>
+        <parameters>
+            <parameter type="string" optional="false" name="startTime">
+                <description><![CDATA[Desired date and time of the first frame of the movie. ISO 8601 combined UTC date and time UTC format.]]></description>
+                <example><![CDATA[2010-03-01T12:12:12Z]]></example>
+            </parameter>
+            <parameter type="string" optional="false" name="endTime">
+                <description><![CDATA[Desired date and time of the final frame of the movie. ISO 8601 combined UTC date and time UTC format.]]></description>
+                <example><![CDATA[2010-03-04T12:12:12Z]]></example>
+            </parameter>
+            <parameter type="string" optional="false" name="layers">
+                <description><![CDATA[Image datasource layer(s) to include in the movie.]]></description>
+                <example><![CDATA[[3,1,100],[4,1,100]]]></example>
+            </parameter>
+            <parameter type="string" optional="false" name="events">
+                <description><![CDATA[List feature/event types and FRMs to use to annoate the movie.  Use the empty string to indicate that no feature/event annotations should be shown.]]></description>
+                <example><![CDATA[[AR,HMI_HARP;SPoCA,1],[CH,all,1]]]></example>
+            </parameter>
+            <parameter type="boolean" optional="false" name="eventsLabels">
+                <description><![CDATA[Optionally annotate each event marker with a text label.]]></description>
+                <example><![CDATA[false]]></example>
+            </parameter>
+            <parameter type="number" optional="false" name="imageScale">
+                <description><![CDATA[Image scale in arcseconds per pixel.]]></description>
+                <example><![CDATA[21.04]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="format">
+                <description><![CDATA[Movie format (`mp4`, `webm`, `flv`). Default value is `mp4`.]]></description>
+                <example><![CDATA[mp4]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="frameRate">
+                <description><![CDATA[Movie frames per second.  15 frames per second by default.]]></description>
+                <example><![CDATA[15]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="maxFrames">
+                <description><![CDATA[Maximum number of frames in the movie.  May be capped by the server.]]></description>
+                <example><![CDATA[300]]></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="scale">
+                <description><![CDATA[Optionally overlay an image scale indicator.]]></description>
+                <example></example>
+            </parameter>
+            <parameter type="string" optional="true" default="earth" name="scaleType">
+                <description><![CDATA[Image scale indicator.]]></description>
+                <example><![CDATA[earth]]></example>
+                <values>
+                    <value>earth</value>
+                </values>
+            </parameter>
+            <parameter type="number" optional="true" name="scaleX">
+                <description><![CDATA[Horizontal offset of the image scale indicator in arcseconds with respect to the center of the Sun.]]></description>
+                <example><![CDATA[-1000]]></example>
+            </parameter>
+            <parameter type="number" optional="true" name="scaleY">
+                <description><![CDATA[Vertical offset of the image scale indicator in arcseconds with respect to the center of the Sun.]]></description>
+                <example><![CDATA[-500]]></example>
+            </parameter>
+            <parameter type="number" optional="true" name="movieLength">
+                <description><![CDATA[Movie length in seconds.]]></description>
+                <example><![CDATA[4.3333]]></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="true" name="watermark">
+                <description><![CDATA[Optionally overlay a Helioviewer.org watermark image.  Enabled by default.]]></description>
+                <example><![CDATA[true]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="width">
+                <description><![CDATA[Width of the field of view in pixels. (Used in conjunction width `x0`,`y0`, and `height`).]]></description>
+                <example><![CDATA[1920]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="height">
+                <description><![CDATA[Height of the field of view in pixels. (Used in conjunction width `x0`,`y0`, and `width`).]]></description>
+                <example><![CDATA[1200]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="x0">
+                <description><![CDATA[The horizontal offset of the center of the field of view from the center of the Sun.  Used in conjunction with `y0`, `width`, and `height`.]]></description>
+                <example><![CDATA[0]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="y0">
+                <description><![CDATA[The vertical offset of the center of the field of view from the center of the Sun.  Used in conjunction with `x0`, `width`, and `height`.]]></description>
+                <example><![CDATA[0]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="x1">
+                <description><![CDATA[The horizontal offset of the top-left corner of the field of view with respect to the center of the Sun (in arcseconds). Used in conjunction with `y1`, `x2`, and `y2`.]]></description>
+                <example><![CDATA[-5000]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="y1">
+                <description><![CDATA[The vertical offset of the top-left corner of the field of view with respect to the center of the Sun (in arcseconds). Used in conjunction with `x1`, `x2`, and `y2`.]]></description>
+                <example><![CDATA[-5000]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="x2">
+                <description><![CDATA[The horizontal offset of the bottom-right corner of the field of view with respect to the center of the Sun (in arcseconds). Used in conjunction with `x1`, `y1`, and `y2`.]]></description>
+                <example><![CDATA[5000]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="y2">
+                <description><![CDATA[The vertical offset of the bottom-right corner of the field of view with respect to the center of the Sun (in arcseconds). Used in conjunction with `x1`, `y1`, and `x2`.]]></description>
+                <example><![CDATA[5000]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="callback">
+                <description><![CDATA[Wrap the response object in a function call of your choosing.]]></description>
+                <example></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="Queued Movie" subtype="JSON">
+            <description><![CDATA[JSON response to "queueMovie" and "reQueueMovie" API requests.]]></description>
+            <example query_string="?startTime=2010-03-01T12:12:12Z&amp;endTime=2010-03-04T12:12:12Z&amp;layers=[3,1,100],[4,1,100]&amp;events=[AR,HMI_HARP;SPoCA,1],[CH,all,1]&amp;eventsLabels=false&amp;imageScale=21.04&amp;x1=-5000&amp;y1=-5000&amp;x2=5000&amp;y2=5000"><![CDATA[{
+  "id": "z6vX5",
+  "eta": 376,
+  "queue": 0,
+  "token": "50e0d98f645b42d159ec1c8a1e15de3e"
+}]]></example>
+        </response>
+    </endpoint>
+    <endpoint name="reQueueMovie" group="Movies" http="GET">
+        <route>/v1/reQueueMovie/</route>
+        <description><![CDATA[Re-generate a custom movie that is no longer cached on disk.  Once the movie has been successfully queued for regeneration, the Movie ID can be used to check on the status of the movie (via `getMovieStatus`) and to download the movie (via `downloadMovie`).]]></description>
+        <parameters>
+            <parameter type="string" optional="false" name="id">
+                <description><![CDATA[Unique movie identifier (provided by the response to a `queueMovie` request).]]></description>
+                <example><![CDATA[VXvX5]]></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="Queued Movie" subtype="JSON">
+            <description><![CDATA[JSON response to "queueMovie" and "reQueueMovie" API requests.]]></description>
+            <example query_string="?id=VXvX5"><![CDATA[{
+    "id": "VXvX5",
+    "eta": 285,
+    "queue": 0,
+    "token": "4673d6db4e2a3365ab361267f2a9a112"
+}]]></example>
+        </response>
+    </endpoint>
+    <endpoint name="getMovieStatus" group="Movies" http="GET">
+        <route>/v1/getMovieStatus/</route>
+        <description></description>
+        <parameters>
+            <parameter type="string" optional="false" name="id">
+                <description><![CDATA[Unique movie identifier (provided by the response to a `queueMovie` request).]]></description>
+                <example><![CDATA[VXvX5]]></example>
+            </parameter>
+            <parameter type="string" optional="false" name="format">
+                <description><![CDATA[Movie format (`mp4`, `webm`, or `flv`).]]></description>
+                <example><![CDATA[mp4]]></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="verbose">
+                <description><![CDATA[Optionally include extra metadata in the response.]]></description>
+                <example><![CDATA[checked]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="callback">
+                <description><![CDATA[Wrap the response object in a function call of your choosing.]]></description>
+                <example></example>
+            </parameter>
+            <parameter type="string" optional="true" name="token">
+                <description></description>
+                <example></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="Movie Status" subtype="JSON">
+            <description><![CDATA[A JSON object containing metadata describing a user-generated movie, including its generation status (0=queued, 1=processing, 2=finished, 3=invalid).]]></description>
+            <example query_string="?id=VXvX5&amp;format=mp4"><![CDATA[{
+  "status": 0
+}]]></example>
+        </response>
+        <response code="200" type="Movie Status Verbose" subtype="JSON">
+            <description><![CDATA[A JSON object containing metadata describing a user-generated movie, including its generation status (0=queued, 1=processing, 2=finished, 3=invalid) and the parameters used to create it.]]></description>
+            <example query_string="?id=VXvX5&amp;format=mp4&amp;verbose=true"><![CDATA[{
+    "frameRate": 15,
+    "numFrames": 300,
+    "startDate": "2014-02-03 20:26:16",
+    "status": 2,
+    "endDate": "2014-02-05 19:40:16",
+    "width": 846,
+    "height": 820,
+    "title": "SDO AIA 1600 (2014-02-03 20:26:16 - 19:40:16 UTC)",
+    "thumbnails": {
+        "icon": "http://helioviewer.org/cache/movies/2014/02/05/VXvX5/preview-icon.png",
+        "small": "http://helioviewer.org/cache/movies/2014/02/05/VXvX5/preview-small.png",
+        "medium": "http://helioviewer.org/cache/movies/2014/02/05/VXvX5/preview-medium.png",
+        "large": "http://helioviewer.org/cache/movies/2014/02/05/VXvX5/preview-large.png",
+        "full": "http://helioviewer.org/cache/movies/2014/02/05/VXvX5/preview-full.png"
+    },
+    "url": "http://helioviewer.org/cache/movies/2014/02/05/VXvX5/2014_02_03_20_26_16_2014_02_05_19_40_16_AIA_1600.mp4",
+    "timestamp": "2014-02-05 20:25:55",
+    "duration": 20,
+    "imageScale": 2.42044,
+    "layers": "[SDO,AIA,AIA,1600,1,100]",
+    "events": "[AR,all,1],[CC,all,1],[CD,all,1],[CH,all,1],[CJ,all,1],[CE,all,1],[CR,all,1],[CW,all,1],[EF,all,1],[ER,all,1],[FI,all,1],[FA,all,1],[FE,all,1],[FL,all,1],[LP,all,1],[OS,all,1],[PG,all,1],[SG,all,1],[SP,all,1],[SS,all,1]",
+    "x1": -1011.7442962,
+    "y1": -980.2785645,
+    "x2": 1035.9487052,
+    "y2": 1004.4829735
+}]]></example>
+        </response>
+    </endpoint>
+    <endpoint name="downloadMovie" group="Movies" http="GET">
+        <route>/v1/downloadMovie/</route>
+        <description><![CDATA[Download a custom movie in one of three file formats.]]></description>
+        <parameters>
+            <parameter type="string" optional="false" name="id">
+                <description><![CDATA[Unique movie identifier (provided by the response to a `queueMovie` request).]]></description>
+                <example><![CDATA[VXvX5]]></example>
+            </parameter>
+            <parameter type="string" optional="false" name="format">
+                <description><![CDATA[Movie Format (`mp4`, `webm`, or `flv`).]]></description>
+                <example><![CDATA[mp4]]></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="hq">
+                <description><![CDATA[Optionally download a higher-quality movie file (valid for .mp4 movies only, ignored otherwise).]]></description>
+                <example><![CDATA[checked]]></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="binary" subtype="movie data">
+            <example query_string="?id=VXvX5&amp;format=mp4"/>
+        </response>
+    </endpoint>
+    <endpoint name="takeScreenshot" group="Screenshots" http="GET">
+        <route>/v1/takeScreenshot/</route>
+        <description><![CDATA[Generate a custom screenshot.
+
+        You must specify values for either `x1`, `y1`, `x2`, and `y2`
+        or `x0`, `y0`, `width` and `height`.
+
+        By default, the response is a JSON object containing a unique screenshot identifier (`id`) that can be used to with the `downloadScreenshot` API endpoint.
+
+        Set the `display` parameter to `true` to directly return the screenshot as binary PNG image data in the response.
+
+        Please note that each request causes the server to generate a screenshot from scratch and is resource intensive.  For performance reasons, you should cache the response if you simply intend to serve exactly the same screenshot to multiple users.]]></description>
+        <parameters>
+            <parameter type="string" optional="false" name="date">
+                <description><![CDATA[Desired date/time of the image. ISO 8601 combined UTC date and time UTC format.]]></description>
+                <example><![CDATA[2014-01-01T23:59:59Z]]></example>
+            </parameter>
+            <parameter type="number" optional="false" name="imageScale">
+                <description><![CDATA[Image scale in arcseconds per pixel.]]></description>
+                <example><![CDATA[2.4204409]]></example>
+            </parameter>
+            <parameter type="string" optional="false" name="layers">
+                <description><![CDATA[Image datasource layer(s) to include in the screenshot.]]></description>
+                <example><![CDATA[[SDO,AIA,AIA,335,1,100]]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="events">
+                <description><![CDATA[List feature/event types and FRMs to use to annoate the movie.  Use the empty string to indicate that no feature/event annotations should be shown.]]></description>
+                <example><![CDATA[[AR,HMI_HARP;SPoCA,1],[CH,all,1]]]></example>
+            </parameter>
+            <parameter type="boolean" optional="false" name="eventLabels">
+                <description><![CDATA[Optionally annotate each event marker with a text label.]]></description>
+                <example><![CDATA[false]]></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="scale">
+                <description><![CDATA[Optionally overlay an image scale indicator.]]></description>
+                <example></example>
+            </parameter>
+            <parameter type="string" optional="true" name="scaleType">
+                <description><![CDATA[Image scale indicator.]]></description>
+                <example><![CDATA[earth]]></example>
+                <values>
+                    <value>earth</value>
+                </values>
+            </parameter>
+            <parameter type="number" optional="true" name="scaleX">
+                <description><![CDATA[Horizontal offset of the image scale indicator in arcseconds with respect to the center of the Sun.]]></description>
+                <example><![CDATA[-1000]]></example>
+            </parameter>
+            <parameter type="number" optional="true" name="scaleY">
+                <description><![CDATA[Vertical offset of the image scale indicator in arcseconds with respect to the center of the Sun.]]></description>
+                <example><![CDATA[-500]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="width">
+                <description><![CDATA[Width of the field of view in pixels. (Used in conjunction width `x0`,`y0`, and `height`).]]></description>
+                <example><![CDATA[1920]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="height">
+                <description><![CDATA[Height of the field of view in pixels. (Used in conjunction width `x0`,`y0`, and `width`).]]></description>
+                <example><![CDATA[1200]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="x0">
+                <description><![CDATA[The horizontal offset of the center of the field of view from the center of the Sun.  Used in conjunction with `y0`, `width`, and `height`.]]></description>
+                <example><![CDATA[0]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="y0">
+                <description><![CDATA[The vertical offset of the center of the field of view from the center of the Sun.  Used in conjunction with `x0`, `width`, and `height`.]]></description>
+                <example><![CDATA[0]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="x1">
+                <description><![CDATA[The horizontal offset of the top-left corner of the field of view with respect to the center of the Sun (in arcseconds). Used in conjunction with `y1`, `x2`, and `y2`.]]></description>
+                <example><![CDATA[-5000]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="y1">
+                <description><![CDATA[The vertical offset of the top-left corner of the field of view with respect to the center of the Sun (in arcseconds). Used in conjunction with `x1`, `x2`, and `y2`.]]></description>
+                <example><![CDATA[-5000]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="x2">
+                <description><![CDATA[The horizontal offset of the bottom-right corner of the field of view with respect to the center of the Sun (in arcseconds). Used in conjunction with `x1`, `y1`, and `y2`.]]></description>
+                <example><![CDATA[5000]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="y2">
+                <description><![CDATA[The vertical offset of the bottom-right corner of the field of view with respect to the center of the Sun (in arcseconds). Used in conjunction with `x1`, `y1`, and `x2`.]]></description>
+                <example><![CDATA[5000]]></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="display">
+                <description><![CDATA[Set to `true` to directly output binary PNG image data.  Default is `false` (which outputs a JSON object).]]></description>
+                <example></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="true" name="watermark">
+                <description><![CDATA[Optionally overlay a watermark consisting of a Helioviewer logo and the datasource abbreviation(s) and timestamp(s) displayed in the screenshot.]]></description>
+                <example><![CDATA[checked]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="callback">
+                <description><![CDATA[Wrap the response object in a function call of your choosing.]]></description>
+                <example></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="Take Screenshot" subtype="JSON">
+            <description><![CDATA[JSON response to "takeScreenshot" API requests.  Assumes that the `display` parameter was omitted or set to `false`.]]></description>
+            <example query_string="?date=2014-01-01T23:59:59Z&amp;imageScale=2.4204409&amp;layers=[SDO,AIA,AIA,335,1,100]&amp;events=[AR,HMI_HARP;SPoCA,1],[CH,all,1]&amp;eventsLabels=false&amp;x0=0&amp;y0=0&amp;width=1920&amp;height=1200"><![CDATA[{
+    "id": 3285980
+}]]></example>
+        </response>
+        <response code="200" type="binary" subtype="PNG image data">
+            <description><![CDATA[Set the `display` parameter to `true` to directly return binary PNG image data in the response.]]></description>
+            <example query_string="?imageScale=2.4204409&amp;layers=[SDO,AIA,AIA,304,1,100]&amp;events=&amp;eventLabels=true&amp;scale=true&amp;scaleType=earth&amp;scaleX=0&amp;scaleY=0&amp;date=2014-02-25T15:53:00.136Z&amp;x1=-929.2475775696686&amp;x2=106.70112763033143&amp;y1=-970.7984919973343&amp;y2=486.3069298026657&amp;display=true&amp;watermark=true&amp;events=[CH,all,1]"></example>
+        </response>
+    </endpoint>
+    <endpoint name="downloadScreenshot" group="Screenshots" http="GET">
+        <route>/v1/downloadScreenshot/</route>
+        <description><![CDATA[Download a custom screenshot (that was generated using the `takeScreenshot` API endpoint).]]></description>
+        <parameters>
+            <parameter type="number" optional="false" name="id">
+                <description><![CDATA[Unique screenshot identifier (provided by the response to a `takeScreenshot` request).]]></description>
+                <example><![CDATA[3240748]]></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="binary" subtype="PNG image data">
+            <example query_string="?id=3240748"></example>
+        </response>
+    </endpoint>
+    <endpoint name="getClosestImage" group="Official Clients" http="GET">
+        <route>/v1/getClosestImage/</route>
+        <description><![CDATA[Find the image data that is closest to the requested date/time.  Return the associated metadata from the helioviewer database and the XML header of the JPEG2000 image file.
+
+        Either `sourceId` must be specified, or the combination of `observatory`, `instrument`, `detector`, and `measurement`.]]></description>
+        <parameters>
+            <parameter type="string" optional="false" name="date">
+                <description><![CDATA[Desired date/time of the image. ISO 8601 combined UTC date and time UTC format.]]></description>
+                <example><![CDATA[2014-01-01T23:59:59Z]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="callback">
+                <description><![CDATA[Wrap the response object in a function call of your choosing.]]></description>
+                <example></example>
+            </parameter>
+            <parameter type="number" optional="true" name="sourceId">
+                <description><![CDATA[Unique image datasource identifier.  Can be specified in lieu of the `observatory`, `instrument`, `detector`, and `measurement` parameters.]]></description>
+                <example><![CDATA[14]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="observatory">
+                <description><![CDATA[Observatory name.]]></description>
+                <example><![CDATA[SDO]]></example>
+                <values>
+                    <value>SDO</value>
+                    <value>SOHO</value>
+                    <value>STEREO_A</value>
+                    <value>STEREO_B</value>
+                    <value>Yohkoh</value>
+                </values>
+            </parameter>
+            <parameter type="string" optional="true" name="instrument">
+                <description><![CDATA[Instrument name.]]></description>
+                <example><![CDATA[AIA]]></example>
+                <values>
+                    <value>AIA</value>
+                    <value>EIT</value>
+                    <value>HMI</value>
+                    <value>LASCO</value>
+                    <value>MDI</value>
+                    <value>SECCHI</value>
+                    <value>SXT</value>
+                </values>
+            </parameter>
+            <parameter type="string" optional="true" name="detector">
+                <description><![CDATA[Detector name.]]></description>
+                <example><![CDATA[AIA]]></example>
+                <values>
+                    <value>AIA</value>
+                    <value>C2</value>
+                    <value>C3</value>
+                    <value>COR1</value>
+                    <value>COR2</value>
+                    <value>EIT</value>
+                    <value>EUVI</value>
+                    <value>HMI</value>
+                    <value>MDI</value>
+                    <value>SXT</value>
+                </values>
+            </parameter>
+            <parameter type="string" optional="true" name="measurement">
+                <description><![CDATA[Measurement name.]]></description>
+                <example><![CDATA[335]]></example>
+                <values>
+                    <value>94</value>
+                    <value>131</value>
+                    <value>171</value>
+                    <value>193</value>
+                    <value>195</value>
+                    <value>211</value>
+                    <value>284</value>
+                    <value>304</value>
+                    <value>335</value>
+                    <value>1600</value>
+                    <value>1700</value>
+                    <value>4500</value>
+                    <value>AlMgMn</value>
+                    <value>continuum</value>
+                    <value>magnetogram</value>
+                    <value>thin-Al</value>
+                    <value>white-light</value>
+                </values>
+            </parameter>
+        </parameters>
+        <response code="200" type="Get Closest Image" subtype="JSON">
+            <description><![CDATA[A JSON object containing metadata related to the JPEG2000 image representing the closest temporal match for the specified datasource.]]></description>
+            <example query_string="?date=2014-01-01T23:59:59Z&amp;sourceId=14"><![CDATA[{
+    "id": 34205701,
+    "date": "2014-01-02 00:00:02",
+    "scale": 0.58996068317702,
+    "width": 4096,
+    "height": 4096,
+    "refPixelX": 2048.5,
+    "refPixelY": 2048.5,
+    "sunCenterOffsetParams": [],
+    "layeringOrder": 1
+}]]></example>
+        </response>
+    </endpoint>
+    <endpoint name="getDataSources" group="Official Clients" http="GET">
+        <route>/v1/getDataSources/</route>
+        <description><![CDATA[Return a hierarchial list of the available datasources.
+
+        Optional parameter `verbose` is exists for compatability with JHelioviewer.  It outputs the hierarchical list in an alternative format and limits the list of available datasources to a known set (SDO and SOHO).  JHelioviewer may not operate properly if new datasources appear in the feed without a client-side updgrade.  To explicitly include new sources, use the optional `enable` parameter.]]></description>
+        <parameters>
+            <parameter type="boolean" optional="true" default="false" name="verbose">
+                <description></description>
+                <example></example>
+            </parameter>
+            <parameter type="string" optional="true" name="enable">
+                <description><![CDATA[Comma-separated list of observatories to enable.]]></description>
+                <example><![CDATA[[Yohkoh,STEREO_A,STEREO_B]]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="callback">
+                <description><![CDATA[Wrap the response object in a function call of your choosing.]]></description>
+                <example></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="Get Data Sources" subtype="JSON">
+            <description></description>
+            <example query_string="?"><![CDATA[{
+    "SOHO": {
+        "EIT": {
+            "EIT": {
+                "171": {
+                    "sourceId": 0,
+                    "nickname": "EIT 171",
+                    "layeringOrder": 1,
+                    "start": "1996-01-15 21:39:21",
+                    "end": "2013-08-07 13:00:13"
+                },
+                "195": {
+                    "sourceId": 1,
+                    "nickname": "EIT 195",
+                    "layeringOrder": 1,
+                    "start": "1996-01-15 20:51:47",
+                    "end": "2013-08-07 01:13:50"
+                },
+                "284": {
+                    "sourceId": 2,
+                    "nickname": "EIT 284",
+                    "layeringOrder": 1,
+                    "start": "1996-01-15 21:04:17",
+                    "end": "2013-08-07 13:06:09"
+                },
+                "304": {
+                    "sourceId": 3,
+                    "nickname": "EIT 304",
+                    "layeringOrder": 1,
+                    "start": "1996-01-15 22:00:17",
+                    "end": "2013-08-07 01:19:42"
+                }
+            }
+        },
+        "LASCO": {
+            "C2": {
+                "white-light": {
+                    "sourceId": 4,
+                    "nickname": "LASCO C2",
+                    "layeringOrder": 2,
+                    "start": "1996-04-01 01:12:15",
+                    "end": "2014-02-26 14:48:05"
+                }
+            },
+            "C3": {
+                "white-light": {
+                    "sourceId": 5,
+                    "nickname": "LASCO C3",
+                    "layeringOrder": 3,
+                    "start": "1996-04-14 09:48:18",
+                    "end": "2014-02-26 15:06:06"
+                }
+            }
+        },
+        "MDI": {
+            "MDI": {
+                "magnetogram": {
+                    "sourceId": 6,
+                    "nickname": "MDI Mag",
+                    "layeringOrder": 1,
+                    "start": "1996-04-21 00:30:04",
+                    "end": "2011-01-11 22:39:00"
+                },
+                "continuum": {
+                    "sourceId": 7,
+                    "nickname": "MDI Int",
+                    "layeringOrder": 1,
+                    "start": "1996-05-19 19:08:35",
+                    "end": "2011-01-11 22:39:00"
+                }
+            }
+        }
+    },
+    "SDO": {
+        "AIA": {
+            "AIA": {
+                "94": {
+                    "sourceId": 8,
+                    "nickname": "AIA 94",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:33",
+                    "end": "2014-02-26 19:30:25"
+                },
+                "131": {
+                    "sourceId": 9,
+                    "nickname": "AIA 131",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:34",
+                    "end": "2014-02-26 19:31:32"
+                },
+                "171": {
+                    "sourceId": 10,
+                    "nickname": "AIA 171",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:36",
+                    "end": "2014-02-26 19:31:59"
+                },
+                "193": {
+                    "sourceId": 11,
+                    "nickname": "AIA 193",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:31",
+                    "end": "2014-02-26 19:34:42"
+                },
+                "211": {
+                    "sourceId": 12,
+                    "nickname": "AIA 211",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:37",
+                    "end": "2014-02-26 19:28:23"
+                },
+                "304": {
+                    "sourceId": 13,
+                    "nickname": "AIA 304",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:39",
+                    "end": "2014-02-26 19:18:19"
+                },
+                "335": {
+                    "sourceId": 14,
+                    "nickname": "AIA 335",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:28",
+                    "end": "2014-02-26 19:18:50"
+                },
+                "1600": {
+                    "sourceId": 15,
+                    "nickname": "AIA 1600",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:30",
+                    "end": "2014-02-26 19:19:52"
+                },
+                "1700": {
+                    "sourceId": 16,
+                    "nickname": "AIA 1700",
+                    "layeringOrder": 1,
+                    "start": "2010-06-23 00:00:31",
+                    "end": "2014-02-26 19:20:30"
+                },
+                "4500": {
+                    "sourceId": 17,
+                    "nickname": "AIA 4500",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:44",
+                    "end": "2014-02-26 19:00:07"
+                }
+            }
+        },
+        "HMI": {
+            "HMI": {
+                "continuum": {
+                    "sourceId": 18,
+                    "nickname": "HMI Int",
+                    "layeringOrder": 1,
+                    "start": "2010-12-06 06:53:41",
+                    "end": "2014-02-26 17:41:42"
+                },
+                "magnetogram": {
+                    "sourceId": 19,
+                    "nickname": "HMI Mag",
+                    "layeringOrder": 1,
+                    "start": "2010-12-06 06:53:41",
+                    "end": "2014-02-26 17:27:27"
+                }
+            }
+        }
+    },
+    "STEREO_A": {
+        "SECCHI": {
+            "EUVI": {
+                "171": {
+                    "sourceId": 20,
+                    "nickname": "EUVI-A 171",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:14:00",
+                    "end": "2014-02-23 22:14:00"
+                },
+                "195": {
+                    "sourceId": 21,
+                    "nickname": "EUVI-A 195",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:05:30",
+                    "end": "2014-02-23 23:55:30"
+                },
+                "284": {
+                    "sourceId": 22,
+                    "nickname": "EUVI-A 284",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:16:30",
+                    "end": "2014-02-23 22:16:30"
+                },
+                "304": {
+                    "sourceId": 23,
+                    "nickname": "EUVI-A 304",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:06:15",
+                    "end": "2014-02-23 23:56:15"
+                }
+            },
+            "COR1": {
+                "white-light": {
+                    "sourceId": 28,
+                    "nickname": "COR1-A",
+                    "layeringOrder": 2,
+                    "start": "2006-12-04 17:35:55",
+                    "end": "2014-02-23 23:55:00"
+                }
+            },
+            "COR2": {
+                "white-light": {
+                    "sourceId": 29,
+                    "nickname": "COR2-A",
+                    "layeringOrder": 3,
+                    "start": "2006-12-29 02:10:00",
+                    "end": "2014-02-23 23:54:00"
+                }
+            }
+        }
+    },
+    "STEREO_B": {
+        "SECCHI": {
+            "EUVI": {
+                "171": {
+                    "sourceId": 24,
+                    "nickname": "EUVI-B 171",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:07:52",
+                    "end": "2014-02-24 04:14:56"
+                },
+                "195": {
+                    "sourceId": 25,
+                    "nickname": "EUVI-B 195",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:06:07",
+                    "end": "2014-02-24 04:31:27"
+                },
+                "284": {
+                    "sourceId": 26,
+                    "nickname": "EUVI-B 284",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:07:07",
+                    "end": "2014-02-24 04:17:26"
+                },
+                "304": {
+                    "sourceId": 27,
+                    "nickname": "EUVI-B 304",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:06:52",
+                    "end": "2014-02-24 04:27:11"
+                }
+            },
+            "COR1": {
+                "white-light": {
+                    "sourceId": 30,
+                    "nickname": "COR1-B",
+                    "layeringOrder": 2,
+                    "start": "2006-12-13 14:23:50",
+                    "end": "2014-02-24 07:45:55"
+                }
+            },
+            "COR2": {
+                "white-light": {
+                    "sourceId": 31,
+                    "nickname": "COR2-B",
+                    "layeringOrder": 3,
+                    "start": "2006-12-29 02:10:00",
+                    "end": "2014-02-24 19:39:55"
+                }
+            }
+        }
+    },
+    "PROBA2": {
+        "SWAP": {
+            "SWAP": {
+                "174": {
+                    "sourceId": 32,
+                    "nickname": "SWAP 174",
+                    "layeringOrder": 1,
+                    "start": "2010-01-04 17:00:50",
+                    "end": "2014-02-26 18:08:02"
+                }
+            }
+        }
+    },
+    "Yohkoh": {
+        "SXT": {
+            "SXT": {
+                "AlMgMn": {
+                    "sourceId": 33,
+                    "nickname": "SXT AlMgMn",
+                    "layeringOrder": 1,
+                    "start": "1991-09-13 21:53:40",
+                    "end": "2001-12-14 20:58:33"
+                },
+                "thin-Al": {
+                    "sourceId": 34,
+                    "nickname": "SXT thin-Al",
+                    "layeringOrder": 1,
+                    "start": "1991-09-13 21:49:24",
+                    "end": "2001-12-14 08:20:43"
+                },
+                "white-light": {
+                    "sourceId": 35,
+                    "nickname": "SXT white-light",
+                    "layeringOrder": 1,
+                    "start": "1991-09-11 23:02:54",
+                    "end": "1992-11-13 17:05:32"
+                }
+            }
+        }
+    }
+}]]></example>
+        </response>
+        <response code="200" type="Get Data Sources Verbose" subtype="JSON">
+            <description><![CDATA[Output the hierarchical list of available datasources in a format that is compatible with the JHelioviewer desktop client.]]></description>
+            <example query_string="?verbose=true&amp;enable=[Yohkoh,STEREO_A,STEREO_B]"><![CDATA[{
+    "SOHO": {
+        "name": "SOHO",
+        "description": "Solar and Heliospheric Observatory",
+        "children": {
+            "EIT": {
+                "name": "EIT",
+                "description": "Extreme ultraviolet Imaging Telescope",
+                "children": {
+                    "EIT": {
+                        "name": "EIT",
+                        "description": "EIT",
+                        "children": {
+                            "171": {
+                                "name": "171 Å",
+                                "description": "171 Ångström extreme ultraviolet",
+                                "nickname": "EIT 171",
+                                "sourceId": 0,
+                                "layeringOrder": 1,
+                                "start": "1996-01-15 21:39:21",
+                                "end": "2013-08-07 13:00:13"
+                            },
+                            "195": {
+                                "name": "195 Å",
+                                "description": "195 Ångström extreme ultraviolet",
+                                "nickname": "EIT 195",
+                                "sourceId": 1,
+                                "layeringOrder": 1,
+                                "start": "1996-01-15 20:51:47",
+                                "end": "2013-08-07 01:13:50"
+                            },
+                            "284": {
+                                "name": "284 Å",
+                                "description": "284 Ångström extreme ultraviolet",
+                                "nickname": "EIT 284",
+                                "sourceId": 2,
+                                "layeringOrder": 1,
+                                "start": "1996-01-15 21:04:17",
+                                "end": "2013-08-07 13:06:09"
+                            },
+                            "304": {
+                                "name": "304 Å",
+                                "description": "304 Ångström extreme ultraviolet",
+                                "nickname": "EIT 304",
+                                "sourceId": 3,
+                                "layeringOrder": 1,
+                                "start": "1996-01-15 22:00:17",
+                                "end": "2013-08-07 01:19:42"
+                            }
+                        }
+                    }
+                }
+            },
+            "LASCO": {
+                "name": "LASCO",
+                "description": "The Large Angle Spectrometric Coronagraph",
+                "children": {
+                    "C2": {
+                        "name": "C2",
+                        "description": "LASCO C2",
+                        "children": {
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "White Light",
+                                "nickname": "LASCO C2",
+                                "sourceId": 4,
+                                "layeringOrder": 2,
+                                "start": "1996-04-01 01:12:15",
+                                "end": "2014-02-26 14:48:05"
+                            }
+                        }
+                    },
+                    "C3": {
+                        "name": "C3",
+                        "description": "LASCO C3",
+                        "children": {
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "White Light",
+                                "nickname": "LASCO C3",
+                                "sourceId": 5,
+                                "layeringOrder": 3,
+                                "start": "1996-04-14 09:48:18",
+                                "end": "2014-02-26 15:06:06"
+                            }
+                        }
+                    }
+                }
+            },
+            "MDI": {
+                "name": "MDI",
+                "description": "Michelson Doppler Imager",
+                "children": {
+                    "MDI": {
+                        "name": "MDI",
+                        "description": "MDI",
+                        "children": {
+                            "magnetogram": {
+                                "name": "Magnetogram",
+                                "description": "Magnetogram",
+                                "nickname": "MDI Mag",
+                                "sourceId": 6,
+                                "layeringOrder": 1,
+                                "start": "1996-04-21 00:30:04",
+                                "end": "2011-01-11 22:39:00"
+                            },
+                            "continuum": {
+                                "name": "Continuum",
+                                "description": "Intensitygram",
+                                "nickname": "MDI Int",
+                                "sourceId": 7,
+                                "layeringOrder": 1,
+                                "start": "1996-05-19 19:08:35",
+                                "end": "2011-01-11 22:39:00"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "SDO": {
+        "name": "SDO",
+        "description": "Solar Dynamics Observatory",
+        "children": {
+            "AIA": {
+                "name": "AIA",
+                "description": "Atmospheric Imaging Assembly",
+                "children": {
+                    "AIA": {
+                        "name": "AIA",
+                        "description": "AIA",
+                        "children": {
+                            "94": {
+                                "name": "94 Å",
+                                "description": "94 Ångström extreme ultraviolet",
+                                "nickname": "AIA 94",
+                                "sourceId": 8,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:33",
+                                "end": "2014-02-26 19:13:25"
+                            },
+                            "131": {
+                                "name": "131 Å",
+                                "description": "131 Ångström extreme ultraviolet",
+                                "nickname": "AIA 131",
+                                "sourceId": 9,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:34",
+                                "end": "2014-02-26 19:14:32"
+                            },
+                            "171": {
+                                "name": "171 Å",
+                                "description": "171 Ångström extreme ultraviolet",
+                                "nickname": "AIA 171",
+                                "sourceId": 10,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:36",
+                                "end": "2014-02-26 19:15:23",
+                                "default": true
+                            },
+                            "193": {
+                                "name": "193 Å",
+                                "description": "193 Ångström extreme ultraviolet",
+                                "nickname": "AIA 193",
+                                "sourceId": 11,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:31",
+                                "end": "2014-02-26 19:16:18"
+                            },
+                            "211": {
+                                "name": "211 Å",
+                                "description": "211 Ångström extreme ultraviolet",
+                                "nickname": "AIA 211",
+                                "sourceId": 12,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:37",
+                                "end": "2014-02-26 19:17:23"
+                            },
+                            "304": {
+                                "name": "304 Å",
+                                "description": "304 Ångström extreme ultraviolet",
+                                "nickname": "AIA 304",
+                                "sourceId": 13,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:39",
+                                "end": "2014-02-26 19:18:19"
+                            },
+                            "335": {
+                                "name": "335 Å",
+                                "description": "335 Ångström extreme ultraviolet",
+                                "nickname": "AIA 335",
+                                "sourceId": 14,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:28",
+                                "end": "2014-02-26 19:18:50"
+                            },
+                            "1600": {
+                                "name": "1600 Å",
+                                "description": "1600 Ångström extreme ultraviolet",
+                                "nickname": "AIA 1600",
+                                "sourceId": 15,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:30",
+                                "end": "2014-02-26 19:19:52"
+                            },
+                            "1700": {
+                                "name": "1700 Å",
+                                "description": "1700 Ångström extreme ultraviolet",
+                                "nickname": "AIA 1700",
+                                "sourceId": 16,
+                                "layeringOrder": 1,
+                                "start": "2010-06-23 00:00:31",
+                                "end": "2014-02-26 19:19:42"
+                            },
+                            "4500": {
+                                "name": "4500 Å",
+                                "description": "4500 Ångström extreme ultraviolet",
+                                "nickname": "AIA 4500",
+                                "sourceId": 17,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:44",
+                                "end": "2014-02-26 19:00:07"
+                            }
+                        },
+                        "default": true
+                    }
+                },
+                "default": true
+            },
+            "HMI": {
+                "name": "HMI",
+                "description": "Helioseismic and Magnetic Imager",
+                "children": {
+                    "HMI": {
+                        "name": "HMI",
+                        "description": "HMI",
+                        "children": {
+                            "continuum": {
+                                "name": "Continuum",
+                                "description": "Intensitygram",
+                                "nickname": "HMI Int",
+                                "sourceId": 18,
+                                "layeringOrder": 1,
+                                "start": "2010-12-06 06:53:41",
+                                "end": "2014-02-26 17:41:42"
+                            },
+                            "magnetogram": {
+                                "name": "Magnetogram",
+                                "description": "Magnetogram",
+                                "nickname": "HMI Mag",
+                                "sourceId": 19,
+                                "layeringOrder": 1,
+                                "start": "2010-12-06 06:53:41",
+                                "end": "2014-02-26 17:27:27"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "default": true
+    },
+    "STEREO_A": {
+        "name": "STEREO_A",
+        "description": "Solar Terrestrial Relations Observatory Ahead",
+        "children": {
+            "SECCHI": {
+                "name": "SECCHI",
+                "description": "Sun Earth Connection Coronal and Heliospheric Investigation",
+                "children": {
+                    "EUVI": {
+                        "name": "EUVI",
+                        "description": "Extreme Ultraviolet Imager",
+                        "children": {
+                            "171": {
+                                "name": "171 Å",
+                                "description": "171 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-A 171",
+                                "sourceId": 20,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:14:00",
+                                "end": "2014-02-23 22:14:00"
+                            },
+                            "195": {
+                                "name": "195 Å",
+                                "description": "195 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-A 195",
+                                "sourceId": 21,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:05:30",
+                                "end": "2014-02-23 23:55:30"
+                            },
+                            "284": {
+                                "name": "284 Å",
+                                "description": "284 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-A 284",
+                                "sourceId": 22,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:16:30",
+                                "end": "2014-02-23 22:16:30"
+                            },
+                            "304": {
+                                "name": "304 Å",
+                                "description": "304 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-A 304",
+                                "sourceId": 23,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:06:15",
+                                "end": "2014-02-23 23:56:15"
+                            }
+                        }
+                    },
+                    "COR1": {
+                        "name": "COR1",
+                        "description": "Coronograph 1",
+                        "children": {
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "White Light",
+                                "nickname": "COR1-A",
+                                "sourceId": 28,
+                                "layeringOrder": 2,
+                                "start": "2006-12-04 17:35:55",
+                                "end": "2014-02-23 23:55:00"
+                            }
+                        }
+                    },
+                    "COR2": {
+                        "name": "COR2",
+                        "description": "Coronograph 2",
+                        "children": {
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "White Light",
+                                "nickname": "COR2-A",
+                                "sourceId": 29,
+                                "layeringOrder": 3,
+                                "start": "2006-12-29 02:10:00",
+                                "end": "2014-02-23 23:54:00"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "STEREO_B": {
+        "name": "STEREO_B",
+        "description": "Solar Terrestrial Relations Observatory Behind",
+        "children": {
+            "SECCHI": {
+                "name": "SECCHI",
+                "description": "Sun Earth Connection Coronal and Heliospheric Investigation",
+                "children": {
+                    "EUVI": {
+                        "name": "EUVI",
+                        "description": "Extreme Ultraviolet Imager",
+                        "children": {
+                            "171": {
+                                "name": "171 Å",
+                                "description": "171 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-B 171",
+                                "sourceId": 24,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:07:52",
+                                "end": "2014-02-23 22:14:56"
+                            },
+                            "195": {
+                                "name": "195 Å",
+                                "description": "195 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-B 195",
+                                "sourceId": 25,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:06:07",
+                                "end": "2014-02-23 23:56:27"
+                            },
+                            "284": {
+                                "name": "284 Å",
+                                "description": "284 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-B 284",
+                                "sourceId": 26,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:07:07",
+                                "end": "2014-02-23 22:17:26"
+                            },
+                            "304": {
+                                "name": "304 Å",
+                                "description": "304 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-B 304",
+                                "sourceId": 27,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:06:52",
+                                "end": "2014-02-23 23:57:11"
+                            }
+                        }
+                    },
+                    "COR1": {
+                        "name": "COR1",
+                        "description": "Coronograph 1",
+                        "children": {
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "White Light",
+                                "nickname": "COR1-B",
+                                "sourceId": 30,
+                                "layeringOrder": 2,
+                                "start": "2006-12-13 14:23:50",
+                                "end": "2014-02-24 02:50:56"
+                            }
+                        }
+                    },
+                    "COR2": {
+                        "name": "COR2",
+                        "description": "Coronograph 2",
+                        "children": {
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "White Light",
+                                "nickname": "COR2-B",
+                                "sourceId": 31,
+                                "layeringOrder": 3,
+                                "start": "2006-12-29 02:10:00",
+                                "end": "2014-02-23 23:54:56"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "Yohkoh": {
+        "name": "Yohkoh",
+        "description": "Yohkoh (Solar-A)",
+        "children": {
+            "SXT": {
+                "name": "SXT",
+                "description": "Soft X-ray Telescope",
+                "children": {
+                    "SXT": {
+                        "name": "SXT",
+                        "description": "Soft X-ray Telescope",
+                        "children": {
+                            "AlMgMn": {
+                                "name": "AlMgMn",
+                                "description": "Al/Mg/Mn filter (2.4 Å - 32 Å pass band)",
+                                "nickname": "SXT AlMgMn",
+                                "sourceId": 33,
+                                "layeringOrder": 1,
+                                "start": "1991-09-13 21:53:40",
+                                "end": "2001-12-14 20:58:33"
+                            },
+                            "thin-Al": {
+                                "name": "Thin Al",
+                                "description": "11.6 µm Al filter (2.4 Å - 13 Å pass band)",
+                                "nickname": "SXT thin-Al",
+                                "sourceId": 34,
+                                "layeringOrder": 1,
+                                "start": "1991-09-13 21:49:24",
+                                "end": "2001-12-14 08:20:43"
+                            },
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "No filter",
+                                "nickname": "SXT white-light",
+                                "sourceId": 35,
+                                "layeringOrder": 1,
+                                "start": "1991-09-11 23:02:54",
+                                "end": "1992-11-13 17:05:32"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}]]></example>
+        </response>
+    </endpoint>
+    <endpoint name="getJP2Image" group="JPEG2000" http="GET">
+        <route>/v1/getJP2Image/</route>
+        <description><![CDATA[Download a JP2 image for the specified datasource that is the closest match in time to the `date` requested.
+
+        Either `sourceId` must be specified, or the combination of `observatory`, `instrument`, `detector`, and `measurement`.]]></description>
+        <parameters>
+            <parameter type="string" optional="false" name="date">
+                <description><![CDATA[Desired date/time of the JP2 image. ISO 8601 combined UTC date and time UTC format.]]></description>
+                <example><![CDATA[2014-01-01T23:59:59Z]]></example>
+            </parameter>
+            <parameter type="number" optional="true" name="sourceId">
+                <description><![CDATA[Unique image datasource identifier.]]></description>
+                <example><![CDATA[14]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="observatory">
+                <description><![CDATA[Observatory name.]]></description>
+                <example><![CDATA[SDO]]></example>
+                <values>
+                    <value>SDO</value>
+                    <value>SOHO</value>
+                    <value>STEREO_A</value>
+                    <value>STEREO_B</value>
+                    <value>Yohkoh</value>
+                </values>
+            </parameter>
+            <parameter type="string" optional="true" name="instrument">
+                <description><![CDATA[Instrument name.]]></description>
+                <example><![CDATA[AIA]]></example>
+                <values>
+                    <value>AIA</value>
+                    <value>EIT</value>
+                    <value>HMI</value>
+                    <value>LASCO</value>
+                    <value>MDI</value>
+                    <value>SECCHI</value>
+                    <value>SXT</value>
+                </values>
+            </parameter>
+            <parameter type="string" optional="true" name="detector">
+                <description><![CDATA[Detector name.]]></description>
+                <example><![CDATA[AIA]]></example>
+                <values>
+                    <value>AIA</value>
+                    <value>C2</value>
+                    <value>C3</value>
+                    <value>COR1</value>
+                    <value>COR2</value>
+                    <value>EIT</value>
+                    <value>EUVI</value>
+                    <value>HMI</value>
+                    <value>MDI</value>
+                    <value>SXT</value>
+                </values>
+            </parameter>
+            <parameter type="string" optional="true" name="measurement">
+                <description><![CDATA[Measurement name.]]></description>
+                <example><![CDATA[335]]></example>
+                <values>
+                    <value>94</value>
+                    <value>131</value>
+                    <value>171</value>
+                    <value>193</value>
+                    <value>195</value>
+                    <value>211</value>
+                    <value>284</value>
+                    <value>304</value>
+                    <value>335</value>
+                    <value>1600</value>
+                    <value>1700</value>
+                    <value>4500</value>
+                    <value>AlMgMn</value>
+                    <value>continuum</value>
+                    <value>magnetogram</value>
+                    <value>thin-Al</value>
+                    <value>white-light</value>
+                </values>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="jpip">
+                <description><![CDATA[Optionally return a JPIP URI instead of the binary data of the image itself.]]></description>
+                <example></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="json">
+                <description><![CDATA[Optionally return a JSON object.]]></description>
+                <example></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="binary" subtype="JPEG2000 image data">
+            <description><![CDATA[By default, JPEG2000 binary image data is returned.  This assumes that the `jpip` parameter is omitted or set to `false`.]]></description>
+            <example query_string="?date=2014-01-01T23:59:59Z&amp;sourceId=14"/>
+        </response>
+        <response code="200" type="string" subtype="JPIP link to JP2 Image">
+            <description><![CDATA[If request parameter `jpip` is set to `true` (and the `json` parameter is omitted or set to `false`) the reponse is a plain text string.]]></description>
+            <example query_string="?date=2014-01-01T23:59:59Z&amp;sourceId=14&amp;jpip=true"><![CDATA[jpip://helioviewer.org:8090/AIA/2014/01/02/335/2014_01_02__00_00_02_62__SDO_AIA_AIA_335.jp2]]></example>
+        </response>
+        <response code="200" type="JP2 Image" subtype="JSON">
+            <description><![CDATA[If request parameters `jpip` and `json` are both set to `true`, the reponse is a JSON object.]]></description>
+            <example query_string="?date=2014-01-01T23:59:59Z&amp;sourceId=14&amp;jpip=true&amp;json=true"><![CDATA[{
+    "uri": "jpip://helioviewer.org:8090/AIA/2014/01/02/335/2014_01_02__00_00_02_62__SDO_AIA_AIA_335.jp2"
+}]]></example>
+        </response>
+    </endpoint>
+    <endpoint name="getJP2Header" group="JPEG2000" http="GET">
+        <route>/v1/getJP2Header/</route>
+        <description><![CDATA[Get the XML header embedded in a JPEG2000 image. Includes the FITS header as well as a section of Helioviewer-specific metadata.]]></description>
+        <parameters>
+            <parameter type="number" optional="false" name="id">
+                <description><![CDATA[Unique JP2 image identifier.]]></description>
+                <example><![CDATA[7654321]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="callback">
+                <description><![CDATA[Wrap the response object in a function call of your choosing.]]></description>
+                <example></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="string" subtype="XML">
+            <example query_string="?id=7654321"><![CDATA[&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;meta&gt;
+    &lt;fits&gt;
+        &lt;SIMPLE&gt;1&lt;/SIMPLE&gt;
+        &lt;BITPIX&gt;16&lt;/BITPIX&gt;
+        &lt;NAXIS&gt;2&lt;/NAXIS&gt;
+        &lt;NAXIS1&gt;4096&lt;/NAXIS1&gt;
+        &lt;NAXIS2&gt;4096&lt;/NAXIS2&gt;
+        &lt;EXTEND&gt;1&lt;/EXTEND&gt;
+        &lt;DATE_OBS&gt;2011-05-25T09:07:00.34&lt;/DATE_OBS&gt;
+        &lt;ORIGIN&gt;SDO&lt;/ORIGIN&gt;
+        &lt;DATE&gt;2011-05-25T09:15:44&lt;/DATE&gt;
+        &lt;TELESCOP&gt;SDO&lt;/TELESCOP&gt;
+        &lt;INSTRUME&gt;AIA_3&lt;/INSTRUME&gt;
+        &lt;DATE-OBS&gt;2011-05-25T09:07:00.34&lt;/DATE-OBS&gt;
+        &lt;T_OBS&gt;2011-05-25T09:07:01.34Z&lt;/T_OBS&gt;
+        &lt;TOBSSTEP&gt;1.0000000&lt;/TOBSSTEP&gt;
+        &lt;TOBSEPOC&gt;1977.01.01_00:00:00_TAI&lt;/TOBSEPOC&gt;
+        &lt;CAMERA&gt;3&lt;/CAMERA&gt;
+        &lt;IMG_TYPE&gt;LIGHT&lt;/IMG_TYPE&gt;
+        &lt;EXPTIME&gt;2.0002010&lt;/EXPTIME&gt;
+        &lt;EXPSDEV&gt;0.00012300000&lt;/EXPSDEV&gt;
+        &lt;INT_TIME&gt;2.2734380&lt;/INT_TIME&gt;
+        &lt;WAVELNTH&gt;171&lt;/WAVELNTH&gt;
+        &lt;WAVEUNIT&gt;angstrom&lt;/WAVEUNIT&gt;
+        &lt;WAVE_STR&gt;171_THIN&lt;/WAVE_STR&gt;
+        &lt;FSN&gt;26454194&lt;/FSN&gt;
+        &lt;FID&gt;0&lt;/FID&gt;
+        &lt;LVL_NUM&gt;1.5000000&lt;/LVL_NUM&gt;
+        &lt;QUALLEV0&gt;0&lt;/QUALLEV0&gt;
+        &lt;QUALITY&gt;1073741824&lt;/QUALITY&gt;
+        &lt;TOTVALS&gt;16777216&lt;/TOTVALS&gt;
+        &lt;DATAVALS&gt;16777216&lt;/DATAVALS&gt;
+        &lt;MISSVALS&gt;0&lt;/MISSVALS&gt;
+        &lt;PERCENTD&gt;100.000&lt;/PERCENTD&gt;
+        &lt;DATAMIN&gt;0&lt;/DATAMIN&gt;
+        &lt;DATAMAX&gt;5041&lt;/DATAMAX&gt;
+        &lt;DATAMEDN&gt;143&lt;/DATAMEDN&gt;
+        &lt;DATAMEAN&gt;197.450&lt;/DATAMEAN&gt;
+        &lt;DATARMS&gt;240.880&lt;/DATARMS&gt;
+        &lt;DATASKEW&gt;3.37000&lt;/DATASKEW&gt;
+        &lt;DATAKURT&gt;-18.5000&lt;/DATAKURT&gt;
+        &lt;OSCNMEAN&gt;nan&lt;/OSCNMEAN&gt;
+        &lt;OSCNRMS&gt;nan&lt;/OSCNRMS&gt;
+        &lt;FLAT_REC&gt;aia.flatfield[:#30]&lt;/FLAT_REC&gt;
+        &lt;CTYPE1&gt;HPLN-TAN&lt;/CTYPE1&gt;
+        &lt;CUNIT1&gt;arcsec&lt;/CUNIT1&gt;
+        &lt;CRVAL1&gt;0.0000000&lt;/CRVAL1&gt;
+        &lt;CDELT1&gt;0.60000000&lt;/CDELT1&gt;
+        &lt;CRPIX1&gt;2048.5000&lt;/CRPIX1&gt;
+        &lt;CTYPE2&gt;HPLT-TAN&lt;/CTYPE2&gt;
+        &lt;CUNIT2&gt;arcsec&lt;/CUNIT2&gt;
+        &lt;CRVAL2&gt;0.0000000&lt;/CRVAL2&gt;
+        &lt;CDELT2&gt;0.60000000&lt;/CDELT2&gt;
+        &lt;CRPIX2&gt;2048.5000&lt;/CRPIX2&gt;
+        &lt;CROTA2&gt;0.0000000&lt;/CROTA2&gt;
+        &lt;R_SUN&gt;1581.4006&lt;/R_SUN&gt;
+        &lt;MPO_REC&gt;sdo.master_pointing[:#158]&lt;/MPO_REC&gt;
+        &lt;INST_ROT&gt;0.10248800&lt;/INST_ROT&gt;
+        &lt;IMSCL_MP&gt;0.59907600&lt;/IMSCL_MP&gt;
+        &lt;X0_MP&gt;2049.9199&lt;/X0_MP&gt;
+        &lt;Y0_MP&gt;2048.8101&lt;/Y0_MP&gt;
+        &lt;RSUN_LF&gt;nan&lt;/RSUN_LF&gt;
+        &lt;X0_LF&gt;nan&lt;/X0_LF&gt;
+        &lt;Y0_LF&gt;nan&lt;/Y0_LF&gt;
+        &lt;ASD_REC&gt;sdo.lev0_asd_0004[:#10393635]&lt;/ASD_REC&gt;
+        &lt;SAT_Y0&gt;-4.9394650&lt;/SAT_Y0&gt;
+        &lt;SAT_Z0&gt;8.3641070&lt;/SAT_Z0&gt;
+        &lt;SAT_ROT&gt;2.6000000e-05&lt;/SAT_ROT&gt;
+        &lt;ACS_MODE&gt;SCIENCE&lt;/ACS_MODE&gt;
+        &lt;ACS_ECLP&gt;NO&lt;/ACS_ECLP&gt;
+        &lt;ACS_SUNP&gt;YES&lt;/ACS_SUNP&gt;
+        &lt;ACS_SAFE&gt;NO&lt;/ACS_SAFE&gt;
+        &lt;ACS_CGT&gt;GT3&lt;/ACS_CGT&gt;
+        &lt;ORB_REC&gt;sdo.fds_orbit_vectors[2011.05.25_09:07:00_UTC]&lt;/ORB_REC&gt;
+        &lt;DSUN_REF&gt;1.4959787e+11&lt;/DSUN_REF&gt;
+        &lt;DSUN_OBS&gt;1.5153469e+11&lt;/DSUN_OBS&gt;
+        &lt;RSUN_REF&gt;6.9600000e+08&lt;/RSUN_REF&gt;
+        &lt;RSUN_OBS&gt;947.37917&lt;/RSUN_OBS&gt;
+        &lt;GCIEC_X&gt;nan&lt;/GCIEC_X&gt;
+        &lt;GCIEC_Y&gt;nan&lt;/GCIEC_Y&gt;
+        &lt;GCIEC_Z&gt;nan&lt;/GCIEC_Z&gt;
+        &lt;HCIEC_X&gt;nan&lt;/HCIEC_X&gt;
+        &lt;HCIEC_Y&gt;nan&lt;/HCIEC_Y&gt;
+        &lt;HCIEC_Z&gt;nan&lt;/HCIEC_Z&gt;
+        &lt;OBS_VR&gt;-1256.5236&lt;/OBS_VR&gt;
+        &lt;OBS_VW&gt;31812.788&lt;/OBS_VW&gt;
+        &lt;OBS_VN&gt;3667.9192&lt;/OBS_VN&gt;
+        &lt;CRLN_OBS&gt;151.31955&lt;/CRLN_OBS&gt;
+        &lt;CRLT_OBS&gt;-1.4993120&lt;/CRLT_OBS&gt;
+        &lt;CAR_ROT&gt;2110&lt;/CAR_ROT&gt;
+        &lt;ROI_NWIN&gt;-2147483648&lt;/ROI_NWIN&gt;
+        &lt;ROI_SUM&gt;-2147483648&lt;/ROI_SUM&gt;
+        &lt;ROI_NAX1&gt;-2147483648&lt;/ROI_NAX1&gt;
+        &lt;ROI_NAY1&gt;-2147483648&lt;/ROI_NAY1&gt;
+        &lt;ROI_LLX1&gt;-2147483648&lt;/ROI_LLX1&gt;
+        &lt;ROI_LLY1&gt;-2147483648&lt;/ROI_LLY1&gt;
+        &lt;ROI_NAX2&gt;-2147483648&lt;/ROI_NAX2&gt;
+        &lt;ROI_NAY2&gt;-2147483648&lt;/ROI_NAY2&gt;
+        &lt;ROI_LLX2&gt;-2147483648&lt;/ROI_LLX2&gt;
+        &lt;ROI_LLY2&gt;-2147483648&lt;/ROI_LLY2&gt;
+        &lt;ISPSNAME&gt;aia.lev0_isp_0011&lt;/ISPSNAME&gt;
+        &lt;ISPPKTIM&gt;2011-05-25T09:06:57.50Z&lt;/ISPPKTIM&gt;
+        &lt;ISPPKTVN&gt;001.197&lt;/ISPPKTVN&gt;
+        &lt;AIVNMST&gt;453&lt;/AIVNMST&gt;
+        &lt;AIMGOTS&gt;1685005655&lt;/AIMGOTS&gt;
+        &lt;ASQHDR&gt;2.1739378e+09&lt;/ASQHDR&gt;
+        &lt;ASQTNUM&gt;2&lt;/ASQTNUM&gt;
+        &lt;ASQFSN&gt;26454194&lt;/ASQFSN&gt;
+        &lt;AIAHFSN&gt;26454186&lt;/AIAHFSN&gt;
+        &lt;AECDELAY&gt;1535&lt;/AECDELAY&gt;
+        &lt;AIAECTI&gt;0&lt;/AIAECTI&gt;
+        &lt;AIASEN&gt;0&lt;/AIASEN&gt;
+        &lt;AIFDBID&gt;241&lt;/AIFDBID&gt;
+        &lt;AIMGOTSS&gt;5382&lt;/AIMGOTSS&gt;
+        &lt;AIFCPS&gt;10&lt;/AIFCPS&gt;
+        &lt;AIFTSWTH&gt;0&lt;/AIFTSWTH&gt;
+        &lt;AIFRMLID&gt;3025&lt;/AIFRMLID&gt;
+        &lt;AIFTSID&gt;40961&lt;/AIFTSID&gt;
+        &lt;AIHISMXB&gt;7&lt;/AIHISMXB&gt;
+        &lt;AIHIS192&gt;8386460&lt;/AIHIS192&gt;
+        &lt;AIHIS348&gt;8388608&lt;/AIHIS348&gt;
+        &lt;AIHIS604&gt;8388608&lt;/AIHIS604&gt;
+        &lt;AIHIS860&gt;8388608&lt;/AIHIS860&gt;
+        &lt;AIFWEN&gt;204&lt;/AIFWEN&gt;
+        &lt;AIMGSHCE&gt;2000&lt;/AIMGSHCE&gt;
+        &lt;AECTYPE&gt;2&lt;/AECTYPE&gt;
+        &lt;AECMODE&gt;ON&lt;/AECMODE&gt;
+        &lt;AISTATE&gt;CLOSED&lt;/AISTATE&gt;
+        &lt;AIAECENF&gt;1&lt;/AIAECENF&gt;
+        &lt;AIFILTYP&gt;0&lt;/AIFILTYP&gt;
+        &lt;AIMSHOBC&gt;54.787998&lt;/AIMSHOBC&gt;
+        &lt;AIMSHOBE&gt;68.779999&lt;/AIMSHOBE&gt;
+        &lt;AIMSHOTC&gt;40.528000&lt;/AIMSHOTC&gt;
+        &lt;AIMSHOTE&gt;25.516001&lt;/AIMSHOTE&gt;
+        &lt;AIMSHCBC&gt;2054.9199&lt;/AIMSHCBC&gt;
+        &lt;AIMSHCBE&gt;2068.8201&lt;/AIMSHCBE&gt;
+        &lt;AIMSHCTC&gt;2040.8040&lt;/AIMSHCTC&gt;
+        &lt;AIMSHCTE&gt;2025.8719&lt;/AIMSHCTE&gt;
+        &lt;AICFGDL1&gt;0&lt;/AICFGDL1&gt;
+        &lt;AICFGDL2&gt;137&lt;/AICFGDL2&gt;
+        &lt;AICFGDL3&gt;201&lt;/AICFGDL3&gt;
+        &lt;AICFGDL4&gt;236&lt;/AICFGDL4&gt;
+        &lt;AIFOENFL&gt;1&lt;/AIFOENFL&gt;
+        &lt;AIMGFSN&gt;5&lt;/AIMGFSN&gt;
+        &lt;AIMGTYP&gt;0&lt;/AIMGTYP&gt;
+        &lt;AIAWVLEN&gt;7&lt;/AIAWVLEN&gt;
+        &lt;AIAGP1&gt;0&lt;/AIAGP1&gt;
+        &lt;AIAGP2&gt;0&lt;/AIAGP2&gt;
+        &lt;AIAGP3&gt;0&lt;/AIAGP3&gt;
+        &lt;AIAGP4&gt;0&lt;/AIAGP4&gt;
+        &lt;AIAGP5&gt;0&lt;/AIAGP5&gt;
+        &lt;AIAGP6&gt;0&lt;/AIAGP6&gt;
+        &lt;AIAGP7&gt;0&lt;/AIAGP7&gt;
+        &lt;AIAGP8&gt;393&lt;/AIAGP8&gt;
+        &lt;AIAGP9&gt;457&lt;/AIAGP9&gt;
+        &lt;AIAGP10&gt;748&lt;/AIAGP10&gt;
+        &lt;AGT1SVY&gt;3&lt;/AGT1SVY&gt;
+        &lt;AGT1SVZ&gt;-7&lt;/AGT1SVZ&gt;
+        &lt;AGT2SVY&gt;2&lt;/AGT2SVY&gt;
+        &lt;AGT2SVZ&gt;-3&lt;/AGT2SVZ&gt;
+        &lt;AGT3SVY&gt;0&lt;/AGT3SVY&gt;
+        &lt;AGT3SVZ&gt;0&lt;/AGT3SVZ&gt;
+        &lt;AGT4SVY&gt;-2&lt;/AGT4SVY&gt;
+        &lt;AGT4SVZ&gt;2&lt;/AGT4SVZ&gt;
+        &lt;AIMGSHEN&gt;13&lt;/AIMGSHEN&gt;
+        &lt;RECNUM&gt;20306521&lt;/RECNUM&gt;
+        &lt;BLANK&gt;-32768&lt;/BLANK&gt;
+        &lt;CHECKSUM&gt;CAWfE5VZCAVdC3VZ&lt;/CHECKSUM&gt;
+        &lt;DATASUM&gt;368618671&lt;/DATASUM&gt;
+        &lt;XCEN&gt;0.00000&lt;/XCEN&gt;
+        &lt;YCEN&gt;0.00000&lt;/YCEN&gt;
+        &lt;history&gt;FITSHEAD2STRUCT run at: Wed May 25 02:27:23 2011
+&lt;/history&gt;
+        &lt;comment&gt;FITS (Flexible Image Transport System) format is defined in &#039;Astronomy
+and Astrophysics&#039;, volume 376, page 359; bibcode: 2001A&amp;amp;A...376..359H
+FITSHEAD2STRUCT
+&lt;/comment&gt;
+    &lt;/fits&gt;
+    &lt;helioviewer&gt;
+        &lt;HV_ROTATION&gt;0.00000&lt;/HV_ROTATION&gt;
+        &lt;HV_JP2GEN_VERSION&gt;0.8&lt;/HV_JP2GEN_VERSION&gt;
+        &lt;HV_JP2GEN_BRANCH_REVISION&gt;No valid revision number found. Bazaar not installed? Using HV_WRITTENBY manually included revision number: 84 [2011/01/10, https://launchpad.net/jp2gen] : % SPAWN: Error managing child process.:  No such file or directory&lt;/HV_JP2GEN_BRANCH_REVISION&gt;
+        &lt;HV_HVS_DETAILS_FILENAME&gt;hvs_version5.pro&lt;/HV_HVS_DETAILS_FILENAME&gt;
+        &lt;HV_HVS_DETAILS_FILENAME_VERSION&gt;5.0&lt;/HV_HVS_DETAILS_FILENAME_VERSION&gt;
+        &lt;HV_COMMENT&gt;JP2 file created locally at Lockheed LMSAL using hv_aia_list2jp2_gs2 at Wed May 25 02:27:24 2011.
+Contact Helioviewer LMSAL Franchise (slater@lmsal.com) for more details/questions/comments regarding this JP2 file.
+HVS (Helioviewer setup) file used to create this JP2 file: hvs_version5.pro (version 5.0).
+FITS to JP2 source code provided by ESA/NASA Helioviewer Project [contact the Helioviewer Project at webmaster@helioviewer.org][NASA-GSFC] and is available for download at https://launchpad.net/jp2gen.
+Please contact the source code providers if you suspect an error in the source code.
+Full source code for the entire Helioviewer Project can be found at https://github.com/Helioviewer-Project.&lt;/HV_COMMENT&gt;
+        &lt;HV_SUPPORTED&gt;TRUE&lt;/HV_SUPPORTED&gt;
+    &lt;/helioviewer&gt;
+&lt;/meta&gt;]]></example>
+        </response>
+    </endpoint>
+    <endpoint name="getJPX" group="JPEG2000" http="GET">
+        <route>/v1/getJPX/</route>
+        <description><![CDATA[Generate and (optionally) download a custom JPX movie of the specified datasource.
+
+        Either `sourceId` must be specified, or the combination of `observatory`, `instrument`, `detector`, and `measurement`.]]></description>
+        <parameters>
+            <parameter type="string" optional="false" name="startTime">
+                <description><![CDATA[Date/Time for the beginning of the JPX movie data. ISO 8601 combined UTC date and time UTC format.]]></description>
+                <example><![CDATA[2014-01-01T00:00:00Z]]></example>
+            </parameter>
+            <parameter type="string" optional="false" name="endTime">
+                <description><![CDATA[Date/Time for the end of the JPX movie data.  ISO 8601 combined UTC date and time UTC format.]]></description>
+                <example><![CDATA[2014-01-01T00:45:00Z]]></example>
+            </parameter>
+            <parameter type="number" optional="true" name="sourceId">
+                <description><![CDATA[Unique image datasource identifier.  Can be specified in lieu of the `observatory`, `instrument`, `detector`, and `measurement` parameters.]]></description>
+                <example><![CDATA[14]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="observatory">
+                <description><![CDATA[Observatory name.]]></description>
+                <example><![CDATA[SDO]]></example>
+                <values>
+                    <value>SDO</value>
+                    <value>SOHO</value>
+                    <value>STEREO_A</value>
+                    <value>STEREO_B</value>
+                    <value>Yohkoh</value>
+                </values>
+            </parameter>
+            <parameter type="string" optional="true" name="instrument">
+                <description><![CDATA[Instrument name.]]></description>
+                <example><![CDATA[AIA]]></example>
+                <values>
+                    <value>AIA</value>
+                    <value>EIT</value>
+                    <value>HMI</value>
+                    <value>LASCO</value>
+                    <value>MDI</value>
+                    <value>SECCHI</value>
+                    <value>SXT</value>
+                </values>
+            </parameter>
+            <parameter type="string" optional="true" name="detector">
+                <description><![CDATA[Detector name.]]></description>
+                <example><![CDATA[AIA]]></example>
+                <values>
+                    <value>AIA</value>
+                    <value>C2</value>
+                    <value>C3</value>
+                    <value>COR1</value>
+                    <value>COR2</value>
+                    <value>EIT</value>
+                    <value>EUVI</value>
+                    <value>HMI</value>
+                    <value>MDI</value>
+                    <value>SXT</value>
+                </values>
+            </parameter>
+            <parameter type="string" optional="true" name="measurement">
+                <description><![CDATA[Measurement name.]]></description>
+                <example><![CDATA[335]]></example>
+                <values>
+                    <value>94</value>
+                    <value>131</value>
+                    <value>171</value>
+                    <value>193</value>
+                    <value>195</value>
+                    <value>211</value>
+                    <value>284</value>
+                    <value>304</value>
+                    <value>335</value>
+                    <value>1600</value>
+                    <value>1700</value>
+                    <value>4500</value>
+                    <value>AlMgMn</value>
+                    <value>continuum</value>
+                    <value>magnetogram</value>
+                    <value>thin-Al</value>
+                    <value>white-light</value>
+                </values>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="linked">
+                <description><![CDATA[Generate a `linked` JPX file containing image pointers instead of data for each individual frame in the series. Currently, only JPX image series support this feature.]]></description>
+                <example><![CDATA[checked]]></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="verbose">
+                <description><![CDATA[If set to `true,` the JSON response will include timestamps for each frame in the resulting movie and any warning messages associated with the request, in addition to the JPX movie file URI.]]></description>
+                <example></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="jpip">
+                <description><![CDATA[Optionally return a JPIP URI string instead of the binary data of the movie itself, or instead of an HTTP URI in the JSON response (if `verbose` is set to `true`).]]></description>
+                <example></example>
+            </parameter>
+            <parameter type="number" optional="true" name="cadence">
+                <description><![CDATA[The desired amount of time (in seconds) between each frame in the movie.
+
+                If no cadence is specified, the server will attempt to select an optimal cadence.]]></description>
+                <example><![CDATA[12]]></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="binary" subtype="JPX movie data">
+            <description><![CDATA[By default, JPX binary movie data is returned.  This assumes that the `jpip` and `verbose` parameters are omitted or set to `false`.]]></description>
+            <example query_string="?startTime=2014-01-01T00:00:00Z&amp;endTime=2014-01-01T00:45:00Z&amp;sourceId=14"/>
+        </response>
+        <response code="200" type="string" subtype="JPIP link to JPX movie">
+            <description><![CDATA[If the `jpip` parameter is set to `true` (and the `verbose` parameter is omitted or set to `false`) the reponse is a a JPIP-protocol link to the JPX movie as a plain text string.]]></description>
+            <example query_string="?startTime=2014-01-01T00:00:00Z&amp;endTime=2014-01-01T00:45:00Z&amp;sourceId=14&amp;jpip=true"><![CDATA[jpip://helioviewer.org:8090/movies/SDO_AIA_AIA_335_F2014-01-01T00.00.00Z_T2014-01-01T00.45.00Z.jpx]]></example>
+        </response>
+        <response code="200" type="JPIP JPX Movie" subtype="JSON">
+            <description><![CDATA[If request parameters `jpip` and `verbose` are both set to `true`, the reponse is a JSON object containing a JPIP-protocol link to the JPX movie plus the timestamps of each frame a message if the value of `cadence` was overridden by the server.]]></description>
+            <example query_string="?startTime=2014-01-01T00:00:00Z&amp;endTime=2014-01-01T00:45:00Z&amp;sourceId=14&amp;jpip=true&amp;verbose=true"><![CDATA[{
+    "message": null,
+    "uri": "jpip://helioviewer.org:8090/movies/SDO_AIA_AIA_335_F2014-01-01T00.00.00Z_T2014-01-01T00.45.00Z.jpx",
+    "frames": [
+        1388534414,
+        1388534450,
+        1388534486,
+        [...],
+        1388537006,
+        1388537042,
+        1388537078
+    ]
+}]]></example>
+        </response>
+        <response code="200" type="HTTP JPX Movie" subtype="JSON">
+            <description><![CDATA[If request parameters `verbose` is set to `true` and `jpip` is omitted or set to `false`, the reponse is a JSON object containing an HTTP-protocol link to the JPX movie plus the timestamps of each frame a message if the value of `cadence` was overridden by the server.]]></description>
+            <example query_string="?startTime=2014-01-01T00:00:00Z&amp;endTime=2014-01-01T00:45:00Z&amp;sourceId=14&amp;verbose=true"><![CDATA[{
+    "message": "Movie cadence has been changed to one image every 1284 seconds in order to avoid exceeding the maximum allowed number of frames (1000) between the requested start and end dates.",
+    "uri": "http://helioviewer.org/jp2/movies/SOHO_MDI_MDI_magnetogram_F2003-10-05T00.00.00Z_T2003-10-20T00.00.00ZB1L.jpx",
+    "frames": [
+        1065323703,
+        1065329463,
+        1065335223,
+        [...],
+        1066596483,
+        1066602183,
+        1066607943
+    ]
+}]]></example>
+    </response>
+    </endpoint>
+    <endpoint name="getNewsFeed" group="Web Site" http="GET">
+        <route>/v1/getNewsFeed/</route>
+        <description><![CDATA[Get the XML RSS feed of the official Helioviewer Project Blog.]]></description>
+        <parameters>
+            <parameter type="string" optional="true" name="callback">
+                <description><![CDATA[Wrap the response object in a function call of your choosing.]]></description>
+                <example></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="string" subtype="RSS XML">
+            <example query_string="?"><![CDATA[&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;rss version=&quot;2.0&quot;
+    xmlns:content=&quot;http://purl.org/rss/1.0/modules/content/&quot;
+    xmlns:wfw=&quot;http://wellformedweb.org/CommentAPI/&quot;
+    xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot;
+    xmlns:atom=&quot;http://www.w3.org/2005/Atom&quot;
+    xmlns:sy=&quot;http://purl.org/rss/1.0/modules/syndication/&quot;
+    xmlns:slash=&quot;http://purl.org/rss/1.0/modules/slash/&quot; &gt;
+
+&lt;channel&gt;
+    &lt;title&gt;The Helioviewer Project Blog&lt;/title&gt;
+    &lt;atom:link href=&quot;http://blog.helioviewer.org/feed/&quot; rel=&quot;self&quot; type=&quot;application/rss+xml&quot; /&gt;
+    &lt;link&gt;http://blog.helioviewer.org&lt;/link&gt;
+    &lt;description&gt;Explore your heliosphere&lt;/description&gt;
+    &lt;lastBuildDate&gt;Tue, 28 Jan 2014 15:16:51 +0000&lt;/lastBuildDate&gt;
+    &lt;language&gt;en&lt;/language&gt;
+        &lt;sy:updatePeriod&gt;hourly&lt;/sy:updatePeriod&gt;
+        &lt;sy:updateFrequency&gt;1&lt;/sy:updateFrequency&gt;
+    &lt;generator&gt;http://wordpress.org/?v=3.8.1&lt;/generator&gt;
+    &lt;item&gt;
+        &lt;title&gt;Follow the Helioviewer Project on Twitter&lt;/title&gt;
+        &lt;link&gt;http://blog.helioviewer.org/2014/01/28/follow-the-helioviewer-project-on-twitter/&lt;/link&gt;
+        &lt;comments&gt;http://blog.helioviewer.org/2014/01/28/follow-the-helioviewer-project-on-twitter/#comments&lt;/comments&gt;
+        &lt;pubDate&gt;Tue, 28 Jan 2014 15:16:51 +0000&lt;/pubDate&gt;
+        &lt;dc:creator&gt;&lt;![CDATA[jack]]&gt;&lt;/dc:creator&gt;
+                &lt;category&gt;&lt;![CDATA[General]]&gt;&lt;/category&gt;
+
+        &lt;guid isPermaLink=&quot;false&quot;&gt;http://blog.helioviewer.org/?p=1265&lt;/guid&gt;
+        &lt;description&gt;&lt;![CDATA[The Helioviewer Project is now on Twitter, @Helioviewer. Please follow us on Twitter for the latest solar and heliospheric news and movies, as well as new Helioviewer Project features.]]&gt;&lt;/description&gt;
+                &lt;content:encoded&gt;&lt;![CDATA[&lt;p&gt;The Helioviewer Project is now on Twitter, @Helioviewer.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://blog.helioviewer.org/wp-content/uploads/2014/01/twitter_hv.png&quot;&gt;&lt;img src=&quot;http://blog.helioviewer.org/wp-content/uploads/2014/01/twitter_hv.png&quot; alt=&quot;twitter_hv&quot; width=&quot;538&quot; height=&quot;268&quot; class=&quot;aligncenter size-full wp-image-1266&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Please &lt;a href=&quot;https://twitter.com/Helioviewer&quot; title=&quot;Helioviewer on Twitter&quot;&gt;follow us on Twitter&lt;/a&gt; for the latest solar and heliospheric news and movies, as well as new Helioviewer Project features.&lt;/p&gt;
+]]&gt;&lt;/content:encoded&gt;
+            &lt;wfw:commentRss&gt;http://blog.helioviewer.org/2014/01/28/follow-the-helioviewer-project-on-twitter/feed/&lt;/wfw:commentRss&gt;
+        &lt;slash:comments&gt;0&lt;/slash:comments&gt;
+    &lt;/item&gt;
+&lt;/channel&gt;
+&lt;/rss&gt;]]></example>
+        </response>
+    </endpoint>
+    <endpoint name="getTile" group="Official Clients" http="GET">
+        <route>/v1/getTile/</route>
+        <description><![CDATA[Request a single image tile to be used in the Helioviewer.org Viewport.  Tiles are 512x512 pixel PNG images, generated for a given image scale from the intermediary JPEG2000 image files.
+
+        Use the `getClosestImage` API endpoint to obtain the desired image identifier for the `id` parameter.
+        ]]></description>
+        <parameters>
+            <parameter type="number" optional="false" name="id">
+                <description><![CDATA[Unique image identifier.]]></description>
+                <example><![CDATA[36275490]]></example>
+            </parameter>
+            <parameter type="number" optional="false" name="x">
+                <description><![CDATA[Tile position.]]></description>
+                <example><![CDATA[-1]]></example>
+            </parameter>
+            <parameter type="number" optional="false" name="y">
+                <description><![CDATA[Tile position.]]></description>
+                <example><![CDATA[-1]]></example>
+            </parameter>
+            <parameter type="number" optional="false" name="imageScale">
+                <description><![CDATA[Image scale in arcseconds per pixel.]]></description>
+                <example><![CDATA[2.42044088]]></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="binary" subtype="PNG image data">
+            <example query_string="?id=36275490&amp;x=-1&amp;y=-1&amp;imageScale=2.42044088"/>
+        </response>
+    </endpoint>
+    <endpoint name="getYouTubeAuth" group="YouTube" http="GET">
+        <route>/v1/getYouTubeAuth/</route>
+        <description><![CDATA[Request authorization from the user via a Google / YouTube authorization flow to permit Helioviewer to upload videos on behalf of the user.]]></description>
+        <parameters>
+            <parameter type="string" optional="false" name="id">
+                <description><![CDATA[Unique movie identifier (provided by the response to a `queueMovie` request).]]></description>
+                <example><![CDATA[VXvX5]]></example>
+            </parameter>
+            <parameter type="string" optional="false" name="title">
+                <description><![CDATA[Movie title.]]></description>
+                <example><![CDATA[AIA 4500 (2013-12-30 16:00:07 - 2014-01-27 15:00:07 UTC)]]></example>
+            </parameter>
+            <parameter type="string" optional="false" name="description">
+                <description><![CDATA[Move description.]]></description>
+                <example><![CDATA[This movie was produced by Helioviewer.org. See the original at http://helioviewer.org/?movieId=z6vX5 or download a high-quality version from http://helioviewer.org/api/?action=downloadMovie&id=z6vX5&format=mp4&hq=true]]></example>
+            </parameter>
+            <parameter type="string" optional="false" name="tags">
+                <description><![CDATA[Movie keyword tags (comma separated).]]></description>
+                <example><![CDATA[SDO,AIA,4500]]></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="share">
+                <description><![CDATA[Optionally share the movie with the Helioviewer community.]]></description>
+                <example><![CDATA[checked]]></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="string" subtype="HTTP Header redirect">
+            <description><![CDATA[Redirect user to YouTube authorization page.]]></description>
+            <example query_string="?id=VXvX5&amp;title=AIA%204500%20(2013-12-30%2016%3A00%3A07%20-%202014-01-27%2015%3A00%3A07%20UTC)&amp;description=This%20movie%20was%20produced%20by%20Helioviewer.org.%20See%20the%20original%20at%20http%3A%2F%2Fhelioviewer.org%2F%3FmovieId%3Dz6vX5%20or%20download%20a%20high-quality%20version%20from%20http%3A%2F%2Fhelioviewer.org%2Fapi%2F%3Faction%3DdownloadMovie%26id%3Dz6vX5%26format%3Dmp4%26hq%3Dtrue&amp;tags=SDO%2CAIA%2C4500&amp;share=true"><![CDATA[Location: https://www.google.com/accounts/AuthSubRequest?next=http%3A%2F%2Fhelioviewer.org%2Fapi%2Findex.php%3Faction%3DuploadMovieToYouTube%26id%3DVXvX5%26html%3Dtrue&scope=http://gdata.youtube.com&secure=&session=1]]></example>
+        </response>
+    </endpoint>
+    <endpoint name="playMovie" group="Movies" http="GET">
+        <route>/v1/playMovie/</route>
+        <description><![CDATA[Output an HTML web page with the requested movie embedded within.]]></description>
+        <parameters>
+            <parameter type="string" optional="false" name="id">
+                <description><![CDATA[Unique movie identifier (provided by the response to a `queueMovie` request).]]></description>
+                <example><![CDATA[VXvX5]]></example>
+            </parameter>
+            <parameter type="string" optional="false" name="format">
+                <description><![CDATA[Movie format (mp4, webm, or flv).]]></description>
+                <example><![CDATA[mp4]]></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="hq">
+                <description><![CDATA[Optionally download a higher-quality movie file (valid for .mp4 movies only, ignored otherwise).]]></description>
+                <example><![CDATA[checked]]></example>
+            </parameter>
+            <parameter type="number" optional="true" name="width">
+                <description><![CDATA[Width of embedded movie player in pixels.  Defaults to the actual width of the movie itself.]]></description>
+                <example><![CDATA[846]]></example>
+            </parameter>
+            <parameter type="string" optional="false" name="height">
+                <description><![CDATA[Height of embedded movie player in pixels. Defaults to the actual height of the movie itself.]]></description>
+                <example><![CDATA[820]]></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="string" subtype="HTML">
+            <example query_string="?id=VXvX5&amp;format=mp4&amp;hq=true"><![CDATA[&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Helioviewer.org - 2014_02_03_20_26_16_2014_02_05_20_16_40_AIA_1600-hq.mp4&lt;/title&gt;
+    &lt;script src=&quot;http://helioviewer.org/lib/flowplayer/flowplayer-3.2.8.min.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- Movie player --&gt;
+    &lt;div href=&quot;http://helioviewer.org/cache/movies/2014/02/05/VXvX5/2014_02_03_20_26_16_2014_02_05_20_16_40_AIA_1600-hq.mp4&quot;
+       style=&quot;display:block; width: 846px; height: 820px;&quot;
+       id=&quot;movie-player&quot;&gt;
+    &lt;/div&gt;
+    &lt;br&gt;
+    &lt;script language=&quot;javascript&quot;&gt;
+        flowplayer(&quot;movie-player&quot;, &quot;http://helioviewer.org/lib/flowplayer/flowplayer-3.2.8.swf&quot;, {
+            clip: {
+                autoBuffering: true,
+                scaling: &quot;fit&quot;
+            }
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+]]></example>
+        </response>
+    </endpoint>
+    <endpoint name="shortenURL" group="Official Clients" http="GET">
+        <route>/v1/shortenURL/</route>
+        <description><![CDATA[Shorten a Helioviewer.org URL with the bit.ly URL shortening web service.]]></description>
+        <parameters>
+            <parameter type="string" optional="false" name="queryString">
+                <description><![CDATA[URL-encoded query string.]]></description>
+                <example><![CDATA[date%3D2014-02-25T15%3A18%3A07.000Z%26imageScale%3D2.4204409%26centerX%3D-410.06307838566283%26centerY%3D-244.6662219973343%26imageLayers%3D%255BSDO%2CAIA%2CAIA%2C304%2C1%2C100%255D%26eventLayers%3D%26eventLabels%3Dtrue]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="callback">
+                <description><![CDATA[Wrap the response object in a function call of your choosing.]]></description>
+                <example></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="Shortened URL" subtype="JSON">
+            <description></description>
+            <example query_string="?queryString=date%3D2014-02-25T15%3A18%3A07.000Z%26imageScale%3D2.4204409%26centerX%3D-410.06307838566283%26centerY%3D-244.6662219973343%26imageLayers%3D%255BSDO%2CAIA%2CAIA%2C304%2C1%2C100%255D%26eventLayers%3D%26eventLabels%3Dtrue"><![CDATA[{
+    "status_code": 200,
+    "status_txt": "OK",
+    "data": {
+        "long_url": "http://helioviewer.org/?date=2014-02-25T15:18:07.000Z&imageScale=2.4204409&centerX=-410.06307838566283&centerY=-244.6662219973343&imageLayers=[SDO,AIA,AIA,304,1,100]&eventLayers=&eventLabels=true",
+        "url": "http://bit.ly/1hbCHMq",
+        "hash": "1hbCHMq",
+        "global_hash": "1hbCHMr",
+        "new_hash": 0
+    }
+}]]></example>
+        </response>
+    </endpoint>
+    <endpoint name="uploadMovieToYouTube" group="YouTube" http="GET">
+        <route>/v1/uploadMovieToYouTube/</route>
+        <description><![CDATA[Share an existing user-generated movie to YouTube.]]></description>
+        <parameters>
+            <parameter type="string" optional="false" name="id">
+                <description><![CDATA[Unique movie identifier (provided by the response to a `queueMovie` request).]]></description>
+                <example><![CDATA[y9tX5]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="title">
+                <description><![CDATA[Movie title.]]></description>
+                <example><![CDATA[AIA 94 (2014-02-26 16:14:25 - 2014-02-27 15:37:49 UTC)]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="description">
+                <description><![CDATA[Move description.]]></description>
+                <example><![CDATA[This movie was produced by Helioviewer.org. See the original at http://helioviewer.org/?movieId=y9tX5 or download a high-quality version from http://helioviewer.org/api/?action=downloadMovie&id=y9tX5&format=mp4&hq=true]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="tags">
+                <description><![CDATA[Movie keyword tags (comma separated).]]></description>
+                <example><![CDATA[SDO,AIA,94]]></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="share">
+                <description><![CDATA[Optionally share the movie with the Helioviewer community.]]></description>
+                <example><![CDATA[checked]]></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="html">
+                <description><![CDATA[Optionally output response as HTML instead of JSON.]]></description>
+                <example></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="YouTube Upload Status">
+            <description><![CDATA[JSON response to "uploadMovieToYouTube" API requests.]]></description>
+            <example query_string="?title=AIA+94+(2014-02-26+16%3A14%3A25+-+2014-02-27+15%3A37%3A49+UTC)&amp;description=This+movie+was+produced+by+Helioviewer.org.+See+the+original+at+http%3A%2F%2Fhelioviewer.org%2F%3FmovieId%3Dy9tX5+or+download+a+high-quality+version+from+http%3A%2F%2Fhelioviewer.org%2Fapi%2F%3Faction%3DdownloadMovie%26id%3Dy9tX5%26format%3Dmp4%26hq%3Dtrue&amp;tags=SDO%2CAIA%2C94&amp;share=true&amp;id=y9tX5"><![CDATA[{
+  "status": "upload in progress."
+}]]></example>
+        </response>
+        <errors>
+            <error type="Error" code="401">
+                <description><![CDATA["Error encountered during authentication. Revoke access for Helioviewer.org in your Google settings page and try again."]]></description>
+            </error>
+            <error type="Error" code="404">
+                <description><![CDATA["Unable to find the requested movie"]]></description>
+            </error>
+            <error type="Error" code="409">
+                <description><![CDATA["Movie has already been uploaded. Please allow several minutes for your video to appear on YouTube."]]></description>
+            </error>
+        </errors>
+    </endpoint>
+    <endpoint name="getUserVideos" group="YouTube" http="GET">
+        <route>/v1/getUserVideos/</route>
+        <description><![CDATA[Get a listing (in descending time order) of the most recently user-generated movies that have been publicly shared to YouTube.  Result set is limited to the value requested or default value of the `num` parameter (unless truncated when the date value of the `since` parameter is reached).]]></description>
+        <parameters>
+            <parameter type="number" optional="true" name="num">
+                <description><![CDATA[Number of shared user-generated movies to include in the response.  Default is 10.]]></description>
+                <example><![CDATA[10]]></example>
+            </parameter>
+            <parameter type="string" optional="true" name="since">
+                <description><![CDATA[Optionally truncate result set if this date/time is reached.  ISO 8601 combined UTC date and time UTC format.]]></description>
+                <example></example>
+            </parameter>
+            <parameter type="boolean" optional="true" default="false" name="force">
+                <description><![CDATA[Optionally bypass cache to retrieve most up-to-date data.]]></description>
+                <example></example>
+            </parameter>
+            <parameter type="string" optional="true" name="callback">
+                <description><![CDATA[Wrap the response object in a function call of your choosing.]]></description>
+                <example></example>
+            </parameter>
+        </parameters>
+        <response code="200" type="string" subtype="JSON">
+            <description></description>
+            <example query_string="?num=2"><![CDATA[[
+    {
+        "id": "J5tX5",
+        "url": "http://www.youtube.com/watch?v=x2VYjI1Eo3M",
+        "thumbnails": {
+            "icon": "http://helioviewer.org/cache/movies/2014/02/27/J5tX5/preview-icon.png",
+            "small": "http://helioviewer.org/cache/movies/2014/02/27/J5tX5/preview-small.png",
+            "medium": "http://helioviewer.org/cache/movies/2014/02/27/J5tX5/preview-medium.png",
+            "large": "http://helioviewer.org/cache/movies/2014/02/27/J5tX5/preview-large.png",
+            "full": "http://helioviewer.org/cache/movies/2014/02/27/J5tX5/preview-full.png"
+        },
+        "published": "2014-02-27 14:56:00"
+    },
+    {
+        "id": "L5tX5",
+        "url": "http://www.youtube.com/watch?v=h6Y6vhpKPRk",
+        "thumbnails": {
+            "icon": "http://helioviewer.org/cache/movies/2014/02/27/L5tX5/preview-icon.png",
+            "small": "http://helioviewer.org/cache/movies/2014/02/27/L5tX5/preview-small.png",
+            "medium": "http://helioviewer.org/cache/movies/2014/02/27/L5tX5/preview-medium.png",
+            "large": "http://helioviewer.org/cache/movies/2014/02/27/L5tX5/preview-large.png",
+            "full": "http://helioviewer.org/cache/movies/2014/02/27/L5tX5/preview-full.png"
+        },
+        "published": "2014-02-27 14:54:08"
+    }
+]]]></example>
+        </response>
+    </endpoint>
+    <model name="Error">
+        <description><![CDATA[A JSON object containing a numerical error code and a textual error message.]]></description>
+        <example><![CDATA[{
+  "error": "Error encountered during authentication. <a href=\"https://accounts.google.com/IssuedAuthSubTokens\">Revoke access</a> for Helioviewer.org in your Google settings page and try again.</a>",
+  "errno": 42
+}]]></example>
+        <fields>
+            <simple type="number" optional="false" name="errno">
+                <description><![CDATA[Error number]]></description>
+            </simple>
+            <simple type="string" optional="false" name="error">
+                <description><![CDATA[Error message]]></description>
+            </simple>
+        </fields>
+    </model>
+    <model name="Movie Status">
+        <fields>
+            <simple type="number" optional="false" name="status">
+                <description><![CDATA[Movie generation status (0=queued, 1=processing, 2=finished, 3=invalid)]]></description>
+            </simple>
+        </fields>
+    </model>
+    <model name="Movie Status Verbose">
+        <fields>
+            <simple type="string" optional="true" name="endDate">
+                <description><![CDATA[Date of final frame in movie (e.g. "2014-02-05 19:40:16")]]></description>
+            </simple>
+            <simple type="number" optional="true" name="frameRate">
+                <description><![CDATA[Number of frames per second (e.g. 15)]]></description>
+            </simple>
+            <simple type="number" optional="true" name="height">
+                <description><![CDATA[Pixel height of movie]]></description>
+            </simple>
+            <simple type="number" optional="true" name="numFrames">
+                <description><![CDATA[Total number of frames (e.g. 300)]]></description>
+            </simple>
+            <simple type="string" optional="true" name="startDate">
+                <description><![CDATA[Date of first frame in movie (e.g. "2014-02-05 19:40:16")]]></description>
+            </simple>
+            <simple type="number" optional="false" name="status">
+                <description><![CDATA[Movie generation status (0=queued, 1=processing, 2=finished, 3=invalid)]]></description>
+            </simple>
+            <complex type="Movie Thumbnails" optional="true" name="thumbnails">
+                <description></description>
+            </complex>
+            <simple type="string" optional="true" name="title">
+                <description><![CDATA[Title of movie (e.g. "SDO AIA 1600 (2014-02-03 20:26:16 - 19:40:16 UTC)")]]></description>
+            </simple>
+            <simple type="string" optional="true" name="url">
+                <description><![CDATA[Download URL for movie in specified format]]></description>
+            </simple>
+            <simple type="number" optional="true" name="width">
+                <description><![CDATA[Pixel width of movie]]></description>
+            </simple>
+            <simple type="string" optional="true" name="duration">
+                <description><![CDATA[Movie duration in seconds (e.g. 20)]]></description>
+            </simple>
+            <simple type="string" optional="true" name="events">
+                <description><![CDATA[Solar Feature/Event layer(s) contained in movie]]></description>
+            </simple>
+            <simple type="number" optional="true" name="imageScale">
+                <description><![CDATA[Image scale in arcseconds per pixel (e.g. 2.42044)]]></description>
+            </simple>
+            <simple type="string" optional="true" name="layers">
+                <description><![CDATA[Image datasource layer(s) contained in movie]]></description>
+            </simple>
+            <simple type="string" optional="true" name="timestamp">
+                <description><![CDATA[Timestamp (e.g. "2014-02-05 20:25:55")]]></description>
+            </simple>
+            <simple type="number" optional="true" name="x1">
+                <description><![CDATA[Arc seconds from Sun center (e.g. -1011.7442962)]]></description>
+            </simple>
+            <simple type="number" optional="true" name="y1">
+                <description><![CDATA[Arc seconds from Sun center (e.g. -980.2785645)]]></description>
+            </simple>
+            <simple type="number" optional="true" name="x2">
+                <description><![CDATA[Arc seconds from Sun center (e.g. 1035.9487052)]]></description>
+            </simple>
+            <simple type="number" optional="true" name="y2">
+                <description><![CDATA[Arc seconds from Sun center (e.g. 1004.4829735)]]></description>
+            </simple>
+        </fields>
+    </model>
+    <model name="Movie Thumbnails">
+        <description></description>
+        <example><![CDATA[{
+  "icon": "http://helioviewer.org/cache/movies/2014/02/05/VXvX5/preview-icon.png",
+  "small": "http://helioviewer.org/cache/movies/2014/02/05/VXvX5/preview-small.png",
+  "medium": "http://helioviewer.org/cache/movies/2014/02/05/VXvX5/preview-medium.png",
+  "large": "http://helioviewer.org/cache/movies/2014/02/05/VXvX5/preview-large.png",
+  "full": "http://helioviewer.org/cache/movies/2014/02/05/VXvX5/preview-full.png"
+}]]></example>
+        <fields>
+            <simple type="string" optional="false" name="full">
+                <description><![CDATA[URL to full-sized thumbnail PNG]]></description>
+            </simple>
+            <simple type="string" optional="false" name="icon">
+                <description><![CDATA[URL to icon-sized thumbnail PNG (64x64 pixels)]]></description>
+            </simple>
+            <simple type="string" optional="false" name="large">
+                <description><![CDATA[URL to large thumbnail PNG (640x480 pixels)]]></description>
+            </simple>
+            <simple type="string" optional="false" name="medium">
+                <description><![CDATA[URL to medium thumbnail PNG (320x240 pixels)]]></description>
+            </simple>
+            <simple type="string" optional="false" name="small">
+                <description><![CDATA[URL to small thumbnail PNG (240x180 pixels)]]></description>
+            </simple>
+        </fields>
+    </model>
+    <model name="Queued Movie">
+        <fields>
+            <simple type="number" optional="false" name="eta">
+                <description><![CDATA[Estimated time until movie generation will be completed in seconds]]></description>
+            </simple>
+            <simple type="string" optional="false" name="id">
+                <description><![CDATA[Unique movie identifier (e.g. "z6vX5")]]></description>
+            </simple>
+            <simple type="number" optional="false" name="queue">
+                <description><![CDATA[Position in movie generation queue]]></description>
+            </simple>
+            <simple type="string" optional="false" name="token">
+                <description></description>
+            </simple>
+        </fields>
+    </model>
+    <model name="Take Screenshot">
+        <fields>
+            <simple type="string" optional="false" name="id">
+                <description><![CDATA[Unique screenshot identifier (e.g. "3285980")]]></description>
+            </simple>
+        </fields>
+    </model>
+    <model name="YouTube Upload Status">
+        <fields>
+            <simple type="string" optional="false" name="status">
+                <description><![CDATA[YouTube upload status]]></description>
+            </simple>
+        </fields>
+    </model>
+    <model name="JP2 Image">
+        <fields>
+            <simple type="string" optional="false" name="uri">
+                <description><![CDATA[JPIP protocol link to JP2 image.]]></description>
+            </simple>
+        </fields>
+    </model>
+    <model name="JPIP JPX Movie">
+        <fields>
+            <simple type="string" optional="false" name="message">
+                <description><![CDATA[Message describing any values overrided by the server.]]></description>
+            </simple>
+            <simple type="string" optional="false" name="uri">
+                <description><![CDATA[JPIP protocol link to the JPX movie.]]></description>
+            </simple>
+            <simple type="List[Number]" optional="false" name="frames">
+                <description><![CDATA[UNIX timestamps of each frame.]]></description>
+            </simple>
+        </fields>
+    </model>
+    <model name="HTTP JPX Movie">
+        <fields>
+            <simple type="string" optional="false" name="message">
+                <description><![CDATA[An informational message may be included (e.g. if the server overrode the `cadence` parameter).]]></description>
+            </simple>
+            <simple type="string" optional="false" name="uri">
+                <description><![CDATA[JPIP protocol link to the JPX movie.]]></description>
+            </simple>
+            <simple type="List[Number]" optional="true" name="frames">
+                <description><![CDATA[UNIX timestamps of each frame.]]></description>
+            </simple>
+        </fields>
+    </model>
+    <model name="Shortened URL">
+        <fields>
+            <simple type="string" optional="false" name="status">
+                <description><![CDATA[YouTube upload status]]></description>
+            </simple>
+        </fields>
+    </model>
+    <model name="Get Closest Image">
+        <fields>
+            <simple type="number" optional="false" name="id">
+                <description><![CDATA[Unique image identifier (e.g. 34205701)]]></description>
+            </simple>
+            <simple type="string" optional="false" name="date">
+                <description><![CDATA[Date/time of selected image.]]></description>
+            </simple>
+            <simple type="number" optional="false" name="scale">
+                <description><![CDATA[Image scale in arc-seconds per pixel.]]></description>
+            </simple>
+            <simple type="number" optional="false" name="width">
+                <description><![CDATA[Width in pixels of source JPEG2000 image data.]]></description>
+            </simple>
+            <simple type="number" optional="false" name="height">
+                <description><![CDATA[Height in pixels of source JPEG2000 image data.]]></description>
+            </simple>
+            <simple type="number" optional="false" name="refPixelX">
+                <description><![CDATA[X-coordinate of reference pixel.]]></description>
+            </simple>
+            <simple type="number" optional="false" name="refPixelY">
+                <description><![CDATA[Y-coordinate of reference pixel.]]></description>
+            </simple>
+            <simple type="string" optional="false" name="sunCenterOffsetParams">
+                <description><![CDATA[FITS header positioning metadata.]]></description>
+            </simple>
+            <simple type="number" optional="false" name="layeringOrder">
+                <description><![CDATA[Relative order for image layer compositing.]]></description>
+            </simple>
+        </fields>
+    </model>
+    <model name="Get Data Sources">
+        <description></description>
+        <example query_string="?"><![CDATA[{
+    "SOHO": {
+        "EIT": {
+            "EIT": {
+                "171": {
+                    "sourceId": 0,
+                    "nickname": "EIT 171",
+                    "layeringOrder": 1,
+                    "start": "1996-01-15 21:39:21",
+                    "end": "2013-08-07 13:00:13"
+                },
+                "195": {
+                    "sourceId": 1,
+                    "nickname": "EIT 195",
+                    "layeringOrder": 1,
+                    "start": "1996-01-15 20:51:47",
+                    "end": "2013-08-07 01:13:50"
+                },
+                "284": {
+                    "sourceId": 2,
+                    "nickname": "EIT 284",
+                    "layeringOrder": 1,
+                    "start": "1996-01-15 21:04:17",
+                    "end": "2013-08-07 13:06:09"
+                },
+                "304": {
+                    "sourceId": 3,
+                    "nickname": "EIT 304",
+                    "layeringOrder": 1,
+                    "start": "1996-01-15 22:00:17",
+                    "end": "2013-08-07 01:19:42"
+                }
+            }
+        },
+        "LASCO": {
+            "C2": {
+                "white-light": {
+                    "sourceId": 4,
+                    "nickname": "LASCO C2",
+                    "layeringOrder": 2,
+                    "start": "1996-04-01 01:12:15",
+                    "end": "2014-02-26 14:48:05"
+                }
+            },
+            "C3": {
+                "white-light": {
+                    "sourceId": 5,
+                    "nickname": "LASCO C3",
+                    "layeringOrder": 3,
+                    "start": "1996-04-14 09:48:18",
+                    "end": "2014-02-26 15:06:06"
+                }
+            }
+        },
+        "MDI": {
+            "MDI": {
+                "magnetogram": {
+                    "sourceId": 6,
+                    "nickname": "MDI Mag",
+                    "layeringOrder": 1,
+                    "start": "1996-04-21 00:30:04",
+                    "end": "2011-01-11 22:39:00"
+                },
+                "continuum": {
+                    "sourceId": 7,
+                    "nickname": "MDI Int",
+                    "layeringOrder": 1,
+                    "start": "1996-05-19 19:08:35",
+                    "end": "2011-01-11 22:39:00"
+                }
+            }
+        }
+    },
+    "SDO": {
+        "AIA": {
+            "AIA": {
+                "94": {
+                    "sourceId": 8,
+                    "nickname": "AIA 94",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:33",
+                    "end": "2014-02-26 19:30:25"
+                },
+                "131": {
+                    "sourceId": 9,
+                    "nickname": "AIA 131",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:34",
+                    "end": "2014-02-26 19:31:32"
+                },
+                "171": {
+                    "sourceId": 10,
+                    "nickname": "AIA 171",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:36",
+                    "end": "2014-02-26 19:31:59"
+                },
+                "193": {
+                    "sourceId": 11,
+                    "nickname": "AIA 193",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:31",
+                    "end": "2014-02-26 19:34:42"
+                },
+                "211": {
+                    "sourceId": 12,
+                    "nickname": "AIA 211",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:37",
+                    "end": "2014-02-26 19:28:23"
+                },
+                "304": {
+                    "sourceId": 13,
+                    "nickname": "AIA 304",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:39",
+                    "end": "2014-02-26 19:18:19"
+                },
+                "335": {
+                    "sourceId": 14,
+                    "nickname": "AIA 335",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:28",
+                    "end": "2014-02-26 19:18:50"
+                },
+                "1600": {
+                    "sourceId": 15,
+                    "nickname": "AIA 1600",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:30",
+                    "end": "2014-02-26 19:19:52"
+                },
+                "1700": {
+                    "sourceId": 16,
+                    "nickname": "AIA 1700",
+                    "layeringOrder": 1,
+                    "start": "2010-06-23 00:00:31",
+                    "end": "2014-02-26 19:20:30"
+                },
+                "4500": {
+                    "sourceId": 17,
+                    "nickname": "AIA 4500",
+                    "layeringOrder": 1,
+                    "start": "2010-06-02 00:05:44",
+                    "end": "2014-02-26 19:00:07"
+                }
+            }
+        },
+        "HMI": {
+            "HMI": {
+                "continuum": {
+                    "sourceId": 18,
+                    "nickname": "HMI Int",
+                    "layeringOrder": 1,
+                    "start": "2010-12-06 06:53:41",
+                    "end": "2014-02-26 17:41:42"
+                },
+                "magnetogram": {
+                    "sourceId": 19,
+                    "nickname": "HMI Mag",
+                    "layeringOrder": 1,
+                    "start": "2010-12-06 06:53:41",
+                    "end": "2014-02-26 17:27:27"
+                }
+            }
+        }
+    },
+    "STEREO_A": {
+        "SECCHI": {
+            "EUVI": {
+                "171": {
+                    "sourceId": 20,
+                    "nickname": "EUVI-A 171",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:14:00",
+                    "end": "2014-02-23 22:14:00"
+                },
+                "195": {
+                    "sourceId": 21,
+                    "nickname": "EUVI-A 195",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:05:30",
+                    "end": "2014-02-23 23:55:30"
+                },
+                "284": {
+                    "sourceId": 22,
+                    "nickname": "EUVI-A 284",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:16:30",
+                    "end": "2014-02-23 22:16:30"
+                },
+                "304": {
+                    "sourceId": 23,
+                    "nickname": "EUVI-A 304",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:06:15",
+                    "end": "2014-02-23 23:56:15"
+                }
+            },
+            "COR1": {
+                "white-light": {
+                    "sourceId": 28,
+                    "nickname": "COR1-A",
+                    "layeringOrder": 2,
+                    "start": "2006-12-04 17:35:55",
+                    "end": "2014-02-23 23:55:00"
+                }
+            },
+            "COR2": {
+                "white-light": {
+                    "sourceId": 29,
+                    "nickname": "COR2-A",
+                    "layeringOrder": 3,
+                    "start": "2006-12-29 02:10:00",
+                    "end": "2014-02-23 23:54:00"
+                }
+            }
+        }
+    },
+    "STEREO_B": {
+        "SECCHI": {
+            "EUVI": {
+                "171": {
+                    "sourceId": 24,
+                    "nickname": "EUVI-B 171",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:07:52",
+                    "end": "2014-02-24 04:14:56"
+                },
+                "195": {
+                    "sourceId": 25,
+                    "nickname": "EUVI-B 195",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:06:07",
+                    "end": "2014-02-24 04:31:27"
+                },
+                "284": {
+                    "sourceId": 26,
+                    "nickname": "EUVI-B 284",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:07:07",
+                    "end": "2014-02-24 04:17:26"
+                },
+                "304": {
+                    "sourceId": 27,
+                    "nickname": "EUVI-B 304",
+                    "layeringOrder": 1,
+                    "start": "2010-01-01 00:06:52",
+                    "end": "2014-02-24 04:27:11"
+                }
+            },
+            "COR1": {
+                "white-light": {
+                    "sourceId": 30,
+                    "nickname": "COR1-B",
+                    "layeringOrder": 2,
+                    "start": "2006-12-13 14:23:50",
+                    "end": "2014-02-24 07:45:55"
+                }
+            },
+            "COR2": {
+                "white-light": {
+                    "sourceId": 31,
+                    "nickname": "COR2-B",
+                    "layeringOrder": 3,
+                    "start": "2006-12-29 02:10:00",
+                    "end": "2014-02-24 19:39:55"
+                }
+            }
+        }
+    },
+    "PROBA2": {
+        "SWAP": {
+            "SWAP": {
+                "174": {
+                    "sourceId": 32,
+                    "nickname": "SWAP 174",
+                    "layeringOrder": 1,
+                    "start": "2010-01-04 17:00:50",
+                    "end": "2014-02-26 18:08:02"
+                }
+            }
+        }
+    },
+    "Yohkoh": {
+        "SXT": {
+            "SXT": {
+                "AlMgMn": {
+                    "sourceId": 33,
+                    "nickname": "SXT AlMgMn",
+                    "layeringOrder": 1,
+                    "start": "1991-09-13 21:53:40",
+                    "end": "2001-12-14 20:58:33"
+                },
+                "thin-Al": {
+                    "sourceId": 34,
+                    "nickname": "SXT thin-Al",
+                    "layeringOrder": 1,
+                    "start": "1991-09-13 21:49:24",
+                    "end": "2001-12-14 08:20:43"
+                },
+                "white-light": {
+                    "sourceId": 35,
+                    "nickname": "SXT white-light",
+                    "layeringOrder": 1,
+                    "start": "1991-09-11 23:02:54",
+                    "end": "1992-11-13 17:05:32"
+                }
+            }
+        }
+    }
+}]]></example>
+        <fields></fields>
+    </model>
+    <model name="Get Data Sources Verbose">
+        <description><![CDATA[Output the hierarchical list of available datasources in a format that is compatible with the JHelioviewer desktop client.]]></description>
+        <example query_string="?verbose=true&amp;enable=[Yohkoh,STEREO_A,STEREO_B]"><![CDATA[{
+    "SOHO": {
+        "name": "SOHO",
+        "description": "Solar and Heliospheric Observatory",
+        "children": {
+            "EIT": {
+                "name": "EIT",
+                "description": "Extreme ultraviolet Imaging Telescope",
+                "children": {
+                    "EIT": {
+                        "name": "EIT",
+                        "description": "EIT",
+                        "children": {
+                            "171": {
+                                "name": "171 Å",
+                                "description": "171 Ångström extreme ultraviolet",
+                                "nickname": "EIT 171",
+                                "sourceId": 0,
+                                "layeringOrder": 1,
+                                "start": "1996-01-15 21:39:21",
+                                "end": "2013-08-07 13:00:13"
+                            },
+                            "195": {
+                                "name": "195 Å",
+                                "description": "195 Ångström extreme ultraviolet",
+                                "nickname": "EIT 195",
+                                "sourceId": 1,
+                                "layeringOrder": 1,
+                                "start": "1996-01-15 20:51:47",
+                                "end": "2013-08-07 01:13:50"
+                            },
+                            "284": {
+                                "name": "284 Å",
+                                "description": "284 Ångström extreme ultraviolet",
+                                "nickname": "EIT 284",
+                                "sourceId": 2,
+                                "layeringOrder": 1,
+                                "start": "1996-01-15 21:04:17",
+                                "end": "2013-08-07 13:06:09"
+                            },
+                            "304": {
+                                "name": "304 Å",
+                                "description": "304 Ångström extreme ultraviolet",
+                                "nickname": "EIT 304",
+                                "sourceId": 3,
+                                "layeringOrder": 1,
+                                "start": "1996-01-15 22:00:17",
+                                "end": "2013-08-07 01:19:42"
+                            }
+                        }
+                    }
+                }
+            },
+            "LASCO": {
+                "name": "LASCO",
+                "description": "The Large Angle Spectrometric Coronagraph",
+                "children": {
+                    "C2": {
+                        "name": "C2",
+                        "description": "LASCO C2",
+                        "children": {
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "White Light",
+                                "nickname": "LASCO C2",
+                                "sourceId": 4,
+                                "layeringOrder": 2,
+                                "start": "1996-04-01 01:12:15",
+                                "end": "2014-02-26 14:48:05"
+                            }
+                        }
+                    },
+                    "C3": {
+                        "name": "C3",
+                        "description": "LASCO C3",
+                        "children": {
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "White Light",
+                                "nickname": "LASCO C3",
+                                "sourceId": 5,
+                                "layeringOrder": 3,
+                                "start": "1996-04-14 09:48:18",
+                                "end": "2014-02-26 15:06:06"
+                            }
+                        }
+                    }
+                }
+            },
+            "MDI": {
+                "name": "MDI",
+                "description": "Michelson Doppler Imager",
+                "children": {
+                    "MDI": {
+                        "name": "MDI",
+                        "description": "MDI",
+                        "children": {
+                            "magnetogram": {
+                                "name": "Magnetogram",
+                                "description": "Magnetogram",
+                                "nickname": "MDI Mag",
+                                "sourceId": 6,
+                                "layeringOrder": 1,
+                                "start": "1996-04-21 00:30:04",
+                                "end": "2011-01-11 22:39:00"
+                            },
+                            "continuum": {
+                                "name": "Continuum",
+                                "description": "Intensitygram",
+                                "nickname": "MDI Int",
+                                "sourceId": 7,
+                                "layeringOrder": 1,
+                                "start": "1996-05-19 19:08:35",
+                                "end": "2011-01-11 22:39:00"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "SDO": {
+        "name": "SDO",
+        "description": "Solar Dynamics Observatory",
+        "children": {
+            "AIA": {
+                "name": "AIA",
+                "description": "Atmospheric Imaging Assembly",
+                "children": {
+                    "AIA": {
+                        "name": "AIA",
+                        "description": "AIA",
+                        "children": {
+                            "94": {
+                                "name": "94 Å",
+                                "description": "94 Ångström extreme ultraviolet",
+                                "nickname": "AIA 94",
+                                "sourceId": 8,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:33",
+                                "end": "2014-02-26 19:13:25"
+                            },
+                            "131": {
+                                "name": "131 Å",
+                                "description": "131 Ångström extreme ultraviolet",
+                                "nickname": "AIA 131",
+                                "sourceId": 9,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:34",
+                                "end": "2014-02-26 19:14:32"
+                            },
+                            "171": {
+                                "name": "171 Å",
+                                "description": "171 Ångström extreme ultraviolet",
+                                "nickname": "AIA 171",
+                                "sourceId": 10,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:36",
+                                "end": "2014-02-26 19:15:23",
+                                "default": true
+                            },
+                            "193": {
+                                "name": "193 Å",
+                                "description": "193 Ångström extreme ultraviolet",
+                                "nickname": "AIA 193",
+                                "sourceId": 11,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:31",
+                                "end": "2014-02-26 19:16:18"
+                            },
+                            "211": {
+                                "name": "211 Å",
+                                "description": "211 Ångström extreme ultraviolet",
+                                "nickname": "AIA 211",
+                                "sourceId": 12,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:37",
+                                "end": "2014-02-26 19:17:23"
+                            },
+                            "304": {
+                                "name": "304 Å",
+                                "description": "304 Ångström extreme ultraviolet",
+                                "nickname": "AIA 304",
+                                "sourceId": 13,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:39",
+                                "end": "2014-02-26 19:18:19"
+                            },
+                            "335": {
+                                "name": "335 Å",
+                                "description": "335 Ångström extreme ultraviolet",
+                                "nickname": "AIA 335",
+                                "sourceId": 14,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:28",
+                                "end": "2014-02-26 19:18:50"
+                            },
+                            "1600": {
+                                "name": "1600 Å",
+                                "description": "1600 Ångström extreme ultraviolet",
+                                "nickname": "AIA 1600",
+                                "sourceId": 15,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:30",
+                                "end": "2014-02-26 19:19:52"
+                            },
+                            "1700": {
+                                "name": "1700 Å",
+                                "description": "1700 Ångström extreme ultraviolet",
+                                "nickname": "AIA 1700",
+                                "sourceId": 16,
+                                "layeringOrder": 1,
+                                "start": "2010-06-23 00:00:31",
+                                "end": "2014-02-26 19:19:42"
+                            },
+                            "4500": {
+                                "name": "4500 Å",
+                                "description": "4500 Ångström extreme ultraviolet",
+                                "nickname": "AIA 4500",
+                                "sourceId": 17,
+                                "layeringOrder": 1,
+                                "start": "2010-06-02 00:05:44",
+                                "end": "2014-02-26 19:00:07"
+                            }
+                        },
+                        "default": true
+                    }
+                },
+                "default": true
+            },
+            "HMI": {
+                "name": "HMI",
+                "description": "Helioseismic and Magnetic Imager",
+                "children": {
+                    "HMI": {
+                        "name": "HMI",
+                        "description": "HMI",
+                        "children": {
+                            "continuum": {
+                                "name": "Continuum",
+                                "description": "Intensitygram",
+                                "nickname": "HMI Int",
+                                "sourceId": 18,
+                                "layeringOrder": 1,
+                                "start": "2010-12-06 06:53:41",
+                                "end": "2014-02-26 17:41:42"
+                            },
+                            "magnetogram": {
+                                "name": "Magnetogram",
+                                "description": "Magnetogram",
+                                "nickname": "HMI Mag",
+                                "sourceId": 19,
+                                "layeringOrder": 1,
+                                "start": "2010-12-06 06:53:41",
+                                "end": "2014-02-26 17:27:27"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "default": true
+    },
+    "STEREO_A": {
+        "name": "STEREO_A",
+        "description": "Solar Terrestrial Relations Observatory Ahead",
+        "children": {
+            "SECCHI": {
+                "name": "SECCHI",
+                "description": "Sun Earth Connection Coronal and Heliospheric Investigation",
+                "children": {
+                    "EUVI": {
+                        "name": "EUVI",
+                        "description": "Extreme Ultraviolet Imager",
+                        "children": {
+                            "171": {
+                                "name": "171 Å",
+                                "description": "171 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-A 171",
+                                "sourceId": 20,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:14:00",
+                                "end": "2014-02-23 22:14:00"
+                            },
+                            "195": {
+                                "name": "195 Å",
+                                "description": "195 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-A 195",
+                                "sourceId": 21,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:05:30",
+                                "end": "2014-02-23 23:55:30"
+                            },
+                            "284": {
+                                "name": "284 Å",
+                                "description": "284 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-A 284",
+                                "sourceId": 22,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:16:30",
+                                "end": "2014-02-23 22:16:30"
+                            },
+                            "304": {
+                                "name": "304 Å",
+                                "description": "304 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-A 304",
+                                "sourceId": 23,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:06:15",
+                                "end": "2014-02-23 23:56:15"
+                            }
+                        }
+                    },
+                    "COR1": {
+                        "name": "COR1",
+                        "description": "Coronograph 1",
+                        "children": {
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "White Light",
+                                "nickname": "COR1-A",
+                                "sourceId": 28,
+                                "layeringOrder": 2,
+                                "start": "2006-12-04 17:35:55",
+                                "end": "2014-02-23 23:55:00"
+                            }
+                        }
+                    },
+                    "COR2": {
+                        "name": "COR2",
+                        "description": "Coronograph 2",
+                        "children": {
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "White Light",
+                                "nickname": "COR2-A",
+                                "sourceId": 29,
+                                "layeringOrder": 3,
+                                "start": "2006-12-29 02:10:00",
+                                "end": "2014-02-23 23:54:00"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "STEREO_B": {
+        "name": "STEREO_B",
+        "description": "Solar Terrestrial Relations Observatory Behind",
+        "children": {
+            "SECCHI": {
+                "name": "SECCHI",
+                "description": "Sun Earth Connection Coronal and Heliospheric Investigation",
+                "children": {
+                    "EUVI": {
+                        "name": "EUVI",
+                        "description": "Extreme Ultraviolet Imager",
+                        "children": {
+                            "171": {
+                                "name": "171 Å",
+                                "description": "171 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-B 171",
+                                "sourceId": 24,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:07:52",
+                                "end": "2014-02-23 22:14:56"
+                            },
+                            "195": {
+                                "name": "195 Å",
+                                "description": "195 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-B 195",
+                                "sourceId": 25,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:06:07",
+                                "end": "2014-02-23 23:56:27"
+                            },
+                            "284": {
+                                "name": "284 Å",
+                                "description": "284 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-B 284",
+                                "sourceId": 26,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:07:07",
+                                "end": "2014-02-23 22:17:26"
+                            },
+                            "304": {
+                                "name": "304 Å",
+                                "description": "304 Ångström extreme ultraviolet",
+                                "nickname": "EUVI-B 304",
+                                "sourceId": 27,
+                                "layeringOrder": 1,
+                                "start": "2010-01-01 00:06:52",
+                                "end": "2014-02-23 23:57:11"
+                            }
+                        }
+                    },
+                    "COR1": {
+                        "name": "COR1",
+                        "description": "Coronograph 1",
+                        "children": {
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "White Light",
+                                "nickname": "COR1-B",
+                                "sourceId": 30,
+                                "layeringOrder": 2,
+                                "start": "2006-12-13 14:23:50",
+                                "end": "2014-02-24 02:50:56"
+                            }
+                        }
+                    },
+                    "COR2": {
+                        "name": "COR2",
+                        "description": "Coronograph 2",
+                        "children": {
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "White Light",
+                                "nickname": "COR2-B",
+                                "sourceId": 31,
+                                "layeringOrder": 3,
+                                "start": "2006-12-29 02:10:00",
+                                "end": "2014-02-23 23:54:56"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "Yohkoh": {
+        "name": "Yohkoh",
+        "description": "Yohkoh (Solar-A)",
+        "children": {
+            "SXT": {
+                "name": "SXT",
+                "description": "Soft X-ray Telescope",
+                "children": {
+                    "SXT": {
+                        "name": "SXT",
+                        "description": "Soft X-ray Telescope",
+                        "children": {
+                            "AlMgMn": {
+                                "name": "AlMgMn",
+                                "description": "Al/Mg/Mn filter (2.4 Å - 32 Å pass band)",
+                                "nickname": "SXT AlMgMn",
+                                "sourceId": 33,
+                                "layeringOrder": 1,
+                                "start": "1991-09-13 21:53:40",
+                                "end": "2001-12-14 20:58:33"
+                            },
+                            "thin-Al": {
+                                "name": "Thin Al",
+                                "description": "11.6 µm Al filter (2.4 Å - 13 Å pass band)",
+                                "nickname": "SXT thin-Al",
+                                "sourceId": 34,
+                                "layeringOrder": 1,
+                                "start": "1991-09-13 21:49:24",
+                                "end": "2001-12-14 08:20:43"
+                            },
+                            "white-light": {
+                                "name": "White Light",
+                                "description": "No filter",
+                                "nickname": "SXT white-light",
+                                "sourceId": 35,
+                                "layeringOrder": 1,
+                                "start": "1991-09-11 23:02:54",
+                                "end": "1992-11-13 17:05:32"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}]]></example>
+        <fields></fields>
+    </model>
+</api>

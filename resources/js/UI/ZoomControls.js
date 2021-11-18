@@ -48,6 +48,7 @@ var ZoomControls = Class.extend(
      */
     _setImageScale: function (v) {
         $(document).trigger('image-scale-changed', [this.increments[v]]);
+        $(document).trigger('replot-celestial-objects');
         $(document).trigger('replot-event-markers');
         $(document).trigger('earth-scale');
         $(document).trigger('update-external-datasource-integration');

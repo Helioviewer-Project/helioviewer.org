@@ -156,19 +156,7 @@ var UserLayersPresets = Class.extend({
         
         $('.item-list, .image-layer-switch').click(function(event){
 	        event.stopPropagation();
-			self._loadData(this);
-			/*
-			// --- zoom out on the eruption observation ---
-			var selectedValue = event.target.value;
-	        if(selectedValue == 1){
-				var h = 2; //zoom notch level to move to
-				var hs = $('#zoomControlSlider').slider();
-				hs.slider('option','value',h);
-				hs.slider('option','slide')
-       				.call(hs,null,{ handle: $('.ui-slider-handle', hs), value: h });
-			}
-			// --------------------------------------------
-			*/
+	        self._loadData(this);
         });
         
         $('.item-list').hover(
@@ -216,27 +204,16 @@ var UserLayersPresets = Class.extend({
 		        selectValue = 0;
 				Helioviewer.userSettings.set('state.dropdownLayerSelectID', 0);
 	        }
-
+			//console.log(selectValue);
 			if(firstInitMinimalLayerSelection){
 				//$("#image-layer-select").val(selectValue);
 				setTimeout(function(){
-						$("#image-layer-select option[value='"+selectValue+"']").attr('selected', 'selected').change();
+					$("#image-layer-select option[value='"+selectValue+"']").attr('selected', 'selected').change();
 				},250);
 				firstInitMinimalLayerSelection = false;
 			}else{
 				$("#image-layer-select").val(selectValue);
 			}
-			/*
-			// --- zoom out on the eruption observation ---
-			if(selectValue == 1){
-				var h = 2; //zoom notch level to move to
-				var hs = $('#zoomControlSlider').slider();
-				hs.slider('option','value',h);
-				hs.slider('option','slide')
-       				.call(hs,null,{ handle: $('.ui-slider-handle', hs), value: h });
-			}
-			// ---------------------------------------------
-			*/
         }
 		
 	},
@@ -248,7 +225,7 @@ var UserLayersPresets = Class.extend({
         var layers = $(el).data('layers');
         var events = $(el).data('events');
         var settings = {};
-
+        
         if(outputType == 'minimal'){
 	        var selectValue = parseInt($(el).val());
 	        Helioviewer.userSettings.set('state.dropdownLayerSelectID', selectValue);

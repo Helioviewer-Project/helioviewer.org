@@ -83,6 +83,9 @@ var SettingsLoader = (
                             },
                             "#accordion-events": {
                                 "open": true
+                            },
+                            "#accordion-bodies": {
+                                "open": true
                             }
                         }
                     },
@@ -181,7 +184,12 @@ var SettingsLoader = (
                 }],
                 "userTileLayers": [],
                 "dropdownLayerSelectID": 0,
-                "timeStep"   : 86400
+                "timeStep"   : 86400,
+                "celestialBodiesChecked" : {},
+                "celestialBodiesAccordionOpen" : {},
+                "celestialBodiesAvailableVisible" : {},
+                "celestialBodiesLabelsVisible" : {},
+                "celestialBodiesTrajectoriesVisible" : {}
             },
             version: serverSettings.version
         };

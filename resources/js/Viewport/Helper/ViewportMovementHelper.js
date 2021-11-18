@@ -15,8 +15,8 @@ var ViewportMovementHelper = Class.extend(
     maxLayerDimensions      : { width: 0, height: 0 },
     mouseStartingPosition   : { x: 0, y: 0 },
     moveCounter             : 0,
-    imageUpdateThrottle     : 3,
-    tileUpdateThrottle      : 9,
+    imageUpdateThrottle     : 1,
+    tileUpdateThrottle      : 2,
 
     /**
      * @constructs

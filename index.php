@@ -26,23 +26,39 @@
 	}
 	
 	//check if URL have output parameter or if $hv_output enabled
-	if(isset($_GET['output']) || $hv_output){
-		if($hv_output == 'embed' || $hv_output == 'minimal'){
-			$outputType = $hv_output;
-		}else if(isset($_GET['output']) && ($_GET['output'] == 'embed' || $_GET['output'] == 'minimal')){
-			$outputType = $_GET['output'];
-		}
-		
-		if($outputType){
-			//Load Config
-			include_once "../api.helioviewer.org/src/Config.php";
-			$config = new Config("../api.helioviewer.org/settings/Config.ini");
-	        
-	        //Log Statistic
-			include_once HV_ROOT_DIR.'/../src/Database/Statistics.php';
-	        $statistics = new Database_Statistics();
-	        $statistics->log($outputType);
-		}
+        if($hv_output == 'embed' || $hv_output == 'minimal'){
+                $outputType = $hv_output;
+        }else if(isset($_GET['output']) && ($_GET['output'] == 'embed' || $_GET['output'] == 'minimal')){
+                $outputType = $_GET['output'];
+        }
+        
+        if($outputType){ // minimal and embed statistic
+                //Load Config
+                include_once "../api.helioviewer.org/src/Config.php";
+                $config = new Config("../api.helioviewer.org/settings/Config.ini");
+        
+                //Log Statistic
+                include_once HV_ROOT_DIR.'/../src/Database/Statistics.php';
+                $statistics = new Database_Statistics();
+                //$statistics->log($outputType);
+		$statistics->logRedis($outputType);
+        }else{ //standard mode statistic
+                //Load Config
+                include_once "../api.helioviewer.org/src/Config.php";
+                $config = new Config("../api.helioviewer.org/settings/Config.ini");
+        
+                //Log Statistic
+                include_once HV_ROOT_DIR.'/../src/Database/Statistics.php';
+                $statistics = new Database_Statistics();
+
+		//temporary additional logging
+		$ip = "$_SERVER[REMOTE_ADDR]";
+		$url = "$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+		if(strpos($url,"helioviewer.org")===0){
+			//$statistics->log("standard");
+			$statistics->logRedis("standard");
+			//$statistics->logAccess("standard",$ip,$url);
+        	}
 	}
 	
 ?><!DOCTYPE html>
@@ -61,6 +77,10 @@
 	<!-- Blog RSS Feed -->
 	<link rel="alternate" type="application/rss+xml" title="The Helioviewer Project Blog RSS Feed" href="http://blog.helioviewer.org/feed/" />
 	<link rel="alternate" type="application/atom+xml" title="The Helioviewer Project Blog Atom Feed" href="http://blog.helioviewer.org/feed/atom/" />
+
+	<!--- NASA -->
+	<script id='_fed_an_ua_tag' type='text/javascript' src='https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NASA&subagency=GSFC&dclink=true'>
+</script>
 
 	<!--OpenGraph Metadata-->
 	<meta property="og:title" content="Helioviewer.org" />
@@ -101,6 +121,7 @@
 		<link rel="stylesheet" href="resources/css/youtube.css" />
 		<link rel="stylesheet" href="resources/css/font-awesome.min.css" />
 		<link rel="stylesheet" href="resources/css/helioviewer-views.css" />
+		<link rel="stylesheet" href="resources/css/celestial-bodies.css" />
 	<?php
 	} else {
 	?>
@@ -187,7 +208,7 @@
 	
 					<div id="news-button" class="fa fa-rss fa-fw qtip-left social-button" title="Helioviewer Project Announcements."></div>
 	
-					<a id="youtube-button" class="fa fa-youtube fa-fw qtip-left social-button header-tab" title="View Helioviewer Movies Shared to YouTube."></a>
+					<div id="youtube-button" class="fa fa-fw qtip-left" title="View Helioviewer Movies Shared to YouTube."></div>
 	
 					<div id="movies-button" class="fa fa-file-video-o fa-fw qtip-left social-button" title="Create a Helioviewer Movie."></div>
 	
@@ -214,13 +235,13 @@
 			</div>
 	
 			<!-- Mouse coordinates display -->
-			<div id="mouse-coords-box">
+			<!--<div id="mouse-coords-box">
 				<div id="mouse-coords">
 					<div id="mouse-coords-x"></div>
 					<div id="mouse-coords-y"></div>
 				</div>
 				<div id="mouse-cartesian" style="margin-top:4px;" class="viewport-action segmented-left fa fa-cube" title="Toggle Mouse Coordinates (Cartesian)"></div><div id="mouse-polar" class="viewport-action segmented-right fa fa-dot-circle-o" style="border-left: 0;margin-top:4px;" title="Toggle Mouse Coordinates (Polar)"></div>
-			</div>
+			</div>-->
 	
 		</div>
 	
@@ -314,6 +335,18 @@
 						</div>
 					</div>
 				</div>
+				<div id="accordion-bodies" class="accordion">
+					<div class="header">
+						<div class="disclosure-triangle closed">►</div>
+						<h1>Celestial Bodies</h1>
+						<div class="right fa fa-question-circle contextual-help" style="margin-right: 15px;" title="Celestial Bodies - Satellites orbiting in the solar system."></div>
+					</div>
+					<div class="content">
+						<div id="solarBodiesAccordion">
+							<div id="SolarBodiesAccordion-Container"></div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div id="hv-drawer-tab-left" class="drawer-tab drawer-tab-left user-select-none">Data Sources</div>
@@ -345,7 +378,7 @@
 				<div id="accordion-youtube-current" class="accordion">
 					<div class="header">
 						<div class="disclosure-triangle closed">►</div>
-						<h1>Movies spanning observation date</h1>
+						<h1>Movies Spanning Observation Date</h1>
 						<div class="right fa fa-question-circle contextual-help qtip-left" title="View YouTube movies generated by users of Helioviewer for current observation date."></div>
 					</div>
 					<div class="content">
@@ -364,7 +397,7 @@
 				<div id="accordion-youtube" class="accordion">
 					<div class="header">
 						<div class="disclosure-triangle closed">►</div>
-						<h1>Recently shared</h1>
+						<h1>Recently Shared to YouTube</h1>
 						<div class="right fa fa-question-circle contextual-help qtip-left" title="View YouTube movies generated by users of Helioviewer."></div>
 					</div>
 					<div class="content">
@@ -1040,6 +1073,8 @@
 				</div>
 				</fieldset>
 			</form>
+			<br>
+			<a href="https://security.google.com/settings/security/permissions" target="_blank" style="font-weight:bold;">Revoke YouTube API Access for Helioviewer.org</a> <br/>
 		</div>
 	
 		<!-- Usage Dialog -->
@@ -1069,9 +1104,11 @@
 	
 			<!-- Upload Form -->
 			<div id='upload-form'>
-				<img id='youtube-logo-large' src="resources/images/youtube_79x32.png" alt='YouTube logo' />
-				<h1>Upload Video</h1>
-				<br />
+				<div>
+					<img id='youtube-logo-large' src="resources/images/yt_logo_rgb_dark.png" alt='YouTube logo'/>
+				</div>
+				<br><br><br>
+				<div><h1>Upload Video</h1></div>
 				<form id="youtube-video-info" action="/index.php" method="post">
 					<!-- Title -->
 					<label for="youtube-title">Title:</label>
@@ -1100,6 +1137,16 @@
 					<!-- Hidden fields -->
 					<input id="youtube-movie-id" type="hidden" name="id" value="" />
 				</form>
+				<br><br><br><br>
+				<div id="about-credits" style="width:100%; text-align:center;">
+					<span style="margin-left:auto; margin-right: auto;">
+						<span style="font-weight:bold;">YouTube API Client Acknowledgements:</span>
+						<br />
+						<a href="https://www.youtube.com/terms" target="_blank">YouTube Terms of Service (ToS)</a> <br/>
+						<a href="https://policies.google.com/privacy" target="_blank">Google Privacy Policy</a> <br/>
+						<a href="https://security.google.com/settings/security/permissions" target="_blank">Revoke YouTube API Access for Helioviewer.org</a> <br/>
+					</span>
+				</div>
 				<div id='upload-error-console-container'><div id='upload-error-console'>...</div></div>
 			</div>
 		</div>
@@ -1433,7 +1480,7 @@
 	</div>
 	
 	<!-- Library JavaScript -->
-	<script src="resources/lib/jquery/jquery-3.1.0.min.js" type="text/javascript"></script>
+	<script src="resources/lib/jquery/jquery-3.5.1.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery-ui-1.12.0/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.mousewheel/jquery.mousewheel.3.1.13.min.js" type="text/javascript"></script>
@@ -1515,6 +1562,7 @@
 		<script src="resources/js/UI/jquery.ui.dynaccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/ImagePresets.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/TileLayerData.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/CelestialBodiesSatellites.js?v=<?=debugTime?>" type="text/javascript"></script>
 	<?php
 	} else {	
 	?>
@@ -1580,6 +1628,11 @@
 				}else if (sParameterName[0] === 'eventLabels') {
 					if ( typeof sParameterName[1] != 'undefined' && (sParameterName[1] == false  || sParameterName[1] == 'false' ) ) {
 						data['eventLabels'] = false;
+					}
+				}else if (sParameterName[0] === 'celestialBodies'){
+					// Process Celestial bodies labels seperately if set
+					if(sParameterName[1] != '') {
+						data['celestialBodiesChecked'] = sParameterName[1];
 					}
 				}else{
 					if(sParameterName[0] != ''){
