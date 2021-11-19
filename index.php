@@ -951,7 +951,7 @@
 	
 								<div id='' class='social-btns'>
 									<div style="font-size: 1.5em;">
-										<div id='help-links-blog' class='text-btn qtip-left' style="width: 90%;border:none;" title='Blog'>
+										<div id='help-links-blog' onclick="window.open('https://helioviewer-project.github.io/','_blank');" class='text-btn qtip-left' style="width: 90%;border:none;" title='Blog'>
 											<span class='fa fa-rss fa-fw'></span>
 											<span style='line-height: 1.6em'>Blog</span>
 										</div>
