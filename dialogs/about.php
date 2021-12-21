@@ -1,7 +1,37 @@
+<?php
+// Returns the latest git tag, which is equivalent to the latest
+// version string.
+function get_version() {
+    // Gets the most recent tag even if it's not the current commit.
+    $result = shell_exec("git describe --tags --abbrev=0");
+    // Command will fail if git isn't installed or if it's not a git repository.
+    // In that case, return version unknown.
+    if (!$result) {
+        return "Unknown";
+    }
+
+    return trim($result);
+}
+
+// Get the current commit date to show as the "Last Updated" time.
+function get_date() {
+    $result = shell_exec("git show -s --format=%as .");
+    if (!$result) {
+        return "Unknown";
+    }
+    return trim($result);
+}
+
+function print_version_info() {
+    $date = get_date();
+    $version = get_version();
+    echo $date . " (" . $version . ")";
+}
+?>
 
 <img src="resources/images/logos/about_white.png" alt="Helioviewer.org Logo"><br>
 <div style="width:100%; text-align: center;">
-    <span style="margin-left: auto; margin-right: auto; font-size:small;">Last Updated: 2017/03/10 (v3.2.0)</span>
+    <span style="margin-left: auto; margin-right: auto; font-size:small;">Last Updated: <?php print_version_info()?></span>
 </div>
 <br />
 
@@ -47,6 +77,6 @@ For more information, please visit our <a href="http://helioviewer.org/wiki/Main
         <a href="https://www.youtube.com/terms" target="_blank">YouTube Terms of Service (ToS)</a> <br/>
         <a href="https://policies.google.com/privacy" target="_blank">Google Privacy Policy</a> <br/>
         <a href="https://security.google.com/settings/security/permissions" target="_blank">Revoke YouTube API Access for Helioviewer.org</a> <br/>
-    
+
     </span>
 </div>
