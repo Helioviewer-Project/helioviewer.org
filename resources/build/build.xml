@@ -33,8 +33,9 @@
         </concat>
 
         <echo>minimizing JavaScript...</echo>
-        <exec dir="resources/build/jsmin" executable="jsmin.py" input="resources/compressed/helioviewer.js"
-          output="resources/compressed/helioviewer.min.js.tmp" resolveexecutable="true" />
+        <exec dir="resources/build/jsmin" executable="python3" output="resources/compressed/helioviewer.min.js.tmp" resolveexecutable="true">
+            <arg line="jsmin.py resources/compressed/helioviewer.js" />
+        </exec>
 
         <echo>compressing CSS...</echo>
         <exec dir="resources/compressed/" executable="java">
@@ -80,8 +81,9 @@
         </concat>
 
         <echo>minimizing JavaScript...</echo>
-        <exec dir="resources/build/jsmin" executable="jsmin.py" input="resources/compressed/helioviewer-embed.js"
-          output="resources/compressed/helioviewer-embed.min.js.tmp" resolveexecutable="true" />
+        <exec dir="resources/build/jsmin" executable="python3" output="resources/compressed/helioviewer-embed.min.js.tmp" resolveexecutable="true">
+            <arg line="jsmin.py resources/compressed/helioviewer-embed.js" />
+        </exec>
 
         <echo>compressing CSS...</echo>
         <exec dir="resources/compressed/" executable="java">
