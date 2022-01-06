@@ -78,7 +78,7 @@ class JavascriptMinify(object):
         if c == '': # EOF
             return '\000'
         if c == '\r':
-            return '\n'
+            return self._get() # Ignore carriage returns
         return ' '
 
     def _peek(self):
