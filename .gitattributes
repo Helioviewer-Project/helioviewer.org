@@ -1,0 +1,3 @@
+# workaround for windows hosts running in a docker container
+# to be able to build js
+jsmin.py eol=lf
