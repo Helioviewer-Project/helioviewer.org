@@ -1567,9 +1567,13 @@
 	} else {	
 	?>
 		<script src="resources/compressed/helioviewer.min.js?v=<?=filemtime('resources/compressed/helioviewer.min.js')?>" type="text/javascript"></script>
+	
+	
 	<?php
 	}	
 	?>
+	
+	<script src="resources/lib/hvbrowserspecific/hv_browserspecific.js" type="text/javascript"></script>
 	
 	<!-- Launch Helioviewer -->
 	<script type="text/javascript">
