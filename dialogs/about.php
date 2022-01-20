@@ -15,7 +15,7 @@ function get_version() {
 
 // Get the current commit date to show as the "Last Updated" time.
 function get_date() {
-    $result = shell_exec("git show -s --format=%as .");
+    $result = shell_exec("git show -s --format=%as");
     if (!$result) {
         return "Unknown";
     }
