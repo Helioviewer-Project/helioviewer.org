@@ -22,7 +22,7 @@ function startTutorial(){
 			position: 'top_right'
 		},{
 			selector: '#accordion-bodies',
-			text: '<b>Celestial Bodies</b><br><br>Use the Celestial Bodies checkbox interface to select Labels and/or Trajectories to overlay onto the images in the viewport. Use the Next/Last buttons in the Trajectory sub-section to skip to the Next/Last trajectory relative to the current observation time. Click on Celestial Body and Satelite labels to reveal more information. Hover over points in trajectory overlay to reveal date information. Click on points in trajectory overlay to set the observation time to that point.',
+			text: '<script>if($("#accordion-events .disclosure-triangle:first").hasClass("closed")===false){$("#accordion-events .disclosure-triangle:first").addClass("closed");$("#accordion-events .content, #soho-dynaccordion .dynaccordion-cell, #stereo_a-dynaccordion .dynaccordion-cell, #stereo_b-dynaccordion .dynaccordion-cell").css("display","none");}</script><b>Celestial Bodies</b><br><br>Use the Celestial Bodies checkbox interface to select Labels and/or Trajectories to overlay onto the images in the viewport. Use the Next/Last buttons in the Trajectory sub-section to skip to the Next/Last trajectory relative to the current observation time. Click on Celestial Body and Satelite labels to reveal more information. Hover over points in trajectory overlay to reveal date information. Click on points in trajectory overlay to set the observation time to that point.',
 			position: 'best'
 		},{
 			selector: '#zoom',
