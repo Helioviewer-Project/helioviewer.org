@@ -1,0 +1,3 @@
+[submodule "resources/lib/mediaelement"]
+	path = resources/lib/mediaelement
+	url = https://github.com/mediaelement/mediaelement.git
