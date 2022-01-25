@@ -4,3 +4,6 @@
 [submodule "resources/lib/jquery.browser"]
 	path = resources/lib/jquery.browser
 	url = https://github.com/gabceb/jquery-browser-plugin.git
+[submodule "resources/lib/jquery.jgrowl"]
+	path = resources/lib/jquery.jgrowl
+	url = https://github.com/stanlemon/jGrowl.git

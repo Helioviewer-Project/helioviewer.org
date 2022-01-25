@@ -91,7 +91,7 @@
 	<!-- Library CSS -->
 	<link rel="stylesheet" href="resources/lib/yui-2.8.2r1/reset-fonts.css" />
 	<link rel="stylesheet" href="resources/lib/jquery-ui-1.12.0/jquery-ui.min.css" />
-	<link rel="stylesheet" href="resources/lib/jquery.jgrowl-1.4.5/jquery.jgrowl.min.css" />
+	<link rel="stylesheet" href="resources/lib/jquery.jgrowl/jquery.jgrowl.min.css" />
 	<link rel="stylesheet" href="resources/lib/jquery.qTip3/jquery.qtip.min.css" />
 	<link rel="stylesheet" href="resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
 	<link rel="stylesheet" href="resources/lib/DatetimePicker/jquery.datetimepicker.css" />
@@ -1493,7 +1493,7 @@
 	<script src="resources/lib/Highstock-4.2.1/js/highstock.js" type="text/javascript"></script>
 	<script src="resources/lib/Highstock-4.2.1/js/highcharts-more.js" type="text/javascript"></script>
 	<script src="resources/lib/custom_events-master/customEvents.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery.jgrowl-1.4.5/jquery.jgrowl.min.js" type="text/javascript"></script>
+	<script src="resources/lib/jquery.jgrowl/jquery.jgrowl.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.imgareaselect-0.9.8/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
 	<script src="resources/lib/jquery.jsTree-1.0rc/jquery.jstree.js"></script>
