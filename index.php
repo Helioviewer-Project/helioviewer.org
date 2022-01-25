@@ -90,7 +90,7 @@
 
 	<!-- Library CSS -->
 	<link rel="stylesheet" href="resources/lib/yui-2.8.2r1/reset-fonts.css" />
-	<link rel="stylesheet" href="resources/lib/jquery-ui-1.12.0/jquery-ui.min.css" />
+	<link rel="stylesheet" href="resources/lib/jquery-ui-1.13.1/jquery-ui.min.css" />
 	<link rel="stylesheet" href="resources/lib/jquery.jgrowl/jquery.jgrowl.min.css" />
 	<link rel="stylesheet" href="resources/lib/jquery.qTip3/jquery.qtip.min.css" />
 	<link rel="stylesheet" href="resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
@@ -1481,7 +1481,7 @@
 
 	<!-- Library JavaScript -->
 	<script src="resources/lib/jquery/jquery-3.6.0.min.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery-ui-1.12.0/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="resources/lib/jquery-ui-1.13.1/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.mousewheel/jquery.mousewheel.3.1.13.min.js" type="text/javascript"></script>
 	<script src="resources/lib/jquery.browser/dist/jquery.browser.min.js" type="text/javascript" language="javascript"></script>
