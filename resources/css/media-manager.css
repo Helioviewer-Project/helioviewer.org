@@ -186,3 +186,13 @@
             border-radius: 0.4em;
          background-color: rgba(255, 255, 255, 0.50);
 }
+
+.mejs__overlay-button {
+	background-image: url("/resources/lib/mediaelement/build/mejs-controls.svg");
+}
+.mejs__overlay-loading-bg-img {
+	background-image: url("/resources/lib/mediaelement/build/mejs-controls.svg");
+}
+.mejs__button > button {
+	background-image: url("/resources/lib/mediaelement/build/mejs-controls.svg");
+}
