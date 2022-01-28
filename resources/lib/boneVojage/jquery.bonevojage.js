@@ -90,7 +90,7 @@
           var i, map, _ref;
           map = '';
           for (i = 0, _ref = points.length - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
-            map += '<li></li>';
+            map += '<li id="bvmodal_'+i+'" class="bvmodal_li"></li>';
           }
           return boneVojage_main.settings.$tooltip.find('ul').html(map);
         },
