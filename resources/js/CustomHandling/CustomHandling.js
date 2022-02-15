@@ -26,8 +26,9 @@ $(document).ready(function() {
 						
 						if($('#soho-psp-container-hover-date-'+pspstartenc).length > 0) {
 							var numEncPoints= $('#soho-psp-trajectory .hover-date-container').length;
+						}
 						else if($('#stereo_a-psp-trajectory-hover-date-'+pspstartenc).length > 0) {
-							var numEncPoints= $('#soho-psp-trajectory .hover-date-container').length;
+							var numEncPoints= $('#stereo_a-psp-trajectory .hover-date-container').length;
 						}
 						
 						
