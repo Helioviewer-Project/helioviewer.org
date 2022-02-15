@@ -72,7 +72,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.drawerHelpOpened          = false;
         this.drawerHelpOpenedHeight    = 'auto';
         this.drawerHelpOpenedWidth     = '25em';
-        
+
 
         this.tabbedDrawers = ['#hv-drawer-news', '#hv-drawer-movies',
                               '#hv-drawer-screenshots', '#hv-drawer-youtube',
@@ -131,7 +131,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this._glossary = new VisualGlossary(this._setupDialog);
 
         this._timeSelector      = new TimeSelector();
-        
+
         this._userLayersPresets = new UserLayersPresets();
 
         this._celestialBodies = new CelestialBodiesSatellites();
@@ -141,7 +141,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this._setupSettingsUI();
 
         this._displayGreeting();
-		
+
         $('#mouse-cartesian').click();
 
         this.drawerUserSettings = Helioviewer.userSettings.get("state.drawers");
@@ -201,9 +201,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 console.info(['no drawer: ', drawerSelector, obj]);
             }
         });
-        
+
         this.updateHeightsInsideViewportContainer();
-        
+
     },
 
     /**
@@ -264,7 +264,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      */
     _initViewport: function (date, marginTop, marginBottom) {
         var self = this;
-		
+
         $(document).bind("datasources-initialized", function (e, dataSources) {
             self._tileLayerAccordion = new TileLayerAccordion(
                    '#tileLayerAccordion', dataSources, date);
@@ -358,7 +358,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	            }else{
 		            d.dialog($.extend(defaults, options));
 	            }
-                
+
                 btn.addClass("dialog-loaded");
             }
             return false;
@@ -451,11 +451,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var self = this,
             msg  = "Link directly to the current state of Helioviewer:",
             btns;
-		
+
 		if($('.helioviewer-url-input-box').is(':visible')){
 			$(".helioviewer-url-input-box").attr("value", self.toURL());
 		}
-		
+
 		// Update Heliovuewer link
 		$(document).on('update-external-datasource-integration', function(e){
 	        if ( $('.helioviewer-url-input-box').is(':visible') ) {
@@ -475,14 +475,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				$(".helioviewer-url-shorten").removeAttr("checked");
 			}
         });
-        	
+
         $(document).on('update-external-datasource-integration', $.proxy(this.updateExternalDataSourceIntegration, this, false));
         $(document).on('observation-time-changed', function(e){
 	        setTimeout(function(){ self.updateExternalDataSourceIntegration(true,e); }, 500);
         });
 
 		$('#TileLayerAccordion-Container').sortable({
-			placeholder:'sortable-placeholder', 
+			placeholder:'sortable-placeholder',
 			handle:'.tile-accordion-header-left'
 		}).bind('sortupdate', function(e, ui) {
 			$(document).trigger('save-tile-layers-from-accordion');
@@ -500,7 +500,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             }
             self.updateExternalDataSourceIntegration(self, false);
         });
-        
+
         $('#vso-start-date').datetimepicker({
 			timepicker:false,
 			format:'Y/m/d',
@@ -511,7 +511,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				})
 			}
 		});
-		
+
 		$('#vso-end-date').datetimepicker({
 			timepicker:false,
 			format:'Y/m/d',
@@ -522,7 +522,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				})
 			}
 		});
-		
+
 		$('#sdo-start-date').datetimepicker({
 			timepicker:false,
 			format:'Y/m/d',
@@ -533,7 +533,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				})
 			}
 		});
-		
+
 		$('#sdo-end-date').datetimepicker({
 			timepicker:false,
 			format:'Y/m/d',
@@ -544,7 +544,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				})
 			}
 		});
-		
+
 		//TimePicker's
 		var time1 = '';
 		var time2 = '';
@@ -561,14 +561,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				if(time1 != ''){
 					$input.val(time1).change();
 				}
-				
+
 				return true;
 			},
 			onChange: function (str, datetime) {
 				time1 = str;
 			}
 		});
-		
+
 		$('#vso-end-time').TimePickerAlone({
 			twelveHoursFormat:false,
 			seconds:true,
@@ -580,14 +580,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				if(time2 != ''){
 					$input.val(time2).change();
 				}
-				
+
 				return true;
 			},
 			onChange: function (str, datetime) {
 				time2 = str;
 			}
 		});
-		
+
 		$('#sdo-start-time').TimePickerAlone({
 			twelveHoursFormat:false,
 			seconds:true,
@@ -599,14 +599,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				if(time3 != ''){
 					$input.val(time3).change();
 				}
-				
+
 				return true;
 			},
 			onChange: function (str, datetime) {
 				time3 = str;
 			}
 		});
-		
+
 		$('#sdo-end-time').TimePickerAlone({
 			twelveHoursFormat:false,
 			seconds:true,
@@ -618,37 +618,37 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				if(time4 != ''){
 					$input.val(time4).change();
 				}
-				
+
 				return true;
 			},
 			onChange: function (str, datetime) {
 				time4 = str;
 			}
 		});
-		
+
 		//Fix Scroll
-		$('#hv-drawer-data').on( 'scroll', function(){ 
+		$('#hv-drawer-data').on( 'scroll', function(){
 			$('.periodpicker_timepicker_dialog').removeClass('visible');
 			$('#vso-start-time, #vso-end-time, #sdo-start-time, #sdo-end-time').blur() ;
-				
+
 			$('#vso-start-date').datetimepicker('hide') ;
 			$('#vso-end-date').datetimepicker('hide') ;
 			$('#sdo-start-date').datetimepicker('hide') ;
 			$('#sdo-end-date').datetimepicker('hide') ;
 		});
-		$('#hv-drawer-left').on( 'scroll', function(){ 
+		$('#hv-drawer-left').on( 'scroll', function(){
 			$('.periodpicker_timepicker_dialog').removeClass('visible');
 			$('#time').blur() ;
 			$('#date').datetimepicker('hide') ;
 		});
-		
+
 
         $(this.drawerLeftTab).bind('click', $.proxy(this.drawerLeftClick, this));
         this.drawerLeft.bind('mouseover', function (event) { event.stopPropagation(); });
-        
+
         $(this.drawerTimelineTab).bind('click', $.proxy(this.drawerTimelineClick, this));
         this.drawerTimeline.bind('mouseover', function (event) { event.stopPropagation(); });
-        
+
         $(this.drawerTimelineEventsTab).bind('click', $.proxy(this.drawerTimelineEventsClick, this));
         this.drawerTimelineEvents.bind('mouseover', function (event) { event.stopPropagation(); });
 
@@ -687,24 +687,24 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $(".helioviewer-url-shorten").on('click', function (e) {
             self.displayURL(self.toURL());
         });
-		
-		
+
+
 		// Email Link
 		$('#share-email-link').on('click', function(e){
 			var subject = 'Helioviewer.org - Solar and heliospheric image visualization tool';
 			var link = encodeURIComponent(self.toURL());
 			window.location.href = "mailto:?subject="+subject+"&body=\r\n\r\n"+link;
 		});
-		
+
 		// Copy Link to Clipboard
 		$('#share-copy-link').on('click', function(e){
 			$('.helioviewer-url-input-box-menu').on("focus", function() {
 				$(this).select();
 			});
 			$( ".helioviewer-url-input-box-menu" ).focus();
-			document.execCommand('copy'); 
+			document.execCommand('copy');
 		});
-		
+
 		var isIe = (navigator.userAgent.toLowerCase().indexOf("msie") != -1 || navigator.userAgent.toLowerCase().indexOf("trident") != -1);
 		document.addEventListener('copy', function(e) {
 			if(e.target.className == 'helioviewer-url-input-box'){
@@ -713,9 +713,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				return true;
 				//var textToPutOnClipboard = self.toURL();
 			}
-			
+
 		    if (isIe) {
-		        window.clipboardData.setData('Text', textToPutOnClipboard);    
+		        window.clipboardData.setData('Text', textToPutOnClipboard);
 		    } else {
 		        e.clipboardData.setData('text/plain', textToPutOnClipboard);
 		    }
@@ -730,8 +730,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         	$(document).trigger("message-console-log", ["Link successfully copied to clipboard.", jGrowlOpts, true, true]);
 		    e.preventDefault();
 		});
-		
-		
+
+
         $('#share-twitter-link').on('click', $.proxy(this.twitter, this));
         $('#share-facebook-link').on('click', $.proxy(this.facebook, this));
         $('#share-google-link').on('click', $.proxy(this.google, this));
@@ -741,47 +741,47 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		$('#help-links-guide').on('click', function(){
 			window.open('http://wiki.helioviewer.org/wiki/Helioviewer.org_User_Guide_3.1.0','_blank');
 		});
-		
+
 		//Glossary
 		$('#help-links-glossary').on('click', function(){
 			//http://helioviewer.org/dialogs/glossary.html
 		});
-		
+
 		//Shortcuts
 		$('#help-links-shortcuts').on('click', function(){
 			//http://helioviewer.org/dialogs/usage.php
 		});
-		
+
 		//Documentation
 		$('#help-links-documentation').on('click', function(){
 			window.open('http://wiki.helioviewer.org/wiki/Main_Page','_blank');
 		});
-		
+
 		//API Documentation
 		$('#help-links-api-documentation').on('click', function(){
 			window.open(Helioviewer.api + '/docs/v2','_blank');
 		});
-		
+
 		//Blog
 		$('#help-links-blog').on('click', function(){
-			window.open('http://blog.helioviewer.org/','_blank');
+			window.open('http://helioviewer-project.github.io/','_blank');
 		});
-		
+
 		//JHelioviewer
 		$('#help-links-jhelioviewer').on('click', function(){
 			window.open('http://www.jhelioviewer.org/','_blank');
 		});
-		
+
 		//Contact
 		$('#help-links-contact').on('click', function(){
 			window.location.href = 'mailto:'+self.serverSettings.contactEmail;
 		});
-		
+
 		//Github
 		$('#help-links-github').on('click', function(){
 			window.open('https://github.com/Helioviewer-Project/helioviewer.org/issues','_blank');
 		});
-		
+
         $('#mouse-cartesian').click( function (event) {
             var buttonPolar     = $('#mouse-polar');
             var buttonCartesian = $('#mouse-cartesian');
@@ -812,7 +812,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 buttonCartesian.removeClass("active");
             }
         });
-		
+
 		$('#earth-button').on('click', function () {
 			var buttonEarth     	= $('#earth-button');
 			var buttonScaleBar 	= $('#scalebar-button');
@@ -845,7 +845,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 buttonEarth.removeClass("active");
             }
         });
-		
+
         $('#sdo-full-viewport').click(function () {
             $('#sdo-select-area').removeClass('selected');
             $('#sdo-full-viewport').addClass('selected');
@@ -921,7 +921,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     updateSDOaccordion: function (sdoPreviews, sdoButtons, imageAccordions, imageScale, global) {
 
         var vport, imageScale;
-			
+
         // Wipe the slate clean
         this._clearSDOaccordion(sdoPreviews, sdoButtons);
 
@@ -1048,10 +1048,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 +  '&wavemax='  + nickname.split(' ')[1]
                 +  '&waveunit=' + 'Angstrom';
         }
-        
+
         var sDate = startDate.replace(/T|Z/gi, ' ');
         var eDate = endDate.replace(/T|Z/gi, ' ');
-        
+
         html = '<a href="' + url + '" target="_blank">'
              + nickname + ' ' + sDate
              + ' <span class="dateSelector" data-date-time="'+sDate+'" data-tip-pisition="left">UTC</span> <i class="fa fa-external-link-square fa-fw"></i></a>';
@@ -1122,26 +1122,26 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this._clearVSOaccordion(vsoLinks, vsoPreviews, vsoButtons);
 
         $.each( imageAccordions, function(i, accordion) {
-			
+
             if ( !$(accordion).find('.visible').hasClass('hidden') ) {
                 nickname = $(accordion).find('.tile-accordion-header-left').html();
                 sourceId = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
                 var date     = $(accordion).find('.timestamp').html();
                 var dateArr = date.split(" ");
 				var timestamp = new Date(dateArr[0]+' '+dateArr[1]).getTime();
-				
-				
+
+
 				if(sTimestamp == 0 || timestamp < sTimestamp){
 					sTimestamp = timestamp;
 				}
 				if(eTimestamp == 0 || timestamp > eTimestamp){
 					eTimestamp = timestamp;
 				}
-				
+
 				var sDate = new Date(timestamp);
-				
+
 				globalStartDate = globalEndDate = sDate.toDateString() + 'T' + sDate.toTimeString() + 'Z';
-				
+
 				if(global){
 					startDate = endDate = globalStartDate;
 				}else{
@@ -1150,38 +1150,38 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	                endDate   = $('#vso-end-date').val()   + 'T'
 	                          + $('#vso-end-time').val()   + 'Z';
 				}
-				
-				
+
+
                 sourceIDs.push(sourceId);
                 instruments.push(nickname.split(' ')[0]);
                 if ( parseInt(nickname.split(' ')[1], 10) ) {
                     waves.push(parseInt(nickname.split(' ')[1], 10));
                 }
-                
+
 				vsoLinks.append(
                     self._vsoLink(globalStartDate, globalEndDate, nickname)
                 );
                 helioviewer._timeSelector = new TimeSelector();
-                
+
                 vsoPreviews.append(
                     self._vsoThumbnail(startDate, endDate, nickname, sourceId)
                 );
             }
         });
-		
+
 		if(global){
 			var _sDate = new Date(sTimestamp);
 			var _eDate = new Date(eTimestamp);
-			
+
 			var sDate = _sDate.toDateString();
 			var sTime = _sDate.toTimeString();
 			var eDate = _eDate.toDateString();
 			var eTime = _eDate.toTimeString();
-			
+
 			startDate 	= _sDate.toDateString() + 'T' + _sDate.toTimeString() + 'Z';
 			endDate 	= _eDate.toDateString() + 'T' + _eDate.toTimeString() + 'Z';
 		}
-		
+
         this._setVSOtimes(sDate, sTime, eDate, eTime);
 
         if ( sourceIDs.length > 0 ) {
@@ -1191,7 +1191,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 
     _updateVSObuttons: function (startDate, endDate, sourceIDs, instruments, waves) {
-	
+
         var x1=0, y1=0, x2=0, y2=0, url, body, imageScale,
             vport = this.viewport.getViewportInformation();
 
@@ -1247,7 +1247,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $(document).trigger("message-console-log", [body,
                 { sticky: true, header: 'Just now' }, true, true]);
         });
-		
+
 		//Because VSO doesn't accept seconds we need to validate date inputs and if values
 		// within one minute ve need to round start minute and ent minute
 		var startTimestamp = getDateFromUTCString(startDate);
@@ -1256,7 +1256,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		var coeff = 1000 * 60;
 		startTimestamp = new Date(Math.floor(startTimestamp / coeff) * coeff);
 		startDate 	= startTimestamp.toDateString() + 'T' + startTimestamp.toTimeString() + 'Z';
-		
+
 		endTimestamp = new Date( (Math.floor(endTimestamp / coeff) * coeff) + 60000);
 		endDate 	= endTimestamp.toDateString() + 'T' + endTimestamp.toTimeString() + 'Z';
 
@@ -1313,11 +1313,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
                 sourceId = $(accordion).find('.tile-accordion-header-left').attr('data-sourceid');
                 imageLayer = '['+sourceId+',1,100]';
-				
+
 				var date     = $(accordion).find('.timestamp').html();
 				var dateArr = date.split(" ");
 				var timestamp = new Date(dateArr[0]+' '+dateArr[1]).getTime();
-				
+
 				if(global){
 					if(sTimestamp == 0 || timestamp < sTimestamp){
 						sTimestamp = timestamp;
@@ -1325,8 +1325,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 					if(eTimestamp == 0 || timestamp > eTimestamp){
 						eTimestamp = timestamp;
 					}
-					
-					
+
+
 					var sDate = new Date(timestamp);
 					startDate = endDate = sDate.toDateString() + 'T' + sDate.toTimeString() + 'Z';
 				}else{
@@ -1335,8 +1335,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	                endDate   = $('#sdo-end-date').val()   + 'T'
 	                          + $('#sdo-end-time').val()   + 'Z';
 				}
-				
-                
+
+
 
                 if ( startDate == 'TZ' || endDate == 'TZ' ) {
                     return false;
@@ -1399,19 +1399,19 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 sdoPreviews.append(html);
             }
         });
-        
+
         if(global){
 			var _sDate = new Date(sTimestamp);
 			var _eDate = new Date(eTimestamp);
-			
+
 			var sDate = _sDate.toDateString();
 			var sTime = _sDate.toTimeString();
 			var eDate = _eDate.toDateString();
 			var eTime = _eDate.toTimeString();
 		}
-        
+
         this._setSDOtimes(sDate, sTime, eDate, eTime);
-        
+
     },
 
 
@@ -1484,16 +1484,16 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 [body, {sticky: true, header: 'Just now'}, true, true]
             );
         });
-		
+
 		//Because SDO doesn't accept seconds we need to validate date inputs and if values
 		// within one minute ve need to round start minute and ent minute
 		var coeff = 1000 * 60;
 		var startTimestamp = getDateFromUTCString($('#sdo-start-date').val() + ' ' + $('#sdo-start-time').val());
 		startTimestamp = new Date(Math.floor(startTimestamp.getTime() / coeff) * coeff);
-		
+
 		var endTimestamp = getDateFromUTCString($('#sdo-end-date').val() + ' ' + $('#sdo-end-time').val());
 		endTimestamp = new Date( (Math.floor(endTimestamp.getTime() / coeff) * coeff) + 60000);
-		
+
         // SDO Website Button
         $('#sdo-www').attr('href', 'http://www.lmsal.com/get_aia_data/'
             + '?width='  + $('#sdo-width').val()
@@ -1539,7 +1539,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      */
     displayURL: function (url, msg, displayDialog) {
         var displayDialog = typeof displayDialog !== 'undefined' ? displayDialog : false;
-        
+
         // Get short URL before displaying
         var callback = function (response) {
             $(".helioviewer-long-url").attr("value", url);
@@ -1562,9 +1562,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	                resizable : true,
 	                title     : "Helioviewer - Direct Link",
 	                open      : function (e) {
-	                    
+
 	                    $('.ui-widget-overlay').hide().fadeIn();
-	                    
+
 	                }
 	            });
             }
@@ -1614,11 +1614,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         } else {
             dtype = "xml";
         }
-		
+
 		if (typeof Helioviewer.userSettings.get("notifications.news") == 'undefined') {
             Helioviewer.userSettings.set("notifications.news", new Date().getTime());
         }
-        
+
         $.ajax({
             url: Helioviewer.api,
             data: {"action": "getNewsFeed"},
@@ -1632,19 +1632,19 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                     var updated = $item.find('published').text();
                     updated = updated.split("+")[0].split("T").join(" ");//format to iso date like "2020-08-20 00:00:00"
                     var link = $item.find('link').attr("href");
-					
+
 					link = "<a href='" + link + "' alt='" + title + "' target='_blank'>" + title + "</a><br />";
                     date = "<div class='article-date'>" + updated + " UTC</div>";
                     html += "<div class='blog-entry'>" + link + date;
-					
+
 					//Check for notification
 					var newsDate = (new Date(updated)).getTime();
 					var lastNewsTime = Helioviewer.userSettings.get("notifications.news");
-					
+
 					if(newsDate > lastNewsTime){
 						newNewsAmount++;
 					}
-					
+
                     // Include description?
                     if (showDescription) {
                         // Shorten if requested
@@ -1656,7 +1656,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
                     html += "</div>";
 				});
-				
+
 				// Display message if there was an error retrieving the feed
 				if(html == ''){
 					$("#social-panel").append("Unable to retrieve news feed...");
@@ -1666,9 +1666,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 				        $('#news-button').html('<span class="notification-counter">'+newNewsAmount+'</span>');
 			        }
 				}
-				
+
                 more = "<div id='more-articles'><a href='" + url +  "' title='The Helioviewer Project Blog'>Visit Blog...</a></div>";
-				
+
                 $("#social-panel").append(html + more);
             }
         });
@@ -1704,14 +1704,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         if (!Helioviewer.userSettings.get("notifications.welcome")) {
             return;
         }
-        
+
         if(outputType != false){
 	        return;
         }
 
         $(document).trigger("message-console-info",
             ["<b>Welcome to Helioviewer.org</b>, a solar data browser. First time here? Be sure to complete our " +
-             "<a href=\"javascript:void(0);\" class=\"message-console-link\" onclick=\"startTutorial();\"> Interactive Tutorial</a>.</br>", 
+             "<a href=\"javascript:void(0);\" class=\"message-console-link\" onclick=\"startTutorial();\"> Interactive Tutorial</a>.</br>",
              {"sticky": true,"group":"tutorial-greeting"}]
         );
 
@@ -1744,10 +1744,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     getEvents: function () {
         return this.viewport.serializeEvents();
     },
-    
+
     /**
      * Returns the currently selected celestial bodies labels from the sidebar
-     * 
+     *
      * @return {String} Serialized celestial bodies labels string
      */
     getCelestialBodiesLabels: function() {
@@ -1756,7 +1756,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     /**
      * Returns the currently selected celestial bodies trajectories from the sidebar
-     * 
+     *
      * @return {String} Serialized celestial bodies trajectories string
      */
     getCelestialBodiesTrajectories: function() {
@@ -1809,7 +1809,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         if ( typeof this.viewport._tileLayerManager == 'undefined' ) {
             return this.serverSettings.rootURL;
         }
-        
+
         // URL parameters
         var params = {
             "date"              : this.viewport._tileLayerManager.getRequestDateAsISOString(),
@@ -1824,44 +1824,44 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         return this.serverSettings.rootURL + "/?" + decodeURIComponent($.param(params));
     },
-    
+
     /**
      * Builds a screenshot URL for the current view
      *
      * @returns {String} A URL representing the screenshot of viewport.
      */
     getViewportScreenshotURL: function(timestamp, name, delay){
-	    var x0=0, y0=0, x1, x2, y1, y2, width=0, height=0, vport, imageScale, imageAccordions, roi, html = '', 
+	    var x0=0, y0=0, x1, x2, y1, y2, width=0, height=0, vport, imageScale, imageAccordions, roi, html = '',
 		date, sourceId, opacity, imageLayer = '', thumbImageScale;
-		
+
 		var sDate = new Date(timestamp);
 		var sDateUTC = new Date(sDate.getUTCFullYear(), sDate.getUTCMonth(), sDate.getUTCDate(),  sDate.getUTCHours(), sDate.getUTCMinutes(), sDate.getUTCSeconds());
 		date = sDateUTC.toDateString() + 'T' + sDateUTC.toTimeString() + 'Z';
-		
+
 		vport = this.viewport.getViewportInformation();
 		imageScale = vport['imageScale'];
 		imageAccordions = $('#accordion-images .dynaccordion-section');
-		
+
 		roi = {
 	          'left': vport['coordinates']['left'],
 	         'right': vport['coordinates']['right'],
 	           'top': vport['coordinates']['top'],
 	        'bottom': vport['coordinates']['bottom']
 	    };
-		
+
 		x0 = (imageScale * (roi.left + roi.right) / 2).toFixed(2);
 	    y0 = (imageScale * (roi.bottom + roi.top) / 2).toFixed(2);
 	    width  = (( roi.right - roi.left ) * imageScale).toFixed(2);
 	    height = (( roi.bottom - roi.top ) * imageScale).toFixed(2);
-		
+
 		x1 = Math.round(parseFloat(x0) - parseFloat(width / 2));
 	    x2 = Math.round(parseFloat(x0) + parseFloat(width / 2));
-	
+
 	    y1 = Math.round(parseFloat(y0) - parseFloat(height / 2));
 	    y2 = Math.round(parseFloat(y0) + parseFloat(height / 2));
-	
+
 	    thumbImageScale = width / 128;
-		
+
 		if(typeof name != 'undefined' && name != 'undefined'){
 			var layers = name.split(" ");
 			var layerData = '';
@@ -1880,7 +1880,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		        }
 		    });
 	    }
-	    
+
 	    //Output
 	    var url = Helioviewer.api + '?action=takeScreenshot'
 	                 +     '&imageScale=' + thumbImageScale
@@ -1893,27 +1893,27 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	                 +     '&y1=' + y1
 	                 +     '&y2=' + y2
 	                 +     '&display=true&watermark=false';
-	    
+
 	    var style = 'display:block;width:' + 160 + 'px; ' + 'height:' + Math.round( 160 / ( width / height ) ) + 'px;border: 1px solid rgba(255,255,255,0.2);margin:5px;';
-	    
+
 	    if(typeof delay != 'undefined' && delay == true){
 		    style += 'background:url(/resources/images/ajax-loader-large.gif) no-repeat center center;';
 		    html = '<img data-delayedsrc="'+url+'" class="preview end" style="'+style+'"/>';
 	    }else{
 		    html = '<img src="'+url+'" class="preview end" style="'+style+'"/>';
 	    }
-	    
-	    return html;             
+
+	    return html;
     },
 
     updateHeightsInsideViewportContainer: function() {
         var newHeight, sidebars, windowHeight = parseInt($(window).height()),
             header, viewport, drawerBottomHeight, drawerLeft, drawerRight, self = this;
-		
+
         header       = $('#hv-header');
         viewport     = $('#helioviewer-viewport');
         drawerLeft   = $('#hv-drawer-left');
-        
+
         if($('#hv-drawer-timeline').height() > 0){
 	        drawerBottomHeight = $('#hv-drawer-timeline').height();
         }else if ($('#hv-drawer-timeline-events').height() > 0){
@@ -1921,7 +1921,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         }else{
 	        drawerBottomHeight = 0;
         }
-        
+
         //left sidebars
         var drawerNews   	= $('#hv-drawer-news');
         var drawerYouTube   = $('#hv-drawer-youtube');
@@ -1939,10 +1939,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		}
 
         sidebars = [drawerLeft, drawerNews, drawerYouTube, drawerMovies, drawerScreenshots, drawerData, drawerShare, drawerHelp];
-		
+
         $.each(sidebars, function(i, sidebar) {
             if(isOpen == true){
-	            
+
 	            newHeight = windowHeight
                       - parseInt(header.css('border-top-width'))
                       - parseInt(header.css('margin-top'))
@@ -2002,7 +2002,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         }
         return;
     },
-	
+
 	drawerTimelineClick: function(openNow) {
 		var self = this;
         if ( this.drawerTimelineOpened || openNow === false ) {
@@ -2011,7 +2011,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerTimeline.css('height', 0).hide();
             $('.drawer-contents', this.drawerTimeline).hide();
             this.drawerTimeline.css('padding', 0);
-            
+
             //for (var i=1; i<=this.drawerSpeed; i=i+10) {
             //    setTimeout(this.updateHeightsInsideViewportContainer, i);
             //}
@@ -2019,39 +2019,39 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 this.updateHeightsInsideViewportContainer,
                 this.drawerSpeed*2
             );
-			
+
 			Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline.open", false);
             this.drawerTimelineOpened = false;
         }
         else if ( !this.drawerTimelineOpened || openNow === true ) {
-            
+
             var imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
 	        if(imageLayersStr == ''){
 		        $(document).trigger("message-console-log", ["To open Data Timeline you must have at least one visible image layer.", {sticky: true,header: "Just now"}, true, true]);
 		        return;
 	        }
-	        
+
             this.drawerTimelineEventsClick(false);
-            
+
             $('#hv-drawer-tab-timeline').css('bottom', this.drawerTimelineOpenedHeight + 'px').addClass('selected');
             $('#hv-drawer-tab-timeline-events').css('bottom', this.drawerTimelineOpenedHeight + 'px');
             this.drawerTimeline.show().css('height', this.drawerTimelineOpenedHeight + 'px');
             $('.drawer-contents', this.drawerTimeline).show();
-            
+
             //for (var i=1; i<=this.drawerSpeed; i=i+10) {
             //    setTimeout(this.updateHeightsInsideViewportContainer, i);
             //}
             setTimeout(this.updateHeightsInsideViewportContainer, this.drawerSpeed);
-			
+
 			Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline.open", true);
             this.drawerTimelineOpened = true;
-            
+
             Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline-events.open", false);
             this.drawerTimelineEventsOpened = false;
-            
+
 			if(typeof this.timeline == 'undefined'){
 				setTimeout(function(){self.timeline   = new Timeline();}, 200);
-				//this.timeline   = new Timeline();				
+				//this.timeline   = new Timeline();
 			}else{
 				this.timeline.drawPlotLine();
 				$('#data-coverage-timeline').highcharts().xAxis[0].setExtremes(timelineStartDate, timelineEndDate);
@@ -2062,7 +2062,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         return;
     },
-	
+
 	drawerTimelineEventsClick: function(openNow) {
 		var self = this;
         if ( this.drawerTimelineEventsOpened || openNow === false ) {
@@ -2071,7 +2071,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerTimelineEvents.css('height', 0).hide();
             $('.drawer-contents', this.drawerTimelineEvents).hide();
             this.drawerTimelineEvents.css('padding', 0);
-            
+
             //for (var i=1; i<=this.drawerSpeed; i=i+10) {
             //    setTimeout(this.updateHeightsInsideViewportContainer, i);
             //}
@@ -2079,40 +2079,40 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 this.updateHeightsInsideViewportContainer,
                 this.drawerSpeed*2
             );
-			
+
 			Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline-events.open", false);
             this.drawerTimelineEventsOpened = false;
-            
+
             if(this.drawerTimelineOpened){
 	            //Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline.open", false);
 				//this.drawerTimelineOpened = false;
             }
         }
         else if ( !this.drawerTimelineEventsOpened || openNow === true ) {
-	        
+
             var imageLayersStr = this.getEvents();
 	        if(imageLayersStr == ''){
 		        $(document).trigger("message-console-log", ["To open Events Timeline you must select at least one event.", {sticky: true,header: "Just now"}, true, true]);
 		        return;
 	        }
-	        
+
             this.drawerTimelineClick(false);
-            
+
             $('#hv-drawer-tab-timeline-events').css('bottom', this.drawerTimelineEventsOpenedHeight + 'px').addClass('selected');
             $('#hv-drawer-tab-timeline').css('bottom', this.drawerTimelineEventsOpenedHeight + 'px');
             this.drawerTimelineEvents.show().css('height', this.drawerTimelineEventsOpenedHeight + 'px');
             $('.drawer-contents', this.drawerTimelineEvents).show();
 
             setTimeout(this.updateHeightsInsideViewportContainer, this.drawerSpeed);
-			
+
 			Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline-events.open", true);
             this.drawerTimelineEventsOpened = true;
-            
+
             Helioviewer.userSettings.set("state.drawers.#hv-drawer-timeline.open", false);
             this.drawerTimelineOpened = false;
-            
+
 			if(typeof this.timelineEvents == 'undefined'){
-				setTimeout(function(){self.timelineEvents   = new TimelineEvents();}, 200);			
+				setTimeout(function(){self.timelineEvents   = new TimelineEvents();}, 200);
 			}else{
 				this.timelineEvents.drawPlotLine();
 				$('#data-coverage-timeline-events').highcharts().xAxis[0].setExtremes(timelineStartDate, timelineEndDate);
@@ -2126,7 +2126,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     drawerNewsClick: function(openNow) {
         var self = this, buttonId = "#news-button";
-		
+
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerNews.attr('id'));
 
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
@@ -2142,7 +2142,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
 			$(buttonId).html('');
 	        Helioviewer.userSettings.set("notifications.news", new Date().getTime());
-            
+
             self.drawerNews.css('transition', 'height 500ms');
             this.drawerNews.css('width', this.drawerNewsOpenedWidth);
             this.drawerNews.css('height', this.drawerNewsOpenedHeight);
@@ -2197,9 +2197,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var self = this, buttonId = "#movies-button";
 
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerMovies.attr('id'));
-		
+
 		self._movieManagerUI._refresh();
-		
+
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
             self.drawerMovies.css('transition', '');
             $('.drawer-contents', this.drawerMovies).fadeOut(10);
@@ -2231,11 +2231,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var self = this, buttonId = "#screenshots-button";
 
         this.closeTabDrawersExcept(buttonId, '#'+this.drawerScreenshots.attr('id'));
-		
+
 		self._screenshotManagerUI._refresh();
-        
+
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
-	        
+
             self.drawerScreenshots.css('transition', '');
             $('.drawer-contents', this.drawerScreenshots).fadeOut(10);
             this.drawerScreenshots.css('width', 0);
@@ -2321,7 +2321,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 			$(".helioviewer-long-url").attr("value", url);
 			$(".helioviewer-url-shorten").removeAttr("checked");
 			$(".helioviewer-short-url").attr("value", "");
-			
+
             self.drawerShare.css('transition', 'height 500ms');
             this.drawerShare.css('width', this.drawerShareOpenedWidth);
             this.drawerShare.css('height', this.drawerShareOpenedHeight);
@@ -2431,14 +2431,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 	                    $(selector).find('.header').trigger("click", [true]);
 	                    if ( selector == '#accordion-vso' ||
 	                         selector == '#accordion-sdo' ) {
-	
+
 	                        trigger = true;
 	                    }
 	                }
 	            });
 	        }
 		}
-        
+
 
         if ( trigger ) {
             $(document).trigger('update-external-datasource-integration');
@@ -2558,7 +2558,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.updateSDOaccordion(sdoPreviews, sdoButtons, imageAccordions,
                 imageScale, sdoGlobal);
         }
-        
+
         $('#vso-start-time').TimePickerAlone('setValue', $('#vso-start-time').val());
         $('#vso-end-time').TimePickerAlone('setValue', $('#vso-end-time').val());
         $('#sdo-start-time').TimePickerAlone('setValue', $('#sdo-start-time').val());

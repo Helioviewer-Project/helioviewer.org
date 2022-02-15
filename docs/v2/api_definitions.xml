@@ -3268,8 +3268,8 @@ Full source code for the entire Helioviewer Project can be found at https://gith
 
 &lt;channel&gt;
     &lt;title&gt;The Helioviewer Project Blog&lt;/title&gt;
-    &lt;atom:link href=&quot;http://blog.helioviewer.org/feed/&quot; rel=&quot;self&quot; type=&quot;application/rss+xml&quot; /&gt;
-    &lt;link&gt;http://blog.helioviewer.org&lt;/link&gt;
+    &lt;atom:link href=&quot;http://helioviewer-project.github.io/feed/&quot; rel=&quot;self&quot; type=&quot;application/rss+xml&quot; /&gt;
+    &lt;link&gt;http://helioviewer-project.github.io&lt;/link&gt;
     &lt;description&gt;Explore your heliosphere&lt;/description&gt;
     &lt;lastBuildDate&gt;Tue, 28 Jan 2014 15:16:51 +0000&lt;/lastBuildDate&gt;
     &lt;language&gt;en&lt;/language&gt;
@@ -3278,19 +3278,19 @@ Full source code for the entire Helioviewer Project can be found at https://gith
     &lt;generator&gt;http://wordpress.org/?v=3.8.1&lt;/generator&gt;
     &lt;item&gt;
         &lt;title&gt;Follow the Helioviewer Project on Twitter&lt;/title&gt;
-        &lt;link&gt;http://blog.helioviewer.org/2014/01/28/follow-the-helioviewer-project-on-twitter/&lt;/link&gt;
-        &lt;comments&gt;http://blog.helioviewer.org/2014/01/28/follow-the-helioviewer-project-on-twitter/#comments&lt;/comments&gt;
+        &lt;link&gt;http://helioviewer-project.github.io/2014/01/28/follow-the-helioviewer-project-on-twitter/&lt;/link&gt;
+        &lt;comments&gt;http://helioviewer-project.github.io/2014/01/28/follow-the-helioviewer-project-on-twitter/#comments&lt;/comments&gt;
         &lt;pubDate&gt;Tue, 28 Jan 2014 15:16:51 +0000&lt;/pubDate&gt;
         &lt;dc:creator&gt;&lt;![CDATA[jack]]&gt;&lt;/dc:creator&gt;
                 &lt;category&gt;&lt;![CDATA[General]]&gt;&lt;/category&gt;
 
-        &lt;guid isPermaLink=&quot;false&quot;&gt;http://blog.helioviewer.org/?p=1265&lt;/guid&gt;
+        &lt;guid isPermaLink=&quot;false&quot;&gt;http://helioviewer-project.github.io/?p=1265&lt;/guid&gt;
         &lt;description&gt;&lt;![CDATA[The Helioviewer Project is now on Twitter, @Helioviewer. Please follow us on Twitter for the latest solar and heliospheric news and movies, as well as new Helioviewer Project features.]]&gt;&lt;/description&gt;
                 &lt;content:encoded&gt;&lt;![CDATA[&lt;p&gt;The Helioviewer Project is now on Twitter, @Helioviewer.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;http://blog.helioviewer.org/wp-content/uploads/2014/01/twitter_hv.png&quot;&gt;&lt;img src=&quot;http://blog.helioviewer.org/wp-content/uploads/2014/01/twitter_hv.png&quot; alt=&quot;twitter_hv&quot; width=&quot;538&quot; height=&quot;268&quot; class=&quot;aligncenter size-full wp-image-1266&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://helioviewer-project.github.io/wp-content/uploads/2014/01/twitter_hv.png&quot;&gt;&lt;img src=&quot;http://helioviewer-project.github.io/wp-content/uploads/2014/01/twitter_hv.png&quot; alt=&quot;twitter_hv&quot; width=&quot;538&quot; height=&quot;268&quot; class=&quot;aligncenter size-full wp-image-1266&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Please &lt;a href=&quot;https://twitter.com/Helioviewer&quot; title=&quot;Helioviewer on Twitter&quot;&gt;follow us on Twitter&lt;/a&gt; for the latest solar and heliospheric news and movies, as well as new Helioviewer Project features.&lt;/p&gt;
 ]]&gt;&lt;/content:encoded&gt;
-            &lt;wfw:commentRss&gt;http://blog.helioviewer.org/2014/01/28/follow-the-helioviewer-project-on-twitter/feed/&lt;/wfw:commentRss&gt;
+            &lt;wfw:commentRss&gt;http://helioviewer-project.github.io/2014/01/28/follow-the-helioviewer-project-on-twitter/feed/&lt;/wfw:commentRss&gt;
         &lt;slash:comments&gt;0&lt;/slash:comments&gt;
     &lt;/item&gt;
 &lt;/channel&gt;

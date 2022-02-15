@@ -75,8 +75,8 @@
 	<link rel="shortcut icon" type="image/png" href="/favicon.png"/>
 
 	<!-- Blog RSS Feed -->
-	<link rel="alternate" type="application/rss+xml" title="The Helioviewer Project Blog RSS Feed" href="http://blog.helioviewer.org/feed/" />
-	<link rel="alternate" type="application/atom+xml" title="The Helioviewer Project Blog Atom Feed" href="http://blog.helioviewer.org/feed/atom/" />
+	<link rel="alternate" type="application/rss+xml" title="The Helioviewer Project Blog RSS Feed" href="http://helioviewer-project.github.io/feed/" />
+	<link rel="alternate" type="application/atom+xml" title="The Helioviewer Project Blog Atom Feed" href="http://helioviewer-project.github.io/feed/atom/" />
 
 	<!--- NASA -->
 	<script id='_fed_an_ua_tag' type='text/javascript' src='https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NASA&subagency=GSFC&dclink=true'>
