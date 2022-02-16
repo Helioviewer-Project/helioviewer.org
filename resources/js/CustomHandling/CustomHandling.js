@@ -4,11 +4,13 @@ $(document).ready(function() {
 		
 		$.getJSON("https://api.beta.helioviewer.org/resources/JSON/celestial-objects/soho/psp/soho_psp_dictionary.json?rndnm=<?php echo (rand(9999,9999999)); ?>", function(pspdata){
 			
+				console.log('getJSON succeeded');
+				
 				var pspencnum=0;
 				
 				// loop through each encounter
 				$.each(pspdata, function(pspvalue, pspkey){
-					//console.log(pspkey, pspvalue);
+					console.log(pspkey, pspvalue);
 					
 					pspencnum++;
 					
@@ -32,6 +34,8 @@ $(document).ready(function() {
 						}
 						
 						
+						console.log('found current encounter');
+						
 						// go through each encounter unix time and append the Encounter to each label
 						for(var psp_subenc=1;psp_subenc<=numEncPoints;psp_subenc++) {
 							$('#soho-psp-trajectory .hover-date-container, #stereo_a-psp-trajectory .hover-date-container').css('height','33px');
@@ -49,7 +53,7 @@ $(document).ready(function() {
 			
 				
 		}).fail(function(){
-			//console.log('');
+			console.log('getJSON failed');
 		});
 	
 	
