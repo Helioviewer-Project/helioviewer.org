@@ -1575,7 +1575,7 @@
 
 	<script src="resources/lib/hvbrowserspecific/hv_browserspecific.js" type="text/javascript"></script>
 	<script src="resources/js/CustomHandling/CustomHandling.js?chrndnm=<?php echo (rand(9999,9999999)); ?>" type="text/javascript"></script>
-
+	
 	<!-- Launch Helioviewer -->
 	<script type="text/javascript">
 		var serverSettings, settingsJSON, urlSettings, debug, scrollLock = false, embedView = false;
