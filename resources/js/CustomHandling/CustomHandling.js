@@ -54,7 +54,7 @@ $(document).ready(function() {
 		
 		setTimeout(function() {
 		
-			$.getJSON(thishvapiurl+"/resources/JSON/celestial-objects/soho/psp/soho_psp_dictionary.json?rndnm=<?php echo (rand(9999,9999999)); ?>", function(pspdata){
+			$.getJSON(thishvapiurl+"/resources/JSON/celestial-objects/soho/psp/soho_psp_dictionary.json", function(pspdata){
 
 				
 				
