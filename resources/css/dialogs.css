@@ -231,7 +231,31 @@ a.show-tags-btn {
     text-decoration: underline;
 }
 
+#about-dialog, #about-dialog a {
+   color: #ffffff;
+}
+
+#about-credits, #about-credits a {
+   color: #ffffff;
+}
+
+
+
+
+
 /* Visual Glossary */
+
+.glossary-title {
+   color: #ffffff;
+}
+
+.glossary-text, .glossary-text a {
+   color: #ffffff;
+}
+
+.glossary-text a {
+   color: #ffffff;
+}
 
 #glossary-menu span {
     float: left;
@@ -292,4 +316,8 @@ a.show-tags-btn {
     -moz-box-shadow:    1px 1px 0px 0px rgba(255,255,255,0.25);
     -webkit-box-shadow: 1px 1px 0px 0px rgba(255,255,255,0.25);
     box-shadow:         1px 1px 0px 0px rgba(255,255,255,0.25);
+}
+
+.ui-dialog-title {
+   color: #ffffff;
 }
