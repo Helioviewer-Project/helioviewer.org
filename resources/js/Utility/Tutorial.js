@@ -38,14 +38,14 @@ function startTutorial(){
 			position: 'bottom'
 		},{
 			selector: '#menus',
-			text: '<b>Navigation Menu</b><br><br><p style="text-align:left"><div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/projectanounce_icon_white.png"> : Helioviewer Project Announcements.</div>\
-<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/viewyoutube_icon_white.png"> : View Helioviewer Movies Shared to YouTube.</div>\
-<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/createmovie_icontest.png"> : Create a movie.</div>\
-<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/screenshot_icon_white.png"> : Create a screenshot.</div>\
-<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/datadownload_icon_white.png"> : Request Science Data Download from External Partners.</div>\
-<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/shareviewport_icon_white.png"> : Share the current viewport on social media.</div>\
-<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/help_icon_white.png"> : Get Help with Helioviewer.</div>\
-<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/setting_icon_white.png"> : Edit Settings &amp; Defaults.</div></p><br></br> <a href="http://wiki.helioviewer.org/wiki/Helioviewer.org_User_Guide_3.1.0#Sidebar_Panels" target="_blank">Click here <span class="fa fa-external-link fa-fw"></span></a> to read about each menu item and functionality.',
+			text: '<b>Navigation Menu</b><br><br><p style="text-align:left"><div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/projectanounce_icon_white.png"> Helioviewer Project Announcements.</div>\
+<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/viewyoutube_icon_white.png"> View Helioviewer Movies Shared to YouTube.</div>\
+<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/createmovie_icontest.png"> Create a movie.</div>\
+<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/screenshot_icon_white.png"> Create a screenshot.</div>\
+<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/datadownload_icon_white.png"> Request Science Data Download from External Partners.</div>\
+<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/shareviewport_icon_white.png"> Share the current viewport on social media.</div>\
+<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/help_icon_white.png"> Get Help with Helioviewer.</div>\
+<div class="tutappicons_box"><img src="https://beta.helioviewer.org/resources/images/setting_icon_white.png"> Edit Settings &amp; Defaults.</div></p><br></br> <a href="http://wiki.helioviewer.org/wiki/Helioviewer.org_User_Guide_3.1.0#Sidebar_Panels" target="_blank">Click here <span class="fa fa-external-link fa-fw"></span></a> to read about each menu item and functionality.',
 			position: 'bottom'
 		},{
 			selector: '#hv-drawer-tab-timeline',
