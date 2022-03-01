@@ -226,7 +226,7 @@ a.show-tags-btn {
     overflow: hidden;
 }
 
-#helioviewer-settings {
+#helioviewer-settings, #helioviewer-settings a {
     color: #ffffff;
 }
 
