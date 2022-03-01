@@ -226,6 +226,10 @@ a.show-tags-btn {
     overflow: hidden;
 }
 
+#helioviewer-settings {
+    color: #ffffff;
+}
+
 /* About Dialog */
 #about-credits a {
     text-decoration: underline;
