@@ -1518,3 +1518,8 @@ span.ui-icon-hover, div.ui-icon-hover {
 
 .dropdown-holder .item-list:hover .item-list-remove { display:block; }
 
+
+.tutappicons_box {
+   display: flex;
+   align-items:center;
+}
