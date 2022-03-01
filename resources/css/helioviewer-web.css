@@ -1522,4 +1522,5 @@ span.ui-icon-hover, div.ui-icon-hover {
 .tutappicons_box {
    display: flex;
    align-items:center;
+   padding-bottom: 5px;
 }
