@@ -52,6 +52,6 @@
 }
 
 .ui-icon, .ui-widget-content .ui-icon {
-    background-image: url(images/ui-icons_ffffff_256x240.png);
+    background-image: url("../lib/jquery-ui-1.13.1/images/ui-icons_ffffff_256x240.png");
 }
 
