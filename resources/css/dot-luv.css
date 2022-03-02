@@ -16,16 +16,16 @@
 }
 
 .ui-state-hover-bgonly {
-    background-image: url(../lib/jquery-ui-1.12.0/images/ui-bg_dots-small_40_00498f_2x2.png);
+    background-image: url(../lib/jquery-ui-1.13.1/images/ui-bg_dots-small_40_00498f_2x2.png);
     background-color: #00498f;
 }
 
 .ui-state-hover-icononly {
-    background-image: url(../lib/jquery-ui-1.12.0/images/ui-icons_d18f61_256x240.png) !important;
+    background-image: url(../lib/jquery-ui-1.13.1/images/ui-icons_d18f61_256x240.png) !important;
 }
 
 .ui-icon:hover {
-    background-image: url(../lib/jquery-ui-1.12.0/images/ui-icons_d18f61_256x240.png) !important;
+    background-image: url(../lib/jquery-ui-1.13.1/images/ui-icons_d18f61_256x240.png) !important;
 }
 
 .layerManagerBtn.visible:hover {
