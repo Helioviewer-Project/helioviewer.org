@@ -92,7 +92,7 @@ $(document).ready(function() {
 							hvencelems[0].parentNode.removeChild(hvencelems[0]);
 					    	}
 							
-						const hvencpaginationelem = document.getElementByID('hvencpagination');
+						const hvencpaginationelem = document.getElementById('hvencpagination');
 						hvencpaginationelem.remove();
 						//hvencpaginationelem[0].parentNode.removeChild(hvencpaginationelem[0]);
 						
