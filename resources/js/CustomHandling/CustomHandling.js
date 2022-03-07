@@ -109,28 +109,41 @@ $(document).ready(function() {
 						
 						// START generate encounter "pagination"
 						
-						
-						$('#soho-psp-tree-trajectory .decoration').eq(1).html(' - '+pspencnum+' - ');
-						
-						$('#soho-psp-tree-trajectory .decoration:first, #soho-psp-tree-trajectory .decoration:last').html('');
-						
-						// get previous encounter
-						if(pspencnum != 1) {
-							encpagprev=pspencnum-1;
-							$('#soho-psp-tree-trajectory .button:first').html('< '+encpagprev);
-						}
-						else if(pspencnum == 1) {
-							$('#soho-psp-tree-trajectory .button:first').html('&nbsp;&nbsp;');
-						}
-						
-						// get next encounter
-						if(pspencnum != pspenctotal) {
-							encpagnxt=pspencnum+1;
-							$('#soho-psp-tree-trajectory .button:last').html(encpagnxt+' >');
-						}
-						else if(pspencnum == pspenctotal) {
-							$('#soho-psp-tree-trajectory .button:last').html('&nbsp;&nbsp;');
-						}
+							if(pspencnum == 1) {
+								encdash1='';
+							}
+							else {
+								encdash1=' - ';
+							}
+							
+							if(pspencnum == pspenctotal) {
+								encdash2='';
+							}
+							else {
+								encdash2=' - ';
+							}
+							
+							$('#soho-psp-tree-trajectory .decoration').eq(1).html(encdash1+pspencnum+encdash2);
+							
+							$('#soho-psp-tree-trajectory .decoration:first, #soho-psp-tree-trajectory .decoration:last').html('');
+							
+							// get previous encounter
+							if(pspencnum != 1) {
+								encpagprev=pspencnum-1;
+								$('#soho-psp-tree-trajectory .button:first').html('<br>< '+encpagprev);
+							}
+							else if(pspencnum == 1) {
+								$('#soho-psp-tree-trajectory .button:first').html('<br>&nbsp;&nbsp;');
+							}
+							
+							// get next encounter
+							if(pspencnum != pspenctotal) {
+								encpagnxt=pspencnum+1;
+								$('#soho-psp-tree-trajectory .button:last').html(encpagnxt+' >');
+							}
+							else if(pspencnum == pspenctotal) {
+								$('#soho-psp-tree-trajectory .button:last').html('&nbsp;&nbsp;');
+							}
 						
 						// END generate encounter "pagination"
 					}
@@ -165,8 +178,7 @@ $(document).ready(function() {
 		HVcustomHandling('hvtutorial_CB_click');
 	});
 	
-	// line break underneath Parker Solar Probe's Trajectory checkbox
-	$('#soho-psp-tree-trajectory a:first').append('<br>&nbsp;');
+
 	
 	
 }); // end of doc ready
