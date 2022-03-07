@@ -109,6 +109,7 @@ $(document).ready(function() {
 						
 						// START generate encounter "pagination"
 						
+							
 							if(pspencnum == 1) {
 								encdash1='';
 							}
@@ -123,6 +124,7 @@ $(document).ready(function() {
 								encdash2=' - ';
 							}
 							
+							// get current encounter
 							$('#soho-psp-tree-trajectory .decoration').eq(1).html(encdash1+pspencnum+encdash2);
 							
 							$('#soho-psp-tree-trajectory .decoration:first, #soho-psp-tree-trajectory .decoration:last').html('');
@@ -182,8 +184,3 @@ $(document).ready(function() {
 	
 	
 }); // end of doc ready
-
-
-
-
-
