@@ -53,9 +53,11 @@ $(document).ready(function() {
 		}
 		
 		setTimeout(function() {
+
 		
 			$.getJSON(thishvapiurl+"/resources/JSON/celestial-objects/soho/psp/soho_psp_dictionary.json", function(pspdata){
 
+				console.log(Object.keys(pspdata).length);
 				
 				
 				var pspencnum=0;
@@ -66,7 +68,6 @@ $(document).ready(function() {
 					
 					pspencnum++;
 					
-					$('#showjsondata').append('<span style="font-weight:bold;">Dates: '+JSON.stringify(pspvalue)+'</span><br>');
 					
 					 //JSON.stringify(pspkey.start);
 					
@@ -83,19 +84,49 @@ $(document).ready(function() {
 						
 						$('.hover-date-container').css('height','33px');
 
+
+
+
 						const hvencelems = document.getElementsByClassName('hvenclabels');
 					    	while(hvencelems.length > 0){
 							hvencelems[0].parentNode.removeChild(hvencelems[0]);
 					    	}
+							
+						const hvencpaginationelem = document.getElementByID('hvencpagination');
+						hvencpaginationelem.remove();
+						//hvencpaginationelem[0].parentNode.removeChild(hvencpaginationelem[0]);
 						
 						$(".hover-date-container").removeClass("hvenclabels");
 						
 						$('.hover-date-container').append('<span class="hvenclabels"></span>');
+						$('#soho-psp-tree-trajectory').append('<span id="hvencpagination">'+pspencnum+'</span>');
+						
 						$('.hvenclabels').html('<br>Encounter '+pspencnum);
 						//document.getElementsByClassName("hover-date-container").innerHTML+= '<br>Encounter '+pspencnum;
 						
+						// START generate encounter "pagination"
+						$('#soho-psp-tree-trajectory a:first').append('<br>&nbsp;&nbsp;&nbsp;&nbsp;');
 						
+						// get previous encounter
+						if(pspencnum != 1) {
+							encpagprev=pspencnum-1;
+							$('#soho-psp-tree-trajectory .decoration:first').html(encpagprev);
+						}
+						else if(pspencnum == 1) {
+							$('#soho-psp-tree-trajectory .decoration:first').html('&nbsp;&nbsp;');
+						}
 						
+						// get next encounter
+						/*
+						if(pspencnum != 1) {
+							encpagnxt=pspencnum+1;
+							$('#soho-psp-tree-trajectory .decoration:last').html(encpagnxt);
+						}
+						else if(pspencnum == 1) {
+							$('#soho-psp-tree-trajectory .decoration:last').html('&nbsp;&nbsp;');
+						}
+						*/
+						// END generate encounter "pagination"
 					}
 					
 				});
