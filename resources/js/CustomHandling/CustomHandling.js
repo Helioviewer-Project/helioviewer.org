@@ -132,7 +132,7 @@ $(document).ready(function() {
 							// get previous encounter
 							if(pspencnum != 1) {
 								encpagprev=pspencnum-1;
-								$('#soho-psp-tree-trajectory .button:first').html('<br>< '+encpagprev);
+								$('#soho-psp-tree-trajectory .button:first').html('<br><span class="menuenclabel">Encounters: </span>&#9664; '+encpagprev);
 							}
 							else if(pspencnum == 1) {
 								$('#soho-psp-tree-trajectory .button:first').html('<br>&nbsp;&nbsp;');
@@ -141,7 +141,7 @@ $(document).ready(function() {
 							// get next encounter
 							if(pspencnum != pspenctotal) {
 								encpagnxt=pspencnum+1;
-								$('#soho-psp-tree-trajectory .button:last').html(encpagnxt+' >');
+								$('#soho-psp-tree-trajectory .button:last').html(encpagnxt+' &#9654;');
 							}
 							else if(pspencnum == pspenctotal) {
 								$('#soho-psp-tree-trajectory .button:last').html('&nbsp;&nbsp;');
