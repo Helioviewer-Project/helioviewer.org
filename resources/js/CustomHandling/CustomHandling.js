@@ -57,7 +57,7 @@ $(document).ready(function() {
 		
 			$.getJSON(thishvapiurl+"/resources/JSON/celestial-objects/soho/psp/soho_psp_dictionary.json", function(pspdata){
 
-				console.log(Object.keys(pspdata).length);
+				var pspenctotal= Object.keys(pspdata).length);
 				
 				
 				var pspencnum=0;
@@ -108,27 +108,29 @@ $(document).ready(function() {
 						//document.getElementsByClassName("hover-date-container").innerHTML+= '<br>Encounter '+pspencnum;
 						
 						// START generate encounter "pagination"
-						$('#soho-psp-tree-trajectory a:first').append('<br>&nbsp;&nbsp;&nbsp;&nbsp;');
+						$('#soho-psp-tree-trajectory a:first').append('<br>&nbsp;');
+						
+						 $('#soho-psp-tree-trajectory .decoration').eq(1).html(' - '+pspencnum+' - ');
 						
 						// get previous encounter
 						if(pspencnum != 1) {
 							encpagprev=pspencnum-1;
-							$('#soho-psp-tree-trajectory .decoration:first').html(encpagprev);
+							$('#soho-psp-tree-trajectory .button:first').html('< '+encpagprev);
 						}
 						else if(pspencnum == 1) {
-							$('#soho-psp-tree-trajectory .decoration:first').html('&nbsp;&nbsp;');
+							$('#soho-psp-tree-trajectory .button:first').html('&nbsp;&nbsp;');
 						}
 						
 						// get next encounter
-						/*
-						if(pspencnum != 1) {
+						
+						if(pspencnum != pspenctotal) {
 							encpagnxt=pspencnum+1;
-							$('#soho-psp-tree-trajectory .decoration:last').html(encpagnxt);
+							$('#soho-psp-tree-trajectory .button:last').html(encpagnxt+' >');
 						}
-						else if(pspencnum == 1) {
-							$('#soho-psp-tree-trajectory .decoration:last').html('&nbsp;&nbsp;');
+						else if(pspencnum == pspenctotal) {
+							$('#soho-psp-tree-trajectory .button:last').html('&nbsp;&nbsp;');
 						}
-						*/
+						
 						// END generate encounter "pagination"
 					}
 					
