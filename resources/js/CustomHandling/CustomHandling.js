@@ -109,8 +109,7 @@ $(document).ready(function() {
 						
 						// START generate encounter "pagination"
 						
-							// prepend Encounter label
-							$('#soho-psp-tree-trajectory a:first').after('<span class="menuenclabel">Encounters: </span>');
+
 							
 							
 							if(pspencnum == 1) {
@@ -130,7 +129,7 @@ $(document).ready(function() {
 							// get current encounter
 							$('#soho-psp-tree-trajectory .decoration, #stereo_a-psp-tree-trajectory .decoration').eq(1).html(encdash1+'<span style="border-radius:2px;background:white;color:black;font-weight:bold;">&nbsp;'+pspencnum+'&nbsp;</span>'+encdash2);
 							
-							$('#soho-psp-tree-trajectory .decoration:first, #soho-psp-tree-trajectory .decoration:last, , #stereo_a-psp-tree-trajectory .decoration:first, , #stereo_a-psp-tree-trajectory .decoration:last').html('');
+							$('#soho-psp-tree-trajectory .decoration:first, #soho-psp-tree-trajectory .decoration:last, #stereo_a-psp-tree-trajectory .decoration:first, #stereo_a-psp-tree-trajectory .decoration:last').html('');
 							
 							// get previous encounter
 							if(pspencnum != 1) {
@@ -184,6 +183,7 @@ $(document).ready(function() {
 	});
 	
 
-	
+	// prepend Encounter label
+	$('#soho-psp-tree-trajectory a:first, #stereo_a-psp-tree-trajectory a:first').after('<br><span class="menuenclabel">Encounters: </span>');
 	
 }); // end of doc ready
