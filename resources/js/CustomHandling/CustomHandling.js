@@ -92,25 +92,27 @@ $(document).ready(function() {
 							hvencelems[0].parentNode.removeChild(hvencelems[0]);
 					    	}
 						
-						if($("#hvencpagination").length > 0) {
+						/*if($("#hvencpagination").length > 0) {
 							const hvencpaginationelem = document.getElementById('hvencpagination');
 							hvencpaginationelem.remove();
-						}						
+						}*/						
 
 						//hvencpaginationelem[0].parentNode.removeChild(hvencpaginationelem[0]);
 						
 						$(".hover-date-container").removeClass("hvenclabels");
 						
 						$('.hover-date-container').append('<span class="hvenclabels"></span>');
-						$('#soho-psp-tree-trajectory').append('<span id="hvencpagination">'+pspencnum+'</span>');
+						//$('#soho-psp-tree-trajectory').append('<span id="hvencpagination">'+pspencnum+'</span>');
 						
 						$('.hvenclabels').html('<br>Encounter '+pspencnum);
 						//document.getElementsByClassName("hover-date-container").innerHTML+= '<br>Encounter '+pspencnum;
 						
 						// START generate encounter "pagination"
-						$('#soho-psp-tree-trajectory a:first').append('<br>&nbsp;');
 						
-						 $('#soho-psp-tree-trajectory .decoration').eq(1).html(' - '+pspencnum+' - ');
+						
+						$('#soho-psp-tree-trajectory .decoration').eq(1).html(' - '+pspencnum+' - ');
+						
+						$('#soho-psp-tree-trajectory .decoration:first, #soho-psp-tree-trajectory .decoration:last').html('');
 						
 						// get previous encounter
 						if(pspencnum != 1) {
@@ -122,7 +124,6 @@ $(document).ready(function() {
 						}
 						
 						// get next encounter
-						
 						if(pspencnum != pspenctotal) {
 							encpagnxt=pspencnum+1;
 							$('#soho-psp-tree-trajectory .button:last').html(encpagnxt+' >');
@@ -163,6 +164,9 @@ $(document).ready(function() {
 	$(document).on('click','#bvmodal_4', function() {
 		HVcustomHandling('hvtutorial_CB_click');
 	});
+	
+	// line break underneath Parker Solar Probe's Trajectory checkbox
+	$('#soho-psp-tree-trajectory a:first').append('<br>&nbsp;');
 	
 	
 }); // end of doc ready
