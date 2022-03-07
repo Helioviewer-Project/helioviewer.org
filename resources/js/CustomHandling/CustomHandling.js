@@ -57,7 +57,7 @@ $(document).ready(function() {
 		
 			$.getJSON(thishvapiurl+"/resources/JSON/celestial-objects/soho/psp/soho_psp_dictionary.json", function(pspdata){
 
-				var pspenctotal= Object.keys(pspdata).length);
+				var pspenctotal= Object.keys(pspdata).length;
 				
 				
 				var pspencnum=0;
