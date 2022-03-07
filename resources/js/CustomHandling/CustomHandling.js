@@ -109,6 +109,9 @@ $(document).ready(function() {
 						
 						// START generate encounter "pagination"
 						
+							// prepend Encounter label
+							$('#soho-psp-tree-trajectory a:first').after('<span class="menuenclabel">Encounters: </span>');
+							
 							
 							if(pspencnum == 1) {
 								encdash1='';
@@ -125,26 +128,26 @@ $(document).ready(function() {
 							}
 							
 							// get current encounter
-							$('#soho-psp-tree-trajectory .decoration').eq(1).html(encdash1+'<span style="border-radius:2px;background:white;color:black;font-weight:bold;">&nbsp;'+pspencnum+'&nbsp;</span>'+encdash2);
+							$('#soho-psp-tree-trajectory .decoration, #stereo_a-psp-tree-trajectory .decoration').eq(1).html(encdash1+'<span style="border-radius:2px;background:white;color:black;font-weight:bold;">&nbsp;'+pspencnum+'&nbsp;</span>'+encdash2);
 							
-							$('#soho-psp-tree-trajectory .decoration:first, #soho-psp-tree-trajectory .decoration:last').html('');
+							$('#soho-psp-tree-trajectory .decoration:first, #soho-psp-tree-trajectory .decoration:last, , #stereo_a-psp-tree-trajectory .decoration:first, , #stereo_a-psp-tree-trajectory .decoration:last').html('');
 							
 							// get previous encounter
 							if(pspencnum != 1) {
 								encpagprev=pspencnum-1;
-								$('#soho-psp-tree-trajectory .button:first').html('<br><span class="menuenclabel">Encounters: </span>&#9664; '+encpagprev);
+								$('#soho-psp-tree-trajectory .button:first, #stereo_a-psp-tree-trajectory .button:first').html('<br>&#9664; '+encpagprev);
 							}
 							else if(pspencnum == 1) {
-								$('#soho-psp-tree-trajectory .button:first').html('<br>&nbsp;&nbsp;');
+								$('#soho-psp-tree-trajectory .button:first, #stereo_a-psp-tree-trajectory .button:first').html('<br>&nbsp;&nbsp;');
 							}
 							
 							// get next encounter
 							if(pspencnum != pspenctotal) {
 								encpagnxt=pspencnum+1;
-								$('#soho-psp-tree-trajectory .button:last').html(encpagnxt+' &#9654;');
+								$('#soho-psp-tree-trajectory .button:last, #stereo_a-psp-tree-trajectory .button:last').html(encpagnxt+' &#9654;');
 							}
 							else if(pspencnum == pspenctotal) {
-								$('#soho-psp-tree-trajectory .button:last').html('&nbsp;&nbsp;');
+								$('#soho-psp-tree-trajectory .button:last, #stereo_a-psp-tree-trajectory .button:last').html('&nbsp;&nbsp;');
 							}
 						
 						// END generate encounter "pagination"
