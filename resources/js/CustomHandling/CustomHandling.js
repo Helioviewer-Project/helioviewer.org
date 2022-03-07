@@ -91,9 +91,12 @@ $(document).ready(function() {
 					    	while(hvencelems.length > 0){
 							hvencelems[0].parentNode.removeChild(hvencelems[0]);
 					    	}
-							
-						const hvencpaginationelem = document.getElementById('hvencpagination');
-						hvencpaginationelem.remove();
+						
+						if($("#hvencpagination").length > 0) {
+							const hvencpaginationelem = document.getElementById('hvencpagination');
+							hvencpaginationelem.remove();
+						}						
+
 						//hvencpaginationelem[0].parentNode.removeChild(hvencpaginationelem[0]);
 						
 						$(".hover-date-container").removeClass("hvenclabels");
