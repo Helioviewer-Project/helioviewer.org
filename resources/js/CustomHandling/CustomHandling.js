@@ -174,6 +174,10 @@ $(document).ready(function() {
 	
 	showEncounter();
 	
+	// prepend Encounter label
+	$('#soho-psp-tree-trajectory a:first, #stereo_a-psp-tree-trajectory a:first').after('<br><span class="menuenclabel">Encounters: </span>');	
+	
+	
 	// END Encounter Count
 	
 	
@@ -183,7 +187,6 @@ $(document).ready(function() {
 	});
 	
 
-	// prepend Encounter label
-	$('#soho-psp-tree-trajectory a:first, #stereo_a-psp-tree-trajectory a:first').after('<br><span class="menuenclabel">Encounters: </span>');
+
 	
 }); // end of doc ready
