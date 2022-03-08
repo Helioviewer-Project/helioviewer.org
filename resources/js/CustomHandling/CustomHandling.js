@@ -116,7 +116,7 @@ $(document).ready(function() {
 						
 						if(menuenclblexists=='no') {
 							// prepend Encounter label
-							$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').after('<br><br><ins class="jstree-icon" style="background:none;">&nbsp;</ins><span class="menuenclabel" style="font-family: \'Courier New\',Courier,monospace;">Encounters: </span>');
+							$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').after('<br><br><ins class="jstree-icon" style="background:none;">&nbsp;</ins><span class="menuenclabel" style="font-family: \'Courier New\',Courier,monospace;">Encounters: </span>');	
 							menuenclblexists='yes';
 						}
 						
@@ -192,13 +192,7 @@ $(document).ready(function() {
 	
 
 	
-	setTimeout(function() {
-		
-		$('#soho-psp-tree-trajectory .button, #soho-psp-tree-trajectory .decoration').html('');
-		$('#stereo_a-psp-tree-trajectory .button, #stereo_a-psp-tree-trajectory .decoration').html('');
-		showEncounter();
-		
-	}, 1000);
+	showEncounter();
 	
 
 	
