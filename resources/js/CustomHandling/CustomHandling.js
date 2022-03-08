@@ -1,5 +1,13 @@
 $(document).ready(function() {
 
+
+	// prepend Encounter label
+	$('#soho-psp-tree-trajectory a:first, #stereo_a-psp-tree-trajectory a:first').after('<br><span class="menuenclabel">Encounters: </span>');	
+	
+	showEncounter();
+
+
+
 	function HVcustomHandling(thisHVcomponent) {
 
 		function hvtutorialHandling(thisHVtutSection) {
@@ -128,8 +136,7 @@ $(document).ready(function() {
 							
 							$('#soho-psp-tree-trajectory .decoration:first, #soho-psp-tree-trajectory .decoration:last, #stereo_a-psp-tree-trajectory .decoration:first, #stereo_a-psp-tree-trajectory .decoration:last').html('');
 							
-							// prepend Encounter label
-							$('#soho-psp-tree-trajectory a:first, #stereo_a-psp-tree-trajectory a:first').after('<br><span class="menuenclabel">Encounters: </span>');								
+							
 							
 							
 							// get previous encounter
@@ -173,7 +180,7 @@ $(document).ready(function() {
 	
 	$("#helioviewer-viewport").bind("mousewheel", function(){showEncounter()});
 	
-	showEncounter();
+
 	
 
 	
