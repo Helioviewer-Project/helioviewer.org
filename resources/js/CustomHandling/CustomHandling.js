@@ -116,7 +116,7 @@ $(document).ready(function() {
 						
 						if(menuenclblexists=='no') {
 							// prepend Encounter label
-							$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').after('<br><br><span class="menuenclabel" style="font-family: \'Courier New\',Courier,monospace;">Encounters: </span>');	
+							$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').after('<br><br><ins class="jstree-icon" style="background:none;">&nbsp;</ins><span class="menuenclabel" style="font-family: \'Courier New\',Courier,monospace;">Encounters: </span>');	
 							menuenclblexists='yes';
 						}
 						
@@ -137,11 +137,13 @@ $(document).ready(function() {
 								encdash2=' - ';
 							}
 							
-							// get current encounter
+							// show current encounter in the pagination (SOHO)
 							$('#soho-psp-tree-trajectory .decoration').eq(1).html(encdash1+'<span style="border-radius:2px;background:white;color:black;font-weight:bold;">&nbsp;'+pspencnum+'&nbsp;</span>'+encdash2);
 							
+							// show current encounter in the pagination (Stereo A)
 							$('#stereo_a-psp-tree-trajectory .decoration').eq(1).html(encdash1+'<span style="border-radius:2px;background:white;color:black;font-weight:bold;">&nbsp;'+pspencnum+'&nbsp;</span>'+encdash2);
 							
+							// make the first and last .decoration <span> elements blank 
 							$('#soho-psp-tree-trajectory .decoration:first, #soho-psp-tree-trajectory .decoration:last, #stereo_a-psp-tree-trajectory .decoration:first, #stereo_a-psp-tree-trajectory .decoration:last').html('');
 							
 							
@@ -150,7 +152,7 @@ $(document).ready(function() {
 							// get previous encounter
 							if(pspencnum != 1) {
 								encpagprev=pspencnum-1;
-								$('#soho-psp-tree-trajectory .button:first, #stereo_a-psp-tree-trajectory .button:first').html('<br>&#9664; '+encpagprev);
+								$('#soho-psp-tree-trajectory .button:first, #stereo_a-psp-tree-trajectory .button:first').html('<br><ins class="jstree-icon" style="background:none;">&nbsp;</ins>&#9664; '+encpagprev);
 							}
 							else if(pspencnum == 1) {
 								$('#soho-psp-tree-trajectory .button:first, #stereo_a-psp-tree-trajectory .button:first').html('<br>&nbsp;&nbsp;');
@@ -207,6 +209,4 @@ $(document).ready(function() {
 
 	
 }); // end of doc ready
-
-
 
