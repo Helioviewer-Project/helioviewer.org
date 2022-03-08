@@ -116,7 +116,7 @@ $(document).ready(function() {
 						
 						if(menuenclblexists=='no') {
 							// prepend Encounter label
-							$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').after('<br><span class="menuenclabel">Encounters: </span>');	
+							$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').after('<br><br><span class="menuenclabel" style="font-family: \'Courier New\',Courier,monospace;">Encounters: </span>');	
 							menuenclblexists='yes';
 						}
 						
