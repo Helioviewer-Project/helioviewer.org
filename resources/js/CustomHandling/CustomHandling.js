@@ -177,7 +177,10 @@ $(document).ready(function() {
 	
 	$("#helioviewer-viewport").bind("mousewheel", function(){showEncounter()});
 	
-
+	// prepend Encounter label
+	$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').delay(3000).after('<br><span class="menuenclabel">Encounters: </span>');	
+	
+	showEncounter();
 	
 
 	
@@ -195,7 +198,4 @@ $(document).ready(function() {
 	
 }); // end of doc ready
 
-	// prepend Encounter label
-	$('#soho-psp-tree-trajectory a:first, #stereo_a-psp-tree-trajectory a:first').delay(2000).after('<br><span class="menuenclabel">Encounters: </span>');	
-	
-	showEncounter();
+
