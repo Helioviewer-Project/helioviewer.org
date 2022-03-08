@@ -209,12 +209,11 @@ $(document).ready(function() {
 
 
 // START of window load
-$(window).load(function() {
+$(window).on('load', function() {
 	
 	showEncounter();
 
 
 });
 // END of window load
-
 
