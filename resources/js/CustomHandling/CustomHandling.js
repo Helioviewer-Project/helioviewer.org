@@ -42,6 +42,7 @@ $(document).ready(function() {
 
 
 	// START Encounter Count
+	var menuenclblexists='no';
 	
 	function showEncounter() {
 		
@@ -112,6 +113,14 @@ $(document).ready(function() {
 						$('.hvenclabels').html('<br>Encounter '+pspencnum);
 						//document.getElementsByClassName("hover-date-container").innerHTML+= '<br>Encounter '+pspencnum;
 						
+						
+						if(menuenclblexists=='no') {
+							// prepend Encounter label
+							$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').after('<br><span class="menuenclabel">Encounters: </span>');	
+							menuenclblexists='yes';
+						}
+						
+						
 						// START generate encounter "pagination"
 							
 							if(pspencnum == 1) {
@@ -133,8 +142,7 @@ $(document).ready(function() {
 							
 							$('#soho-psp-tree-trajectory .decoration:first, #soho-psp-tree-trajectory .decoration:last, #stereo_a-psp-tree-trajectory .decoration:first, #stereo_a-psp-tree-trajectory .decoration:last').html('');
 							
-							
-							
+
 							
 							// get previous encounter
 							if(pspencnum != 1) {
@@ -177,8 +185,7 @@ $(document).ready(function() {
 	
 	$("#helioviewer-viewport").bind("mousewheel", function(){showEncounter()});
 	
-	// prepend Encounter label
-	$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').delay(3000).after('<br><span class="menuenclabel">Encounters: </span>');	
+
 	
 	showEncounter();
 	
@@ -197,5 +204,4 @@ $(document).ready(function() {
 
 	
 }); // end of doc ready
-
 
