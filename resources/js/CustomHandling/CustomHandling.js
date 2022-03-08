@@ -116,7 +116,7 @@ $(document).ready(function() {
 						
 						if(menuenclblexists=='no') {
 							// prepend Encounter label
-							$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').after('<br><br><ins class="jstree-icon" style="background:none;">&nbsp;</ins><span class="menuenclabel" style="font-family: \'Courier New\',Courier,monospace;">Encounters: </span>');	
+							$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').after('<br><br><ins class="jstree-icon" style="background:none;">&nbsp;</ins><span class="menuenclabel" style="font-family: \'Courier New\',Courier,monospace;">Encounters: </span>');
 							menuenclblexists='yes';
 						}
 						
@@ -190,9 +190,6 @@ $(document).ready(function() {
 	
 	$("#helioviewer-viewport").bind("mousewheel", function(){showEncounter()});
 	
-
-	
-	showEncounter();
 	
 
 	
@@ -209,5 +206,15 @@ $(document).ready(function() {
 
 	
 }); // end of doc ready
+
+
+// START of window load
+$(window).load(function() {
+	
+	showEncounter();
+
+
+});
+// END of window load
 
 
