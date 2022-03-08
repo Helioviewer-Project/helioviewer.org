@@ -108,9 +108,6 @@ $(document).ready(function() {
 						//document.getElementsByClassName("hover-date-container").innerHTML+= '<br>Encounter '+pspencnum;
 						
 						// START generate encounter "pagination"
-						
-
-							
 							
 							if(pspencnum == 1) {
 								encdash1='';
@@ -130,6 +127,10 @@ $(document).ready(function() {
 							$('#soho-psp-tree-trajectory .decoration, #stereo_a-psp-tree-trajectory .decoration').eq(1).html(encdash1+'<span style="border-radius:2px;background:white;color:black;font-weight:bold;">&nbsp;'+pspencnum+'&nbsp;</span>'+encdash2);
 							
 							$('#soho-psp-tree-trajectory .decoration:first, #soho-psp-tree-trajectory .decoration:last, #stereo_a-psp-tree-trajectory .decoration:first, #stereo_a-psp-tree-trajectory .decoration:last').html('');
+							
+							// prepend Encounter label
+							$('#soho-psp-tree-trajectory a:first, #stereo_a-psp-tree-trajectory a:first').after('<br><span class="menuenclabel">Encounters: </span>');								
+							
 							
 							// get previous encounter
 							if(pspencnum != 1) {
@@ -174,8 +175,7 @@ $(document).ready(function() {
 	
 	showEncounter();
 	
-	// prepend Encounter label
-	$('#soho-psp-tree-trajectory a:first, #stereo_a-psp-tree-trajectory a:first').after('<br><span class="menuenclabel">Encounters: </span>');	
+
 	
 	
 	// END Encounter Count
