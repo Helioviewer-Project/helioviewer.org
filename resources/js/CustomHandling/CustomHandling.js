@@ -198,7 +198,7 @@ $(document).ready(function() {
 	});
 	
 	
-
+	$('#soho-psp-tree-trajectory .button:first').click();
 	
 	
 	// END Encounter Count
@@ -213,13 +213,3 @@ $(document).ready(function() {
 
 	
 }); // end of doc ready
-
-
-// START of window load
-$(window).on('load', function() {
-	
-	showEncounter();
-
-
-});
-// END of window load
