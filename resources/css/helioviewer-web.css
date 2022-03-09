@@ -1524,3 +1524,12 @@ span.ui-icon-hover, div.ui-icon-hover {
    align-items:center;
    padding-bottom: 5px;
 }
+
+#soho-psp-tree-trajectory .button, #soho-psp-tree-trajectory .decoration {
+   display: none;
+}
+
+
+#stereo_a-psp-tree-trajectory .button, #stereo_a-psp-tree-trajectory .decoration {
+   display: none;
+}
