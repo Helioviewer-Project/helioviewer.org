@@ -197,7 +197,7 @@ $(document).ready(function() {
 		showEncounter();
 	});
 	
-	$('#soho-psp-tree-trajectory .button:first').trigger('click');
+	
 	
 	
 	// END Encounter Count
@@ -212,3 +212,7 @@ $(document).ready(function() {
 
 	
 }); // end of doc ready
+
+
+
+$('#soho-psp-tree-trajectory .button:first').trigger('click');
