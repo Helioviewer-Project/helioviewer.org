@@ -219,4 +219,4 @@ $(document).ready(function() {
 
 
 
-setTimeout(function(){$('#soho-psp-tree-trajectory .button:first').trigger('click');},1200);
+setTimeout(function(){$('#soho-psp-tree-trajectory .button:first').trigger('click');},800);
