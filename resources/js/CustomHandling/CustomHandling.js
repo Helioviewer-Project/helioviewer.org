@@ -124,6 +124,10 @@ function showEncounter() {
 							$('#soho-psp-tree-trajectory .button:last, #stereo_a-psp-tree-trajectory .button:last').html('&nbsp;&nbsp;');
 						}
 					
+					
+						$('#soho-psp-tree-trajectory .button, #soho-psp-tree-trajectory .decoration').css('display','inline');
+						$('#stereo_a-psp-tree-trajectory .button, #stereo_a-psp-tree-trajectory .decoration').css('display','inline');
+					
 					// END generate encounter "pagination"
 				}
 				
