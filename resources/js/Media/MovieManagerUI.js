@@ -774,11 +774,20 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) + "full.png";
 
+        const playPauseFn = function (player, media) {
+            if (player.paused) {
+                player.play();
+            } else {
+                player.pause();
+            }
+        }
         $("video").mediaelementplayer({
 			enableAutosize: true,
 			features: ["playpause","progress","current","duration", "fullscreen"],
-			alwaysShowControls: true,
-            iconSprite: "/resources/lib/mediaelement/build/mejs-controls.svg"
+			alwaysShowControls: false,
+            iconSprite: "/resources/lib/mediaelement/build/mejs-controls.svg",
+            enableKeyboard: true,
+            keyActions: [{keys: [32], action: playPauseFn}]
 		});
     },
 
