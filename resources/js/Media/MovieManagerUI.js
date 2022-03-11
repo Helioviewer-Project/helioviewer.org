@@ -17,9 +17,9 @@ var MovieManagerUI = MediaManagerUI.extend(
      * @constructs
      * Creates a new MovieManagerUI instance
      *
-     * @param {MovieManager} model MovieManager instance
+     * @param {int} regenerateMovieThreshold Number of days to wait before displaying the "regenerate" option on an old movie.
      */
-    init: function (movieManager) {
+    init: function (regenerateMovieThreshold = 90) {
         var movies = Helioviewer.userSettings.get('history.movies');
         this._manager = new MovieManager(movies);
         this._super("movie");
@@ -33,6 +33,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         this._movieLayers = null;
         this._movieEvents = null;
         this._movieEventsLabels = null;
+        this._regenerateMovieThreshold = regenerateMovieThreshold;
         this._initEvents();
         this._initSettings();
 
@@ -592,7 +593,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         movie = this._manager.get(id);
 
 		dateRequested = Date.parseUTCDate(movie.dateRequested);
-        if((new Date) - dateRequested >= 180 * 24 * 60 * 60 * 1000 || movie.status === 3){
+        if((new Date) - dateRequested >= this._regenerateMovieThreshold * 24 * 60 * 60 * 1000 || movie.status === 3){
 			this._rebuildItem(movie);
 			return false;
         }
@@ -1202,6 +1203,7 @@ var MovieManagerUI = MediaManagerUI.extend(
     _refresh: function () {
         var status, statusMsg, dateRequested;
 
+        let regenThreshold = this._regenerateMovieThreshold;
         // Update the status information for each row in the history
         $.each(this._manager.toArray(), function (i, item) {
             status = $("#movie-" + item.id).find(".status");
@@ -1209,7 +1211,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             // For completed entries, display elapsed time
             if (item.status === 2) {
                 dateRequested = Date.parseUTCDate(item.dateRequested);
-                if((new Date) - dateRequested >= 180 * 24 * 60 * 60 * 1000){
+                if((new Date) - dateRequested >= regenThreshold * 24 * 60 * 60 * 1000){
 					statusMsg = '<span class="rebuild-item" data-id="'+item.id+'" title="Regenerate movie"> regenerate <span class="fa fa-refresh"></span></span>';
                 }else{
 	                statusMsg = dateRequested.getElapsedTime();

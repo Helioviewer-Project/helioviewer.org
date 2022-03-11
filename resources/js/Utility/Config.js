@@ -14,28 +14,29 @@ var Config = Class.extend(
      * Default parameters
      */
      params: {
-        'back_end'             	: "https://api.helioviewer.org/",
-        'web_root_url'         	: "https://helioviewer.org",
-	    'build_num'             : 700,
-        'default_image_scale'   : 4.8408817,
-        'min_image_scale'       : 0.60511022,
-        'max_image_scale'       : 154.90822,
-        'max_tile_layers'       : 5,
-        'prefetch_size'        	: 0,
-        'news_url'             	: "https://helioviewer-project.github.io/",
-        'user_video_feed'       : "https://api.helioviewer.org/",
-        'contact_email'        	: "contact@helioviewer.org"
+        'back_end'                  : "https://api.helioviewer.org/",
+        'web_root_url'              : "https://helioviewer.org",
+        'build_num'                 : 700,
+        'default_image_scale'       : 4.8408817,
+        'min_image_scale'           : 0.60511022,
+        'max_image_scale'           : 154.90822,
+        'max_tile_layers'           : 5,
+        'prefetch_size'             : 0,
+        'news_url'                  : "https://helioviewer-project.github.io/",
+        'user_video_feed'           : "https://api.helioviewer.org/",
+        'contact_email'             : "contact@helioviewer.org",
+        'regenerate_movie_threshold': 90
      },
-    
+
     /**
      * @description Creates a new Config.
      * @constructs
      */
     init: function (params) {
         var self = this;
-        
+
         $.each(params, function (k,v) {
-	        self.params[k] = v;
+            self.params[k] = v;
         });
 
         this.bools  = [];
@@ -79,18 +80,19 @@ var Config = Class.extend(
      */
     toArray: function () {
         return {
-            'version'             : this.params["build_num"],
-            'defaultImageScale'   : this.params["default_image_scale"],
-            'minImageScale'       : this.params["min_image_scale"],
-            'maxImageScale'       : this.params["max_image_scale"],
-            'maxTileLayers'       : this.params["max_tile_layers"],
-            'prefetchSize'        : this.params["prefetch_size"],
-            'backEnd'             : this.params["back_end"],
-            'newsURL'             : this.params["news_url"],
-            'rootURL'             : this.params["web_root_url"],
-            'videoFeed'           : this.params["user_video_feed"],
-            'contactEmail'        : this.params["contact_email"],
-            'apiURL'              : this.params["back_end"]
+            'version'                 : this.params["build_num"],
+            'defaultImageScale'       : this.params["default_image_scale"],
+            'minImageScale'           : this.params["min_image_scale"],
+            'maxImageScale'           : this.params["max_image_scale"],
+            'maxTileLayers'           : this.params["max_tile_layers"],
+            'prefetchSize'            : this.params["prefetch_size"],
+            'backEnd'                 : this.params["back_end"],
+            'newsURL'                 : this.params["news_url"],
+            'rootURL'                 : this.params["web_root_url"],
+            'videoFeed'               : this.params["user_video_feed"],
+            'contactEmail'            : this.params["contact_email"],
+            'apiURL'                  : this.params["back_end"],
+            'regenerateMovieThreshold': this.params["regenerate_movie_threshold"]
         };
     }
 });

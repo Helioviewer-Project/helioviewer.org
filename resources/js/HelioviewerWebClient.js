@@ -126,7 +126,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.imageSelectTool = new ImageSelectTool();
 
         this._screenshotManagerUI = new ScreenshotManagerUI();
-        this._movieManagerUI      = new MovieManagerUI();
+        this._movieManagerUI      = new MovieManagerUI(serverSettings.regenerateMovieThreshold);
 
         this._glossary = new VisualGlossary(this._setupDialog);
 
