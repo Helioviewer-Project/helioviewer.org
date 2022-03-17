@@ -73,7 +73,7 @@ function showEncounter() {
 					
 					if(menuenclblexists=='no') {
 						// prepend Encounter label
-						$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').after('<br><br><ins class="jstree-icon" style="background:none;">&nbsp;</ins><span class="menuenclabel" style="font-family: \'Courier New\',Courier,monospace;">Encounters: </span>');
+						$('#soho-psp-tree-trajectory a, #stereo_a-psp-tree-trajectory a').after('<br><br><ins class="jstree-icon" style="background:none;">&nbsp;</ins><span class="menuenclabel" style="font-family: \'Courier New\',Courier,monospace;">Encounter: </span>');
 						menuenclblexists='yes';
 					}
 					
