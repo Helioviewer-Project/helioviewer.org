@@ -1,0 +1,160 @@
+
+.zeynep {
+	background-image: url(../images/backmobilemenubg2.png);
+	border-left: 3px solid #404143;
+}
+
+	.zeynep ul {
+		padding-left: 0px;
+	}
+
+	.zeynep ul > li:not(:last-child) > a {
+		border-bottom: 0px solid black;
+	}
+
+	.zeynep ul > li > a {
+		padding: 8px;
+		color: #ffffff;
+		font-weight: normal;
+	}
+
+	.zeynep ul > li > a:hover {
+		background-color:gray;
+		border-radius: 0px;
+	}
+
+	#hvmobilemenu_btn {
+		position:absolute;
+		margin-top:0px;
+		right:0;
+		z-index:9999;
+	}
+	
+	.btn-open {
+		min-width: 0px;
+	}
+
+@media screen and (min-width: 791px) {	
+	.zeynep {
+		display: none;
+	}
+	
+	
+	#hvmobilemenu_btn {
+		display: none;
+	}
+}
+
+/* tablets */
+@media screen and (max-width: 790px) {  /*  and (orientation : portrait) */
+	
+	#hv-drawer-left {
+		display: block;
+	}
+	
+	.drawer-contents {
+		display: block;
+	}
+	
+	#hv-drawer-tab-timeline, #hv-drawer-tab-timeline-events {
+		display: none;
+	}
+	
+	#logo {
+		text-align: left;
+	}
+	
+	#menus {
+		display: none;
+	}
+	
+	#zoom {
+		display: none;
+	}
+	
+	#scale {
+		display: none;
+	}
+	
+	#mouse-coords-box {
+		display: none;
+	}
+	
+	#hvmobilemenu_btn {
+		display: block;
+		padding: 8px;
+		border: 0;
+		border-radius: 0px;
+		box-shadow: none;
+	}
+	
+	.hamburger-inner, .hamburger-inner:after, .hamburger-inner:before {
+		background-color: #ffffff;
+	}
+	
+	.hamburger.is-active .hamburger-inner, .hamburger.is-active .hamburger-inner:after, .hamburger.is-active .hamburger-inner:before {
+		background-color: #ffffff;
+	}	
+
+	.btn-open.first {
+		background-color: none;
+	}
+
+	#hv-header {
+		height: 40px;
+		max-height: 40px;
+		background:gray;
+	}
+	
+
+	#hv-header #menus {
+		float: none;
+	}
+
+	#menus {
+		clear: both;
+	}
+
+	#hv-drawer-youtube {
+		display: none;
+	}
+
+	#hv-drawer-tab-left {
+		display: none;
+		transform: rotate(0deg);
+		/*top: 24.5em;*/
+		position: absolute;
+		margin: auto;
+		width: 70px;
+		height: 40px;
+		top: auto !important;
+		left: 0 !important;
+		bottom: 0;
+		z-index: 9999999999999999999999999999999999999999999999999999999999999999999999999;
+		border-top-left-radius: 0px;
+		border-bottom-left-radius: 0px;
+		border-bottom-right-radius: 4pt;
+		
+	}
+
+	#hv-drawer-left {
+		position: absolute;
+		width: 100% !important;
+		/*margin-top: 300px;*/
+		top: auto;
+		bottom: 0;
+		height:auto;
+	}
+
+	.drawer-contents .header {
+		height: 35px;
+		padding-top: 10px;
+	}
+
+}
+
+/* smartphones */
+@media screen and (max-width: 599px) {
+	
+	
+}
