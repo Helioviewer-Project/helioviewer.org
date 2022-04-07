@@ -89,15 +89,15 @@
 	}
 	
 	.hamburger-inner, .hamburger-inner:after, .hamburger-inner:before {
-		background-color: #ffffff;
+		background-color: #ffffff !important;
 	}
 	
 	.hamburger.is-active .hamburger-inner, .hamburger.is-active .hamburger-inner:after, .hamburger.is-active .hamburger-inner:before {
-		background-color: #ffffff;
+		background-color: #ffffff !important;
 	}	
 
 	.btn-open.first {
-		background-color: none;
+		background-color: none !important;
 	}
 
 	#hv-header {
