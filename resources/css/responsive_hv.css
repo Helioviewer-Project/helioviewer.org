@@ -138,12 +138,11 @@
 	}
 
 	#hv-drawer-left {
-		position: absolute;
-		width: 100% !important;
-		/*margin-top: 300px;*/
-		top: auto;
-		bottom: 0;
-		height:auto;
+	    position: absolute !important;
+	    width: 100% !important;
+	    margin-top: 300px !important;
+	    top: auto !important;
+	    bottom: 0;
 	}
 
 	.drawer-contents .header {
