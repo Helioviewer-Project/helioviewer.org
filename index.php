@@ -103,6 +103,14 @@
 	<!-- jQuery UI Theme Modifications -->
 	<link rel="stylesheet" href="resources/css/dot-luv.css">
 
+	
+	<!-- START responsive CSS files -->
+	<link rel='stylesheet' href='resources/css/zeynep.css?rng=<?php echo(rand(2145, 999999)); ?>'>
+	<link href="resources/css/hamburger.min.css?rng=<?php echo(rand(2145, 999999)); ?>" rel="stylesheet">
+	<link rel="stylesheet" href="resources/css/responsive_hv.css?rng=<?php echo(rand(2145, 999999)); ?>">
+	<!-- END responsive CSS files -->
+	
+	
 	<!-- Helioviewer CSS -->
 	<?php
 	if ($debug){
@@ -146,6 +154,79 @@
 
 </head>
 <body <?php echo ($outputType ? 'class="helioviewer-view-type-'.$outputType.'"' : '')?>>
+	
+<!-- START mobile menu -->
+
+
+
+<div class="zeynep" style="background-color:none;">
+	<ul>
+		<li>
+			
+			<a href="">
+				<img src="https://beta.helioviewer.org/resources/images/projectanounce_icon_white.png">&nbsp;&nbsp;<br>Helioviewer Project Announcements.
+			</a>
+		</li>
+		
+		<li>
+			<a href="">
+				<img src="https://beta.helioviewer.org/resources/images/viewyoutube_icon_white.png">&nbsp;&nbsp;<br>View Helioviewer Movies<br>Shared to YouTube.
+			</a>
+		</li>
+		
+		
+		<li>
+			<a href="">
+				<img src="https://beta.helioviewer.org/resources/images/createmovie_icontest.png">&nbsp;&nbsp;<br>Create a movie.
+			</a>
+		</li>
+		
+		<li>
+			<a href="">
+				<img src="https://beta.helioviewer.org/resources/images/screenshot_icon_white.png">&nbsp;&nbsp;<br>Create a screenshot.
+			</a>
+		</li>		
+		
+		<li>
+			<a href="">
+				<img src="https://beta.helioviewer.org/resources/images/datadownload_icon_white.png">&nbsp;&nbsp;<br>Request Science Data Download from External Partners.
+			</a>
+		</li>		
+		
+		<li>
+			<a href="">
+				<img src="https://beta.helioviewer.org/resources/images/shareviewport_icon_white.png">&nbsp;&nbsp;<br>Share the current viewport on social media.
+			</a>
+		</li>
+
+		<li>
+			<a href="">
+				<img src="https://beta.helioviewer.org/resources/images/help_icon_white.png">&nbsp;&nbsp;<br>Get Help with Helioviewer.
+			</a>
+		</li>		
+		
+		<li>
+			<a href="">
+				<img src="https://beta.helioviewer.org/resources/images/setting_icon_white.png">&nbsp;&nbsp;Edit Settings & Defaults
+			</a>
+		</li>
+		
+	</ul>
+
+</div>
+
+
+<button id="hvmobilemenu_btn" class="hamburger hamburger--emphatic btn-open first" type="button">
+  <span class="hamburger-box">
+    <span class="hamburger-inner"></span>
+  </span>
+</button>
+
+
+<div class="zeynep-overlay"></div>
+
+<!-- END mobile menu -->	
+	
 	<?php if($outputType != 'embed'){ ?>
 	<div class="user-select-none" style="width: 100%; margin: 0; padding: 0; text-align: center; z-index: 9;">
 		<!-- Image area select tool -->
@@ -1665,6 +1746,44 @@
 			}
 		});
 	</script>
+	
+	<script src='https://raw.githack.com/hsynlms/zeynepjs/master/dist/zeynep.min.js'></script>
+<script>
+// zeynepjs initialization for demo
+$(function() {
+
+  var zeynep = $('.zeynep').zeynep({
+    opened: function () {
+      console.log('the side menu is opened')
+    }
+  })
+
+  // dynamically bind 'closing' event
+  zeynep.on('closing', function () {
+    console.log('this event is dynamically binded')
+  })
+
+  // handle zeynepjs overlay click
+  $('.zeynep-overlay').on('click', function () {
+    $(".hamburger").removeClass("is-active");
+	zeynep.close();
+  })
+
+  // open zeynepjs side menu
+  $('.btn-open, .hamburger').on('click', function () {
+    if($(".hamburger").hasClass("is-active")) {
+		$(".hamburger").removeClass("is-active");
+		zeynep.close();
+	}
+	else {
+		zeynep.open();
+		$(".hamburger").addClass("is-active");
+	}
+  })
+
+});
+</script>
+	
 	<?php
 		if($outputType=='embed' && (!isset($_GET['hideWatermark']) || $_GET['hideWatermark'] != 'true')){
 			$link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("output=embed", "", $_SERVER['REQUEST_URI']));
