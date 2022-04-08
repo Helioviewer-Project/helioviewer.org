@@ -49,11 +49,11 @@
 @media screen and (max-width: 790px) {  /*  and (orientation : portrait) */
 	
 	html, body {
-		min-width: 300px;
+		min-width: 300px !important;
 	}
 
 	#helioviewer-viewport-container-outer {
-		min-width: 300px;
+		min-width: 300px !important;
 	}	
 	
 	#hv-drawer-left {
@@ -110,7 +110,7 @@
 
 	#hv-header {
 		height: 40px;
-		min-width: 300px;
+		min-width: 300px !important;
 		max-height: 40px;
 		background:gray;
 	}
