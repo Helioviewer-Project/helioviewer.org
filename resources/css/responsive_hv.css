@@ -5,17 +5,18 @@
 }
 
 	.zeynep ul {
-		padding-left: 0px;
+		padding-left: 0px !important;
 	}
 
 	.zeynep ul > li:not(:last-child) > a {
-		border-bottom: 0px solid black;
+		border-bottom: 0px solid black !important;
 	}
 
 	.zeynep ul > li > a {
 		padding: 8px;
-		color: #ffffff;
-		font-weight: normal;
+		color: #ffffff !important;
+		font-weight: normal !important;
+		font-family: 'Helvetica Neue','Helvetica',sans-serif !important;
 	}
 
 	.zeynep ul > li > a:hover {
