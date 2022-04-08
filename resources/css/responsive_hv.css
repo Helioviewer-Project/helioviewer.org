@@ -48,6 +48,14 @@
 /* tablets */
 @media screen and (max-width: 790px) {  /*  and (orientation : portrait) */
 	
+	html, body {
+		min-width: 300px;
+	}
+
+	#helioviewer-viewport-container-outer {
+		min-width: 300px;
+	}	
+	
 	#hv-drawer-left {
 		display: block;
 	}
