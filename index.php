@@ -106,11 +106,7 @@
 	<link rel="stylesheet" href="resources/css/dot-luv.css">
 
 	
-	<!-- START responsive CSS files -->
-	<link rel='stylesheet' href='resources/css/zeynep.css?rng=<?php echo(rand(2145, 999999)); ?>'>
-	<link href="resources/css/hamburger.min.css?rng=<?php echo(rand(2145, 999999)); ?>" rel="stylesheet">
-	<link rel="stylesheet" href="resources/css/responsive_hv.css?rng=<?php echo(rand(2145, 999999)); ?>">
-	<!-- END responsive CSS files -->
+
 	
 	
 	<!-- Helioviewer CSS -->
@@ -153,6 +149,12 @@
 	}
 	?>
 	<script type="text/javascript">var outputType = <?php if($outputType){ echo "'".$outputType."'"; } else { echo 'false'; }?>;</script>
+	
+	<!-- START responsive CSS files -->
+	<link rel='stylesheet' href='resources/css/zeynep.css?rng=<?php echo(rand(2145, 999999)); ?>'>
+	<link href="resources/css/hamburger.min.css?rng=<?php echo(rand(2145, 999999)); ?>" rel="stylesheet">
+	<link rel="stylesheet" href="resources/css/responsive_hv.css?rng=<?php echo(rand(2145, 999999)); ?>">
+	<!-- END responsive CSS files -->
 
 </head>
 <body <?php echo ($outputType ? 'class="helioviewer-view-type-'.$outputType.'"' : '')?>>
