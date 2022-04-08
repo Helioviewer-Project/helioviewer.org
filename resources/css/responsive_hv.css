@@ -152,6 +152,10 @@
 	    top: auto !important;
 	    bottom: 0;
 	}
+	
+	.drawer-contents {
+		display: block !important;	
+	}
 
 	.drawer-contents .header {
 		height: 35px;
