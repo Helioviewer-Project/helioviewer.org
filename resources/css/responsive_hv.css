@@ -20,8 +20,8 @@
 	}
 
 	.zeynep ul > li > a:hover {
-		background-color:gray;
-		border-radius: 0px;
+		background-color:gray !important;
+		border-radius: 0px !important;
 	}
 
 	#hvmobilemenu_btn {
