@@ -168,7 +168,7 @@
 		<li>
 			
 			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/projectanounce_icon_white.png">&nbsp;&nbsp;<br>Helioviewer Project Announcements.
+				<img src="https://beta.helioviewer.org/resources/images/projectanounce_icon_white.png"><i class="fa-thin fa-file-video"></i>&nbsp;&nbsp;<br>Helioviewer Project Announcements.
 			</a>
 		</li>
 		
