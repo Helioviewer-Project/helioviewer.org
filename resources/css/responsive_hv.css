@@ -46,6 +46,10 @@
 		text-align: center;
 	}
 	
+		.hvmobmenu_left_td a {
+			text-decoration: none;
+		}
+	
 	.hvmobmenu_right_td {
 		text-align: left;
 		color: white;
