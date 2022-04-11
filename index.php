@@ -287,6 +287,16 @@
 
 <!-- END mobile menu -->	
 	
+<!-- START Mobile Drawer Tabs -->
+<div class="hvmobdstab_wrap">
+	<div class="hvmobdstabs" drawersec="accordion-date">Observation Date</div>&nbsp;
+	<div class="hvmobdstabs" drawersec="accordion-images">Images</div>&nbsp;
+	<div class="hvmobdstabs" drawersec="accordion-events">Features & Events</div>&nbsp;
+	<div class="hvmobdstabs" drawersec="accordion-bodies">Celestial Bodies</div>
+</div>
+<!-- END Mobile Drawer Tabs -->	
+	
+	
 	<?php if($outputType != 'embed'){ ?>
 	<div class="user-select-none" style="width: 100%; margin: 0; padding: 0; text-align: center; z-index: 9;">
 		<!-- Image area select tool -->
@@ -1829,7 +1839,22 @@ $(function() {
 		zeynep.open();
 		$(".hamburger").addClass("is-active");
 	}
-  })
+  });
+	
+	// open drawer by tab click
+	var currdsopen= 'nonexistentds';
+	$(".hvmobdstabs").click(function(){
+		var thisdrawersect=  $(this).attr('drawersec');
+		//alert(thisdrawersect);
+		// if it's not already open, close currently open drawer and open correct one
+		if(thisdrawersect != currdsopen) {
+			$('#'+currdsopen).css('display','none');
+			$('#'+thisdrawersect).css('display','block');
+			currdsopen= thisdrawersect;
+		}
+
+	});  	
+	
 
 });
 </script>
