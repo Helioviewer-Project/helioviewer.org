@@ -168,44 +168,44 @@
 		<li>
 			
 			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/projectanounce_icon_white.png"><i class="fa-thin fa-file-video"></i>&nbsp;&nbsp;<br>Helioviewer Project Announcements.
+				<img src="https://beta.helioviewer.org/resources/images/projectanounce_icon_white.png">&nbsp;&nbsp;Helioviewer Project Announcements.
 			</a>
 		</li>
 		
 		<li>
 			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/viewyoutube_icon_white.png">&nbsp;&nbsp;<br>View Helioviewer Movies<br>Shared to YouTube.
+				<img src="https://beta.helioviewer.org/resources/images/viewyoutube_icon_white.png">&nbsp;&nbsp;View Helioviewer Movies<br>Shared to YouTube.
 			</a>
 		</li>
 		
 		
 		<li>
 			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/createmovie_icontest.png">&nbsp;&nbsp;<br>Create a movie.
+				<img src="https://beta.helioviewer.org/resources/images/createmovie_icontest.png">&nbsp;&nbsp;Create a movie.
 			</a>
 		</li>
 		
 		<li>
 			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/screenshot_icon_white.png">&nbsp;&nbsp;<br>Create a screenshot.
+				<img src="https://beta.helioviewer.org/resources/images/screenshot_icon_white.png">&nbsp;&nbsp;Create a screenshot.
 			</a>
 		</li>		
 		
 		<li>
 			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/datadownload_icon_white.png">&nbsp;&nbsp;<br>Request Science Data Download from External Partners.
+				<img src="https://beta.helioviewer.org/resources/images/datadownload_icon_white.png">&nbsp;&nbsp;Request Science Data Download from External Partners.
 			</a>
 		</li>		
 		
 		<li>
 			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/shareviewport_icon_white.png">&nbsp;&nbsp;<br>Share the current viewport on social media.
+				<img src="https://beta.helioviewer.org/resources/images/shareviewport_icon_white.png">&nbsp;&nbsp;Share the current viewport on social media.
 			</a>
 		</li>
 
 		<li>
 			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/help_icon_white.png">&nbsp;&nbsp;<br>Get Help with Helioviewer.
+				<img src="https://beta.helioviewer.org/resources/images/help_icon_white.png">&nbsp;&nbsp;Get Help with Helioviewer.
 			</a>
 		</li>		
 		
