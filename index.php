@@ -165,54 +165,110 @@
 
 <div class="zeynep" style="background-color:none;">
 	<ul>
+
 		<li>
-			
-			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/projectanounce_icon_white.png">&nbsp;&nbsp;Helioviewer Project Announcements.
-			</a>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<a href="">
+						<img src="https://beta.helioviewer.org/resources/images/projectanounce_icon_white.png">&nbsp;&nbsp;
+					</a>
+				</td>
+				<td class="hvmobmenu_right_td">
+					Helioviewer Project Announcements.
+				</td>
+			</table>
 		</li>
 		
 		<li>
-			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/viewyoutube_icon_white.png">&nbsp;&nbsp;View Helioviewer Movies<br>Shared to YouTube.
-			</a>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<a href="">
+						<img src="https://beta.helioviewer.org/resources/images/viewyoutube_icon_white.png">&nbsp;&nbsp;
+					</a>
+				</td>
+				<td class="hvmobmenu_right_td">
+					View Helioviewer Movies<br>Shared to YouTube.
+				</td>
+			</table>
 		</li>
 		
 		
 		<li>
-			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/createmovie_icontest.png">&nbsp;&nbsp;Create a movie.
-			</a>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<a href="">
+						<img src="https://beta.helioviewer.org/resources/images/createmovie_icontest.png">&nbsp;&nbsp;
+					</a>
+				</td>
+				<td class="hvmobmenu_right_td">
+					Create a movie.
+				</td>
+			</table>
 		</li>
 		
 		<li>
-			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/screenshot_icon_white.png">&nbsp;&nbsp;Create a screenshot.
-			</a>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<a href="">
+						<img src="https://beta.helioviewer.org/resources/images/screenshot_icon_white.png">&nbsp;&nbsp;
+					</a>
+				</td>
+				<td class="hvmobmenu_right_td">
+					Create a screenshot.
+				</td>
+			</table>				
 		</li>		
 		
 		<li>
-			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/datadownload_icon_white.png">&nbsp;&nbsp;Request Science Data Download from External Partners.
-			</a>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<a href="">
+						<img src="https://beta.helioviewer.org/resources/images/datadownload_icon_white.png">&nbsp;&nbsp;
+					</a>
+				</td>
+				<td class="hvmobmenu_right_td">
+					Request Science Data Download from External Partners.
+				</td>
+			</table>
 		</li>		
 		
 		<li>
-			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/shareviewport_icon_white.png">&nbsp;&nbsp;Share the current viewport on social media.
-			</a>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<a href="">
+						<img src="https://beta.helioviewer.org/resources/images/shareviewport_icon_white.png">&nbsp;&nbsp;
+					</a>
+				</td>
+				<td class="hvmobmenu_right_td">
+					Share the current viewport on social media.
+				</td>
+			</table>
 		</li>
 
 		<li>
-			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/help_icon_white.png">&nbsp;&nbsp;Get Help with Helioviewer.
-			</a>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<a href="">
+						<img src="https://beta.helioviewer.org/resources/images/help_icon_white.png">&nbsp;&nbsp;
+					</a>
+				</td>
+				<td class="hvmobmenu_right_td">
+					Get Help with Helioviewer.
+				</td>
+			</table>
 		</li>		
 		
 		<li>
-			<a href="">
-				<img src="https://beta.helioviewer.org/resources/images/setting_icon_white.png">&nbsp;&nbsp;Edit Settings & Defaults
-			</a>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<a href="">
+						<img src="https://beta.helioviewer.org/resources/images/setting_icon_white.png">&nbsp;&nbsp;
+					</a>
+				</td>
+				<td class="hvmobmenu_right_td">
+					Edit Settings & Defaults
+				</td>
+			</table>
 		</li>
 		
 	</ul>
