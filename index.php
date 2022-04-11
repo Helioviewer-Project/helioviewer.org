@@ -167,7 +167,7 @@
 	<ul>
 
 		<li>
-			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0" style="margin-top: 50px;">
 				<td class="hvmobmenu_left_td">
 					<a href="">
 						<img src="https://beta.helioviewer.org/resources/images/projectanounce_icon_white.png">&nbsp;&nbsp;
