@@ -37,15 +37,20 @@
 	
 	.hvmobmenu_table {
 		width: 100%;
+		margin-top: 20px;
 	}
 	
+			.hvmobmenu_table:first {
+				margin-top: 50px;
+			}
+	
 	.hvmobmenu_left_td {
-		width: 100px;
+		width: 50px;
 		text-align: center;
 	}
 	
 	.hvmobmenu_right_td {
-		text-align: center;
+		text-align: left;
 	}
 	
 	.hvmobdstab_wrap {
