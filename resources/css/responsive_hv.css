@@ -40,7 +40,7 @@
 		margin-top: 20px;
 	}
 	
-			.hvmobmenu_table:first {
+			.hvmobmenu_table:first-child {
 				margin-top: 50px;
 			}
 	
@@ -51,6 +51,7 @@
 	
 	.hvmobmenu_right_td {
 		text-align: left;
+		color: white;
 	}
 	
 	.hvmobdstab_wrap {
