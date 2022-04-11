@@ -106,6 +106,7 @@
 		display: block !important;
 	    position: absolute !important;
 	    width: 100% !important;
+		min-height: 40px;
 	    top: auto !important;
 	    bottom: 0;
 		margin-bottom: 40px;
