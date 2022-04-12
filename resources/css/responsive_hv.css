@@ -121,6 +121,10 @@
 		display: block;
 	}
 	
+	.drawer-contents .content .section {
+		background: transparent;
+	}
+	
 	.accordion .header {
 		background-color: transparent;
 	}
