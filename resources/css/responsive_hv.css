@@ -115,6 +115,7 @@
 		-moz-box-shadow: 0 0 #0000;
 		-webkit-box-shadow: 0 0 #0000;
 		box-shadow: 0 0 #0000;
+		border-top: 1px solid white;
 	}
 	
 	.drawer-contents {
