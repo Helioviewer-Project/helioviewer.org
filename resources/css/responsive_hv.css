@@ -110,7 +110,7 @@
 	    top: auto !important;
 	    bottom: 0;
 		/*margin-bottom: 40px;*/
-		background-color: none; /*transparent !important;*/
+		background-color: transparent; /*transparent !important;*/
 		background-image: url(../images/backmobilemenubg2.png);
 		-moz-box-shadow: 0 0 #0000;
 		-webkit-box-shadow: 0 0 #0000;
@@ -122,11 +122,15 @@
 	}
 	
 	.accordion .header {
-		background-color:none;
+		background-color: transparent;
+	}
+	
+	.accordion .header:hover {
+		background-color: transparent;
 	}
 	
 	.accordion .content {
-		background-color:none;	
+		background-color: transparent;	
 	}
 	
 	#hv-drawer-tab-timeline, #hv-drawer-tab-timeline-events {
