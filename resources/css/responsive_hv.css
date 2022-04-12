@@ -106,11 +106,12 @@
 		display: block !important;
 	    position: absolute !important;
 	    width: 100% !important;
-		min-height: 40px;
+		min-height: 80px;
 	    top: auto !important;
 	    bottom: 0;
-		margin-bottom: 40px;
-		background-color: transparent !important;
+		/*margin-bottom: 40px;*/
+		background-color: none; /*transparent !important;*/
+		background-image: url(../images/backmobilemenubg2.png);
 		-moz-box-shadow: 0 0 #0000;
 		-webkit-box-shadow: 0 0 #0000;
 		box-shadow: 0 0 #0000;
@@ -118,6 +119,14 @@
 	
 	.drawer-contents {
 		display: block;
+	}
+	
+	.accordion .header {
+		background-color:none;
+	}
+	
+	.accordion .content {
+		background-color:none;	
 	}
 	
 	#hv-drawer-tab-timeline, #hv-drawer-tab-timeline-events {
@@ -145,7 +154,7 @@
 	}
 	
 	#earth-container {
-		display:none;
+		display:none !important;
 	}
 	
 	#hvmobilemenu_btn {
