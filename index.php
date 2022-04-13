@@ -1818,7 +1818,7 @@
 	</script>
 	
 	<script src='https://raw.githack.com/hsynlms/zeynepjs/master/dist/zeynep.min.js'></script>
-	<script src="resources/js/responsive/hv_responsive.js"></script>
+	<script src="resources/js/responsive/responsive_hv.js"></script>
 	
 	<?php
 		if($outputType=='embed' && (!isset($_GET['hideWatermark']) || $_GET['hideWatermark'] != 'true')){
