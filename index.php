@@ -1808,56 +1808,7 @@
 	</script>
 	
 	<script src='https://raw.githack.com/hsynlms/zeynepjs/master/dist/zeynep.min.js'></script>
-<script>
-// zeynepjs initialization for demo
-$(function() {
-
-  var zeynep = $('.zeynep').zeynep({
-    opened: function () {
-      console.log('the side menu is opened')
-    }
-  })
-
-  // dynamically bind 'closing' event
-  zeynep.on('closing', function () {
-    console.log('this event is dynamically binded')
-  })
-
-  // handle zeynepjs overlay click
-  $('.zeynep-overlay').on('click', function () {
-    $(".hamburger").removeClass("is-active");
-	zeynep.close();
-  })
-
-  // open zeynepjs side menu
-  $('.btn-open, .hamburger').on('click', function () {
-    if($(".hamburger").hasClass("is-active")) {
-		$(".hamburger").removeClass("is-active");
-		zeynep.close();
-	}
-	else {
-		zeynep.open();
-		$(".hamburger").addClass("is-active");
-	}
-  });
-	
-	// open drawer by tab click
-	var currdsopen= 'nonexistentds';
-	$(".hvmobdstabs").click(function(){
-		var thisdrawersect=  $(this).attr('drawersec');
-		//alert(thisdrawersect);
-		// if it's not already open, close currently open drawer and open correct one
-		if(thisdrawersect != currdsopen) {
-			$('#'+currdsopen).css('display','none');
-			$('#'+thisdrawersect).css('display','block');
-			currdsopen= thisdrawersect;
-		}
-
-	});  	
-	
-
-});
-</script>
+	<script src="resources/js/responsive/hv_responsive.js"></script>
 	
 	<?php
 		if($outputType=='embed' && (!isset($_GET['hideWatermark']) || $_GET['hideWatermark'] != 'true')){
