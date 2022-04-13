@@ -35,6 +35,7 @@ $(function() {
 	var currdsopen= 'nonexistentds';
 	$(".hvmobdstabs").click(function(){
 		$('.hvmodbstabs').css('background-image','url(https://develop.helioviewer.org/resources/images/backmobilemenubg2.png)');
+		$(this).css('background-image','url(https://develop.helioviewer.org/resources/images/mobiletabbgwhite1.png)');
 		var thisdrawersect= this.attr('drawersec');
 		// if it's not already open, close currently open drawer and open correct one
 		if(thisdrawersect != currdsopen) {
