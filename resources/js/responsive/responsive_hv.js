@@ -34,9 +34,9 @@ $(function() {
 	// open drawer by tab click
 	var currdsopen= 'nonexistentds';
 	$(".hvmobdstabs").click(function(){
-		$('.hvmodbstabs').css('background-image','url(https://develop.helioviewer.org/resources/images/backmobilemenubg2.png)');
+		$('.hvmodbstabs').css({'background-image':'url(https://develop.helioviewer.org/resources/images/backmobilemenubg2.png)','color':'black'});
 		$(this).css('background-image','url(https://develop.helioviewer.org/resources/images/mobiletabbgwhite1.png)');
-		var thisdrawersect= this.attr('drawersec');
+		var thisdrawersect= $(this).attr('drawersec');
 		// if it's not already open, close currently open drawer and open correct one
 		if(thisdrawersect != currdsopen) {
 			$('#'+currdsopen).slideDown("slow");
