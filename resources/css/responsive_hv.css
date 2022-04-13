@@ -106,6 +106,7 @@
 		display: block !important;
 	    position: absolute !important;
 	    width: 100% !important;
+		max-height: 480px;
 		min-height: 80px;
 	    top: auto !important;
 	    bottom: 0;
@@ -242,6 +243,12 @@
 	}
 
 }
+
+/* tablets & smartphones */
+@media screen and (max-width: 790px) and (orientation : landscape) {  /*   */
+	#hv-drawer-left {
+		max-height: 90%;
+	}
 
 /* smartphones */
 @media screen and (max-width: 599px) {
