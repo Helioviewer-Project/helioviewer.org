@@ -104,7 +104,7 @@
 	}	
 	
 	#hv-drawer-left {
-		display: none !important;
+		display: none;
 	    position: absolute !important;
 	    width: 100% !important;
 		max-height: 480px !important;
