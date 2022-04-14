@@ -289,10 +289,10 @@
 	
 <!-- START Mobile Drawer Tabs -->
 <div class="hvmobdstab_wrap">
-	<div class="hvmobdstabs" drawersec="accordion-date">Observation Date</div>&nbsp;
-	<div class="hvmobdstabs" drawersec="accordion-images">Images</div>&nbsp;
-	<div class="hvmobdstabs" drawersec="accordion-events">Features & Events</div>&nbsp;
-	<div class="hvmobdstabs" drawersec="accordion-bodies">Celestial Bodies</div>
+	<div class="hvmobdstabs" id="accordion-date_mobtab" drawersec="accordion-date">Observation Date</div>&nbsp;
+	<div class="hvmobdstabs" id="accordion-images_mobtab" drawersec="accordion-images">Images</div>&nbsp;
+	<div class="hvmobdstabs" id="accordion-events_mobtab" drawersec="accordion-events">Features & Events</div>&nbsp;
+	<div class="hvmobdstabs" id="accordion-bodies_mobtab" drawersec="accordion-bodies">Celestial Bodies</div>
 </div>
 <!-- END Mobile Drawer Tabs -->	
 	
