@@ -36,7 +36,7 @@ $(function() {
 	$(".hvmobdstabs").click(function(){
 		$('.hvmodbstabs').css('background-image','url(https://develop.helioviewer.org/resources/images/backmobilemenubg2.png)');
 		var hvmobtabid = this.id; //$(this).attr('id');
-		//console.log($(this));
+		console.log(hvmobtabid);
 		$('#'+hvmobtabid).css({'background-image':'url(https://develop.helioviewer.org/resources/images/mobiletabbgwhite1.png)','color':'black'});
 		var thisdrawersect= $('#'+hvmobtabid).attr('drawersec'); //$(this)
 		// if it's not already open, close currently open drawer and open correct one
