@@ -41,7 +41,7 @@ $(function() {
 		var thisdrawersect= $(this).attr('drawersec');
 		// if it's not already open, close currently open drawer and open correct one
 		if(thisdrawersect != currdsopen) {
-			$('#hv-drawer-left').attr('style', '');
+			$('#hv-drawer-left').attr('style', 'display: none');
 			$('#hv-drawer-left').fadeOut("fast");
 			$('#'+currdsopen).css('display','none');
 			$('#'+thisdrawersect).css('display','block');
