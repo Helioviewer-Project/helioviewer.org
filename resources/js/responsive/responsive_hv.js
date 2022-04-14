@@ -35,7 +35,8 @@ $(function() {
 	var currdsopen= 'nonexistentds';
 	$(".hvmobdstabs").click(function(){
 		$('.hvmodbstabs').css('background-image','url(https://develop.helioviewer.org/resources/images/backmobilemenubg2.png)');
-		$(this).css({'background-image':'url(https://develop.helioviewer.org/resources/images/mobiletabbgwhite1.png)','color':'black'});
+		var hvmobtabid = $(this).attr('id');
+		$('#'+hvmobtabid).css({'background-image':'url(https://develop.helioviewer.org/resources/images/mobiletabbgwhite1.png)','color':'black'});
 		var thisdrawersect= this.attr('drawersec'); //$(this)
 		// if it's not already open, close currently open drawer and open correct one
 		if(thisdrawersect != currdsopen) {
