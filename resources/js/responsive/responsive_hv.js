@@ -1,6 +1,8 @@
 // zeynepjs initialization for demo
 $(function() {
 
+	var currdsopen= 'nonexistentds';
+
 	// add closing X to #hv-drawer-left
 	$('#hv-drawer-left').prepend('<div id="hvmobdrawerclose">x&nbsp;&nbsp;</div>');
 
@@ -9,6 +11,7 @@ $(function() {
 		$('#hvmobdrawerclose').css('display','none');
 		$('#hv-drawer-left').css('display','none');
 		$('#hv-drawer-left').attr('style', 'display: none');
+		currdsopen= 'nonexistentds'
 	});
 
 
@@ -43,7 +46,7 @@ $(function() {
 
 
 	// open drawer by tab click
-	var currdsopen= 'nonexistentds';
+	
 	$(".hvmobdstabs").click(function(){
 		$('.hvmodbstabs').css({'background-image':'url(https://develop.helioviewer.org/resources/images/backmobilemenubg2.png)'});
 		var hvmobtabid = $(this).attr('drawersec')+'_mobtab';
