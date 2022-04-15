@@ -7,6 +7,8 @@ $(function() {
 	$("#hvmobdrawerclose").click(function(){
 		$('#accordion-date, #accordion-images, #accordion-events, #accordion-bodies').css('display','none');
 		$('#hvmobdrawerclose').css('display','none');
+		$('#hv-drawer-left').css('display','none');
+		$('#hv-drawer-left').attr('style', 'display: none');
 	});
 
 
