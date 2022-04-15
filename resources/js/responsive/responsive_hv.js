@@ -42,10 +42,10 @@ $(function() {
 		// if it's not already open, close currently open drawer and open correct one
 		if(thisdrawersect != currdsopen) {
 			$('#hv-drawer-left').attr('style', 'display: none');
-			$('#hv-drawer-left').fadeOut("fast");
+			//$('#hv-drawer-left').fadeOut("fast");
 			$('#'+currdsopen).css('display','none');
 			$('#'+thisdrawersect).css('display','block');
-			$('#hv-drawer-left').slideUp("fast");
+			$('#hv-drawer-left').css('display','block');
 			currdsopen= thisdrawersect;
 		}
 
