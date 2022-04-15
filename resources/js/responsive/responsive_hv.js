@@ -45,7 +45,7 @@ $(function() {
 			//$('#hv-drawer-left').fadeOut("fast");
 			$('#'+currdsopen).css('display','none');
 			$('#'+thisdrawersect).css('display','block');
-			$('#hv-drawer-left').css('display':'block','height':'100%');
+			$('#hv-drawer-left').css({'display':'block','height':'100%'});
 			currdsopen= thisdrawersect;
 		}
 
