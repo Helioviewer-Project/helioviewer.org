@@ -104,14 +104,14 @@
 	}	
 	
 	#hv-drawer-left {
-		display: none !important;
+		display: none;
 	    position: absolute !important;
 	    width: 100% !important;
 		max-height: 480px !important;
 		height: 480px !important;
 		min-height: 80px;
-	    top: auto !important;
-	    bottom: 0;
+	    top: 46px;
+	    /* bottom: 0; */
 		/*margin-bottom: 40px;*/
 		background-color: transparent; /*transparent !important;*/
 		background-image: url(../images/backmobilemenubg2.png);
