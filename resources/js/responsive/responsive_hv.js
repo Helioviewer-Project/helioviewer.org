@@ -62,6 +62,7 @@ function handleTabletChange(e) {
     // Then log the following message to the console
     console.log('Media Query Matched!');
 	$('#hv-drawer-left').attr('style', 'display: none');
+	$('#hv-drawer-left').css('display','none');
   }
 }
 
