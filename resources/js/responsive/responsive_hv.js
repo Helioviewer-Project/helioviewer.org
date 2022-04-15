@@ -54,6 +54,10 @@ $(function() {
 
 });
 
+// add closing X to #hv-drawer-left
+$('#hv-drawer-left').prepend('<div id="hvmobdrawerclose">X&nbsp;&nbsp;</div>');
+
+
 // START media query 
 
 // Create a condition that targets viewports at least 790px wide
