@@ -105,20 +105,19 @@
 	
 	#hv-drawer-left {
 		display: none;
-	    position: absolute !important;
-	    width: 100% !important;
-		max-height: 480px !important;
-		height: 480px !important;
-		min-height: 80px;
-	    top: 46px;
-	    /* bottom: 0; */
-		/*margin-bottom: 40px;*/
-		background-color: transparent; /*transparent !important;*/
+		position: absolute !important;
+		width: 100% !important;
+		max-height: 100% !important;
+		height: auto !important;
+		min-height: 0px;
+		top: 46px;
+		/* bottom: 0; */
+		/* margin-bottom: 40px; */
+		background-color: transparent;
 		background-image: url(../images/backmobilemenubg2.png);
 		-moz-box-shadow: 0 0 #0000;
 		-webkit-box-shadow: 0 0 #0000;
 		box-shadow: 0 0 #0000;
-		border-top: 1px solid white;
 	}
 	
 	.drawer-contents {
