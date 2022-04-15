@@ -61,7 +61,7 @@ function handleTabletChange(e) {
   if (e.matches) {
     // Then log the following message to the console
     console.log('Media Query Matched!');
-	$('#hv-drawer-left').attr('style', 'display: none');
+	$('#hv-drawer-left').attr('style', 'display: none !important');
 	$('#hv-drawer-left').css('display','none');
   }
 }
