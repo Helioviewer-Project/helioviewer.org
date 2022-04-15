@@ -1,6 +1,14 @@
 // zeynepjs initialization for demo
 $(function() {
 
+	// add closing X to #hv-drawer-left
+	$('#hv-drawer-left').prepend('<div id="hvmobdrawerclose">x&nbsp;&nbsp;</div>');
+
+	$("#hvmobdrawerclose").click(function(){
+		$('#accordion-date, #accordion-images, #accordion-events, #accordion-bodies').css('display','none');
+		$('#hvmobdrawerclose').css('display','none');
+	});
+
 
   var zeynep = $('.zeynep').zeynep({
     opened: function () {
@@ -40,6 +48,7 @@ $(function() {
 		// console.log(hvmobtabid);
 		$('#'+hvmobtabid).css({'background-image':'url(https://develop.helioviewer.org/resources/images/mobiletabbgwhite1.png)','color':'black'});
 		var thisdrawersect= $(this).attr('drawersec');
+		
 		// if it's not already open, close currently open drawer and open correct one
 		if(thisdrawersect != currdsopen) {
 			$('#hv-drawer-left').attr('style', 'display: none');
@@ -47,6 +56,7 @@ $(function() {
 			$('#'+currdsopen).css('display','none');
 			$('#'+thisdrawersect).css('display','block');
 			$('#hv-drawer-left').css({'display':'block','height':'100%'});
+			$('#hvmobdrawerclose').css('display','block');
 			currdsopen= thisdrawersect;
 		}
 
@@ -54,8 +64,7 @@ $(function() {
 
 });
 
-// add closing X to #hv-drawer-left
-$('#hv-drawer-left').prepend('<div id="hvmobdrawerclose">X&nbsp;&nbsp;</div>');
+
 
 
 // START media query 
