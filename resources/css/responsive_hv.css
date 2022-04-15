@@ -120,9 +120,11 @@
 	}
 	
 	#hvmobdrawerclose {
+		display:none;
 		font-family: arial, helvetica, verdana, sans-serif;
-		font-size: 15px;
+		font-size: 17px;
 		text-align: right;
+		font-weight: bold;
 	}
 	
 	.drawer-contents {
