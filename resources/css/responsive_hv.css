@@ -237,7 +237,7 @@
 	}
 
 	#accordion-date, #accordion-images, #accordion-events, #accordion-bodies {
-		/*display: none;*/
+		display: none;
 	}
 	
 	.hvmobdstab_wrap {
