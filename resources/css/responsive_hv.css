@@ -119,6 +119,12 @@
 		box-shadow: 0 0 #0000;
 	}
 	
+	#hvmobdrawerclose {
+		font-family: arial, helvetica, verdana, sans-serif;
+		font-size: 15px;
+		text-align: right;
+	}
+	
 	.drawer-contents {
 		display: block;
 	}
