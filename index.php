@@ -295,19 +295,23 @@
 	<div class="hvmobdstabs" id="accordion-events_mobtab" drawersec="accordion-events">Features & Events</div>&nbsp;
 	<div class="hvmobdstabs" id="accordion-bodies_mobtab" drawersec="accordion-bodies">Celestial Bodies</div>
 	-->
-	<table class="hvmobds_table" cellpadding="0" cellspacing="0" border="0">
-		<tr class="hvmobds_tr">
-			<td class="hvmobds_td">
-				<img class="hvmobds_icon" drawersec="accordion-images" src="https://develop.helioviewer.org/resources/images/mobile/images_icon1.png">
-			</td>
-			<td class="hvmobds_td">
-				<img class="hvmobds_icon" drawersec="accordion-events" src="https://develop.helioviewer.org/resources/images/mobile/events_icon1.png">
-			</td>
-			<td class="hvmobds_td">
-				<img class="hvmobds_icon" drawersec="accordion-bodies" src="https://develop.helioviewer.org/resources/images/mobile/celestial_icon2.png">
-			</td>
-		</tr>
-	</table>
+<table class="hvmobds_table" cellpadding="0" cellspacing="0" border="0">
+	<tr class="hvmobds_tr">
+		<td class="hvmobds_td">
+			<img class="hvmobds_icon" drawersec="accordion-images" src="https://develop.helioviewer.org/resources/images/mobile/images_icon1.png">
+			<br><span>Images</span>
+		</td>
+		<td class="hvmobds_td">
+			<img class="hvmobds_icon" drawersec="accordion-events" src="https://develop.helioviewer.org/resources/images/mobile/events_icon1.png">
+			<br><span>Features &<br>Events</span>
+		</td>
+		<td class="hvmobds_td">
+			<img class="hvmobds_icon" drawersec="accordion-bodies" src="https://develop.helioviewer.org/resources/images/mobile/celestial_icon2.png">
+			<br><span>Celestial<br>Bodies</span>
+		</td>
+	</tr>
+</table>
+	
 </div>
 <!-- END Mobile Drawer Tabs -->	
 	
