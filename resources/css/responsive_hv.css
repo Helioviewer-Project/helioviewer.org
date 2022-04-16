@@ -92,8 +92,9 @@
 	}
 	
 	.hvmobds_td {
+		padding-top: 4px;
 		text-align:center;
-		vertical-align:middle;
+		vertical-align: top;
 		font-size: 9px;
 		color: white;
 	}
@@ -101,10 +102,16 @@
 	.hvmobds_td a {
 		text-decoration: none;
 		border: 0px solid white;
+		cursor: pointer;
 	}
 	
 	.hvmobds_td span {
 		line-height: 6.5px;
+		color: silver;
+	}
+	
+	.hvmobds_td span:hover {
+		color: #ffffff;
 	}
 	
 	.hvmobds_icon {
