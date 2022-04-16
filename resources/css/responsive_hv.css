@@ -152,6 +152,7 @@
 	
 	html, body {
 		min-width: 300px !important;
+		min-height: 400px;
 	}
 
 	#helioviewer-viewport-container-outer {
