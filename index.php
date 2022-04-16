@@ -304,7 +304,7 @@
 				<img class="hvmobds_icon" drawersec="accordion-events" src="https://develop.helioviewer.org/resources/images/mobile/events_icon1.png">
 			</td>
 			<td class="hvmobds_td">
-				<img class="hvmobds_icon" drawersec="accordion-bodies" src="https://develop.helioviewer.org/resources/images/mobile/celestial_icon1.png">
+				<img class="hvmobds_icon" drawersec="accordion-bodies" src="https://develop.helioviewer.org/resources/images/mobile/celestial_icon2.png">
 			</td>
 		</tr>
 	</table>
