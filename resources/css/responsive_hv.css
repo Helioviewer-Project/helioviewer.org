@@ -124,8 +124,14 @@
 		filter: invert(100%) sepia(5%) saturate(7409%) hue-rotate(183deg) brightness(123%) contrast(95%);
 	}
 	
-	.hvmobdrawerclose_div {
+	#hvmobdrawerclose_div {
 		text-align:right;
+	}
+	
+	#hvmobdrawerclose {
+		width:30px;
+		height:30px
+		filter: invert(100%) sepia(5%) saturate(7409%) hue-rotate(183deg) brightness(123%) contrast(95%);
 	}
 	
 
@@ -165,14 +171,6 @@
 		-moz-box-shadow: 0 0 #0000;
 		-webkit-box-shadow: 0 0 #0000;
 		box-shadow: 0 0 #0000;
-	}
-	
-	#hvmobdrawerclose {
-		display:none;
-		font-family: arial, helvetica, verdana, sans-serif;
-		font-size: 17px;
-		text-align: right;
-		font-weight: bold;
 	}
 	
 	.drawer-contents {
