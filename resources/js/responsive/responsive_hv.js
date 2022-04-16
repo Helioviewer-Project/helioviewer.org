@@ -61,7 +61,7 @@ $(function() {
 			$('#'+currdsopen).css('display','none');
 			$('#'+thisdrawersect).css('display','block');
 			$('#hv-drawer-left').css({'display':'block','height':'100%'});
-			$('#hvmobdrawerclose').css('display','block');
+			$('#hvmobdrawerclose').css('display','inline');
 			currdsopen= thisdrawersect;
 		}
 
