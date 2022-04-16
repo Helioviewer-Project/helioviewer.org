@@ -305,13 +305,13 @@
 		</td>
 		<td class="hvmobds_td">
 			<a class="hvmobdstabs" drawersec="accordion-events">
-				<img class="hvmobds_icon" drawersec="accordion-events" src="https://develop.helioviewer.org/resources/images/mobile/events_icon1.png">
+				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/events_icon1.png">
 				<br><span>Features &<br>Events</span>
 			</a>
 		</td>
 		<td class="hvmobds_td">
 			<a class="hvmobdstabs" drawersec="accordion-bodies">
-				<img class="hvmobds_icon" drawersec="accordion-bodies" src="https://develop.helioviewer.org/resources/images/mobile/celestial_icon2.png">
+				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/celestial_icon2.png">
 				<br><span>Celestial<br>Bodies</span>
 			</a>
 		</td>
