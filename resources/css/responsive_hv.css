@@ -100,6 +100,7 @@
 	}
 	
 	.hvmobds_td a {
+		background: transparent;
 		text-decoration: none;
 		border: 0px solid white;
 		cursor: pointer;
