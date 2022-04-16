@@ -57,7 +57,7 @@
 	
 	.hvmobdstab_wrap {
 		display: none;
-		position: absolute;
+		position: fixed;
 		background-image: url(../images/backmobilemenubg2.png);
 		height: 65px;
 		z-index: 3;
