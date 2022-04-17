@@ -203,7 +203,7 @@
 	}
 	
 	.dynaccordion-section {
-		background: transparent;
+		background: transparent !important;
 	}
 	
 	#logo {
