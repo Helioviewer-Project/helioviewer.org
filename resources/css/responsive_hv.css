@@ -300,6 +300,11 @@
 		height: 35px;
 		padding-top: 35px;
 	}
+	
+	.drawer-contents .content {
+		width: 340px;
+		margin: auto;
+	}
 
 	#accordion-date, #accordion-images, #accordion-events, #accordion-bodies {
 		display: none;
