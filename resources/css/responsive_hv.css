@@ -130,6 +130,8 @@
 		text-align:right;
 		position: fixed;
 		width: 100%;
+		z-index: 9;
+		background: black;
 	}
 	
 	#hvmobdrawerclose {
@@ -181,6 +183,7 @@
 	.drawer-contents {
 		display: block;
 	}
+	
 	
 	.drawer-contents .content .section {
 		background: transparent;
@@ -294,7 +297,7 @@
 
 	.drawer-contents .header {
 		height: 35px;
-		padding-top: 10px;
+		padding-top: 35px;
 	}
 
 	#accordion-date, #accordion-images, #accordion-events, #accordion-bodies {
