@@ -8,7 +8,7 @@ $(function() {
 
 	$("#hvmobdrawerclose").click(function(){
 		$('#accordion-date, #accordion-images, #accordion-events, #accordion-bodies').css('display','none');
-		$('#hvmobdrawerclose').css('display','none');
+		$('#hvmobdrawerclose_div').css('display','none');
 		$('#hv-drawer-left').css('display','none');
 		$('#hv-drawer-left').attr('style', 'display: none');
 		currdsopen= 'nonexistentds'
@@ -61,7 +61,7 @@ $(function() {
 			$('#'+currdsopen).css('display','none');
 			$('#'+thisdrawersect).css('display','block');
 			$('#hv-drawer-left').css({'display':'block','height':'100%'});
-			$('#hvmobdrawerclose').css('display','inline');
+			$('#hvmobdrawerclose_div').css('display','block');
 			currdsopen= thisdrawersect;
 		}
 
