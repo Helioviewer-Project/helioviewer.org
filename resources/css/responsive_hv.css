@@ -331,6 +331,10 @@
 		display: none;
 	}
 	
+	#accordian-images h1:first-child {
+		margin-left: 100px;
+	}
+	
 	.hvmobdstab_wrap {
 		display: block;
 	}
