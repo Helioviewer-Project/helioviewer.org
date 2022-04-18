@@ -1,7 +1,8 @@
 
 	.zeynep {
 		background-image: url(../images/backmobilemenubg2.png);
-		border-left: 3px solid #404143;
+		/*border-left: 3px solid #404143;*/
+		box-shadow: 9pt 9pt 4pt 9pt rgb(255 255 255 / 75%);
 	}
 
 	.zeynep ul {
@@ -131,7 +132,7 @@
 		position: fixed;
 		width: 100%;
 		z-index: 9;
-		background: black;
+		background: transparent;
 	}
 	
 	#hvmobdrawerclose {
@@ -258,7 +259,7 @@
 		height: 40px;
 		min-width: 300px !important;
 		max-height: 40px;
-		background: #000000;
+		background-image: url(../images/backmobilemenubg2.png);
 	}
 	
 
@@ -330,6 +331,10 @@
 	
 	.hvmobdstab_wrap {
 		display: block;
+	}
+	
+	.dynaccordion-section:last-child {
+		padding-bottom: 130px;
 	}
 
 }
