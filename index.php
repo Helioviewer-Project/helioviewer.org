@@ -295,12 +295,14 @@
 	<div class="hvmobdstabs" id="accordion-events_mobtab" drawersec="accordion-events">Features & Events</div>&nbsp;
 	<div class="hvmobdstabs" id="accordion-bodies_mobtab" drawersec="accordion-bodies">Celestial Bodies</div>
 	-->
+	
+<!-- START: Mobile Data source menu -->
 <table class="hvmobds_table" cellpadding="0" cellspacing="0" border="0">
 	<tr class="hvmobds_tr">
 		<td class="hvmobds_td">
 			<a class="hvmobdstabs" drawersec="accordion-images">
 				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/images_icon1.png">
-				<br><span>Images</span>
+				<br><span>Images &<br>Layers</span>
 			</a>
 		</td>
 		<td class="hvmobds_td">
@@ -317,6 +319,7 @@
 		</td>
 	</tr>
 </table>
+<!-- END: Mobile Data source menu -->
 	
 </div>
 <!-- END Mobile Drawer Tabs -->	
