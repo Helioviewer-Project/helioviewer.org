@@ -6,6 +6,7 @@ $(function() {
 	// add closing X to #hv-drawer-left
 	$('#hv-drawer-left').prepend('<div id="hvmobdrawerclose_div"><img id="hvmobdrawerclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
+	// closing drawer function
 	$("#hvmobdrawerclose").click(function(){
 		$('#accordion-date, #accordion-images, #accordion-events, #accordion-bodies').css('display','none');
 		$('#hvmobdrawerclose_div').css('display','none');
@@ -14,6 +15,8 @@ $(function() {
 		currdsopen= 'nonexistentds'
 	});
 
+	// hide triangle disclosure
+	$('.header .disclosure-triangle').html('&nbsp;&nbsp;');
 
   var zeynep = $('.zeynep').zeynep({
     opened: function () {
