@@ -336,7 +336,7 @@
 	}
 	
 	.dynaccordion-section {	
-		padding-bottom: 30px;
+		padding-bottom: 30px !important;
 	}
 	
 	.dynaccordion-section:last-child {
