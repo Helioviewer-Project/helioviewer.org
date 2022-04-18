@@ -259,8 +259,6 @@
 		min-width: 300px !important;
 		max-height: 40px;
 		background-image: url(../images/backmobilemenubg2.png);
-		text-align: center;
-		font-size: 16px;
 	}
 	
 
@@ -301,6 +299,8 @@
 	.drawer-contents .header {
 		height: 35px;
 		padding-top: 35px;
+		text-align: center;
+		font-size: 16px;
 	}
 	
 	.drawer-contents .content {
