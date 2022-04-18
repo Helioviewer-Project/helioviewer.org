@@ -73,7 +73,7 @@
 		height: 100%;
 		padding-left:6px;
 		padding-right:6px;
-		padding-top:4px;
+		padding-top:0px;
 		background-image: url(../images/backmobilemenubg2.png);
 		border: 1px solid white;
 		border-bottom: 0px solid black;
@@ -302,6 +302,7 @@
 	}
 	
 	.drawer-contents .content {
+		display: block;
 		width: 100%;
 		margin: auto;
 	}
@@ -332,8 +333,16 @@
 		display: block;
 	}
 	
+	.dynaccordion-section {	
+		padding-bottom: 30px;
+	}
+	
 	.dynaccordion-section:last-child {
 		padding-bottom: 130px !important;
+	}
+	
+	#add-new-tile-layer-btn {
+		font-size: 12px;
 	}
 
 }
