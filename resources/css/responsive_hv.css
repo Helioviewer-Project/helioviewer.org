@@ -331,7 +331,7 @@
 		display: none;
 	}
 	
-	#accordian-images h1:first-child {
+	#accordian-images .header .disclosure-triangle h1:first-child {
 		margin-left: 100px;
 	}
 	
