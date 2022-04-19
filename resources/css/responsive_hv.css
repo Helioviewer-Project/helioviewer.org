@@ -176,9 +176,10 @@
 		/* margin-bottom: 40px; */
 		background-color: transparent;
 		background-image: url(../images/backmobilemenubg2.png);
-		-moz-box-shadow: 0 0 #0000;
-		-webkit-box-shadow: 0 0 #0000;
-		box-shadow: 0 0 #0000;
+		-moz-box-shadow: 0pt 2pt 4pt 1pt rgb(255 255 255 / 75%);
+		-webkit-box-shadow: 0pt 2pt 4pt 1pt rgb(255 255 255 / 75%);
+		box-shadow: 0pt 2pt 4pt 1pt rgb(255 255 255 / 75%);
+		padding-top: 10px;
 	}
 	
 	.drawer-contents {
@@ -259,8 +260,7 @@
 		min-width: 300px !important;
 		max-height: 40px;
 		background-image: url(../images/backmobilemenubg2.png);
-		box-shadow: 0pt 2pt 4pt 1pt rgb(255 255 255 / 75%);
-		padding-top: 10px;
+
 	}
 	
 
@@ -291,6 +291,7 @@
 		border-top-left-radius: 0px;
 		border-bottom-left-radius: 0px;
 		border-bottom-right-radius: 4pt;
+		
 		
 	}
 	
