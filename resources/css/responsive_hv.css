@@ -381,6 +381,14 @@
 	#soho-psp-tree-branch, #stereo_a-psp-tree-branch {
 		clear:both;
 	}
+	
+	.fa-question-circle {
+		display: none;
+	}
+	
+	div.dropdown-holder.layersPresetsList {
+		display: none;
+	}
 
 }
 
