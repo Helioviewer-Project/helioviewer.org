@@ -400,7 +400,7 @@
 }
 
 /* tablets & smartphones */
-@media screen and (max-width: 790px) and (orientation : landscape) {  /*   */
+@media screen and (max-width: 790px) and (orientation : landscape) { 
 	#hv-drawer-left {
 		max-height: 90% !important;
 	}
