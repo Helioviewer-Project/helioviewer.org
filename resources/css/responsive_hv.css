@@ -259,6 +259,8 @@
 		min-width: 300px !important;
 		max-height: 40px;
 		background-image: url(../images/backmobilemenubg2.png);
+		box-shadow: 0pt 2pt 4pt 1pt rgb(255 255 255 / 75%);
+		padding-top: 10px;
 	}
 	
 
