@@ -162,10 +162,16 @@
 	}
 
 	#helioviewer-viewport-container-outer {
-		min-width: 800px !important;
-		height: 800px;
-		touch-action: pinch-zoom;
+		min-width: 300px !important;
+
 	}	
+	
+	
+	
+	#helioviewer-viewport-container-inner {
+		height: 800px;
+		touch-action: pinch-zoom;		
+	}
 	
 	#hv-drawer-left {
 		display: none;
