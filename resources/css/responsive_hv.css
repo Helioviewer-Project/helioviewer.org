@@ -397,9 +397,19 @@
 		display: none !important;
 	}
 
+	#eventJSTree a {
+		font-family: arial, helvetica, verdana;
+		color: #ffffff !important;
+	}
+	
+	.observer-jstree a {
+		font-family: arial, helvetica, verdana;
+		color: #ffffff !important;
+	}
+
 }
 
-/* tablets & smartphones */
+/* tablets & smartphones LANDSCAPE */
 @media screen and (max-width: 790px) and (orientation : landscape) { 
 	#hv-drawer-left {
 		max-height: 100% !important;
