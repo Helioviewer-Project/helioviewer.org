@@ -405,6 +405,11 @@
 		max-height: 90% !important;
 	}
 
+	.dynaccordian-section {
+		margin: auto !important;
+		max-width: 500px;
+	}
+
 	.hvmobbs_br {
 		display: none;
 	}
