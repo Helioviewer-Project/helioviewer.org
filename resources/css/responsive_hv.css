@@ -355,11 +355,14 @@
 	}
 	
 	.dynaccordion-section {	
+		padding-top: 13px;
 		padding-bottom: 30px !important;
+		border-bottom: 1px solid #34282C;
 	}
 	
 	.dynaccordion-section:last-child {
 		padding-bottom: 130px !important;
+		border-bottom: 0px solid #34282C;
 	}
 	
 	#add-new-tile-layer-btn {
@@ -387,7 +390,7 @@
 	}
 	
 	div.dropdown-holder.layersPresetsList {
-		display: none;
+		display: none !important;
 	}
 
 }
