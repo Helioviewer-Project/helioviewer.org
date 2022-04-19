@@ -355,7 +355,7 @@
 	}
 	
 	.dynaccordion-section {	
-		padding-top: 13px;
+		padding-top: 13px !important;
 		padding-bottom: 30px !important;
 		border-bottom: 1px solid #34282C;
 	}
