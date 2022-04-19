@@ -354,6 +354,10 @@
 		display: block;
 	}
 	
+	.hvmobbs_br {
+		display: inline;
+	}
+	
 	.dynaccordion-section {	
 		padding-top: 13px !important;
 		padding-bottom: 30px !important;
@@ -400,6 +404,12 @@
 	#hv-drawer-left {
 		max-height: 90% !important;
 	}
+
+	.hvmobbs_br {
+		display: none;
+	}
+
+}
 
 /* smartphones */
 @media screen and (max-width: 599px) {
