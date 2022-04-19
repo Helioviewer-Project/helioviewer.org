@@ -374,7 +374,7 @@
 	}
 	
 	.jstree > ul > li:first-child, .jstree > ul > li:nth-child(2) {
-		margin-top: 10px;
+		margin-top: 20px;
 	}
 
 	
@@ -408,6 +408,11 @@
 	.dynaccordion-section {
 		margin: auto !important;
 		max-width: 500px;
+	}
+
+	.hvmobdstab_wrap {
+		height: 50px;
+		min-height:50px;
 	}
 
 	.hvmobbs_br {
