@@ -223,6 +223,10 @@
 		text-align: left !important;
 	}
 	
+	#hv-header #loading {
+		top: 40%;
+	}
+	
 	#menus {
 		display: none;
 	}
@@ -360,6 +364,22 @@
 	
 	#add-new-tile-layer-btn {
 		font-size: 12px;
+	}
+	
+	.jstree > ul > li:first-child, .jstree > ul > li:nth-child(2) {
+		margin-top: 10px;
+	}
+
+	
+	.jstree > ul > li {
+		margin-left: 0px;
+		margin-bottom: 10px;
+		width: 50%;
+		float: left;
+	}	
+	
+	#soho-psp-tree-branch, #stereo_a-psp-tree-branch {
+		clear:both;
 	}
 
 }
