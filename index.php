@@ -302,19 +302,19 @@
 		<td class="hvmobds_td">
 			<a class="hvmobdstabs" drawersec="accordion-images">
 				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/images_icon1.png">
-				<br><span>Images &amp;<span class="hvmobbs_br"><br></span>Layers</span>
+				<br><span>Images &amp;<span class="hvmobbs_br"><br></span> Layers</span>
 			</a>
 		</td>
 		<td class="hvmobds_td">
 			<a class="hvmobdstabs" drawersec="accordion-events">
 				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/events_icon1.png">
-				<br><span>Features &amp;<span class="hvmobbs_br"><br></span>Events</span>
+				<br><span>Features &amp;<span class="hvmobbs_br"><br></span> Events</span>
 			</a>
 		</td>
 		<td class="hvmobds_td">
 			<a class="hvmobdstabs" drawersec="accordion-bodies">
 				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/celestial_icon2.png">
-				<br><span>Celestial<span class="hvmobbs_br"><br></span>Bodies</span>
+				<br><span>Celestial<span class="hvmobbs_br"><br></span> Bodies</span>
 			</a>
 		</td>
 	</tr>
