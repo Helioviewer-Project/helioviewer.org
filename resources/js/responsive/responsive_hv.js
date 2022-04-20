@@ -92,6 +92,8 @@ function handleTabletChange(e) {
 	$('.qtip').each(function(){
 	  $(this).data('qtip').destroy();
 	});
+	$('[data-hasqtip]').qtip('destroy', true);
+	$(mytooltip).remove();
   }
 }
 
