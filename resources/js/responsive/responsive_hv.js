@@ -88,7 +88,9 @@ function handleTabletChange(e) {
 	$('#hv-drawer-left').attr('style', 'display: none !important');
 	$('#hv-drawer-left').css({'display':'none'});
 	
-	$(".qtip").remove();
+	$('.qtip').each(function(){
+	  $(this).data('qtip').destroy();
+	});
   }
 }
 
