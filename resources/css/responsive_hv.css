@@ -166,11 +166,13 @@
 
 	}	
 	
-	
-	
 	#helioviewer-viewport-container-inner {
 		height: 800px;
 		touch-action: pinch-zoom;		
+	}
+	
+	.qtip {
+		display: none !important;
 	}
 	
 	#hv-drawer-left {
