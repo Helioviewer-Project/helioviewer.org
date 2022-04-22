@@ -51,11 +51,15 @@ $(function() {
 	// open drawer by tab click
 	
 	$(".hvmobdstabs").click(function(){
-		$('.hvmodbstabs').css({'background-image':'url(https://develop.helioviewer.org/resources/images/backmobilemenubg2.png)'});
-		var hvmobtabid = $(this).attr('drawersec')+'_mobtab';
+		//$('.hvmobdstabs').css({'background-image':'url(https://develop.helioviewer.org/resources/images/backmobilemenubg2.png)'});
+		//var hvmobtabid = $(this).attr('drawersec')+'_mobtab';
 		// console.log(hvmobtabid);
-		$('#'+hvmobtabid).css({'background-image':'url(https://develop.helioviewer.org/resources/images/mobiletabbgwhite1.png)','color':'black'});
+		//$('#'+hvmobtabid).css({'background-image':'url(https://develop.helioviewer.org/resources/images/mobiletabbgwhite1.png)','color':'black'});
 		var thisdrawersect= $(this).attr('drawersec');
+		
+		$('.hvmobdstabs .hvmobds_icon, .hvmobdstabs span').css('filter','invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%)');
+
+		$(this).children( '.hvmobds_icon, span' ).css('filter','invert(91%) sepia(89%) saturate(602%) hue-rotate(331deg) brightness(102%) contrast(94%)');
 		
 		// if it's not already open, close currently open drawer and open correct one
 		if(thisdrawersect != currdsopen) {
