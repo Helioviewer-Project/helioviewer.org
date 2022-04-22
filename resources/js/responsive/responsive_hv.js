@@ -16,7 +16,7 @@ $(function() {
 	});
 
 	// hide triangle disclosure
-	$('.header .disclosure-triangle').html('&nbsp;&nbsp;');
+	$('#accordion-images .header h1').css('margin-left','70px');
 
   var zeynep = $('.zeynep').zeynep({
     opened: function () {
