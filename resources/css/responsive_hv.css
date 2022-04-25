@@ -199,7 +199,7 @@
 		display: none;
 		position: absolute !important;
 		width: 100% !important;
-		max-height: 100% !important;
+		max-height: 150% !important;
 		min-height: 0px;
 		top: 46px;
 		/* bottom: 0; */
@@ -210,6 +210,7 @@
 		-webkit-box-shadow: 0pt 2pt 4pt 1pt rgb(255 255 255 / 75%);
 		box-shadow: 0pt 2pt 4pt 1pt rgb(255 255 255 / 75%);
 		padding-top: 10px;
+		padding-bottom: 130px;
 		z-index: 8 !important;
 	}
 	
@@ -364,11 +365,11 @@
 	}
 
 	#image-tile-layer-1650895269599-download-btn {
-		display: none;
+		display: none !important;
 	}
 
-	image-tile-layer-1650895269599-info-btn {
-		display: none;
+	#image-tile-layer-1650895269599-info-btn {
+		display: none !important;
 	}	
 	
 	.drawer-contents .content {
