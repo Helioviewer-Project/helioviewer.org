@@ -142,7 +142,7 @@
 	}
 	
 
-@media screen and (min-width: 791px) {	
+@media screen and (min-width: 992px) {	/* 791px */
 	.zeynep {
 		display: none;
 	}
@@ -154,7 +154,7 @@
 }
 
 /* desktop */
-@media screen and (min-width: 791px) { 
+@media screen and (min-width: 992px) { 
 	#hv-drawer-left {
 		display: block;
 		height: 100%;
@@ -164,7 +164,7 @@
 }
 
 /* tablets */
-@media screen and (max-width: 790px) {  /*  and (orientation : portrait) */
+@media screen and (max-width: 991px) {  /*  and (orientation : portrait) */
 	
 	html, body {
 		min-width: 300px !important;
@@ -464,7 +464,7 @@
 }
 
 /* tablets & smartphones LANDSCAPE */
-@media screen and (max-width: 790px) and (orientation : landscape) { 
+@media screen and (max-width: 991px) and (orientation : landscape) { /* 790px  */
 	#hv-drawer-left {
 		max-height: 100% !important;
 		height: 100%  !important;
@@ -486,8 +486,3 @@
 
 }
 
-/* smartphones */
-@media screen and (max-width: 599px) {
-	
-	
-}
