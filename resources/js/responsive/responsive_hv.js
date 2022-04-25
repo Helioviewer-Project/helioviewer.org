@@ -18,7 +18,8 @@ $(function() {
 	});
 
 	// hide triangle disclosure
-	$('#accordion-images .header h1').css('margin-left','70px');
+	$('#accordion-images .header h1').css('margin-left','80px');
+	$('#accordion-images .accordion-header').append('&nbsp;&nbsp;&nbsp;');
 
   var zeynep = $('.zeynep').zeynep({
     opened: function () {
