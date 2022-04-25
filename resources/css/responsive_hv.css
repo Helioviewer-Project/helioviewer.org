@@ -468,6 +468,7 @@
 	#hv-drawer-left {
 		max-height: 100% !important;
 		height: 100%  !important;
+		padding-bottom: 0px;
 	}
 
 	.dynaccordion-section {
