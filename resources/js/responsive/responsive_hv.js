@@ -12,7 +12,9 @@ $(function() {
 		$('#hvmobdrawerclose_div').css('display','none');
 		$('#hv-drawer-left').css('display','none');
 		$('#hv-drawer-left').attr('style', 'display: none');
-		currdsopen= 'nonexistentds'
+		$('.hvmobdstabs .hvmobds_icon').css('filter','invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%)');
+		$('.hvmobdstabs span').css({'color':'silver'});
+		currdsopen= 'nonexistentds';
 	});
 
 	// hide triangle disclosure
@@ -83,8 +85,8 @@ $(function() {
 
 // START media query 
 
-// Create a condition that targets viewports at least 790px wide
-const mediaQuery = window.matchMedia('(max-width: 790px)');
+// Create a condition that targets viewports at most 991px wide
+const mediaQuery = window.matchMedia('(max-width: 991px)');
 
 function handleTabletChange(e) {
   // Check if the media query is true
@@ -93,6 +95,8 @@ function handleTabletChange(e) {
     console.log('Media Query Matched!');
 	$('#hv-drawer-left').attr('style', 'display: none !important');
 	$('#hv-drawer-left').css({'display':'none'});
+	
+	showEncounter();
 	
   }
 }
