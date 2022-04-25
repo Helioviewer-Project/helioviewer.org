@@ -364,11 +364,11 @@
 		display: none;
 	}
 
-	#image-tile-layer-1650895269599-download-btn {
+	.image-info-dialog-btn {
 		display: none !important;
 	}
 
-	#image-tile-layer-1650895269599-info-btn {
+	.image-download-btn {
 		display: none !important;
 	}	
 	
