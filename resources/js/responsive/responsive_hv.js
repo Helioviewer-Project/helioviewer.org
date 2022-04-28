@@ -55,7 +55,7 @@ $(function() {
 	
 	$(".hvmobdstabs").click(function(){
 		
-		$('#hv-drawer-left').scrollIntoView();
+		document.getElementById("hv-drawer-left").scrollIntoView();
 		
 		//showEncounter();
 		
