@@ -67,7 +67,7 @@
 		text-align: center;
 	}
 	
-	.hvmobdstabs, .hvmobdstabs:active, .hvmobdstabs:target, .hvmobdstabs:hover, .hvmobdstabs:visited {
+	.hvmobdstabs {
 		display: inline-block;
 		max-width:135px;
 		height: 100%;
