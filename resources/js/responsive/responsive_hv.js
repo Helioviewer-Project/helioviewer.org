@@ -82,7 +82,17 @@ $(function() {
 			$('#hv-drawer-left').css({'display':'block','height':'100%'});
 			$('#hvmobdrawerclose_div').css('display','block');
 			var thisdrmobtitle= $('#'+thisdrawersect+' .header h1:first').text();
-			$('#hvmobdrawertitle_div').html(thisdrmobtitle);
+			switch(thisdrawersect) {
+				case 'accordion-images':
+					$('#hvmobdrawertitle_div').html('Images');
+					break;
+				case 'accordion-events':
+					$('#hvmobdrawertitle_div').html('Events');
+					break;
+				case 'accordion-bodies':
+					$('#hvmobdrawertitle_div').html('Celestial Bodies');
+					break;
+			}
 			currdsopen= thisdrawersect;
 		}
 
