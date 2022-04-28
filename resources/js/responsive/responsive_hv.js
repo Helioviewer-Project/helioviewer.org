@@ -1,7 +1,9 @@
-// zeynepjs initialization for demo
+// onload 
 $(function() {
 
 	var currdsopen= 'nonexistentds';
+
+	$('#hv-drawer-left').prepend('<span id="mobdrawertopanchor"></span>');
 
 	// add closing X to #hv-drawer-left
 	$('#hv-drawer-left').prepend('<div id="hvmobdrawerclose_div"><img id="hvmobdrawerclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
@@ -55,7 +57,7 @@ $(function() {
 	
 	$(".hvmobdstabs").click(function(){
 		
-		document.getElementById("hv-drawer-left").scrollIntoView();
+		document.getElementById("mobdrawertopanchor").scrollIntoView();
 		
 		//showEncounter();
 		
