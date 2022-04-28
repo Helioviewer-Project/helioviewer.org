@@ -67,7 +67,7 @@
 		text-align: center;
 	}
 	
-	.hvmobdstabs {
+	.hvmobdstabs, .hvmobdstabs:active, .hvmobdstabs:focus, .hvmobdstabs:focus-within, .hvmobdstabs:target, .hvmobdstabs:hover, .hvmobdstabs:visited, .hvmobdstabs:focus-visible {
 		display: inline-block;
 		max-width:135px;
 		height: 100%;
@@ -477,7 +477,7 @@
 		position: fixed;
 		margin: 0px;
 		margin-bottom: 100px;
-		background-image: url(../images/mobile/backmobilemenubg3.png);
+		background-image: url(../images/mobile/backmobilemenubg2.png);
 		bottom: 0;
 		border-top-right-radius: 16px;
 		border-bottom-right-radius: 16px;
