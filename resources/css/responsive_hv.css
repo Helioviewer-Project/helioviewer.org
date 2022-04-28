@@ -482,10 +482,9 @@
 		border-top-right-radius: 16px;
 		border-bottom-right-radius: 16px;
 		width: 190px;
-		
 		height: 65px; 
 		border: 1px solid #3a3a3a;
-
+		border-left:0px solid #000000;
 	}	
 	
 	.dtcycle {
@@ -621,7 +620,6 @@
 	.hvmobbs_br {
 		display: none;
 	}
-
 
 }
 
