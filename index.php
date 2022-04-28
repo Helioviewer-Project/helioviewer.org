@@ -245,7 +245,7 @@
 			</table>
 		</li>
 
-		<li>
+		<li class="has-submenu">
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="">
@@ -256,7 +256,46 @@
 					Get Help with Helioviewer.
 				</td>
 			</table>
-		</li>		
+			
+				<div id="hvhelp" class="submenu">
+
+					<div class="submenu-header">
+						<a href="#" data-submenu-close="hvhelp">Main Menu</a>
+					</div>
+
+					<label>Get Help With Helioviewer</label>
+
+					<ul>
+						<li>
+							<a href="">About Helioviewer</a>
+						</li>
+						<li>
+							<a href="">User's Guide</a>
+						</li>
+						<li>
+							<a href="">Visual Glossary</a>
+						</li>
+						<li>
+							<a href="">Documentation</a>
+						</li>
+						<li>
+							<a href="">Public API Documentation</a>
+						</li>
+						<li>
+							<a href="">Blog</a>
+						</li>
+						<li>
+							<a href="">Contact</a>
+						</li>
+						<li>
+							<a href="">Report Problem</a>
+						</li>
+					</ul>
+				
+				</div>
+			
+			
+		</li>	
 		
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
