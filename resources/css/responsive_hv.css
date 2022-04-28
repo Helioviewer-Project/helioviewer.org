@@ -146,6 +146,10 @@
 		cursor: pointer;
 	}
 	
+	.hvbottombar { 
+		display:none;
+	}
+	
 
 @media screen and (min-width: 992px) {	/* 791px */
 	.zeynep {
@@ -477,6 +481,7 @@
 	/*  START datetime field   */
 	
 	.hvbottombar {
+		display: block;
 		z-index: 1;
 		position: fixed;
 		margin: 0px;
