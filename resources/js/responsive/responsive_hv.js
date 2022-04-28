@@ -55,7 +55,9 @@ $(function() {
 	
 	$(".hvmobdstabs").click(function(){
 		
-		showEncounter();
+		$('#hv-drawer-left').scrollIntoView();
+		
+		//showEncounter();
 		
 		//$('.hvmobdstabs').css({'background-image':'url(https://develop.helioviewer.org/resources/images/backmobilemenubg2.png)'});
 		//var hvmobtabid = $(this).attr('drawersec')+'_mobtab';
