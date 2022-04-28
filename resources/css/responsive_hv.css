@@ -80,6 +80,11 @@
 		border-radius: 4px;
 		color: #ffffff;
 		cursor: pointer;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-o-user-select: none;
+		user-select: none;
 	}
 	
 	.hvmobds_table {
@@ -198,9 +203,11 @@
 	#hv-drawer-left {
 		display: none;
 		position: absolute !important;
+		margin: auto;
 		width: 100% !important;
 		max-height: 100% !important;
 		min-height: 0px;
+		min-width: 300px !important;
 		height: 85% !important;
 		top: 46px;
 		/* bottom: 0; */
@@ -461,6 +468,133 @@
 		font-family: arial, helvetica, verdana;
 		color: #ffffff !important;
 	}
+	
+	
+	/*  START datetime field   */
+	
+	.hvbottombar {
+		z-index: 1;
+		position: fixed;
+		margin: 0px;
+		margin-bottom: 100px;
+		background-image: url(../images/mobile/backmobilemenubg3.png);
+		bottom: 0;
+		border-radius: 6px;
+		width: 100%; /*175px; */
+		height: 65px; 
+		border: 0px solid silver;
+
+	}	
+	
+	.dtcycle {
+		height:100%;
+		width: 175px;
+		margin-left: 18px;
+	}
+
+	.dtcycle_table {
+		height: 100%;
+		padding:0px;
+		width:100%;
+		border-radius:6px;
+	}
+
+	.dtcycle_tr {
+		line-height: 0px;
+		padding: 0px;
+		margin: 0px;
+	}
+
+	.dtcycle_td {
+		height: 21px;
+		width: 63px;
+		padding: 0px;
+		line-height:;
+		text-align: center;
+		padding-right:10px;
+		font-size: 13px;
+		font-weight: normal;
+		color: #ffffff;
+		font-family: arial, helvetica, verdana; /*Roboto Mono,monospace;*/
+		background-image: url(../images/panelbg1.png);
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-o-user-select: none;
+		user-select: none;
+	}
+
+	.dtcycle_td_reach {
+		height:0px;
+	}
+
+	.dtcycle_td:nth-child(6) {
+		padding-right:0px;
+	}
+
+	.dtcycle_td:first-child {
+		padding-left:7px;
+	}
+
+	.dtcycle_td:nth-child(4) {
+		padding-left:7px;
+	}
+
+	.hvbottombar_expand_td {
+		width:35px;
+		height:60px;
+		background:#721800;
+		border-top-right-radius: 6px;
+		border-bottom-right-radius: 6px;
+		padding:0px;
+		margin:0px;
+		line-height:0;
+		text-align:center;
+	}
+
+	.hvbottombar_expand_td:hover {
+		background: #a02200;
+	}
+
+	.hvbottombar_expand_a {
+		display: block;
+		height:100%;
+		cursor:pointer;
+	}
+
+	.hvbottombar_expand_a:hover {
+		webkit-filter: brightness(150%);
+		filter: brightness(150%);
+	}
+
+	.hvexpandarrow1 {
+		width: 21px;
+		margin-top:19px;
+	}
+
+	.dtcycle_arrows {
+		width: 20px;
+		filter: invert(80%) sepia(0%) saturate(56%) hue-rotate(182deg) brightness(94%) contrast(100%);
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-o-user-select: none;
+		user-select: none;
+	}
+
+	.dtcycle_arrows:hover {
+		-webkit-filter: invert(77%) sepia(100%) saturate(0%) hue-rotate(272deg) brightness(108%) contrast(106%);
+		filter: invert(77%) sepia(100%) saturate(0%) hue-rotate(272deg) brightness(108%) contrast(106%);
+	}
+
+	.hvtimeline_td {
+		background:black;
+		opacity:0.7;
+		width:0px;
+	}
+
+/* END datetime field */
+
 
 }
 
@@ -486,6 +620,5 @@
 		display: none;
 	}
 
-	
 }
 
