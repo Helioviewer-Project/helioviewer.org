@@ -141,9 +141,10 @@
 	}
 	
 	#hvmobdrawertitle_div {
+		display:none;
 		position: absolute;
 		display: block;
-		background: #ffffff;
+		background: silver;
 		color: #000000;
 		width: 100%;
 		height: 27px;
@@ -368,6 +369,10 @@
 		border-bottom-right-radius: 4pt;
 		
 		
+	}
+	
+	#hvmobdrawertitle_div {
+		display:block;
 	}
 	
 	.div.accordion-arrow {
