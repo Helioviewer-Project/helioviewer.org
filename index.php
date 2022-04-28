@@ -323,6 +323,33 @@
 	
 </div>
 <!-- END Mobile Drawer Tabs -->	
+
+<!-- START Mobile DateTime field -->
+<div class="hvbottombar" style="">
+	<div class="dtcycle">
+		<table class="dtcycle_table" cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr class="dtcycle_tr">
+				<td colspan="6" class="dtcycle_td_reach" style="height: 0px;"></td>
+				<td rowspan="4" class="hvtimeline_td" style="width: 0px; border: 0px solid gray;"></td>
+			</tr>			
+			<tr class="dtcycle_tr">
+				<td class="dtcycle_td" style="border-top-left-radius: 6px;"><a href=""><img class="dtcycle_arrows" src="images/uparrow2.png"></a></td>
+				<td class="dtcycle_td"><a href=""><img class="dtcycle_arrows" src="images/uparrow2.png"></a></td>
+				<td class="dtcycle_td"><a href=""><img class="dtcycle_arrows" src="images/uparrow2.png"></a></td>
+			</tr>
+			<tr class="dtcycle_tr">
+				<td class="dtcycle_td" id="dt_year_td">2021</td>			
+				<td class="dtcycle_td" id="dt_month_td">AUG</td>
+				<td class="dtcycle_td" id="dt_day_td">25</td>
+			</tr><tr class="dtcycle_tr">
+				<td class="dtcycle_td" style="border-bottom-left-radius: 6px;"><a href=""><img class="dtcycle_arrows" src="images/downarrow2.png"></a></td>
+				<td class="dtcycle_td"><a href=""><img class="dtcycle_arrows" src="images/downarrow2.png"></a></td>
+				<td class="dtcycle_td"><a href=""><img class="dtcycle_arrows" src="images/downarrow2.png"></a></td>
+			</tr>
+		</tbody></table>
+	</div>
+</div>
+<!-- END Mobile DateTime field -->	
 	
 	
 	<?php if($outputType != 'embed'){ ?>
