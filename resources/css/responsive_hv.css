@@ -140,6 +140,16 @@
 		background: transparent;
 	}
 	
+	#hvmobdrawertitle_div {
+		position: absolute;
+		display: block;
+		background: #f7e057;
+		color: #000000;
+		width: 100%;
+		text-align: center;
+		top: 8px;
+	}
+	
 	#hvmobdrawerclose {
 		width:30px;
 		height:30px;
@@ -249,6 +259,10 @@
 	
 	.accordion .header:hover {
 		background-color: transparent;
+	}
+	
+	.accordion .header h1 {
+		display: none !important;
 	}
 	
 	.accordion .content {
