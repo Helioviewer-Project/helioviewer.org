@@ -26,7 +26,7 @@
 	}
 
 	#hvmobilemenu_btn {
-		position:absolute;
+		position:fixed;
 		margin-top:0px;
 		right:0;
 		z-index:9999;
@@ -297,7 +297,6 @@
 		border: 0;
 		border-radius: 0px;
 		box-shadow: none;
-		top: 55px;
 	}
 	
 	.hamburger-inner, .hamburger-inner:after, .hamburger-inner:before {
@@ -313,11 +312,12 @@
 	}
 
 	#hv-header {
+		position: fixed;
 		height: 40px;
 		min-width: 300px !important;
 		max-height: 40px;
 		background-image: url(../images/mobile/backmobilemenubg3.png);
-		top: 55px;
+		z-index: 10;
 	}
 	
 
