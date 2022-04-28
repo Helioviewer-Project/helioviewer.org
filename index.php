@@ -1862,7 +1862,7 @@
 		});
 	</script>
 	
-	<script src='https://raw.githack.com/hsynlms/zeynepjs/master/dist/zeynep.min.js'></script>
+	<script src='resources/js/responsive/zeynep1.js?rng=<?php echo(rand(2145, 999999)); ?>'></script>
 	<script src="resources/js/responsive/responsive_hv.js?rng=<?php echo(rand(2145, 999999)); ?>"></script>
 	
 	<?php
