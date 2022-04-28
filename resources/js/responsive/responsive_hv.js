@@ -6,7 +6,7 @@ $(function() {
 	$('#hv-drawer-left').prepend('<span id="mobdrawertopanchor"></span>');
 
 	// add closing X to #hv-drawer-left
-	$('#hv-drawer-left').prepend('<div id="hvmobdrawerclose_div"><img id="hvmobdrawerclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+	$('#hv-drawer-left').prepend('<div id="hvmobdrawerclose_div"><div id="hvmobdrawertitle_div"></div><img id="hvmobdrawerclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
 	// closing drawer function
 	$("#hvmobdrawerclose").click(function(){
@@ -81,6 +81,8 @@ $(function() {
 			$('#'+thisdrawersect).css('display','block');
 			$('#hv-drawer-left').css({'display':'block','height':'100%'});
 			$('#hvmobdrawerclose_div').css('display','block');
+			var thisdrmobtitle= $('#'+thisdrawersect+' .header h1').text();
+			$('#hvmobdrawertitle_div').html(thisdrmobtitle);
 			currdsopen= thisdrawersect;
 		}
 
