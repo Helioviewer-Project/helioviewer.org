@@ -248,12 +248,12 @@
 		<li class="has-submenu">
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
-					<a href="">
+					<a href="#" data-submenu="hvhelp">
 						<img src="https://beta.helioviewer.org/resources/images/help_icon_white.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
-					Get Help with Helioviewer.
+					<a href="#" data-submenu="hvhelp">Get Help with Helioviewer.</a>
 				</td>
 			</table>
 			
@@ -295,7 +295,7 @@
 				</div>
 			
 			
-		</li>	
+		</li>
 		
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
