@@ -153,12 +153,16 @@
 		padding-top: 8px;
 		font-weight: bold;
 		font-size: 16px;
+		z-index: 8;
 	}
 	
 	#hvmobdrawerclose {
 		width:30px;
 		height:30px;
 		cursor: pointer;
+		z-index: 9;
+		position: absolute;
+		right: 0;
 	}
 	
 	.hvbottombar { 
