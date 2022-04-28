@@ -371,6 +371,10 @@
 	.drawer-contents .ui-accordion-header .fa.fa-fw {
 		display: none;
 	}
+	
+	.removeBtn {
+		display: inline-block !important;
+	}
 
 	.image-info-dialog-btn {
 		display: none !important;
