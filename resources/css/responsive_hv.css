@@ -67,7 +67,7 @@
 		text-align: center;
 	}
 	
-	.hvmobdstabs, .hvmobdstabs:active, .hvmobdstabs:focus, .hvmobdstabs:focus-within, .hvmobdstabs:target, .hvmobdstabs:hover, .hvmobdstabs:visited, .hvmobdstabs:focus-visible {
+	.hvmobdstabs, .hvmobdstabs:active, .hvmobdstabs:target, .hvmobdstabs:hover, .hvmobdstabs:visited {
 		display: inline-block;
 		max-width:135px;
 		height: 100%;
