@@ -84,10 +84,10 @@ $(function() {
 			var thisdrmobtitle= $('#'+thisdrawersect+' .header h1:first').text();
 			switch(thisdrawersect) {
 				case 'accordion-images':
-					$('#hvmobdrawertitle_div').html('Images');
+					$('#hvmobdrawertitle_div').html('Images & Layers');
 					break;
 				case 'accordion-events':
-					$('#hvmobdrawertitle_div').html('Events');
+					$('#hvmobdrawertitle_div').html('Events & Features');
 					break;
 				case 'accordion-bodies':
 					$('#hvmobdrawertitle_div').html('Celestial Bodies');
