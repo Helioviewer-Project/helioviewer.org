@@ -255,6 +255,9 @@
 		padding-bottom: 130px;
 	}
 	
+	.drawer-contents .header {
+		display: none;
+	}
 	
 	.drawer-contents .content .section {
 		background: transparent;
@@ -468,7 +471,15 @@
 		border-bottom: 1px solid #34282C;
 	}
 	
+	#TileLayerAccordion-Container .dynaccordion-section:first-child {
+		padding-top: 30px !important;
+	}
+	
 	#EventLayerAccordion-Container .dynaccordion-section:first-child {
+		padding-top: 30px !important;
+	}
+	
+	#SolarBodiesAccordion-Container .dynaccordion-section:first-child {
 		padding-top: 30px !important;
 	}
 	
