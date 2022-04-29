@@ -141,9 +141,7 @@
 	}
 	
 	#hvmobdrawertitle_div {
-		display:none;
 		position: absolute;
-		display: block;
 		background: silver;
 		color: #000000;
 		width: 100%;
@@ -169,20 +167,20 @@
 		display:none;
 	}
 	
-
+/* desktops */
 @media screen and (min-width: 992px) {	/* 791px */
 	.zeynep {
 		display: none;
 	}
 	
+	#hvmobdrawerclose_div {
+		display: none;
+	}
 	
 	#hvmobilemenu_btn {
 		display: none;
 	}
-}
-
-/* desktop */
-@media screen and (min-width: 992px) { 
+ 
 	#hv-drawer-left {
 		display: block;
 		height: 100%;
@@ -191,7 +189,7 @@
 	}
 }
 
-/* tablets */
+/* phones & tablets */
 @media screen and (max-width: 991px) {  /*  and (orientation : portrait) */
 	
 	html, body {
@@ -448,6 +446,10 @@
 		margin-left: 100px;
 	}
 	
+	.accordion .content .ui-icon {
+		display: none;
+	}
+	
 	.timestamp {
 		display:none;
 	}
@@ -464,6 +466,10 @@
 		padding-top: 13px !important;
 		padding-bottom: 30px !important;
 		border-bottom: 1px solid #34282C;
+	}
+	
+	#EventLayerAccordion-Container .dynaccordion-section:first-child {
+		padding-top: 30px !important;
 	}
 	
 	.dynaccordion-section:last-child {
@@ -662,4 +668,6 @@
 	}
 
 }
+
+
 
