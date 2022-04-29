@@ -153,7 +153,7 @@
 	<!-- START responsive CSS files -->
 	<link rel='stylesheet' href='resources/css/zeynep.css?rng=<?php echo(rand(2145, 999999)); ?>'>
 	<link href="resources/css/hamburger.min.css?rng=<?php echo(rand(2145, 999999)); ?>" rel="stylesheet">
-	<link rel="stylesheet" href="resources/css/responsive_hv.css?rng=<?php echo(rand(2145, 999999)); ?>" media="screen and (max-width:991px)">
+	<link rel="stylesheet" href="resources/css/responsive_hv.css?rng=<?php echo(rand(2145, 999999)); ?>" media="only screen and (max-width: 991px)">
 	<!-- END responsive CSS files -->
 
 </head>
