@@ -4,6 +4,23 @@
 		/*border-left: 3px solid #404143;*/
 		box-shadow: 9pt 9pt 4pt 9pt rgb(255 255 255 / 75%);
 	}
+	
+	.zeynep .submenu {
+		background-image: url(../images/mobile/backmobilemenubg3.png);
+	}
+	
+	.zeynep .submenu-header > a {
+		color:#ffffff;
+		text-align:center;
+		padding-left: 0px;
+	}
+	
+	.zeynep .submenu > label {
+		color: #f7e057;
+		padding-left: 0px;
+		text-align: center;
+		margin-bottom: 20px;
+	}
 
 	.zeynep ul {
 		padding-left: 0px !important;
