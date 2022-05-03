@@ -73,6 +73,13 @@
 		color: white;
 	}
 	
+	.hvmobmenuitems {
+		cursor: pointer;
+		color: #ffffff !important;
+		text-decoration: none !important;
+	}
+	
+	
 	.hvmobdstab_wrap {
 		display: none;
 		position: fixed;
