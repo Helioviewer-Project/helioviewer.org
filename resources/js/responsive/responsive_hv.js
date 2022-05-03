@@ -125,8 +125,9 @@ $(function() {
 		#hv-drawer-share
 	*/
 	$(".hvmobmenuitems").click(function(){
+		$(".hamburger").removeClass("is-active");
 		zeynep.close();
-		$('.hv-drawer-right').css({'display':'none'});
+		$('#hv-drawer-right').css({'display':'none'});
 		var thisdrawersect= $(this).attr('drawersec');
 		$('#'+thisdrawersect).css('display','block');
 		document.getElementById("mobmenutopanchor").scrollIntoView();
