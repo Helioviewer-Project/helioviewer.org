@@ -3,16 +3,16 @@ $(function() {
 
 
 	// add an anchor to topbar of datasource window on mobile
-	$('#hv-drawer-right').prepend('<span id="mobmenutopanchor"></span>');
+	$('.hv-drawer-right').prepend('<span class="mobmenutopanchor"></span>');
 
 	// add closing X to #hv-drawer-right
-	$('#hv-drawer-right').prepend('<div id="hvmobmenuclose_div"><div id="hvmobmenutitle_div"></div><img id="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+	$('.hv-drawer-right').prepend('<div id="hvmobmenuclose_div"><div id="hvmobmenutitle_div"></div><img id="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
 	//
 	$("#hvmobmenuclose").click(function(){
 		$('#hvmobmenuclose_div').css('display','none');
-		$('#hv-drawer-right').css('display','none');
-		$('#hv-drawer-right').attr('style', 'display: none');
+		$('.hv-drawer-right').css('display','none');
+		$('.hv-drawer-right').attr('style', 'display: none');
 	});
 
 
@@ -127,10 +127,10 @@ $(function() {
 	$(".hvmobmenuitems").click(function(){
 		$(".hamburger").removeClass("is-active");
 		zeynep.close();
-		$('#hv-drawer-right').css({'display':'none'});
-		var thisdrawersect= $(this).attr('drawersec');
-		$('#'+thisdrawersect).css('display','block');
-		document.getElementById("mobmenutopanchor").scrollIntoView();
+		$('.hv-drawer-right').css({'display':'none'});
+		var thisdrawersect2= $(this).attr('drawersec');
+		$('#'+thisdrawersect2).css('display','block');
+		document.getElementsByClassName("mobmenutopanchor").scrollIntoView();
 		
 		
 		
