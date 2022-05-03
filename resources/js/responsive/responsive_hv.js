@@ -6,7 +6,7 @@ $(function() {
 	$('.hv-drawer-right').prepend('<span class="mobmenutopanchor"></span>');
 
 	// add closing X to #hv-drawer-right
-	$('.hv-drawer-right').prepend('<div id="hvmobmenuclose_div"><div id="hvmobmenutitle_div"></div><img id="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+	$('.hv-drawer-right').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
 	//
 	$("#hvmobmenuclose").click(function(){
@@ -128,6 +128,8 @@ $(function() {
 		$(".hamburger").removeClass("is-active");
 		zeynep.close();
 		$('.hv-drawer-right').css({'display':'none'});
+		$('#hv-drawer-left').css('display','none');
+		$('#hv-drawer-left').attr('style', 'display: none');
 		var thisdrawersect2= $(this).attr('drawersec');
 		$('#'+thisdrawersect2).css('display','block');
 		document.getElementsByClassName("mobmenutopanchor").scrollIntoView();
