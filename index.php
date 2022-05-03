@@ -167,11 +167,11 @@
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0" style="margin-top: 50px;">
 				<td class="hvmobmenu_left_td">
 					<a class="hvmobmenuitems" drawersec="" href="">
-						<img class="hvmobmenuitems" drawersec="" src="https://beta.helioviewer.org/resources/images/projectanounce_icon_white.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-news" src="https://beta.helioviewer.org/resources/images/projectanounce_icon_white.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
-					<span class="hvmobmenuitems" drawersec="">Helioviewer Project Announcements.</span>
+					<span class="hvmobmenuitems" drawersec="hv-drawer-news">Helioviewer Project Announcements.</span>
 				</td>
 			</table>
 		</li>
@@ -180,11 +180,11 @@
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a class="hvmobmenuitems" drawersec="" href="">
-						<img class="hvmobmenuitems" drawersec="" src="https://beta.helioviewer.org/resources/images/viewyoutube_icon_white.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-youtube" src="https://beta.helioviewer.org/resources/images/viewyoutube_icon_white.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
-					<span class="hvmobmenuitems" drawersec="">View Helioviewer Movies<br>Shared to YouTube.</span>
+					<span class="hvmobmenuitems" drawersec="hv-drawer-youtube">View Helioviewer Movies<br>Shared to YouTube.</span>
 				</td>
 			</table>
 		</li>
@@ -194,11 +194,11 @@
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="">
-						<img class="hvmobmenuitems" drawersec="" src="https://beta.helioviewer.org/resources/images/createmovie_icontest.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-movies" src="https://beta.helioviewer.org/resources/images/createmovie_icontest.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
-					<span class="hvmobmenuitems" drawersec="">Create a movie.</span>
+					<span class="hvmobmenuitems" drawersec="hv-drawer-movies">Create a movie.</span>
 				</td>
 			</table>
 		</li>
@@ -207,11 +207,11 @@
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="">
-						<img class="hvmobmenuitems" drawersec="" src="https://beta.helioviewer.org/resources/images/screenshot_icon_white.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-screenshots" src="https://beta.helioviewer.org/resources/images/screenshot_icon_white.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
-					<span class="hvmobmenuitems" drawersec="">Create a screenshot.</span>
+					<span class="hvmobmenuitems" drawersec="hv-drawer-screenshots">Create a screenshot.</span>
 				</td>
 			</table>				
 		</li>		
@@ -220,11 +220,11 @@
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="">
-						<img class="hvmobmenuitems" drawersec="" src="https://beta.helioviewer.org/resources/images/datadownload_icon_white.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-data" src="https://beta.helioviewer.org/resources/images/datadownload_icon_white.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
-					<span class="hvmobmenuitems" drawersec="">Request Science Data Download from External Partners.</span>
+					<span class="hvmobmenuitems" drawersec="hv-drawer-data">Request Science Data Download from External Partners.</span>
 				</td>
 			</table>
 		</li>		
@@ -233,11 +233,11 @@
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="">
-						<img class="hvmobmenuitems" drawersec="" src="https://beta.helioviewer.org/resources/images/shareviewport_icon_white.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-share" src="https://beta.helioviewer.org/resources/images/shareviewport_icon_white.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
-					<span class="hvmobmenuitems" drawersec="">Share the current viewport on social media.</span>
+					<span class="hvmobmenuitems" drawersec="hv-drawer-share">Share the current viewport on social media.</span>
 				</td>
 			</table>
 		</li>
@@ -321,7 +321,7 @@
 
 <div class="zeynep-overlay"></div>
 
-<!-- END mobile menu -->		
+<!-- END mobile menu -->			
 	
 <!-- START Mobile Drawer Tabs -->
 <div class="hvmobdstab_wrap">
