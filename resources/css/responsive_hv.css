@@ -155,7 +155,7 @@
 		filter: invert(100%) sepia(5%) saturate(7409%) hue-rotate(183deg) brightness(123%) contrast(95%);
 	}
 	
-	#hvmobmenuclose_div {
+	.hvmobmenuclose_div {
 		display: none;
 		text-align:right;
 		position: fixed;
@@ -164,7 +164,7 @@
 		background: transparent;	
 	}
 	
-	#hvmobmenutitle_div	{
+	.hvmobmenutitle_div	{
 		position: absolute;
 		background: silver;
 		color: #000000;
@@ -178,7 +178,7 @@
 		z-index: 8;
 	}
 	
-	#hvmobmenuclose {
+	.hvmobmenuclose {
 		width:30px;
 		height:30px;
 		cursor: pointer;
