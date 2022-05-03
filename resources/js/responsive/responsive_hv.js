@@ -9,8 +9,8 @@ $(function() {
 	$('.hv-drawer-right').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
 	//
-	$("#hvmobmenuclose").click(function(){
-		$('#hvmobmenuclose_div').css('display','none');
+	$(".hvmobmenuclose").click(function(){
+		$('.hvmobmenuclose_div').css('display','none');
 		$('.hv-drawer-right').css('display','none');
 		$('.hv-drawer-right').attr('style', 'display: none');
 	});
