@@ -1,8 +1,25 @@
 // onload 
 $(function() {
 
+
+	// add an anchor to topbar of datasource window on mobile
+	$('#hv-drawer-right').prepend('<span id="mobmenutopanchor"></span>');
+
+	// add closing X to #hv-drawer-right
+	$('#hv-drawer-right').prepend('<div id="hvmobmenuclose_div"><div id="hvmobmenutitle_div"></div><img id="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+
+	//
+	$("#hvmobmenuclose").click(function(){
+		$('#hvmobmenuclose_div').css('display','none');
+		$('#hv-drawer-right').css('display','none');
+		$('#hv-drawer-right').attr('style', 'display: none');
+	});
+
+
+	// current datasource that's open
 	var currdsopen= 'nonexistentds';
 
+	// add an anchor to topbar of datasource window on mobile
 	$('#hv-drawer-left').prepend('<span id="mobdrawertopanchor"></span>');
 
 	// add closing X to #hv-drawer-left
@@ -87,7 +104,7 @@ $(function() {
 					$('#hvmobdrawertitle_div').html('Images & Layers');
 					break;
 				case 'accordion-events':
-					$('#hvmobdrawertitle_div').html('Events & Features');
+					$('#hvmobdrawertitle_div').html('Features & Events');
 					break;
 				case 'accordion-bodies':
 					$('#hvmobdrawertitle_div').html('Celestial Bodies');
@@ -97,6 +114,27 @@ $(function() {
 		}
 
 	});
+	
+	
+	/*
+		#hv-drawer-news
+		#hv-drawer-youtube
+		#hv-drawer-movies
+		#hv-drawer-screenshots
+		#hv-drawer-data
+		#hv-drawer-share
+	*/
+	$(".hvmobmenuitems").click(function(){
+		zeynep.close();
+		$('.hv-drawer-right').css({'display':'none'});
+		var thisdrawersect= $(this).attr('drawersec');
+		$('#'+thisdrawersect).css('display','block');
+		document.getElementById("mobmenutopanchor").scrollIntoView();
+		
+		
+		
+	});
+	
 
 });
 
