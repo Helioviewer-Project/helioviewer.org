@@ -233,7 +233,7 @@
 		display: none;
 	}
 	
-	#hvmobilemenu_btn {
+	.hamburger {
 		display: none !important;
 	}
  
