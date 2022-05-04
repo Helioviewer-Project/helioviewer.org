@@ -160,11 +160,11 @@
 	}
 	
 	.hvmobmenuclose_div {
+		z-index:4;
 		display: none;
 		text-align:right;
 		position: fixed;
 		width: 100%;
-		z-index: 1;
 		background: transparent;	
 	}
 	
@@ -238,7 +238,7 @@
 		width: 35px;
 		height: 35px;
 		text-align:center;
-		z-index:9;
+		z-index:1;
 		box-shadow: 1pt 1pt 4pt 1pt rgb(68 63 63 / 75%);
 		background-image: url(../images/mobile/backmobilemenubg2.png);
 	}
