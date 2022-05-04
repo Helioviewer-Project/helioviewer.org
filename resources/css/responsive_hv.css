@@ -243,7 +243,7 @@
 		background-image: url(resources/images/mobile/backmobilemenubg2.png);
 	}
 	
-	.hvbottom_img {
+	.hvbottomcal_img {
 		width: 35px;
 		height: 35px;
 		filter: invert(93%) sepia(99%) saturate(2049%) hue-rotate(318deg) brightness(113%) contrast(94%);
