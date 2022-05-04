@@ -227,6 +227,28 @@
 		display:none;
 	}
 	
+	.hvbottomcal_wrap {
+		display: none;
+		position:absolute;
+		bottom:0;
+		right:0;
+		padding:10px;
+		margin-right: 25px;
+		margin-bottom:100px;
+		width: 35px;
+		height: 35px;
+		text-align:center;
+		z-index:9;
+		box-shadow: 1pt 1pt 4pt 1pt rgb(68 63 63 / 75%);
+		background-image: url(resources/images/mobile/backmobilemenubg2.png);
+	}
+	
+	.hvbottom_img {
+		width: 35px;
+		height: 35px;
+		filter: invert(93%) sepia(99%) saturate(2049%) hue-rotate(318deg) brightness(113%) contrast(94%);
+	}
+	
 /* desktops */
 @media screen and (min-width: 992px) {	
 	.zeynep {
@@ -261,6 +283,9 @@
 		display: inline-block;
 	}
 
+	.hvbottomcal_wrap {
+		display:block;
+	}
 
 	#helioviewer-viewport-container-outer {
 		min-width: 300px !important;
@@ -595,7 +620,7 @@
 	/*  START datetime field   */
 	
 	.hvbottombar {
-		display: block;
+		display: none;
 		z-index: 1;
 		position: fixed;
 		margin: 0px;
