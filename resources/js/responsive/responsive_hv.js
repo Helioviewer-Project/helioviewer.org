@@ -171,16 +171,20 @@ $(function() {
 // Initial check
 //handleTabletChange(mediaQuery);
 
-
-if (window.matchMedia("(max-width: 991px)").matches) {
-  // Viewport is less or equal to 991 pixels wide
-    $('#hv-drawer-left').attr('style', 'display: none !important');
-  	$('#hv-drawer-left').css({'display':'none'});
-	enctimeoutmobile = setTimeout(showEncounter, 3000);
-} else {
-  // Viewport is greater than 991 pixels wide
-  $('.hamburger').css('display','none');
-  
+function hvOnResize() {
+	if (window.matchMedia("(max-width: 991px)").matches) {
+	  // Viewport is less or equal to 991 pixels wide
+		$('#hv-drawer-left').attr('style', 'display: none !important');
+		$('#hv-drawer-left').css({'display':'none'});
+		enctimeoutmobile = setTimeout(showEncounter, 3000);
+	} else {
+	  // Viewport is greater than 991 pixels wide
+	  $('.hamburger').css('display','none');
+	  
+	}
 }
 
+window.addEventListener("resize", hvOnResize);
+
+enctimeoutmobile = setTimeout(hvOnResize, 3000);
 // END media query 
