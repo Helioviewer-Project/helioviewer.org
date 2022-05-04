@@ -49,6 +49,10 @@
 		z-index:9999;
 	}
 	
+	.hamburger {
+		display: none;
+	}
+	
 	.btn-open {
 		min-width: 0px !important;
 	}
@@ -252,6 +256,11 @@
 		min-width: 300px !important;
 		min-height: 400px;
 	}
+
+	.hamburger {
+		display: inline-block;
+	}
+
 
 	#helioviewer-viewport-container-outer {
 		min-width: 300px !important;
