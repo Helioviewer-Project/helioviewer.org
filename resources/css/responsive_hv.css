@@ -224,7 +224,7 @@
 	}
 	
 /* desktops */
-@media screen and (min-width: 992px) {	/* 791px */
+@media screen and (min-width: 992px) {	
 	.zeynep {
 		display: none;
 	}
@@ -234,7 +234,7 @@
 	}
 	
 	#hvmobilemenu_btn {
-		display: none;
+		display: none !important;
 	}
  
 	#hv-drawer-left {
