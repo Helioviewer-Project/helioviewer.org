@@ -49,6 +49,7 @@ $(function() {
   // dynamically bind 'closing' event
   zeynep.on('closing', function () {
     //console.log('this event is dynamically binded')
+	
   })
 
   // handle zeynepjs overlay click
@@ -147,27 +148,39 @@ $(function() {
 // START media query 
 
 // Create a condition that targets viewports at most 991px wide
-const mediaQuery = window.matchMedia('(max-width: 991px)');
+//const mediaQuery = window.matchMedia('(max-width: 991px)');
 
-function handleTabletChange(e) {
+//function handleTabletChange(e) {
   // Check if the media query is true
-  if (e.matches) {
+ // if (e.matches) {
     // Then log the following message to the console
     /*
 	console.log('Media Query Matched!');
 	$('#hv-drawer-left').attr('style', 'display: none !important');
 	$('#hv-drawer-left').css({'display':'none'});
 	*/
-	showEncounter();
 	
-  }
-}
+	//enctimeoutmobile = setTimeout(showEncounter, 3000);
+	
+  //}
+//}
 
 // Register event listener
-mediaQuery.addListener(handleTabletChange);
+//mediaQuery.addListener(handleTabletChange);
 
 // Initial check
-handleTabletChange(mediaQuery);
+//handleTabletChange(mediaQuery);
 
+
+if (window.matchMedia("(max-width: 991px)").matches) {
+  // Viewport is less or equal to 991 pixels wide
+    $('#hv-drawer-left').attr('style', 'display: none !important');
+  	$('#hv-drawer-left').css({'display':'none'});
+	enctimeoutmobile = setTimeout(showEncounter, 3000);
+} else {
+  // Viewport is greater than 991 pixels wide
+  $('.hamburger').css('display','none');
+  
+}
 
 // END media query 
