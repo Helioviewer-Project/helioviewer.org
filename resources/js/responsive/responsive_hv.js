@@ -132,6 +132,7 @@ $(function() {
 		$('#hv-drawer-left').css('display','none');
 		$('#hv-drawer-left').attr('style', 'display: none');
 		var thisdrawersect2= $(this).attr('drawersec');
+		$('#'+thisdrawersect2+' .hvmobmenuclose_div').css('display','block');
 		$('#'+thisdrawersect2).css('display','block');
 		document.getElementsByClassName("mobmenutopanchor").scrollIntoView();
 		
