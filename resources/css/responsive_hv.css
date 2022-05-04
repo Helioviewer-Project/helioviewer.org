@@ -164,7 +164,7 @@
 		text-align:right;
 		position: fixed;
 		width: 100%;
-		z-index: 9;
+		z-index: 1;
 		background: transparent;	
 	}
 	
@@ -269,6 +269,11 @@
 		max-height: 100%;
 		width: 354px !important;
 	}
+	
+	.hvmobmenuclose_div {
+		display: none;
+	}
+	
 }
 
 /* phones & tablets */
@@ -338,6 +343,15 @@
 		width: 100% !important;
 		height: 800px !important;
 		background-image: url(../images/backmobilemenubg2.png);
+		overflow: hidden;
+	}
+	
+	.hvmobmenuclose_div {
+		display: block;
+	}
+	
+	.hv-drawer-right .drawer-contents {
+		padding-top: 30px;
 	}
 	
 	.drawer-contents {
