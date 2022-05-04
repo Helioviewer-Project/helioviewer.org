@@ -387,6 +387,14 @@
 </div>
 <!-- END Mobile DateTime field -->	
 	
+<!-- START mobile bottom calendar tool -->
+
+<div class="hvbottomcal_wrap">
+<img src="/images/mobile/calendar1.png" class="hvbottomcal_img">
+</div>
+
+<!-- END mobile bottom calendar tool -->	
+	
 	
 	<?php if($outputType != 'embed'){ ?>
 	<div class="user-select-none" style="width: 100%; margin: 0; padding: 0; text-align: center; z-index: 9;">
