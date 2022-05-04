@@ -240,7 +240,7 @@
 		text-align:center;
 		z-index:9;
 		box-shadow: 1pt 1pt 4pt 1pt rgb(68 63 63 / 75%);
-		background-image: url(resources/images/mobile/backmobilemenubg2.png);
+		background-image: url(../images/mobile/backmobilemenubg2.png);
 	}
 	
 	.hvbottomcal_img {
