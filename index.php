@@ -156,7 +156,7 @@
 	<link rel="stylesheet" href="resources/css/responsive_hv.css?rng=<?php echo(rand(2145, 999999)); ?>" media="only screen and (max-width: 991px)">
 	END responsive CSS files -->
 <?php	
-if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')) {      
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {      
 $cssfilesrndnum= rand(2145, 999999);
 $hvmobcssfiles= <<<MCF
 <!-- START responsive CSS files -->
@@ -1923,7 +1923,7 @@ echo $hvmobcssfiles;
 	<script src="resources/js/responsive/responsive_hv.js?rng=<?php echo(rand(2145, 999999)); ?>"></script>
 	-->
 <?php
-if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')) {      
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {      
 $jsfilesrndnum= rand(2145, 999999);
 $hvmobjsfiles= <<<MJF
 <!-- START responsive JS files -->
