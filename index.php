@@ -67,7 +67,7 @@
 	<!-- Helioviewer.org 3.2 2017/03/31 -->
 	<title><?=($debug ? '[DEBUG]' : '')?> Helioviewer.org - Solar and heliospheric image visualization tool</title>
 	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="noindex">
 	<meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
 	<meta name="keywords" content="Helioviewer, JPEG 2000, JP2, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, SDO, STEREO, AIA, HMI, EUVI, COR, EIT, LASCO, SDO, MDI, coronagraph, " />
