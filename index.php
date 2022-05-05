@@ -150,11 +150,23 @@
 	?>
 	<script type="text/javascript">var outputType = <?php if($outputType){ echo "'".$outputType."'"; } else { echo 'false'; }?>;</script>
 	
-	<!-- START responsive CSS files -->
+	<!-- START responsive CSS files 
 	<link rel='stylesheet' href='resources/css/zeynep.css?rng=<?php echo(rand(2145, 999999)); ?>'>
 	<link href="resources/css/hamburger.min.css?rng=<?php echo(rand(2145, 999999)); ?>" rel="stylesheet">
 	<link rel="stylesheet" href="resources/css/responsive_hv.css?rng=<?php echo(rand(2145, 999999)); ?>" media="only screen and (max-width: 991px)">
-	<!-- END responsive CSS files -->
+	END responsive CSS files -->
+	
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')) {      
+$cssfilesrndnum= rand(2145, 999999);
+$hvmobcssfiles= <<<MCF
+<!-- START responsive CSS files -->
+<link rel='stylesheet' href='resources/css/zeynep.css?rng=$cssfilesrndnum'>
+<link href="resources/css/hamburger.min.css?rng=$cssfilesrndnum" rel="stylesheet">
+<link rel="stylesheet" href="resources/css/responsive_hv.css?rng=$cssfilesrndnum">
+<!-- END responsive CSS files -->
+MCF;
+echo $hvmobcssfiles;	
+}
 
 </head>
 <body <?php echo ($outputType ? 'class="helioviewer-view-type-'.$outputType.'"' : '')?>>
@@ -1916,8 +1928,20 @@
 		});
 	</script>
 	
+	<!--
 	<script src='resources/js/responsive/zeynep1.js?rng=<?php echo(rand(2145, 999999)); ?>'></script>
 	<script src="resources/js/responsive/responsive_hv.js?rng=<?php echo(rand(2145, 999999)); ?>"></script>
+	-->
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')) {      
+$jsfilesrndnum= rand(2145, 999999);
+$hvmobjsfiles= <<<MJF
+<!-- START responsive JS files -->
+<script src='resources/js/responsive/zeynep1.js?rng=$jsfilesrndnum'></script>
+<script src="resources/js/responsive/responsive_hv.js?rng=$jsfilesrndnum"></script>
+<!-- END responsive JS files -->
+MJF;
+echo $hvmobjsfiles;
+}
 	
 	<?php
 		if($outputType=='embed' && (!isset($_GET['hideWatermark']) || $_GET['hideWatermark'] != 'true')){
