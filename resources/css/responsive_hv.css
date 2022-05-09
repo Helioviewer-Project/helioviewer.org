@@ -250,7 +250,7 @@
 	}
 	
 /* desktops */
-@media screen and (min-width: 992px) {	
+@media screen and (min-width: 1025px) {	
 	.zeynep {
 		display: none;
 	}
@@ -277,7 +277,7 @@
 }
 
 /* phones & tablets */
-@media screen and (max-width: 991px) {  /*  and (orientation : portrait) */
+@media screen and (max-width: 1024px) {  /* (max-width: 991px) and (orientation : portrait) */
 	
 	html, body {
 		min-width: 300px !important;
@@ -761,7 +761,7 @@
 }
 
 /* tablets & smartphones LANDSCAPE */
-@media screen and (max-width: 991px) and (orientation : landscape) { /* 790px  */
+@media screen and (max-width: 1024px) and (orientation : landscape) { /* 790px  */
 	#hv-drawer-left {
 		max-height: 100% !important;
 		height: 100% !important;
