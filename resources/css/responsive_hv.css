@@ -363,6 +363,10 @@
 		display: block; /*none;*/
 	}
 	
+	#accordion-events .header {
+		display: none;
+	}
+	
 	.drawer-contents .content .section {
 		background: transparent;
 	}
