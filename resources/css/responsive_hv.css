@@ -367,6 +367,10 @@
 		display: none;
 	}
 	
+	#accordion-bodies .header {
+		display: none;
+	}
+	
 	.drawer-contents .content .section {
 		background: transparent;
 	}
