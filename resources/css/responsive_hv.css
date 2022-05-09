@@ -360,7 +360,7 @@
 	}
 	
 	.drawer-contents .header {
-		display: none;
+		display: block; /*none;*/
 	}
 	
 	.drawer-contents .content .section {
@@ -576,7 +576,7 @@
 	}
 	
 	#TileLayerAccordion-Container .dynaccordion-section:first-child {
-		padding-top: 30px !important;
+		padding-top: 0px !important;
 	}
 	
 	#EventLayerAccordion-Container .dynaccordion-section:first-child {
