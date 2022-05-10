@@ -205,7 +205,7 @@ $(document).ready(function() {
 		if(menuenclblexists=='no' && ($('#soho-psp-tree-branch').hasClass('jstree-checked') || $('#stereo_a-psp-tree-branch').hasClass('jstree-checked'))) {
 			showEncounter();
 		}
-	}
+	});
 	
 	// END Encounter Count
 	
