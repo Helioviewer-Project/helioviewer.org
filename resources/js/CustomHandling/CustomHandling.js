@@ -208,6 +208,11 @@ $(document).ready(function() {
 		}
 	});
 	
+	setTimeout(function(){
+		$('#soho-psp-tree-branch, #stereo_a-psp-tree-branch').removeClass('jstree-checked');
+		$('#soho-psp-tree-branch, #stereo_a-psp-tree-branch').removeClass('jstree-unchecked');
+		$('#soho-psp-tree-branch, #stereo_a-psp-tree-branch').addClass('jstree-unchecked');
+	},800);
 	
 	// END Encounter Count
 	
