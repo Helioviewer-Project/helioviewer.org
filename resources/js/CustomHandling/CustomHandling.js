@@ -219,9 +219,12 @@ $(document).ready(function() {
 
 
 // if SOHO or Stereo-A PSP are checked, then run the PSP Encounter code updates
-if($('#soho-psp-tree-branch')hasClass('jstree-checked') || $('#soho-psp-tree-branch')hasClass('jstree-checked')) {
-
-	setTimeout(function(){$('#soho-psp-tree-trajectory .button:first').trigger('click');},800);
-
+function timedPSPEncounterCall() {
+	if($('#soho-psp-tree-branch')hasClass('jstree-checked') || $('#soho-psp-tree-branch')hasClass('jstree-checked')) {
+		//setTimeout(function(){$('#soho-psp-tree-trajectory .button:first').trigger('click');},800);
+		$('#soho-psp-tree-trajectory .button:first').trigger('click');
+	}
 }
+
+setTimeout(function(){timedPSPEncounterCall();},800);
 
