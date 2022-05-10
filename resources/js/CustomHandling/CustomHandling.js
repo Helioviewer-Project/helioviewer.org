@@ -230,5 +230,5 @@ function timedPSPEncounterCall() {
 	}
 }
 
-setTimeout(function(){timedPSPEncounterCall();},800);
+//setTimeout(function(){timedPSPEncounterCall();},800);
 
