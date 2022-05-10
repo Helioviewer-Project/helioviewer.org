@@ -218,5 +218,12 @@ $(document).ready(function() {
 }); // end of doc ready
 
 
+// if SOHO or Stereo-A PSP are checked, then run the PSP Encounter code updates
+function timedPSPEncounterCall() {
+	if($('#soho-psp-tree-branch').hasClass('jstree-checked') || $('#stereo_a-psp-tree-branch').hasClass('jstree-checked')) {
+		$('#soho-psp-tree-trajectory .button:first').trigger('click');
+	}
+}
 
-setTimeout(function(){$('#soho-psp-tree-trajectory .button:first').trigger('click');},800);
+setTimeout(function(){timedPSPEncounterCall();},800);
+
