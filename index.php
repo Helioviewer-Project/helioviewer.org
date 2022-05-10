@@ -1835,6 +1835,19 @@ echo $hvmobcssfiles;
 	}
 	?>
 
+<?php
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {      
+$jsfilesrndnum= rand(2145, 999999);
+$hvmobjsfiles= <<<MJF
+<!-- START responsive JS files -->
+<script src='resources/js/responsive/zeynep1.js?rng=$jsfilesrndnum'></script>
+<script src="resources/js/responsive/responsive_hv.js?rng=$jsfilesrndnum"></script>
+<!-- END responsive JS files -->
+MJF;
+echo $hvmobjsfiles;
+}
+?>	
+	
 	<script src="resources/lib/hvbrowserspecific/hv_browserspecific.js" type="text/javascript"></script>
 	<script src="resources/js/CustomHandling/CustomHandling.js?chrndnm=<?php echo (rand(9999,9999999)); ?>" type="text/javascript"></script>
 	
@@ -1932,18 +1945,7 @@ echo $hvmobcssfiles;
 	<script src='resources/js/responsive/zeynep1.js?rng=<?php echo(rand(2145, 999999)); ?>'></script>
 	<script src="resources/js/responsive/responsive_hv.js?rng=<?php echo(rand(2145, 999999)); ?>"></script>
 	-->
-<?php
-if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {      
-$jsfilesrndnum= rand(2145, 999999);
-$hvmobjsfiles= <<<MJF
-<!-- START responsive JS files -->
-<script src='resources/js/responsive/zeynep1.js?rng=$jsfilesrndnum'></script>
-<script src="resources/js/responsive/responsive_hv.js?rng=$jsfilesrndnum"></script>
-<!-- END responsive JS files -->
-MJF;
-echo $hvmobjsfiles;
-}
-?>
+
 	<?php
 		if($outputType=='embed' && (!isset($_GET['hideWatermark']) || $_GET['hideWatermark'] != 'true')){
 			$link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("output=embed", "", $_SERVER['REQUEST_URI']));
