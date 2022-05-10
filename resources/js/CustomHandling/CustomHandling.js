@@ -202,7 +202,7 @@ $(document).ready(function() {
 	});
 	
 	$(document).on('click','#soho-psp-tree-branch a:first, #stereo_a-psp-tree-branch a:first', function() {
-		if(menuenclblexists=='no' && ($('#soho-psp-tree-branch').hasClass('jstree-checked') || $('#stereo_a-psp-tree-branch').hasClass('jstree-checked')){
+		if(menuenclblexists=='no' && ($('#soho-psp-tree-branch').hasClass('jstree-checked') || $('#stereo_a-psp-tree-branch').hasClass('jstree-checked'))) {
 			showEncounter();
 		}
 	}
