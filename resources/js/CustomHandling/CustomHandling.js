@@ -228,7 +228,8 @@ $(document).ready(function() {
 
 // if SOHO or Stereo-A PSP are checked, then run the PSP Encounter code updates
 function timedPSPEncounterCall() {
-	if($('#soho-psp-tree-branch').hasClass('jstree-checked') || $('#stereo_a-psp-tree-branch').hasClass('jstree-checked')) {
+	if($('#soho-psp-tree-branch').hasClass('jstree-checked') || $('#soho-psp-tree-branch').hasClass('jstree-checked')) {
+		//setTimeout(function(){$('#soho-psp-tree-trajectory .button:first').trigger('click');},800);
 		$('#soho-psp-tree-trajectory .button:first').trigger('click');
 	}
 }
