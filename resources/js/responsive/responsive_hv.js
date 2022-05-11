@@ -144,8 +144,14 @@ $(function() {
 	// mobile datetime module
 	$('.dtcycle_arrows').click(function(){
 		var hvdateelemval= $('#date').val();
+		var hvtimeelemval= $('#time').val();
+		
+		const hvmobdateobj = new Date(hvdateelemval+ ' '+hvtimeelemval);
+		let hvmobyear = hvmobdateobj.getFullYear();
+		console.log(hvmobyear);
+		
 		var thismobdtbtn= $(this).attr('hvdtcontrol');
-		console.log(thismobdtbtn);
+		
 		
 		// determine which btn was pressed
 		switch(thismobdtbtn) {
