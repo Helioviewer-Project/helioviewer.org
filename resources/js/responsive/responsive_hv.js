@@ -142,7 +142,7 @@ $(function() {
 	
 
 	// mobile datetime module
-	$('.dtcycle_arrows').click({
+	$('.dtcycle_arrows').click(function(){
 		var hvdateelemval= $('#date').val();
 		var thismobdtbtn= $(this).attr('hvdtcontrol');
 		console.log(thismobdtbtn);
