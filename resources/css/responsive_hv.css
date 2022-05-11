@@ -302,6 +302,10 @@
 		touch-action: pinch-zoom;		
 	}
 	
+	#message-console {
+		display: none !important;
+	}
+	
 	.qtip {
 		display: none !important;
 	}
