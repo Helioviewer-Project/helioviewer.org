@@ -289,7 +289,7 @@
 	}
 
 	.hvbottomcal_wrap {
-		display:block;
+		display:none;
 	}
 
 	#helioviewer-viewport-container-outer {
@@ -646,7 +646,7 @@
 	/*  START datetime field   */
 	
 	.hvbottombar {
-		display: none;
+		display: block;
 		z-index: 1;
 		position: fixed;
 		margin: 0px;
