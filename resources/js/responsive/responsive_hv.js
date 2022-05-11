@@ -141,6 +141,29 @@ $(function() {
 	});
 	
 
+	// mobile datetime module
+	$('.dtcycle_arrows').click({
+		var hvdateelemval= $('#date').val();
+		var thismobdtbtn= $(this).attr('hvdtcontrol');
+		console.log(thismobdtbtn);
+		
+		// determine which btn was pressed
+		switch(thismobdtbtn) {
+			case 'year_up':
+				
+				break;
+			case 'month_up':
+				
+				break;
+			case 'day_up':
+				$('#timeForwardBtn').trigger('click');
+				break;
+			case 'day_down':
+				$('#timeBackBtn').trigger('click');
+				break;
+		}
+	});
+
 });
 
 
