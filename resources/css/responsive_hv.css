@@ -407,8 +407,8 @@
 		text-align: left !important;
 	}
 	
-	#hv-header #loading {
-		
+	#loading {
+		display: none !important;
 	}
 	
 	#menus {
