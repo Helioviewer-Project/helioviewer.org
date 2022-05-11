@@ -381,18 +381,18 @@ echo $hvmobcssfiles;
 				<td rowspan="4" class="hvtimeline_td" style="width: 0px; border: 0px solid gray;"></td>
 			</tr>			
 			<tr class="dtcycle_tr">
-				<td class="dtcycle_td" style="border-top-left-radius: 6px;"><a href=""><img class="dtcycle_arrows" hvdtcontrol="year_up" src="resources/images/mobile/uparrow2.png"></a></td>
-				<td class="dtcycle_td"><a href=""><img class="dtcycle_arrows" hvdtcontrol="month_up" src="resources/images/mobile/uparrow2.png"></a></td>
-				<td class="dtcycle_td"><a href=""><img class="dtcycle_arrows" hvdtcontrol="day_up" src="resources/images/mobile/uparrow2.png"></a></td>
+				<td class="dtcycle_td" style="border-top-left-radius: 6px;"><img class="dtcycle_arrows" hvdtcontrol="year_up" src="resources/images/mobile/uparrow2.png"></td>
+				<td class="dtcycle_td"><img class="dtcycle_arrows" hvdtcontrol="month_up" src="resources/images/mobile/uparrow2.png"></td>
+				<td class="dtcycle_td"><img class="dtcycle_arrows" hvdtcontrol="day_up" src="resources/images/mobile/uparrow2.png"></td>
 			</tr>
 			<tr class="dtcycle_tr">
 				<td class="dtcycle_td" id="dt_year_td">2021</td>			
 				<td class="dtcycle_td" id="dt_month_td">AUG</td>
 				<td class="dtcycle_td" id="dt_day_td">25</td>
 			</tr><tr class="dtcycle_tr">
-				<td class="dtcycle_td" style="border-bottom-left-radius: 6px;"><a href=""><img class="dtcycle_arrows" hvdtcontrol="year_down" src="resources/images/mobile/downarrow2.png"></a></td>
-				<td class="dtcycle_td"><a href=""><img class="dtcycle_arrows" hvdtcontrol="month_down" src="resources/images/mobile/downarrow2.png"></a></td>
-				<td class="dtcycle_td"><a href=""><img class="dtcycle_arrows" hvdtcontrol="day_down" src="resources/images/mobile/downarrow2.png"></a></td>
+				<td class="dtcycle_td" style="border-bottom-left-radius: 6px;"><img class="dtcycle_arrows" hvdtcontrol="year_down" src="resources/images/mobile/downarrow2.png"></td>
+				<td class="dtcycle_td"><img class="dtcycle_arrows" hvdtcontrol="month_down" src="resources/images/mobile/downarrow2.png"></td>
+				<td class="dtcycle_td"><img class="dtcycle_arrows" hvdtcontrol="day_down" src="resources/images/mobile/downarrow2.png"></td>
 			</tr>
 		</tbody></table>
 	</div>
