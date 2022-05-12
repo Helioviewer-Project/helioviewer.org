@@ -146,13 +146,12 @@ $(function() {
 	// mobile datetime module
 	
 		const hvmonthnames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
-];
+  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 	
 		var hvdateelemval= $('#date').val();
 		var hvtimeelemval= $('#time').val();
 
-		var hvmobdateobj = new Date(hvdateelemval+ ' '+hvtimeelemval);
+		var hvmobdateobj = new Date(hvdateelemval+' 00:00:00'); //' '+hvtimeelemval
 		var hvmobyear = hvmobdateobj.getFullYear();
 		var hvmobmonth = hvmonthnames[hvmobdateobj.getMonth()];
 		var hvmobday = hvmobdateobj.getDate();
@@ -165,7 +164,7 @@ $(function() {
 		hvdateelemval= $('#date').val();
 		hvtimeelemval= $('#time').val();
 		
-		hvmobdateobj = new Date(hvdateelemval+ ' '+hvtimeelemval);
+		hvmobdateobj = new Date(hvdateelemval+' 00:00:00');
 		hvmobyear = hvmobdateobj.getFullYear();
 		hvmobmonth = hvmonthnames[hvmobdateobj.getMonth()];
 		hvmobday = hvmobdateobj.getDate();
