@@ -153,8 +153,8 @@ $(function() {
 		var hvmobmonth = hvmobdateobj.getMonth();
 		var hvmobday = hvmobdateobj.getDate();
 
-		$('#dt_month_td').html(hvmobday);
-		$('#dt_day_td').html(hvmobmonth);
+		$('#dt_month_td').html(hvmobmonth);
+		$('#dt_day_td').html(hvmobday);
 		$('#dt_year_td').html(hvmobyear);	
 	
 	$('.dtcycle_arrows').click(function(){
@@ -167,8 +167,8 @@ $(function() {
 		hvmobday = hvmobdateobj.getDate();
 		//console.log(hvmobyear);
 		
-		$('#dt_month_td').html(hvmobday);
-		$('#dt_day_td').html(hvmobmonth);
+		$('#dt_month_td').html(hvmobmonth);
+		$('#dt_day_td').html(hvmobday);
 		$('#dt_year_td').html(hvmobyear);
 		
 		var thismobdtbtn= $(this).attr('hvdtcontrol');
