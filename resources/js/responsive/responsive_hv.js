@@ -148,10 +148,10 @@ $(function() {
 		var hvdateelemval= $('#date').val();
 		var hvtimeelemval= $('#time').val();
 
-		const hvmobdateobj = new Date(hvdateelemval+ ' '+hvtimeelemval);
-		let hvmobyear = hvmobdateobj.getFullYear();
-		let hvmobmonth = hvmobdateobj.getMonth();
-		let hvmobday = hvmobdateobj.getDate();
+		var hvmobdateobj = new Date(hvdateelemval+ ' '+hvtimeelemval);
+		var hvmobyear = hvmobdateobj.getFullYear();
+		var hvmobmonth = hvmobdateobj.getMonth();
+		var hvmobday = hvmobdateobj.getDate();
 
 		$('#dt_month_td').html(hvmobday);
 		$('#dt_day_td').html(hvmobmonth);
