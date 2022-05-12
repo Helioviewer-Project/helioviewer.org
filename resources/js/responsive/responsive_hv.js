@@ -159,6 +159,7 @@ $(function() {
 		$('#dt_month_td').html(hvmobmonth);
 		$('#dt_day_td').html(hvmobday);
 		$('#dt_year_td').html(hvmobyear);
+		console.log(hvdateelemval+' '+hvtimeelemval);
 		console.log(hvmobmonth+' '+hvmobday+' '+hvmobyear);		
 	
 	$('.dtcycle_arrows').click(function(){
