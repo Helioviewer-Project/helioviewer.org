@@ -189,7 +189,7 @@ $(function() {
 		
 	});
 	
-	setTimeout(function(){datetimemobModule();},2000);
+	setTimeout(function(){datetimemobModule();},800);
 
 /*
 	var firsthvdatepop='no';
