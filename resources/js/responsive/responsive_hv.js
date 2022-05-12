@@ -245,7 +245,7 @@ function hvOnResize() {
 	}
 }
 
-window.addEventListener("resize", hvOnResize);
+//window.addEventListener("resize", hvOnResize);
 
-enctimeoutmobile = setTimeout(hvOnResize, 3000);
+//enctimeoutmobile = setTimeout(hvOnResize, 3000);
 // END media query 
