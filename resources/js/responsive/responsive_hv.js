@@ -161,18 +161,7 @@ $(function() {
 		$('#dt_year_td').html(hvmobyear);	
 	
 	$('.dtcycle_arrows').click(function(){
-		hvdateelemval= $('#date').val();
-		hvtimeelemval= $('#time').val();
-		
-		hvmobdateobj = new Date(hvdateelemval+' 00:00:00');
-		hvmobyear = hvmobdateobj.getFullYear();
-		hvmobmonth = hvmonthnames[hvmobdateobj.getMonth()];
-		hvmobday = hvmobdateobj.getDate();
-		//console.log(hvmobyear);
-		
-		$('#dt_month_td').html(hvmobmonth);
-		$('#dt_day_td').html(hvmobday);
-		$('#dt_year_td').html(hvmobyear);
+
 		
 		var thismobdtbtn= $(this).attr('hvdtcontrol');
 		
@@ -192,6 +181,20 @@ $(function() {
 				$('#timeBackBtn').trigger('click');
 				break;
 		}
+		
+		hvdateelemval= $('#date').val();
+		hvtimeelemval= $('#time').val();
+		
+		hvmobdateobj = new Date(hvdateelemval+' 00:00:00');
+		hvmobyear = hvmobdateobj.getFullYear();
+		hvmobmonth = hvmonthnames[hvmobdateobj.getMonth()];
+		hvmobday = hvmobdateobj.getDate();
+		//console.log(hvmobyear);
+		
+		$('#dt_month_td').html(hvmobmonth);
+		$('#dt_day_td').html(hvmobday);
+		$('#dt_year_td').html(hvmobyear);
+		
 	});
 
 });
