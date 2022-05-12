@@ -189,8 +189,9 @@ $(function() {
 		
 	});
 	
-	//setTimeout(function(){datetimemobModule();},2000);
-	datetimemobModule();
+	setTimeout(function(){datetimemobModule();},2000);
+
+/*
 	var firsthvdatepop='no';
 	$('#date').change(function(){
 		if(firsthvdatepop=='no') {
@@ -198,6 +199,7 @@ $(function() {
 			datetimemobModule();
 		}
 	});
+	*/
 
 });
 
