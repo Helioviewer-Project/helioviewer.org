@@ -141,14 +141,35 @@ $(function() {
 	});
 	
 
+
+
 	// mobile datetime module
-	$('.dtcycle_arrows').click(function(){
+	
 		var hvdateelemval= $('#date').val();
 		var hvtimeelemval= $('#time').val();
-		
+
 		const hvmobdateobj = new Date(hvdateelemval+ ' '+hvtimeelemval);
 		let hvmobyear = hvmobdateobj.getFullYear();
-		console.log(hvmobyear);
+		let hvmobmonth = hvmobdateobj.getMonth();
+		let hvmobday = hvmobdateobj.getDate();
+
+		$('#dt_month_td').html(hvmobday);
+		$('#dt_day_td').html(hvmobmonth);
+		$('#dt_year_td').html(hvmobyear);	
+	
+	$('.dtcycle_arrows').click(function(){
+		hvdateelemval= $('#date').val();
+		hvtimeelemval= $('#time').val();
+		
+		hvmobdateobj = new Date(hvdateelemval+ ' '+hvtimeelemval);
+		hvmobyear = hvmobdateobj.getFullYear();
+		hvmobmonth = hvmobdateobj.getMonth();
+		hvmobday = hvmobdateobj.getDate();
+		//console.log(hvmobyear);
+		
+		$('#dt_month_td').html(hvmobday);
+		$('#dt_day_td').html(hvmobmonth);
+		$('#dt_year_td').html(hvmobyear);
 		
 		var thismobdtbtn= $(this).attr('hvdtcontrol');
 		
