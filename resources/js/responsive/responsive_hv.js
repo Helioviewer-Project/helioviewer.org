@@ -144,8 +144,8 @@ $(function() {
 
 
 	// mobile datetime module
-	
-		const hvmonthnames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+	function datetimemobModule() {
+		var hvmonthnames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN",
   "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 	
 		var hvdateelemval= $('#date').val();
@@ -160,7 +160,8 @@ $(function() {
 		$('#dt_day_td').html(hvmobday);
 		$('#dt_year_td').html(hvmobyear);
 		console.log(hvdateelemval+' '+hvtimeelemval);
-		console.log(hvmobmonth+' '+hvmobday+' '+hvmobyear);		
+		console.log(hvmobmonth+' '+hvmobday+' '+hvmobyear);	
+	}
 	
 	$('.dtcycle_arrows').click(function(){
 
@@ -184,20 +185,11 @@ $(function() {
 				break;
 		}
 		
-		hvdateelemval= $('#date').val();
-		hvtimeelemval= $('#time').val();
-		
-		hvmobdateobj = new Date(hvdateelemval+' 00:00:00');
-		hvmobyear = hvmobdateobj.getFullYear();
-		hvmobmonth = hvmonthnames[hvmobdateobj.getMonth()];
-		hvmobday = hvmobdateobj.getDate();
-		//console.log(hvmobyear);
-		
-		$('#dt_month_td').html(hvmobmonth);
-		$('#dt_day_td').html(hvmobday);
-		$('#dt_year_td').html(hvmobyear);
+		datetimemobModule();
 		
 	});
+	
+	setTimeout(function(){datetimemobModule();},2000);
 
 });
 
