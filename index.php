@@ -397,15 +397,15 @@ echo $hvmobcssfiles;
 			</tr>
 		</tbody></table>
 		-->
-		<table class="dtcycle_table2" cellpadding="0" cellspacing="0" border="0">
+		<table class="dtcycle_table2" cellpadding="0" cellspacing="0" border="0" style="width: 100%;height: 100%;">
 			<tr>
-				<td><img hvdtcontrol="day_up" class="dtcycle_arrows" src="resources/images/mobile/leftarrow1.png"></td>
-				<td>
+				<td style="text-align:left;vertical-align:middle;"><img hvdtcontrol="day_down" class="dtcycle_arrows" src="resources/images/mobile/leftarrow1.png"></td>
+				<td style="text-align:center;vertical-align:middle;color:#ffffff;">
 					<span id="dt_month_td"></span><br>
 					<span id="dt_year_td"></span>
 				</td>
-				<td><span id="dt_day_td"></span></td>
-				<td><img hvdtcontrol="day_up" class="dtcycle_arrows" src="resources/images/mobile/rightarrow1.png"></td>
+				<td style="text-align:center;vertical-align:middle;color:#ffffff;"><span id="dt_day_td"></span></td>
+				<td style="text-align:right;vertical-align:middle;"><img hvdtcontrol="day_up" class="dtcycle_arrows" src="resources/images/mobile/rightarrow1.png"></td>
 			</tr>
 		</table>
 	</div>
