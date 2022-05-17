@@ -375,6 +375,7 @@ echo $hvmobcssfiles;
 <!-- START Mobile DateTime field -->
 <div class="hvbottombar" style="">
 	<div class="dtcycle">
+		<!--
 		<table class="dtcycle_table" cellspacing="0" cellpadding="0" border="0">
 			<tbody><tr class="dtcycle_tr">
 				<td colspan="6" class="dtcycle_td_reach" style="height: 0px;"></td>
@@ -395,6 +396,18 @@ echo $hvmobcssfiles;
 				<td class="dtcycle_td"><img class="dtcycle_arrows" hvdtcontrol="day_down" src="resources/images/mobile/downarrow2.png"></td>
 			</tr>
 		</tbody></table>
+		-->
+		<table class="dtcycle_table2" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+				<td><img hvdtcontrol="day_up" class="dtcycle_arrows" src="resources/images/mobile/leftarrow1.png"></td>
+				<td>
+					<span id="dt_month_td"></span><br>
+					<span id="dt_year_td"></span>
+				</td>
+				<td><span id="dt_day_td"></span></td>
+				<td><img hvdtcontrol="day_up" class="dtcycle_arrows" src="resources/images/mobile/rightarrow1.png"></td>
+			</tr>
+		</table>
 	</div>
 </div>
 <!-- END Mobile DateTime field -->	
