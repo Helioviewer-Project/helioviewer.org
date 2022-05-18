@@ -129,6 +129,8 @@ function showEncounter() {
 						$('#stereo_a-psp-tree-trajectory .button, #stereo_a-psp-tree-trajectory .decoration').css('display','inline');
 					
 					// END generate encounter "pagination"
+					
+					datetimemobModule();
 				}
 				
 			});
