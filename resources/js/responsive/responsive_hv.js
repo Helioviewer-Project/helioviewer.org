@@ -156,7 +156,7 @@ $(function() {
 					$('#hvmobmenutitle_div').html('Share Viewport On Social Media');
 					break;
 			}
-		document.getElementsByClassName("mobmenutopanchor").scrollIntoView();
+		document.getElementById(thisdrawersect2).scrollIntoView();
 		
 		
 		
