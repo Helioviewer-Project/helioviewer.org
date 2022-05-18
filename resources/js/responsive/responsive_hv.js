@@ -138,22 +138,22 @@ $(function() {
 		$('#'+thisdrawersect2).css('display','block');
 			switch(thisdrawersect2) {
 				case 'hv-drawer-news':
-					$('#hvmobmenutitle_div').html('Helioviewer Project Announcements');
+					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Helioviewer Project Announcements');
 					break;
 				case 'hv-drawer-youtube':
-					$('#hvmobmenutitle_div').html('Shared To Youtube');
+					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Shared To Youtube');
 					break;
 				case 'hv-drawer-movies':
-					$('#hvmobmenutitle_div').html('Create A Movie');
+					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Create A Movie');
 					break;
 				case 'hv-drawer-screenshots':
-					$('#hvmobmenutitle_div').html('Create A Screenshot');
+					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Create A Screenshot');
 					break;
 				case 'hv-drawer-data':
-					$('#hvmobmenutitle_div').html('Request Science Data Download');
+					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Request Science Data Download');
 					break;
 				case 'hv-drawer-share':
-					$('#hvmobmenutitle_div').html('Share Viewport On Social Media');
+					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Share Viewport On Social Media');
 					break;
 			}
 		document.getElementById(thisdrawersect2).scrollIntoView();
