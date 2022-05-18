@@ -91,16 +91,16 @@
 	<meta id="fb-og-image" property="og:image" content="//helioviewer.org/resources/images/logos/hvlogo1s_transparent.png" />
 
 	<!-- Library CSS -->
-	<link rel="stylesheet" href="/resources/lib/yui-2.8.2r1/reset-fonts.css" />
-	<link rel="stylesheet" href="/resources/lib/jquery-ui-1.13.1/jquery-ui.min.css" />
-	<link rel="stylesheet" href="/resources/lib/jquery.jgrowl/jquery.jgrowl.min.css" />
-	<link rel="stylesheet" href="/resources/lib/jquery.qTip3/jquery.qtip.min.css" />
-	<link rel="stylesheet" href="/resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
-	<link rel="stylesheet" href="/resources/lib/DatetimePicker/jquery.datetimepicker.css" />
-	<link rel="stylesheet" href="/resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.min.css" />
-	<link rel="stylesheet" href="/resources/lib/period_picker.2.7.8.pro/build/jquery.timepicker.css" />
-	<link rel="stylesheet" href="/resources/lib/boneVojage/bonevojage.css">
-	<link rel="stylesheet" href="/resources/lib/mediaelement/build/mediaelementplayer.min.css">
+	<link rel="stylesheet" href="resources/lib/yui-2.8.2r1/reset-fonts.css" />
+	<link rel="stylesheet" href="resources/lib/jquery-ui-1.13.1/jquery-ui.min.css?rndnm=<?php echo (rand(9999,9999999)); ?>" />
+	<link rel="stylesheet" href="resources/lib/jquery.jgrowl/jquery.jgrowl.min.css" />
+	<link rel="stylesheet" href="resources/lib/jquery.qTip3/jquery.qtip.min.css" />
+	<link rel="stylesheet" href="resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
+	<link rel="stylesheet" href="resources/lib/DatetimePicker/jquery.datetimepicker.css" />
+	<link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.min.css" />
+	<link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.timepicker.css" />
+	<link rel="stylesheet" href="resources/lib/boneVojage/bonevojage.css">
+	<link rel="stylesheet" href="resources/lib/mediaelement/build/mediaelementplayer.min.css">
 
 	<!-- jQuery UI Theme Modifications -->
 	<link rel="stylesheet" href="/resources/css/dot-luv.css">
