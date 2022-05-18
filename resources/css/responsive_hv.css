@@ -75,6 +75,12 @@
 	.hvmobmenu_right_td {
 		text-align: left;
 		color: white;
+		text-decoration: none;
+	}
+	
+	.hvmobmenu_right_td a {
+		color: white;
+		text-decoration: none;
 	}
 	
 	.hvmobmenuitems {
