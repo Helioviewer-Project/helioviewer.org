@@ -2,13 +2,13 @@
 $(function() {
 
 
-	// add an anchor to topbar of datasource window on mobile
+	// add an anchor to topbar of pull-out menu windows on mobile
 	$('.hv-drawer-right').prepend('<span class="mobmenutopanchor"></span>');
 
 	// add closing X to #hv-drawer-right
 	$('.hv-drawer-right').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
-	//
+	// closing pull-out menu windows
 	$(".hvmobmenuclose").click(function(){
 		$('.hvmobmenuclose_div').css('display','none');
 		$('.hv-drawer-right').css('display','none');
@@ -71,7 +71,7 @@ $(function() {
   })
 
 
-	// open drawer by tab click
+	// click datasource items
 	
 	$(".hvmobdstabs").click(function(){
 		
@@ -125,6 +125,8 @@ $(function() {
 		#hv-drawer-data
 		#hv-drawer-share
 	*/
+	
+	// click mobile menu items
 	$(".hvmobmenuitems").click(function(){
 		$(".hamburger").removeClass("is-active");
 		zeynep.close();
@@ -134,6 +136,26 @@ $(function() {
 		var thisdrawersect2= $(this).attr('drawersec');
 		$('#'+thisdrawersect2+' .hvmobmenuclose_div').css('display','block');
 		$('#'+thisdrawersect2).css('display','block');
+			switch(thisdrawersect2) {
+				case 'hv-drawer-news':
+					$('#hvmobmenutitle_div').html('Helioviewer Project Announcements');
+					break;
+				case 'hv-drawer-youtube':
+					$('#hvmobmenutitle_div').html('Shared To Youtube');
+					break;
+				case 'hv-drawer-movies':
+					$('#hvmobmenutitle_div').html('Create A Movie');
+					break;
+				case 'hv-drawer-screenshots':
+					$('#hvmobmenutitle_div').html('Create A Screenshot');
+					break;
+				case 'hv-drawer-data':
+					$('#hvmobmenutitle_div').html('Request Science Data Download');
+					break;
+				case 'hv-drawer-share':
+					$('#hvmobmenutitle_div').html('Share Viewport On Social Media');
+					break;
+			}
 		document.getElementsByClassName("mobmenutopanchor").scrollIntoView();
 		
 		
