@@ -77,12 +77,6 @@ $(function() {
 		
 		document.getElementById("mobdrawertopanchor").scrollIntoView();
 		
-		//showEncounter();
-		
-		//$('.hvmobdstabs').css({'background-image':'url(https://develop.helioviewer.org/resources/images/backmobilemenubg2.png)'});
-		//var hvmobtabid = $(this).attr('drawersec')+'_mobtab';
-		// console.log(hvmobtabid);
-		//$('#'+hvmobtabid).css({'background-image':'url(https://develop.helioviewer.org/resources/images/mobiletabbgwhite1.png)','color':'black'});
 		var thisdrawersect= $(this).attr('drawersec');
 		
 		$('.hvmobdstabs .hvmobds_icon').css('filter','invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%)');
@@ -116,16 +110,6 @@ $(function() {
 		}
 
 	});
-	
-	
-	/*
-		#hv-drawer-news
-		#hv-drawer-youtube
-		#hv-drawer-movies
-		#hv-drawer-screenshots
-		#hv-drawer-data
-		#hv-drawer-share
-	*/
 	
 	// click mobile menu items
 	$(".hvmobmenuitems").click(function(){
@@ -197,15 +181,6 @@ $(function() {
 	});
 
 
-/*
-	var firsthvdatepop='no';
-	$('#date').change(function(){
-		if(firsthvdatepop=='no') {
-			firsthvdatepop='yes';
-			datetimemobModule();
-		}
-	});
-	*/
 
 });
 
@@ -213,30 +188,6 @@ $(function() {
 
 
 // START media query 
-
-// Create a condition that targets viewports at most 991px wide
-//const mediaQuery = window.matchMedia('(max-width: 991px)');
-
-//function handleTabletChange(e) {
-  // Check if the media query is true
- // if (e.matches) {
-    // Then log the following message to the console
-    /*
-	console.log('Media Query Matched!');
-	$('#hv-drawer-left').attr('style', 'display: none !important');
-	$('#hv-drawer-left').css({'display':'none'});
-	*/
-	
-	//enctimeoutmobile = setTimeout(showEncounter, 3000);
-	
-  //}
-//}
-
-// Register event listener
-//mediaQuery.addListener(handleTabletChange);
-
-// Initial check
-//handleTabletChange(mediaQuery);
 
 function hvOnResize() {
 	if (window.matchMedia("(max-width: 991px)").matches) {
@@ -251,9 +202,6 @@ function hvOnResize() {
 	}
 }
 
-//window.addEventListener("resize", hvOnResize);
-
-//enctimeoutmobile = setTimeout(hvOnResize, 3000);
 // END media query 
 
 
@@ -274,8 +222,8 @@ function hvOnResize() {
 		$('#dt_month_td').html(hvmobmonth);
 		$('#dt_day_td').html(hvmobday);
 		$('#dt_year_td').html(hvmobyear);
-		console.log(hvdateelemval+' '+hvtimeelemval);
-		console.log(hvmobmonth+' '+hvmobday+' '+hvmobyear);	
+		//console.log(hvdateelemval+' '+hvtimeelemval);
+		//console.log(hvmobmonth+' '+hvmobday+' '+hvmobyear);	
 	}
 	
 	const hvmobdateobj_init = new Date();
