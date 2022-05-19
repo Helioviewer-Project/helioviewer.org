@@ -129,6 +129,7 @@ $(function() {
 	
 	// click mobile menu items
 	$(".hvmobmenuitems").click(function(){
+		currdsopen= 'nonexistentds';
 		$(".hamburger").removeClass("is-active");
 		zeynep.close();
 		$('.hv-drawer-right').css({'display':'none'});
@@ -257,10 +258,11 @@ function hvOnResize() {
 
 
 	// mobile datetime module
-	function datetimemobModule() {
-		var hvmonthnames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 	
+	var hvmonthnames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];	
+	
+	function datetimemobModule() {
 		var hvdateelemval= $('#date').val();
 		var hvtimeelemval= $('#time').val();
 
@@ -276,6 +278,9 @@ function hvOnResize() {
 		console.log(hvmobmonth+' '+hvmobday+' '+hvmobyear);	
 	}
 	
-
+	const hvmobdateobj_init = new Date();
+	$('#dt_month_td').html(hvmonthnames[hvmobdateobj_init.getMonth()]);
+	$('#dt_day_td').html(hvmobdateobj_init.getDate());
+	$('#dt_year_td').html(hvmobdateobj_init.getFullYear());
 	
 	setTimeout(function(){datetimemobModule();},100);
