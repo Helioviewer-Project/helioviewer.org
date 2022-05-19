@@ -665,6 +665,10 @@
 		height: 65px; 
 		border: 1px solid #3a3a3a;
 		border-left:0px solid #000000;
+		box-shadow: 0pt 0pt 2pt 0pt rgb(255 255 255 / 75%);
+}
+
+
 	}	
 	
 	.dtcycle {
