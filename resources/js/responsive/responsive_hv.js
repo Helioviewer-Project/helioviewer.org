@@ -154,7 +154,7 @@ $(function() {
 	
 
 	// when datetime arrows are clicked
-	$('.dtcycle_arrows, .dtcycle_arrows_td').click(function(){
+	$('.dtcycle_arrows_td').click(function(){
 
 		
 		var thismobdtbtn= $(this).attr('hvdtcontrol');
