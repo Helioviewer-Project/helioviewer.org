@@ -181,6 +181,7 @@ $(function() {
 	});
 
 
+	$('#moving-conatiner').draggable('disable');
 
 });
 
