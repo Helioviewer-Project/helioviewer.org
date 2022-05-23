@@ -681,7 +681,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         // Fix drag and drop for mobile browsers
         $("#helioviewer-viewport, .ui-slider-handle").each(function () {
-            //assignTouchHandlers(this);
+            assignTouchHandlers(this);
         });
 
         $(".helioviewer-url-shorten").on('click', function (e) {
