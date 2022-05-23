@@ -308,6 +308,10 @@
 		touch-action: pinch-zoom;		
 	}
 	
+	#moving-container {
+		touch-action: pinch-zoom;
+	}
+	
 	#message-console {
 		display: none !important;
 	}
