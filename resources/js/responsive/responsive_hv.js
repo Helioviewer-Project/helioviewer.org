@@ -181,7 +181,7 @@ $(function() {
 	});
 
 
-	$('#moving-conatiner').draggable('disable');
+	$('#moving-container').draggable("destroy");
 
 });
 
