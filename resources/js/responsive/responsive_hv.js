@@ -180,8 +180,11 @@ $(function() {
 		
 	});
 
-
+	
 	$('#moving-container').draggable("destroy");
+
+	// move zoom controls to the body
+	$($("#zoom").detach()).appendTo("body");
 
 });
 
