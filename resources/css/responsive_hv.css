@@ -447,6 +447,7 @@
 
 	#zoomControlSlider>.ui-slider-handle {
 		width: 20px;
+		height: 20px;
 		opacity: 0.9;
 	}
 
