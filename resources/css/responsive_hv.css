@@ -431,8 +431,8 @@
 	}
 	*/
 	
-	#zoom, #zoomControls, #zoomControlZoomIn, #zoomSliderContainer {
-		display: block;
+	#zoom, #zoomControls, #zoomSliderContainer {
+		display: block !important;
 	}
 
 	#zoom {
