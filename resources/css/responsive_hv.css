@@ -433,6 +433,7 @@
 	
 	#zoom, #zoomControls, #zoomSliderContainer, #zoomControlSlider {
 		display: block !important;
+		z-index: 1 !important;
 	}
 
 	#zoom {
