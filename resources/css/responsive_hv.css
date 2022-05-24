@@ -437,10 +437,11 @@
 
 	#zoom {
 		position: absolute;
-		top: 0px;
+		top: 50px;
 		left: 0px;
 		z-index: 9999999999999;
 		height: 350px;
+		width: 30px;
 	}
 
 	#center-button, #zoom-out-button, #zoom-in-button {
