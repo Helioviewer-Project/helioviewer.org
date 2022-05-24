@@ -425,9 +425,28 @@
 		display: none;
 	}
 	
+	/*
 	#zoom {
 		display: none;
 	}
+	*/
+	
+	#zoom, #zoomControls, #zoomControlZoomIn, #zoomSliderContainer {
+		display: block;
+	}
+
+	#zoom {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		z-index: 9999999999999;
+		height: 350px;
+	}
+
+	#center-button, #zoom-out-button, #zoom-in-button {
+		display: none;
+	}
+
 	
 	#scale {
 		display: none;
