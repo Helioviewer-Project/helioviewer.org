@@ -445,6 +445,8 @@
 
 	#center-button, #zoom-out-button, #zoom-in-button {
 		display: none;
+		width:0px !important;
+		height:0px !important;
 	}
 
 	
