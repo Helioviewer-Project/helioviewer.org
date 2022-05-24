@@ -185,6 +185,8 @@ $(function() {
 
 	// move zoom controls to the body
 	$($("#zoom").detach()).appendTo("body");
+	$("#center-button, #zoom-out-button, #zoom-in-button").css({display:none});
+	$("#zoom, #zoomControls, #zoomSliderContainer").css({display:block});
 
 });
 
