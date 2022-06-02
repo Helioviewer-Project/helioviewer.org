@@ -237,4 +237,4 @@ function hvOnResize() {
 	$('#dt_day_td').html(hvmobdateobj_init.getDate());
 	$('#dt_year_td').html(hvmobdateobj_init.getFullYear());
 	
-	setTimeout(function(){datetimemobModule();},100);
+	setTimeout(function(){datetimemobModule();},2000);
