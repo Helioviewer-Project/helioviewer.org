@@ -435,6 +435,11 @@
 		display: block !important;
 		z-index: 1 !important;
 	}
+	
+	#zoomSliderContainer {
+		background-color: black;
+		border: 1px solid silver;
+	}
 
 	#zoom {
 		position: absolute;
@@ -610,6 +615,10 @@
 	
 	.timestamp {
 		display:none;
+	}
+	
+	#hv-drawer-timeline-events, #hv-drawer-timeline {
+	   display: none !important;
 	}
 	
 	.hvmobdstab_wrap {
