@@ -95,10 +95,22 @@ $(function() {
 		
 		// if a data source button is clicked while its screen is already open, close it
 		if(currdsopen == thisdrawersect) {
-			$('#'+currdsopen).css('display','none');
-			$('#hv-drawer-left').attr('style', 'display: none');
-			$('.hvmobdstabs .hvmobds_icon').css('filter','invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%)');
-			$('.hvmobdstabs span').css({'color':'silver'});
+			
+			if(dswindowopen=='yes') {
+				$('#'+currdsopen).css('display','none');
+				$('#hv-drawer-left').attr('style', 'display: none');
+				$('.hvmobdstabs .hvmobds_icon').css('filter','invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%)');
+				$('.hvmobdstabs span').css({'color':'silver'});
+				dswindowopen='no';
+			}
+			else {
+				$('#'+currdsopen).css('display','block');
+				$('#hv-drawer-left').attr('style', 'display: block');
+				$(this).children('.hvmobds_icon').css('filter','invert(91%) sepia(89%) saturate(602%) hue-rotate(331deg) brightness(102%) contrast(94%)');
+				$(this).children('span').css({'color':'#f7e057','filter':'none'});
+				dswindowopen='yes';
+			}
+			
 		}		
 		
 		// if it's not already open, close currently open drawer and open correct one
