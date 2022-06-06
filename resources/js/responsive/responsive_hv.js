@@ -94,13 +94,11 @@ $(function() {
 		$(this).children('span').css({'color':'#f7e057','filter':'none'});
 		
 		// if a data source button is clicked while its screen is already open, close it
-		if(currdsopen == thisdrawersect && dswindowopen=='yes') {
+		if(currdsopen == thisdrawersect) {
 			$('#'+currdsopen).css('display','none');
 			$('#hv-drawer-left').attr('style', 'display: none');
 			$('.hvmobdstabs .hvmobds_icon').css('filter','invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%)');
 			$('.hvmobdstabs span').css({'color':'silver'});
-			currdsopen= 'nonexistentds';
-			dswindowopen='no';
 		}		
 		
 		// if it's not already open, close currently open drawer and open correct one
@@ -125,7 +123,6 @@ $(function() {
 					break;
 			}
 			currdsopen= thisdrawersect;
-			dswindowopen='yes';
 		}
 
 	});
