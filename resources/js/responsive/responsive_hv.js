@@ -135,6 +135,7 @@ $(function() {
 					break;
 			}
 			currdsopen= thisdrawersect;
+			dswindowopen='yes';
 		}
 
 	});
