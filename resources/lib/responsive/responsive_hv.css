@@ -1,12 +1,12 @@
 
 	.zeynep {
-		background-image: url(../images/mobile/backmobilemenubg3.png);
+		background-image: url(../../images/mobile/backmobilemenubg3.png);
 		/*border-left: 3px solid #404143;*/
 		box-shadow: 9pt 9pt 4pt 9pt rgb(255 255 255 / 75%);
 	}
 	
 	.zeynep .submenu {
-		background-image: url(../images/mobile/backmobilemenubg3.png);
+		background-image: url(../../images/mobile/backmobilemenubg3.png);
 	}
 	
 	.zeynep .submenu-header > a {
@@ -93,7 +93,7 @@
 	.hvmobdstab_wrap {
 		display: none;
 		position: fixed;
-		background-image: url(../images/mobile/backmobilemenubg3.png);
+		background-image: url(../../images/mobile/backmobilemenubg3.png);
 		height: 65px;
 		z-index: 10;
 		bottom: 0;
@@ -108,7 +108,7 @@
 		padding-left:6px;
 		padding-right:6px;
 		padding-top:0px;
-		background-image: url(../images/mobile/backmobilemenubg3.png);
+		background-image: url(../../images/mobile/backmobilemenubg3.png);
 		border: 1px solid white;
 		border-bottom: 0px solid black;
 		border-radius: 4px;
@@ -246,7 +246,7 @@
 		text-align:center;
 		z-index:1;
 		box-shadow: 1pt 1pt 4pt 1pt rgb(68 63 63 / 75%);
-		background-image: url(../images/mobile/backmobilemenubg2.png);
+		background-image: url(../../images/mobile/backmobilemenubg2.png);
 	}
 	
 	.hvbottomcal_img {
@@ -343,7 +343,7 @@
 		/* bottom: 0; */
 		/* margin-bottom: 40px; */
 		background-color: transparent;
-		background-image: url(../images/mobile/backmobilemenubg3.png);
+		background-image: url(../../images/mobile/backmobilemenubg3.png);
 		-moz-box-shadow: 0pt 2pt 4pt 1pt rgb(255 255 255 / 75%);
 		-webkit-box-shadow: 0pt 2pt 4pt 1pt rgb(255 255 255 / 75%);
 		box-shadow: 0pt 2pt 4pt 1pt rgb(255 255 255 / 75%);
@@ -356,7 +356,7 @@
 		top: 46px;
 		width: 100% !important;
 		height: 800px !important;
-		background-image: url(../images/backmobilemenubg2.png);
+		background-image: url(../../images/backmobilemenubg2.png);
 		overflow: hidden;
 	}
 	
@@ -500,7 +500,7 @@
 		height: 40px;
 		min-width: 300px !important;
 		max-height: 40px;
-		background-image: url(../images/mobile/backmobilemenubg3.png);
+		background-image: url(../../images/mobile/backmobilemenubg3.png);
 		z-index: 10;
 	}
 	
@@ -699,7 +699,7 @@
 		position: fixed;
 		margin: 0px;
 		margin-bottom: 100px;
-		background-image: url(../images/mobile/backmobilemenubg2.png);
+		background-image: url(../../images/mobile/backmobilemenubg2.png);
 		bottom: 0;
 		border-top-right-radius: 16px;
 		border-bottom-right-radius: 16px;
