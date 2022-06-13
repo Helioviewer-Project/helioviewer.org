@@ -167,6 +167,34 @@ $hvmobcssfiles= <<<MCF
 MCF;
 echo $hvmobcssfiles;	
 }
+else {
+$hvdesktopcsshides= <<<DCH
+<style>
+.zeynep {
+display: none;
+}
+#hvmobilemenu_btn {
+display: none;
+}
+.zeynep-overlay {
+display: none;
+}
+.hvmobdstab_wrap {
+display: none;
+}
+.hvmobds_table {
+display: none;
+}
+.hvbottombar {
+display: none;
+}
+.hvbottomcal_wrap {
+display: none;
+}
+</style>
+DCH;
+echo $hvdesktopcsshides;
+}
 ?>
 </head>
 <body <?php echo ($outputType ? 'class="helioviewer-view-type-'.$outputType.'"' : '')?>>
