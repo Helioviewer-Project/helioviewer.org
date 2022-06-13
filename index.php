@@ -160,8 +160,8 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'
 $cssfilesrndnum= rand(2145, 999999);
 $hvmobcssfiles= <<<MCF
 <!-- START responsive CSS files -->
-<link rel='stylesheet' href='resources/css/zeynep.css?rng=$cssfilesrndnum'>
-<link href="resources/css/hamburger.min.css?rng=$cssfilesrndnum" rel="stylesheet">
+<link rel='stylesheet' href='resources/lib/responsive/zeynep.css?rng=$cssfilesrndnum'>
+<link href="resources/lib/responsive/hamburger.min.css?rng=$cssfilesrndnum" rel="stylesheet">
 <link rel="stylesheet" href="resources/lib/responsive/responsive_hv.css?rng=$cssfilesrndnum">
 <!-- END responsive CSS files -->
 MCF;
@@ -1843,7 +1843,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'
 $jsfilesrndnum= rand(2145, 999999);
 $hvmobjsfiles= <<<MJF
 <!-- START responsive JS files -->
-<script src='resources/js/responsive/zeynep1.js?rng=$jsfilesrndnum'></script>
+<script src='resources/lib/responsive/zeynep1.js?rng=$jsfilesrndnum'></script>
 <script src="resources/lib/responsive/responsive_hv.js?rng=$jsfilesrndnum"></script>
 <!-- END responsive JS files -->
 MJF;
