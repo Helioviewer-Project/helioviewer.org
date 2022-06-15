@@ -9,6 +9,8 @@ $(function() {
 	$('.hv-drawer-right').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
 	$('#hv-drawer-movies').css('display','none');
+	$('#hv-drawer-movies').attr('style', 'display: none');
+
 
 	// closing pull-out menu windows
 	$(".hvmobmenuclose").click(function(){
