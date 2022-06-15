@@ -8,6 +8,8 @@ $(function() {
 	// add closing X to #hv-drawer-right
 	$('.hv-drawer-right').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
+	$('.hv-drawer-right').css('display','none');
+
 	// closing pull-out menu windows
 	$(".hvmobmenuclose").click(function(){
 		$('.hvmobmenuclose_div').css('display','none');
