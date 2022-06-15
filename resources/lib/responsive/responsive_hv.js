@@ -267,3 +267,9 @@ function hvOnResize() {
 	$('#dt_year_td').html(hvmobdateobj_init.getFullYear());
 	
 	setTimeout(function(){datetimemobModule();},2000);
+
+
+$(".event-marker").click(function(){
+	console.log("event-marker clicked");
+	alert("event-marker clicked");
+});
