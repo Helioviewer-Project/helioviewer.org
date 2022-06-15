@@ -16,6 +16,8 @@ $(function() {
 		$('.hv-drawer-right').css('display','none');
 		$('.hv-drawer-right').attr('style', 'display: none');
 	});
+	
+	$(".hvmobmenuclose").click();
 
 
 	// current datasource that's open
