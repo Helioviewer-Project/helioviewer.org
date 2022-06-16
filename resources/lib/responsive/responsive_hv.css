@@ -720,12 +720,12 @@
 	
 	.dtcycle {
 		height:100%;
-		width: 175px;
+		width: 100%; /* 175px */
 		margin-left: 8px;
 	}
 
 	.dtcycle_table {
-		height: 96%; /*100%;*/
+		height: 100%;
 		padding:0px;
 		width:100%;
 		border-radius:6px;
