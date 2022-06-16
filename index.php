@@ -425,17 +425,41 @@ echo $hvdesktopcsshides;
 			</tr>
 		</tbody></table>
 		-->
-		<table class="dtcycle_table2" cellpadding="0" cellspacing="0" border="0" style="width: 100%;height: 100%;">
-			<tr>
-				<td class="dtcycle_arrows_td" hvdtcontrol="day_down" style="text-align:left;vertical-align:middle;"><img hvdtcontrol="day_down" class="dtcycle_arrows" src="resources/images/mobile/leftarrow1.png"></td>
-				<td style="text-align:center;vertical-align:middle;color:#ffffff;font-size: 18px;">
-					<span id="dt_month_td"></span><br>
-					<span id="dt_year_td"></span>
-				</td>
-				<td style="text-align:center;vertical-align:middle;color:#ffffff;font-size:18px;font-weight: bold;"><span id="dt_day_td"></span></td>
-				<td class="dtcycle_arrows_td" hvdtcontrol="day_up" style="text-align:right;vertical-align:middle;"><img hvdtcontrol="day_up" class="dtcycle_arrows" src="resources/images/mobile/rightarrow1.png"></td>
-			</tr>
-		</table>
+<table class="dtcycle_table2" cellpadding="0" cellspacing="0" border="0" style="width: 100%;height: 100%;">
+	<tr>
+		<td class="dtcycle_arrows_td" hvdtcontrol="day_down" style="text-align:left;vertical-align:middle;"><img hvdtcontrol="day_down" class="dtcycle_arrows" src="resources/images/mobile/leftarrow1.png"></td>
+		<td style="text-align:center;vertical-align:middle;color:#ffffff;font-size: 18px;">
+			<span id="dt_month_td"></span><br>
+			<span id="dt_year_td"></span>
+		</td>
+		<td style="text-align:center;vertical-align:middle;color:#ffffff;font-size:18px;font-weight: bold;"><span id="dt_day_td"></span></td>
+		
+		<td style="border-left:1px dotted silvertext-align: center;font-size: 18px;"><span id="tm_td" style="color:white;">00:00:00</span></td>
+		
+		<td class="dtcycle_arrows_td" hvdtcontrol="day_up" style="text-align:right;vertical-align:middle;"><img hvdtcontrol="day_up" class="dtcycle_arrows" src="resources/images/mobile/rightarrow1.png"></td>
+	</tr>
+	
+	<tr>
+		<td colspan="5" style="text-align:center;">
+			<span>Jump:</span>&nbsp;
+			<select style="border:0px;background: transparent;color:#ffffff;-webkit-appearance: none;-moz-appearance: none;text-indent: 1px;text-overflow: '';">
+				<option value="1">1&nbsp;Sec</option>
+				<option value="60">1&nbsp;Min</option>
+				<option value="300">5&nbsp;Mins</option>
+				<option value="900">15&nbsp;Mins</option>
+				<option value="3600">1&nbsp;Hour</option>
+				<option value="21600">6&nbsp;Hours</option>
+				<option value="43200">12&nbsp;Hours</option>
+				<option value="86400" selected="selected">1&nbsp;Day</option>
+				<option value="604800">1&nbsp;Week</option>
+				<option value="2356583">Carrington&nbsp;rotation</option>
+				<option value="2419200">28&nbsp;Days</option>
+				<option value="31556926">1&nbsp;Year</option>
+			</select>
+		</td>
+	</tr>
+	
+</table>
 	</div>
 </div>
 <!-- END Mobile DateTime field -->	
