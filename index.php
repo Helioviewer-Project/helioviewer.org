@@ -450,7 +450,7 @@ echo $hvdesktopcsshides;
 				<option value="3600">1&nbsp;Hour</option>
 				<option value="21600">6&nbsp;Hours</option>
 				<option value="43200">12&nbsp;Hours</option>
-				<option value="86400" selected="selected">1&nbsp;Day</option>
+				<option value="86400">1&nbsp;Day</option>
 				<option value="604800">1&nbsp;Week</option>
 				<option value="2356583">Carrington&nbsp;rotation</option>
 				<option value="2419200">28&nbsp;Days</option>
@@ -460,6 +460,7 @@ echo $hvdesktopcsshides;
 	</tr>
 	
 </table>
+
 	</div>
 </div>
 <!-- END Mobile DateTime field -->	
