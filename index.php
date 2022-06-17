@@ -442,7 +442,7 @@ echo $hvdesktopcsshides;
 	<tr>
 		<td colspan="5" style="text-align:center;">
 			<span>Jump:</span>&nbsp;
-			<select style="border:0px;background: transparent;color:#ffffff;-webkit-appearance: none;-moz-appearance: none;text-indent: 1px;text-overflow: '';">
+			<select id="hvmobjump_sel" style="border:0px;background: transparent;color:#ffffff;-webkit-appearance: none;-moz-appearance: none;text-indent: 1px;text-overflow: '';">
 				<option value="1">1&nbsp;Sec</option>
 				<option value="60">1&nbsp;Min</option>
 				<option value="300">5&nbsp;Mins</option>
