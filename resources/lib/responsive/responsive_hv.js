@@ -8,6 +8,7 @@ $(function() {
 	// add closing X to #hv-drawer-right
 	$('.hv-drawer-right').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
+	// force-close right drawers (add drawers as necessary)
 	$('#hv-drawer-movies').css('display','none');
 	$('#hv-drawer-movies').attr('style', 'display: none');
 
@@ -223,6 +224,19 @@ $(function() {
 	$("#center-button, #zoom-out-button, #zoom-in-button").css({'display':'none'});
 	$("#zoom, #zoomControls, #zoomSliderContainer").css({'display':'block'});
 
+
+	// tie JUMP to desktop jump select field
+	$("#hvmobjump_sel").change(function(){
+	  $("#timestep-select").val($("#hvmobjump_sel").val());
+	});
+
+	// testing: features & events marker tracking
+	$(".event-marker").click(function(){
+		console.log("event-marker clicked");
+		alert("event-marker clicked");
+	});
+
+
 });
 
 
@@ -275,7 +289,3 @@ function hvOnResize() {
 	setTimeout(function(){datetimemobModule();},2000);
 
 
-$(".event-marker").click(function(){
-	console.log("event-marker clicked");
-	alert("event-marker clicked");
-});
