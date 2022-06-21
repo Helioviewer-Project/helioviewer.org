@@ -225,9 +225,9 @@ $(function() {
 	$("#zoom, #zoomControls, #zoomSliderContainer").css({'display':'block'});
 
 
-	// tie JUMP to desktop jump select field
+	// testing: tie JUMP to desktop jump select field
 	$("#hvmobjump_sel").change(function(){
-	  $("#timestep-select").val($("#hvmobjump_sel").val());
+	  $("#timestep-select").val($(this).val()).trigger('change');
 	});
 
 	// testing: features & events marker tracking
