@@ -823,6 +823,17 @@
 		opacity:0.7;
 		width:0px;
 	}
+	
+	#time {
+		background: #000000;
+		color: #ffffff;
+		border: 0px solid #000000;
+	}
+	
+	.periodpicker_timepicker_dialog.visible {
+		top: 280px;
+	}
+	
 
 /* END datetime field */
 
