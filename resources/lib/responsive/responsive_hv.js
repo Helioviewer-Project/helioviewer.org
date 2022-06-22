@@ -230,10 +230,16 @@ $(function() {
 	  $("#time").val($(this).val()).trigger('change');
 	});
 	
+	$("#time").change(function(){
+	  $("#hvmobtime_input").val($(this).val());
+	});
+	
 	// testing: tie JUMP to desktop jump select field
 	$("#hvmobjump_sel").change(function(){
 	  $("#timestep-select").val($(this).val()).trigger('change');
 	});
+	
+	
 
 	// testing: features & events marker tracking
 	$(".event-marker").click(function(){
