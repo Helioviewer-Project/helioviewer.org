@@ -237,6 +237,7 @@ $(function() {
 	*/
 	
 	$("#time").clone().appendTo("#hvmobtime_td");
+	$("#time").attr('readonly', 'readonly');
 	
 	// testing: tie JUMP to desktop jump select field
 	$("#hvmobjump_sel").change(function(){
