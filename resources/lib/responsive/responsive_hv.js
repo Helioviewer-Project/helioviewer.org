@@ -225,6 +225,11 @@ $(function() {
 	$("#zoom, #zoomControls, #zoomSliderContainer").css({'display':'block'});
 
 
+	//testing: tie time to desktop time
+	$("#hvmobtime_input").change(function(){
+	  $("#time").val($(this).val()).trigger('change');
+	});
+	
 	// testing: tie JUMP to desktop jump select field
 	$("#hvmobjump_sel").change(function(){
 	  $("#timestep-select").val($(this).val()).trigger('change');
@@ -269,7 +274,7 @@ function hvOnResize() {
 		var hvdateelemval= $('#date').val();
 		var hvtimeelemval= $('#time').val();
 
-		var hvmobdateobj = new Date(hvdateelemval+' 00:00:00'); //' '+hvtimeelemval
+		var hvmobdateobj = new Date(hvdateelemval+' '+hvtimeelemval); // ' 00:00:00'
 		var hvmobyear = hvmobdateobj.getFullYear();
 		var hvmobmonth = hvmonthnames[hvmobdateobj.getMonth()];
 		var hvmobday = hvmobdateobj.getDate();
@@ -286,6 +291,12 @@ function hvOnResize() {
 	$('#dt_day_td').html(hvmobdateobj_init.getDate());
 	$('#dt_year_td').html(hvmobdateobj_init.getFullYear());
 	
+	$('#hvmobtime_input').val(hvmobdateobj_init.getHours()+':'+hvmobdateobj_init.getMinutes()+':'+hvmobdateobj_init.getSeconds());
+	
 	setTimeout(function(){datetimemobModule();},2000);
+	
+	
+	
+	
 
 
