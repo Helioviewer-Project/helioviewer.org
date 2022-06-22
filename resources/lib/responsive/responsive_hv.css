@@ -831,7 +831,9 @@
 	}
 	
 	.periodpicker_timepicker_dialog.visible {
-		top: 280px !important;
+		left: 185px;
+		top: auto !important;
+		bottom: 154px !important;
 	}
 	
 
