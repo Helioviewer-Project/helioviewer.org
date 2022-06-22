@@ -434,15 +434,16 @@ echo $hvdesktopcsshides;
 		</td>
 		<td style="text-align:center;vertical-align:middle;color:#ffffff;font-size:18px;font-weight: bold;"><span id="dt_day_td"></span></td>
 		
-		<td style="border-left:1px dotted silver;text-align: center;font-size: 18px;"><span id="tm_td" style="color:white;">00:00:00</span></td>
+		<td style="border-left:1px dotted silver;text-align: center;font-size: 18px;"><input id="hvmobtime_input" style="color:white;" val="00:00:00"></td>
 		
 		<td class="dtcycle_arrows_td" hvdtcontrol="day_up" style="text-align:right;vertical-align:middle;"><img hvdtcontrol="day_up" class="dtcycle_arrows" src="resources/images/mobile/rightarrow1.png"></td>
 	</tr>
 	
 	<tr>
 		<td colspan="5" style="text-align:center;">
-			<span>Jump:</span>&nbsp;
+			<span style="color:white;">JUMP:</span>&nbsp;
 			<select id="hvmobjump_sel" style="border:0px;background: transparent;color:#ffffff;-webkit-appearance: none;-moz-appearance: none;text-indent: 1px;text-overflow: '';">
+				<option value=""></option>
 				<option value="1">1&nbsp;Sec</option>
 				<option value="60">1&nbsp;Min</option>
 				<option value="300">5&nbsp;Mins</option>
