@@ -434,7 +434,7 @@ echo $hvdesktopcsshides;
 		</td>
 		<td style="text-align:center;vertical-align:middle;color:#ffffff;font-size:18px;font-weight: bold;"><span id="dt_day_td"></span></td>
 		
-		<td style="border-left:1px dotted silver;text-align: center;font-size: 18px;width: 132px;"><input id="hvmobtime_input" style="color:white;width:100px;background:black;border:0px solid black;" val="00:00:00"></td>
+		<td id="hvmobtime_td" style="border-left:1px dotted silver;text-align:center;font-size:18px;width: 132px;"><input id="hvmobtime_input" type="text" maxlength="8" style="color:white;width:100px;background:black;border:0px solid black;" pattern="[\d]{2}:[\d]{2}:[\d]{2}" val="00:00:00"></td>
 		
 		<td class="dtcycle_arrows_td" hvdtcontrol="day_up" style="text-align:right;vertical-align:middle;"><img hvdtcontrol="day_up" class="dtcycle_arrows" src="resources/images/mobile/rightarrow1.png"></td>
 	</tr>
@@ -461,6 +461,7 @@ echo $hvdesktopcsshides;
 	</tr>
 	
 </table>
+
 
 
 	</div>
