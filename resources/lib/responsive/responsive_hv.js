@@ -226,6 +226,7 @@ $(function() {
 
 
 	//testing: tie time to desktop time
+	/*
 	$("#hvmobtime_input").change(function(){
 	  $("#time").val($(this).val()).trigger('change');
 	});
@@ -233,6 +234,9 @@ $(function() {
 	$("#time").change(function(){
 	  $("#hvmobtime_input").val($(this).val());
 	});
+	*/
+	
+	$("#time").clone().appendTo("#hvmobtime_td");
 	
 	// testing: tie JUMP to desktop jump select field
 	$("#hvmobjump_sel").change(function(){
