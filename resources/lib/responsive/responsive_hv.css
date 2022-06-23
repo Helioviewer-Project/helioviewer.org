@@ -900,15 +900,22 @@
 	}
 
 	.hvbottombar {
-		margin-bottom: 63px !important;
+		margin-bottom: 50px !important;
 		padding-bottom: 7px !important;
 	}
 	
 	#zoom {
 		z-index:0 !important;
+		top: 10px;
+	}
+	
+	#zoomSliderContainer {
 		top: 40px;
 		height: 130px;
-
+	}
+	
+	#zoomControlSlider {
+		height: 130px;
 	}
 
 }
