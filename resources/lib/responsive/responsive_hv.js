@@ -240,6 +240,11 @@ $(function() {
 	$("#time").clone().appendTo("#hvmobtime_td");
 	$("#time").attr('readonly', 'readonly');
 	
+	$("#time").change(function(){
+		$("#time").blur(); 
+	});
+	
+	
 	// copy/paste JUMP drop-down
 	$('#timestep-select').css('float','none');
 	$("#timestep-select").clone().appendTo("#hvmobjump_div");
@@ -257,6 +262,10 @@ $(function() {
 		alert("event-marker clicked");
 	});
 
+	$(window).on('orientationchange resize', function () {
+		$(".periodpicker_timepicker_dialog.visible").css('display','none');
+		$("#time").blur(); 
+	});
 
 });
 
