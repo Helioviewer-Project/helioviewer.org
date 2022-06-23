@@ -936,6 +936,10 @@
 		width: 20%;
 		border-left: 0px solid black;
 	}
+	
+	.periodpicker_timepicker_dialog.visible {
+		bottom: 117px !important;
+	}
 
 }
 
