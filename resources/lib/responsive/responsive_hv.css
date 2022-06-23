@@ -900,6 +900,18 @@
 		display: none;
 	}
 
+	.hvbottombar {
+		margin-bottom: 63px;
+		padding-bottom: 7px;
+	}
+	
+	#zoom {
+		z-index:0 !important;
+		top: 40px;
+		height: 130px;
+
+	}
+
 }
 
 
