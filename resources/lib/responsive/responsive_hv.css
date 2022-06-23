@@ -917,6 +917,25 @@
 	#zoomControlSlider {
 		height: 130px;
 	}
+	
+	.dtcycle_arrows_td {
+		width: 20%;
+	}
+	
+	#dt_monthyear_td {
+		text-align: right;
+		width: 20%;
+	}
+	
+	#dtday_td {
+		text-align: left;
+		width: 20%;
+	}
+	
+	#hvmobtime_td {
+		width: 20%;
+		border-left: 0px solid black;
+	}
 
 }
 
