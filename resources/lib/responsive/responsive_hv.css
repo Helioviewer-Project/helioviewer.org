@@ -472,7 +472,7 @@
 	}
 	
 	#earth-container {
-		display:none !important;
+		display:block !important;
 	}
 	
 	#hvmobilemenu_btn {
