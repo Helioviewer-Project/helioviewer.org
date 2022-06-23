@@ -264,6 +264,7 @@ $(function() {
 
 	$(window).on('orientationchange resize', function () {
 		//$(".periodpicker_timepicker_dialog.visible").css('display','none');
+		$(".periodpicker_timepicker_dialog").removeClass("visible");
 		$("#time").blur(); 
 	});
 
