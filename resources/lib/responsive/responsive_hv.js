@@ -240,7 +240,8 @@ $(function() {
 	$("#time").clone().appendTo("#hvmobtime_td");
 	$("#time").attr('readonly', 'readonly');
 	
-	
+	// copy/paste JUMP drop-down
+	$('#timestep-select').css('float','none');
 	$("#timestep-select").clone().appendTo("#hvmobjump_div");
 	
 	// testing: tie JUMP to desktop jump select field
