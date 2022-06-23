@@ -236,8 +236,12 @@ $(function() {
 	});
 	*/
 	
+	// copy/paste the #time element and make it readonly so the keyboard doesn't show
 	$("#time").clone().appendTo("#hvmobtime_td");
 	$("#time").attr('readonly', 'readonly');
+	
+	
+	$("#timestep-select").clone().appendTo("#hvmobjump_div");
 	
 	// testing: tie JUMP to desktop jump select field
 	$("#hvmobjump_sel").change(function(){
