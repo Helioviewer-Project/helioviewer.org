@@ -715,8 +715,7 @@
 		box-shadow: 0pt 0pt 2pt 0pt rgb(255 255 255 / 75%);
 }
 
-
-	}	
+	
 	
 	.dtcycle {
 		height:100%;
@@ -901,8 +900,8 @@
 	}
 
 	.hvbottombar {
-		margin-bottom: 63px;
-		padding-bottom: 7px;
+		margin-bottom: 63px !important;
+		padding-bottom: 7px !important;
 	}
 	
 	#zoom {
