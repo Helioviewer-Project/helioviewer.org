@@ -836,6 +836,17 @@
 		bottom: 154px !important;
 	}
 	
+	#timestep-select {
+		width: 95px;
+		background: #000000;
+		color: #ffffff;
+	}
+	
+	#timestep-select option {
+		background: #000000;
+		color: #ffffff;
+	}
+	
 
 /* END datetime field */
 
