@@ -837,6 +837,7 @@
 	}
 	
 	#timestep-select {
+		display: none;
 		width: 95px;
 		background: #000000;
 		color: #ffffff;
