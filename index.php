@@ -432,7 +432,7 @@ echo $hvdesktopcsshides;
 			<span id="dt_month_td"></span><br>
 			<span id="dt_year_td"></span>
 		</td>
-		<td style="text-align:center;vertical-align:middle;color:#ffffff;font-size:18px;font-weight: bold;"><span id="dt_day_td"></span></td>
+		<td style="text-align:center;vertical-align:middle;color:#ffffff;font-size:18px;font-weight: bold;"><span id="dt_day_spaces1">&nbsp;&nbsp;&nbsp;</span><span id="dt_day_td"></span></td>
 		
 		<td id="hvmobtime_td" style="border-left:1px dotted silver;text-align:center;font-size:18px;width: 132px;"><!--<input id="hvmobtime_input" type="text" maxlength="8" style="color:white;width:100px;background:black;border:0px solid black;" pattern="[\d]{2}:[\d]{2}:[\d]{2}" val="00:00:00">--></td>
 		
@@ -442,25 +442,29 @@ echo $hvdesktopcsshides;
 	<tr>
 		<td colspan="5" style="text-align:center;">
 			<span style="color:white;">JUMP:</span>&nbsp;
+			<span id="hvmobjump_div"></span>
+			<!--
 			<select id="hvmobjump_sel" style="border:0px solid black;background: black;color:#ffffff;-webkit-appearance: none;-moz-appearance: none;text-indent: 1px;text-overflow: '';">
 				<option value=""></option>
-				<option value="1">1&nbsp;Sec</option>
-				<option value="60">1&nbsp;Min</option>
-				<option value="300">5&nbsp;Mins</option>
-				<option value="900">15&nbsp;Mins</option>
-				<option value="3600">1&nbsp;Hour</option>
-				<option value="21600">6&nbsp;Hours</option>
-				<option value="43200">12&nbsp;Hours</option>
-				<option value="86400">1&nbsp;Day</option>
-				<option value="604800">1&nbsp;Week</option>
-				<option value="2356583">Carrington&nbsp;rotation</option>
-				<option value="2419200">28&nbsp;Days</option>
-				<option value="31556926">1&nbsp;Year</option>
+				<option value="1">&nbsp;1&nbsp;Sec</option>
+				<option value="60">&nbsp;1&nbsp;Min</option>
+				<option value="300">&nbsp;5&nbsp;Mins</option>
+				<option value="900">&nbsp;15&nbsp;Mins</option>
+				<option value="3600">&nbsp;1&nbsp;Hour</option>
+				<option value="21600">&nbsp;6&nbsp;Hours</option>
+				<option value="43200">&nbsp;12&nbsp;Hours</option>
+				<option value="86400">&nbsp;1&nbsp;Day</option>
+				<option value="604800">&nbsp;1&nbsp;Week</option>
+				<option value="2356583">&nbsp;Carrington&nbsp;rotation</option>
+				<option value="2419200">&nbsp;28&nbsp;Days</option>
+				<option value="31556926">&nbsp;1&nbsp;Year</option>
 			</select>
+			-->
 		</td>
 	</tr>
 	
 </table>
+
 
 
 
