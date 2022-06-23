@@ -709,7 +709,7 @@
 		width: 100%;
 		border-top-right-radius: 0px;
 		border-bottom-right-radius: 0px;
-		height: 65px; 
+		height: 75px; 
 		border: 1px solid #3a3a3a;
 		border-left:0px solid #000000;
 		box-shadow: 0pt 0pt 2pt 0pt rgb(255 255 255 / 75%);
@@ -811,11 +811,27 @@
 		-moz-user-select: none;
 		-o-user-select: none;
 		user-select: none;
+		vertical-align:middle;
 	}
 
 	.dtcycle_arrows:hover {
 		-webkit-filter: invert(77%) sepia(100%) saturate(0%) hue-rotate(272deg) brightness(108%) contrast(106%);
 		filter: invert(77%) sepia(100%) saturate(0%) hue-rotate(272deg) brightness(108%) contrast(106%);
+	}
+	
+	#dt_monthyear_td {
+		text-align:center;
+		vertical-align:middle;
+		color:#ffffff;
+		font-size: 18px;
+	}
+	
+	#dtday_td {
+		text-align:center;
+		vertical-align:middle;
+		color:#ffffff;
+		font-size:18px;
+		font-weight: bold;
 	}
 
 	.hvtimeline_td {
@@ -824,8 +840,16 @@
 		width:0px;
 	}
 	
+	#hvmobtime_td {
+		border-left:1px dotted silver;
+		text-align:center;
+		font-size:18px;
+		width: 132px;
+	}
+	
+	
 	#time {
-		background: #000000;
+		background: transparent;
 		color: #ffffff;
 		border: 0px solid #000000;
 	}
@@ -838,8 +862,8 @@
 	
 	#timestep-select {
 		float: none;
-		width: 95px;
-		background: #000000;
+		width: 135px;
+		background: transparent;
 		color: #ffffff;
 	}
 	
