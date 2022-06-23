@@ -403,71 +403,29 @@ echo $hvdesktopcsshides;
 <!-- START Mobile DateTime field -->
 <div class="hvbottombar" style="">
 	<div class="dtcycle">
-		<!--
-		<table class="dtcycle_table" cellspacing="0" cellpadding="0" border="0">
-			<tbody><tr class="dtcycle_tr">
-				<td colspan="6" class="dtcycle_td_reach" style="height: 0px;"></td>
-				<td rowspan="4" class="hvtimeline_td" style="width: 0px; border: 0px solid gray;"></td>
-			</tr>			
-			<tr class="dtcycle_tr">
-				<td class="dtcycle_td" style="border-top-left-radius: 6px;"><img class="dtcycle_arrows" hvdtcontrol="year_up" src="resources/images/mobile/uparrow2.png"></td>
-				<td class="dtcycle_td"><img class="dtcycle_arrows" hvdtcontrol="month_up" src="resources/images/mobile/uparrow2.png"></td>
-				<td class="dtcycle_td"><img class="dtcycle_arrows" hvdtcontrol="day_up" src="resources/images/mobile/uparrow2.png"></td>
-			</tr>
-			<tr class="dtcycle_tr">
-				<td class="dtcycle_td" id="dt_year_td"></td>			
-				<td class="dtcycle_td" id="dt_month_td"></td>
-				<td class="dtcycle_td" id="dt_day_td"></td>
-			</tr><tr class="dtcycle_tr">
-				<td class="dtcycle_td" style="border-bottom-left-radius: 6px;"><img class="dtcycle_arrows" hvdtcontrol="year_down" src="resources/images/mobile/downarrow2.png"></td>
-				<td class="dtcycle_td"><img class="dtcycle_arrows" hvdtcontrol="month_down" src="resources/images/mobile/downarrow2.png"></td>
-				<td class="dtcycle_td"><img class="dtcycle_arrows" hvdtcontrol="day_down" src="resources/images/mobile/downarrow2.png"></td>
-			</tr>
-		</tbody></table>
-		-->
-<table class="dtcycle_table2" cellpadding="0" cellspacing="0" border="0" style="width: 100%;height: 100%;">
-	<tr>
-		<td class="dtcycle_arrows_td" hvdtcontrol="day_down" style="text-align:left;vertical-align:middle;"><img hvdtcontrol="day_down" class="dtcycle_arrows" src="resources/images/mobile/leftarrow1.png"></td>
-		<td style="text-align:center;vertical-align:middle;color:#ffffff;font-size: 18px;">
-			<span id="dt_month_td"></span><br>
-			<span id="dt_year_td"></span>
-		</td>
-		<td style="text-align:center;vertical-align:middle;color:#ffffff;font-size:18px;font-weight: bold;"><span id="dt_day_spaces1">&nbsp;&nbsp;&nbsp;</span><span id="dt_day_td"></span></td>
 		
-		<td id="hvmobtime_td" style="border-left:1px dotted silver;text-align:center;font-size:18px;width: 132px;"><!--<input id="hvmobtime_input" type="text" maxlength="8" style="color:white;width:100px;background:black;border:0px solid black;" pattern="[\d]{2}:[\d]{2}:[\d]{2}" val="00:00:00">--></td>
-		
-		<td class="dtcycle_arrows_td" hvdtcontrol="day_up" style="text-align:right;vertical-align:middle;"><img hvdtcontrol="day_up" class="dtcycle_arrows" src="resources/images/mobile/rightarrow1.png"></td>
-	</tr>
-	
-	<tr>
-		<td colspan="5" style="text-align:center;">
-			<span style="color:white;">JUMP:</span>&nbsp;
-			<span id="hvmobjump_div"></span>
-			<!--
-			<select id="hvmobjump_sel" style="border:0px solid black;background: black;color:#ffffff;-webkit-appearance: none;-moz-appearance: none;text-indent: 1px;text-overflow: '';">
-				<option value=""></option>
-				<option value="1">&nbsp;1&nbsp;Sec</option>
-				<option value="60">&nbsp;1&nbsp;Min</option>
-				<option value="300">&nbsp;5&nbsp;Mins</option>
-				<option value="900">&nbsp;15&nbsp;Mins</option>
-				<option value="3600">&nbsp;1&nbsp;Hour</option>
-				<option value="21600">&nbsp;6&nbsp;Hours</option>
-				<option value="43200">&nbsp;12&nbsp;Hours</option>
-				<option value="86400">&nbsp;1&nbsp;Day</option>
-				<option value="604800">&nbsp;1&nbsp;Week</option>
-				<option value="2356583">&nbsp;Carrington&nbsp;rotation</option>
-				<option value="2419200">&nbsp;28&nbsp;Days</option>
-				<option value="31556926">&nbsp;1&nbsp;Year</option>
-			</select>
-			-->
-		</td>
-	</tr>
-	
-</table>
+		<table class="dtcycle_table2" cellpadding="0" cellspacing="0" border="0" style="width: 100%;height: 100%;">
+			<tr>
+				<td class="dtcycle_arrows_td" hvdtcontrol="day_down" style="text-align:left;"><img hvdtcontrol="day_down" class="dtcycle_arrows" src="resources/images/mobile/leftarrow1.png"></td>
+				<td id="dt_monthyear_td" style="">
+					<span id="dt_month_td"></span><br>
+					<span id="dt_year_td"></span>
+				</td>
+				<td id="dtday_td" style=""><span id="dt_day_spaces1">&nbsp;&nbsp;&nbsp;</span><span id="dt_day_td"></span></td>
 
+				<td id="hvmobtime_td" style=""></td>
 
+				<td class="dtcycle_arrows_td" hvdtcontrol="day_up" style="text-align:right;"><img hvdtcontrol="day_up" class="dtcycle_arrows" src="resources/images/mobile/rightarrow1.png"></td>
+			</tr>
 
+			<tr>
+				<td colspan="5" style="text-align:center;border-top:1px dotted silver;">
+					<span style="color:white;">JUMP:</span>&nbsp;
+					<span id="hvmobjump_div"></span>
+				</td>
+			</tr>
 
+		</table>
 
 	</div>
 </div>
