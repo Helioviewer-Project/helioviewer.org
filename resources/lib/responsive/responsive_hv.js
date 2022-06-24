@@ -258,6 +258,11 @@ $(function() {
 	// copy/paste #scale element into the mobile menu
 	$("#scale").clone().appendTo("#hvmobscale_li");
 	
+	// close mobile menu when earth/scale buttons pressed
+	$("#earth-button, #scalebar-button").click(function(){
+		zeynep.close();
+	});
+	
 
 	// testing: features & events marker tracking
 	$(".event-marker").click(function(){
