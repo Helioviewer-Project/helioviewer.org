@@ -464,7 +464,7 @@
 
 	
 	#scale {
-		display: none;
+		display: block;
 	}
 	
 	#mouse-coords-box {
