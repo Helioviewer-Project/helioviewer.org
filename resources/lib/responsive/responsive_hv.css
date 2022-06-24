@@ -465,6 +465,20 @@
 	
 	#scale {
 		display: block;
+		margin-top:40px;
+		width: 100%;
+		text-align:left;
+	}
+	
+	#earth-button {
+		border: 1px solid white;
+		padding: 3px;
+	}
+	
+	#scalebar-button {
+		border: 1px solid white;
+		padding: 3px;
+		margin-left: 10px;
 	}
 	
 	#mouse-coords-box {
