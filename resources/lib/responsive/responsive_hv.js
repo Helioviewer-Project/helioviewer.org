@@ -265,8 +265,8 @@ $(function() {
 	});
 	
 	// clone #center-button element into the mobile menu
-	$("#center-button").clone().appendTo("#hvmobscale_li");
-	
+	$("#center-button").clone().appendTo("#scale");
+	$("#center-button").css('display','inline');
 
 	// testing: features & events marker tracking
 	$(".event-marker").click(function(){
