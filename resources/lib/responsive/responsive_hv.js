@@ -264,6 +264,9 @@ $(function() {
 		zeynep.close();
 	});
 	
+	// clone #center-button element into the mobile menu
+	$("#center-button").clone().appendTo("#hvmobscale_li");
+	
 
 	// testing: features & events marker tracking
 	$(".event-marker").click(function(){
