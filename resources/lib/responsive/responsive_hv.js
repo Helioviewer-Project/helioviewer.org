@@ -240,6 +240,7 @@ $(function() {
 	$("#time").clone().appendTo("#hvmobtime_td");
 	$("#time").attr('readonly', 'readonly');
 	
+	// take the time element out of focus after changed
 	$("#time").change(function(){
 		$("#time").blur(); 
 	});
@@ -254,6 +255,8 @@ $(function() {
 	  $("#timestep-select").val($(this).val()).trigger('change');
 	});
 	
+	// copy/paste #scale element into the mobile menu
+	$("#scale").clone().appendTo("#hvmobscale_li");
 	
 
 	// testing: features & events marker tracking
@@ -262,6 +265,7 @@ $(function() {
 		alert("event-marker clicked");
 	});
 
+	// on orientation change [portait / landscape]
 	$(window).on('orientationchange resize', function () {
 		//$(".periodpicker_timepicker_dialog.visible").css('display','none');
 		$(".periodpicker_timepicker_dialog").removeClass("visible");
