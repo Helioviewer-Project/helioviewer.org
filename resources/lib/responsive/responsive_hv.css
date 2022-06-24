@@ -456,11 +456,16 @@
 		opacity: 0.9;
 	}
 
-	#center-button, #zoom-out-button, #zoom-in-button {
+	#zoom-out-button, #zoom-in-button {
 		display: none;
 		width:0px !important;
 		height:0px !important;
 	}
+	
+	#center-button {
+		
+	}
+	
 
 	#hvmobscale_li {
 		height: 50px;
