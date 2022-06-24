@@ -258,15 +258,17 @@ $(function() {
 	// copy/paste #scale element into the mobile menu
 	$("#scale").clone().appendTo("#hvmobscale_li");
 	
+	// clone #center-button element into the mobile menu
+	$("#center-button").clone().appendTo("#scale");
+	$("#center-button").css('display','inline-block');	
+	
 	// close mobile menu when earth/scale buttons pressed
 	$("#earth-button, #scalebar-button, #center-button").click(function(){
 		$(".hamburger").removeClass("is-active");
 		zeynep.close();
 	});
 	
-	// clone #center-button element into the mobile menu
-	$("#center-button").clone().appendTo("#scale");
-	$("#center-button").css('display','inline-block');
+
 
 	// testing: features & events marker tracking
 	$(".event-marker").click(function(){
