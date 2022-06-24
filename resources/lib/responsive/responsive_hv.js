@@ -259,7 +259,7 @@ $(function() {
 	$("#scale").clone().appendTo("#hvmobscale_li");
 	
 	// close mobile menu when earth/scale buttons pressed
-	$("#earth-button, #scalebar-button").click(function(){
+	$("#earth-button, #scalebar-button, #center-button").click(function(){
 		$(".hamburger").removeClass("is-active");
 		zeynep.close();
 	});
