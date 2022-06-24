@@ -471,12 +471,14 @@
 	}
 	
 	#earth-button {
+		margin-left: 10px;
 		border: 1px solid white;
 		padding: 3px;
 	}
 	
 	#scalebar-button {
 		border: 1px solid white;
+		border-left: 1px solid white;
 		padding: 3px;
 		margin-left: 10px;
 	}
