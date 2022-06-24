@@ -260,6 +260,7 @@ $(function() {
 	
 	// close mobile menu when earth/scale buttons pressed
 	$("#earth-button, #scalebar-button").click(function(){
+		$(".hamburger").removeClass("is-active");
 		zeynep.close();
 	});
 	
