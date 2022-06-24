@@ -462,6 +462,9 @@
 		height:0px !important;
 	}
 
+	#hvmobscale_li {
+		height: 50px;
+	}
 	
 	#scale {
 		display: block;
@@ -478,7 +481,7 @@
 	
 	#scalebar-button {
 		border: 1px solid white;
-		border-left: 1px solid white;
+		border-left: 1px solid white !important;
 		padding: 3px;
 		margin-left: 10px;
 	}
