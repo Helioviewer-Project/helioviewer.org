@@ -454,6 +454,7 @@
 		width: 20px;
 		height: 20px;
 		opacity: 0.9;
+		border-radius: 11px;
 	}
 
 	#zoom-out-button, #zoom-in-button {
