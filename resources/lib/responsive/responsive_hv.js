@@ -247,6 +247,14 @@ $(function() {
 		$("#date").blur(); 
 	});
 	
+	$("#date").focus(function(){
+		$("#date").removeAttr("readonly");
+	});	
+	
+	$("#date").blur(function(){
+		$("#date").attr('readonly', 'readonly');
+	});	
+	
 	
 	// clone the #time element and make it readonly so the keyboard doesn't show
 	$("#time").clone().appendTo("#hvmobtime_td");
