@@ -240,7 +240,7 @@ $(function() {
 	
 	// clone the #date element and make it readonly so the keyboard doesn't show
 	$("#date").clone().appendTo("#hvmobdate_td");
-	//$("#time").attr('readonly', 'readonly');
+	$("#date").attr('readonly', 'readonly');
 	
 	// take the time element out of focus after changed
 	$("#date").change(function(){
