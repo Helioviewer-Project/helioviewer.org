@@ -867,6 +867,11 @@
 		width:0px;
 	}
 	
+	#hvmobdate_td {
+		text-align:center;
+		font-size:18px;
+	}
+	
 	#hvmobtime_td {
 		border-left:1px dotted silver;
 		text-align:center;
@@ -874,11 +879,16 @@
 		width: 132px;
 	}
 	
-	
 	#time {
 		background: transparent;
 		color: #ffffff;
 		border: 0px solid #000000;
+	}
+	
+	#date {
+		background: transparent;
+		color: #ffffff;
+		border: 0px solid #000000;		
 	}
 	
 	.periodpicker_timepicker_dialog.visible {
