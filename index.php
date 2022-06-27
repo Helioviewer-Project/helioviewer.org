@@ -409,11 +409,16 @@ echo $hvdesktopcsshides;
 		<table class="dtcycle_table2" cellpadding="0" cellspacing="0" border="0" style="width: 100%;height: 100%;">
 			<tr>
 				<td class="dtcycle_arrows_td" hvdtcontrol="day_down" style="text-align:left;"><img hvdtcontrol="day_down" class="dtcycle_arrows" src="resources/images/mobile/leftarrow1.png"></td>
+
+				<!--
 				<td id="dt_monthyear_td" style="">
 					<span id="dt_month_td"></span><br>
 					<span id="dt_year_td"></span>
 				</td>
 				<td id="dtday_td" style=""><span id="dt_day_spaces1">&nbsp;&nbsp;&nbsp;</span><span id="dt_day_td"></span></td>
+				-->
+
+				<td id="hvmobdate_td" style=""></td>
 
 				<td id="hvmobtime_td" style=""></td>
 
@@ -421,13 +426,14 @@ echo $hvdesktopcsshides;
 			</tr>
 
 			<tr>
-				<td colspan="5" style="text-align:center;border-top:1px dotted silver;">
+				<td colspan="4" style="text-align:center;border-top:1px dotted silver;">
 					<span style="color:white;">JUMP:</span>&nbsp;
 					<span id="hvmobjump_div"></span>
 				</td>
 			</tr>
 
 		</table>
+
 
 	</div>
 </div>
