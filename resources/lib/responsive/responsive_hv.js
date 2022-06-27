@@ -236,7 +236,19 @@ $(function() {
 	});
 	*/
 	
-	// copy/paste the #time element and make it readonly so the keyboard doesn't show
+	
+	
+	// clone the #date element and make it readonly so the keyboard doesn't show
+	$("#date").clone().appendTo("#hvmobdate_td");
+	//$("#time").attr('readonly', 'readonly');
+	
+	// take the time element out of focus after changed
+	$("#date").change(function(){
+		$("#date").blur(); 
+	});
+	
+	
+	// clone the #time element and make it readonly so the keyboard doesn't show
 	$("#time").clone().appendTo("#hvmobtime_td");
 	$("#time").attr('readonly', 'readonly');
 	
@@ -246,7 +258,9 @@ $(function() {
 	});
 	
 	
-	// copy/paste JUMP drop-down
+	
+	
+	// clone JUMP drop-down
 	$('#timestep-select').css('float','none');
 	$("#timestep-select").clone().appendTo("#hvmobjump_div");
 	
@@ -255,7 +269,7 @@ $(function() {
 	  $("#timestep-select").val($(this).val()).trigger('change');
 	});
 	
-	// copy/paste #scale element into the mobile menu
+	// clone #scale element into the mobile menu
 	$("#scale").clone().appendTo("#hvmobscale_li");
 	
 	// clone #center-button element into the mobile menu
