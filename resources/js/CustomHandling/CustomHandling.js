@@ -224,7 +224,8 @@ $(document).ready(function() {
 		HVcustomHandling('hvtutorial_CB_click');
 	});
 	
-
+	// hide Legacy Helioviewer link in the Get Help section
+	$(".social-btns").has("#help-links-legacy").css("display", "none");
 
 	
 }); // end of doc ready
