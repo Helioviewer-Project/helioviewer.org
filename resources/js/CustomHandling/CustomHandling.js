@@ -223,7 +223,8 @@ $(document).ready(function() {
 	});
 	
 
-
+	// hide Legacy Helioviewer link in the Get Help section
+	$(".social-btns").has("#help-links-legacy").css("display", "none");
 	
 }); // end of doc ready
 
