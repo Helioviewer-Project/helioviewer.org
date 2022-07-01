@@ -718,6 +718,17 @@
 		color: #ffffff !important;
 	}
 	
+	#screenshot-manager-select-area {
+	   display: none;
+	}
+
+	#screenshot-manager-full-viewport {
+		float: none;
+		margin: auto;
+		display: block;
+		width: 120px;
+		text-align: center;
+	}
 	
 	/*  START datetime field   */
 	
