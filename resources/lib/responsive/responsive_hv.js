@@ -1,6 +1,8 @@
 // onload 
 $(function() {
 
+	// Change verbiage for Create a Screenshot menu button       span:nth-child(2)
+	$('#screenshot-manager-full-viewport').html('<span class="fa fa-arrows-alt fa-fw"></span><span style="line-height: 1.6em">Take a Screenshot</span>');
 
 	// add an anchor to topbar of pull-out menu windows on mobile
 	$('.hv-drawer-right').prepend('<span class="mobmenutopanchor"></span>');
