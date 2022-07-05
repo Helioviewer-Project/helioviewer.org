@@ -447,13 +447,13 @@ function touchHandler(event)
 
     switch (event.type) {
     case "touchstart":
-        type = "mousedown";
+        //type = "mousedown";
         break;
     case "touchmove":
-        type = "mousemove";
+        //type = "mousemove";
         break;
     case "touchend":
-        type = "mouseup";
+        //type = "mouseup";
         break;
     default:
         return;
