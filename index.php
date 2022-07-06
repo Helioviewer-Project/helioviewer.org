@@ -1881,6 +1881,7 @@ $jsfilesrndnum= rand(2145, 999999);
 $hvmobjsfiles= <<<MJF
 <!-- START responsive JS files -->
 <script src='resources/lib/responsive/zeynep1.js?rng=$jsfilesrndnum'></script>
+<script src="resources/lib/responsive/interact.min.js?rng=$jsfilesrndnum"></script>
 <script src="resources/lib/responsive/responsive_hv.js?rng=$jsfilesrndnum"></script>
 <!-- END responsive JS files -->
 MJF;
