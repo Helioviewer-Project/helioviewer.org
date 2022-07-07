@@ -395,12 +395,15 @@ function enableLog(hvmobev) {
 }
 
 function log(prefix, hvmobev) {
+  
+  /*
   if (!hvmobpnchlogEv) return;
   var hvmobpnchlogoutput = document.getElementsByTagName('output')[0];
   var hvmob_s = prefix + ": pointerID = " + hvmobev.pointerId +
                 " ; pointerType = " + hvmobev.pointerType +
                 " ; isPrimary = " + hvmobev.isPrimary;
   hvmobpnchlogoutput.innerHTML += hvmob_s + " <br>";
+  */
 } 
 
 function clearLog(event) {
@@ -425,7 +428,6 @@ function pointermove_handler(hvmobev) {
  // This function sets the target element's border to "dashed" to visually
  // indicate the pointer's target received a move event.
  log("pointerMove", hvmobev);
- hvmobev.target.style.border = "dashed";
 
  // Find this event in the cache and update its record with this event
  for (var hvmobevitem = 0; hvmobevitem < hvmobpncevCache.length; hvmobevitem++) {
@@ -469,8 +471,6 @@ function pointerup_handler(hvmobev) {
   // Remove this pointer from the cache and reset the target's
   // background and border
   remove_event(hvmobev);
-  hvmobev.target.style.background = "white";
-  hvmobev.target.style.border = "1px solid black";
  
   // If the number of pointers down is less than two then reset diff tracker
   if (hvmobpncevCache.length < 2) hvmobpncprevDiff = -1;
