@@ -441,25 +441,29 @@ function pointermove_handler(hvmobev) {
  if (hvmobpncevCache.length == 2) {
    // Calculate the distance between the two pointers
    var curDiff = Math.abs(hvmobpncevCache[0].clientX - hvmobpncevCache[1].clientX);
-
-   if (hvmobpncprevDiff > 0) {
-     if (curDiff > hvmobpncprevDiff) {
-       // The distance between the two pointers has increased
-       log("Pinch moving OUT -> Zoom in", hvmobev);
-       //hvmobev.target.style.background = "pink";
-	   
-	   $('#zoom-in-button').trigger('click');
-	   
-     }
-     if (curDiff < hvmobpncprevDiff) {
-       // The distance between the two pointers has decreased
-       log("Pinch moving IN -> Zoom out",hvmobev);
-       //hvmobev.target.style.background = "lightblue";
-	   
-	   $('#zoom-out-button').trigger('click');
-	   
-     }
-   }
+   
+		   
+		setTimeout(function() {   
+		   
+		   if (hvmobpncprevDiff > 0) {
+			 if (curDiff > hvmobpncprevDiff) {
+			   // The distance between the two pointers has increased
+			   log("Pinch moving OUT -> Zoom in", hvmobev);
+			   //hvmobev.target.style.background = "pink";
+			   
+			   $('#zoom-in-button').trigger('click');
+			   
+			 }
+			 if (curDiff < hvmobpncprevDiff) {
+			   // The distance between the two pointers has decreased
+			   log("Pinch moving IN -> Zoom out",hvmobev);
+			   //hvmobev.target.style.background = "lightblue";
+			   
+			   $('#zoom-out-button').trigger('click');
+			   
+			 }
+		   }
+	   }, 500);
 
    // Cache the distance for the next move event 
    hvmobpncprevDiff = curDiff;
