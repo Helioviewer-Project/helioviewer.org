@@ -289,6 +289,10 @@
 		min-width: 300px !important;
 		min-height: 400px;
 	}
+	
+	body {
+		touch-action: none;
+	}
 
 	.hamburger {
 		display: inline-block;
