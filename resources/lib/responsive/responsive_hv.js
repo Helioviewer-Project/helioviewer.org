@@ -463,7 +463,7 @@ function pointermove_handler(hvmobev) {
 			   
 			 }
 		   }
-	   }, 500);
+	   }, 200);
 
    // Cache the distance for the next move event 
    hvmobpncprevDiff = curDiff;
