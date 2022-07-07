@@ -451,7 +451,7 @@ function pointermove_handler(hvmobev) {
 			   log("Pinch moving OUT -> Zoom in", hvmobev);
 			   //hvmobev.target.style.background = "pink";
 			   
-			   $('#zoom-in-button').trigger('click');
+			   $('#zoom-out-button').trigger('click');
 			   
 			 }
 			 if (curDiff < (hvmobpncprevDiff-29)) {
@@ -459,7 +459,7 @@ function pointermove_handler(hvmobev) {
 			   log("Pinch moving IN -> Zoom out",hvmobev);
 			   //hvmobev.target.style.background = "lightblue";
 			   
-			   $('#zoom-out-button').trigger('click');
+			   $('#zoom-in-button').trigger('click');
 			   
 			 }
 		   }
