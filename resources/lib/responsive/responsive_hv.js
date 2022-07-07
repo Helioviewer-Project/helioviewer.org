@@ -446,7 +446,7 @@ function pointermove_handler(hvmobev) {
 		setTimeout(function() {   
 		   
 		   if (hvmobpncprevDiff > 0) {
-			 if (curDiff > (hvmobpncprevDiff+15)) {
+			 if (curDiff > (hvmobpncprevDiff-15)) {
 			   // The distance between the two pointers has increased
 			   log("Pinch moving OUT -> Zoom in", hvmobev);
 			   //hvmobev.target.style.background = "pink";
@@ -454,7 +454,7 @@ function pointermove_handler(hvmobev) {
 			   $('#zoom-in-button').trigger('click');
 			   
 			 }
-			 if (curDiff < (hvmobpncprevDiff-15)) {
+			 if (curDiff < (hvmobpncprevDiff+15)) {
 			   // The distance between the two pointers has decreased
 			   log("Pinch moving IN -> Zoom out",hvmobev);
 			   //hvmobev.target.style.background = "lightblue";
