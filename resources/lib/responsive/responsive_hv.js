@@ -488,7 +488,7 @@ function remove_event(hvmobev) {
 
 function hvmobpnchinit() {
 	// Install event handlers for the pointer target
-	var hvmobel=document.getElementById("moving-container");
+	var hvmobel=document.getElementById("sandbox");
 	hvmobel.onpointerdown = pointerdown_handler;
 	hvmobel.onpointermove = pointermove_handler;
 
