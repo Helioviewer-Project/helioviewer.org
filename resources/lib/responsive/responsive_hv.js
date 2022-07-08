@@ -404,12 +404,9 @@ var hvmobdist1=0;
     }
 	
 		// START added atf BAT
-		const hvmobimgtiles = document.querySelectorAll('.tile');
+		$('.tile').on('touchstart',pinchStart);
+		$('.tile').on('touchmove',pinchMove);
 
-		hvmobimgtiles.forEach(hvmobimgtile => {
-			hvmobimgtile.addEventListener('touchstart', pinchStart, false);
-			hvmobimgtile.addEventListener('touchmove', pinchMove, false);
-		});	
 		// END added atf BAT
 	
 		/*
