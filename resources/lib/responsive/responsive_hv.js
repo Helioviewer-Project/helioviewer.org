@@ -374,14 +374,15 @@ function hvOnResize() {
 /* -------------- START pinch-to-zoom functionality -------------- */
 
 var hvmobdist1=0;
-function pinchStart(hvmobev) {
+
+	function pinchStart(hvmobev) {
            if (hvmobev.targetTouches.length == 2) {//check if two fingers touched screen
                hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
                 hvmobev.touches[0].pageX - hvmobev.touches[1].pageX,
                 hvmobev.touches[0].pageY - hvmobev.touches[1].pageY);                  
            }
-    
     }
+	
     function pinchMove(hvmobev) {
            if (hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2) {
                  // Check if the two target touches are the same ones that started
@@ -393,7 +394,7 @@ function pinchStart(hvmobev) {
 					$('#zoom-in-button').trigger('click');
 					console.log('zoom out: because 1st finger position '+hvmobdist1+' is less than 2nd finger position ('+hvmobdist2+')' );
                 }
-                if(hvmobdist1>hvmobdist2) {//if fingers are closer now than when they first touched screen, they are pinching
+                else if(hvmobdist1>hvmobdist2) {//if fingers are closer now than when they first touched screen, they are pinching
 					$('#zoom-out-button').trigger('click');
 					console.log('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')' );
                 }				
