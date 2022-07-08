@@ -371,139 +371,38 @@ function hvOnResize() {
 
 
 
-
-
-
-
-
-
-
-
-
 /* -------------- START pinch-to-zoom functionality -------------- */
 
-// Log events flag
-var hvmobpnchlogEv = false;
+var hvmobdist1=0;
+function pinchStart(hvmobev) {
+           if (hvmobev.targetTouches.length == 2) {//check if two fingers touched screen
+               hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
+                hvmobev.touches[0].pageX - hvmobev.touches[1].pageX,
+                hvmobev.touches[0].pageY - hvmobev.touches[1].pageY);                  
+           }
+    
+    }
+    function pinchMove(hvmobev) {
+           if (hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2) {
+                 // Check if the two target touches are the same ones that started
+               var hvmobdist2 = Math.hypot(//get rough estimate of new distance between fingers
+                hvmobev.touches[0].pageX - hvmobev.touches[1].pageX,
+                hvmobev.touches[0].pageY - hvmobev.touches[1].pageY);
+                //alert(dist);
+                if(hvmobdist1>hvmobdist2) {//if fingers are closer now than when they first touched screen, they are pinching
+                  $('#zoom-out-button').delay(1000).trigger('click');
+                }
+                if(hvmobdist1<hvmobdist2) {//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
+                   $('#zoom-in-button').delay(1000).trigger('click');
+                }
+           }
+           
+    }
+        document.getElementById ('sandbox').addEventListener ('touchstart', pinchStart, false);
+        document.getElementById('sandbox').addEventListener('touchmove', pinchMove, false);
 
-// Global vars to cache event state
-var hvmobpncevCache = new Array();
-var hvmobpncprevDiff = -1;
 
-// Logging/debugging functions
-function enableLog(hvmobev) {
-  hvmobpnchlogEv = hvmobpnchlogEv ? false : true;
-}
 
-function log(prefix, hvmobev) {
-  
-  /*
-  if (!hvmobpnchlogEv) return;
-  var hvmobpnchlogoutput = document.getElementsByTagName('output')[0];
-  var hvmob_s = prefix + ": pointerID = " + hvmobev.pointerId +
-                " ; pointerType = " + hvmobev.pointerType +
-                " ; isPrimary = " + hvmobev.isPrimary;
-  hvmobpnchlogoutput.innerHTML += hvmob_s + " <br>";
-  */
-} 
 
-function clearLog(event) {
- var hvmobpnchlogoutput = document.getElementsByTagName('output')[0];
- hvmobpnchlogoutput.innerHTML = "";
-}
+/* -------------- END pinch-to-zoom functionality -------------- */
 
-function pointerdown_handler(hvmobev) {
- // The pointerdown event signals the start of a touch interaction.
- // This event is cached to support 2-finger gestures
- hvmobpncevCache.push(hvmobev);
- log("pointerDown", hvmobev);
-}
-
-function pointermove_handler(hvmobev) {
- // This function implements a 2-pointer horizontal pinch/zoom gesture. 
- //
- // If the distance between the two pointers has increased (zoom in), 
- // the taget element's background is changed to "pink" and if the 
- // distance is decreasing (zoom out), the color is changed to "lightblue".
- //
- // This function sets the target element's border to "dashed" to visually
- // indicate the pointer's target received a move event.
- log("pointerMove", hvmobev);
-
- // Find this event in the cache and update its record with this event
- for (var hvmobevitem = 0; hvmobevitem < hvmobpncevCache.length; hvmobevitem++) {
-   if (hvmobev.pointerId == hvmobpncevCache[hvmobevitem].pointerId) {
-      hvmobpncevCache[hvmobevitem] = hvmobev;
-   break;
-   }
- }
-
- // If two pointers are down, check for pinch gestures
- if (hvmobpncevCache.length == 2) {
-   // Calculate the distance between the two pointers
-   var curDiff = Math.abs(hvmobpncevCache[0].clientX - hvmobpncevCache[1].clientX);
-   
-		   
-		setTimeout(function() {   
-		   
-		   if (hvmobpncprevDiff > 0) {
-			 if (curDiff > (hvmobpncprevDiff)) {
-			   // The distance between the two pointers has increased
-			   log("Pinch moving OUT -> Zoom in", hvmobev);
-			   //hvmobev.target.style.background = "pink";
-			   
-			   $('#zoom-out-button').delay(1000).trigger('click');
-			   
-			 }
-			 if (curDiff < (hvmobpncprevDiff)) {
-			   // The distance between the two pointers has decreased
-			   log("Pinch moving IN -> Zoom out",hvmobev);
-			   //hvmobev.target.style.background = "lightblue";
-			   
-			   $('#zoom-in-button').delay(1000).trigger('click');
-			   
-			 }
-		   }
-	   }, 200);
-
-   // Cache the distance for the next move event 
-   hvmobpncprevDiff = curDiff;
- }
-}
-
-function pointerup_handler(hvmobev) {
-  log(hvmobev.type, hvmobev);
-  // Remove this pointer from the cache and reset the target's
-  // background and border
-  remove_event(hvmobev);
- 
-  // If the number of pointers down is less than two then reset diff tracker
-  if (hvmobpncevCache.length < 2) hvmobpncprevDiff = -1;
-}
-
-function remove_event(hvmobev) {
- // Remove this event from the target's cache
- for (var hvmobevitem = 0; hvmobevitem < hvmobpncevCache.length; hvmobevitem++) {
-   if (hvmobpncevCache[hvmobevitem].pointerId == hvmobev.pointerId) {
-     hvmobpncevCache.splice(hvmobevitem, 1);
-     break;
-   }
- }
-}
-
-function hvmobpnchinit() {
-	// Install event handlers for the pointer target
-	var hvmobel=document.getElementById("sandbox");
-	hvmobel.onpointerdown = pointerdown_handler;
-	hvmobel.onpointermove = pointermove_handler;
-
-	// Use same handler for pointer{up,cancel,out,leave} events since
-	// the semantics for these events - in this app - are the same.
-	hvmobel.onpointerup = pointerup_handler;
-	hvmobel.onpointercancel = pointerup_handler;
-	hvmobel.onpointerout = pointerup_handler;
-	hvmobel.onpointerleave = pointerup_handler;
-}
-
-hvmobpnchinit();
- 
- /* ------------- END pinch-to-zoom functionality -------------- */
