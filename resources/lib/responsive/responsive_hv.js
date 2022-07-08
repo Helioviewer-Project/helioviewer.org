@@ -403,26 +403,12 @@ var hvmobdist1=0;
            
     }
 	
-		// START added atf BAT
-        document.getElementById('tile')[0].addEventListener('touchstart', pinchStart, false);
-        document.getElementById('tile')[0].addEventListener('touchmove', pinchMove, false);
 
-        document.getElementById('tile')[1].addEventListener('touchstart', pinchStart, false);
-        document.getElementById('tile')[1].addEventListener('touchmove', pinchMove, false);
-		
-		document.getElementById('tile')[2].addEventListener('touchstart', pinchStart, false);
-        document.getElementById('tile')[2].addEventListener('touchmove', pinchMove, false);
-		
-		document.getElementById('tile')[3].addEventListener('touchstart', pinchStart, false);
-        document.getElementById('tile')[3].addEventListener('touchmove', pinchMove, false);
-
-
-		// END added atf BAT
 	
-		/*
+		
         document.getElementById('helioviewer-viewport-container-outer').addEventListener('touchstart', pinchStart, false);
         document.getElementById('helioviewer-viewport-container-outer').addEventListener('touchmove', pinchMove, false);
-		*/
+		
 
 
 
