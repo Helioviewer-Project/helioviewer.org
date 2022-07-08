@@ -312,6 +312,7 @@
 	
 	#helioviewer-viewport-container-inner {
 		height: 100%; /* 800px */
+		touch-action: pinch-zoom;
 	}
 	
 	#moving-container {
