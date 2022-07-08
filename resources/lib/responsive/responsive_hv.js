@@ -413,7 +413,7 @@ var hvmobdist1=0;
 			$(function() {
 				document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchstart', pinchStart, false);
 				document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchmove', pinchMove, false);
-			)};
+			});
 		}
 		else {
 			setTimeout(detectTilesExist(),1000);
