@@ -392,19 +392,29 @@ var hvmobdist1=0;
 				//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
                 if(hvmobdist1<hvmobdist2) {
 					$('#zoom-in-button').trigger('click');
-					alert('zoom out: because 1st finger position '+hvmobdist1+' is less than 2nd finger position ('+hvmobdist2+')');
+					//alert('zoom in: because 1st finger position '+hvmobdist1+' is less than 2nd finger position ('+hvmobdist2+')');
                 }
 				//if fingers are closer now than when they first touched screen, they are pinching
                 else if(hvmobdist1>hvmobdist2) {
 					$('#zoom-out-button').trigger('click');
-					alert('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')');
+					//alert('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')');
                 }				
            }
            
     }
+	
+		// START added atf BAT
+		const hvmobimgtiles = document.querySelectorAll('.tile');
+
+		hvmobimgtiles.forEach(hvmobimgtile => {
+		  hvmobimgtile.addEventListener('touchstart', pinchStart, false);
+		});	
+		// END added atf BAT
+	
+		/*
         document.getElementById('helioviewer-viewport-container-outer').addEventListener('touchstart', pinchStart, false);
         document.getElementById('helioviewer-viewport-container-outer').addEventListener('touchmove', pinchMove, false);
-
+		*/
 
 
 
