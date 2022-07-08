@@ -408,16 +408,18 @@ var hvmobdist1=0;
 	//document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchmove', pinchMove, false);
 		
 	var detecttilestry=0;
+	var imgtilefound='no';
 	function detectTilesExist() {
-		if($('.tile-layer-container').length) {
+		if($('.tile-layer-container').length && imgtilefound=='no') {
 			$(function() {
 				document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchstart', pinchStart, false);
 				document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchmove', pinchMove, false);
 			});
+			imgtilefound='yes';
 		}
 		else {
 			if(detecttilestry<11) {
-				setTimeout(detectTilesExist(),1000);
+				setTimeout(detectTilesExist(),2000);
 			}
 			else {
 				location.reload();
