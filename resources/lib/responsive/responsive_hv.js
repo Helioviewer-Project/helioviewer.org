@@ -407,7 +407,7 @@ var hvmobdist1=0;
 	//document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchstart', pinchStart, false);
 	//document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchmove', pinchMove, false);
 		
-	
+	var detecttilestry=0;
 	function detectTilesExist() {
 		if($('.tile-layer-container').length) {
 			$(function() {
@@ -416,8 +416,14 @@ var hvmobdist1=0;
 			});
 		}
 		else {
-			setTimeout(detectTilesExist(),1000);
+			if(detecttilestry<11) {
+				setTimeout(detectTilesExist(),1000);
+			}
+			else {
+				location.reload();
+			}
 		}
+		detecttilestry++;
 	}
 	
 	detectTilesExist();
