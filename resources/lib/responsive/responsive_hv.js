@@ -407,7 +407,8 @@ var hvmobdist1=0;
 		const hvmobimgtiles = document.querySelectorAll('.tile');
 
 		hvmobimgtiles.forEach(hvmobimgtile => {
-		  hvmobimgtile.addEventListener('touchstart', pinchStart, false);
+			hvmobimgtile.addEventListener('touchstart', pinchStart, false);
+			hvmobimgtile.addEventListener('touchmove', pinchMove, false);
 		});	
 		// END added atf BAT
 	
