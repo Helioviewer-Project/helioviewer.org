@@ -386,23 +386,25 @@ var hvmobdist1=0;
     function pinchMove(hvmobev) {
            if (hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2) {
                  // Check if the two target touches are the same ones that started
-               var hvmobdist2 = Math.hypot(//get rough estimate of new distance between fingers
-                hvmobev.touches[0].pageX - hvmobev.touches[1].pageX,
-                hvmobev.touches[0].pageY - hvmobev.touches[1].pageY);
+               //get rough estimate of new distance between fingers
+			   var hvmobdist2 = Math.hypot(hvmobev.touches[0].pageX - hvmobev.touches[1].pageX,hvmobev.touches[0].pageY - hvmobev.touches[1].pageY);
                 //alert(dist);
-                if(hvmobdist1<hvmobdist2) {//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
+				//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
+                if(hvmobdist1<hvmobdist2) {
 					$('#zoom-in-button').trigger('click');
-					console.log('zoom out: because 1st finger position '+hvmobdist1+' is less than 2nd finger position ('+hvmobdist2+')' );
+					alert('zoom out: because 1st finger position '+hvmobdist1+' is less than 2nd finger position ('+hvmobdist2+')');
                 }
-                else if(hvmobdist1>hvmobdist2) {//if fingers are closer now than when they first touched screen, they are pinching
+				//if fingers are closer now than when they first touched screen, they are pinching
+                else if(hvmobdist1>hvmobdist2) {
 					$('#zoom-out-button').trigger('click');
-					console.log('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')' );
+					alert('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')');
                 }				
            }
            
     }
-        document.getElementById ('helioviewer-viewport-container-outer').addEventListener ('touchstart', pinchStart, false);
+        document.getElementById('helioviewer-viewport-container-outer').addEventListener('touchstart', pinchStart, false);
         document.getElementById('helioviewer-viewport-container-outer').addEventListener('touchmove', pinchMove, false);
+
 
 
 
