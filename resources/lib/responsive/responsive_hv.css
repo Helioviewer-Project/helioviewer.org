@@ -307,7 +307,8 @@
 		min-width: 100%;
 		min-height: 100%;
 		width: 100%;
-		height: 100% !important;		
+		height: 100% !important;
+		z-index: 1;		
 	}	
 	
 	#helioviewer-viewport-container-inner {
