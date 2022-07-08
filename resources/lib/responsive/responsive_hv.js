@@ -404,10 +404,11 @@ var hvmobdist1=0;
     }
 	
 
-	
+	document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchstart', pinchStart, false);
+	document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchmove', pinchMove, false);
 		
-        document.getElementById('helioviewer-viewport-container-outer').addEventListener('touchstart', pinchStart, false);
-        document.getElementById('helioviewer-viewport-container-outer').addEventListener('touchmove', pinchMove, false);
+        //document.getElementById('helioviewer-viewport-container-outer').addEventListener('touchstart', pinchStart, false);
+        //document.getElementById('helioviewer-viewport-container-outer').addEventListener('touchmove', pinchMove, false);
 		
 
 
