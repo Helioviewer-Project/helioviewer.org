@@ -391,9 +391,11 @@ function pinchStart(hvmobev) {
                 //alert(dist);
                 if(hvmobdist1>hvmobdist2) {//if fingers are closer now than when they first touched screen, they are pinching
 					$('#zoom-out-button').trigger('click');
+					console.log('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')' );
                 }
                 if(hvmobdist1<hvmobdist2) {//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
 					$('#zoom-in-button').trigger('click');
+					console.log('zoom out: because 1st finger position '+hvmobdist1+' is less than 2nd finger position ('+hvmobdist2+')' );
                 }
            }
            
