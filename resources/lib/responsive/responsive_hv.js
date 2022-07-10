@@ -403,17 +403,19 @@ var hvmobdist1=0;
            
     }
 	
-
-	//document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchstart', pinchStart, false);
-	//document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchmove', pinchMove, false);
 		
 	var detecttilestry=0;
 	var imgtilefound='no';
 	function detectTilesExist() {
 		if($('.tile-layer-container:first').length > 0 && imgtilefound=='no') {
 			$(function() {
+				document.getElementById('helioviewer-viewport').addEventListener('touchstart', pinchStart, false);
+				document.getElementById('helioviewer-viewport').addEventListener('touchmove', pinchMove, false);
+				
+				/*
 				document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchstart', pinchStart, false);
 				document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchmove', pinchMove, false);
+				*/
 			});
 			imgtilefound='yes';
 		}
