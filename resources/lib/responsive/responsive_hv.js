@@ -384,8 +384,9 @@ var hvmobdist1=0;
     }
 	
     function pinchMove(hvmobev) {
+			// Check if the two target touches are the same ones that started
            if (hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2) {
-                 // Check if the two target touches are the same ones that started
+                 
                //get rough estimate of new distance between fingers
 			   var hvmobdist2 = Math.hypot(hvmobev.touches[0].screenX - hvmobev.touches[1].screenX,hvmobev.touches[0].screenY - hvmobev.touches[1].screenY);
                 //alert(dist);
@@ -409,8 +410,11 @@ var hvmobdist1=0;
 	function detectTilesExist() {
 		if($('.tile-layer-container:first').length > 0 && imgtilefound=='no') {
 			$(function() {
-				document.getElementById('helioviewer-viewport').addEventListener('touchstart', pinchStart, false);
-				document.getElementById('helioviewer-viewport').addEventListener('touchmove', pinchMove, false);
+				//document.getElementById('helioviewer-viewport').addEventListener('touchstart', pinchStart, false);
+				//document.getElementById('helioviewer-viewport').addEventListener('touchmove', pinchMove, false);
+				
+				document.body.addEventListener('touchstart', pinchStart, false);
+				document.body.addEventListener('touchmove', pinchMove, false);
 				
 				/*
 				document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchstart', pinchStart, false);
