@@ -422,8 +422,8 @@ var hvmobdist1=0;
 		if($('.tile-layer-container:first').length > 0 && imgtilefound=='no') {
 			$(function() {
 				
-				// HTML IDs tested: tile-layer-container, helioviewer-viewport
-				document.getElementById('helioviewer-viewport').addEventListener('touchstart', pinchStart, false);
+				// HTML IDs tested: sandbox, tile-layer-container, helioviewer-viewport
+				document.getElementById('sandbox').addEventListener('touchstart', pinchStart, false);
 				document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
 				document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
 				
