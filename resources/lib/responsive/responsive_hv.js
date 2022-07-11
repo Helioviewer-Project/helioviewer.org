@@ -380,7 +380,7 @@ var hvmobdist1=0;
 		   
 				// place invisible div layer on top of all of the content
 				$('#toptouchlayer').css('z-index','20');
-				$('#toptouchlayer').css('background','navy');
+				//$('#toptouchlayer').css('background','navy');
 				
 				hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
 				hvmobev.touches[0].screenX - hvmobev.touches[1].screenX,
