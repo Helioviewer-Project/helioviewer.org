@@ -315,11 +315,11 @@
 	
 	#helioviewer-viewport-container-inner {
 		height: 100%; /* 800px */
-		touch-action: pinch-zoom;
+		/* touch-action: pinch-zoom; */
 	}
 	
 	#moving-container {
-		touch-action: manipulation;
+		/* touch-action: manipulation; */
 	}
 	
 	#message-console {
