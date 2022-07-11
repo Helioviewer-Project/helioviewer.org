@@ -291,6 +291,7 @@
 	}
 	
 	#toptouchlayer {
+		touch-action: none;
 		position: absolute;
 		width: 100%;
 		height: 100%;
