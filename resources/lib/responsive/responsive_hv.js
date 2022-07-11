@@ -380,6 +380,7 @@ var hvmobdist1=0;
 		   
 				// place invisible div layer on top of all of the content
 				$('#toptouchlayer').css('z-index','20');
+				$('#toptouchlayer').css('background','navy');
 				
 				hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
 				hvmobev.touches[0].screenX - hvmobev.touches[1].screenX,
@@ -390,29 +391,24 @@ var hvmobdist1=0;
 	
     function pinchMove(hvmobev) {
 		
-		setTimeout(function(){
-			
-			// Check if the two target touches are the same ones that started
-           if (hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2) {
-                 
-               //get rough estimate of new distance between fingers
-			   var hvmobdist2 = Math.hypot(hvmobev.touches[0].screenX - hvmobev.touches[1].screenX,hvmobev.touches[0].screenY - hvmobev.touches[1].screenY);
-                //alert(dist);
-				//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
-                if(hvmobdist1<hvmobdist2) {
-					$('#zoom-in-button').trigger('click');
-					//alert('zoom in: because 1st finger position '+hvmobdist1+' is less than 2nd finger position ('+hvmobdist2+')');
-                }
-				//if fingers are closer now than when they first touched screen, they are pinching
-                else if(hvmobdist1>hvmobdist2) {
-					$('#zoom-out-button').trigger('click');
-					//alert('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')');
-                }				
-           }
-		   
-		}, 500);
-		   
-           
+		// Check if the two target touches are the same ones that started
+	   if (hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2) {
+			 
+		   //get rough estimate of new distance between fingers
+		   var hvmobdist2 = Math.hypot(hvmobev.touches[0].screenX - hvmobev.touches[1].screenX,hvmobev.touches[0].screenY - hvmobev.touches[1].screenY);
+			//alert(dist);
+			//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
+			if(hvmobdist1<hvmobdist2) {
+				$('#zoom-in-button').trigger('click');
+				//alert('zoom in: because 1st finger position '+hvmobdist1+' is less than 2nd finger position ('+hvmobdist2+')');
+			}
+			//if fingers are closer now than when they first touched screen, they are pinching
+			else if(hvmobdist1>hvmobdist2) {
+				$('#zoom-out-button').trigger('click');
+				//alert('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')');
+			}				
+	   } 
+     
     }
 	
 	function pinchEnd(hvmobev) {
