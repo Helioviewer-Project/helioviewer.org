@@ -199,6 +199,10 @@ echo $hvdesktopcsshides;
 </head>
 <body <?php echo ($outputType ? 'class="helioviewer-view-type-'.$outputType.'"' : '')?>>
 	
+<!-- START mobile touchscreen viewport div -->	
+<div id="#toptouchmove"></div>
+<!-- END mobile touchscreen viewport div -->	
+	
 <!-- START mobile menu -->	
 <div class="zeynep" style="background-color:none;">
 	<ul>
