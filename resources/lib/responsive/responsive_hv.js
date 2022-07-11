@@ -379,7 +379,7 @@ var hvmobdist1=0;
            if (hvmobev.targetTouches.length == 2) {//check if two fingers touched screen
 		   
 				// place invisible div layer on top of all of the content
-				$('#toptouchlayer').css('display','block');
+				$('#toptouchlayer').css('z-index','20');
 		   
 				hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
 				hvmobev.touches[0].screenX - hvmobev.touches[1].screenX,
@@ -409,7 +409,7 @@ var hvmobdist1=0;
     }
 	
 	function pinchEnd(hvmobev) {
-		$('#toptouchlayer').css('display','none');
+		$('#toptouchlayer').css('z-index','-5');
 	}
 	
 		
