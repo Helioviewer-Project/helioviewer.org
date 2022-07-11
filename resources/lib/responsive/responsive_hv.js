@@ -420,7 +420,7 @@ var hvmobdist1=0;
 			$(function() {
 				
 				// HTML IDs tested: tile-layer-container, helioviewer-viewport
-				document.getElementById('tile-layer-container').addEventListener('touchstart', pinchStart, false);
+				document.getElementById('helioviewer-viewport').addEventListener('touchstart', pinchStart, false);
 				document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
 				document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
 				
