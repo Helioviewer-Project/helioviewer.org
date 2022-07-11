@@ -377,9 +377,13 @@ var hvmobdist1=0;
 
 	function pinchStart(hvmobev) {
            if (hvmobev.targetTouches.length == 2) {//check if two fingers touched screen
-               hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
-                hvmobev.touches[0].screenX - hvmobev.touches[1].screenX,
-                hvmobev.touches[0].screenY - hvmobev.touches[1].screenY);                  
+		   
+				// place invisible div layer on top of all of the content
+				$('#toptouchlayer').css('display','block');
+		   
+				hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
+				hvmobev.touches[0].screenX - hvmobev.touches[1].screenX,
+				hvmobev.touches[0].screenY - hvmobev.touches[1].screenY);                  
            }
     }
 	
@@ -404,22 +408,22 @@ var hvmobdist1=0;
            
     }
 	
+	function pinchEnd(hvmobev) {
+		$('#toptouchlayer').css('display','none');
+	}
+	
 		
 	var detecttilestry=0;
 	var imgtilefound='no';
 	function detectTilesExist() {
 		if($('.tile-layer-container:first').length > 0 && imgtilefound=='no') {
 			$(function() {
-				//document.getElementById('helioviewer-viewport').addEventListener('touchstart', pinchStart, false);
-				//document.getElementById('helioviewer-viewport').addEventListener('touchmove', pinchMove, false);
 				
-				document.body.addEventListener('touchstart', pinchStart, false);
-				document.body.addEventListener('touchmove', pinchMove, false);
+				// HTML IDs tested: tile-layer-container, helioviewer-viewport
+				document.getElementById('tile-layer-container').addEventListener('touchstart', pinchStart, false);
+				document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
+				document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
 				
-				/*
-				document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchstart', pinchStart, false);
-				document.getElementsByClassName('tile-layer-container')[0].addEventListener('touchmove', pinchMove, false);
-				*/
 			});
 			imgtilefound='yes';
 		}
