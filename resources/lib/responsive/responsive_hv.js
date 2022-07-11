@@ -374,17 +374,31 @@ function hvOnResize() {
 /* -------------- START pinch-to-zoom functionality -------------- */
 
 var hvmobdist1=0;
+var twofingersdown='no';
+
+$('.tile').on('touchstart', function(hvmobev) {
+	if (hvmobev.targetTouches.length == 2) {
+		pinchStart(hvmobev);
+	}
+});
 
 	function pinchStart(hvmobev) {
-           if (hvmobev.targetTouches.length == 2) {//check if two fingers touched screen
+           //check if two fingers touched screen
+		   if (hvmobev.targetTouches.length == 2) {
 		   
 				// place invisible div layer on top of all of the content
 				$('#toptouchlayer').css('z-index','20');
 				//$('#toptouchlayer').css('background','navy');
+				twofingersdown='yes';
 				
-				hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
-				hvmobev.touches[0].screenX - hvmobev.touches[1].screenX,
-				hvmobev.touches[0].screenY - hvmobev.touches[1].screenY);
+				if(twofingersdown=='yes') {
+					hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
+					hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,
+					hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
+				}
+				else {
+					pinchStart(hvmobev);
+				}
 				
            }
     }
@@ -395,7 +409,7 @@ var hvmobdist1=0;
 	   if (hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2) {
 			 
 		   //get rough estimate of new distance between fingers
-		   var hvmobdist2 = Math.hypot(hvmobev.touches[0].screenX - hvmobev.touches[1].screenX,hvmobev.touches[0].screenY - hvmobev.touches[1].screenY);
+		   var hvmobdist2 = Math.hypot(hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
 			//alert(dist);
 			//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
 			if(hvmobdist1<hvmobdist2) {
@@ -413,6 +427,7 @@ var hvmobdist1=0;
 	
 	function pinchEnd(hvmobev) {
 		$('#toptouchlayer').css('z-index','-5');
+		twofingersdown='no';
 	}
 	
 		
