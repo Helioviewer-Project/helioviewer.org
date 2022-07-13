@@ -377,17 +377,23 @@ $('#hv-header').css('background','black');
 var hvmobdist1=0;
 var twofingersdown='no';
 
-$('body').on('touchstart', function(hvmobev) {
+$('html').on('touchend', function(hvmobev) {
+	$('#hv-header').css('background','black');
+});
+
+$('html').on('touchstart', function(hvmobev) {
 	if (hvmobev.targetTouches.length == 2) {
 		$('#hv-header').css('background','navy');
 		$('#toptouchlayer').css('z-index','20');
-		$('body').trigger('touchend');
+		$('html').trigger('touchend');
 		$('#toptouchlayer').trigger('touchstart');
 		pinchStart(hvmobev);
 	}
 });
 
-
+$('#toptouchlayer').on('touchstart', function(hvmobev) {
+	
+});
 
 $('#toptouchlayer').on('touchmove', function(hvmobev) {
 	pinchMove(hvmobev);
@@ -460,8 +466,10 @@ $('#toptouchlayer').on('touchmove', function(hvmobev) {
 				// HTML IDs tested: sandbox, tile-layer-container, helioviewer-viewport, helioviewer-viewport-container-outer
 				//document.getElementById('sandbox').addEventListener('touchstart', pinchStart, false);
 				
-				//document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
+				document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
 				document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
+				
+				//document.getElementsByTagName("html")[0]
 				
 			});
 			imgtilefound='yes';
