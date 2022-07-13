@@ -381,13 +381,13 @@ $('body').on('touchstart', function(hvmobev) {
 	if (hvmobev.targetTouches.length == 2) {
 		$('#hv-header').css('background','navy');
 		$('#toptouchlayer').css('z-index','20');
+		$('body').trigger('touchend');
+		$('#toptouchlayer').trigger('touchstart');
 		pinchStart(hvmobev);
 	}
 });
 
-$('body').on('touchend', function(hvmobev) {
-	$('#hv-header').css('background','black');
-});
+
 
 $('#toptouchlayer').on('touchmove', function(hvmobev) {
 	pinchMove(hvmobev);
@@ -405,9 +405,9 @@ $('#toptouchlayer').on('touchmove', function(hvmobev) {
 				//$('#toptouchlayer').css('z-index','20');
 				//$('#toptouchlayer').css('background','navy');
 				
-				$('body').trigger('touchend');
 				
-				$('#toptouchlayer').trigger('touchstart');
+				
+				
 				
 				twofingersdown='yes';
 				
