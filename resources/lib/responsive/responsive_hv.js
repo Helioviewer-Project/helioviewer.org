@@ -391,7 +391,7 @@ $('body').on('touchstart', function(hvmobev) {
 				$('#toptouchlayer').css('z-index','20');
 				//$('#toptouchlayer').css('background','navy');
 				
-				$('.tile').trigger('touchend');
+				$('body').trigger('touchend');
 				
 				$('#toptouchlayer').trigger('touchstart');
 				
