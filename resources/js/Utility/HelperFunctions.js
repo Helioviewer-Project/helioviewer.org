@@ -437,6 +437,8 @@ var parseEventString = function (str) {
  *
  * @see http://ross.posterous.com/2008/08/19/iphone-touch-events-in-javascript/
  */
+
+/*
 function touchHandler(event)
 {
     var touches, first, type, simulatedEvent;
@@ -467,6 +469,8 @@ function touchHandler(event)
     event.preventDefault();
 }
 
+*/
+
 /**
  * Maps the touch handler events to mouse events for a given element using the touchHandler event listener above
  *
@@ -474,6 +478,8 @@ function touchHandler(event)
  *
  * @return void
  */
+
+/*
 function assignTouchHandlers(element) {
     if (typeof element == 'undefined' || !element.addEventListener) {
         return; // IE 8 and under
@@ -483,7 +489,7 @@ function assignTouchHandlers(element) {
     element.addEventListener("touchend", touchHandler, true);
     element.addEventListener("touchcancel", touchHandler, true);
 }
-
+*/
 
 /**
  * @description Convert Date object to Julian Day.
