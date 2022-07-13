@@ -392,7 +392,7 @@ $('#sandbox').on('touchstart', function(hvmobev) {
 				
 				$('.tile').trigger('touchend');
 				
-				$('.toptouchlayer').trigger('touchstart');
+				$('#toptouchlayer').trigger('touchstart');
 				
 				twofingersdown='yes';
 				
