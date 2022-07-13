@@ -385,6 +385,10 @@ $('body').on('touchstart', function(hvmobev) {
 	}
 });
 
+$('body').on('touchend', function(hvmobev) {
+	$('#hv-header').css('background','black');
+});
+
 $('#toptouchlayer').on('touchmove', function(hvmobev) {
 	pinchMove(hvmobev);
 });
@@ -442,8 +446,6 @@ $('#toptouchlayer').on('touchmove', function(hvmobev) {
     }
 	
 	function pinchEnd(hvmobev) {
-		
-		$('#hv-header').css('background','black');
 		$('#toptouchlayer').css('z-index','-5');
 		twofingersdown='no';
 	}
