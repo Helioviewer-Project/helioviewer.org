@@ -373,6 +373,7 @@ function hvOnResize() {
 
 /* -------------- START pinch-to-zoom functionality -------------- */
 
+$('#hv-header').css('background','black');
 var hvmobdist1=0;
 var twofingersdown='no';
 
@@ -441,6 +442,8 @@ $('#toptouchlayer').on('touchmove', function(hvmobev) {
     }
 	
 	function pinchEnd(hvmobev) {
+		
+		$('#hv-header').css('background','black');
 		$('#toptouchlayer').css('z-index','-5');
 		twofingersdown='no';
 	}
