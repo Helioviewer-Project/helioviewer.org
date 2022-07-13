@@ -290,6 +290,10 @@
 		min-height: 400px;
 	}
 	
+	body {
+		touch-action: none;
+	}
+	
 	#toptouchlayer {
 		touch-action: none;
 		position: absolute;
