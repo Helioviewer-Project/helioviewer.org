@@ -378,17 +378,26 @@ var twofingersdown='no';
 
 $('body').on('touchstart', function(hvmobev) {
 	if (hvmobev.targetTouches.length == 2) {
-		//$('#toptouchlayer').css('background','navy');
+		$('#hv-header').css('background','navy');
+		$('#toptouchlayer').css('z-index','20');
 		pinchStart(hvmobev);
 	}
 });
+
+$('#toptouchlayer').on('touchmove', function(hvmobev) {
+	pinchMove(hvmobev);
+});
+
+
+
+
 
 	function pinchStart(hvmobev) {
            //check if two fingers touched screen
 		   if (hvmobev.targetTouches.length == 2) {
 		   
 				// place invisible div layer on top of all of the content
-				$('#toptouchlayer').css('z-index','20');
+				//$('#toptouchlayer').css('z-index','20');
 				//$('#toptouchlayer').css('background','navy');
 				
 				$('body').trigger('touchend');
@@ -446,7 +455,7 @@ $('body').on('touchstart', function(hvmobev) {
 				// HTML IDs tested: sandbox, tile-layer-container, helioviewer-viewport, helioviewer-viewport-container-outer
 				//document.getElementById('sandbox').addEventListener('touchstart', pinchStart, false);
 				
-				document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
+				//document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
 				document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
 				
 			});
