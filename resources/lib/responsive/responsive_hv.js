@@ -376,7 +376,7 @@ function hvOnResize() {
 var hvmobdist1=0;
 var twofingersdown='no';
 
-$('.tile').on('touchstart', function(hvmobev) {
+$('#sandbox').on('touchstart', function(hvmobev) {
 	if (hvmobev.targetTouches.length == 2) {
 		pinchStart(hvmobev);
 	}
@@ -389,6 +389,11 @@ $('.tile').on('touchstart', function(hvmobev) {
 				// place invisible div layer on top of all of the content
 				$('#toptouchlayer').css('z-index','20');
 				//$('#toptouchlayer').css('background','navy');
+				
+				$('.tile').trigger('touchend');
+				
+				$('.toptouchlayer').trigger('touchstart');
+				
 				twofingersdown='yes';
 				
 				if(twofingersdown=='yes') {
@@ -437,8 +442,9 @@ $('.tile').on('touchstart', function(hvmobev) {
 		if($('.tile-layer-container:first').length > 0 && imgtilefound=='no') {
 			$(function() {
 				
-				// HTML IDs tested: sandbox, tile-layer-container, helioviewer-viewport
-				document.getElementById('sandbox').addEventListener('touchstart', pinchStart, false);
+				// HTML IDs tested: sandbox, tile-layer-container, helioviewer-viewport, helioviewer-viewport-container-outer
+				//document.getElementById('sandbox').addEventListener('touchstart', pinchStart, false);
+				
 				document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
 				document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
 				
@@ -457,13 +463,7 @@ $('.tile').on('touchstart', function(hvmobev) {
 	}
 	
 	detectTilesExist();
-		
-        //document.getElementById('helioviewer-viewport-container-outer').addEventListener('touchstart', pinchStart, false);
-        //document.getElementById('helioviewer-viewport-container-outer').addEventListener('touchmove', pinchMove, false);
-		
-
-
-
+	
 
 /* -------------- END pinch-to-zoom functionality -------------- */
 
