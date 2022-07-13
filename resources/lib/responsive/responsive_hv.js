@@ -378,6 +378,7 @@ var twofingersdown='no';
 
 $('#sandbox').on('touchstart', function(hvmobev) {
 	if (hvmobev.targetTouches.length == 2) {
+		$('#toptouchlayer').css('background','navy');
 		pinchStart(hvmobev);
 	}
 });
