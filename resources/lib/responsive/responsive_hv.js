@@ -376,6 +376,7 @@ function hvOnResize() {
 
 $('#hv-header').css('background','black');
 var hvmobdist1=0;
+var htmltwofingersdown=0;
 var twofingersdown='no';
 
 $('html').on('touchend', function(hvmobev) {
@@ -383,10 +384,13 @@ $('html').on('touchend', function(hvmobev) {
 });
 
 $('html').on('touchstart', function(hvmobev) {
-	if (hvmobev.targetTouches.length == 2) {
+	if(htmltwofingersdown<2) {
+		htmltwofingersdown++;
+	}
+	if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2
 		$('#hv-header').css('background','navy');
 		$('#toptouchlayer').css({'z-index':'20','opacity':'0.20','background':'green'});
-		$('html').trigger('touchend');
+		//$('html').trigger('touchend');
 		//$('#toptouchlayer').trigger('touchstart');
 		
 	}
@@ -410,7 +414,7 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 
 	function pinchStart(hvmobev) {
            //check if two fingers touched screen
-		   if (hvmobev.targetTouches.length == 2) {
+		   if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2
 		   
 				// place invisible div layer on top of all of the content
 				//$('#toptouchlayer').css('z-index','20');
@@ -433,7 +437,7 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
     function pinchMove(hvmobev) {
 		
 		// Check if the two target touches are the same ones that started
-	   if (hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2) {
+	   if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2
 			 
 		   //get rough estimate of new distance between fingers
 		   var hvmobdist2 = Math.hypot(hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
