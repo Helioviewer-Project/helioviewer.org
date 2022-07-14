@@ -381,6 +381,7 @@ var twofingersdown='no';
 
 $('html').on('touchend', function(hvmobev) {
 	$('#hv-header').css('background','black');
+	htmltwofingersdown=0;
 });
 
 $('html').on('touchstart', function(hvmobev) {
