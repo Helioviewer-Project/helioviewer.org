@@ -413,10 +413,6 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 				//$('#toptouchlayer').css('z-index','20');
 				//$('#toptouchlayer').css('background','navy');
 				
-				
-				
-				
-				
 				twofingersdown='yes';
 				
 				if(twofingersdown=='yes') {
@@ -468,8 +464,8 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 				// HTML IDs tested: sandbox, tile-layer-container, helioviewer-viewport, helioviewer-viewport-container-outer
 				//document.getElementById('sandbox').addEventListener('touchstart', pinchStart, false);
 				
-				document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
-				document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
+				//document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
+				//document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
 				
 				//document.getElementsByTagName("html")[0]
 				
