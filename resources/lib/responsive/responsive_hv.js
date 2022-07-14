@@ -396,6 +396,7 @@ $('html').on('touchstart', function(hvmobev) {
 		$('#toptouchlayer').css({'z-index':'20','opacity':'0.20','background':'green'});
 		//$('html').trigger('touchend');
 		//$('#toptouchlayer').trigger('touchstart');
+		pinchMove(hvmobev);
 		
 	}
 });
@@ -440,7 +441,6 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 	
     function pinchMove(hvmobev) {
 		
-		alert('touchmove');
 		
 		// Check if the two target touches are the same ones that started
 	   if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2
@@ -481,9 +481,11 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 				
 				// HTML IDs tested: sandbox, tile-layer-container, helioviewer-viewport, helioviewer-viewport-container-outer
 				
+				/*
 				document.getElementById('toptouchlayer').addEventListener('touchstart', pinchStart, false);
 				document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
 				document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
+				*/
 				
 				//document.getElementsByTagName("html")[0]
 				
