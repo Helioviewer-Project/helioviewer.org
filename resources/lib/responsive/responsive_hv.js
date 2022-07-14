@@ -399,11 +399,11 @@ $('#toptouchlayer').on('touchmove', function(hvmobev) {
 	pinchMove(hvmobev);
 });
 
+/*
 $('#toptouchlayer').on('touchend', function(hvmobev) {
-	alert('touchend');
 	pinchEnd(hvmobev);
 });
-
+*/
 
 
 	function pinchStart(hvmobev) {
@@ -453,6 +453,7 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 	function pinchEnd(hvmobev) {
 		$('#toptouchlayer').css('z-index','-5');
 		twofingersdown='no';
+		alert('touchend');
 	}
 	
 		
@@ -466,7 +467,7 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 				//document.getElementById('sandbox').addEventListener('touchstart', pinchStart, false);
 				
 				//document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
-				//document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
+				document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
 				
 				//document.getElementsByTagName("html")[0]
 				
