@@ -442,6 +442,11 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 		// Check if the two target touches are the same ones that started
 	   if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2
 			 
+					hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
+					hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,
+					hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
+			 
+			 
 		   //get rough estimate of new distance between fingers
 		   var hvmobdist2 = Math.hypot(hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
 			//alert(dist);
