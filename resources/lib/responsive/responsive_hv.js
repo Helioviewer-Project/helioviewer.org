@@ -387,12 +387,12 @@ $('html').on('touchstart', function(hvmobev) {
 		$('#toptouchlayer').css({'z-index':'20','opacity':'0.20','background':'green'});
 		$('html').trigger('touchend');
 		$('#toptouchlayer').trigger('touchstart');
-		pinchStart(hvmobev);
+		
 	}
 });
 
 $('#toptouchlayer').on('touchstart', function(hvmobev) {
-	
+	pinchStart(hvmobev);
 });
 
 $('#toptouchlayer').on('touchmove', function(hvmobev) {
