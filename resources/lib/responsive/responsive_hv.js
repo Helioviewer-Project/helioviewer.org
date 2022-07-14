@@ -454,7 +454,6 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 	function pinchEnd(hvmobev) {
 		$('#toptouchlayer').css('z-index','-5');
 		twofingersdown='no';
-		alert('touchend');
 	}
 	
 		
@@ -466,7 +465,7 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 				
 				// HTML IDs tested: sandbox, tile-layer-container, helioviewer-viewport, helioviewer-viewport-container-outer
 				
-				document.getElementById('sandbox').addEventListener('touchstart', pinchStart, false);
+				document.getElementById('toptouchlayer').addEventListener('touchstart', pinchStart, false);
 				document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
 				document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
 				
