@@ -387,6 +387,10 @@ $('html').on('touchend', function(hvmobev) {
 	hvmobdist1=0;
 });
 
+$('html').on('touchmove', function(hvmobev) {
+	pinchMove(hvmobev);
+});
+
 $('html').on('touchstart', function(hvmobev) {
 	if(htmltwofingersdown<2) {
 		htmltwofingersdown++;
@@ -396,7 +400,7 @@ $('html').on('touchstart', function(hvmobev) {
 		$('#toptouchlayer').css({'z-index':'20','opacity':'0.20','background':'green'});
 		//$('html').trigger('touchend');
 		//$('#toptouchlayer').trigger('touchstart');
-		pinchMove(hvmobev);
+		pinchStart(hvmobev);
 		
 	}
 });
@@ -444,10 +448,6 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 		
 		// Check if the two target touches are the same ones that started
 	   if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2
-			 
-					hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
-					hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,
-					hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
 			 
 			 
 		   //get rough estimate of new distance between fingers
