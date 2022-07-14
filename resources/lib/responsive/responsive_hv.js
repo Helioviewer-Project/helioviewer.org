@@ -384,7 +384,7 @@ $('html').on('touchend', function(hvmobev) {
 $('html').on('touchstart', function(hvmobev) {
 	if (hvmobev.targetTouches.length == 2) {
 		$('#hv-header').css('background','navy');
-		$('#toptouchlayer').css('z-index','20');
+		$('#toptouchlayer').css({'z-index':'20','opacity':'0.20','background':'green'});
 		$('html').trigger('touchend');
 		$('#toptouchlayer').trigger('touchstart');
 		pinchStart(hvmobev);
@@ -399,7 +399,9 @@ $('#toptouchlayer').on('touchmove', function(hvmobev) {
 	pinchMove(hvmobev);
 });
 
-
+$('#toptouchlayer').on('touchend', function(hvmobev) {
+	pinchEnd(hvmobev);
+});
 
 
 
