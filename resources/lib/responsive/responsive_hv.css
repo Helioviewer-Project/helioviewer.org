@@ -301,6 +301,10 @@
 		height: 100%;
 		z-index: -5;
 	}
+	
+	.tile {
+		display: inline;
+	}
 
 	.hamburger {
 		display: inline-block;
