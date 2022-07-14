@@ -222,8 +222,6 @@ $(document).ready(function() {
 		HVcustomHandling('hvtutorial_CB_click');
 	});
 	
-
-
 	
 }); // end of doc ready
 
