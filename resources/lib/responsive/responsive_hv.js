@@ -386,7 +386,7 @@ $('html').on('touchstart', function(hvmobev) {
 		$('#hv-header').css('background','navy');
 		$('#toptouchlayer').css({'z-index':'20','opacity':'0.20','background':'green'});
 		$('html').trigger('touchend');
-		$('#toptouchlayer').trigger('touchstart');
+		//$('#toptouchlayer').trigger('touchstart');
 		
 	}
 });
