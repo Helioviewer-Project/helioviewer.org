@@ -373,6 +373,7 @@ function hvOnResize() {
 
 /* -------------- START pinch-to-zoom functionality -------------- */
 
+
 $('#hv-header').css('background','black');
 var hvmobdist1=0;
 var twofingersdown='no';
