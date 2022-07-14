@@ -384,6 +384,7 @@ $('html').on('touchend', function(hvmobev) {
 	$('#toptouchlayer').css('z-index','-5');
 	twofingersdown='no';	
 	htmltwofingersdown=0;
+	hvmobdist1=0;
 });
 
 $('html').on('touchstart', function(hvmobev) {
@@ -438,6 +439,8 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
     }
 	
     function pinchMove(hvmobev) {
+		
+		alert('touchmove');
 		
 		// Check if the two target touches are the same ones that started
 	   if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2
