@@ -400,6 +400,7 @@ $('#toptouchlayer').on('touchmove', function(hvmobev) {
 });
 
 $('#toptouchlayer').on('touchend', function(hvmobev) {
+	alert('touchend');
 	pinchEnd(hvmobev);
 });
 
