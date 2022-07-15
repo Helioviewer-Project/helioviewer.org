@@ -301,10 +301,7 @@
 		height: 100%;
 		z-index: -5;
 	}
-	
-	.tile {
-		display: inline;
-	}
+
 
 	.hamburger {
 		display: inline-block;
@@ -451,7 +448,7 @@
 	*/
 	
 	#zoom, #zoomControls, #zoomSliderContainer, #zoomControlSlider {
-		display: block !important;
+		display: none !important;
 		z-index: 1 !important;
 	}
 	
