@@ -456,10 +456,9 @@ $('html').on('touchstart', function(hvmobev) {
 		$('#hv-header').css('background','black');
 		$('#toptouchlayer').css({'z-index':'-5','opacity':'0.00','background':'none'});
 		twofingersdown='no';	
-		/*if(htmltwofingersdown>0) {
+		if(htmltwofingersdown>0) {
 			htmltwofingersdown--;
-		}*/
-		htmltwofingersdown=0;
+		}
 		hvmobdist1=0;
 		hvmobdist2=0;
 	}
