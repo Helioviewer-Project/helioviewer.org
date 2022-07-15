@@ -376,15 +376,12 @@ function hvOnResize() {
 
 $('#hv-header').css('background','black');
 var hvmobdist1=0;
+var hvmobdist2 = 0;
 var htmltwofingersdown=0;
 var twofingersdown='no';
 
 $('html').on('touchend', function(hvmobev) {
-	$('#hv-header').css('background','black');
-	$('#toptouchlayer').css({'z-index':'-5','opacity':'0.20','background':'none'});
-	twofingersdown='no';	
-	htmltwofingersdown=0;
-	hvmobdist1=0;
+	pinchEnd(hvmobev)
 });
 
 $('html').on('touchmove', function(hvmobev) {
@@ -436,7 +433,7 @@ $('html').on('touchstart', function(hvmobev) {
 			 
 			 
 		   //get rough estimate of new distance between fingers
-		   var hvmobdist2 = Math.hypot(hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
+		   hvmobdist2 = Math.hypot(hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
 			//alert(dist);
 			//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
 			if(hvmobdist1<hvmobdist2 && (hvmobdist2-hvmobdist1)>60) {
@@ -453,36 +450,13 @@ $('html').on('touchstart', function(hvmobev) {
     }
 	
 	function pinchEnd(hvmobev) {
-		$('#toptouchlayer').css('z-index','-5');
-		twofingersdown='no';
+		$('#hv-header').css('background','black');
+		$('#toptouchlayer').css({'z-index':'-5','opacity':'0.20','background':'none'});
+		twofingersdown='no';	
+		htmltwofingersdown=0;
+		hvmobdist1=0;
+		hvmobdist2=0;
 	}
-	
-	
-/*	
-	var detecttilestry=0;
-	var imgtilefound='no';
-	function detectTilesExist() {
-		if($('.tile-layer-container:first').length > 0 && imgtilefound=='no') {
-			$(function() {
-				
-
-				
-			});
-			imgtilefound='yes';
-		}
-		else {
-			if(detecttilestry<11) {
-				setTimeout(detectTilesExist,2000);
-			}
-			else {
-				location.reload();
-			}
-		}
-		detecttilestry++;
-	}
-	
-	detectTilesExist();
-	*/
 	
 
 /* -------------- END pinch-to-zoom functionality -------------- */
