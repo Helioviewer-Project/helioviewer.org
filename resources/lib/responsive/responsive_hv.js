@@ -380,9 +380,11 @@ var hvmobdist2 = 0;
 var htmltwofingersdown=0;
 var twofingersdown='no';
 
+/*
 $('html').on('touchend', function(hvmobev) {
 	pinchEnd(hvmobev);
 });
+*/
 
 document.getElementsByTagName('html')[0].addEventListener('touchend',pinchEnd);
 
@@ -450,7 +452,7 @@ $('html').on('touchstart', function(hvmobev) {
 	
 	function pinchEnd(hvmobev) {
 		$('#hv-header').css('background','black');
-		$('#toptouchlayer').css({'z-index':'-5','opacity':'0.20','background':'none'});
+		$('#toptouchlayer').css({'z-index':'-5','opacity':'0.00','background':'none'});
 		twofingersdown='no';	
 		if(htmltwofingersdown>0) {
 			htmltwofingersdown--;
