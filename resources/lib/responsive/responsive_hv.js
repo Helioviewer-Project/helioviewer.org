@@ -381,7 +381,7 @@ var twofingersdown='no';
 
 $('html').on('touchend', function(hvmobev) {
 	$('#hv-header').css('background','black');
-	$('#toptouchlayer').css('z-index','-5');
+	$('#toptouchlayer').css({'z-index':'-5','opacity':'0.20','background':'none'});
 	twofingersdown='no';	
 	htmltwofingersdown=0;
 	hvmobdist1=0;
@@ -397,37 +397,22 @@ $('html').on('touchstart', function(hvmobev) {
 	}
 	if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2
 		$('#hv-header').css('background','navy');
+		
+		// place invisible div layer on top of all of the content
 		$('#toptouchlayer').css({'z-index':'20','opacity':'0.20','background':'green'});
-		//$('html').trigger('touchend');
-		//$('#toptouchlayer').trigger('touchstart');
+		
 		pinchStart(hvmobev);
 		
 	}
 });
 
-/*
-$('#toptouchlayer').on('touchstart', function(hvmobev) {
-	pinchStart(hvmobev);
-});
-
-$('#toptouchlayer').on('touchmove', function(hvmobev) {
-	pinchMove(hvmobev);
-});
-
-
-$('#toptouchlayer').on('touchend', function(hvmobev) {
-	pinchEnd(hvmobev);
-});
-*/
 
 
 	function pinchStart(hvmobev) {
            //check if two fingers touched screen
 		   if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2
 		   
-				// place invisible div layer on top of all of the content
-				//$('#toptouchlayer').css('z-index','20');
-				//$('#toptouchlayer').css('background','navy');
+				
 				
 				twofingersdown='yes';
 				
@@ -454,12 +439,12 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 		   var hvmobdist2 = Math.hypot(hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
 			//alert(dist);
 			//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
-			if(hvmobdist1<hvmobdist2) {
+			if(hvmobdist1<hvmobdist2 && (hvmobdist2-hvmobdist1)>30) {
 				$('#zoom-in-button').trigger('click');
 				//alert('zoom in: because 1st finger position '+hvmobdist1+' is less than 2nd finger position ('+hvmobdist2+')');
 			}
 			//if fingers are closer now than when they first touched screen, they are pinching
-			else if(hvmobdist1>hvmobdist2) {
+			else if(hvmobdist1>hvmobdist2 && (hvmobdist1-hvmobdist2)>30) {
 				$('#zoom-out-button').trigger('click');
 				//alert('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')');
 			}				
@@ -472,22 +457,15 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 		twofingersdown='no';
 	}
 	
-		
+	
+/*	
 	var detecttilestry=0;
 	var imgtilefound='no';
 	function detectTilesExist() {
 		if($('.tile-layer-container:first').length > 0 && imgtilefound=='no') {
 			$(function() {
 				
-				// HTML IDs tested: sandbox, tile-layer-container, helioviewer-viewport, helioviewer-viewport-container-outer
-				
-				/*
-				document.getElementById('toptouchlayer').addEventListener('touchstart', pinchStart, false);
-				document.getElementById('toptouchlayer').addEventListener('touchmove', pinchMove, false);
-				document.getElementById('toptouchlayer').addEventListener('touchend', pinchEnd, false);
-				*/
-				
-				//document.getElementsByTagName("html")[0]
+
 				
 			});
 			imgtilefound='yes';
@@ -504,6 +482,7 @@ $('#toptouchlayer').on('touchend', function(hvmobev) {
 	}
 	
 	detectTilesExist();
+	*/
 	
 
 /* -------------- END pinch-to-zoom functionality -------------- */
