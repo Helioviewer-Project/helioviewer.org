@@ -436,15 +436,14 @@ $('html').on('touchstart', function(hvmobev) {
 			//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
 			if(hvmobdist1<hvmobdist2 && (hvmobdist2-hvmobdist1)>60) {
 				$('#zoom-in-button').delay(1500).trigger('click');
-				pinchEnd(hvmobev);
 				//alert('zoom in: because 1st finger position '+hvmobdist1+' is less than 2nd finger position ('+hvmobdist2+')');
 			}
 			//if fingers are closer now than when they first touched screen, they are pinching
 			else if(hvmobdist1>hvmobdist2 && (hvmobdist1-hvmobdist2)>60) {
 				$('#zoom-out-button').delay(1500).trigger('click');
-				pinchEnd(hvmobev);
 				//alert('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')');
-			}				
+			}
+			pinchEnd(hvmobev);
 	   } 
 		else {
 			pinchEnd(hvmobev);
@@ -457,9 +456,10 @@ $('html').on('touchstart', function(hvmobev) {
 		$('#hv-header').css('background','black');
 		$('#toptouchlayer').css({'z-index':'-5','opacity':'0.00','background':'none'});
 		twofingersdown='no';	
-		if(htmltwofingersdown>0) {
+		/*if(htmltwofingersdown>0) {
 			htmltwofingersdown--;
-		}
+		}*/
+		htmltwofingersdown=0;
 		hvmobdist1=0;
 		hvmobdist2=0;
 	}
