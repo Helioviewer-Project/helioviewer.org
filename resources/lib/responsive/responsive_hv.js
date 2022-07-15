@@ -384,7 +384,7 @@ $('html').on('touchend', function(hvmobev) {
 	pinchEnd(hvmobev);
 });
 
-getElementsByTagName('html')[0].addEventListener('touchend',pinchEnd);
+document.getElementsByTagName('html')[0].addEventListener('touchend',pinchEnd);
 
 $('html').on('touchmove', function(hvmobev) {
 	if (htmltwofingersdown==2) {
