@@ -451,6 +451,7 @@ $('html').on('touchstart', function(hvmobev) {
     }
 	
 	function pinchEnd(hvmobev) {
+		$('html').trigger('mouseup');
 		$('#hv-header').css('background','black');
 		$('#toptouchlayer').css({'z-index':'-5','opacity':'0.00','background':'none'});
 		twofingersdown='no';	
