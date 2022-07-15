@@ -385,7 +385,9 @@ $('html').on('touchend', function(hvmobev) {
 });
 
 $('html').on('touchmove', function(hvmobev) {
-	pinchMove(hvmobev);
+	if (htmltwofingersdown==2) {
+		pinchMove(hvmobev);
+	}
 });
 
 $('html').on('touchstart', function(hvmobev) {
