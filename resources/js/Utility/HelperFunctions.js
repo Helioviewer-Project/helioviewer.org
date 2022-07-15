@@ -441,7 +441,7 @@ var parseEventString = function (str) {
 
 function touchHandler(event)
 {
-	/*
+	
     var touches, first, type, simulatedEvent;
 
     touches = event.changedTouches;
@@ -468,7 +468,7 @@ function touchHandler(event)
 
     first.target.dispatchEvent(simulatedEvent);
     event.preventDefault();
-	*/
+	
 }
 
 
@@ -483,7 +483,7 @@ function touchHandler(event)
 
 
 function assignTouchHandlers(element) {
-/*
+
     if (typeof element == 'undefined' || !element.addEventListener) {
         return; // IE 8 and under
     }
@@ -491,7 +491,7 @@ function assignTouchHandlers(element) {
     element.addEventListener("touchmove", touchHandler, true);
     element.addEventListener("touchend", touchHandler, true);
     element.addEventListener("touchcancel", touchHandler, true);
-*/
+
 }
 
 
