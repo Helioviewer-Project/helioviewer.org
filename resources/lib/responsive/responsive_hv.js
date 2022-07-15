@@ -439,12 +439,12 @@ $('html').on('touchstart', function(hvmobev) {
 		   var hvmobdist2 = Math.hypot(hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
 			//alert(dist);
 			//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
-			if(hvmobdist1<hvmobdist2 && (hvmobdist2-hvmobdist1)>30) {
+			if(hvmobdist1<hvmobdist2 && (hvmobdist2-hvmobdist1)>60) {
 				$('#zoom-in-button').trigger('click');
 				//alert('zoom in: because 1st finger position '+hvmobdist1+' is less than 2nd finger position ('+hvmobdist2+')');
 			}
 			//if fingers are closer now than when they first touched screen, they are pinching
-			else if(hvmobdist1>hvmobdist2 && (hvmobdist1-hvmobdist2)>30) {
+			else if(hvmobdist1>hvmobdist2 && (hvmobdist1-hvmobdist2)>60) {
 				$('#zoom-out-button').trigger('click');
 				//alert('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')');
 			}				
