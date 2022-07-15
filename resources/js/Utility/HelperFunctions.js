@@ -441,33 +441,37 @@ var parseEventString = function (str) {
 
 function touchHandler(event)
 {
-	
-    var touches, first, type, simulatedEvent;
 
-    touches = event.changedTouches;
-    first   = touches[0];
-    type    = "";
+	if(event.targetTouches.length < 2 && event.changedTouches.length < 2) {
 
-    switch (event.type) {
-    case "touchstart":
-        type = "mousedown";
-        break;
-    case "touchmove":
-        type = "mousemove";
-        break;
-    case "touchend":
-        //type = "mouseup";
-        break;
-    default:
-        return;
-    }
+		var touches, first, type, simulatedEvent;
 
-    simulatedEvent = document.createEvent("MouseEvent");
-    simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY,
-                                  first.clientX, first.clientY, false, false, false, false, 0, null);
+		touches = event.changedTouches;
+		first   = touches[0];
+		type    = "";
 
-    first.target.dispatchEvent(simulatedEvent);
-    event.preventDefault();
+		switch (event.type) {
+		case "touchstart":
+		type = "mousedown";
+		break;
+		case "touchmove":
+		type = "mousemove";
+		break;
+		case "touchend":
+		type = "mouseup";
+		break;
+		default:
+		return;
+		}
+
+		simulatedEvent = document.createEvent("MouseEvent");
+		simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY,
+					  first.clientX, first.clientY, false, false, false, false, 0, null);
+
+		first.target.dispatchEvent(simulatedEvent);
+		event.preventDefault();
+
+	}
 	
 }
 
