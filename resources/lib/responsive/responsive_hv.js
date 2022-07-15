@@ -438,7 +438,9 @@ $('html').on('touchstart', function(hvmobev) {
 				//alert('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')');
 			}				
 	   } 
-     
+		
+		pinchEnd(hvmobev);
+		
     }
 	
 	function pinchEnd(hvmobev) {
