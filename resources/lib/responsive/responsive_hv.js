@@ -381,7 +381,7 @@ var htmltwofingersdown=0;
 var twofingersdown='no';
 
 $('html').on('touchend', function(hvmobev) {
-	pinchEnd(hvmobev)
+	pinchEnd(hvmobev);
 });
 
 $('html').on('touchmove', function(hvmobev) {
@@ -408,21 +408,13 @@ $('html').on('touchstart', function(hvmobev) {
 	function pinchStart(hvmobev) {
            //check if two fingers touched screen
 		   if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2
-		   
-				
-				
-				twofingersdown='yes';
-				
-				if(twofingersdown=='yes') {
-					hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
-					hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,
-					hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
-				}
-				else {
-					pinchStart(hvmobev);
-				}
-				
+				hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
+				hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,
+				hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
            }
+			else {
+				pinchStart(hvmobev);
+			}
     }
 	
     function pinchMove(hvmobev) {
@@ -453,7 +445,9 @@ $('html').on('touchstart', function(hvmobev) {
 		$('#hv-header').css('background','black');
 		$('#toptouchlayer').css({'z-index':'-5','opacity':'0.20','background':'none'});
 		twofingersdown='no';	
-		htmltwofingersdown=0;
+		if(htmltwofingersdown>0) {
+			htmltwofingersdown--;
+		}
 		hvmobdist1=0;
 		hvmobdist2=0;
 	}
