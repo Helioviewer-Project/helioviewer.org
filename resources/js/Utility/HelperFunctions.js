@@ -456,7 +456,7 @@ function touchHandler(event)
         type = "mousemove";
         break;
     case "touchend":
-        type = "mouseup";
+        //type = "mouseup";
         break;
     default:
         return;
