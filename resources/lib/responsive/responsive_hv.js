@@ -399,10 +399,10 @@ $('html').on('touchstart', function(hvmobev) {
 		htmltwofingersdown++;
 	}
 	if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2
-		$('#hv-header').css('background','navy');
+		//$('#hv-header').css('background','navy');
 		
 		// place invisible div layer on top of all of the content
-		$('#toptouchlayer').css({'z-index':'20','opacity':'0.20','background':'green'});
+		$('#toptouchlayer').css({'z-index':'20'});//,'opacity':'0.20','background':'green'
 		
 		pinchStart(hvmobev);
 		
@@ -455,8 +455,8 @@ $('html').on('touchstart', function(hvmobev) {
 	
 	function pinchEnd(hvmobev) {
 		$('html').trigger('mouseup');
-		$('#hv-header').css('background','black');
-		$('#toptouchlayer').css({'z-index':'-5','opacity':'0.00','background':'none'});
+		//$('#hv-header').css('background','black');
+		$('#toptouchlayer').css({'z-index':'-5'}); //,'opacity':'0.00','background':'none'
 		twofingersdown='no';	
 		/*if(htmltwofingersdown>0) {
 			htmltwofingersdown--;
