@@ -437,7 +437,7 @@ var parseEventString = function (str) {
  *
  * @see http://ross.posterous.com/2008/08/19/iphone-touch-events-in-javascript/
  */
-
+var htmltwofingersdown=0;
 
 function touchHandler(event)
 {
@@ -491,13 +491,17 @@ function touchHandler(event)
 
 function assignTouchHandlers(element) {
 
-	if (typeof element == 'undefined' || !element.addEventListener) {
-	return; // IE 8 and under
+	if(htmltwofingersdown<2) {
+	
+		if (typeof element == 'undefined' || !element.addEventListener) {
+		return; // IE 8 and under
+		}
+		element.addEventListener("touchstart", touchHandler, true);
+		element.addEventListener("touchmove", touchHandler, true);
+		element.addEventListener("touchend", touchHandler, true);
+		element.addEventListener("touchcancel", touchHandler, true);
+		
 	}
-	element.addEventListener("touchstart", touchHandler, true);
-	element.addEventListener("touchmove", touchHandler, true);
-	element.addEventListener("touchend", touchHandler, true);
-	element.addEventListener("touchcancel", touchHandler, true);
 
 }
 
