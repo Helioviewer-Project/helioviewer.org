@@ -90,8 +90,8 @@ $(function() {
 	
 	$(".hvmobdstabs").click(function(){
 		
-		console.log('Currently open: '+currdsopen);
-		console.log('Just clicked: '+$(this).attr('drawersec'));
+		//console.log('Currently open: '+currdsopen);
+		//console.log('Just clicked: '+$(this).attr('drawersec'));
 		
 		document.getElementById("mobdrawertopanchor").scrollIntoView();
 		
