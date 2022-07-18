@@ -490,18 +490,14 @@ function touchHandler(event)
 
 
 function assignTouchHandlers(element) {
-	
-	if(document.getElementById('sandbox').targetTouches.length == 1 && document.getElementById('sandbox').changedTouches.length == 1) {
-	
-		if (typeof element == 'undefined' || !element.addEventListener) {
-		return; // IE 8 and under
-		}
-		element.addEventListener("touchstart", touchHandler, true);
-		element.addEventListener("touchmove", touchHandler, true);
-		element.addEventListener("touchend", touchHandler, true);
-		element.addEventListener("touchcancel", touchHandler, true);
-		
+
+	if (typeof element == 'undefined' || !element.addEventListener) {
+	return; // IE 8 and under
 	}
+	element.addEventListener("touchstart", touchHandler, true);
+	element.addEventListener("touchmove", touchHandler, true);
+	element.addEventListener("touchend", touchHandler, true);
+	element.addEventListener("touchcancel", touchHandler, true);
 
 }
 
