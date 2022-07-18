@@ -441,7 +441,7 @@ var parseEventString = function (str) {
 
 function touchHandler(event)
 {
-
+	console.log(event);
 	if(event.targetTouches.length == 1 && event.changedTouches.length == 1) { // event.targetTouches.length < 2 && event.changedTouches.length < 2
 
 		var touches, first, type, simulatedEvent;
