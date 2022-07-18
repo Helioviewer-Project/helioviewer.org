@@ -491,7 +491,7 @@ function touchHandler(event)
 
 function assignTouchHandlers(element) {
 	
-	if(document.getElementById('helioviewer-viewport').targetTouches.length == 1 && document.getElementById('helioviewer-viewport').changedTouches.length == 1) {
+	if(document.getElementById('sandbox').targetTouches.length == 1 && document.getElementById('sandbox').changedTouches.length == 1) {
 	
 		if (typeof element == 'undefined' || !element.addEventListener) {
 		return; // IE 8 and under
