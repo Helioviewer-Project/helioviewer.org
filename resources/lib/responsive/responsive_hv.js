@@ -377,7 +377,7 @@ function hvOnResize() {
 $('#hv-header').css('background','black');
 var hvmobdist1=0;
 var hvmobdist2 = 0;
-var htmltwofingersdown=0;
+//var htmltwofingersdown=0;
 var twofingersdown='no';
 
 /*
