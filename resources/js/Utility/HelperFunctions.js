@@ -491,15 +491,17 @@ function touchHandler(event)
 
 function assignTouchHandlers(element) {
 	
-	console.log(element);
+	if(document.getElementById('helioviewer-viewport').targetTouches.length == 1 && document.getElementById('helioviewer-viewport').changedTouches.length == 1) {
 	
-    if (typeof element == 'undefined' || !element.addEventListener) {
-        return; // IE 8 and under
-    }
-    element.addEventListener("touchstart", touchHandler, true);
-    element.addEventListener("touchmove", touchHandler, true);
-    element.addEventListener("touchend", touchHandler, true);
-    element.addEventListener("touchcancel", touchHandler, true);
+		if (typeof element == 'undefined' || !element.addEventListener) {
+		return; // IE 8 and under
+		}
+		element.addEventListener("touchstart", touchHandler, true);
+		element.addEventListener("touchmove", touchHandler, true);
+		element.addEventListener("touchend", touchHandler, true);
+		element.addEventListener("touchcancel", touchHandler, true);
+		
+	}
 
 }
 
