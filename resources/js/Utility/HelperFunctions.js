@@ -441,8 +441,8 @@ var htmltwofingersdown=0;
 
 function touchHandler(event)
 {
-	//console.log(htmltwofingersdown);
-	if(event.targetTouches.length == 1 && event.changedTouches.length == 1 && htmltwofingersdown<2) { // event.targetTouches.length < 2 && event.changedTouches.length < 2
+	
+	if(event.targetTouches.length == 1 && event.changedTouches.length == 1 && htmltwofingersdown<2) { 
 
 		var touches, first, type, simulatedEvent;
 
