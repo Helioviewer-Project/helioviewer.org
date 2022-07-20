@@ -340,7 +340,7 @@
 	.ui-dialog {
 		top: 0px;
 		left: 0px;
-		width:100%;
+		width:100% !important; 
 		height:800px;
 		border: 0px solid #ffffff;
 		z-index: 9 !important;
@@ -428,6 +428,27 @@
 	.dynaccordion-section {
 		background: transparent !important;
 	}
+	
+	
+.movie-player-dialog, .mejs__video {
+   width: 100% !important;
+}
+
+.mejs__video {
+	margin: auto;
+}
+
+.mejs__overlay {
+	width: 100% !important;
+}
+
+.ui-widget.ui-widget-content {
+   border: 0px solid #c5c5c5;
+}
+
+.video-links div:nth-child(3) {
+   clear:both;
+}	
 	
 	#logo {
 		text-align: left !important;
