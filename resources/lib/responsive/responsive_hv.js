@@ -2,7 +2,7 @@
 $(function() {
 
 	// positioning movie player
-	$('div:has(div.movie-player-dialog)').css({'width':'100%','left':'37px'});
+	$('.ui-dialog:has(div.movie-player-dialog)').css({'width':'100%','top':'37px'});
 
 	// Change verbiage for Create a Screenshot menu button       span:nth-child(2)
 	$('#screenshot-manager-full-viewport').html('<span class="fa fa-arrows-alt fa-fw"></span>&nbsp;<span style="line-height: 1.6em">Take a Screenshot</span>');
