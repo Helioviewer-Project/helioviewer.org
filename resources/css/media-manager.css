@@ -200,7 +200,7 @@
 @media screen and (min-width: 800px) {
 
    #hv-drawer-movies {
-      overflow: none;
+      overflow: none !important;
    }
 
    #movie-manager-container { 
