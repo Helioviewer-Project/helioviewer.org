@@ -28,6 +28,7 @@
     margin: 0;
 }
 
+
 #movie-settings-container {
     width: 300px;
 }
@@ -197,17 +198,16 @@
 	background-image: url("/resources/lib/mediaelement/build/mejs-controls.svg");
 }
 
-#hv-drawer-movies {
-   overflow: none !important;
-}
+@media screen and (min-width: 800px) {
 
-#movie-manager-container {
-   overflow: auto !important;
-   max-height: 500px !important;
-}
+   #hv-drawer-movies {
+      overflow: none;
+   }
 
-#movie-history {
- overflow: auto !important;
+   #movie-manager-container { 
+      overflow:auto;
+      max-height: 500px;
+   }
 }
 
 #google {
