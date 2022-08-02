@@ -4,7 +4,7 @@ $(function() {
 	// positioning movie player
 	$('.ui-dialog:has(div.movie-player-dialog)').css({'width':'100%','top':'37px'});
 
-	// Change verbiage for Create a Screenshot menu button       span:nth-child(2)
+	// Change verbiage for Create a Screenshot menu button 
 	$('#screenshot-manager-full-viewport').html('<span class="fa fa-arrows-alt fa-fw"></span>&nbsp;<span style="line-height: 1.6em">Take a Screenshot</span>');
 	
 	// Change verbiage for Create a Movie menu button
@@ -60,13 +60,11 @@ $(function() {
 
   var zeynep = $('.zeynep').zeynep({
     opened: function () {
-      //console.log('the side menu is opened')
     }
   })
 
   // dynamically bind 'closing' event
   zeynep.on('closing', function () {
-    //console.log('this event is dynamically binded')
 	
   })
 
@@ -92,9 +90,6 @@ $(function() {
 	// click datasource items
 	
 	$(".hvmobdstabs").click(function(){
-		
-		//console.log('Currently open: '+currdsopen);
-		//console.log('Just clicked: '+$(this).attr('drawersec'));
 		
 		document.getElementById("mobdrawertopanchor").scrollIntoView();
 		
@@ -132,7 +127,6 @@ $(function() {
 		if(thisdrawersect != currdsopen) {
 			$('.hv-drawer-right').css({'display':'none'});
 			$('#hv-drawer-left').attr('style', 'display: none');
-			//$('#hv-drawer-left').fadeOut("fast");
 			$('#'+currdsopen).css('display','none');
 			$('#'+thisdrawersect).css('display','block');
 			$('#hv-drawer-left').css({'display':'block','height':'100%'});
@@ -224,25 +218,12 @@ $(function() {
 		
 	});
 
-	
-	//$('#moving-container').draggable("destroy");
+
 
 	// move zoom controls to the body
 	$($("#zoom").detach()).appendTo("body");
 	$("#center-button, #zoom-out-button, #zoom-in-button").css({'display':'none'});
 	$("#zoom, #zoomControls, #zoomSliderContainer").css({'display':'block'});
-
-
-	//testing: tie time to desktop time
-	/*
-	$("#hvmobtime_input").change(function(){
-	  $("#time").val($(this).val()).trigger('change');
-	});
-	
-	$("#time").change(function(){
-	  $("#hvmobtime_input").val($(this).val());
-	});
-	*/
 	
 	
 	
@@ -301,16 +282,8 @@ $(function() {
 	});
 	
 
-
-	// testing: features & events marker tracking
-	$(".event-marker").click(function(){
-		console.log("event-marker clicked");
-		alert("event-marker clicked");
-	});
-
 	// on orientation change [portait / landscape]
 	$(window).on('orientationchange resize', function () {
-		//$(".periodpicker_timepicker_dialog.visible").css('display','none');
 		$(".periodpicker_timepicker_dialog").removeClass("visible");
 		$("#time").blur(); 
 	});
@@ -354,9 +327,7 @@ function hvOnResize() {
 
 		$('#dt_month_td').html(hvmobmonth);
 		$('#dt_day_td').html(hvmobday);
-		$('#dt_year_td').html(hvmobyear);
-		//console.log(hvdateelemval+' '+hvtimeelemval);
-		//console.log(hvmobmonth+' '+hvmobday+' '+hvmobyear);	
+		$('#dt_year_td').html(hvmobyear);	
 	}
 	
 	const hvmobdateobj_init = new Date();
@@ -383,12 +354,6 @@ var hvmobdist2 = 0;
 //var htmltwofingersdown=0;
 var twofingersdown='no';
 
-/*
-$('html').on('touchend', function(hvmobev) {
-	pinchEnd(hvmobev);
-});
-*/
-
 document.getElementsByTagName('html')[0].addEventListener('touchend',pinchEnd);
 
 $('html').on('touchmove', function(hvmobev) {
@@ -401,11 +366,10 @@ $('html').on('touchstart', function(hvmobev) {
 	if(htmltwofingersdown<2) {
 		htmltwofingersdown++;
 	}
-	if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2
-		//$('#hv-header').css('background','navy');
+	if (htmltwofingersdown==2) {
 		
 		// place invisible div layer on top of all of the content
-		$('#toptouchlayer').css({'z-index':'20'});//,'opacity':'0.20','background':'green'
+		$('#toptouchlayer').css({'z-index':'20'});
 		
 		pinchStart(hvmobev);
 		
@@ -416,7 +380,7 @@ $('html').on('touchstart', function(hvmobev) {
 
 	function pinchStart(hvmobev) {
            //check if two fingers touched screen
-		   if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2
+		   if (htmltwofingersdown==2) {
 				hvmobdist1 = Math.hypot( //get rough estimate of distance between two fingers
 				hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,
 				hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
@@ -430,40 +394,29 @@ $('html').on('touchstart', function(hvmobev) {
 		
 		
 		// Check if the two target touches are the same ones that started
-	   if (htmltwofingersdown==2) { //hvmobev.targetTouches.length == 2 && hvmobev.changedTouches.length == 2
-			 
+	   if (htmltwofingersdown==2) {
 			 
 		   //get rough estimate of new distance between fingers
 		   hvmobdist2 = Math.hypot(hvmobev.touches[0].clientX - hvmobev.touches[1].clientX,hvmobev.touches[0].clientY - hvmobev.touches[1].clientY);
-			//alert(dist);
 			//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
 			if(hvmobdist1<hvmobdist2 && (hvmobdist2-hvmobdist1)>60) {
 				$('#zoom-in-button').delay(1500).trigger('click');
 				pinchEnd(hvmobev);
-				//alert('zoom in: because 1st finger position '+hvmobdist1+' is less than 2nd finger position ('+hvmobdist2+')');
 			}
 			//if fingers are closer now than when they first touched screen, they are pinching
 			else if(hvmobdist1>hvmobdist2 && (hvmobdist1-hvmobdist2)>60) {
 				$('#zoom-out-button').delay(1500).trigger('click');
 				pinchEnd(hvmobev);
-				//alert('zoom out: because 1st finger position '+hvmobdist1+' is greater than 2nd finger position ('+hvmobdist2+')');
 			}
-			//pinchEnd(hvmobev);
+
 	   } 
-		/*else {
-			pinchEnd(hvmobev);
-		}*/
 		
     }
 	
 	function pinchEnd(hvmobev) {
 		$('html').trigger('mouseup');
-		//$('#hv-header').css('background','black');
-		$('#toptouchlayer').css({'z-index':'-5'}); //,'opacity':'0.00','background':'none'
+		$('#toptouchlayer').css({'z-index':'-5'});
 		twofingersdown='no';	
-		/*if(htmltwofingersdown>0) {
-			htmltwofingersdown--;
-		}*/
 		htmltwofingersdown=0;
 		hvmobdist1=0;
 		hvmobdist2=0;
