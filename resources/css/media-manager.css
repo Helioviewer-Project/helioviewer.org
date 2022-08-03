@@ -197,7 +197,6 @@
 	background-image: url("/resources/lib/mediaelement/build/mejs-controls.svg");
 }
 
-/* @media screen and (min-width: 800px) { */
 
    #hv-drawer-movies {
       overflow: none !important;
@@ -211,5 +210,3 @@
    #movie-history {
 	overflow: auto !important;   
    }
-
-/* } */
