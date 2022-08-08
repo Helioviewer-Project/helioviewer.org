@@ -46,7 +46,7 @@ var HelioviewerEmbeddedClient = HelioviewerClient.extend(
 
         // User Interface components
         this.zoomControls = new ZoomControls('#zoomControls', imageScale, zoomLevels,
-                                               this.serverSettings.minImageScale, this.serverSettings.maxImageScale);
+                                               this.serverSettings.minImageScale, this.serverSettings.maxImageScale, ".tile-layer-container");
     },
 
     /**

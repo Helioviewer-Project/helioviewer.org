@@ -16,12 +16,15 @@ var ZoomControls = Class.extend(
      *
      * Creates a new ZoomControl
      */
-    init: function (id, imageScale, increments, minImageScale, maxImageScale) {
+    init: function (id, imageScale, increments, minImageScale, maxImageScale, tileContainerSelector) {
         this.id            = id;
         this.imageScale    = imageScale;
         this.increments    = increments;
         this.minImageScale = minImageScale;
         this.maxImageScale = maxImageScale;
+
+        this.tileContainerSelector = tileContainerSelector;
+        this.targetScale = 1;
 
         this.zoomInBtn  = $('#zoom-in-button');
         this.zoomSlider = $('#zoomControlSlider');
@@ -29,6 +32,56 @@ var ZoomControls = Class.extend(
 
         this._initSlider();
         this._initEventHandlers();
+    },
+
+    /**
+     * Initializes the transitionend event listener on the tile container.
+     * The transitionend event is called when a CSS transition event ends
+     * In this case it will be used to notify us when CSS completes it's
+     * transform:scale transition to smooth out the zoom.
+     */
+    _initTileContainerListeners(container) {
+        let zoomController = this;
+        container.addEventListener("transitionend", function () {
+            zoomController.completeZoom();
+        }, false);
+    },
+
+
+    /**
+     * Returns the tileContainer div.
+     * queried via the query selector passed in through the constructor.
+     * The first time this is called, it initializes event listeners.
+     */
+    _getTileContainer: function () {
+        // If container is cached, return it
+        if (this.tileContainer) {
+            return this.tileContainer;
+        }
+        // Otherwise, query for it
+        this.tileContainer = document.querySelector(this.tileContainerSelector);
+        // Initializing the listener here since this is the first time
+        // the container is loaded. The container is not present in the DOM
+        // when the page loads, so this was chosen as the best place to initialize
+        // the container events.
+        this._initTileContainerListeners(this.tileContainer);
+        return this.tileContainer;
+    },
+
+    /**
+     * Resets the CSS scale back to 1.
+     * This is called when the CSS transition ends, and we load the new image
+     * for the desired scale.
+     */
+    _clearZoomClasses() {
+        let container = this._getTileContainer();
+        // Disable the transition animation before setting scale to 1.
+        // Otherwise the scale will try to animate back from 2 to 1. This new
+        // image at scale(1) is equivalent to the old image at scale(2). So
+        // seeing the new image at scale(2) is larger than the desired zoom.
+        container.style.transition = "none";
+        container.style.transform = "scale(1)";
+        this.targetScale = 1;
     },
 
     /**
@@ -84,26 +137,74 @@ var ZoomControls = Class.extend(
     },
 
     /**
+     * Registered event listener that is called when transitionend is called
+     * on the tile container. This indicates that the CSS scaling is complete
+     * which is when we should fire the imageScale update. This has the effect
+     * of CSS "zooming" the image, and then when we update the imageScale, then
+     * the new image resolution is rendered. The result is a smooth animated zoom.
+     */
+    completeZoom: function () {
+        this._clearZoomClasses();
+        let index = this.zoomSlider.slider("value");
+        this._setImageScale(index);
+    },
+
+    /**
+     * Sets the CSS transform: scale to the given value.
+     * This begins the CSS zoom transition, when the transition is complete,
+     * then completeZoom will be called by the transitionend listener registered
+     * in _initTileContainerListeners
+     */
+    _setCssScale(scale) {
+        let container = this._getTileContainer();
+        console.log(container.style.transition);
+        if (!container.style.transition || container.style.transition.startsWith("none")) {
+            container.style.transition = "transform 0.5s";
+        }
+        container.style.transform = "scale(" + scale + ")";
+    },
+
+    /**
      * @description Responds to zoom in button click
      */
     _onZoomInBtnClick: function () {
+        // Update the zoom controls to increase the zoom value,
+        // but don't set the image scale until the zoom is complete.
         var index = this.zoomSlider.slider("value") + 1;
 
         if (this.increments[index] >= this.minImageScale) {
             this.zoomSlider.slider("value", index);
-            this._setImageScale(index);
+
+            // The slider has the desired zoom value, begin scaling to
+            // 2x the current zoom. If the user clicks the zoom button again
+            // before the animation is done, then the slider will be up 2 zoom
+            // values from where it started, this results in a CSS scale of 4
+            // from the starting point (Each slider value is a zoom factor of 2.)
+            // The transitionend event is not called until the animation is done.
+            // targetScale will be reset back to 1 when the animation finishes.
+            this.targetScale *= 2;
+            this._setCssScale(this.targetScale);
         }
     },
 
     /**
      * @description Responds to zoom out button click
      */
-    _onZoomOutBtnClick: function () {
+    _onZoomOutBtnClick: function (_, continuingZoom) {
         var index = this.zoomSlider.slider("value") - 1;
 
         if (this.increments[index] <= this.maxImageScale) {
             this.zoomSlider.slider("value", index);
-            this._setImageScale(index);
+
+            // The slider has the desired zoom value, begin scaling to
+            // 1/2 the current zoom. If the user clicks the zoom button again
+            // before the animation is done, then the slider will be down 2 zoom
+            // values from where it started, this results in a CSS scale of 0.25 (1/4)
+            // from the starting point (Each slider value is a zoom factor of 2.)
+            // The transitionend event is not called until the animation is done.
+            // targetScale will be reset back to 1 when the animation finishes.
+            this.targetScale /= 2;
+            this._setCssScale(this.targetScale);
         }
     },
 
@@ -116,19 +217,19 @@ var ZoomControls = Class.extend(
         if(scrollLock){
 	        return false;
         }
-        
+
         //Lock the scroll
         scrollLock = true;
         window.setTimeout(function(){
             scrollLock = false;
         },500);
-        
+
         if (delta > 0) {
             this.zoomInBtn.click();
         } else {
             this.zoomOutBtn.click();
         }
-        
+
         return false;
     },
 

@@ -159,7 +159,7 @@ var ViewportMovementHelper = Class.extend(
         var center, newSize;
         newSize = this._getDesiredSandboxDimensions();
         center  = this._getCenter();
-		
+
         this.sandboxHelper.updateSandbox(center, newSize);
     },
 
@@ -213,28 +213,14 @@ var ViewportMovementHelper = Class.extend(
      * @param {Float} imageScale The desired image scale
      */
     zoomTo: function (imageScale) {
-        var vpCoords, center, newScale, newCenter, newCoords;
+        var newScale;
 
         newScale = this.mouseCoords.imageScale / imageScale;
         this._scaleLayerDimensions(newScale);
 
-        vpCoords = this.getViewportCoords();
-        center = {
-            x: (vpCoords.right + vpCoords.left) / 2,
-            y: (vpCoords.bottom + vpCoords.top) / 2
-        };
-
-        newCenter = {
-            x: center.x * newScale,
-            y: center.y * newScale
-        };
-
         // update sandbox
         this.update();
 
-        newCoords = this._viewportCoordsToMovingContainerCoords(newCenter);
-
-        this._moveTo(newCoords.x, newCoords.y);
         this.mouseCoords.updateImageScale(imageScale);
     },
 
