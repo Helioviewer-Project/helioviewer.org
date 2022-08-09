@@ -6,8 +6,6 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false,
 eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
 newcap: true, immed: true, maxlen: 80, sub: true */
-/*globals $, Class */
-"use strict";
 var ZoomControls = Class.extend(
     /** @lends ZoomControls.prototype */
     {
@@ -53,19 +51,14 @@ var ZoomControls = Class.extend(
      * queried via the query selector passed in through the constructor.
      * The first time this is called, it initializes event listeners.
      */
-    _getTileContainer: function () {
-        // If container is cached, return it
-        if (this.tileContainer) {
-            return this.tileContainer;
-        }
-        // Otherwise, query for it
-        this.tileContainer = document.querySelector(this.tileContainerSelector);
+    _getTileContainers: function () {
+        let containers = document.querySelectorAll(this.tileContainerSelector);
         // Initializing the listener here since this is the first time
         // the container is loaded. The container is not present in the DOM
         // when the page loads, so this was chosen as the best place to initialize
         // the container events.
-        this._initTileContainerListeners(this.tileContainer);
-        return this.tileContainer;
+        this._initTileContainerListeners(containers[0]);
+        return containers;
     },
 
     /**
@@ -74,13 +67,15 @@ var ZoomControls = Class.extend(
      * for the desired scale.
      */
     _clearZoomClasses() {
-        let container = this._getTileContainer();
+        let containers = this._getTileContainers();
         // Disable the transition animation before setting scale to 1.
         // Otherwise the scale will try to animate back from 2 to 1. This new
         // image at scale(1) is equivalent to the old image at scale(2). So
         // seeing the new image at scale(2) is larger than the desired zoom.
-        container.style.transition = "none";
-        container.style.transform = "scale(1)";
+        containers.forEach((container) => {
+            container.style.transition = "none";
+            container.style.transform = "scale(1)";
+        });
         this.targetScale = 1;
     },
 
@@ -156,12 +151,13 @@ var ZoomControls = Class.extend(
      * in _initTileContainerListeners
      */
     _setCssScale(scale) {
-        let container = this._getTileContainer();
-        console.log(container.style.transition);
-        if (!container.style.transition || container.style.transition.startsWith("none")) {
-            container.style.transition = "transform 0.5s";
-        }
-        container.style.transform = "scale(" + scale + ")";
+        let containers = this._getTileContainers();
+        containers.forEach((container) => {
+            if (!container.style.transition || container.style.transition.startsWith("none")) {
+                container.style.transition = "transform 0.5s";
+            }
+            container.style.transform = "scale(" + scale + ")";
+        });
     },
 
     /**
