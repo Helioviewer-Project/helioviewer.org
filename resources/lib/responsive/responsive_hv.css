@@ -430,6 +430,20 @@
 	}
 	
 	
+.ui-dialog-titlebar {
+   display: none;
+}
+
+.movie-player-dialog {
+   top: 40px;
+   height: 300px;
+}
+
+.mejs__controls {
+   bottom: -30px;
+}
+	
+	
 .movie-player-dialog, .mejs__video {
    width: 100% !important;
 }
@@ -444,6 +458,7 @@
 
 .ui-widget.ui-widget-content {
    border: 0px solid #c5c5c5;
+   top: 37px !important;
 }
 
 .video-links div:nth-child(3) {
