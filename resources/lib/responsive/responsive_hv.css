@@ -471,7 +471,13 @@
 
 .ui-widget.ui-widget-content {
    border: 0px solid #c5c5c5;
-   top: 37px !important;
+   top: 77px !important; /* 37px !important */
+   
+   height: 80%;
+}
+
+.video-links {
+   margin-top: 20px;
 }
 
 .video-links div:nth-child(3) {
