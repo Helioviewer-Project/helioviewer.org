@@ -434,9 +434,17 @@
    display: none;
 }
 
+.mejs__poster {
+	position: unset;
+	margin: auto;
+}
+
 .movie-player-dialog {
    top: 40px;
-   height: 300px;
+   height: 79% !important;
+   position: unset;
+   width:90% !important;
+   margin: auto;
 }
 
 .mejs__controls {
@@ -450,6 +458,11 @@
 
 .mejs__video {
 	margin: auto;
+}
+
+.mejs__mediaelement div video {
+	margin: auto;
+	display: block;
 }
 
 .mejs__overlay {
