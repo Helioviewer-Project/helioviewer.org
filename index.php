@@ -213,7 +213,7 @@ echo $hvdesktopcsshides;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0" style="margin-top: 50px;">
 				<td class="hvmobmenu_left_td">
 					<a class="hvmobmenuitems" drawersec="" href="">
-						<img class="hvmobmenuitems" drawersec="hv-drawer-news" src="resources/images/projectanounce_icon_white.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-news" src="resources/images/projectanounce_icon_transp.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -226,7 +226,7 @@ echo $hvdesktopcsshides;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a class="hvmobmenuitems" drawersec="" href="">
-						<img class="hvmobmenuitems" drawersec="hv-drawer-youtube" src="https://beta.helioviewer.org/resources/images/viewyoutube_icon_white.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-youtube" src="resources/images/viewyoutube_icon_transp.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -240,7 +240,7 @@ echo $hvdesktopcsshides;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="">
-						<img class="hvmobmenuitems" drawersec="hv-drawer-movies" src="https://beta.helioviewer.org/resources/images/createmovie_icontest.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-movies" src="resources/images/createmovie_icon_transp.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -253,7 +253,7 @@ echo $hvdesktopcsshides;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="">
-						<img class="hvmobmenuitems" drawersec="hv-drawer-screenshots" src="https://beta.helioviewer.org/resources/images/screenshot_icon_white.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-screenshots" src="resources/images/screenshot_icon_transp.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -266,7 +266,7 @@ echo $hvdesktopcsshides;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="">
-						<img class="hvmobmenuitems" drawersec="hv-drawer-data" src="https://beta.helioviewer.org/resources/images/datadownload_icon_white.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-data" src="resources/images/datadownload_icon_transp.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -279,7 +279,7 @@ echo $hvdesktopcsshides;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="">
-						<img class="hvmobmenuitems" drawersec="hv-drawer-share" src="https://beta.helioviewer.org/resources/images/shareviewport_icon_white.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-share" src="resources/images/shareviewport_icon_transp.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -292,7 +292,7 @@ echo $hvdesktopcsshides;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="#" data-submenu="hvhelp">
-						<img src="https://beta.helioviewer.org/resources/images/help_icon_white.png">&nbsp;&nbsp;
+						<img src="resources/images/help_icon_transp.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
