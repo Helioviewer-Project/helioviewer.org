@@ -344,7 +344,7 @@ echo $hvdesktopcsshides;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="">
-						<img class="hvmobmenuitems" drawersec="" src="https://beta.helioviewer.org/resources/images/setting_icon_white.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="" src="resources/images/setting_icon_white.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
