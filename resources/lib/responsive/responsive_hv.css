@@ -697,6 +697,7 @@
 
 	.opacity-slider-track {
 		margin-bottom: 28px;
+		top: 5px !important;
 	}	
 	
 
@@ -1035,6 +1036,11 @@
 		margin-bottom: 50px !important;
 		padding-bottom: 7px !important;
 	}
+	
+	.ui-widget.ui-widget-content {
+		top: 105px !important;	
+	}
+	
 	
 	#zoom {
 		z-index:0 !important;
