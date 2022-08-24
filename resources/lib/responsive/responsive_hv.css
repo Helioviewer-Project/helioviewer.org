@@ -471,7 +471,7 @@
 
 .ui-widget.ui-widget-content {
    border: 0px solid #c5c5c5;
-   top: 77px !important; /* 37px !important */
+   top: 77px; /* 37px !important */
    
    height: 80%;
 }
@@ -1038,7 +1038,7 @@
 	}
 	
 	.ui-widget.ui-widget-content {
-		top: 105px !important;	
+		top: 105px;	
 	}
 	
 	
