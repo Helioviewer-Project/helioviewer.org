@@ -157,7 +157,7 @@
 	
 	.hvmobds_icon {
 		width: 30px;
-		height: auto;
+		height: 26px;
 		filter: invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%);
 	}
 	
@@ -536,7 +536,7 @@
 	
 	#center-button {
 		display: none;
-		margin-left: 10px;
+		margin-left: 6px;
 		border: 1px solid white;
 		padding: 3px;
 	}
