@@ -19,6 +19,7 @@
  * You can register listeners to respond to these changes.
  * - addPinchStartListener(fn) fn will be called when the beginning of a pinch/stretch is detected
  * - addPinchUpdateListener(fn(pixels)) fn will be called when the user is pinching. The pinch size in pixels is given as a parameter
+ * - addPinchEndListener(fn) fn will be called when less than 2 fingers are on the screen
  *   a negative value is a pinch, a positive value is a stretch
  */
 class PinchDetector {
@@ -32,6 +33,15 @@ class PinchDetector {
         // Store event listeners
         this._on_start_listeners = [];
         this._on_pinch_listeners = [];
+        this._on_end_listeners = [];
+    }
+
+    /**
+     * Adds callback to be executed when pinches end
+     * @param {function} callback executed when a pinch ends
+     */
+    addPinchEndListener(fn) {
+        this._on_end_listeners.push(fn);
     }
 
     /**
@@ -70,6 +80,15 @@ class PinchDetector {
     }
 
     /**
+     * Executes pinch end listeners
+     */
+    _onPinchEnd() {
+        for (const fn of this._on_end_listeners) {
+            fn();
+        }
+    }
+
+    /**
      * Initializes touch listeners on the specified element
      * @param {HTMLElement} element to add listeners to.
      */
@@ -77,6 +96,16 @@ class PinchDetector {
         let instance = this;
         element.addEventListener("touchstart", (e) => {instance.onTouchStart(e.touches);}, true);
         element.addEventListener("touchmove",  (e) => {instance.onTouchMove(e.touches);}, true);
+        element.addEventListener("touchend",  (e) => {instance.onTouchEnd(e.touches);}, true);
+    }
+
+    /**
+     * Fired when touches end. If user isn't pinching, fires the pinch end event
+     */
+    onTouchEnd(touchList) {
+        if (touchList.length < 2) {
+            this._onPinchEnd();
+        }
     }
 
     /**
