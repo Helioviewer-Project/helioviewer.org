@@ -45,17 +45,19 @@ var TileLoader = Class.extend(
         this.width  = width;
         this.height = height;
     },
-    
+
     /**
      * @description Determines the boundaries for the valid tile range
+     * @param {number} width Image width
+     * @param {number} height Image height
      * @return {Array} An array containing the tile boundaries
      */
-    getValidTileRange: function () {
+    _getValidTileRangeForDimensions: function (width, height) {
         var numTilesX, numTilesY, boundaries, ts = this.tileSize;
 
         // Number of tiles for the entire image
-        numTilesX = Math.max(2, Math.ceil(this.width  / ts));
-        numTilesY = Math.max(2, Math.ceil(this.height  / ts));
+        numTilesX = Math.max(2, Math.ceil(width  / ts));
+        numTilesY = Math.max(2, Math.ceil(height  / ts));
         
         // Tile placement architecture expects an even number of tiles along each dimension
         if ((numTilesX % 2) !== 0) {
@@ -76,7 +78,15 @@ var TileLoader = Class.extend(
 
         return boundaries;
     },
-    
+
+    /**
+     * Gets the valid tile range for the current width/height
+     * @return {Array} An array containing the tile boundaries
+     */
+    getValidTileRange: function () {
+        return this.getValidTileRangeForDimensions(this.width, this.height);
+    },
+
     /**
      * 
      */
