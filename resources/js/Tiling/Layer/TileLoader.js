@@ -174,18 +174,22 @@ var TileLoader = Class.extend(
         });
 
         // Enable eager loading
-        this._preloadNextScale();
+        this._preloadNextScale(true);
+        this._preloadNextScale(false);
     },
 
-    _preloadNextScale: function () {
-        let nextWidth = this.width * 2;
-        let nextHeight = this.height * 2;
+    _preloadNextScale: function (zoomIn) {
+        // If zooming in, then the next width/height is * 2
+        // If zooming out, then the next width/height is * 0.5
+        let multiplier = zoomIn ? 2 : 0.5;
+        let nextWidth = this.width * multiplier;
+        let nextHeight = this.height * multiplier;
         // Maximum scale is 4k, so if the next zoom level is highter, then don't
-        // do anything
-        if (nextWidth <= 4000) {
+        // Minimum scale is 15 pixels. So less than that should also be ignored
+        if (nextWidth >= 15 && nextWidth <= 4000) {
             let visibilityRange = this._getValidTileRangeForDimensions(nextWidth, nextHeight);
             this._iterateVisibilityRange(visibilityRange, (i, j) => {
-                $(this.domNode).trigger('preload-tile', [i, j]);
+                $(this.domNode).trigger('preload-tile', [true, i, j]);
             });
         }
     },
