@@ -441,12 +441,11 @@ var htmltwofingersdown=0;
 
 function touchHandler(event)
 {
-	
-	if(event.targetTouches.length == 1 && event.changedTouches.length == 1 && htmltwofingersdown<2) { 
+	if(event.changedTouches.length == 1 && event.touches.length < 2) {
 
 		var touches, first, type, simulatedEvent;
 
-		touches = event.changedTouches;
+		touches = event.touches;
 		first   = touches[0];
 		type    = "";
 
@@ -458,7 +457,7 @@ function touchHandler(event)
 		type = "mousemove";
 		break;
 		case "touchend":
-		type = "mouseup";
+		type = "mousedown";
 		break;
 		case "touchcancel":
 		type = "mouseup";
@@ -473,7 +472,6 @@ function touchHandler(event)
 
 		first.target.dispatchEvent(simulatedEvent);
 		event.preventDefault();
-
 	}
 	
 }

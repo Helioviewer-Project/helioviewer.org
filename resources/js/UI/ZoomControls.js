@@ -155,7 +155,7 @@ var ZoomControls = Class.extend(
      */
     _enablePinchZoom: function () {
         this.zoomer = new PinchDetector("helioviewer-viewport");
-        let viewport = document.getElementById("helioviewer-viewport");
+        let viewport = document.getElementById("moving-container");
         let instance = this;
 
         // Current scale is the actual CSS scale applied to the viewport
@@ -180,7 +180,7 @@ var ZoomControls = Class.extend(
             // This factor translates to how much we should scale. If the user's pinch size is half the screen (0.5)
             // then this results in scaling the image by 2x. That 2x is either up or down all depending on if it's a
             // pinch or a stretch
-            let scale_factor = 1 + (pinch_power * 2);
+            let scale_factor = 1 + (pinch_power * 3);
             
             // Forward declaration for the scale we're about to calculate
             let css_scale = 1;
@@ -190,14 +190,12 @@ var ZoomControls = Class.extend(
                 css_scale = reference_scale / scale_factor;
             } else {
                 // Stretches enlarge the scale
-                css_scale = refrence_scale * scale_factor;
+                css_scale = reference_scale * scale_factor;
             }
 
             // Apply the new css scale
+            current_scale = css_scale;
             viewport.style.transform = "scale(" + css_scale + ")";
-        });
-
-        this.zoomer.addPinchEndListener(() => {
         });
     }
 });
