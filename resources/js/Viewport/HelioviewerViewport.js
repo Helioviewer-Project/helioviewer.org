@@ -55,7 +55,6 @@ var HelioviewerViewport = Class.extend(
         this.loadEventTypes();
 
         this._initEventHandlers();
-        this._enablePinchZoom();
     },
 
     /**
@@ -450,14 +449,6 @@ var HelioviewerViewport = Class.extend(
         endDate   = Date.parseUTCDate(dates[dates.length - 1]);
 
         return endDate;
-    },
-
-    /**
-     * Enables pinch zoom handling
-     */
-    _enablePinchZoom: function () {
-        this.zoomer = new PinchDetector(this.id.replace("#",""));
-        this.zoomer.addPinchStartListener(() => {alert("Pinching!")});
-        this.zoomer.addPinchUpdateListener(() => {alert("Moving!")});
     }
+
 });

@@ -1824,13 +1824,13 @@ echo $hvdesktopcsshides;
 		<script src="resources/js/Tiling/Manager/TileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Tiling/Manager/HelioviewerTileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Image/JP2Image.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/PinchDetector.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/MouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/HelioviewerMouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/SandboxHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/ViewportMovementHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/HelioviewerViewport.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/HelioviewerClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/PinchDetector.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/ZoomControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/ImageScale.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/Timeline.js?v=<?=$debugTime?>" type="text/javascript"></script>
