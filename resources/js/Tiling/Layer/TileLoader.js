@@ -84,7 +84,7 @@ var TileLoader = Class.extend(
      * @return {Array} An array containing the tile boundaries
      */
     getValidTileRange: function () {
-        return this.getValidTileRangeForDimensions(this.width, this.height);
+        return this._getValidTileRangeForDimensions(this.width, this.height);
     },
 
     /**
@@ -125,7 +125,20 @@ var TileLoader = Class.extend(
         
         return tiles;
     },
-    
+
+    /**
+     * Executes a function over the given visibility range
+     * @param {Object} visibilityRange the x/yStart and x/yEnd fields
+     * @param {function} fn function to execute for each tile. input parameters must be (x, y)
+     */
+    _iterateVisibilityRange: function (visibilityRange, fn) {
+        for (i = visibilityRange.xStart; i <= visibilityRange.xEnd; i += 1) {
+            for (j = visibilityRange.yStart; j <= visibilityRange.yEnd; j += 1) {
+                fn(i, j);
+            }
+        }
+    },
+
     /**
      * @description reloads displayed tiles
      * @param {Boolean} removeOldTilesFirst Whether old tiles should be removed before or after new ones are loaded.
@@ -147,20 +160,18 @@ var TileLoader = Class.extend(
         this.numTiles = 0;
         
         // Load tiles that lie within the current viewport
-        for (i = this.tileVisibilityRange.xStart; i <= this.tileVisibilityRange.xEnd; i += 1) {
-            for (j = this.tileVisibilityRange.yStart; j <= this.tileVisibilityRange.yEnd; j += 1) {
-                if (this.validTiles[i] && this.validTiles[i][j]) {
-                    this.numTiles += 1;
-                    $(this.domNode).trigger('get-tile', [i, j, $.proxy(this.onTileLoadComplete, this)]);
-                                        
-                    if (!this.loadedTiles[i]) {
-                        this.loadedTiles[i] = {};
-                    }
-    
-                    this.loadedTiles[i][j] = true;
+        this._iterateVisibilityRange((i, j) => {
+            if (this.validTiles[i] && this.validTiles[i][j]) {
+                this.numTiles += 1;
+                $(this.domNode).trigger('get-tile', [i, j, $.proxy(this.onTileLoadComplete, this)]);
+
+                if (!this.loadedTiles[i]) {
+                    this.loadedTiles[i] = {};
                 }
+
+                this.loadedTiles[i][j] = true;
             }
-        }        
+        });
     },
     
     onTileLoadComplete: function () {
