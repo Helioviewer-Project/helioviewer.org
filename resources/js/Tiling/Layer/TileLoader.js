@@ -189,7 +189,7 @@ var TileLoader = Class.extend(
         if (nextWidth >= 15 && nextWidth <= 4000) {
             let visibilityRange = this._getValidTileRangeForDimensions(nextWidth, nextHeight);
             this._iterateVisibilityRange(visibilityRange, (i, j) => {
-                $(this.domNode).trigger('preload-tile', [true, i, j]);
+                $(this.domNode).trigger('preload-tile', [zoomIn, i, j]);
             });
         }
     },
