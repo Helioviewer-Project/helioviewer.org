@@ -132,8 +132,8 @@ var TileLoader = Class.extend(
      * @param {function} fn function to execute for each tile. input parameters must be (x, y)
      */
     _iterateVisibilityRange: function (visibilityRange, fn) {
-        for (i = visibilityRange.xStart; i <= visibilityRange.xEnd; i += 1) {
-            for (j = visibilityRange.yStart; j <= visibilityRange.yEnd; j += 1) {
+        for (let i = visibilityRange.xStart; i <= visibilityRange.xEnd; i += 1) {
+            for (let j = visibilityRange.yStart; j <= visibilityRange.yEnd; j += 1) {
                 fn(i, j);
             }
         }
@@ -160,7 +160,7 @@ var TileLoader = Class.extend(
         this.numTiles = 0;
         
         // Load tiles that lie within the current viewport
-        this._iterateVisibilityRange((i, j) => {
+        this._iterateVisibilityRange(this.tileVisibilityRange, (i, j) => {
             if (this.validTiles[i] && this.validTiles[i][j]) {
                 this.numTiles += 1;
                 $(this.domNode).trigger('get-tile', [i, j, $.proxy(this.onTileLoadComplete, this)]);
@@ -172,6 +172,22 @@ var TileLoader = Class.extend(
                 this.loadedTiles[i][j] = true;
             }
         });
+
+        // Enable eager loading
+        this._preloadNextScale();
+    },
+
+    _preloadNextScale: function () {
+        let nextWidth = this.width * 2;
+        let nextHeight = this.height * 2;
+        // Maximum scale is 4k, so if the next zoom level is highter, then don't
+        // do anything
+        if (nextWidth <= 4000) {
+            let visibilityRange = this._getValidTileRangeForDimensions(nextWidth, nextHeight);
+            this._iterateVisibilityRange(visibilityRange, (i, j) => {
+                $(this.domNode).trigger('preload-tile', [i, j]);
+            });
+        }
     },
     
     onTileLoadComplete: function () {
