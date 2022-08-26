@@ -93,8 +93,13 @@ var TileLoader = Class.extend(
     _checkTiles: function () {
         var i, j;
 
-        for (i = this.tileVisibilityRange.xStart; i <= this.tileVisibilityRange.xEnd; i += 1) {
-            for (j = this.tileVisibilityRange.yStart; j <= this.tileVisibilityRange.yEnd; j += 1) {
+	// TODO: This invalidates all the calculations to figure out what SHOULD be
+	//       rendered, and instead renders everything. This improves the app's
+	//       quality since there will be no flickers when the user pans/zooms
+	//       but it means there's a lot of wasted computation
+	let range = this._getValidTileRangeForDimensions(this.width, this.height);
+        for (i = range.xStart; i <= range.xEnd; i += 1) {
+            for (j = range.yStart; j <= range.yEnd; j += 1) {
                 if (!this.loadedTiles[i]) {
                     this.loadedTiles[i] = {};
                 }

@@ -234,7 +234,11 @@ var ViewportMovementHelper = Class.extend(
 
         newCoords = this._viewportCoordsToMovingContainerCoords(newCenter);
 
-        this._moveTo(newCoords.x, newCoords.y);
+        // TODO: Need to see if this has any adverse effect on creating screenshots
+        //       since the container isn't shifted. However, the calculations are wrong
+        //       anyway because this leads to the sun's center moving away from where it
+        //       was before the zoom
+        // this._moveTo(newCoords.x, newCoords.y);
         this.mouseCoords.updateImageScale(imageScale);
     },
 

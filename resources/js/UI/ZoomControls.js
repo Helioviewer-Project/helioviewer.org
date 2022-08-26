@@ -29,6 +29,7 @@ var ZoomControls = Class.extend(
 
         this._initSlider();
         this._initEventHandlers();
+        this._enablePinchZoom();
     },
 
     /**
@@ -84,12 +85,28 @@ var ZoomControls = Class.extend(
     },
 
     /**
+     * Checks if the viewport is already at maximum zoom.
+     */
+    _canZoomIn: function () {
+        let index = this.zoomSlider.slider("value") + 1;
+        return this.increments[index] >= this.minImageScale;
+    },
+
+    /**
+     * Checks if the viewport is already at maximum zoom.
+     */
+    _canZoomOut: function () {
+        let index = this.zoomSlider.slider("value") - 1;
+        return this.increments[index] <= this.maxImageScale;
+    },
+
+    /**
      * @description Responds to zoom in button click
      */
     _onZoomInBtnClick: function () {
         var index = this.zoomSlider.slider("value") + 1;
 
-        if (this.increments[index] >= this.minImageScale) {
+        if (this._canZoomIn()) {
             this.zoomSlider.slider("value", index);
             this._setImageScale(index);
         }
@@ -101,7 +118,7 @@ var ZoomControls = Class.extend(
     _onZoomOutBtnClick: function () {
         var index = this.zoomSlider.slider("value") - 1;
 
-        if (this.increments[index] <= this.maxImageScale) {
+        if (this._canZoomOut()) {
             this.zoomSlider.slider("value", index);
             this._setImageScale(index);
         }
@@ -145,5 +162,98 @@ var ZoomControls = Class.extend(
         $(document).bind("zoom-in",  $.proxy(this._onZoomInBtnClick, this))
                    .bind("zoom-out", $.proxy(this._onZoomOutBtnClick, this));
 
+    },
+
+
+    /**
+     * Enables pinch zoom handling
+     * @author Daniel Garcia-Briseno
+     */
+    _enablePinchZoom: function () {
+        this.zoomer = new PinchDetector("helioviewer-viewport");
+        let viewport = document.getElementById("moving-container");
+        let instance = this;
+
+        // Current scale is the actual CSS scale applied to the viewport
+        let current_scale = 1;
+
+        // Reference scale is used when the user starts pinching, we'll use this to figure out what
+        // the scale should be as they're pinching/stretching
+        let reference_scale = 1;
+
+        // Get the screen size which we'll use to figure out how much the user has pinched
+        // as a percentage of the screen size.
+        let screen_size = Math.hypot(screen.width, screen.height);
+        
+        this.zoomer.addPinchStartListener(() => {
+            // When pinch starts, set the reference scale to whatever it the current scale is
+            reference_scale = current_scale;
+        });
+
+        this.zoomer.addPinchUpdateListener((pinch_size) => {
+            // When the user pinches, get the pinch size as a proportion of the screen size.
+            let pinch_power = Math.abs(pinch_size) / screen_size;
+            // This factor translates to how much we should scale. If the user's pinch size is half the screen (0.5)
+            // then this results in scaling the image by 2x. That 2x is either up or down all depending on if it's a
+            // pinch or a stretch
+            let scale_factor = 1 + (pinch_power * 3);
+            
+            // Forward declaration for the scale we're about to calculate
+            let css_scale = 1;
+            // If the pinch size is below 0, it's a pinch. Otherwise it's a stretch
+            if (pinch_size < 0) {
+                // Pinches shrink the scale
+                css_scale = reference_scale / scale_factor;
+            } else {
+                // Stretches enlarge the scale
+                css_scale = reference_scale * scale_factor;
+            }
+
+            // If the image scale is greater than 2x, then we need to trigger an update to load
+            // a higher resolution image. For lower scales, don't care since the image is already
+            // HD and zooming out doesn't change anything.
+            if (css_scale > 2) {
+                // If we can zoom in more, then do it.
+                if (this._canZoomIn()) {
+                    this.zoomInBtn.click();
+                    css_scale -= 1;
+                    // Change the new pinch reference to this new zoom.
+                    reference_scale = css_scale;
+                    // Update the pinch detector to use whatever the current finger distance is as the
+                    // new reference point
+                    this.zoomer.resetReference();
+                } else {
+                    // If we can't zoom in any more, cap the zoom at 2.5.
+                    // This was chosen experimentally and is an arbitrary value. In theory we could
+                    // let the user zoom forever down to the individual pixel, but that's not helpful.
+                    if (css_scale > 2.5) {
+                        css_scale = 2.5;
+                    }
+                }
+            }
+
+            // Similar logic here for when the user is zooming out
+            if (css_scale < 0.5) {
+                // If we can zoom out, then go ahead and update the zoom out scale
+                if (this._canZoomOut()) {
+                    this.zoomOutBtn.click();
+                    css_scale += 0.5;
+                    // Change the new pinch reference to this new zoom.
+                    reference_scale = css_scale;
+                    // Update the pinch detector to use whatever the current finger distance is as the
+                    // new reference point
+                    this.zoomer.resetReference();
+                } else {
+                    // Limit minimum zoom
+                    if (css_scale < 0.25) {
+                        css_scale = 0.25;
+                    }
+                }
+            }
+            
+            // Apply the new css scale
+            current_scale = css_scale;
+            viewport.style.transform = "scale(" + css_scale + ")";
+        });
     }
 });

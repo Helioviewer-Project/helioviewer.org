@@ -199,9 +199,6 @@ echo $hvdesktopcsshides;
 </head>
 <body <?php echo ($outputType ? 'class="helioviewer-view-type-'.$outputType.'"' : '')?>>
 	
-<!-- START mobile touchscreen viewport div -->	
-<div id="toptouchlayer"></div>
-<!-- END mobile touchscreen viewport div -->	
 	
 <!-- START mobile menu -->	
 <div class="zeynep" style="background-color:none;">
@@ -1770,6 +1767,9 @@ echo $hvdesktopcsshides;
 	<div id="helioviewer-viewport-container-outer" class="user-select-none">
 		<div id="helioviewer-viewport-container-inner">
 			<div id="helioviewer-viewport">
+                <!-- START mobile touchscreen viewport div -->	
+                <div style="position: fixed; width: 100vw; height: 100vh; z-index: 10;" id="toptouchlayer"></div>
+                <!-- END mobile touchscreen viewport div -->	
 
 				<!-- Movement sandbox -->
 				<div id="sandbox" style="position: absolute;">
@@ -1830,6 +1830,7 @@ echo $hvdesktopcsshides;
 		<script src="resources/js/Viewport/Helper/ViewportMovementHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/HelioviewerViewport.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/HelioviewerClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/UI/PinchDetector.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/ZoomControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/ImageScale.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/Timeline.js?v=<?=$debugTime?>" type="text/javascript"></script>
