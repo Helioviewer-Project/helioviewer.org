@@ -236,7 +236,7 @@ var ZoomControls = Class.extend(
             }
 
             // Similar logic here for when the user is zooming out
-            let zoom_out_threshold = 0.25;
+            let zoom_out_threshold = 0.15;
             if (css_scale < zoom_out_threshold) {
                 // If we can zoom out, then go ahead and update the zoom out scale
                 if (this._canZoomOut()) {
