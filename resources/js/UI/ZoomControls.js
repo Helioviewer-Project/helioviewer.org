@@ -232,7 +232,7 @@ var ZoomControls = Class.extend(
                 // If we can zoom out, then go ahead and update the zoom out scale
                 if (this._canZoomOut()) {
                     this.zoomOutBtn.click();
-                    css_scale += 1;
+                    css_scale += 0.5;
                 } else {
                     // Limit minimum zoom
                     if (css_scale < 0.25) {
