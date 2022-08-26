@@ -441,39 +441,44 @@ var htmltwofingersdown=0;
 
 function touchHandler(event)
 {
-	if(event.changedTouches.length == 1 && event.touches.length < 2) {
+	var touches, first, type, simulatedEvent, shouldSendEvent;
 
-		var touches, first, type, simulatedEvent;
+	shouldSendEvent = false;
+	touches = event.touches;
+	first   = touches[0];
+	type    = "";
 
-		touches = event.touches;
-		first   = touches[0];
-		type    = "";
-
-		switch (event.type) {
+	switch (event.type) {
 		case "touchstart":
-		type = "mousedown";
-		break;
+			type = "mousedown";
+			// After 2 finger touch, we don't care. First finger for movement, 2nd finger for
+			// pinch zooming, after that, ignore.
+			shouldSendEvent = event.touches.length <= 2;
+			break;
 		case "touchmove":
-		type = "mousemove";
-		break;
+			type = "mousemove";
+			// Touch move only matters when one finger is down. For multiple touches, let
+			// the pinch zoom handler deal with it, which is a separate touch listener
+			shouldSendEvent = event.touches.length == 1;
+			break;
 		case "touchend":
-		type = "mousedown";
-		break;
+			type = "mouseup";
+			first = event.changedTouches[0];
+			break;
 		case "touchcancel":
-		type = "mouseup";
-		break;		
+			type = "mouseup";
+			first = event.changedTouches[0];
+			break;		
 		default:
-		return;
-		}
-
-		simulatedEvent = document.createEvent("MouseEvent");
-		simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY,
-					  first.clientX, first.clientY, false, false, false, false, 0, null);
-
-		first.target.dispatchEvent(simulatedEvent);
-		event.preventDefault();
+			return;
 	}
-	
+
+	simulatedEvent = document.createEvent("MouseEvent");
+	simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY,
+				  first.clientX, first.clientY, false, false, false, false, 0, null);
+
+	first.target.dispatchEvent(simulatedEvent);
+	event.preventDefault();
 }
 
 
