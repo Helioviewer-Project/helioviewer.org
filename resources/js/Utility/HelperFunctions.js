@@ -446,7 +446,7 @@ function touchHandler(event)
 	shouldSendEvent = false;
 	touches = event.touches;
 	first   = touches[0];
-	type    = "";
+	type	= "";
 
 	switch (event.type) {
 		case "touchstart":
@@ -462,35 +462,36 @@ function touchHandler(event)
 			shouldSendEvent = event.touches.length == 1;
 			break;
 		case "touchend":
-			type = "mouseup";
-            // For touchend it's possible touches[0] is empty since all fingers are lifted.
-            // Get the one that changed instead.
-			first = event.changedTouches[0];
-            // Only fire the event if all fingers are lifted, if there's still one finger down
-            // we still want to respond to movements on it.
-            shouldSendEvent = event.touches.length == 0;
-			break;
 		case "touchcancel":
 			type = "mouseup";
-            // For touchcancel it's possible touches[0] is empty since all fingers are lifted.
-            // Get the one that changed instead.
+			// For touchend it's possible touches[0] is empty since all fingers are lifted.
+			// Get the one that changed instead.
 			first = event.changedTouches[0];
-            // Only fire the event if all fingers are lifted, if there's still one finger down
-            // we still want to respond to movements on it.
-            shouldSendEvent = event.touches.length == 0;
-			break;		
+			// Only fire the event if all fingers are lifted, if there's still one finger down
+			// we still want to respond to movements on it.
+			shouldSendEvent = event.touches.length == 0;
+
+			// Special case, if one finger is still down after touchend, then resend the
+			// mousedown event to reset the tracking position for the finger. This fixes
+			// the sun from jumping to the finger that remains down after a two finger touch
+			if (event.touches.length == 1) {
+				type = "mousedown";
+				first = event.touches[0];
+				shouldSendEvent = true;
+			}
+			break;
 		default:
 			return;
 	}
 
-    if (shouldSendEvent) {
-        simulatedEvent = document.createEvent("MouseEvent");
-        simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY,
-                      first.clientX, first.clientY, false, false, false, false, 0, null);
+	if (shouldSendEvent) {
+		simulatedEvent = document.createEvent("MouseEvent");
+		simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY,
+					  first.clientX, first.clientY, false, false, false, false, 0, null);
 
-        first.target.dispatchEvent(simulatedEvent);
-        event.preventDefault();
-    }
+		first.target.dispatchEvent(simulatedEvent);
+		event.preventDefault();
+	}
 }
 
 
