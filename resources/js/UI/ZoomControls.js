@@ -87,9 +87,17 @@ var ZoomControls = Class.extend(
     /**
      * Checks if the viewport is already at maximum zoom.
      */
-    _canZoom: function () {
+    _canZoomIn: function () {
         let index = this.zoomSlider.slider("value") + 1;
-        return this.increments[index] < this.minImageScale;
+        return this.increments[index] >= this.minImageScale;
+    },
+
+    /**
+     * Checks if the viewport is already at maximum zoom.
+     */
+    _canZoomOut: function () {
+        let index = this.zoomSlider.slider("value") - 1;
+        return this.increments[index] <= this.maxImageScale;
     },
 
     /**
@@ -98,7 +106,7 @@ var ZoomControls = Class.extend(
     _onZoomInBtnClick: function () {
         var index = this.zoomSlider.slider("value") + 1;
 
-        if (this.increments[index] >= this.minImageScale) {
+        if (this._canZoomIn()) {
             this.zoomSlider.slider("value", index);
             this._setImageScale(index);
         }
@@ -110,7 +118,7 @@ var ZoomControls = Class.extend(
     _onZoomOutBtnClick: function () {
         var index = this.zoomSlider.slider("value") - 1;
 
-        if (this.increments[index] <= this.maxImageScale) {
+        if (this._canZoomOut()) {
             this.zoomSlider.slider("value", index);
             this._setImageScale(index);
         }
@@ -206,7 +214,7 @@ var ZoomControls = Class.extend(
             // HD and zooming out doesn't change anything.
             if (css_scale > 2) {
                 // If we can zoom in more, then do it.
-                if (this._canZoom()) {
+                if (this._canZoomIn()) {
                     this.zoomInBtn.click();
                     css_scale -= 1;
                 } else {
@@ -215,6 +223,20 @@ var ZoomControls = Class.extend(
                     // let the user zoom forever down to the individual pixel, but that's not helpful.
                     if (css_scale > 2.5) {
                         css_scale = 2.5;
+                    }
+                }
+            }
+
+            // Similar logic here for when the user is zooming out
+            if (css_scale < 0.5) {
+                // If we can zoom out, then go ahead and update the zoom out scale
+                if (this._canZoomOut()) {
+                    this.zoomOutBtn.click();
+                    css_scale += 1;
+                } else {
+                    // Limit minimum zoom
+                    if (css_scale < 0.25) {
+                        css_scale = 0.25;
                     }
                 }
             }
