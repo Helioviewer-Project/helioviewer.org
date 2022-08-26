@@ -85,6 +85,14 @@ var ZoomControls = Class.extend(
     },
 
     /**
+     * Checks if the viewport is already at maximum zoom.
+     */
+    _canZoom: function () {
+        let index = this.zoomSlider.slider("value") + 1;
+        return this.increments[index] < this.minImageScale;
+    },
+
+    /**
      * @description Responds to zoom in button click
      */
     _onZoomInBtnClick: function () {
@@ -196,7 +204,7 @@ var ZoomControls = Class.extend(
             // If the image scale is greater than 2, then we need to trigger an update to load
             // a higher resolution image. For lower scales, don't care since the image is already
             // HD and zooming out doesn't change anything.
-            if (css_scale > 2) {
+            if (css_scale > 2 && this._canZoom()) {
                 this.zoomInBtn.click();
                 css_scale -= 1;
             }
