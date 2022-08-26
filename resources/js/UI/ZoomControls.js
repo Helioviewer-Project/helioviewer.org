@@ -201,12 +201,22 @@ var ZoomControls = Class.extend(
                 css_scale = reference_scale * scale_factor;
             }
 
-            // If the image scale is greater than 2, then we need to trigger an update to load
+            // If the image scale is greater than 2x, then we need to trigger an update to load
             // a higher resolution image. For lower scales, don't care since the image is already
             // HD and zooming out doesn't change anything.
-            if (css_scale > 2 && this._canZoom()) {
-                this.zoomInBtn.click();
-                css_scale -= 1;
+            if (css_scale > 2) {
+                // If we can zoom in more, then do it.
+                if (this._canZoom()) {
+                    this.zoomInBtn.click();
+                    css_scale -= 1;
+                } else {
+                    // If we can't zoom in any more, cap the zoom at 2.5.
+                    // This was chosen experimentally and is an arbitrary value. In theory we could
+                    // let the user zoom forever down to the individual pixel, but that's not helpful.
+                    if (css_scale > 2.5) {
+                        css_scale = 2.5;
+                    }
+                }
             }
             
             // Apply the new css scale
