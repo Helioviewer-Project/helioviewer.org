@@ -21,6 +21,7 @@
  * - addPinchUpdateListener(fn(pixels)) fn will be called when the user is pinching. The pinch size in pixels is given as a parameter
  * - addPinchEndListener(fn) fn will be called when less than 2 fingers are on the screen
  *   a negative value is a pinch, a positive value is a stretch
+ * - resetReference() At any point in time you can reset what the detector considers the reference point (starting pinch difference)
  */
 class PinchDetector {
     /**
@@ -34,6 +35,8 @@ class PinchDetector {
         this._on_start_listeners = [];
         this._on_pinch_listeners = [];
         this._on_end_listeners = [];
+        this._referenceDistance = 0;
+        this._lastDistance = 0;
     }
 
     /**
@@ -117,6 +120,7 @@ class PinchDetector {
         // as a reference point that we can use to determine if the user is pinching
         // or stretching
         if (touchList.length == 2) {
+            // Add top layer so anything we do to the DOM doesn't effect out pinch
             this._storePinchReferencePoint(touchList[0], touchList[1]);
             // Fire the pinch start listener to the callbacks
             this._onPinchStart();
@@ -156,6 +160,7 @@ class PinchDetector {
      */
     _calculateDifferenceFromReference(touch_a, touch_b) {
         let distance = this._calculateTouchDistance(touch_a, touch_b);
+        this._lastDistance = distance;
         return distance - this._referenceDistance;
     }
 
@@ -188,5 +193,9 @@ class PinchDetector {
      */
     _calculateDistance(dx, dy) {
         return Math.sqrt(dx*dx + dy*dy);
+    }
+
+    resetReference() {
+        this._referenceDistance = this._lastDistance;
     }
 }
