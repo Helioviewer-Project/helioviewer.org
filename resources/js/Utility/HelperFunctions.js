@@ -463,22 +463,34 @@ function touchHandler(event)
 			break;
 		case "touchend":
 			type = "mouseup";
+            // For touchend it's possible touches[0] is empty since all fingers are lifted.
+            // Get the one that changed instead.
 			first = event.changedTouches[0];
+            // Only fire the event if all fingers are lifted, if there's still one finger down
+            // we still want to respond to movements on it.
+            shouldSendEvent = event.touches.length == 0;
 			break;
 		case "touchcancel":
 			type = "mouseup";
+            // For touchcancel it's possible touches[0] is empty since all fingers are lifted.
+            // Get the one that changed instead.
 			first = event.changedTouches[0];
+            // Only fire the event if all fingers are lifted, if there's still one finger down
+            // we still want to respond to movements on it.
+            shouldSendEvent = event.touches.length == 0;
 			break;		
 		default:
 			return;
 	}
 
-	simulatedEvent = document.createEvent("MouseEvent");
-	simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY,
-				  first.clientX, first.clientY, false, false, false, false, 0, null);
+    if (shouldSendEvent) {
+        simulatedEvent = document.createEvent("MouseEvent");
+        simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY,
+                      first.clientX, first.clientY, false, false, false, false, 0, null);
 
-	first.target.dispatchEvent(simulatedEvent);
-	event.preventDefault();
+        first.target.dispatchEvent(simulatedEvent);
+        event.preventDefault();
+    }
 }
 
 
