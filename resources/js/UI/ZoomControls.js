@@ -217,6 +217,11 @@ var ZoomControls = Class.extend(
                 if (this._canZoomIn()) {
                     this.zoomInBtn.click();
                     css_scale -= 1;
+                    // Change the new pinch reference to this new zoom.
+                    reference_scale = css_scale;
+                    // Update the pinch detector to use whatever the current finger distance is as the
+                    // new reference point
+                    this.zoomer.resetReference();
                 } else {
                     // If we can't zoom in any more, cap the zoom at 2.5.
                     // This was chosen experimentally and is an arbitrary value. In theory we could
@@ -233,6 +238,11 @@ var ZoomControls = Class.extend(
                 if (this._canZoomOut()) {
                     this.zoomOutBtn.click();
                     css_scale += 0.5;
+                    // Change the new pinch reference to this new zoom.
+                    reference_scale = css_scale;
+                    // Update the pinch detector to use whatever the current finger distance is as the
+                    // new reference point
+                    this.zoomer.resetReference();
                 } else {
                     // Limit minimum zoom
                     if (css_scale < 0.25) {
