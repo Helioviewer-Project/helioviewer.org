@@ -193,6 +193,14 @@ var ZoomControls = Class.extend(
                 css_scale = reference_scale * scale_factor;
             }
 
+            // If the image scale is greater than 2, then we need to trigger an update to load
+            // a higher resolution image. For lower scales, don't care since the image is already
+            // HD and zooming out doesn't change anything.
+            if (css_scale > 2) {
+                this.zoomInBtn.click();
+                css_scale -= 1;
+            }
+            
             // Apply the new css scale
             current_scale = css_scale;
             viewport.style.transform = "scale(" + css_scale + ")";
