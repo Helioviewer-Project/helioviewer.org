@@ -212,7 +212,7 @@ var ZoomControls = Class.extend(
             // If the image scale is greater than 2x, then we need to trigger an update to load
             // a higher resolution image. For lower scales, don't care since the image is already
             // HD and zooming out doesn't change anything.
-            let zoom_in_treshold = 1.5;
+            let zoom_in_threshold = 1.5;
             if (css_scale > zoom_in_threshold) {
                 // If we can zoom in more, then do it.
                 if (this._canZoomIn()) {
