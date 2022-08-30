@@ -259,6 +259,7 @@ echo $hvdesktopcsshides;
 			</table>				
 		</li>		
 		
+		<!--
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
@@ -270,7 +271,8 @@ echo $hvdesktopcsshides;
 					<span class="hvmobmenuitems" drawersec="hv-drawer-data">Request Science Data Download from External Partners.</span>
 				</td>
 			</table>
-		</li>		
+		</li>
+		-->
 		
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
@@ -306,29 +308,33 @@ echo $hvdesktopcsshides;
 					<label>Get Help With Helioviewer</label>
 
 					<ul>
-						<li>
+						<li id="about_hv_mobmenu_link">
 							<a href="">About Helioviewer</a>
 						</li>
+						<!--
 						<li>
 							<a href="">User's Guide</a>
 						</li>
+						-->
 						<li>
 							<a href="">Visual Glossary</a>
 						</li>
+						<!--
 						<li>
 							<a href="">Documentation</a>
 						</li>
+						-->
 						<li>
-							<a href="">Public API Documentation</a>
+							<a target="_blank" href="https://api.helioviewer.org/docs/v2/">Public API Documentation</a>
 						</li>
 						<li>
-							<a href="">Blog</a>
+							<a target="_blank" href="https://helioviewer-project.github.io/">Blog</a>
 						</li>
 						<li>
-							<a href="">Contact</a>
+							<a target="_blank" href="mailto: HelioViewerDevelopment@nasa.onmicrosoft.com;">Contact</a>
 						</li>
 						<li>
-							<a href="">Report Problem</a>
+							<a target="_blank" href="https://github.com/Helioviewer-Project/helioviewer.org/issues">Report Problem</a>
 						</li>
 					</ul>
 				
