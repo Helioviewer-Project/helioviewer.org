@@ -282,6 +282,12 @@ $(function() {
 	});
 	
 
+	// testing: features & events marker tracking
+	$(".event-marker").click(function(){
+		console.log("event-marker clicked");
+		alert("event-marker clicked");
+	});
+
 	// on orientation change [portait / landscape]
 	$(window).on('orientationchange resize', function () {
 		$(".periodpicker_timepicker_dialog").removeClass("visible");
