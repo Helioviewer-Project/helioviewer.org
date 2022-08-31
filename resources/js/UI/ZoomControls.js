@@ -212,11 +212,14 @@ var ZoomControls = Class.extend(
             // If the image scale is greater than 2x, then we need to trigger an update to load
             // a higher resolution image. For lower scales, don't care since the image is already
             // HD and zooming out doesn't change anything.
-            if (css_scale > 2) {
+            let zoom_in_threshold = 1.5;
+            if (css_scale > zoom_in_threshold) {
                 // If we can zoom in more, then do it.
                 if (this._canZoomIn()) {
                     this.zoomInBtn.click();
-                    css_scale -= 1;
+                    // White board math shows that to get the appropriate scale for the next image
+                    // at the current zoom level, we use this formula.
+                    css_scale = zoom_in_threshold / 2;
                     // Change the new pinch reference to this new zoom.
                     reference_scale = css_scale;
                     // Update the pinch detector to use whatever the current finger distance is as the
@@ -233,11 +236,14 @@ var ZoomControls = Class.extend(
             }
 
             // Similar logic here for when the user is zooming out
-            if (css_scale < 0.5) {
+            let zoom_out_threshold = 0.25;
+            if (css_scale < zoom_out_threshold) {
                 // If we can zoom out, then go ahead and update the zoom out scale
                 if (this._canZoomOut()) {
                     this.zoomOutBtn.click();
-                    css_scale += 0.5;
+                    // White board math shows that to get the appropriate scale for the next image
+                    // at the current zoom level, we use this formula.
+                    css_scale = zoom_out_threshold * 2;
                     // Change the new pinch reference to this new zoom.
                     reference_scale = css_scale;
                     // Update the pinch detector to use whatever the current finger distance is as the
