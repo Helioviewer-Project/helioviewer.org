@@ -472,12 +472,15 @@
 .ui-widget.ui-widget-content {
    border: 0px solid #c5c5c5;
    top: 77px; /* 37px !important */
-   
    height: 80%;
 }
 
 .video-links {
-   margin-top: 20px;
+	margin-top: 20px;
+	position: absolute;
+	width: 50px;
+	top: 0;
+	right: 0;
 }
 
 .video-links div:nth-child(3) {
@@ -571,7 +574,7 @@
 	}
 	
 	#earth-container {
-		display:none !important;
+		display:none;
 	}
 	
 	#hvmobilemenu_btn {
@@ -988,9 +991,10 @@
 	}
 	
 	.periodpicker_timepicker_dialog.visible {
+		right: 0px;
 		left: 185px;
 		top: auto !important;
-		bottom: 154px !important;
+		bottom: 164px !important;
 	}
 	
 	#timestep-select {
