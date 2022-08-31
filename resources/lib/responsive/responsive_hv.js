@@ -269,7 +269,7 @@ $(function() {
 	});
 	
 	// clone #scale element into the mobile menu
-	$("#scale").clone().appendTo("#hvmobscale_li");
+	$("#scale").clone().appendTo("#hvmobscale_div");
 	
 	// clone #center-button element into the mobile menu
 	$("#center-button").clone().appendTo("#scale");
