@@ -372,6 +372,14 @@ echo $hvdesktopcsshides;
 
 <!-- END mobile menu -->			
 	
+	
+<!-- START Mobile toolbar -->
+
+<div id="hvmobscale_div"></div>
+
+<!-- END Mobile toolbar -->	
+	
+	
 <!-- START Mobile Drawer Tabs -->
 <div class="hvmobdstab_wrap">
 	<!--
