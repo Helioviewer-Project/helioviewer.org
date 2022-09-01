@@ -587,7 +587,7 @@
 	}
 	
 	#earthLabel {
-		background-color: rgba(17, 17, 17, 0.5);
+		background-color: rgba(17, 17, 17, 0.5) !important;
 	}
 	
 	#hvmobilemenu_btn {
