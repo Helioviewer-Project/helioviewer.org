@@ -489,7 +489,12 @@
 	
 	#logo {
 		text-align: left !important;
+		margin-top: 5px;
 	}
+	
+	#logo h1 {
+		font-size: 1.8em;
+	}	
 	
 	#loading {
 		display: none !important;
@@ -995,12 +1000,14 @@
 		background: transparent;
 		color: #ffffff;
 		border: 0px solid #000000;
+		text-align: center;
 	}
 	
 	#date {
 		background: transparent;
 		color: #ffffff;
-		border: 0px solid #000000;		
+		border: 0px solid #000000;
+		text-align: center;	
 	}
 	
 	.periodpicker_timepicker_dialog.visible {
