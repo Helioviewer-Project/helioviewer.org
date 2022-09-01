@@ -561,24 +561,27 @@
 	#center-button {
 		display: none;
 		margin-left: 6px;
-		border: 1px solid white;
 		padding: 3px;
 		background-color: rgba(17, 17, 17, 0.5);
+		border: 1px solid rgb(136, 136, 136);
+		box-shadow: black 0px 0px 5px;
 	}
 	
 	#earth-button {
 		margin-left: 10px;
-		border: 1px solid white;
 		padding: 3px;
 		background-color: rgba(17, 17, 17, 0.5);
+		border: 1px solid rgb(136, 136, 136);
+		box-shadow: black 0px 0px 5px;
 	}
 	
 	#scalebar-button {
 		border: 1px solid white;
-		border-left: 1px solid white !important;
 		padding: 3px;
 		margin-left: 10px;
 		background-color: rgba(17, 17, 17, 0.5);
+		border: 1px solid rgb(136, 136, 136);
+		box-shadow: black 0px 0px 5px;
 	}
 	
 	#mouse-coords-box {
