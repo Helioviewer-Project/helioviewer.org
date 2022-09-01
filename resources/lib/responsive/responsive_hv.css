@@ -586,6 +586,10 @@
 		left: 7px !important;
 	}
 	
+	#earthLabel {
+		background-color: rgba(17, 17, 17, 0.5);
+	}
+	
 	#hvmobilemenu_btn {
 		display: block;
 		padding: 8px;
