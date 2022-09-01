@@ -546,13 +546,14 @@
 		height: 35px;
 		position: absolute;
 		top: 60px;
-		width: 99%;
+		width: 110px;
 		border: 0px silver solid;
 		z-index: 1;
 	}	
 
 	#scale {
 		display: block;
+		float: left;
 		margin-top:3px;
 		width: 100%;
 		text-align:left;
