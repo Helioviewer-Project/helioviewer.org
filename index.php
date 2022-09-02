@@ -309,7 +309,7 @@ echo $hvdesktopcsshides;
 
 					<ul>
 						<li id="about_hv_mobmenu_link">
-							<a href="">About Helioviewer</a>
+							<span class="hvmobmenuitems" drawersec="hv-drawer-about">About Helioviewer</span>
 						</li>
 						<!--
 						<li>
@@ -317,7 +317,7 @@ echo $hvdesktopcsshides;
 						</li>
 						-->
 						<li>
-							<a href="">Visual Glossary</a>
+							<span class="hvmobmenuitems" drawersec="hv-drawer-glossary">Visual Glossary</span>
 						</li>
 						<!--
 						<li>
@@ -369,6 +369,7 @@ echo $hvdesktopcsshides;
 
 
 <div class="zeynep-overlay"></div>
+
 
 <!-- END mobile menu -->			
 	
