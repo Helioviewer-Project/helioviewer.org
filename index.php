@@ -199,9 +199,6 @@ echo $hvdesktopcsshides;
 </head>
 <body <?php echo ($outputType ? 'class="helioviewer-view-type-'.$outputType.'"' : '')?>>
 	
-<!-- START mobile touchscreen viewport div -->	
-<div id="toptouchlayer"></div>
-<!-- END mobile touchscreen viewport div -->	
 	
 <!-- START mobile menu -->	
 <div class="zeynep" style="background-color:none;">
@@ -1784,6 +1781,9 @@ echo $hvdesktopcsshides;
 	<div id="helioviewer-viewport-container-outer" class="user-select-none">
 		<div id="helioviewer-viewport-container-inner">
 			<div id="helioviewer-viewport">
+                <!-- START mobile touchscreen viewport div -->	
+                <div id="toptouchlayer"></div>
+                <!-- END mobile touchscreen viewport div -->	
 
 				<!-- Movement sandbox -->
 				<div id="sandbox" style="position: absolute;">
@@ -1838,6 +1838,8 @@ echo $hvdesktopcsshides;
 		<script src="resources/js/Tiling/Manager/TileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Tiling/Manager/HelioviewerTileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Image/JP2Image.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/Helper/PinchDetector.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/Helper/HelioviewerZoomer.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/MouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/HelioviewerMouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/SandboxHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>

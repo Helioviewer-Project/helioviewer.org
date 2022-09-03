@@ -38,6 +38,8 @@ var HelioviewerViewport = Class.extend(
 
         this.domNode   = $(this.id);
         this.outerNode = $(this.container);
+        this.pinchDetector = new PinchDetector('toptouchlayer');
+        this.helioZoom = new HelioviewerZoomer(this.pinchDetector);
 
         this.mouseCoords = new HelioviewerMouseCoordinates(this.imageScale,
             this._rsunInArcseconds, this.warnMouseCoords);
@@ -214,7 +216,6 @@ var HelioviewerViewport = Class.extend(
 
         $('#center-button').click($.proxy(this.centerViewport, this));
         $(window).resize($.proxy(this.resize, this));
-
     },
 
 
