@@ -38,8 +38,6 @@ var HelioviewerViewport = Class.extend(
 
         this.domNode   = $(this.id);
         this.outerNode = $(this.container);
-        this.pinchDetector = new PinchDetector('toptouchlayer');
-        this.helioZoom = new HelioviewerZoomer(this.pinchDetector);
 
         this.mouseCoords = new HelioviewerMouseCoordinates(this.imageScale,
             this._rsunInArcseconds, this.warnMouseCoords);
@@ -52,6 +50,10 @@ var HelioviewerViewport = Class.extend(
             centerY = this.centerY / this.imageScale;
 
         this.movementHelper = new ViewportMovementHelper(this.domNode, this.mouseCoords, centerX, centerY);
+
+        this.pinchDetector = new PinchDetector();
+        this.helioZoom = new HelioviewerZoomer(this.pinchDetector);
+        this.touchMover = new TouchMover(document.getElementById('toptouchlayer'), this.pinchDetector, $.proxy(this.movementHelper.moveViewport, this.movementHelper));
 
         this.loadDataSources();
         this.loadEventTypes();

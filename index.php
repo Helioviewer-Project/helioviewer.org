@@ -1840,6 +1840,7 @@ echo $hvdesktopcsshides;
 		<script src="resources/js/Image/JP2Image.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/PinchDetector.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/HelioviewerZoomer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/Helper/TouchMover.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/MouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/HelioviewerMouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/SandboxHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>

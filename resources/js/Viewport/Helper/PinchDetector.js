@@ -27,11 +27,16 @@
 class PinchDetector {
     /**
      * @constructs Initialize pinch monitor
-     * @param {str} HTML ID of the element that touch events will be registered on.
+     * @note if id is not given, then you must register your own touch
+     *       event handlers and call onTouchStart, onTouchMove, and onTouchEnd
+     *       manually.
+     * @param {str} id HTML ID of the element that touch events will be registered on (optional).
      */
     constructor(id) {
-        this.element = document.getElementById(id);
-        this._InitializePinchListeners(this.element);
+        if (id) {
+            this.element = document.getElementById(id);
+            this._InitializePinchListeners(this.element);
+        }
         // Store event listeners
         this._on_start_listeners = [];
         this._on_pinch_listeners = [];
