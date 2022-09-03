@@ -490,7 +490,7 @@ function touchHandler(event)
 
 
 function assignTouchHandlers(element) {
-
+    return;
 	if(htmltwofingersdown<2) {
 	
 		if (typeof element == 'undefined' || !element.addEventListener) {
