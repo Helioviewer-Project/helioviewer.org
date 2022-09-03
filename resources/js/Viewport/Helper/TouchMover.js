@@ -48,7 +48,10 @@ class TouchMover {
         if ((touches.length < 2 && this._wasPinching) || (touches.length < 1 && this._wasPinching && simulate_pinch)) {
             console.log("Pinch end");
             this.pinchDetector.onTouchEnd(touches);
-        } else if (touches.length == 1) {
+        }
+
+        // This makes sure that two finger to one finger touch doesn't cause jerky movement
+        if (touches.length == 1) {
             this._setReferenceTouch(touches[0]);
         }
     }
