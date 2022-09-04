@@ -17,8 +17,9 @@
  * the change in distance between the fingers.
  *
  * You can register listeners to respond to these changes.
- * - addPinchStartListener(fn) fn will be called when the beginning of a pinch/stretch is detected
- * - addPinchUpdateListener(fn(pixels)) fn will be called when the user is pinching. The pinch size in pixels is given as a parameter
+ * - addPinchStartListener(fn, {left, top}) fn will be called when the beginning of a pinch/stretch is detected
+ *      The position relative to the page is also given as a parameter (pageX, pageY) of center of the two touch events that make up the pinch
+ * - addPinchUpdateListener(fn(pixels, {left, top})) fn will be called when the user is pinching. The pinch size in pixels is given as a parameter
  * - addPinchEndListener(fn) fn will be called when less than 2 fingers are on the screen
  *   a negative value is a pinch, a positive value is a stretch
  * - resetReference() At any point in time you can reset what the detector considers the reference point (starting pinch difference)
@@ -26,11 +27,16 @@
 class PinchDetector {
     /**
      * @constructs Initialize pinch monitor
-     * @param {str} HTML ID of the element that touch events will be registered on.
+     * @note if id is not given, then you must register your own touch
+     *       event handlers and call onTouchStart, onTouchMove, and onTouchEnd
+     *       manually.
+     * @param {str} id HTML ID of the element that touch events will be registered on (optional).
      */
     constructor(id) {
-        this.element = document.getElementById(id);
-        this._InitializePinchListeners(this.element);
+        if (id) {
+            this.element = document.getElementById(id);
+            this._InitializePinchListeners(this.element);
+        }
         // Store event listeners
         this._on_start_listeners = [];
         this._on_pinch_listeners = [];
@@ -66,9 +72,9 @@ class PinchDetector {
     /**
      * Executes pinch start listeners
      */
-    _onPinchStart() {
+    _onPinchStart(center) {
         for (const fn of this._on_start_listeners) {
-            fn();
+            fn(center);
         }
     }
 
@@ -122,8 +128,10 @@ class PinchDetector {
         if (touchList.length == 2) {
             // Add top layer so anything we do to the DOM doesn't effect out pinch
             this._storePinchReferencePoint(touchList[0], touchList[1]);
+            // Calculate the focus of the pinch once, then use it for the remaining pinch
+            let pinchCenter = this._calculatePinchCenter(touchList[0], touchList[1]);
             // Fire the pinch start listener to the callbacks
-            this._onPinchStart();
+            this._onPinchStart(pinchCenter);
         }
     }
 
@@ -193,6 +201,17 @@ class PinchDetector {
      */
     _calculateDistance(dx, dy) {
         return Math.sqrt(dx*dx + dy*dy);
+    }
+
+    /**
+     * Calculates the center of the pinch via pageX/pageY
+     * @param {Touch} touch_a First touch point
+     * @param {Touch} touch_b Second touch point
+     */
+    _calculatePinchCenter(touch_a, touch_b) {
+        let x = (touch_b.pageX + touch_a.pageX) / 2;
+        let y = (touch_b.pageY + touch_a.pageY) / 2;
+        return {left: x, top: y};
     }
 
     resetReference() {
