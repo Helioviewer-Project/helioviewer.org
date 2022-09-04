@@ -140,7 +140,7 @@
      * Fires as a user pinches/stretches
      */
     pinchUpdate(size) {
-        let change = (size - this._last_size) / 100;
+        let change = (size - this._last_size) / 200;
         this.setScale(this._scale + change);
         this._last_size = size;
     }
