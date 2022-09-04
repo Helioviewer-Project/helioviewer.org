@@ -344,4 +344,4 @@ function hvOnResize() {
 	$('#hvmobtime_input').val(hvmobdateobj_init.getHours()+':'+hvmobdateobj_init.getMinutes()+':'+hvmobdateobj_init.getSeconds());
 	
 	setTimeout(function(){datetimemobModule();},2000);
-	
+

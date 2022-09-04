@@ -1773,7 +1773,7 @@ echo $hvdesktopcsshides;
 		<div id="helioviewer-viewport-container-inner">
 			<div id="helioviewer-viewport">
                 <!-- START mobile touchscreen viewport div -->	
-                <div style="position: fixed; width: 100vw; height: 100vh; z-index: 10;" id="toptouchlayer"></div>
+                <div id="toptouchlayer"></div>
                 <!-- END mobile touchscreen viewport div -->	
 
 				<!-- Movement sandbox -->
@@ -1829,13 +1829,15 @@ echo $hvdesktopcsshides;
 		<script src="resources/js/Tiling/Manager/TileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Tiling/Manager/HelioviewerTileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Image/JP2Image.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/Helper/PinchDetector.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/Helper/HelioviewerZoomer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="resources/js/Viewport/Helper/TouchMover.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/MouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/HelioviewerMouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/SandboxHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/Helper/ViewportMovementHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/Viewport/HelioviewerViewport.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/HelioviewerClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/PinchDetector.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/ZoomControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/ImageScale.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="resources/js/UI/Timeline.js?v=<?=$debugTime?>" type="text/javascript"></script>

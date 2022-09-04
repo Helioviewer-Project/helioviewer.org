@@ -51,6 +51,10 @@ var HelioviewerViewport = Class.extend(
 
         this.movementHelper = new ViewportMovementHelper(this.domNode, this.mouseCoords, centerX, centerY);
 
+        this.pinchDetector = new PinchDetector();
+        this.helioZoom = new HelioviewerZoomer(this.pinchDetector);
+        this.touchMover = new TouchMover(document.getElementById('toptouchlayer'), this.pinchDetector, $.proxy(this.movementHelper.moveViewport, this.movementHelper));
+
         this.loadDataSources();
         this.loadEventTypes();
 
@@ -214,7 +218,6 @@ var HelioviewerViewport = Class.extend(
 
         $('#center-button').click($.proxy(this.centerViewport, this));
         $(window).resize($.proxy(this.resize, this));
-
     },
 
 
