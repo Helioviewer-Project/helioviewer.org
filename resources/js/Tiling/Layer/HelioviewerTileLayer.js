@@ -116,7 +116,7 @@ var HelioviewerTileLayer = TileLayer.extend(
         // If scale is given via input, then let it override the global viewport scale
         let imageScale = (scale == undefined) ? this.viewportScale : scale;
         // Limit the scale to two decimal places so that the excess precision digits don't break caching
-        imageScale = imageScale.toFixed(2);
+        imageScale = imageScale.toFixed(3);
         
         var params = {
             "action"      : "getTile",
