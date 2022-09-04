@@ -29,7 +29,6 @@ class TouchMover {
 
     onTouchStart(touches) {
         if (touches.length >= 2 || simulate_pinch) {
-            console.log("Pinch start");
             this.pinchDetector.onTouchStart(touches);
             this._wasPinching = true;
         } else {
@@ -38,7 +37,6 @@ class TouchMover {
     }
     onTouchMove(touches) {
         if (touches.length >= 2 || simulate_pinch) {
-            console.log("Pinch move");
             this.pinchDetector.onTouchMove(touches);
         } else {
             this._moveViewportForTouch(touches[0]);
@@ -46,8 +44,8 @@ class TouchMover {
     }
     onTouchEnd(touches) {
         if ((touches.length < 2 && this._wasPinching) || (touches.length < 1 && this._wasPinching && simulate_pinch)) {
-            console.log("Pinch end");
             this.pinchDetector.onTouchEnd(touches);
+            this._wasPinching = false;
         }
 
         // This makes sure that two finger to one finger touch doesn't cause jerky movement

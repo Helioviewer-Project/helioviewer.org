@@ -63,6 +63,14 @@ var TileLayer = Layer.extend(
      *
      */
     updateImageScale: function (scale, tileVisibilityRange) {
+        // With pinch scaling, these can end up being non-whole numbers from rounding
+        // errors. Instead of -1, we get -0.9999999 which results in the whole
+        // range being wrong.
+        // Round everything to whole numbers to make sure this always works.
+        tileVisibilityRange.xStart = Math.round(tileVisibilityRange.xStart);
+        tileVisibilityRange.yStart = Math.round(tileVisibilityRange.yStart);
+        tileVisibilityRange.xEnd = Math.round(tileVisibilityRange.xEnd);
+        tileVisibilityRange.yEnd = Math.round(tileVisibilityRange.yEnd);
         this.viewportScale = scale;
         this._updateDimensions();
 

@@ -10,11 +10,14 @@
     constructor(pinchDetector) {
         this.pinchDetector = pinchDetector;
         this._initializePinchListeners();
+        this._zoomInBtn = document.getElementById('zoom-in-button');
+        this._zoomOutBtn = document.getElementById('zoom-out-button');
         this._mc = document.getElementById('moving-container');
         this._sandbox = document.getElementById('sandbox');
         this._scale = 1;
         this._anchor = {left: 0, top: 0};
         this._last_size = 0;
+        this._zoomSlider = $('#zoomControlSlider');
     }
 
     _initializePinchListeners() {
@@ -23,12 +26,65 @@
         this.pinchDetector.addPinchEndListener($.proxy(this.pinchEnd, this));
     }
 
+    /**
+     * Triggers the helioviewer zoom. This requires readjusting the entire viewport
+     * so that the 2x image is shown identically to what it appeared to be before
+     * triggering the zoom.
+     * @param {number} triggerScale scale value that triggered the zoom
+     * @param {number} isZoomIn Whether we're zooming in or out
+     */
+    _zoomHelioviewer(triggerScale, isZoomIn) {
+        let targetScale = isZoomIn ? triggerScale / 2 : triggerScale * 2;
+
+        // Get the apparent position that the container should be for the scale that triggered
+        // the zoom. This is still the desired apparent position since the container should appear
+        // as though it does not move.
+        let apparent_x = this.getApparentPosition(parseFloat(this._mc.style.left), triggerScale, this._anchor.left);
+        let apparent_y = this.getApparentPosition(parseFloat(this._mc.style.top), triggerScale, this._anchor.top);
+
+        // Compute the new anchor point
+        let new_anchor_x = isZoomIn ? this._anchor.left * 2 : this._anchor.left / 2;
+        let new_anchor_y = isZoomIn ? this._anchor.top * 2 : this._anchor.top / 2;
+
+        // Compute the new left/top for the zoom
+        let new_left = apparent_x + (targetScale - 1) * new_anchor_x;
+        let new_top = apparent_y + (targetScale - 1) * new_anchor_y;
+
+        // Sandbox may shift, account for this by tracking its position.
+        // TODO: I'll have to deal with this later.
+        let initial_sandbox_position = $(this._sandbox).position();
+
+        let closure = () => {
+            // Set new parameters
+            let new_sandbox_position = $(this._sandbox).position();
+            this.setAnchor({left: new_anchor_x, top: new_anchor_y});
+            this._mc.style.left = (new_left + (initial_sandbox_position.left - new_sandbox_position.left)) + "px";
+            this._mc.style.top = (new_top + (initial_sandbox_position.top - new_sandbox_position.top)) + "px";
+            this.setScale(targetScale);
+            // Unbind closure so this function never executes again.
+            $(document).off('image-scale-changed', null, closure);
+        }
+        // Bind to the image scale change event, so that nothing happens if the image scale doesn't change
+        $(document).on('image-scale-changed', null, null, closure);
+        // Trigger the zoom
+        if (isZoomIn) {
+            this._zoomInBtn.click();
+        } else {
+            this._zoomOutBtn.click();
+        }
+    }
+
     setScale(scale) {
         // Limit scale to 2.5 and 0.25
         if (0.25 <= scale && scale <= 2.5) {
-            this._scale = scale;
-            this._mc.style.transform = "scale(" + this._scale + ")";
-            console.log("Applying scale ", this._scale);
+            if (scale >= 1.5) {
+                this._zoomHelioviewer(scale, true);
+            } else if (scale <= 0.5) {
+                this._zoomHelioviewer(scale, false);
+            } else {
+                this._scale = scale;
+                this._mc.style.transform = "scale(" + this._scale + ")";
+            }
         }
     }
 
@@ -39,7 +95,6 @@
         let new_left = this.getRealPosition(apparent_x, this._scale, anchor.left);
         let new_top = this.getRealPosition(apparent_y, this._scale, anchor.top);
 
-        console.log("Shifting viewport for new anchor position", new_left, new_top);
         this._mc.style.left = new_left + "px";
         this._mc.style.top = new_top + "px";
     }
@@ -48,7 +103,6 @@
         this.shiftViewportForNewAnchor(anchor);
         this._anchor = anchor;
         this._mc.style.transformOrigin = anchor.left + "px " + anchor.top + "px";
-        console.log("Applying anchor ", anchor);
     }
 
     setAnchorForCenter(center) {
@@ -78,7 +132,6 @@
      * Fired when 2 fingers touch the screen
      */
     pinchStart(center) {
-        console.log("Pinch starting at position: ", center);
         this.setAnchorForCenter(center);
         this._last_size = 0;
     }
@@ -93,7 +146,6 @@
     }
 
     pinchEnd() {
-        console.log("Pinch is over");
     }
 
     /**
@@ -105,13 +157,6 @@
      */
     getApparentPosition(real_pos, scale, anchor_point) {
         return real_pos - (scale - 1) * anchor_point;
-    }
-
-    /**
-     * Gets the anchor point (or transform origin)
-     */
-    getAnchorPoint(real, apparent, scale) {
-        return ((real - apparent) / (scale - 1));
     }
 
     /**
