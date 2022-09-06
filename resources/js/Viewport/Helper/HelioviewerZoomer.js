@@ -74,6 +74,20 @@
         }
     }
 
+    _updateScaleForElementWithId(id, scale) {
+        let el = document.getElementById(id);
+        el.style.transform = "scale(" + scale + ")";
+    }
+
+    /**
+     * Updates the size of the earth scale/bar scale
+     * These elements are added dynamically, so can't be cached.
+     */
+    _updateReferenceScale(scale) {
+        this._updateScaleForElementWithId('js-bar-scale', scale);
+        this._updateScaleForElementWithId('earthScale', scale);
+    }
+
     setScale(scale) {
         // Limit scale to 2.5 and 0.25
         if (0.25 <= scale && scale <= 2.5) {
@@ -84,6 +98,7 @@
             } else {
                 this._scale = scale;
                 this._mc.style.transform = "scale(" + this._scale + ")";
+                this._updateReferenceScale(scale)
             }
         }
     }
