@@ -716,7 +716,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Movie player dialog
         dialog = $(
             "<div id='movie-player-" + movie.id + "' " +
-            "class='movie-player-dialog'><div class='hvmobmenuclose_div'><div class='hvmobmenutitle_div'></div><img class='hvmobmenuclose' src='https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png'>&nbsp;&nbsp;</div></div>"
+            "class='movie-player-dialog'></div>"
         ).append(html);
 
         dialog.find(".video-download-icon").click(function () {
