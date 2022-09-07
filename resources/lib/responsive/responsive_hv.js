@@ -13,8 +13,11 @@ $(function() {
 	// add an anchor to topbar of pull-out menu windows on mobile
 	$('.hv-drawer-right').prepend('<span class="mobmenutopanchor"></span>');
 
-	// add closing X to #hv-drawer-right
+	// add closing X to .hv-drawer-right
 	$('.hv-drawer-right').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+
+	// add closing X to mobile movie player
+	$('.ui-dialog:has(div.movie-player-dialog)').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
 	// force-close right drawers (add drawers as necessary)
 	$('#hv-drawer-movies').css('display','none');
@@ -53,6 +56,8 @@ $(function() {
 		$('.hvmobdstabs span').css({'color':'silver'});
 		currdsopen= 'nonexistentds';
 	});
+	
+	$("#hvmobdrawerclose").click();
 
 	// hide triangle disclosure
 	$('#accordion-images .header h1').css('margin-left','80px');
@@ -344,4 +349,4 @@ function hvOnResize() {
 	$('#hvmobtime_input').val(hvmobdateobj_init.getHours()+':'+hvmobdateobj_init.getMinutes()+':'+hvmobdateobj_init.getSeconds());
 	
 	setTimeout(function(){datetimemobModule();},2000);
-
+	
