@@ -18,8 +18,22 @@ $(function() {
 
 	// add closing X to mobile movie player
 	//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+	let UImvplyrchks=0;
 	$("body").on("click", "a.text-btn", function() {
-		$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+		//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+		function showclosebarforMvPlyr() {
+			setTimeout(function(){
+					if ($('.ui-dialog').has('.movie-player-dialog').length && UImvplyrchks<6){
+						$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+						UImvplyrchks=0;
+					}
+					else if(UImvplyrchks<6){
+						UImvplyrchks++;
+						showclosebarforMvPlyr();
+					}
+			},
+			1500);
+		}
 	});
 
 
