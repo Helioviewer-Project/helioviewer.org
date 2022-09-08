@@ -1,6 +1,11 @@
 // onload 
 $(function() {
 
+		$(".text-btn").on('click', function() {
+			alert('hi');
+		});
+
+
 	// positioning movie player
 	$('.ui-dialog').has('.movie-player-dialog').css({'width':'100%','top':'37px'});
 
