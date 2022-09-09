@@ -199,6 +199,8 @@ echo $hvdesktopcsshides;
 </head>
 <body <?php echo ($outputType ? 'class="helioviewer-view-type-'.$outputType.'"' : '')?>>
 	
+<!-- Previously dynamic-made elements, created for selecting purposes -->
+<a class="text-btn" style="display:none;"></a>
 	
 <!-- START mobile menu -->	
 <div class="zeynep" style="background-color:none;">
