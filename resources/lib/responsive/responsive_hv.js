@@ -1,8 +1,8 @@
 // onload 
 $(function() {
 
-		$(".text-btn").on('click', function() {
-			alert('hi');
+		$(".text-btn").click(function() {
+			alert('hi 1');
 		});
 
 
