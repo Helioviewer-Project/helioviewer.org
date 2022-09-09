@@ -4,7 +4,7 @@ $(function() {
 		$('.text-btn').click(function() {
 			alert('hi 1');
 			console.log('hi 1');
-			$('#hv-header').css('background-image':'none','background':'blue');
+			$('#hv-header').css({'background-image':'none','background':'blue'});
 		});
 
 
@@ -29,7 +29,7 @@ $(function() {
 	$(".text-btn").on('click', function() {
 			alert('hi 2');
 			console.log('hi 2');
-			$('#hv-header').css('background-image':'none','background':'green');
+			$('#hv-header').css({'background-image':'none','background':'green'});
 		//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 		function showclosebarforMvPlyr() {
 			setTimeout(function(){
