@@ -444,7 +444,7 @@ echo $hvdesktopcsshides;
 			</tr>
 
 			<tr>
-				<td colspan="4" style="text-align:center;border-top:1px dotted silver;">
+				<td class="dtcycle_jump_td" colspan="4" style="">
 					<span style="color:white;">JUMP:</span>&nbsp;
 					<span id="hvmobjump_div"></span>
 				</td>
