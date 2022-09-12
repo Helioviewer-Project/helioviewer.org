@@ -437,12 +437,12 @@ var parseEventString = function (str) {
  *
  * @see http://ross.posterous.com/2008/08/19/iphone-touch-events-in-javascript/
  */
-var htmltwofingersdown=0;
+//var htmltwofingersdown=0;
 
 function touchHandler(event)
 {
 	
-	if(event.targetTouches.length == 1 && event.changedTouches.length == 1 && htmltwofingersdown<2) { 
+	//if(event.targetTouches.length == 1 && event.changedTouches.length == 1 && htmltwofingersdown<2) { 
 
 		var touches, first, type, simulatedEvent;
 
@@ -474,7 +474,7 @@ function touchHandler(event)
 		first.target.dispatchEvent(simulatedEvent);
 		event.preventDefault();
 
-	}
+	//}
 	
 }
 
@@ -491,7 +491,7 @@ function touchHandler(event)
 
 function assignTouchHandlers(element) {
     return;
-	if(htmltwofingersdown<2) {
+	//if(htmltwofingersdown<2) {
 	
 		if (typeof element == 'undefined' || !element.addEventListener) {
 		return; // IE 8 and under
@@ -501,7 +501,7 @@ function assignTouchHandlers(element) {
 		element.addEventListener("touchend", touchHandler, true);
 		element.addEventListener("touchcancel", touchHandler, true);
 		
-	}
+	//}
 
 }
 
