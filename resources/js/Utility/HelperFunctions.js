@@ -460,9 +460,9 @@ function touchHandler(event)
 		case "touchend":
 		type = "mouseup";
 		break;
-		case "touchcancel":
-		type = "mouseup";
-		break;		
+		//case "touchcancel":
+		//type = "mouseup";
+		//break;		
 		default:
 		return;
 		}
