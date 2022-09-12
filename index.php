@@ -1774,9 +1774,9 @@ echo $hvdesktopcsshides;
 	<div id="helioviewer-viewport-container-outer" class="user-select-none">
 		<div id="helioviewer-viewport-container-inner">
 			<div id="helioviewer-viewport">
-                <!-- START mobile touchscreen viewport div 	
+                <!-- START mobile touchscreen viewport div -->	
                 <div id="toptouchlayer"></div>
-                 END mobile touchscreen viewport div -->	
+                 <!-- END mobile touchscreen viewport div -->	
 
 				<!-- Movement sandbox -->
 				<div id="sandbox" style="position: absolute;">
