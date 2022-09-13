@@ -26,8 +26,8 @@ $(function() {
 		//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 		function showclosebarforMvPlyr() {
 			setTimeout(function(){
-					if ($("#container").find('.ui-dialog').has('.movie-player-dialog').length && UImvplyrchks<6){
-						$("#container").find('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+					if ($("body").find('.ui-dialog').has('.movie-player-dialog').length && UImvplyrchks<6){
+						$("body").find('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 						UImvplyrchks=0;
 					}
 					else if(UImvplyrchks<6){
