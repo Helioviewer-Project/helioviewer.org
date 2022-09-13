@@ -430,7 +430,7 @@
 	
 	
 .ui-dialog-titlebar {
-   display: none;
+   /*display: none;*/
 }
 
 .mejs__poster {
@@ -993,7 +993,7 @@
 	}
 	
 	#hvmobtime_td {
-		border-left:1px dotted silver;
+		border-left:1px solid #555;
 		text-align:center;
 		font-size:18px;
 		width: 132px;
@@ -1030,6 +1030,11 @@
 	#timestep-select option {
 		background: #000000;
 		color: #ffffff;
+	}
+	
+	.dtcycle_jump_td {
+		text-align: center;
+		border-top: 1px solid #555;
 	}
 	
 
