@@ -16,6 +16,30 @@ $(function() {
 	// add closing X to #hv-drawer-right
 	$('.hv-drawer-right').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
+	// TESTING add closing X to mobile movie player
+	//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+	let UImvplyrchks=0;
+	$(".text-btn").on('click', function() {
+			//alert('hi 2');
+			console.log('hi 2');
+			$('#hv-header').css({'background-image':'none','background':'green'});
+		//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+		function showclosebarforMvPlyr() {
+			setTimeout(function(){
+					if ($("#container").find('.ui-dialog').has('.movie-player-dialog').length && UImvplyrchks<6){
+						$("#container").find('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+						UImvplyrchks=0;
+					}
+					else if(UImvplyrchks<6){
+						console.log('check: '+UImvplyrchks);
+						UImvplyrchks++;
+						showclosebarforMvPlyr();
+					}
+			},
+			1500);
+		}
+	});
+
 	// force-close right drawers (add drawers as necessary)
 	$('#hv-drawer-movies').css('display','none');
 	$('#hv-drawer-movies').attr('style', 'display: none');
