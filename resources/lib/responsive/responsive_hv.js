@@ -1,15 +1,8 @@
 // onload 
 $(function() {
 
-		$('.text-btn').click(function() {
-			//alert('hi 1');
-			console.log('hi 1');
-			$('#hv-header').css({'background-image':'none','background':'blue'});
-		});
-
-
 	// positioning movie player
-	$('.ui-dialog').has('.movie-player-dialog').css({'width':'100%','top':'37px'});
+	$('.ui-dialog:has(div.movie-player-dialog)').css({'width':'100%','top':'37px'});
 
 	// Change verbiage for Create a Screenshot menu button 
 	$('#screenshot-manager-full-viewport').html('<span class="fa fa-arrows-alt fa-fw"></span>&nbsp;<span style="line-height: 1.6em">Take a Screenshot</span>');
@@ -20,33 +13,8 @@ $(function() {
 	// add an anchor to topbar of pull-out menu windows on mobile
 	$('.hv-drawer-right').prepend('<span class="mobmenutopanchor"></span>');
 
-	// add closing X to .hv-drawer-right
+	// add closing X to #hv-drawer-right
 	$('.hv-drawer-right').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
-
-	// TESTING add closing X to mobile movie player
-	//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
-	let UImvplyrchks=0;
-	$(".text-btn").on('click', function() {
-			//alert('hi 2');
-			console.log('hi 2');
-			$('#hv-header').css({'background-image':'none','background':'green'});
-		//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
-		function showclosebarforMvPlyr() {
-			setTimeout(function(){
-					if ($("#container").find('.ui-dialog').has('.movie-player-dialog').length && UImvplyrchks<6){
-						$("#container").find('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
-						UImvplyrchks=0;
-					}
-					else if(UImvplyrchks<6){
-						console.log('check: '+UImvplyrchks);
-						UImvplyrchks++;
-						showclosebarforMvPlyr();
-					}
-			},
-			1500);
-		}
-	});
-
 
 	// force-close right drawers (add drawers as necessary)
 	$('#hv-drawer-movies').css('display','none');
@@ -85,8 +53,6 @@ $(function() {
 		$('.hvmobdstabs span').css({'color':'silver'});
 		currdsopen= 'nonexistentds';
 	});
-	
-	$("#hvmobdrawerclose").click();
 
 	// hide triangle disclosure
 	$('#accordion-images .header h1').css('margin-left','80px');
@@ -378,4 +344,4 @@ function hvOnResize() {
 	$('#hvmobtime_input').val(hvmobdateobj_init.getHours()+':'+hvmobdateobj_init.getMinutes()+':'+hvmobdateobj_init.getSeconds());
 	
 	setTimeout(function(){datetimemobModule();},2000);
-	
+
