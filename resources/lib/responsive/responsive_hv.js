@@ -20,10 +20,10 @@ $(function() {
 	//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 	let UImvplyrchks=0;
 	$(".text-btn").on('click', function() {
-			//alert('hi 2');
-			console.log('hi 2');
-			$('#hv-header').css({'background-image':'none','background':'green'});
-		//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+		//alert('hi 2');
+		console.log('hi 2');
+		$('#hv-header').css({'background-image':'none','background':'green'});
+		
 		function showclosebarforMvPlyr() {
 			setTimeout(function(){
 					if ($("body").find('.ui-dialog').has('.movie-player-dialog').length && UImvplyrchks<6){
@@ -38,6 +38,7 @@ $(function() {
 			},
 			1500);
 		}
+		showclosebarforMvPlyr();
 	});
 
 	// force-close right drawers (add drawers as necessary)
