@@ -431,6 +431,12 @@
 	
 .ui-dialog-titlebar {
    /*display: none;*/
+   background: silver;
+   border-radius: 0px;
+}
+
+.ui-dialog-title {
+    color: #000000;
 }
 
 .mejs__poster {
