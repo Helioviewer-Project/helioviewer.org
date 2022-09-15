@@ -444,6 +444,10 @@
 	margin: auto;
 }
 
+.mejs__container {
+   max-height: 400px;
+}
+
 .movie-player-dialog {
    top: 40px;
    height: 79% !important;
@@ -1116,6 +1120,18 @@
 	
 	.periodpicker_timepicker_dialog.visible {
 		bottom: 117px !important;
+	}
+
+	.mejs__container {
+	   max-height: 200px;
+	}
+
+	.mejs__overlay {
+	   max-height: 200px;
+	}
+
+	.mejs__mediaelement div video {
+	   max-height: 200px;
 	}
 
 }
