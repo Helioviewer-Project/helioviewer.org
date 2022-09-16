@@ -340,9 +340,13 @@
 		top: 0px;
 		left: 0px;
 		width:100% !important; 
-		height:800px;
+		height:800px !important;
 		border: 0px solid #ffffff;
 		z-index: 9 !important;
+	}
+	
+	.ui-corner-all {
+	   border-radius: 0px	
 	}
 	
 	#hv-drawer-left {
@@ -450,6 +454,8 @@
 .mejs__poster {
 	position: unset;
 	margin: auto;
+	width: 100% !important;
+	background-image: none !important;
 }
 
 .mejs__container {
@@ -462,6 +468,7 @@
    position: unset;
    width:90% !important;
    margin: auto;
+   padding: 0px;
 }
 
 .mejs__controls {
@@ -488,7 +495,7 @@
 }
 
 .ui-widget.ui-widget-content {
-   border: 0px solid #c5c5c5;
+   border: 0px solid #000000;
    top: 77px; /* 37px !important */
    height: 80%;
 }
