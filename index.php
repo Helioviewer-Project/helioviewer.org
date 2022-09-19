@@ -211,9 +211,9 @@ echo $hvdesktopcsshides;
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0" style="margin-top: 50px;">
 				<td class="hvmobmenu_left_td">
-					<a class="hvmobmenuitems" drawersec="" href="">
-						<img class="hvmobmenuitems" drawersec="hv-drawer-news" src="resources/images/projectanounce_icon_transp.png">&nbsp;&nbsp;
-					</a>
+					<span class="hvmobmenuitems" drawersec="hv-drawer-news">
+						<img src="resources/images/projectanounce_icon_transp.png">&nbsp;&nbsp;
+					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-news">Helioviewer Project Announcements.</span>
@@ -224,9 +224,9 @@ echo $hvdesktopcsshides;
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
-					<a class="hvmobmenuitems" drawersec="" href="">
-						<img class="hvmobmenuitems" drawersec="hv-drawer-youtube" src="resources/images/viewyoutube_icon_transp.png">&nbsp;&nbsp;
-					</a>
+					<span class="hvmobmenuitems" drawersec="hv-drawer-youtube">
+						<img src="resources/images/viewyoutube_icon_transp.png">&nbsp;&nbsp;
+					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-youtube">View Helioviewer Movies<br>Shared to YouTube.</span>
@@ -238,9 +238,9 @@ echo $hvdesktopcsshides;
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
-					<a href="">
-						<img class="hvmobmenuitems" drawersec="hv-drawer-movies" src="resources/images/createmovie_icon_transp.png">&nbsp;&nbsp;
-					</a>
+					<span class="hvmobmenuitems" drawersec="hv-drawer-movies">
+						<img src="resources/images/createmovie_icon_transp.png">&nbsp;&nbsp;
+					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-movies">Create a movie.</span>
@@ -251,9 +251,9 @@ echo $hvdesktopcsshides;
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
-					<a href="">
-						<img class="hvmobmenuitems" drawersec="hv-drawer-screenshots" src="resources/images/screenshot_icon_transp.png">&nbsp;&nbsp;
-					</a>
+					<span class="hvmobmenuitems" drawersec="hv-drawer-screenshots">
+						<img src="resources/images/screenshot_icon_transp.png">&nbsp;&nbsp;
+					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-screenshots">Create a screenshot.</span>
@@ -279,9 +279,9 @@ echo $hvdesktopcsshides;
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
-					<a href="">
-						<img class="hvmobmenuitems" drawersec="hv-drawer-share" src="resources/images/shareviewport_icon_transp.png">&nbsp;&nbsp;
-					</a>
+					<span class="hvmobmenuitems" drawersec="hv-drawer-share">
+						<img src="resources/images/shareviewport_icon_transp.png">&nbsp;&nbsp;
+					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-share">Share the current viewport on social media.</span>
