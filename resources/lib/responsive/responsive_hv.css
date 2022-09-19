@@ -437,6 +437,7 @@
    /*display: none;*/
    background: silver;
    border-radius: 0px;
+   top: 40px;
 }
 
 .ui-dialog-titlebar-close {
