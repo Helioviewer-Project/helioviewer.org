@@ -116,6 +116,9 @@ $(function() {
 	
 	$(".hvmobdstabs").click(function(){
 		
+		// close all ui-dialog windows
+		$('.ui-dialog').css('display','none');
+		
 		document.getElementById("mobdrawertopanchor").scrollIntoView();
 		
 		var thisdrawersect= $(this).attr('drawersec');
