@@ -311,7 +311,7 @@ echo $hvdesktopcsshides;
 
 					<ul>
 						<li id="about_hv_mobmenu_link">
-							<span class="hvmobmenuitems" drawersec="hv-drawer-about">About Helioviewer</span>
+							<span class="hvmobmenuitems" drawersec="hv-drawer-about" style="display:block;padding:8px;">About Helioviewer</span>
 						</li>
 						<!--
 						<li>
@@ -319,7 +319,7 @@ echo $hvdesktopcsshides;
 						</li>
 						-->
 						<li>
-							<span class="hvmobmenuitems" drawersec="hv-drawer-glossary">Visual Glossary</span>
+							<span class="hvmobmenuitems" drawersec="hv-drawer-glossary" style="display:block;padding:8px;">Visual Glossary</span>
 						</li>
 						<!--
 						<li>
