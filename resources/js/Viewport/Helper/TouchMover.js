@@ -14,6 +14,7 @@ class TouchMover {
         this.pinchDetector = pinchDetector;
         this.moveViewport = moveFn;
         this._initTouchListeners(el);
+        this.element = el;
     }
 
     /**
@@ -21,11 +22,35 @@ class TouchMover {
      */
     _initTouchListeners(element) {
         let instance = this;
-        element.addEventListener("touchstart", (e) => {instance.onTouchStart(e.touches);}, true);
+        element.addEventListener("touchstart", (e) => {
+            instance.onTouchStart(e.touches);
+            instance._replayTouchInChild(e);
+        }, true);
         element.addEventListener("touchmove",  (e) => {instance.onTouchMove(e.touches);}, true);
         element.addEventListener("touchend",  (e) => {instance.onTouchEnd(e.touches, e.changedTouches);}, true);
         element.addEventListener("touchcancel",  (e) => {instance.onTouchEnd(e.touches, e.changedTouches);}, true);
     }
+
+    /**
+     * Sends the touch event to the child element
+     */
+    _replayTouchInChild(e) {
+        // Super hack, hide the element capturing the events, resend the touch event, then display the element again
+        if (this.element) {
+            // Hide element from touch events.
+            this.element.style.display = "none";
+            // See if there was an element that needs to be clicked
+            let untouched_element = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+            // If so, click it.
+            if ($(untouched_element).parents("#event-container").length == 1) {
+                untouched_element.click();
+            }
+
+            // Allow touch events again.
+            this.element.style.display = "block";
+        }
+    }
+
 
     onTouchStart(touches) {
         if (touches.length >= 2 || simulate_pinch) {
