@@ -336,10 +336,10 @@
 	}
 	
 	#event-info-dialog {
-	   width: 100%;
-	   max-width: 300px;
-	   height: 800px;
-	   top: 40px;
+	   width: 100% !important;
+	   max-width: 300px !important;
+	   height: 800px !important;
+	   top: 40px !important;
 	}	
 	
 	/* pop-up boxes */
