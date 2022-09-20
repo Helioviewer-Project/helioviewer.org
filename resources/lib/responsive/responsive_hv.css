@@ -335,6 +335,13 @@
 		display: none !important;
 	}
 	
+	#event-info-dialog {
+	   width: 100%;
+	   max-width: 300px;
+	   height: 800px;
+	   top: 40px;
+	}	
+	
 	/* pop-up boxes */
 	.ui-dialog {
 		top: 0px;
