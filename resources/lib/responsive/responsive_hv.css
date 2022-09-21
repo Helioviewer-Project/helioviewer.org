@@ -357,6 +357,21 @@
 		width: 100% !important;
 	}
 	
+	.event-info-dialog-menu {
+		display: none;
+	}
+	
+	a.show-tags-btn {
+		padding: 2px;
+		font-size: 11px;
+		margin: 0px !important;
+		margin-left: 5px !important;
+	}
+	
+	.show-tags-btn.right {
+		float: none !important;
+	}
+	
 	/* pop-up boxes */
 	.ui-dialog {
 		top: 0px;
@@ -1171,6 +1186,11 @@
 
 	.mejs__mediaelement div video {
 	   max-height: 200px;
+	}
+	
+	#event-info-dialog {
+	   width: 100% !important;
+	   max-width: 100% !important;	
 	}
 
 }
