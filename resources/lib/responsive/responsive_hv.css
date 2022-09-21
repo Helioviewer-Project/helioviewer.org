@@ -336,7 +336,7 @@
 	}
 	
 	[aria-describedby="event-info-dialog"] {
-		position: absolute;
+		position: fixed;
 		top: 40px !important;
 	}
 
