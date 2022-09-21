@@ -18,6 +18,7 @@ $(function() {
 
 	// show updated HEK top nav
 	$('.event-info').on('click', function(){
+		console.log('event info clicked');
 		$('.event-info-dialog-menu').delay(1000).html('<a class="show-tags-btn event-type selected">Active Region</a><a class="show-tags-btn obs">Observation</a><a class="show-tags-btn frm">Recognition Method</a><a class="show-tags-btn ref">References</a><a class="show-tags-btn all right">All</a>');
 		$('.event-info-dialog-menu').css('display','block');
 	});
