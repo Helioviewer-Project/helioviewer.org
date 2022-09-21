@@ -16,6 +16,11 @@ $(function() {
 	// add closing X to #hv-drawer-right
 	$('.hv-drawer-right').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
+	// show updated HEK top nav
+	$('.event-info').click(function(){
+		$('.event-info-dialog-menu').css('display','block');
+	});
+
 	// TESTING add closing X to mobile movie player
 	//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 	let UImvplyrchks=0;
@@ -217,6 +222,12 @@ $(function() {
 		
 		
 	});
+	
+	
+	// click mobile Get Help With Helioviewer menu items
+	$(".ewfihhihefuh").click(function(){
+		let testytesterson='test';
+	});		
 	
 
 	// when datetime arrows are clicked
