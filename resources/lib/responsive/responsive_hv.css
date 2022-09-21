@@ -482,7 +482,7 @@
 }
 
 .ui-icon-closethick {
-	margin-left: -8.5px;
+	margin-left: -8.5px !important;
 }
 
 .ui-dialog-title {
