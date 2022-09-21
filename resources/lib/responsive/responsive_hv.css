@@ -354,6 +354,7 @@
 	
 	#event-info-dialog .event-header {
 		height: 100% !important;
+		width: 100% !important;
 	}
 	
 	/* pop-up boxes */
