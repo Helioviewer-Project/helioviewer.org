@@ -336,29 +336,32 @@
 	}
 	
 	[aria-describedby="event-info-dialog"] {
-		top: 289px !important;
+		top: auto !important;
+		bottom: -109px !important;
 	}
 
 	[aria-describedby="event-info-dialog"] .ui-dialog-titlebar {
 		display: block;
-		top: 190px;
+		top: auto;
 	}
 	
 	#event-info-dialog {
 	   width: 100% !important;
 	   max-width: 300px !important;
 	   height: 800px !important;
-	   top: 190px !important;
+	   top: auto !important;
 	}	
 	
-
+	#event-info-dialog .event-header {
+		height: 100% !important;
+	}
 	
 	/* pop-up boxes */
 	.ui-dialog {
 		top: 0px;
 		left: 0px;
 		width:100% !important; 
-		height:800px !important;
+		height:1000px !important; /* 800px */
 		border: 0px solid #ffffff;
 		z-index: 9 !important;
 	}
