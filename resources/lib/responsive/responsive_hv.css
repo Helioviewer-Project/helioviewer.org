@@ -336,8 +336,8 @@
 	}
 	
 	[aria-describedby="event-info-dialog"] {
-		top: auto !important;
-		bottom: -109px !important;
+		position: absolute;
+		top: 40px !important;
 	}
 
 	[aria-describedby="event-info-dialog"] .ui-dialog-titlebar {
