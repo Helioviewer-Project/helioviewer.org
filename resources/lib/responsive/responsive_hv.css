@@ -362,7 +362,12 @@
 		display: block;
 	}
 	
+	.event-header-tag {
+		padding-top: 10px;
+	}
+	
 	.event-header-value {
+		padding-top: 10px;
 		width: 100px;
 	}
 	
