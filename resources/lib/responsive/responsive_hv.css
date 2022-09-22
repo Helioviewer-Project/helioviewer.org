@@ -359,7 +359,7 @@
 	}
 	
 	.event-info-dialog-menu {
-		display: none;
+		display: block;
 	}
 	
 	.event-header-value {
