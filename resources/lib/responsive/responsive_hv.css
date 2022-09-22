@@ -371,6 +371,10 @@
 		width: 100px;
 	}
 	
+	.hek_ref_txt1 {
+	   display:none;
+	}	
+	
 	a.show-tags-btn {
 		padding: 2px;
 		font-size: 11px;
