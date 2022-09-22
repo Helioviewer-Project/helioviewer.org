@@ -346,10 +346,11 @@
 	}
 	
 	#event-info-dialog {
-	   width: 100% !important;
-	   max-width: 300px !important;
-	   height: 800px !important;
-	   top: auto !important;
+		position: absolute;
+		width: 100% !important;
+		max-width: 100% !important; /*300px; */
+		height: 800px !important;
+		top: auto !important;
 	}	
 	
 	#event-info-dialog .event-header {
