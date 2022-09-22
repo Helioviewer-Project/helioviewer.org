@@ -423,7 +423,7 @@ var EventMarker = Class.extend(
              +     '<a class="show-tags-btn event-type selected">'+this.concept+'</a>'
              +     '<a class="show-tags-btn obs">Observation</a>'
              +     '<a class="show-tags-btn frm">Recognition Method</a>'
-             +     '<a class="show-tags-btn ref">References</a>'
+             +     '<a class="show-tags-btn ref">Ref<span class="hek_ref_txt1">erences</span></a>'
              +     '<a class="show-tags-btn all right">All</a>'
              + '</div>';
 
