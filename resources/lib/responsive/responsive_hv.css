@@ -1217,4 +1217,10 @@
 	   max-width: 100% !important;	
 	}
 
+	.event-popup {
+		width: 400px !important;
+		top: 40px !important;
+		left: 112px !important;		
+	}
+
 }
