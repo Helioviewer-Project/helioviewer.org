@@ -253,15 +253,7 @@
 		height: 35px;
 		filter: invert(93%) sepia(99%) saturate(2049%) hue-rotate(318deg) brightness(113%) contrast(94%);
 	}
-	
-	.event-popup {
-		position: fixed !important;
-		padding: 10px !important;
-		width: 90% !important;
-		height: 200px !important;
-		top: 190px !important;
-		left: 4px !important;
-	}	
+		
 	
 /* desktops */
 @media screen and (min-width: 1025px) {	
@@ -1227,7 +1219,9 @@
 	}
 
 	.event-popup {
+		position: fixed !important;
 		width: 400px !important;
+		padding: 10px !important;
 		top: 40px !important;
 		left: 112px !important;		
 	}
