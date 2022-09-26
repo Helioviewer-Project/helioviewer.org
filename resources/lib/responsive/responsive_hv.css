@@ -255,6 +255,16 @@
 	}
 		
 	
+	.event-popup {
+		position: fixed !important;
+		z-index: 1000;
+		padding: 10px !important;
+		width: 90% !important;
+		height: 200px !important;
+		top: 190px !important;
+		left: 4px !important;
+	}	
+	
 /* desktops */
 @media screen and (min-width: 1025px) {	
 	.zeynep {
