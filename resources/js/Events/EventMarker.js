@@ -368,7 +368,8 @@ var EventMarker = Class.extend(
                 // Additional styles found in events.css
             });
             this.eventMarkerDomNode.css('z-index', '998');
-            this.eventPopupDomNode.show();
+            $('.event-popup').hide();
+	    this.eventPopupDomNode.show();
         }
 
         this._popupVisible = !this._popupVisible;
