@@ -23,6 +23,12 @@ $(function() {
 		$('.event-info-dialog-menu').css('display','block');
 	});
 
+	// restyle event window after touchend
+	function reStyleEventWindow() {
+		$('.event-popup').css({'position':'fixed','padding':'10px','width':'90%','height':'200px','top':'190px','left':'4px'});
+	}
+	document.getElementById('toptouchlayer').addEventListener('touchend', reStyleEventWindow, false);
+
 	// TESTING add closing X to mobile movie player
 	//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 	let UImvplyrchks=0;
