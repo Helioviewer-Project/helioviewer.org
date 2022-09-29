@@ -25,6 +25,7 @@ $(function() {
 
 	// restyle event window after touchend
 	function reStyleEventWindow() {
+		$('#hv-header').css({'background-image':'none','background':'navy'});
 		$('.event-popup').css({'position':'fixed','padding':'10px','width':'90%','height':'200px','top':'190px','left':'4px'});
 	}
 	document.body.addEventListener('touchend', reStyleEventWindow, false);
