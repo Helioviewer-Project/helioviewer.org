@@ -28,21 +28,21 @@ $(function() {
 		if(e.touches.length > 1) {
 			//$('#hv-header').css({'background-image':'none','background':'navy'});
 			$('.event-popup').css('display','none');
-			$('.event-popup').css({'position':'fixed','padding':'10px','width':'330px','height':'200px','top':'0px','left':'-200px'});
+			$('.event-popup').attr('style','position:fixed; padding:10px; width:330px; height:200px; top:0px; left:-200px');
 		}
 		else {
 			if ($('.event-popup').is(':visible')) {
-				$('.event-popup').css({'position':'fixed','padding':'10px','width':'330px','height':'200px','top':'0px','left':'-200px'});
+				$('.event-popup').attr('style','position:fixed; padding:10px; width:330px; height:200px; top:0px; left:-200px');
 			}
 		}
 		
-		$('.event-popup').delay(1000).css({'position':'fixed','padding':'10px','width':'330px','height':'200px','top':'0px','left':'-200px'});
-		
+		$('.event-popup').attr('style','position:fixed; padding:10px; width:330px; height:200px; top:0px; left:-200px');
+		$('.event-popup').attr('style','position:fixed; padding:10px; width:330px; height:200px; top:0px; left:-200px');
 	}
 	document.body.addEventListener('touchstart', reStyleEventWindow, false);
 
 	$('.event-marker').click(function(){
-		$('.event-popup').delay(1000).css({'position':'fixed','padding':'10px','width':'330px','height':'200px','top':'0px','left':'-200px'});
+		$('.event-popup').attr('style','position:fixed; padding:10px; width:330px; height:200px; top:0px; left:-200px');
 	});
 
 	// TESTING add closing X to mobile movie player
