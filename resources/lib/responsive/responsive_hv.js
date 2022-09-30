@@ -26,7 +26,7 @@ $(function() {
 	// TESTING restyle event window after touchend
 	function reStyleEventWindow(e) {
 		if(e.touches.length > 1) {
-			$('#hv-header').css({'background-image':'none','background':'navy'});
+			//$('#hv-header').css({'background-image':'none','background':'navy'});
 			$('.event-popup').css('display','none');
 			$('.event-popup').css({'position':'fixed','padding':'10px','width':'90%','height':'200px','top':'190px','left':'4px'});
 		}
@@ -35,6 +35,9 @@ $(function() {
 				$('.event-popup').css({'position':'fixed','padding':'10px','width':'90%','height':'200px','top':'190px','left':'4px'});
 			}
 		}
+		
+		$('.event-popup').delay(1000).css({'position':'fixed','padding':'10px','width':'90%','height':'200px','top':'190px','left':'4px'});
+		
 	}
 	document.body.addEventListener('touchstart', reStyleEventWindow, false);
 
@@ -46,7 +49,7 @@ $(function() {
 	$(".text-btn").on('click', function() {
 		//alert('hi 2');
 		// console.log('hi 2');
-		$('#hv-header').css({'background-image':'none','background':'green'});
+		//$('#hv-header').css({'background-image':'none','background':'green'});
 		
 		function showclosebarforMvPlyr() {
 			setTimeout(function(){
