@@ -28,16 +28,16 @@ $(function() {
 		if(e.touches.length > 1) {
 			//$('#hv-header').css({'background-image':'none','background':'navy'});
 			$('.event-popup').css('display','none');
-			$('.event-popup').attr('style','position:fixed; padding:10px; width:330px; height:200px; top:0px; left:-200px');
+			$('.event-popup').attr('style','position:fixed !important; padding:10px !important; width:330px !important; height:200px !important; top:0px !important; left:-200px !important');
 		}
 		else {
 			if ($('.event-popup').is(':visible')) {
-				$('.event-popup').attr('style','position:fixed; padding:10px; width:330px; height:200px; top:0px; left:-200px');
+				$('.event-popup').attr('style','position:fixed !important; padding:10px !important; width:330px !important; height:200px !important; top:0px !important; left:-200px !important');
 			}
 		}
 		
-		$('.event-popup').attr('style','position:fixed; padding:10px; width:330px; height:200px; top:0px; left:-200px');
-		$('.event-popup').attr('style','position:fixed; padding:10px; width:330px; height:200px; top:0px; left:-200px');
+		//$('.event-popup').attr('style','position:fixed !important; padding:10px !important; width:330px !important; height:200px !important; top:0px !important; left:-200px !important');
+		$('.event-popup').attr('style','position:fixed !important; padding:10px !important; width:330px !important; height:200px !important; top:0px !important; left:-200px !important');
 	}
 	document.body.addEventListener('touchstart', reStyleEventWindow, false);
 
