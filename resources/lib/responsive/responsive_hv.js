@@ -27,6 +27,7 @@ $(function() {
 	function reStyleEventWindow(tmobev) {
 		if(tmobev.touches.length > 1) {
 			$('#hv-header').css({'background-image':'none','background':'navy'});
+			$('.event-popup').css('display','none');
 			$('.event-popup').css({'position':'fixed','padding':'10px','width':'90%','height':'200px','top':'190px','left':'4px'});
 		}
 	}
