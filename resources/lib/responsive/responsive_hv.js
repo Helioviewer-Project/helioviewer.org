@@ -23,19 +23,21 @@ $(function() {
 		$('.event-info-dialog-menu').css('display','block');
 	});
 
-	// restyle event window after touchend
-	function reStyleEventWindow() {
-		$('#hv-header').css({'background-image':'none','background':'navy'});
-		$('.event-popup').css({'position':'fixed','padding':'10px','width':'90%','height':'200px','top':'190px','left':'4px'});
+	// TESTING restyle event window after touchend
+	function reStyleEventWindow(tmobev) {
+		if(tmobev.touches.length > 1) {
+			$('#hv-header').css({'background-image':'none','background':'navy'});
+			$('.event-popup').css({'position':'fixed','padding':'10px','width':'90%','height':'200px','top':'190px','left':'4px'});
+		}
 	}
-	document.body.addEventListener('touchend', reStyleEventWindow, false);
+	document.body.addEventListener('touchstart', reStyleEventWindow(tmobev), false);
 
 	// TESTING add closing X to mobile movie player
 	//$('.ui-dialog').has('.movie-player-dialog').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 	let UImvplyrchks=0;
 	$(".text-btn").on('click', function() {
 		//alert('hi 2');
-		console.log('hi 2');
+		// console.log('hi 2');
 		$('#hv-header').css({'background-image':'none','background':'green'});
 		
 		function showclosebarforMvPlyr() {
@@ -45,7 +47,7 @@ $(function() {
 						UImvplyrchks=0;
 					}
 					else if(UImvplyrchks<6){
-						console.log('check: '+UImvplyrchks);
+						//console.log('check: '+UImvplyrchks);
 						UImvplyrchks++;
 						showclosebarforMvPlyr();
 					}
