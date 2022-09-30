@@ -36,7 +36,7 @@ $(function() {
 			}
 		}
 		
-		$('.event-popup').delay(1000).css({'position':'fixed','padding':'10px','width':'90%','height':'200px','top':'190px','left':'4px'});
+		$('.event-popup').delay(2000).css({'position':'fixed','padding':'10px','width':'90%','height':'200px','top':'190px','left':'4px'});
 		
 	}
 	document.body.addEventListener('touchstart', reStyleEventWindow, false);
