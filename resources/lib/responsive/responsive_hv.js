@@ -319,7 +319,7 @@ $(function() {
 	let aneventpopupisup='no';
 
 	// testing: features & events marker tracking
-	$('#toptouchlayer').on('touchstart mousedown',function(){
+	$('#toptouchlayer').on('click',function(){
 		if($('.event-popup').length > 0 && aneventpopupisup=='no') {
 		//if($('.event-popup').css('display') == 'block') {
 			console.log("event-marker clicked");
