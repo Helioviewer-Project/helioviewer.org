@@ -318,8 +318,9 @@ $(function() {
 	
 
 	// testing: features & events marker tracking
-	$('#toptouchlayer').on('click',function(){
-		if($('.event-popup').css('display') == 'block') {
+	$('#toptouchlayer').on('touchstart mousedown',function(){
+		if($('.event-popup').length > 0)
+		//if($('.event-popup').css('display') == 'block') {
 			console.log("event-marker clicked");
 			//alert("event-marker clicked");
 			let ep_contents= $('.event-popup').html();
