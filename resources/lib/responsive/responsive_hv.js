@@ -334,6 +334,7 @@ $(function() {
 	$('#event-popup_mob .close-button, #toptouchlayer').on('click',function(){
 		console.log("close button clicked");
 		 $("body").find('#event-popup_mob').css('display','none');
+		 $("body").find('#event-popup_mob').html('');
 		//$('#event-popup_mob').css('display','none');
 	}); 
 
