@@ -322,7 +322,7 @@ $(function() {
 		if($('.event-popup').css('display') == 'block') {
 			console.log("event-marker clicked");
 			//alert("event-marker clicked");
-			let ep_contents= $('.event-popup').delay(1500).html();
+			let ep_contents= $('.event-popup').html();
 			$('.event-popup').css('display','none');
 			$('#event-popup_mob').html(ep_contents);
 			$('#event-popup_mob').css('display','block');
