@@ -335,6 +335,7 @@ $(function() {
 		console.log("close button clicked");
 		$("body").find('#event-popup_mob').html('');
 		 $("body").find('#event-popup_mob').css('display','none');
+		 $('.event-popup').remove();
 		//$('#event-popup_mob').css('display','none');
 	}); 
 
