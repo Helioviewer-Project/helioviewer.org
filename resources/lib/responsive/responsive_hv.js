@@ -318,7 +318,7 @@ $(function() {
 	
 
 	// testing: features & events marker tracking
-	$('#toptouchlayer ').on('click',function(){
+	$('#toptouchlayer').on('click',function(){
 		if($('.event-popup').css('display') == 'block') {
 			console.log("event-marker clicked");
 			//alert("event-marker clicked");
@@ -330,10 +330,10 @@ $(function() {
 	});
 	
 	// close mobile event popup when close button pressed or body is touched/clicked
-	/*
-	$('.event-popup .close-button').click(function(){
+	
+	$('.close-button, #toptouchlayer').click(function(){
 		$('#event-popup_mob').css('display','none');
-	}); */
+	}); 
 
 	// on orientation change [portait / landscape]
 	$(window).on('orientationchange resize', function () {
