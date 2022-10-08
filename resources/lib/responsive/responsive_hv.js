@@ -338,11 +338,14 @@ $(function() {
 			console.log("close button clicked");
 			$("body").find('#event-popup_mob').html('');
 			 $("body").find('#event-popup_mob').css('display','none');
-			 $('.event-popup').remove();
+			 $('.event-popup').detach();
 			 aneventpopupisup='no';
 			//$('#event-popup_mob').css('display','none');
 		}
 	}); 
+
+
+
 
 	// on orientation change [portait / landscape]
 	$(window).on('orientationchange resize', function () {
