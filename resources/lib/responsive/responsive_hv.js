@@ -318,7 +318,7 @@ $(function() {
 	
 
 	// testing: features & events marker tracking
-	$('.event-marker').click(function(){
+	$('.event-marker').on('click',function(){
 		console.log("event-marker clicked");
 		//alert("event-marker clicked");
 		let ep_contents= $('.event-popup').delay(1500).html();
