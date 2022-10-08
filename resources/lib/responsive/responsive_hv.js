@@ -330,11 +330,9 @@ $(function() {
 			$('#event-popup_mob').css('display','block');
 			aneventpopupisup='yes';
 		}
-	});
 	
 	// close mobile event popup when close button pressed or body is touched/clicked
-	$('#toptouchlayer').on('click',function(){
-		if($('.event-popup').length > 0 && aneventpopupisup=='yes') {
+		else if($('.event-popup').length > 0 && aneventpopupisup=='yes') {
 			console.log("close button clicked");
 			$("body").find('#event-popup_mob').html('');
 			 $("body").find('#event-popup_mob').css('display','none');
