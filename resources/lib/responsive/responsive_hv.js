@@ -318,13 +318,15 @@ $(function() {
 	
 
 	// testing: features & events marker tracking
-	$('.event-marker').on('click',function(){
-		console.log("event-marker clicked");
-		//alert("event-marker clicked");
-		let ep_contents= $('.event-popup').delay(1500).html();
-		$('.event-popup').css('display','none');
-		$('#event-popup_mob').html(ep_contents);
-		$('#event-popup_mob').css('display','block');
+	$('#toptouchlayer ').on('click',function(){
+		if($('.event-popup').css('display') == 'block') {
+			console.log("event-marker clicked");
+			//alert("event-marker clicked");
+			let ep_contents= $('.event-popup').delay(1500).html();
+			$('.event-popup').css('display','none');
+			$('#event-popup_mob').html(ep_contents);
+			$('#event-popup_mob').css('display','block');
+		}
 	});
 	
 	// close mobile event popup when close button pressed or body is touched/clicked
