@@ -321,8 +321,8 @@ $(function() {
 		console.log("event-marker clicked");
 		//alert("event-marker clicked");
 		let ep_contents= $('.event-popup').delay(1500).html();
-		$('.event-popup_mob').html(ep_contents);
-		$('.event-popup_mob').css('display','block');
+		$('#event-popup_mob').html(ep_contents);
+		$('#event-popup_mob').css('display','block');
 	});
 
 	// on orientation change [portait / landscape]
