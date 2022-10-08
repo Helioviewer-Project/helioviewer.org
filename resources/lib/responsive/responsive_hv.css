@@ -382,7 +382,7 @@
 		width: 100px;
 	}
 	
-	.event-popup {
+	.event-popup, #event-popup_mob {
 		position: fixed !important;
 		z-index: 1000;
 		padding: 10px !important;
@@ -390,6 +390,10 @@
 		height: 200px !important;
 		top: 190px !important;
 		left: 4px !important;
+	}
+	
+	#event-popup_mob {
+		
 	}
 	
 	.hek_ref_txt1 {
