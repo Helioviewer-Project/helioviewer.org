@@ -332,7 +332,8 @@ $(function() {
 	
 	// close mobile event popup when close button pressed or body is touched/clicked
 	$('.close-button').on('click',function(){
-		$('#event-popup_mob').css('display','none');
+		 $("body").find(".#event-popup_mob").css('display','none');
+		//$('#event-popup_mob').css('display','none');
 	}); 
 
 	// on orientation change [portait / landscape]
