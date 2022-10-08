@@ -465,6 +465,10 @@ echo $hvdesktopcsshides;
 
 <!-- END mobile bottom calendar tool -->	
 	
+<!-- START Mobile Event Popup -->
+<div id="event-popup_mob"></div>
+<!-- END Mobile Event Popup -->
+	
 	
 	<?php if($outputType != 'embed'){ ?>
 	<div class="user-select-none" style="width: 100%; margin: 0; padding: 0; text-align: center; z-index: 9;">
