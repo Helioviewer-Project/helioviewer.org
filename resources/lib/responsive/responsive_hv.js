@@ -327,7 +327,7 @@ $(function() {
 	});
 	
 	// close mobile event popup when close button pressed or body is touched/clicked
-	$('.event-popup .close-button, #toptouchlayer').click(function(){
+	$('.event-popup .close-button').click(function(){
 		$('#event-popup_mob').css('display','none');
 	});
 
