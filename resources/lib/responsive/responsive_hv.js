@@ -331,7 +331,7 @@ $(function() {
 	
 	// close mobile event popup when close button pressed or body is touched/clicked
 	
-	$('.close-button, #toptouchlayer').click(function(){
+	$('.close-button').click(function(){
 		$('#event-popup_mob').css('display','none');
 	}); 
 
