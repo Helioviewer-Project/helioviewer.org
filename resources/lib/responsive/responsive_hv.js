@@ -204,8 +204,24 @@ $(function() {
 	
 	
 	// click mobile Get Help With Helioviewer menu items
-	$(".ewfihhihefuh").click(function(){
+	// drawersec="hv-drawer-glossary"
+	$(".hvmobmenuitems").click(function(){
 		let testytesterson='test';
+		
+		currdsopen= 'nonexistentds';
+		$(".hamburger").removeClass("is-active");
+		zeynep.close();
+		$('.hv-drawer-right').css({'display':'none'});
+		$('#hv-drawer-left').css('display','none');
+		$('#hv-drawer-left').attr('style', 'display: none');
+		
+		$('.hvmobdstabs .hvmobds_icon').css('filter','invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%)');
+		$('.hvmobdstabs span').css({'color':'silver'});
+		
+		switch() {
+			case 
+		}
+		
 	});		
 	
 
@@ -301,9 +317,12 @@ $(function() {
 	
 
 	// testing: features & events marker tracking
-	$(".event-marker").click(function(){
+	$('.event-marker').click(function(){
 		console.log("event-marker clicked");
-		alert("event-marker clicked");
+		//alert("event-marker clicked");
+		let ep_contents= $('.event-popup').delay(1500).html();
+		$('.event-popup_mob').html(ep_contents);
+		$('.event-popup_mob').css('display','block');
 	});
 
 	// on orientation change [portait / landscape]
