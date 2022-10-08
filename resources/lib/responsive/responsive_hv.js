@@ -331,7 +331,8 @@ $(function() {
 	});
 	
 	// close mobile event popup when close button pressed or body is touched/clicked
-	$('.close-button').click(function(){
+	$('#event-popup_mob .close-button, #toptouchlayer').on('click',function(){
+		console.log("close button clicked");
 		 $("body").find('#event-popup_mob').css('display','none');
 		//$('#event-popup_mob').css('display','none');
 	}); 
