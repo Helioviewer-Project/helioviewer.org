@@ -328,9 +328,10 @@ $(function() {
 	});
 	
 	// close mobile event popup when close button pressed or body is touched/clicked
+	/*
 	$('.event-popup .close-button').click(function(){
 		$('#event-popup_mob').css('display','none');
-	});
+	}); */
 
 	// on orientation change [portait / landscape]
 	$(window).on('orientationchange resize', function () {
