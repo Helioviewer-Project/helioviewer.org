@@ -325,7 +325,7 @@ $(function() {
 			//alert("event-marker clicked");
 			let ep_contents= $('.event-popup').html();
 			$('.event-popup').css('display','none');
-			$('#event-popup_mob').html(ep_contents);
+			$('#event-popup_mob').html('<div class="event-popup ui-draggable ui-draggable-handle" style="position: relative; left: -62.867px; top: -46.3964px; z-index: 1000;">'+ep_contents+'</div>';);
 			$('#event-popup_mob').css('display','block');
 		}
 	});
