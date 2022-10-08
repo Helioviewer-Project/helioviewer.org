@@ -332,11 +332,13 @@ $(function() {
 	
 	// close mobile event popup when close button pressed or body is touched/clicked
 	$('#toptouchlayer').on('click',function(){
-		console.log("close button clicked");
-		$("body").find('#event-popup_mob').html('');
-		 $("body").find('#event-popup_mob').css('display','none');
-		 $('.event-popup').remove();
-		//$('#event-popup_mob').css('display','none');
+		if($('.event-popup').length > 0) {
+			console.log("close button clicked");
+			$("body").find('#event-popup_mob').html('');
+			 $("body").find('#event-popup_mob').css('display','none');
+			 $('.event-popup').remove();
+			//$('#event-popup_mob').css('display','none');
+		}
 	}); 
 
 	// on orientation change [portait / landscape]
