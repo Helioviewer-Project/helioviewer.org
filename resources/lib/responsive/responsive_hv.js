@@ -316,6 +316,7 @@ $(function() {
 		zeynep.close();
 	});
 	
+	let aneventpopupisup='no';
 
 	// testing: features & events marker tracking
 	$('#toptouchlayer').on('touchstart mousedown',function(){
@@ -327,16 +328,18 @@ $(function() {
 			$('.event-popup').css('display','none');
 			$('#event-popup_mob').html('<div class="event-popup ui-draggable ui-draggable-handle" style="position: relative; z-index: 1000;">'+ep_contents+'</div>');
 			$('#event-popup_mob').css('display','block');
+			aneventpopupisup='yes';
 		}
 	});
 	
 	// close mobile event popup when close button pressed or body is touched/clicked
 	$('#toptouchlayer').on('click',function(){
-		if($('.event-popup').length > 0) {
+		if($('.event-popup').length > 0 && aneventpopupisup=='yes') {
 			console.log("close button clicked");
 			$("body").find('#event-popup_mob').html('');
 			 $("body").find('#event-popup_mob').css('display','none');
 			 $('.event-popup').remove();
+			 aneventpopupisup='no';
 			//$('#event-popup_mob').css('display','none');
 		}
 	}); 
