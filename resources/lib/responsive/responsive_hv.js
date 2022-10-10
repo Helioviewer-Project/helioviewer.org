@@ -363,7 +363,7 @@ $(function() {
 					 aneventpopupisup='no';
 					//$('#event-popup_mob').css('display','none');
 				}
-			}
+			});
 		}
 	}); 
 
