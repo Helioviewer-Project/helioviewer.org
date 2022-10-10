@@ -320,7 +320,26 @@ $(function() {
 
 	// testing: features & events marker tracking
 	$('#toptouchlayer').on('click',function(){
-		if($('.event-popup').length > 0 && aneventpopupisup=='no') {
+		
+		if(aneventpopupisup=='no') {
+			$('.event-popup').each(function(i, obj) {
+				if($(this).css('display') == 'block') { //$('.event-popup').length > 0
+				//if($('.event-popup').css('display') == 'block') {
+					console.log("event-marker clicked");
+					//alert("event-marker clicked");
+					let ep_contents= $(this).html();
+					$(this).css('display','none');
+					$('#event-popup_mob').html('<div class="event-popup ui-draggable ui-draggable-handle" style="position: relative; z-index: 1000;">'+ep_contents+'</div>');
+					$('#event-popup_mob').css('display','block');
+					aneventpopupisup='yes';
+				}		
+				
+			});
+		}
+	});
+
+	/*
+		if($('.event-popup').css('display') == 'block' && aneventpopupisup=='no') { //$('.event-popup').length > 0
 		//if($('.event-popup').css('display') == 'block') {
 			console.log("event-marker clicked");
 			//alert("event-marker clicked");
@@ -329,16 +348,22 @@ $(function() {
 			$('#event-popup_mob').html('<div class="event-popup ui-draggable ui-draggable-handle" style="position: relative; z-index: 1000;">'+ep_contents+'</div>');
 			$('#event-popup_mob').css('display','block');
 			aneventpopupisup='yes';
-		}
+		}*/
 	
-	// close mobile event popup when close button pressed or body is touched/clicked
-		else if($('.event-popup').length > 0 && aneventpopupisup=='yes') {
-			console.log("close button clicked");
-			$("body").find('#event-popup_mob').html('');
-			 $("body").find('#event-popup_mob').css('display','none');
-			 //$('.event-popup').removeClass('event-popup');
-			 aneventpopupisup='no';
-			//$('#event-popup_mob').css('display','none');
+	$('#toptouchlayer').on('click',function(){
+		
+		if(aneventpopupisup=='yes') {
+			$('.event-popup').each(function(i, obj) {
+				// close mobile event popup when close button pressed or body is touched/clicked
+				if($(this).length > 0) {
+					console.log("close button clicked");
+					$("body").find('#event-popup_mob').html('');
+					 $("body").find('#event-popup_mob').css('display','none');
+					 //$('.event-popup').removeClass('event-popup');
+					 aneventpopupisup='no';
+					//$('#event-popup_mob').css('display','none');
+				}
+			}
 		}
 	}); 
 
