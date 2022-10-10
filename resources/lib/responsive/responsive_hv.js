@@ -341,7 +341,7 @@ $(function() {
 			$('.event-popup').each(function(i, obj) {
 				if($(this).length > 0) {
 					console.log("close button clicked");
-					$(this).css({'display':'none','top':'-2000px','left':'-2000px'});
+					$(this).css({'display':'block','top':'-2000px','left':'-2000px'});
 					$("body").find('#event-popup_mob').html('');
 					 $("body").find('#event-popup_mob').css('display','none');
 					 aneventpopupisup='no';
