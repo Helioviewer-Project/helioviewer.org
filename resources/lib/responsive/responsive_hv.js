@@ -337,6 +337,22 @@ $(function() {
 				
 			});
 		}
+		
+		else if(aneventpopupisup=='yes') {
+			$('.event-popup').each(function(i, obj) {
+				// close mobile event popup when close button pressed or body is touched/clicked
+				if($(this).length > 0) {
+					console.log("close button clicked");
+					$("body").find('#event-popup_mob').html('');
+					 $("body").find('#event-popup_mob').css('display','none');
+					 //$('.event-popup').removeClass('event-popup');
+					 aneventpopupisup='no';
+					//$('#event-popup_mob').css('display','none');
+					return;
+				}
+			});
+		}
+		
 	});
 
 	/*
@@ -349,7 +365,7 @@ $(function() {
 			$('#event-popup_mob').html('<div class="event-popup ui-draggable ui-draggable-handle" style="position: relative; z-index: 1000;">'+ep_contents+'</div>');
 			$('#event-popup_mob').css('display','block');
 			aneventpopupisup='yes';
-		}*/
+		}
 	
 	$('#toptouchlayer').on('click',function(){
 		
@@ -367,7 +383,7 @@ $(function() {
 				}
 			});
 		}
-	}); 
+	}); */
 
 
 
