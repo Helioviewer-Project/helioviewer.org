@@ -327,7 +327,7 @@ $(function() {
 				if($(this).css('display') == 'block') {
 					console.log("event-marker clicked");
 					let ep_contents= $(this).html();
-					$(this).css('display','none');
+					$(this).css({'top':'-2000px','left':'-2000px'});
 					$('#event-popup_mob').html('<div class="event-popup ui-draggable ui-draggable-handle" style="position: relative; z-index: 1000;">'+ep_contents+'</div>');
 					$('#event-popup_mob').css('display','block');
 					aneventpopupisup='yes';
@@ -341,7 +341,7 @@ $(function() {
 			$('.event-popup').each(function(i, obj) {
 				if($(this).length > 0) {
 					console.log("close button clicked");
-					$(this).css({'display':'none','top':'-2000px','left':'-2000px'});
+					$(this).css({'top':'-2000px','left':'-2000px'});
 					$("body").find('#event-popup_mob').html('');
 					 $("body").find('#event-popup_mob').css('display','none');
 					 aneventpopupisup='no';
