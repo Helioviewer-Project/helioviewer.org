@@ -332,6 +332,7 @@ $(function() {
 					$('#event-popup_mob').html('<div class="event-popup ui-draggable ui-draggable-handle" style="position: relative; z-index: 1000;">'+ep_contents+'</div>');
 					$('#event-popup_mob').css('display','block');
 					aneventpopupisup='yes';
+					return;
 				}		
 				
 			});
@@ -362,6 +363,7 @@ $(function() {
 					 //$('.event-popup').removeClass('event-popup');
 					 aneventpopupisup='no';
 					//$('#event-popup_mob').css('display','none');
+					return;
 				}
 			});
 		}
