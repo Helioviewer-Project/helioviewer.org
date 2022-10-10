@@ -254,8 +254,8 @@
 		filter: invert(93%) sepia(99%) saturate(2049%) hue-rotate(318deg) brightness(113%) contrast(94%);
 	}
 		
-	/*
-	.event-popup {
+	
+	#event-popup_mob .event-popup {
 		position: fixed !important;
 		z-index: 1000;
 		padding: 10px !important;
@@ -264,7 +264,7 @@
 		top: 190px !important;
 		left: 4px !important;
 	}
-	*/
+	
 	
 /* desktops */
 @media screen and (min-width: 1025px) {	
@@ -383,11 +383,11 @@
 		width: 100px;
 	}
 	
-	.event-popup {
+	#event-container .event-popup {
 		position: absolute !important;
 	}
 	
-	#event-popup_mob {
+	#event-popup_mob .event-popup {
 		position: fixed !important;
 		z-index: 1000;
 		padding: 10px !important;
@@ -1237,14 +1237,14 @@
 	   max-width: 100% !important;	
 	}
 
-	/*
-	.event-popup {
+	
+	#event-popup_mob .event-popup {
 		position: fixed !important;
 		width: 400px !important;
 		padding: 10px !important;
 		top: 40px !important;
 		left: 112px !important;		
 	}
-	*/
+	
 
 }
