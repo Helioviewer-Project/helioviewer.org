@@ -324,7 +324,8 @@ $(function() {
 		// open mobile event pop-up
 		if(aneventpopupisup=='no') {
 			$('.event-popup').each(function(i, obj) {
-				if($(this).css('display') == 'block') {
+				if($(this).css('display') != 'none') {
+					$("body").find('#event-popup_mob').html('');
 					console.log("event-marker clicked");
 					let ep_contents= $(this).html();
 					$(this).css({'top':'-2000px','left':'-2000px'});
