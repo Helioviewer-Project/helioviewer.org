@@ -346,7 +346,7 @@ $(function() {
 					$("body").find('#event-popup_mob').html('');
 					 $("body").find('#event-popup_mob').css('display','none');
 					 aneventpopupisup='no';
-					return;
+					
 				}
 			});
 		}
