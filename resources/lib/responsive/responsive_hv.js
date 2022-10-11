@@ -349,7 +349,7 @@ $(function() {
 					 aneventpopupisup='no';
 					
 				//}
-				$(this).css({'top':'-2000px','left':'-2000px'});
+				$('#event-container .event-popup').css({'top':'-2000px','left':'-2000px'});
 			//});
 		}
 		
