@@ -323,6 +323,7 @@ $(function() {
 		
 		// open mobile event pop-up
 		if(aneventpopupisup=='no') {
+			$('.event-popup').css({'display':'none','top':'-2000px','left':'-2000px'});
 			$('.event-popup').each(function(i, obj) {
 				if($(this).css('display') != 'none') {
 					$("body").find('#event-popup_mob').html('');
@@ -334,7 +335,7 @@ $(function() {
 					aneventpopupisup='yes';
 					return;
 				}		
-				$(this).css({'top':'-2000px','left':'-2000px'});
+				
 			});
 		}
 		// close mobile event pop-up
@@ -342,12 +343,13 @@ $(function() {
 			$('.event-popup').each(function(i, obj) {
 				if($(this).length > 0) {
 					console.log("close button clicked");
-					$(this).css({'top':'-2000px','left':'-2000px'});
+					
 					$("body").find('#event-popup_mob').html('');
 					 $("body").find('#event-popup_mob').css('display','none');
 					 aneventpopupisup='no';
 					
 				}
+				$(this).css({'display':'none','top':'-2000px','left':'-2000px'});
 			});
 		}
 		
