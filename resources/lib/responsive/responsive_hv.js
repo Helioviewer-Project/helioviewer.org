@@ -346,7 +346,7 @@ $(function() {
 					
 					$("body").find('#event-popup_mob').html('');
 					$("body").find('#event-popup_mob').css('display','none');
-					$('#event-container .event-popup').css({'top':'-2000px','left':'-2000px','display':'block'}); 
+					$('#event-container .event-popup').removeAttr("style"); 
 					aneventpopupisup='no';
 					
 				//}
