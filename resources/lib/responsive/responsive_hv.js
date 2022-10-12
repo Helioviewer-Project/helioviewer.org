@@ -329,7 +329,7 @@ $(function() {
 					$("body").find('#event-popup_mob').html('');
 					console.log("event-marker clicked");
 					let ep_contents= $(this).html();
-					$('#event-container .event-popup').css({'display':'none','top':'-2000px','left':'-2000px'});
+					$('#event-container .event-popup').css({'top':'-2000px','left':'-2000px'});
 					$('#event-popup_mob').html('<div class="event-popup ui-draggable ui-draggable-handle" style="position: relative; z-index: 1000;">'+ep_contents+'</div>');
 					$('#event-popup_mob').css('display','block');
 					aneventpopupisup='yes';
@@ -345,11 +345,12 @@ $(function() {
 					console.log("close button clicked");
 					
 					$("body").find('#event-popup_mob').html('');
-					 $("body").find('#event-popup_mob').css('display','none');
+					$("body").find('#event-popup_mob').css('display','none');
+					$('#event-container .event-popup').css({'top':'-2000px','left':'-2000px'}); 
 					 aneventpopupisup='no';
 					
 				//}
-				$('#event-container .event-popup').css({'top':'-2000px','left':'-2000px'});
+				
 			//});
 		}
 		
