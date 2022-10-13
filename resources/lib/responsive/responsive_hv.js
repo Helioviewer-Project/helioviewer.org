@@ -316,6 +316,48 @@ $(function() {
 		zeynep.close();
 	});
 	
+	
+let thisevpopup=0;
+let ep_contents= '';
+const thiseventclass= document.getElementByClassName("event-popup");
+
+
+	respondToEvVisibility = function(element, callback) {
+	  var evpopoptions = {
+		root: document.getElementById("toptouchlayer")
+	  }
+
+	  var observerEv = new IntersectionObserver((entries, observerEv) => {
+		entries.forEach(entry => {
+		  callback(entry.intersectionRatio > 0);
+		});
+	  }, evpopoptions);
+
+	  observerEv.observe(element);
+	}
+	
+
+	respondToEvVisibility(thiseventclass, visible => {
+		//const feedbackEl = document.getElementById("visibilityFeedback");
+	  if(visible) {
+		//feedbackEl.innerText = "Visible!";
+			console.log('visible');
+			$('#event-popup_mob').html('<div>'+thiseventclass.innerHTML+'</div>');
+			$('#event-popup_mob').css('display','block');
+	   }
+	   else {
+		//feedbackEl.innerText = "Not Visible";
+			console.log('invisible');
+			$('#event-popup_mob').html('<div>'+ep_contents+'</div>');
+			$('#event-popup_mob').css('display','none');
+	   }
+	});
+
+	thisevpopup++;
+
+}	
+	
+/*	
 	let aneventpopupisup='no';
 
 	// testing: features & events marker tracking
@@ -330,7 +372,7 @@ $(function() {
 					console.log("event-marker clicked");
 					let ep_contents= $(this).html();
 					$('#event-container .event-popup').css({'top':'-2000px','left':'-2000px'});
-					$('#event-popup_mob').html('<div class="event-popup ui-draggable ui-draggable-handle" style="position: relative; z-index: 1000;">'+ep_contents+'</div>');
+					$('#event-popup_mob').html('<div>'+ep_contents+'</div>');
 					$('#event-popup_mob').css('display','block');
 					aneventpopupisup='yes';
 					return;
@@ -355,7 +397,7 @@ $(function() {
 		}
 		
 	});
-
+*/
 	/*
 		if($('.event-popup').css('display') == 'block' && aneventpopupisup=='no') { //$('.event-popup').length > 0
 		//if($('.event-popup').css('display') == 'block') {
