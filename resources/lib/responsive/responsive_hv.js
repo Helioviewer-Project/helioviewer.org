@@ -353,9 +353,9 @@ const thiseventclass= document.getElementByClassName("event-popup");
 	   }
 	});
 
-	thisevpopup++;
+	//thisevpopup++;
 
-}	
+	
 	
 /*	
 	let aneventpopupisup='no';
