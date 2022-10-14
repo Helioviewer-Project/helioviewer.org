@@ -323,7 +323,7 @@ let evpopuphtml='';
 
 	
 let observerOptions = {
-	root: document.getElementById("toptouchlayer")
+	root: document.getElementById("sandbox")
 }
 
 var observer = new IntersectionObserver(observerCallback, observerOptions);
