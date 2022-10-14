@@ -317,8 +317,11 @@ $(function() {
 	});
 
 // close event pop-ups
+let mobpopupopen= 'no';
 $(document.body).on('click', '#touchtoplayer, .close-button' ,function(){
-	$('#event-popup_mob').css('display','none');
+	if(mobpopupopen == 'yes') {
+		$('#event-popup_mob').css('display','none');
+	}
 });
 
 // trigger HEK Data menu
@@ -345,11 +348,13 @@ function observerCallback(entries, observer) {
 			console.log('visible');
 			$('#event-popup_mob').html('<div>'+evpopuphtml+'</div>');
 			$('#event-popup_mob').css('display','block');
+			mobpopupopen= 'yes';
 		}
 		else {
 			console.log('invisible');
 			$('#event-popup_mob').html('');
 			$('#event-popup_mob').css('display','none');
+			mobpopupopen= 'no';
 		}
     });
 };
