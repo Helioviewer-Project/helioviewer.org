@@ -253,7 +253,7 @@
 		height: 35px;
 		filter: invert(93%) sepia(99%) saturate(2049%) hue-rotate(318deg) brightness(113%) contrast(94%);
 	}
-		
+	
 	
 	#event-popup_mob {
 		position: fixed !important;
@@ -385,9 +385,8 @@
 	
 	#event-container .event-popup {
 		position: absolute !important;
-		/*top:-2000px !important;
-		left:-2000px !important;
-		*/
+		top:-135px !important;
+		left:-298px !important;
 	}
 	
 	#event-popup_mob {
@@ -398,6 +397,17 @@
 		height: 200px !important;
 		top: 190px !important;
 		left: 4px !important;
+		
+		background-color: rgba(24,24,24,0.9);
+		border: 2px solid black;
+		box-shadow: 0 0 12px black;
+		color: white;
+		font-size: 11px;
+		overflow: hidden;
+		padding: 5px 5px 0;
+		/*position: absolute;*/
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 	
 	#event-popup_mob {
