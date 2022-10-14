@@ -384,7 +384,7 @@
 	}
 	
 	#event-container .event-popup {
-		position: absolute !important;
+		position: fixed !important;
 		top:-135px !important;
 		left:-298px !important;
 	}
