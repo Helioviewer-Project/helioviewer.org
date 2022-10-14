@@ -327,6 +327,9 @@ let observerOptions = {
 	root: document.body //document.getElementById("sandbox"),
      rootMargin: '0px',
     threshold: 0.5 */
+	root: null,
+    rootMargin: "0px",
+	threshold:0
 }
 
 var observer = new IntersectionObserver(observerCallback, observerOptions);
