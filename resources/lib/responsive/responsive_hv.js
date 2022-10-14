@@ -364,7 +364,7 @@ function observerCallback(entries, observer) {
 };
 
 const thiseventclass = '.event-popup';
-//$(document.body).on('click', '.event-marker' ,function(){
+$(document.body).on('click', '.event-marker' ,function(){
 	
 	document.querySelectorAll(thiseventclass).forEach((i) => {
 		if (i) {
@@ -374,7 +374,7 @@ const thiseventclass = '.event-popup';
 			observer.observe(i);
 		}
 	});
-//});
+});
 	
 // END detect event pop-ups and paste content into redesigned mobile pop-up
 
