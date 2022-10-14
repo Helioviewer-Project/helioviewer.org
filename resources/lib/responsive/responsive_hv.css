@@ -385,8 +385,9 @@
 	
 	#event-container .event-popup {
 		position: absolute !important;
-		top:-2000px !important;
+		/*top:-2000px !important;
 		left:-2000px !important;
+		*/
 	}
 	
 	#event-popup_mob .event-popup {
