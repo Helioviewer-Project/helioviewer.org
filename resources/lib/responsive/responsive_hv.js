@@ -319,41 +319,37 @@ $(function() {
 	
 let thisevpopup=0;
 let ep_contents= '';
-const thiseventclass= document.getElementByClassName("event-popup");
+let evpopuphtml='';
 
-
-	respondToEvVisibility = function(element, callback) {
-	  var evpopoptions = {
-		root: document.getElementById("toptouchlayer")
-	  }
-
-	  var observerEv = new IntersectionObserver((entries, observerEv) => {
-		entries.forEach(entry => {
-		  callback(entry.intersectionRatio > 0);
-		});
-	  }, evpopoptions);
-
-	  observerEv.observe(element);
-	}
 	
+let observerOptions = {
+	root: document.getElementById("toptouchlayer")
+}
 
-	respondToEvVisibility(thiseventclass, visible => {
-		//const feedbackEl = document.getElementById("visibilityFeedback");
-	  if(visible) {
-		//feedbackEl.innerText = "Visible!";
+var observer = new IntersectionObserver(observerCallback, observerOptions);
+
+function observerCallback(entries, observer) {
+    entries.forEach(entry => {
+        if(entry.isIntersecting) {
 			console.log('visible');
-			$('#event-popup_mob').html('<div>'+thiseventclass.innerHTML+'</div>');
+			$('#event-popup_mob').html('<div>'+evpopuphtml+'</div>');
 			$('#event-popup_mob').css('display','block');
-	   }
-	   else {
-		//feedbackEl.innerText = "Not Visible";
+		}
+		else {
 			console.log('invisible');
-			$('#event-popup_mob').html('<div>'+ep_contents+'</div>');
+			$('#event-popup_mob').html('');
 			$('#event-popup_mob').css('display','none');
-	   }
-	});
+		}
+    });
+};
 
-	//thisevpopup++;
+let thiseventclass = '.event-popup';
+document.querySelectorAll(thiseventclass).forEach((i) => {
+    if (i) {
+		console.log(i);		
+        observer.observe(i);
+    }
+});
 
 	
 	
