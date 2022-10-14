@@ -354,7 +354,7 @@ $(document.body).on('click', '.event-marker' ,function(){
 	console.log('event marker clicked');
 	document.querySelectorAll(thiseventclass).forEach((i) => {
 		if (i) {
-			console.log(i);		
+			console.log(i.innerHTML);		
 			observer.observe(i);
 		}
 	});
