@@ -349,14 +349,15 @@ function observerCallback(entries, observer) {
     });
 };
 
-let thiseventclass = '.event-popup';
-document.querySelectorAll(thiseventclass).forEach((i) => {
-    if (i) {
-		console.log(i);		
-        observer.observe(i);
-    }
+const thiseventclass = '.event-popup';
+$('.event-marker').on('click', function() {
+	document.querySelectorAll(thiseventclass).forEach((i) => {
+		if (i) {
+			console.log(i);		
+			observer.observe(i);
+		}
+	});
 });
-
 	
 	
 /*	
