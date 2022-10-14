@@ -364,16 +364,17 @@ function observerCallback(entries, observer) {
 };
 
 const thiseventclass = '.event-popup';
-$(document.body).on('click', '.event-marker' ,function(){
-	console.log('event marker clicked');
+//$(document.body).on('click', '.event-marker' ,function(){
+	
 	document.querySelectorAll(thiseventclass).forEach((i) => {
 		if (i) {
 			//console.log(i.innerHTML);
+			console.log('event marker clicked');
 			evpopuphtml= i.innerHTML;	
 			observer.observe(i);
 		}
 	});
-});
+//});
 	
 // END detect event pop-ups and paste content into redesigned mobile pop-up
 
