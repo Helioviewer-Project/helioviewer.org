@@ -255,7 +255,7 @@
 	}
 		
 	
-	#event-popup_mob .event-popup {
+	#event-popup_mob {
 		position: fixed !important;
 		z-index: 1000;
 		padding: 10px !important;
@@ -390,7 +390,7 @@
 		*/
 	}
 	
-	#event-popup_mob .event-popup {
+	#event-popup_mob {
 		position: fixed !important;
 		z-index: 1000;
 		padding: 10px !important;
@@ -1241,7 +1241,7 @@
 	}
 
 	
-	#event-popup_mob .event-popup {
+	#event-popup_mob {
 		position: fixed !important;
 		width: 400px !important;
 		padding: 10px !important;
