@@ -318,13 +318,13 @@ $(function() {
 
 // close event pop-ups
 let mobpopupopen= 'no';
-/*
+
 $(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
 	if(mobpopupopen == 'yes') {
 		$('#event-popup_mob').css('display','none');
 	}
 });
-*/
+
 
 // trigger HEK Data menu
 
