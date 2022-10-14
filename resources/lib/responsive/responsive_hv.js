@@ -337,9 +337,11 @@ let evpopuphtml='';
 
 	
 let observerOptions = {
+	/*
 	root: document.getElementById("sandbox"),
     rootMargin: "0px",
 	threshold:0
+	*/
 }
 
 var observer = new IntersectionObserver(observerCallback, observerOptions);
