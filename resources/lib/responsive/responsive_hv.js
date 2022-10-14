@@ -350,7 +350,7 @@ function observerCallback(entries, observer) {
 };
 
 const thiseventclass = '.event-popup';
-$('.event-marker').on('click', function() {
+$(document.body).on('click', '.event-marker' ,function(){
 	console.log('event marker clicked');
 	document.querySelectorAll(thiseventclass).forEach((i) => {
 		if (i) {
