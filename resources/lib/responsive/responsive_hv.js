@@ -315,19 +315,24 @@ $(function() {
 		$(".hamburger").removeClass("is-active");
 		zeynep.close();
 	});
-	
-	
-let thisevpopup=0;
+
+// close event pop-ups
+$(document.body).on('click', '#touchtoplayer, .close-button' ,function(){
+	$('#event-popup_mob').css('display','none');
+});
+
+// trigger HEK Data menu
+
+
+
+// START detect event pop-ups and paste content into redesigned mobile pop-up
+
 let ep_contents= '';
 let evpopuphtml='';
 
 	
 let observerOptions = {
-	/*
-	root: document.body //document.getElementById("sandbox"),
-     rootMargin: '0px',
-    threshold: 0.5 */
-	root: null,
+	root: document.getElementById("sandbox"),
     rootMargin: "0px",
 	threshold:0
 }
@@ -361,79 +366,7 @@ $(document.body).on('click', '.event-marker' ,function(){
 	});
 });
 	
-	
-/*	
-	let aneventpopupisup='no';
-
-	// testing: features & events marker tracking
-	$('#toptouchlayer').on('click',function(){
-		
-		// open mobile event pop-up
-		if(aneventpopupisup=='no') {
-			
-			$('#event-container .event-popup').each(function(i, obj) {
-				if($(this).css('display') != 'none') {
-					$("body").find('#event-popup_mob').html('');
-					console.log("event-marker clicked");
-					let ep_contents= $(this).html();
-					$('#event-container .event-popup').css({'top':'-2000px','left':'-2000px'});
-					$('#event-popup_mob').html('<div>'+ep_contents+'</div>');
-					$('#event-popup_mob').css('display','block');
-					aneventpopupisup='yes';
-					return;
-				}		
-				
-			});
-		}
-		// close mobile event pop-up
-		else if(aneventpopupisup=='yes') {
-			//$('.event-popup').each(function(i, obj) {
-				//if($(this).length > 0) {
-					console.log("close button clicked");
-					
-					$("body").find('#event-popup_mob').html('');
-					$("body").find('#event-popup_mob').css('display','none');
-					$('#event-container .event-popup').removeAttr("style"); 
-					aneventpopupisup='no';
-					
-				//}
-				
-			//});
-		}
-		
-	});
-*/
-	/*
-		if($('.event-popup').css('display') == 'block' && aneventpopupisup=='no') { //$('.event-popup').length > 0
-		//if($('.event-popup').css('display') == 'block') {
-			console.log("event-marker clicked");
-			//alert("event-marker clicked");
-			let ep_contents= $('.event-popup').html();
-			$('.event-popup').css('display','none');
-			$('#event-popup_mob').html('<div class="event-popup ui-draggable ui-draggable-handle" style="position: relative; z-index: 1000;">'+ep_contents+'</div>');
-			$('#event-popup_mob').css('display','block');
-			aneventpopupisup='yes';
-		}
-	
-	$('#toptouchlayer').on('click',function(){
-		
-		if(aneventpopupisup=='yes') {
-			$('.event-popup').each(function(i, obj) {
-				// close mobile event popup when close button pressed or body is touched/clicked
-				if($(this).length > 0) {
-					console.log("close button clicked");
-					$("body").find('#event-popup_mob').html('');
-					 $("body").find('#event-popup_mob').css('display','none');
-					 //$('.event-popup').removeClass('event-popup');
-					 aneventpopupisup='no';
-					//$('#event-popup_mob').css('display','none');
-					return;
-				}
-			});
-		}
-	}); */
-
-
+// END detect event pop-ups and paste content into redesigned mobile pop-up
 
 
 	// on orientation change [portait / landscape]
