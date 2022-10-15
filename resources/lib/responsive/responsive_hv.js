@@ -322,6 +322,7 @@ let mobpopupopen= 'no';
 $(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
 	if(mobpopupopen == 'yes') {
 		$('#event-popup_mob').css('display','none');
+		$('#event-popup_mob').html('');
 	}
 });
 
@@ -364,7 +365,7 @@ function observerCallback(entries, observer) {
 };
 
 const thiseventclass = '.event-popup';
-$(document.body).on('click', '.event-marker' ,function(){
+//$(document.body).on('click', '.event-marker' ,function(){
 	
 	document.querySelectorAll(thiseventclass).forEach((i) => {
 		if (i) {
@@ -374,7 +375,7 @@ $(document.body).on('click', '.event-marker' ,function(){
 			observer.observe(i);
 		}
 	});
-});
+//});
 	
 // END detect event pop-ups and paste content into redesigned mobile pop-up
 
