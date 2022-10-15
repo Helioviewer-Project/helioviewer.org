@@ -379,12 +379,16 @@ const thiseventclass = '#sandbox #moving-container .event-popup';
 		}
 	});
 	*/
-	
+
+$(document.body).on('click','event-marker', function(){
 	$(".event-popup").each(function(i, obj) {
-			console.log('event marker clicked');
-			evpopuphtml= $(this).html();	
-			observer.observe($(this).html());
+			setTimeout(function () {
+				console.log('event marker clicked');
+				evpopuphtml= $(this).html();	
+				observer.observe($(this).html());
+			}, 400);
 	});
+});
 //});
 	
 // END detect event pop-ups and paste content into redesigned mobile pop-up
