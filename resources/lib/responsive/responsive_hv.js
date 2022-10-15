@@ -382,11 +382,13 @@ const thiseventclass = '#sandbox #moving-container .event-popup';
 
 $(document.body).on('click','.event-marker', function(){
 	$(".event-popup").each(function(i, obj) {
-			setTimeout(function () {
-				console.log('event marker clicked');
-				evpopuphtml= $(this).html();	
-				observer.observe($(this).html());
-			}, 400);
+			if($(this).length) {
+				setTimeout(function () {
+					console.log('event marker clicked');
+					evpopuphtml= $(this).html();	
+					observer.observe($(this).html());
+				}, 400);
+			}
 	});
 });
 //});
