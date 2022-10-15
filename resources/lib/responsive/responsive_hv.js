@@ -368,6 +368,7 @@ const thiseventclass = '.event-popup';
 //$(document.body).on('click', '.event-marker' ,function(){
 	
 	document.querySelectorAll(thiseventclass).forEach((i) => {
+		console('somewhat');
 		if (i) {
 			//console.log(i.innerHTML);
 			console.log('event marker clicked');
