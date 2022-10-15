@@ -380,20 +380,20 @@ const thiseventclass = '#sandbox #moving-container .event-popup';
 	});
 	*/
 
-//$(document.body).on('click','.event-marker', function(){
+$(document.body).on('click','.event-marker', function(){
 	$(".event-popup").each(function(i, obj) {
-			if($(this).length) {
-				console.log($(this));
-				setTimeout(function () {
-					console.log('event marker clicked');
-					//evpopuphtml= $(this).html();
-					evpopuphtml= $(this);
-					observer.observe(obj);
-					//observer.observe($(this).html());
-				}, 400);
-			}
+		if($(this).length) {
+			console.log($(this));
+			setTimeout(function () {
+				console.log('event marker clicked');
+				//evpopuphtml= $(this).html();
+				evpopuphtml= $(this);
+				observer.observe(obj);
+				//observer.observe($(this).html());
+			}, 400);
+		}
 	});
-//});
+});
 //});
 	
 // END detect event pop-ups and paste content into redesigned mobile pop-up
