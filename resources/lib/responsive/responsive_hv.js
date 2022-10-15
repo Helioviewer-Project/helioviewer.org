@@ -384,14 +384,13 @@ const thiseventclass = '#sandbox #moving-container .event-popup';
 $(document.body).on('click','.event-marker', function(){
 	$(".event-popup").each(function(i, obj) {
 		if($(this).length) {
-			setTimeout(function () {
+			//setTimeout(function () {
 				console.log('event marker clicked');
 				//evpopuphtml= $(this).html();
-				//evpopuphtml= obj.text;
-				console.log(obj);
+				evpopuphtml= obj;
 				observer.observe(obj);
 				//observer.observe($(this).html());
-			}, 400);
+			//}, 400);
 		}
 	});
 });
