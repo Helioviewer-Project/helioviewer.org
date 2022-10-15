@@ -386,8 +386,10 @@ $(document.body).on('click','.event-marker', function(){
 				console.log($(this));
 				setTimeout(function () {
 					console.log('event marker clicked');
-					evpopuphtml= $(this).html();	
-					observer.observe($(this).html());
+					//evpopuphtml= $(this).html();
+					evpopuphtml= $(this);
+					observer.observe($(this));
+					//observer.observe($(this).html());
 				}, 400);
 			}
 	});
