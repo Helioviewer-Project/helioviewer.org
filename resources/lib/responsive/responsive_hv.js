@@ -387,7 +387,8 @@ $(document.body).on('click','.event-marker', function(){
 			setTimeout(function () {
 				console.log('event marker clicked');
 				//evpopuphtml= $(this).html();
-				evpopuphtml= obj.text;
+				//evpopuphtml= obj.text;
+				console.log(obj);
 				observer.observe(obj);
 				//observer.observe($(this).html());
 			}, 400);
