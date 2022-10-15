@@ -384,8 +384,8 @@ const thiseventclass = '#sandbox #moving-container .event-popup';
 		//if (i) {
 			//console.log(i.innerHTML);
 			console.log('event marker clicked');
-			evpopuphtml= i.innerHTML;	
-			observer.observe(i);
+			evpopuphtml= $(this).html();	
+			observer.observe($(this).html());
 		//}	
 	});
 //});
