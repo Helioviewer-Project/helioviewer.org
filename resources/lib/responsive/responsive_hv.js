@@ -365,7 +365,7 @@ function observerCallback(entries, observer) {
 };
 
 //const thiseventclass = '.event-popup';
-const thiseventclass = '#sandbox > #moving-container > #event-container > .event-layer > .event-popup';
+const thiseventclass = '#sandbox > #moving-container .event-popup';
 //$(document.body).on('click', '.event-marker' ,function(){
 	
 	document.querySelectorAll(thiseventclass).forEach((i) => {
