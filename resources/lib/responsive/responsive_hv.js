@@ -381,6 +381,7 @@ const thiseventclass = '#sandbox #moving-container .event-popup';
 	*/
 	
 	$(".event-popup").each(function() {
+		console.log('somewhat');
 		//if (i) {
 			//console.log(i.innerHTML);
 			console.log('event marker clicked');
