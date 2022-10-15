@@ -365,9 +365,10 @@ function observerCallback(entries, observer) {
 };
 
 //const thiseventclass = '.event-popup';
-const thiseventclass = '#sandbox > #moving-container .event-popup';
+const thiseventclass = '#sandbox #moving-container .event-popup';
 //$(document.body).on('click', '.event-marker' ,function(){
 	
+	/*
 	document.querySelectorAll(thiseventclass).forEach((i) => {
 		console.log('somewhat');
 		if (i) {
@@ -376,6 +377,16 @@ const thiseventclass = '#sandbox > #moving-container .event-popup';
 			evpopuphtml= i.innerHTML;	
 			observer.observe(i);
 		}
+	});
+	*/
+	
+	$(".event-popup").each(function() {
+		//if (i) {
+			//console.log(i.innerHTML);
+			console.log('event marker clicked');
+			evpopuphtml= i.innerHTML;	
+			observer.observe(i);
+		//}	
 	});
 //});
 	
