@@ -383,6 +383,7 @@ const thiseventclass = '#sandbox #moving-container .event-popup';
 $(document.body).on('click','.event-marker', function(){
 	$(".event-popup").each(function(i, obj) {
 			if($(this).length) {
+				console.log($(this));
 				setTimeout(function () {
 					console.log('event marker clicked');
 					evpopuphtml= $(this).html();	
