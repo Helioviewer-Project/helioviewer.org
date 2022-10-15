@@ -380,14 +380,10 @@ const thiseventclass = '#sandbox #moving-container .event-popup';
 	});
 	*/
 	
-	$(".event-popup").each(function() {
-		console.log('somewhat');
-		//if (i) {
-			//console.log(i.innerHTML);
+	$(".event-popup").each(function(i, obj) {
 			console.log('event marker clicked');
 			evpopuphtml= $(this).html();	
 			observer.observe($(this).html());
-		//}	
 	});
 //});
 	
