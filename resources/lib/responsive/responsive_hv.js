@@ -380,7 +380,7 @@ const thiseventclass = '#sandbox #moving-container .event-popup';
 	});
 	*/
 
-$(document.body).on('click','event-marker', function(){
+$(document.body).on('click','.event-marker', function(){
 	$(".event-popup").each(function(i, obj) {
 			setTimeout(function () {
 				console.log('event marker clicked');
