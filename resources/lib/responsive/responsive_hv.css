@@ -383,6 +383,14 @@
 		width: 100px;
 	}
 	
+	#invispopupbg {
+		position: absolute;
+		display: none;
+		z-index: 999;
+		width: 100%;
+		height: 100%;
+	}
+	
 	#event-container .event-popup {
 		display: none !important;
 		position: fixed !important;
