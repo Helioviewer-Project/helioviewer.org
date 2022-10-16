@@ -409,6 +409,7 @@ $(document.body).on('click','.event-marker', function(){
 			//setTimeout(function () {
 				console.log('event marker clicked');
 				$('.event-popup[rel="'+evpoprelattr+'"]').show();
+				evpopuphtml= $('.event-popup[rel="'+evpoprelattr+'"]').html();
 				//evpopuphtml= $(this).html();
 				//evpopuphtml= obj;
 				observer.observe(obj);
