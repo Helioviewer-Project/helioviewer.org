@@ -324,6 +324,7 @@ $(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
 		$('#event-popup_mob').css('display','none');
 		$('#event-popup_mob').html('');
 		mobpopupopen= 'no';
+		$('.event-popup').css('display','none');
 	}
 });
 
@@ -361,6 +362,7 @@ function observerCallback(entries, observer) {
 			$('#event-popup_mob').html('');
 			$('#event-popup_mob').css('display','none');
 			mobpopupopen= 'no';
+			$('.event-popup').css('display','none');
 		}
     });
 };
@@ -387,7 +389,7 @@ $(document.body).on('click','.event-marker', function(){
 			//setTimeout(function () {
 				console.log('event marker clicked');
 				//evpopuphtml= $(this).html();
-				evpopuphtml= obj;
+				//evpopuphtml= obj;
 				observer.observe(obj);
 				//observer.observe($(this).html());
 			//}, 400);
