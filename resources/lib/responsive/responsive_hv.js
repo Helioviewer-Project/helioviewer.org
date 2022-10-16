@@ -393,12 +393,12 @@ $(document.body).on('click','.event-marker', function(){
 	console.log('evrelattr = '+evrelattr);
 	
 	$(".event-popup").each(function(i, obj) {
-		evpoprelattr = $(this).attr('rel');
+		evpoprelattr = obj.attr('rel');
 		console.log('evpoprelattr = '+evrelattr);
 		
 		// if popup doesn't have a rel attribute, give it the one associated with this marker's rel attribute
-		if(typeof evpoprelattr !== 'undefined' && evpoprelattr !== false) {
-			$(this).attr('rel',evpoprelattr);
+		if(typeof evpoprelattr !== 'undefined' && evpoprelattr !== false && evpoprelattr !== null) {
+			obj.attr('rel',evpoprelattr);
 		}
 		
 		if($(this).length && evrelattr == evpoprelattr) {
