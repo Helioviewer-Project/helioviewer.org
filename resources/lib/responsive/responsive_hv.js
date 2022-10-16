@@ -394,7 +394,7 @@ $(document.body).on('click','.event-marker', function(){
 		// if this popup is in the DOM and is bound to the event marker
 		if($(this).length && evrelattr == evpoprelattr) {
 			console.log('event marker clicked');
-			$('.event-popup[rel="'+evpoprelattr+'"]').show();
+			//$('.event-popup[rel="'+evpoprelattr+'"]').show();
 			evpopuphtml= $('.event-popup[rel="'+evpoprelattr+'"]').html();
 			$('#event-popup_mob').html('<div>'+evpopuphtml+'</div>');
 			if(mobpopupopen== 'no') {
