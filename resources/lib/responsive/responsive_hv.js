@@ -319,15 +319,13 @@ $(function() {
 // close event pop-ups
 let mobpopupopen= 'no';
 
-$(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
-//$(document.body).on('mousedown', '#toptouchlayer, .close-button' ,function(){
+//$(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
+$(document.body).on('mousedown touchstart', '#invispopupbg, .close-button' ,function(){
 	if(mobpopupopen == 'yes') {
-		setTimeout(function(){
-			$('#event-popup_mob').css('display','none');
-			//$('#invispopupbg').css('display','block');
-			$('#event-popup_mob').html('');
-			mobpopupopen= 'no';
-		}, 500);
+		$('#invispopupbg').css('display','block');
+		$('#event-popup_mob').css('display','none');
+		$('#event-popup_mob').html('');
+		mobpopupopen= 'no';
 	}
 });
 
@@ -341,17 +339,19 @@ let evpopuphtml='';
 let evrelattr='';
 let evpoprelattr='';
 
+// when event markers are clicked
 $(document.body).on('click','.event-marker', function(){
 	
 	// get this event marker's rel attribute
 	evrelattr = $(this).attr('rel');
 	console.log('evrelattr = '+evrelattr);
 	
+	// cycle each of the accessed popups
 	$(".event-popup").each(function(i, obj) {
 		evpoprelattr = $(obj).attr('rel');
 		console.log('evpoprelattr = '+evpoprelattr);
 		
-		// if popup doesn't have a rel attribute, give it the one associated with this marker's rel attribute
+		// if popup doesn't have a rel attribute, assign it one associated with this marker's rel attribute
 		if(evpoprelattr === undefined || evpoprelattr === false || evpoprelattr === null) {
 			console.log('detected undefined');
 			evpoprelattr=evrelattr;
@@ -365,10 +365,12 @@ $(document.body).on('click','.event-marker', function(){
 			evpopuphtml= $('.event-popup[rel="'+evpoprelattr+'"]').html();
 			$('#event-popup_mob').html('<div>'+evpopuphtml+'</div>');
 			if(mobpopupopen== 'no') {
+				$('#invispopupbg').css('display','block');
 				$('#event-popup_mob').css('display','block');
 				mobpopupopen= 'yes';
 			}
 			else if(mobpopupopen== 'yes') {
+				$('#invispopupbg').css('display','none');
 				$('#event-popup_mob').css('display','none');
 				mobpopupopen= 'no';
 			}
