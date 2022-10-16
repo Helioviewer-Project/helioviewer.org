@@ -324,7 +324,7 @@ $(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
 		$('#event-popup_mob').css('display','none');
 		$('#event-popup_mob').html('');
 		mobpopupopen= 'no';
-		$('.event-popup').css('display','none');
+		$('.event-popup').hide();
 	}
 });
 
@@ -347,6 +347,7 @@ let observerOptions = {
 	*/
 }
 
+/*
 var observer = new IntersectionObserver(observerCallback, observerOptions);
 
 function observerCallback(entries, observer) {
@@ -367,21 +368,8 @@ function observerCallback(entries, observer) {
     });
 };
 
-//const thiseventclass = '.event-popup';
 const thiseventclass = '#sandbox #moving-container .event-popup';
-//$(document.body).on('click', '.event-marker' ,function(){
-	
-	/*
-	document.querySelectorAll(thiseventclass).forEach((i) => {
-		console.log('somewhat');
-		if (i) {
-			//console.log(i.innerHTML);
-			console.log('event marker clicked');
-			evpopuphtml= i.innerHTML;	
-			observer.observe(i);
-		}
-	});
-	*/
+*/
 
 let evrelattr='';
 let evpoprelattr='';
@@ -398,7 +386,6 @@ $(document.body).on('click','.event-marker', function(){
 		
 		// if popup doesn't have a rel attribute, give it the one associated with this marker's rel attribute
 		if(evpoprelattr === undefined || evpoprelattr === false || evpoprelattr === null) {
-		//if(!$(obj).attr('rel')) {
 			console.log('detected undefined');
 			evpoprelattr=evrelattr;
 			$(this).attr('rel',evpoprelattr);
@@ -406,15 +393,19 @@ $(document.body).on('click','.event-marker', function(){
 		
 		// if this popup is in the DOM and is bound to the event marker
 		if($(this).length && evrelattr == evpoprelattr) {
-			//setTimeout(function () {
-				console.log('event marker clicked');
-				$('.event-popup[rel="'+evpoprelattr+'"]').show();
-				evpopuphtml= $('.event-popup[rel="'+evpoprelattr+'"]').html();
-				//evpopuphtml= $(this).html();
-				//evpopuphtml= obj;
-				observer.observe(obj);
-				//observer.observe($(this).html());
-			//}, 400);
+			console.log('event marker clicked');
+			$('.event-popup[rel="'+evpoprelattr+'"]').show();
+			evpopuphtml= $('.event-popup[rel="'+evpoprelattr+'"]').html();
+			$('#event-popup_mob').html('<div>'+evpopuphtml+'</div>');
+			if(mobpopupopen== 'no') {
+				$('#event-popup_mob').css('display','block');
+				mobpopupopen= 'yes';
+			}
+			else if(mobpopupopen== 'yes') {
+				$('#event-popup_mob').css('display','none');
+				mobpopupopen= 'no';
+			}
+			//observer.observe(obj);
 			return false;
 		}
 	});
