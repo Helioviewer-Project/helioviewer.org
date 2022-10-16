@@ -400,7 +400,8 @@ $(document.body).on('click','.event-marker', function(){
 		if(evpoprelattr === undefined || evpoprelattr === false || evpoprelattr === null) {
 		//if(!$(obj).attr('rel')) {
 			console.log('detected undefined');
-			$(this).attr('rel','BAT'+evpoprelattr);
+			evpoprelattr=evrelattr;
+			$(this).attr('rel',evpoprelattr);
 		}
 		
 		if($(this).length && evrelattr == evpoprelattr) {
