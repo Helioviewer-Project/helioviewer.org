@@ -337,7 +337,7 @@ let evpopuphtml='';
 let evrelattr='';
 let evpoprelattr='';
 
-$(document.body).on('mousedown','.event-marker', function(){
+$(document.body).on('click','.event-marker', function(){
 	
 	// get this event marker's rel attribute
 	evrelattr = $(this).attr('rel');
