@@ -383,17 +383,22 @@ const thiseventclass = '#sandbox #moving-container .event-popup';
 	});
 	*/
 
+let evrelattr='';
+let evpoprelattr='';
+
 $(document.body).on('click','.event-marker', function(){
 	
 	// get this event marker's rel attribute
 	let evrelattr = $(this).attr('rel');
+	console.log('evrelattr = '+evrelattr);
 	
 	$(".event-popup").each(function(i, obj) {
 		let evpoprelattr = $(this).attr('rel');
+		console.log('evpoprelattr = '+evrelattr);
 		
 		// if popup doesn't have a rel attribute, give it the one associated with this marker's rel attribute
 		if(typeof evpoprelattr !== 'undefined' && evpoprelattr !== false) {
-			$(this).attr('rel',evrelattr);
+			$(this).attr('rel',evpoprelattr);
 		}
 		
 		if($(this).length && evrelattr == evpoprelattr) {
