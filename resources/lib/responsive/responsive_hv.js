@@ -404,9 +404,11 @@ $(document.body).on('click','.event-marker', function(){
 			$(this).attr('rel',evpoprelattr);
 		}
 		
+		// if this popup is in the DOM and is bound to the event marker
 		if($(this).length && evrelattr == evpoprelattr) {
 			//setTimeout(function () {
 				console.log('event marker clicked');
+				$('.event-popup[rel="'+evpoprelattr+'"]').show();
 				//evpopuphtml= $(this).html();
 				//evpopuphtml= obj;
 				observer.observe(obj);
