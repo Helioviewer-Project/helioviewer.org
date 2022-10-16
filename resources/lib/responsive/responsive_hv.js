@@ -333,43 +333,7 @@ $(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
 
 
 // START detect event pop-ups and paste content into redesigned mobile pop-up
-
-let ep_contents= '';
 let evpopuphtml='';
-
-	
-let observerOptions = {
-	/*
-	root: document.getElementById("sandbox"),
-    rootMargin: "0px",
-	threshold:0
-	*/
-}
-
-/*
-var observer = new IntersectionObserver(observerCallback, observerOptions);
-
-function observerCallback(entries, observer) {
-    entries.forEach(entry => {
-        if(entry.isIntersecting) {
-			console.log('visible');
-			$('#event-popup_mob').html('<div>'+evpopuphtml+'</div>');
-			$('#event-popup_mob').css('display','block');
-			mobpopupopen= 'yes';
-		}
-		else {
-			console.log('invisible');
-			$('#event-popup_mob').html('');
-			$('#event-popup_mob').css('display','none');
-			mobpopupopen= 'no';
-			//$('.event-popup').css('display','none');
-		}
-    });
-};
-
-const thiseventclass = '#sandbox #moving-container .event-popup';
-*/
-
 let evrelattr='';
 let evpoprelattr='';
 
@@ -409,7 +373,6 @@ $(document.body).on('mousedown','.event-marker', function(){
 		}
 	});
 });
-//});
 	
 // END detect event pop-ups and paste content into redesigned mobile pop-up
 
