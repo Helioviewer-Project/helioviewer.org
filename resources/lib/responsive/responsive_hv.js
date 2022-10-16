@@ -384,8 +384,19 @@ const thiseventclass = '#sandbox #moving-container .event-popup';
 	*/
 
 $(document.body).on('click','.event-marker', function(){
+	
+	// get this event marker's rel attribute
+	let evrelattr = $(this).attr('rel');
+	
 	$(".event-popup").each(function(i, obj) {
-		if($(this).length) {
+		let evpoprelattr = $(this).attr('rel');
+		
+		// if popup doesn't have a rel attribute, give it the one associated with this marker's rel attribute
+		if(typeof evpoprelattr !== 'undefined' && evpoprelattr !== false) {
+			$(this).attr('rel',evrelattr);
+		}
+		
+		if($(this).length && evrelattr == evpoprelattr) {
 			//setTimeout(function () {
 				console.log('event marker clicked');
 				//evpopuphtml= $(this).html();
@@ -393,6 +404,7 @@ $(document.body).on('click','.event-marker', function(){
 				observer.observe(obj);
 				//observer.observe($(this).html());
 			//}, 400);
+			return false;
 		}
 	});
 });
