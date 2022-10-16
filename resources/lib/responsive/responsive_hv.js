@@ -324,7 +324,6 @@ $(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
 		$('#event-popup_mob').css('display','none');
 		$('#event-popup_mob').html('');
 		mobpopupopen= 'no';
-		$('.event-popup').hide();
 	}
 });
 
@@ -374,7 +373,7 @@ const thiseventclass = '#sandbox #moving-container .event-popup';
 let evrelattr='';
 let evpoprelattr='';
 
-$(document.body).on('click','.event-marker', function(){
+$(document.body).on('mousedown','.event-marker', function(){
 	
 	// get this event marker's rel attribute
 	evrelattr = $(this).attr('rel');
