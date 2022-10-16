@@ -397,7 +397,8 @@ $(document.body).on('click','.event-marker', function(){
 		console.log('evpoprelattr = '+evpoprelattr);
 		
 		// if popup doesn't have a rel attribute, give it the one associated with this marker's rel attribute
-		if(evpoprelattr === undefined || evpoprelattr === false || evpoprelattr === null) {
+		//if(evpoprelattr === undefined || evpoprelattr === false || evpoprelattr === null) {
+		if(!$(obj).attr('rel')) {
 			$(obj).attr('rel',evpoprelattr);
 		}
 		
