@@ -398,9 +398,9 @@ $(document.body).on('click','.event-marker', function(){
 		
 		// if popup doesn't have a rel attribute, give it the one associated with this marker's rel attribute
 		//if(evpoprelattr === undefined || evpoprelattr === false || evpoprelattr === null) {
-		if(!$(obj).attr('rel')) {
+		//if(!$(obj).attr('rel')) {
 			$(obj).attr('rel',evpoprelattr);
-		}
+		//}
 		
 		if($(this).length && evrelattr == evpoprelattr) {
 			//setTimeout(function () {
