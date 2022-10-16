@@ -320,10 +320,14 @@ $(function() {
 let mobpopupopen= 'no';
 
 $(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
+//$(document.body).on('mousedown', '#toptouchlayer, .close-button' ,function(){
 	if(mobpopupopen == 'yes') {
-		$('#event-popup_mob').css('display','none');
-		$('#event-popup_mob').html('');
-		mobpopupopen= 'no';
+		setTimeout(function(){
+			$('#event-popup_mob').css('display','none');
+			//$('#invispopupbg').css('display','block');
+			$('#event-popup_mob').html('');
+			mobpopupopen= 'no';
+		}, 500);
 	}
 });
 
