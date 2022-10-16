@@ -324,7 +324,7 @@ $(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
 		$('#event-popup_mob').css('display','none');
 		$('#event-popup_mob').html('');
 		mobpopupopen= 'no';
-		//$('.event-popup').css('display','none');
+		$('.event-popup').css('display','none');
 	}
 });
 
