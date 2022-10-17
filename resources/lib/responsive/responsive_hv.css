@@ -423,32 +423,32 @@
 		display:none;
 	}
 	
-	.event-popup_mob h1 {
+	#event-popup_mob h1 {
     display: inline-block;
     font-size: 14px;
     font-weight: bold;
     margin: -3px 0 6px 0;
 }
 
-.event-popup_mob .close-button {
+#event-popup_mob .close-button {
     position: absolute;
     right: 2px;
     top: 0;
 }
 
-.event-popup_mob .param-label {
+#event-popup_mob .param-label {
     float: right;
     text-align: right;
     font-weight: bold;
 }
 
-.event-popup_mob .container {
+#event-popup_mob .container {
     color: #DDD;
     font-family: Arial,Helvetica,sans-serif;
     position: relative;
 }
 
-.event-popup_mob .param-container {
+#event-popup_mob .param-container {
     width: 120px;
     position: relative;
     text-align: right;
@@ -457,7 +457,7 @@
     text-overflow: ellipsis;
 }
 
-.event-popup_mob .value-container {
+#event-popup_mob .value-container {
     width: 260px;
     position: absolute;
     top: 0;
@@ -467,19 +467,19 @@
     text-overflow: ellipsis;
 }
 
-.event-popup_mob .param-value {
+#event-popup_mob .param-value {
     float: left;
     text-align: left;
     font-family: monospace;
 }
 
-.event-popup_mob .btn-container {
+#event-popup_mob .btn-container {
     color: #DDD;
     margin: 7px 0 3px -3px;
     position: relative;
 }
 
-.event-popup_mob .btn-label {
+#event-popup_mob .btn-label {
     font-family: Arial,Helvetica,sans-serif;
     font-size: 10px;
     font-weight: bold;
