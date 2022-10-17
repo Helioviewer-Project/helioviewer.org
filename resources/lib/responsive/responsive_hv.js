@@ -168,6 +168,9 @@ $(function() {
 	
 	// click mobile menu items
 	$(".hvmobmenuitems").click(function(){
+		
+		console.log('.hvmobmenuitems clicked');
+		
 		currdsopen= 'nonexistentds';
 		$(".hamburger").removeClass("is-active");
 		zeynep.close();
