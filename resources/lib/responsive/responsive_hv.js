@@ -185,9 +185,9 @@ $(function() {
 		var thisdrawersect2= $(this).attr('drawersec');
 		$('#'+thisdrawersect2+' .hvmobmenuclose_div').css('display','block');
 		
-		document.getElementById(thisdrawersect2).style.display= "block";
-		$('#'+thisdrawersect2).css('display','block');
-		$('#'+thisdrawersect2).show();
+		
+		$('#'+thisdrawersect2).delay(400).css('display','block');
+		
 		
 			switch(thisdrawersect2) {
 				case 'hv-drawer-news':
