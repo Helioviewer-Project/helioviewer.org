@@ -218,6 +218,7 @@ $(function() {
 	
 	// click mobile Get Help With Helioviewer menu items
 	// drawersec="hv-drawer-glossary"
+	/*
 	$(".hvmobmenuitems").click(function(){
 		let testytesterson='test';
 		
@@ -236,7 +237,8 @@ $(function() {
 			case 
 		}*/
 		
-	});		
+	});
+*/	
 	
 
 	// when datetime arrows are clicked
@@ -333,7 +335,7 @@ $(function() {
 
 //$(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
 
-/*
+
 
 $(document.body).on('click', '.close-button' ,function(){
 	if(mobpopupopen == 'yes') {
@@ -403,7 +405,7 @@ $(document.body).on('click','.event-marker', function(){
 		$(".periodpicker_timepicker_dialog").removeClass("visible");
 		$("#time").blur(); 
 	});
-*/
+
 
 
 
