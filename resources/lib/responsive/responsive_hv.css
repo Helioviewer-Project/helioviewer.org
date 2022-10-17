@@ -489,7 +489,7 @@
 }
 	
 	#event-popup_mob .close-button {
-		background: black;
+		background: transparent;
 		background-image: url('../../images/mobile/evpopup_clostbtn1.png');
 		width: 24px;
 		height: 24px;
