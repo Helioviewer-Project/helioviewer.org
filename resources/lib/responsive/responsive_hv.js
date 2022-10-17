@@ -183,9 +183,11 @@ $(function() {
 		$('#'+thisdrawersect2+' .hvmobmenuclose_div').css('display','block');
 		
 		$('#'+thisdrawersect2).css('display','block');
+		$('#'+thisdrawersect2).show();
+		
 			switch(thisdrawersect2) {
 				case 'hv-drawer-news':
-					console.log('hv-drawer-news open');
+					console.log('#'+thisdrawersect2+' .hvmobmenutitle_div');
 					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Helioviewer Project Announcements');
 					break;
 				case 'hv-drawer-youtube':
