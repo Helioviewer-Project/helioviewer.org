@@ -95,6 +95,9 @@ $(function() {
 	}
   })
 
+	// close event pop-ups
+	let mobpopupopen= 'no';
+
 
 	// click datasource items
 	
@@ -182,6 +185,7 @@ $(function() {
 		var thisdrawersect2= $(this).attr('drawersec');
 		$('#'+thisdrawersect2+' .hvmobmenuclose_div').css('display','block');
 		
+		document.getElementById(thisdrawersect2).style.display= "block";
 		$('#'+thisdrawersect2).css('display','block');
 		$('#'+thisdrawersect2).show();
 		
@@ -326,8 +330,7 @@ $(function() {
 		zeynep.close();
 	});
 
-// close event pop-ups
-let mobpopupopen= 'no';
+
 
 //$(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
 $(document.body).on('click', '.close-button' ,function(){
