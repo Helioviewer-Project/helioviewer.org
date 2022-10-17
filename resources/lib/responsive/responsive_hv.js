@@ -169,8 +169,6 @@ $(function() {
 	// click mobile menu items
 	$(".hvmobmenuitems").click(function(){
 		
-		console.log('.hvmobmenuitems clicked');
-		
 		currdsopen= 'nonexistentds';
 		$(".hamburger").removeClass("is-active");
 		zeynep.close();
@@ -183,9 +181,11 @@ $(function() {
 		
 		var thisdrawersect2= $(this).attr('drawersec');
 		$('#'+thisdrawersect2+' .hvmobmenuclose_div').css('display','block');
+		
 		$('#'+thisdrawersect2).css('display','block');
 			switch(thisdrawersect2) {
 				case 'hv-drawer-news':
+					console.log('hv-drawer-news open');
 					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Helioviewer Project Announcements');
 					break;
 				case 'hv-drawer-youtube':
