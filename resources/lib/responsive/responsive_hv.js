@@ -320,7 +320,7 @@ $(function() {
 let mobpopupopen= 'no';
 
 //$(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
-$(document.body).on('click', '.close-button, #invispopupbg' ,function(){
+$(document.body).on('click', '.close-button' ,function(){
 	if(mobpopupopen == 'yes') {
 		$('#invispopupbg').css('display','none');
 		$('#event-popup_mob').css('display','none');
