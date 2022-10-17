@@ -1,4 +1,4 @@
-// onload 
+// START onload 
 $(function() {
 
 	// positioning movie player
@@ -333,6 +333,8 @@ $(function() {
 
 //$(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
 
+/*
+
 $(document.body).on('click', '.close-button' ,function(){
 	if(mobpopupopen == 'yes') {
 		//$('#invispopupbg').css('display','none');
@@ -345,7 +347,7 @@ $(document.body).on('click', '.close-button' ,function(){
 
 // trigger HEK Data menu
 
-/*
+
 
 // START detect event pop-ups and paste content into redesigned mobile pop-up
 let evpopuphtml='';
@@ -401,10 +403,13 @@ $(document.body).on('click','.event-marker', function(){
 		$(".periodpicker_timepicker_dialog").removeClass("visible");
 		$("#time").blur(); 
 	});
-
-});
-
 */
+
+
+
+}); // END onload
+
+
 
 
 
