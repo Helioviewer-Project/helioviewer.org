@@ -488,7 +488,11 @@
     margin: 0 6px 0 1px;
 }
 	
-	
+	#event-popup_mob .close-button {
+		background-image: url('../../images/mobile/evpopup_clostbtn1.png');
+		width: 24px;
+		height: 24px;
+	}
 	
 	
 	
