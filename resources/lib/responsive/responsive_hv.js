@@ -365,7 +365,7 @@ $(document.body).on('click','.event-marker', function(){
 			evpopuphtml= $('.event-popup[rel="'+evpoprelattr+'"]').html();
 			$('#event-popup_mob').html('<div>'+evpopuphtml+'</div>');
 			if(mobpopupopen== 'no') {
-				$('#invispopupbg').css('display','block');
+				//$('#invispopupbg').css('display','block');
 				$('#event-popup_mob').css('display','block');
 				mobpopupopen= 'yes';
 			}
