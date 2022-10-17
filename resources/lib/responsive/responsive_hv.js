@@ -103,6 +103,11 @@ $(function() {
 		// close all ui-dialog windows
 		$('.ui-dialog').css('display','none');
 		
+		// close event-popup window
+		$('#event-popup_mob').css('display','none');
+		$('#event-popup_mob').html('');
+		mobpopupopen= 'no';
+		
 		document.getElementById("mobdrawertopanchor").scrollIntoView();
 		
 		var thisdrawersect= $(this).attr('drawersec');
@@ -322,7 +327,7 @@ let mobpopupopen= 'no';
 //$(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
 $(document.body).on('click', '.close-button' ,function(){
 	if(mobpopupopen == 'yes') {
-		$('#invispopupbg').css('display','none');
+		//$('#invispopupbg').css('display','none');
 		$('#event-popup_mob').css('display','none');
 		$('#event-popup_mob').html('');
 		mobpopupopen= 'no';
