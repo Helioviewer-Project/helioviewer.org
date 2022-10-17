@@ -466,7 +466,7 @@ echo $hvdesktopcsshides;
 <!-- END mobile bottom calendar tool -->	
 	
 <!-- START Mobile Event Popup -->
-<div id="invispopupbg"></div>
+<!--<div id="invispopupbg"></div>-->
 <div id="event-popup_mob"></div>
 <!-- END Mobile Event Popup -->
 	
