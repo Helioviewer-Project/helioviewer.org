@@ -183,11 +183,10 @@ $(function() {
 		$('.hvmobdstabs span').css({'color':'silver'});
 		
 		var thisdrawersect2= $(this).attr('drawersec');
+		
+		$('#'+thisdrawersect2).css('display','block');
 		$('#'+thisdrawersect2+' .hvmobmenuclose_div').css('display','block');
-		
-		
-		$('#'+thisdrawersect2).delay(400).css('display','block');
-		
+
 		
 			switch(thisdrawersect2) {
 				case 'hv-drawer-news':
