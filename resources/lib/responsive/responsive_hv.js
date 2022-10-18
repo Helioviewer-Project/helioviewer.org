@@ -432,7 +432,12 @@ $(document.body).on('click','#event-popup_mob .event-search-external:nth-child(2
 	closeMobEventPopup();
 });
 
-
+// trigger event popup click to copy start/end times to data download 
+$(document.body).on('click','#event-popup_mob .copy-to-data', function(){
+	let evIDtoaccess= $('#event-popup_mob').attr('rel');
+	$('#'+evIDtoaccess+' .copy-to-data').trigger("click");
+	closeMobEventPopup();
+});
 
 
 
