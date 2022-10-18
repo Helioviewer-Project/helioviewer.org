@@ -352,6 +352,7 @@ $(document.body).on('click', '.close-button' ,function(){
 
 
 // START detect event pop-ups and paste content into redesigned mobile pop-up
+let evpopupid=1;
 let evpopuphtml='';
 let evrelattr='';
 let evpoprelattr='';
@@ -373,6 +374,7 @@ $(document.body).on('click','.event-marker', function(){
 			console.log('detected undefined');
 			evpoprelattr=evrelattr;
 			$(this).attr('rel',evpoprelattr);
+			$(this).attr('id','event-popup-'+evpopupid);
 		}
 		
 		// if this popup is in the DOM and is bound to the event marker
@@ -396,8 +398,17 @@ $(document.body).on('click','.event-marker', function(){
 		}
 	});
 });
-	
 // END detect event pop-ups and paste content into redesigned mobile pop-up
+
+
+// trigger clicks to original popups
+/*
+$(document.body).on('click','.event-marker', function(){
+	
+});
+*/
+	
+
 
 
 	// on orientation change [portait / landscape]
