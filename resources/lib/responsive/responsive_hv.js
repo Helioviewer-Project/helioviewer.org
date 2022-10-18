@@ -332,22 +332,20 @@ $(function() {
 	});
 
 
+// Event Popups
 
-//$(document.body).on('click', '#toptouchlayer, .close-button' ,function(){
-
-
+function closeMobEventPopup() {
+	$('#event-popup_mob').css('display','none');
+	$('#event-popup_mob').html('');
+	mobpopupopen= 'no';
+}
 
 $(document.body).on('click', '.close-button' ,function(){
 	if(mobpopupopen == 'yes') {
 		//$('#invispopupbg').css('display','none');
-		$('#event-popup_mob').css('display','none');
-		$('#event-popup_mob').html('');
-		mobpopupopen= 'no';
+		closeMobEventPopup();
 	}
 });
-
-
-// trigger HEK Data menu
 
 
 
@@ -392,8 +390,7 @@ $(document.body).on('click','.event-marker', function(){
 			}
 			else if(mobpopupopen== 'yes') {
 				//$('#invispopupbg').css('display','none');
-				$('#event-popup_mob').css('display','none');
-				mobpopupopen= 'no';
+				closeMobEventPopup();
 			}
 			//observer.observe(obj);
 			return false;
@@ -405,13 +402,41 @@ $(document.body).on('click','.event-marker', function(){
 
 // trigger clicks to original popups
 // .event-info, .event-create-movie, .event-search-external, .copy-to-data
+
+// trigger event popup click to HEK info
 $(document.body).on('click','#event-popup_mob .event-info', function(){
 	let evIDtoaccess= $('#event-popup_mob').attr('rel');
 	console.log('#'+evIDtoaccess+' .event-info');
 	$('#'+evIDtoaccess+' .event-info').trigger("click");
+	closeMobEventPopup();
 });
 
-	
+// trigger event popup click to create movie 
+$(document.body).on('click','#event-popup_mob .event-create-movie', function(){
+	let evIDtoaccess= $('#event-popup_mob').attr('rel');
+	$('#'+evIDtoaccess+' .event-create-movie').trigger("click");
+	closeMobEventPopup();
+});
+
+// trigger event popup click to search (1) 
+$(document.body).on('click','#event-popup_mob .event-search-external:nth-child(1)', function(){
+	let evIDtoaccess= $('#event-popup_mob').attr('rel');
+	$('#'+evIDtoaccess+' .event-search-external')[0].trigger("click");
+	closeMobEventPopup();
+});
+
+// trigger event popup click to search (2) 
+$(document.body).on('click','#event-popup_mob .event-search-external:nth-child(2)', function(){
+	let evIDtoaccess= $('#event-popup_mob').attr('rel');
+	$('#'+evIDtoaccess+' .event-search-external')[1].trigger("click");
+	closeMobEventPopup();
+});
+
+
+
+
+
+
 
 
 
