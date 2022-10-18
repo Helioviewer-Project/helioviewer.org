@@ -375,6 +375,7 @@ $(document.body).on('click','.event-marker', function(){
 			evpoprelattr=evrelattr;
 			$(this).attr('rel',evpoprelattr);
 			$(this).attr('id','event-popup-'+evpopupid);
+			evpopupid++;
 		}
 		
 		// if this popup is in the DOM and is bound to the event marker
