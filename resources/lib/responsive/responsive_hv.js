@@ -387,6 +387,7 @@ $(document.body).on('click','.event-marker', function(){
 			if(mobpopupopen== 'no') {
 				//$('#invispopupbg').css('display','block');
 				$('#event-popup_mob').css('display','block');
+				$('#event-popup_mob').attr('rel',$(this).attr('id'));
 				mobpopupopen= 'yes';
 			}
 			else if(mobpopupopen== 'yes') {
@@ -403,11 +404,12 @@ $(document.body).on('click','.event-marker', function(){
 
 
 // trigger clicks to original popups
-/*
-$(document.body).on('click','.event-marker', function(){
-	
+// .event-info, .event-create-movie, .event-search-external, .copy-to-data
+$(document.body).on('click','#event-popup_mob .event-info', function(){
+	let evIDtoaccess= $(this).attr('rel');
+	$('#'+evIDtoaccess+' .event-info').trigger("click");
 });
-*/
+
 	
 
 
