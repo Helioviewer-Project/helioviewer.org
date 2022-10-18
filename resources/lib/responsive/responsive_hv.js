@@ -407,6 +407,7 @@ $(document.body).on('click','.event-marker', function(){
 // .event-info, .event-create-movie, .event-search-external, .copy-to-data
 $(document.body).on('click','#event-popup_mob .event-info', function(){
 	let evIDtoaccess= $(this).attr('rel');
+	console.log('#'+evIDtoaccess+' .event-info');
 	$('#'+evIDtoaccess+' .event-info').trigger("click");
 });
 
