@@ -1254,13 +1254,13 @@
 }
 
 #glossary-dialog {
-	width: 100% !important;
+	width: 90% !important;
 	height: 100% !important;
 	margin-top: 40px !important;
 }
 
 #about-dialog {
-	height: 100% !important;
+	height: 90% !important;
     position: absolute !important;
     top: 0px !important;
     left: 0px !important;
