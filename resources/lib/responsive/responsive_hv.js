@@ -92,6 +92,7 @@ $(function() {
 	else {
 		zeynep.open();
 		$(".hamburger").addClass("is-active");
+		$(".hv-drawer-right").css('display','none');
 	}
   })
 
