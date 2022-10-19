@@ -34,7 +34,7 @@ $(function() {
 		$('#hv-drawer-movies').attr('style', 'display: none');
 	}
 	
-	setTimeout(function(){closeallHVwindows()},400);
+	setTimeout(function(){closeallHVwindows()},100);
 
 
 	// closing pull-out menu windows
