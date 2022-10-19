@@ -364,7 +364,7 @@ let evrelattr='';
 let evpoprelattr='';
 
 // when event markers are clicked
-$(document.body).on('click','.event-marker', function(){
+$(document.body).on('mousedown touchstart','.event-marker', function(){ // 'click'
 	
 	// get this event marker's rel attribute
 	evrelattr = $(this).attr('rel');
