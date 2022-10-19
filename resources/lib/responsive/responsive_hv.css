@@ -1245,6 +1245,28 @@
 
 /* END datetime field */
 
+.ui-dialog {
+	position: absolute !important;
+    height: 100% !important;
+    width: 100% !important;
+    top: 0px !important;
+    left: 0px !important;
+}
+
+#glossary-dialog {
+	width: 100% !important;
+	height: 100% !important;
+	margin-top: 40px !important;
+}
+
+#about-dialog {
+	height: 100% !important;
+    position: absolute !important;
+    top: 0px !important;
+    left: 0px !important;
+    margin-top: 60px !important;
+}
+
 
 }
 
