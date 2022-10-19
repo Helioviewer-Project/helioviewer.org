@@ -216,6 +216,12 @@ $(function() {
 				case 'hv-drawer-share':
 					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Share Viewport On Social Media');
 					break;
+				case 'hv-drawer-about':
+					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('About Helioviewer');
+					break;
+				case 'hv-drawer-glossary':
+					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Visual Glossary');
+					break;
 			}
 		document.getElementById(thisdrawersect2).scrollIntoView();
 		
