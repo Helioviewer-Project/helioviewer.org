@@ -443,7 +443,7 @@ $(document.body).on('click','#event-popup_mob .event-create-movie', function(){
 // trigger event popup click to search (1) 
 $(document.body).on('click','#event-popup_mob .event-search-external', function(){
 	//console.log($(this).attr('data-url'));
-	window.location.href = $(this).attr('data-url');
+	window.open($(this).attr('data-url'), '_blank');
 	//let evIDtoaccess= $('#event-popup_mob').attr('rel');
 	//$('#'+evIDtoaccess+' div.event-search-external:nth-child(1)').trigger("click");
 	//closeMobEventPopup();
