@@ -186,6 +186,7 @@ $(function() {
 		$('.hv-drawer-right').css({'display':'none'});
 		$('#hv-drawer-left').css('display','none');
 		$('#hv-drawer-left').attr('style', 'display: none');
+		$('.ui-dialog').css('display','none');
 		
 		$('.hvmobdstabs .hvmobds_icon').css('filter','invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%)');
 		$('.hvmobdstabs span').css({'color':'silver'});
