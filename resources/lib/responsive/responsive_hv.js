@@ -26,11 +26,15 @@ $(function() {
 
 
 	// force-close right drawers (add drawers as necessary)
-	$('#hv-drawer-left').css('display','none');
-	$('#hv-drawer-data').css('display','none');
-	$('.hv-drawer-right').css('display','none');
-	$('#hv-drawer-movies').css('display','none');
-	$('#hv-drawer-movies').attr('style', 'display: none');
+	function closeallHVwindows() {
+		$('#hv-drawer-left').css('display','none');
+		$('#hv-drawer-data').css('display','none');
+		$('.hv-drawer-right').css('display','none');
+		$('#hv-drawer-movies').css('display','none');
+		$('#hv-drawer-movies').attr('style', 'display: none');
+	}
+	
+	setTimeout(function(){closeallHVwindows()},400);
 
 
 	// closing pull-out menu windows
