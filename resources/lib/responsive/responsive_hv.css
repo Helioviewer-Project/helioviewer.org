@@ -1246,7 +1246,6 @@
 /* END datetime field */
 
 .ui-dialog {
-	position: absolute !important;
     height: 100% !important;
     width: 100% !important;
     top: 0px !important;
