@@ -217,9 +217,11 @@ $(function() {
 					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Share Viewport On Social Media');
 					break;
 				case 'hv-drawer-about':
+					$('.ui-dialog[aria-describedby="about-dialog"]').css('display','block');
 					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('About Helioviewer');
 					break;
 				case 'hv-drawer-glossary':
+					$('.ui-dialog[aria-describedby="glossary-dialog"]').css('display','block'); //aria-describedby="glossary-dialog"
 					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Visual Glossary');
 					break;
 			}
