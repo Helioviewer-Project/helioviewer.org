@@ -1259,6 +1259,15 @@
 	margin-top: 40px !important;
 }
 
+#glossary-contents {
+	width: 100%;
+}
+
+table#glossary-contents td {
+    max-width: 260px;
+    display: block;
+}
+
 #about-dialog {
 	width: 90%;
 	height: 100% !important;
@@ -1365,6 +1374,10 @@
 		top: 40px !important;
 		left: 112px !important;		
 	}
+	
+	table#glossary-contents td {
+		max-width: 300px;
+	}	
 	
 
 }
