@@ -441,20 +441,24 @@ $(document.body).on('click','#event-popup_mob .event-create-movie', function(){
 });
 
 // trigger event popup click to search (1) 
-$(document.body).on('click','#event-popup_mob div.event-search-external:nth-child(1)', function(){
-	console.log('1st search clicked'+' '+$(this).attr('data-url'));
-	let evIDtoaccess= $('#event-popup_mob').attr('rel');
-	$('#'+evIDtoaccess+' div.event-search-external:nth-child(1)').trigger("click");
-	closeMobEventPopup();
+$(document.body).on('click','#event-popup_mob .event-search-external', function(){
+	//console.log($(this).attr('data-url'));
+	window.location.href = $(this).attr('data-url');
+	//let evIDtoaccess= $('#event-popup_mob').attr('rel');
+	//$('#'+evIDtoaccess+' div.event-search-external:nth-child(1)').trigger("click");
+	//closeMobEventPopup();
 });
 
 // trigger event popup click to search (2) 
-$(document.body).on('click','#event-popup_mob div.event-search-external:nth-child(2)', function(){
+/*
+$(document.body).on('click','#event-popup_mob .event-search-external:nth-child(2)', function(){
 	console.log('2nd search clicked'+' '+$(this).attr('data-url'));
+	window.location.href = $(this).attr('data-url');
 	let evIDtoaccess= $('#event-popup_mob').attr('rel');
-	$('#'+evIDtoaccess+' div.event-search-external:nth-child(2)').trigger("click");
+	//$('#'+evIDtoaccess+' div.event-search-external:nth-child(2)').trigger("click");
 	closeMobEventPopup();
 });
+*/
 
 // trigger event popup click to copy start/end times to data download 
 $(document.body).on('click','#event-popup_mob .copy-to-data', function(){
