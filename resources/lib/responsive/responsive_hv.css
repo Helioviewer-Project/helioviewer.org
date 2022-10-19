@@ -1268,6 +1268,11 @@ table#glossary-contents td {
     display: block;
 }
 
+#glossary-contents img, #glossary-contents video, #glossary-contents .youtube-player {
+    width: 90%;
+    height: auto;
+}
+
 #about-dialog {
 	width: 90%;
 	height: 100% !important;
