@@ -465,7 +465,7 @@ let thiscbtype='';
 // when celestial bodies are clicked
 $(document.body).on('mousedown','.celestial-bodies-label', function(){
 	console.log('cb clicked');
-	/*
+	
 	closeMobEventPopup();
 	
 	// this celestial body label ID
@@ -498,7 +498,7 @@ $(document.body).on('mousedown','.celestial-bodies-label', function(){
 
 	cbpopuphtml= $('#'+cbgetpopupid).html();
 	$('#event-popup_mob').html(cbpopuphtml);
-	*/
+	
 });
 
 
