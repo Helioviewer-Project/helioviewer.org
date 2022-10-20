@@ -495,7 +495,9 @@
 		height: 24px;
 	}
 	
-	
+.celestial-bodies-label {
+	z-index: 11;
+}
 	
 	
 	.hek_ref_txt1 {
