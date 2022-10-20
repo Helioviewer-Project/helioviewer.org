@@ -442,23 +442,8 @@ $(document.body).on('click','#event-popup_mob .event-create-movie', function(){
 
 // trigger event popup click to search (1) 
 $(document.body).on('click','#event-popup_mob .event-search-external', function(){
-	//console.log($(this).attr('data-url'));
 	window.open($(this).attr('data-url'), '_blank');
-	//let evIDtoaccess= $('#event-popup_mob').attr('rel');
-	//$('#'+evIDtoaccess+' div.event-search-external:nth-child(1)').trigger("click");
-	//closeMobEventPopup();
 });
-
-// trigger event popup click to search (2) 
-/*
-$(document.body).on('click','#event-popup_mob .event-search-external:nth-child(2)', function(){
-	console.log('2nd search clicked'+' '+$(this).attr('data-url'));
-	window.location.href = $(this).attr('data-url');
-	let evIDtoaccess= $('#event-popup_mob').attr('rel');
-	//$('#'+evIDtoaccess+' div.event-search-external:nth-child(2)').trigger("click");
-	closeMobEventPopup();
-});
-*/
 
 // trigger event popup click to copy start/end times to data download 
 $(document.body).on('click','#event-popup_mob .copy-to-data', function(){
@@ -468,8 +453,51 @@ $(document.body).on('click','#event-popup_mob .copy-to-data', function(){
 });
 
 
+// START Celestial Bodies popups celestial-bodies-label
+
+let cbpopuphtml= '';
+let thiscblabelid='';
+let thiscbtype='';
+
+// when celestial bodies are clicked
+$(document.body).on('click','.celestial-bodies-label', function(){
+	closeMobEventPopup();
+	
+	// this celestial body label ID
+	thiscblabelid= $(this).attr('id');
+	
+	// get the celestial body
+	if(thiscblabelid.search("mercury")>0){ thiscbtype='mercury'; }
+	else if(thiscblabelid.search("venus")>0) { thiscbtype='venus'; }
+	else if(thiscblabelid.search("earth")>0) { thiscbtype='earth'; }
+	else if(thiscblabelid.search("mars")>0) { thiscbtype='mars'; }
+	else if(thiscblabelid.search("jupiter")>0) { thiscbtype='jupiter'; }
+	else if(thiscblabelid.search("saturn")>0) { thiscbtype='saturn'; }
+	else if(thiscblabelid.search("uranus")>0) { thiscbtype='uranus'; }
+	else if(thiscblabelid.search("psp")>0) { thiscbtype='psp'; }
+	
+	// if soho
+	if(thiscblabelid.search("soho")) {
+		cbgetpopupid= 'soho_'+thiscbtype+'_popup';
+	}
+	
+	// if stereo-a
+	else if(thiscblabelid.search("stereo_a")) {
+		cbgetpopupid= 'stereo_a_'+thiscbtype+'_popup';
+	}
+	
+	// if stereo-b
+	else if(thiscblabelid.search("stereo_b")) {
+		cbgetpopupid= 'stereo_b_'+thiscbtype+'_popup';
+	}
+
+	cbpopuphtml= $('#'+cbgetpopupid).html();
+	$('#event-popup_mob').html(cbpopuphtml);
+	
+});
 
 
+// END Celestial Bodies popups 
 
 
 
