@@ -495,6 +495,10 @@
 		height: 24px;
 	}
 	
+#bodies-container .body-popup {
+	display:none;
+}
+
 .celestial-bodies-label {
 	z-index: 11;
 }
