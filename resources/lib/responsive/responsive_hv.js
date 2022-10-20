@@ -498,6 +498,29 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 
 	cbpopuphtml= $('#'+cbgetpopupid).html();
 	$('#event-popup_mob').html(cbpopuphtml);
+	
+	$('#event-popup_mob .container').css({
+		'clear':'both',
+		'position':'relative'
+	});
+	
+	$('#event-popup_mob .param-container').css({
+		'clear': 'both',
+		'float': 'left',
+		'width': '50%',
+		'position': 'relative',
+		'text-align': 'left'
+	});
+	
+	$('#event-popup_mob .value-container').css({
+		'float': 'right',
+		'width': '50%'
+	});
+	
+	$('#event-popup_mob .param-label').css({
+		'float': 'unset'
+	});
+	
 	$('#event-popup_mob').css('display','block');
 	
 });
