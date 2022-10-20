@@ -357,6 +357,7 @@ $(function() {
 // Event Popups
 
 function closeMobEventPopup() {
+	$('#event-popup_mob').attr('style','');
 	$('#event-popup_mob').css('display','none');
 	$('#event-popup_mob').html('');
 	mobpopupopen= 'no';
@@ -467,6 +468,7 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	console.log('cb clicked');
 	
 	closeMobEventPopup();
+	mobpopupopen= 'no';
 	
 	// this celestial body label ID
 	thiscblabelid= $(this).attr('id');
@@ -499,6 +501,8 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	cbpopuphtml= $('#'+cbgetpopupid).html();
 	$('#event-popup_mob').html(cbpopuphtml);
 	
+	mobpopupopen= 'yes';
+	
 	$('#event-popup_mob .container').css({
 		'clear':'both',
 		'position':'relative'
@@ -519,6 +523,10 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	
 	$('#event-popup_mob .param-label').css({
 		'float': 'unset'
+	});
+	
+	$('#event-popup_mob .plane-position-container').css({
+		'clear':'both'
 	});
 	
 	$('#event-popup_mob').css('display','block');
