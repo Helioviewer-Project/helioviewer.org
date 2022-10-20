@@ -53,7 +53,7 @@ var HelioviewerViewport = Class.extend(
 
         this.pinchDetector = new PinchDetector();
         this.helioZoom = new HelioviewerZoomer(this.pinchDetector);
-        this.touchMover = new TouchMover(document.getElementById('moving-container'), this.pinchDetector, $.proxy(this.movementHelper.moveViewport, this.movementHelper));
+        this.touchMover = new TouchMover(document.getElementById('sandbox'), this.pinchDetector, $.proxy(this.movementHelper.moveViewport, this.movementHelper));
 // toptouchlayer
         this.loadDataSources();
         this.loadEventTypes();
