@@ -457,10 +457,12 @@ $(document.body).on('click','#event-popup_mob .copy-to-data', function(){
 
 let cbpopuphtml= '';
 let thiscblabelid='';
+let cbgetpopupid='';
 let thiscbtype='';
 
 // when celestial bodies are clicked
 $(document.body).on('click','.celestial-bodies-label', function(){
+	console.log('cb clicked');
 	closeMobEventPopup();
 	
 	// this celestial body label ID
