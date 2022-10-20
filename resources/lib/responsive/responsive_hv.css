@@ -496,7 +496,7 @@
 	}
 	
 #bodies-container .body-popup {
-	display:none;
+	display:none !important;
 }
 
 .celestial-bodies-label {
