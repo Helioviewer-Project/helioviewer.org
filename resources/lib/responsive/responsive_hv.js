@@ -455,6 +455,8 @@ $(document.body).on('click','#event-popup_mob .copy-to-data', function(){
 
 // START Celestial Bodies popups celestial-bodies-label
 
+$('.celestial-bodies-label').css('z-index','11');
+
 let cbpopuphtml= '';
 let thiscblabelid='';
 let cbgetpopupid='';
