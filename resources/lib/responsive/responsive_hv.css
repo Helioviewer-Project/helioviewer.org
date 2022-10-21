@@ -556,7 +556,8 @@
 	}
 	
 	.hv-drawer-right {
-		top: 46px;
+		/*top: 46px;*/
+		top: 0px;
 		width: 100% !important;
 		height: 800px !important;
 		background-image: url(../../images/backmobilemenubg2.png);
@@ -830,7 +831,8 @@
 	}
 
 	#hv-header {
-		position: absolute;
+		/*position: absolute;*/
+		position: fixed;
 		top: 0px;
 		height: 40px;
 		min-width: 300px !important;
