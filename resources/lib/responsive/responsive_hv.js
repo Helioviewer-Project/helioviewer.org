@@ -31,6 +31,7 @@ $(function() {
 
 	// check if safari browser
 	// Detect Safari
+	let userAgentString= navigator.userAgent;
 	let safariAgent = userAgentString.indexOf("Safari") > -1;
 	  
 	// Discard Safari since it also matches Chrome
