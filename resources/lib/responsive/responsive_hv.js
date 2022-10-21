@@ -29,6 +29,13 @@ $(function() {
 		$('.hvmobdstabs span').css({'color':'silver'});
 	}
 
+	// check if safari browser
+	// Detect Safari
+	let safariAgent = userAgentString.indexOf("Safari") > -1;
+	  
+	// Discard Safari since it also matches Chrome
+	if ((chromeAgent) && (safariAgent)) safariAgent = false;
+
 
 	// force-close right drawers (add drawers as necessary)
 	function closeallHVwindows() {
@@ -156,7 +163,9 @@ $(function() {
 				dswindowopen='yes';
 			}
 			
-		}		
+		}
+		
+
 		
 		// if it's not already open, close currently open drawer and open correct one
 		if(thisdrawersect != currdsopen) {
@@ -181,6 +190,10 @@ $(function() {
 			currdsopen= thisdrawersect;
 			dswindowopen='yes';
 		}
+		
+		if(safariAgent) {
+			DSsilverizeIcons();
+		}		
 
 	});
 	
