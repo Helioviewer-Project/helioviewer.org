@@ -547,9 +547,9 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	console.log(document.getElementById(cbgetpopupid));
 	
 	//cbpopuphtml= $('#'+cbgetpopupid).html();
-	cbpopuphtml= document.getElementById(cbgetpopupid).innerHTML
+	//cbpopuphtml= document.getElementById(cbgetpopupid).innerHTML;
 	
-	$('#event-popup_mob').delay(1000).html(cbpopuphtml);
+	$('#event-popup_mob').delay(1000).html('#'+cbpopuphtml);
 	
 	mobpopupopen= 'yes';
 	
