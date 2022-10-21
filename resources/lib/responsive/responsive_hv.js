@@ -529,18 +529,18 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	else if(thiscblabelid.search("psp")>0) { thiscbtype='psp'; }
 	
 	// if soho
-	if(thiscblabelid.search("soho")) {
+	if(thiscblabelid.search("soho")>0) {
 		cbgetpopupid= 'soho_'+thiscbtype+'_popup';
 	}
 	
 	// if stereo-a
-	else if(thiscblabelid.search("stereo_a")) {
+	else if(thiscblabelid.search("stereo_a")>0) {
 		cbgetpopupid= 'stereo_a_'+thiscbtype+'_popup';
 		
 	}
 	
 	// if stereo-b
-	else if(thiscblabelid.search("stereo_b")) {
+	else if(thiscblabelid.search("stereo_b")>0) {
 		cbgetpopupid= 'stereo_b_'+thiscbtype+'_popup';
 	}
 
