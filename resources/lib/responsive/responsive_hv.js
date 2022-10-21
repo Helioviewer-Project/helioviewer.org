@@ -511,14 +511,15 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	$('#event-popup_mob .param-container').css({
 		'clear': 'both',
 		'float': 'left',
-		'width': '50%',
+		'width': 'auto',
 		'position': 'relative',
 		'text-align': 'left'
 	});
 	
 	$('#event-popup_mob .value-container').css({
 		'float': 'right',
-		'width': '50%'
+		'left': '196px',
+		'width': '120px'
 	});
 	
 	$('#event-popup_mob .param-label').css({
