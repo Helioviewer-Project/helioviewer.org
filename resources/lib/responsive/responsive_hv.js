@@ -553,24 +553,25 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	else if(thiscblabelid.search("psp")>0) { thiscbtype='psp'; }
 	
 	// if soho
-	if(thiscblabelid.search("soho")>0) {
+	if(thiscblabelid.search("soho")>=0) {
 		cbgetpopupid= 'soho_'+thiscbtype+'_popup';
 	}
 	
 	// if stereo-a
-	else if(thiscblabelid.search("stereo_a")>0) {
+	else if(thiscblabelid.search("stereo_a")>=0) {
 		cbgetpopupid= 'stereo_a_'+thiscbtype+'_popup';
 		
 	}
 	
 	// if stereo-b
-	else if(thiscblabelid.search("stereo_b")>0) {
+	else if(thiscblabelid.search("stereo_b")>=0) {
 		cbgetpopupid= 'stereo_b_'+thiscbtype+'_popup';
 	}
 
 
 	console.log(cbgetpopupid);
 	
+	/*
 	imageLoaded('#'+cbgetpopupid, function(el) {
 
 		//do stuff here
@@ -578,7 +579,10 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 		$('#event-popup_mob').html(cbpopuphtml);
 		
      },waittime4d);
+	*/
 	
+	cbpopuphtml= $('#'+cbgetpopupid).html();
+	$('#event-popup_mob').html(cbpopuphtml);
 	
 	mobpopupopen= 'yes';
 	
