@@ -294,6 +294,7 @@ $(function() {
 		//$('#observation-controls input[name="date"]').blur();
 		$(this).blur();
 		$('#hvmobdate_td').trigger('click');
+		return;
 	})
 
 	// when datetime arrows are clicked
