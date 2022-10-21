@@ -509,13 +509,14 @@ let thiscbtype='';
 
 // when celestial bodies are clicked
 $(document.body).on('click','.celestial-bodies-label', function(){
-	console.log('cb clicked');
+	
 	
 	closeMobEventPopup();
 	mobpopupopen= 'no';
 	
 	// this celestial body label ID
 	thiscblabelid= $(this).attr('id');
+	console.log(thiscblabelid);
 	
 	// get the celestial body
 	if(thiscblabelid.search("mercury")>0){ thiscbtype='mercury'; }
