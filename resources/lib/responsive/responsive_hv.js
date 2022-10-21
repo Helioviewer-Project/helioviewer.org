@@ -569,13 +569,14 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	}
 
 
+	console.log(cbgetpopupid);
 	
-	imageLoaded('input[name=product\\[image_location\\]]', function(el) {
+	imageLoaded('#'+cbgetpopupid, function(el) {
 
 		//do stuff here
 		cbpopuphtml= $('#'+cbgetpopupid).html();
 		$('#event-popup_mob').html(cbpopuphtml);
-		console.log(cbgetpopupid);
+		
      },waittime4d);
 	
 	
