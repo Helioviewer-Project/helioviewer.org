@@ -1,35 +1,29 @@
 // START onload 
 $(function() {
 
-	// observer for selecting dynamic elements
-	function _waitForElement(selector, delay = 10, tries = 100) {
-	  const element = document.querySelector(selector);
+ // Wait for element to exist.
 
+    function imageLoaded(el, cb,waittime4d) {
 
-	  if (!window[`__${selector}`]) {
-		window[`__${selector}`] = 0;
-		window[`__${selector}__delay`] = delay;
-		window[`__${selector}__tries`] = tries;
-	  }
+        if ($(el).length) {
+            // Element is now loaded.
 
-	  function _search() {
-		return new Promise((resolve) => {
-		  window[`__${selector}`]++;
-		  setTimeout(resolve, window[`__${selector}__delay`]);
-		});
-	  }
+            cb($(el));
 
-	  if (element === null) {
-		if (window[`__${selector}`] >= window[`__${selector}__tries`]) {
-		  window[`__${selector}`] = 0;
-		  return Promise.resolve(null);
-		}
+            var imageInput =  $('input[name=product\\[image_location\\]]');
+            console.log(imageInput);
 
-		return _search().then(() => _waitForElement(selector));
-	  } else {
-		return Promise.resolve(element);
-	  }
-	}
+        } else if(waittime4d < 10000) {
+            // Repeat every 500ms.
+            setTimeout(function() {
+               waittime4d = waittime4d+500;
+
+                imageLoaded(el, cb, waittime4d)
+            }, 500);
+        }
+    };
+
+    var waittime4d = 500;
 
 	// positioning movie player
 	$('.ui-dialog:has(div.movie-player-dialog)').css({'width':'100%','top':'37px'});
@@ -581,8 +575,14 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 		$('#event-popup_mob').html(cbpopuphtml);
 	});
 	
-	cbpopuphtml = await waitForElement('#'+cbgetpopupid);
-    console.log(cbpopuphtml);
+	imageLoaded('input[name=product\\[image_location\\]]', function(el) {
+
+		//do stuff here
+		cbpopuphtml= $('#'+cbgetpopupid).html();
+		$('#event-popup_mob').html(cbpopuphtml);
+
+     },waittime4d);
+	
 	
 	mobpopupopen= 'yes';
 	
