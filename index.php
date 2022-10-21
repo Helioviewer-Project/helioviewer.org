@@ -344,7 +344,7 @@ echo $hvdesktopcsshides;
 			
 			
 		</li>
-		
+		<!--
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
@@ -357,7 +357,7 @@ echo $hvdesktopcsshides;
 				</td>
 			</table>
 		</li>
-		
+		-->
 	</ul>
 
 </div>
