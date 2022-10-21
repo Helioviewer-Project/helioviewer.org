@@ -289,9 +289,11 @@ $(function() {
 	// when date is updated
 	let thismobdateval;
 	$('#hvmobdate_td input[name="date"]').change(function() {
-		thismobdateval=$(this).val();
-		$('#observation-controls input[name="date"]').val(thismobdateval);
+		//thismobdateval=$(this).val();
+		//$('#observation-controls input[name="date"]').val(thismobdateval);
 		//$('#observation-controls input[name="date"]').blur();
+		$(this).blur();
+		$('#hvmobdate_td').trigger('click');
 	})
 
 	// when datetime arrows are clicked
