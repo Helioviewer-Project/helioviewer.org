@@ -536,12 +536,15 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	// if stereo-a
 	else if(thiscblabelid.search("stereo_a")) {
 		cbgetpopupid= 'stereo_a_'+thiscbtype+'_popup';
+		
 	}
 	
 	// if stereo-b
 	else if(thiscblabelid.search("stereo_b")) {
 		cbgetpopupid= 'stereo_b_'+thiscbtype+'_popup';
 	}
+
+	console.log(cbgetpopupid);
 
 	cbpopuphtml= $('#'+cbgetpopupid).html();
 	$('#event-popup_mob').html(cbpopuphtml);
