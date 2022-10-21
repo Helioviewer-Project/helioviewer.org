@@ -568,12 +568,7 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 		cbgetpopupid= 'stereo_b_'+thiscbtype+'_popup';
 	}
 
-	waitForElm('#'+cbgetpopupid).then((elm) => {
-		console.log('Element is ready');
-		//console.log(elm.textContent);
-		cbpopuphtml= $('#'+cbgetpopupid).html();
-		$('#event-popup_mob').html(cbpopuphtml);
-	});
+
 	
 	imageLoaded('input[name=product\\[image_location\\]]', function(el) {
 
