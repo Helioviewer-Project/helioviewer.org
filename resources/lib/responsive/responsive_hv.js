@@ -343,7 +343,7 @@ $(function() {
 	});	
 	*/
 	
-	$('#hvmobdate_td input[name="date"]').attr('id','mobdate');
+	//$('#hvmobdate_td input[name="date"]').attr('id','mobdate');
 	
 	
 	
@@ -358,11 +358,11 @@ $(function() {
 	
 	// when date is updated
 	let thismobdateval;
-	$('#mobdate').on('change',function() {
+	$('#hvmobdate_td input[name="date"]').on('change',function() {
 		//thismobdateval=$(this).val();
 		//$('#observation-controls input[name="date"]').val(thismobdateval);
 		//$('#observation-controls input[name="date"]').blur();
-		$(this).blur();
+		//$(this).blur();
 		$('#hvmobdate_td').trigger('click');
 		return;
 	});
