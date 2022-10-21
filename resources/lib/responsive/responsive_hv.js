@@ -332,10 +332,12 @@ $(function() {
 	$('#observation-controls #date').remove();
 	
 	// take the time element out of focus after changed
+	/*
 	$('#date').on('change',function(){
 		$("#date").blur();
 		//$('#hvmobdate_td').trigger('click');
 	});
+	*/
 	
 	/*
 	$("#date").focus(function(){
