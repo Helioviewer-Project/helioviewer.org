@@ -1,6 +1,27 @@
 // START onload 
 $(function() {
 
+	// observer for selecting dynamic elements
+	function waitForElm(selector) {
+		return new Promise(resolve => {
+			if (document.querySelector(selector)) {
+				return resolve(document.querySelector(selector));
+			}
+
+			const observer = new MutationObserver(mutations => {
+				if (document.querySelector(selector)) {
+					resolve(document.querySelector(selector));
+					observer.disconnect();
+				}
+			});
+
+			observer.observe(document.body, {
+				childList: true,
+				subtree: true
+			});
+		});
+	}
+
 	// positioning movie player
 	$('.ui-dialog:has(div.movie-player-dialog)').css({'width':'100%','top':'37px'});
 
@@ -544,12 +565,12 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 		cbgetpopupid= 'stereo_b_'+thiscbtype+'_popup';
 	}
 
-	console.log(document.getElementById(cbgetpopupid));
-	
-	//cbpopuphtml= $('#'+cbgetpopupid).html();
-	//cbpopuphtml= document.getElementById(cbgetpopupid).innerHTML;
-	
-	$('#event-popup_mob').delay(1000).html($('#'+cbpopuphtml).html());
+	waitForElm('#'+cbgetpopupid).then((elm) => {
+		console.log('Element is ready');
+		//console.log(elm.textContent);
+		cbpopuphtml= $('#'+cbgetpopupid).html();
+		$('#event-popup_mob').html(cbpopuphtml);
+	});
 	
 	mobpopupopen= 'yes';
 	
