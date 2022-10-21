@@ -1275,6 +1275,10 @@
 	top: 40px !important;
 }
 
+#event-info-dialog .event-header div div:last-child {
+	padding-bottom: 300px;
+}
+
 #glossary-dialog {
 	width: 90% !important;
 	height: 100% !important;
