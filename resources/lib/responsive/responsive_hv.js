@@ -96,12 +96,12 @@ $(function() {
   var zeynep = $('.zeynep').zeynep({
     opened: function () {
     }
-  })
+  });
 
   // dynamically bind 'closing' event
   zeynep.on('closing', function () {
 	
-  })
+  });
 
   // handle zeynepjs overlay click
   $('.zeynep-overlay').on('click', function () {
@@ -286,16 +286,7 @@ $(function() {
 	});
 */	
 	
-	// when date is updated
-	let thismobdateval;
-	$('#hvmobdate_td input[name="date"]').change(function() {
-		//thismobdateval=$(this).val();
-		//$('#observation-controls input[name="date"]').val(thismobdateval);
-		//$('#observation-controls input[name="date"]').blur();
-		$(this).blur();
-		$('#hvmobdate_td').trigger('click');
-		return;
-	})
+
 
 	// when datetime arrows are clicked
 	$('.dtcycle_arrows_td').click(function(){
@@ -352,6 +343,9 @@ $(function() {
 	});	
 	*/
 	
+	$('#hvmobdate_td input[name="date"]').attr('id','mobdate');
+	
+	
 	
 	// clone the #time element and make it readonly so the keyboard doesn't show
 	$("#time").clone().appendTo("#hvmobtime_td");
@@ -362,7 +356,16 @@ $(function() {
 		$("#time").blur(); 
 	});
 	
-	
+	// when date is updated
+	let thismobdateval;
+	$('#mobdate').on('change',function() {
+		//thismobdateval=$(this).val();
+		//$('#observation-controls input[name="date"]').val(thismobdateval);
+		//$('#observation-controls input[name="date"]').blur();
+		$(this).blur();
+		$('#hvmobdate_td').trigger('click');
+		return;
+	});
 	
 	
 	// clone JUMP drop-down
