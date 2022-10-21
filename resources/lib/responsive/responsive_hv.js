@@ -2,7 +2,7 @@
 $(function() {
 
 	// observer for selecting dynamic elements
-	export function _waitForElement(selector, delay = 10, tries = 100) {
+	function _waitForElement(selector, delay = 10, tries = 100) {
 	  const element = document.querySelector(selector);
 
 
