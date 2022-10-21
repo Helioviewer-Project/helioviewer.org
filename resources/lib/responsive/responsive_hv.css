@@ -501,6 +501,10 @@
 		height: 24px;
 	}
 	
+.copy-to-data {
+	display: none !important;
+}	
+	
 #bodies-container .body-popup {
 	display:none !important;
 }
