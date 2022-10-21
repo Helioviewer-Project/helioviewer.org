@@ -331,7 +331,7 @@ $(function() {
 	// take the time element out of focus after changed
 	$('input[name="date"]').change(function(){
 		$("#date").blur();
-		$('#hvmobdate_td').trigger('click');
+		//$('#hvmobdate_td').trigger('click');
 	});
 	
 	/*
