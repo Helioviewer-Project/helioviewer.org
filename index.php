@@ -304,7 +304,7 @@ echo $hvdesktopcsshides;
 				<div id="hvhelp" class="submenu">
 
 					<div class="submenu-header">
-						<a href="#" data-submenu-close="hvhelp">Main Menu</a>
+						<a href="#" data-submenu-close="hvhelp"><span style="font-weight:bold;">&#60;</span>&nbsp;&nbsp;Main Menu</a>
 					</div>
 
 					<label>Get Help With Helioviewer</label>
