@@ -38,6 +38,10 @@ $(function() {
 	// Discard Safari since it also matches Chrome
 	if ((chromeAgent) && (safariAgent)) safariAgent = false;
 
+	// position the time picker differently in Safari
+	if(safariAgent) {
+		$('.periodpicker_timepicker_dialog.visible').css('bottom','72px');
+	}
 
 	// force-close right drawers (add drawers as necessary)
 	function closeallHVwindows() {
@@ -282,6 +286,12 @@ $(function() {
 	});
 */	
 	
+	// when date is updated
+	let thismobdateval;
+	$('#hvmobdate_td input[name="date"]').change(function() {
+		thismobdateval=$(this).val();
+		$('#observation-controls input[name="date"]').val(thismobdateval);
+	}).blur();
 
 	// when datetime arrows are clicked
 	$('.dtcycle_arrows_td').click(function(){
