@@ -544,9 +544,11 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 		cbgetpopupid= 'stereo_b_'+thiscbtype+'_popup';
 	}
 
-	console.log(cbgetpopupid);
-
-	cbpopuphtml= $('#'+cbgetpopupid).html();
+	console.log(document.getElementById(cbgetpopupid));
+	
+	//cbpopuphtml= $('#'+cbgetpopupid).html();
+	cbpopuphtml= document.getElementById(cbgetpopupid).innerHTML
+	
 	$('#event-popup_mob').html(cbpopuphtml);
 	
 	mobpopupopen= 'yes';
