@@ -329,8 +329,9 @@ $(function() {
 	//$("#date").attr('readonly', 'readonly');
 	
 	// take the time element out of focus after changed
-	$("#date").change(function(){
-		$("#date").blur(); 
+	$('input[name="date"]').change(function(){
+		$("#date").blur();
+		$('#hvmobdate_td').trigger('click');
 	});
 	
 	/*
@@ -357,7 +358,7 @@ $(function() {
 	});
 	
 	// when date is updated
-	let thismobdateval;
+	/*let thismobdateval;
 	$('#hvmobdate_td input[name="date"]').on('change',function() {
 		//thismobdateval=$(this).val();
 		//$('#observation-controls input[name="date"]').val(thismobdateval);
@@ -366,6 +367,7 @@ $(function() {
 		$('#hvmobdate_td').trigger('click');
 		return;
 	});
+	*/
 	
 	
 	// clone JUMP drop-down
