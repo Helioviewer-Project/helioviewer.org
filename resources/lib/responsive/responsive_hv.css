@@ -1271,6 +1271,10 @@
     left: 0px !important;
 }
 
+.ui-dialog[aria-describedby="event-info-dialog"] {
+	top: 40px !important;
+}
+
 #glossary-dialog {
 	width: 90% !important;
 	height: 100% !important;
