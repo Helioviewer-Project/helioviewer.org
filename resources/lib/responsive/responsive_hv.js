@@ -291,7 +291,8 @@ $(function() {
 	$('#hvmobdate_td input[name="date"]').change(function() {
 		thismobdateval=$(this).val();
 		$('#observation-controls input[name="date"]').val(thismobdateval);
-	}).blur();
+		$('#observation-controls input[name="date"]').blur();
+	})
 
 	// when datetime arrows are clicked
 	$('.dtcycle_arrows_td').click(function(){
