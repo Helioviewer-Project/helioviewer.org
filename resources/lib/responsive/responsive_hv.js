@@ -328,8 +328,11 @@ $(function() {
 	$("#date").clone().appendTo("#hvmobdate_td");
 	//$("#date").attr('readonly', 'readonly');
 	
+	// delete the old element
+	$('#observation-controls #date').remove();
+	
 	// take the time element out of focus after changed
-	$('input[name="date"]').change(function(){
+	$('#date').on('change',function(){
 		$("#date").blur();
 		//$('#hvmobdate_td').trigger('click');
 	});
