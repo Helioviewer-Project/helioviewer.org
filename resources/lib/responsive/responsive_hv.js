@@ -283,32 +283,7 @@ $(function() {
 		
 		
 		
-	});
-	
-	
-	// click mobile Get Help With Helioviewer menu items
-	// drawersec="hv-drawer-glossary"
-	/*
-	$(".hvmobmenuitems").click(function(){
-		let testytesterson='test';
-		
-		currdsopen= 'nonexistentds';
-		$(".hamburger").removeClass("is-active");
-		zeynep.close();
-		$('.hv-drawer-right').css({'display':'none'});
-		$('#hv-drawer-left').css('display','none');
-		$('#hv-drawer-left').attr('style', 'display: none');
-		
-		$('.hvmobdstabs .hvmobds_icon').css('filter','invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%)');
-		$('.hvmobdstabs span').css({'color':'silver'});
-		
-		
-		switch() {
-			case 
-		}
-		
-	});
-*/	
+	});	
 	
 
 
@@ -373,7 +348,6 @@ $(function() {
 	});	
 	*/
 	
-	//$('#hvmobdate_td input[name="date"]').attr('id','mobdate');
 	
 	
 	
@@ -385,18 +359,6 @@ $(function() {
 	$("#time").change(function(){
 		$("#time").blur(); 
 	});
-	
-	// when date is updated
-	/*let thismobdateval;
-	$('#hvmobdate_td input[name="date"]').on('change',function() {
-		//thismobdateval=$(this).val();
-		//$('#observation-controls input[name="date"]').val(thismobdateval);
-		//$('#observation-controls input[name="date"]').blur();
-		//$(this).blur();
-		$('#hvmobdate_td').trigger('click');
-		return;
-	});
-	*/
 	
 	
 	// clone JUMP drop-down
@@ -451,16 +413,14 @@ $(document.body).on('click','.event-marker', function(){
 	
 	// get this event marker's rel attribute
 	evrelattr = $(this).attr('rel');
-	console.log('evrelattr = '+evrelattr);
 	
 	// cycle each of the accessed popups
 	$(".event-popup").each(function(i, obj) {
 		evpoprelattr = $(obj).attr('rel');
-		console.log('evpoprelattr = '+evpoprelattr);
+		
 		
 		// if popup doesn't have a rel attribute, assign it one associated with this marker's rel attribute
 		if(evpoprelattr === undefined || evpoprelattr === false || evpoprelattr === null) {
-			console.log('detected undefined');
 			evpoprelattr=evrelattr;
 			$(this).attr('rel',evpoprelattr);
 			$(this).attr('id','event-popup-'+evpopupid);
@@ -469,7 +429,7 @@ $(document.body).on('click','.event-marker', function(){
 		
 		// if this popup is in the DOM and is bound to the event marker
 		if($(this).length && evrelattr == evpoprelattr) {
-			console.log('event marker clicked');
+			
 			//$('.event-popup[rel="'+evpoprelattr+'"]').show();
 			evpopuphtml= $('.event-popup[rel="'+evpoprelattr+'"]').html();
 			$('#event-popup_mob').html('<div>'+evpopuphtml+'</div>');
@@ -497,7 +457,6 @@ $(document.body).on('click','.event-marker', function(){
 // trigger event popup click to HEK info
 $(document.body).on('click','#event-popup_mob .event-info', function(){
 	let evIDtoaccess= $('#event-popup_mob').attr('rel');
-	console.log('#'+evIDtoaccess+' .event-info');
 	$('#'+evIDtoaccess+' .event-info').trigger("click");
 	closeMobEventPopup();
 });
@@ -540,7 +499,6 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	
 	// this celestial body label ID
 	thiscblabelid= $(this).attr('id');
-	console.log(thiscblabelid);
 	
 	// get the celestial body
 	if(thiscblabelid.search("mercury")>0){ thiscbtype='mercury'; }
@@ -567,19 +525,6 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	else if(thiscblabelid.search("stereo_b")>=0) {
 		cbgetpopupid= 'stereo_b_'+thiscbtype+'_popup';
 	}
-
-
-	console.log(cbgetpopupid);
-	
-	/*
-	imageLoaded('#'+cbgetpopupid, function(el) {
-
-		//do stuff here
-		cbpopuphtml= $('#'+cbgetpopupid).html();
-		$('#event-popup_mob').html(cbpopuphtml);
-		
-     },waittime4d);
-	*/
 	
 	cbpopuphtml= $('#'+cbgetpopupid).html();
 	$('#event-popup_mob').html(cbpopuphtml);
