@@ -518,7 +518,7 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	
 	$('#event-popup_mob .value-container').css({
 		'float': 'right',
-		'left': '196px',
+		'left': '210px',
 		'width': '120px'
 	});
 	
@@ -528,6 +528,10 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 	
 	$('#event-popup_mob .plane-position-container').css({
 		'clear':'both'
+	});
+	
+	$('.plane-position-container').css({
+		'padding-top':'10px'
 	});
 	
 	$('#event-popup_mob').css('display','block');
