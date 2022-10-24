@@ -432,6 +432,20 @@ $(document.body).on('click','.event-marker', function(){
 // trigger clicks to original popups
 // .event-info, .event-create-movie, .event-search-external, .copy-to-data
 
+// trigger event popup click to Start Time arrows
+$(document.body).on('click','#event-popup_mob .ui-icon-arrowstop-1-w', function(){
+	let evIDtoaccess= $('#event-popup_mob').attr('rel');
+	$('#'+evIDtoaccess+' .ui-icon-arrowstop-1-w').trigger("click");
+	closeMobEventPopup();
+});
+
+// trigger event popup click to End Time arrows
+$(document.body).on('click','#event-popup_mob .ui-icon-arrowstop-1-e', function(){
+	let evIDtoaccess= $('#event-popup_mob').attr('rel');
+	$('#'+evIDtoaccess+' .ui-icon-arrowstop-1-e').trigger("click");
+	closeMobEventPopup();
+});
+
 // trigger event popup click to HEK info
 $(document.body).on('click','#event-popup_mob .event-info', function(){
 	let evIDtoaccess= $('#event-popup_mob').attr('rel');
