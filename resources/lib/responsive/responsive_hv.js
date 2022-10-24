@@ -1,29 +1,7 @@
 // START onload 
 $(function() {
 
- // Wait for element to exist.
 
-    function imageLoaded(el, cb,waittime4d) {
-
-        if ($(el).length) {
-            // Element is now loaded.
-
-            cb($(el));
-
-            var imageInput =  $('input[name=product\\[image_location\\]]');
-            console.log(imageInput);
-
-        } else if(waittime4d < 10000) {
-            // Repeat every 500ms.
-            setTimeout(function() {
-               waittime4d = waittime4d+500;
-
-                imageLoaded(el, cb, waittime4d)
-            }, 500);
-        }
-    };
-
-    var waittime4d = 500;
 
 	// positioning movie player
 	$('.ui-dialog:has(div.movie-player-dialog)').css({'width':'100%','top':'37px'});
@@ -569,6 +547,19 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 
 // END Celestial Bodies popups 
 
+
+// Show/Hide Empty Rows button
+let emptyrowsmode='hide';
+$('.toggle_empty').on('click',function(){
+   if(emptyrowsmode=='hide') {
+      $(this).text('Show Empty Rows');
+      emptyrowsmode='show';
+   }
+   else if(emptyrowsmode=='show') {
+      $(this).text('Hide Empty Rows');
+      emptyrowsmode='hide';
+   }
+});
 
 
 	// on orientation change [portait / landscape]
