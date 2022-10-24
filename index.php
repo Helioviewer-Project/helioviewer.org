@@ -89,43 +89,43 @@
 	<meta id="fb-og-image" property="og:image" content="//helioviewer.org/resources/images/logos/hvlogo1s_transparent.png" />
 
 	<!-- Library CSS -->
-	<link rel="stylesheet" href="resources/lib/yui-2.8.2r1/reset-fonts.css" />
-	<link rel="stylesheet" href="resources/lib/jquery-ui-1.13.1/jquery-ui.min.css" />
-	<link rel="stylesheet" href="resources/lib/jquery.jgrowl/jquery.jgrowl.min.css" />
-	<link rel="stylesheet" href="resources/lib/jquery.qTip3/jquery.qtip.min.css" />
-	<link rel="stylesheet" href="resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
-	<link rel="stylesheet" href="resources/lib/DatetimePicker/jquery.datetimepicker.css" />
-	<link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.min.css" />
-	<link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.timepicker.css" />
-	<link rel="stylesheet" href="resources/lib/boneVojage/bonevojage.css">
-	<link rel="stylesheet" href="resources/lib/mediaelement/build/mediaelementplayer.min.css">
+	<link rel="stylesheet" href="/resources/lib/yui-2.8.2r1/reset-fonts.css" />
+	<link rel="stylesheet" href="/resources/lib/jquery-ui-1.13.1/jquery-ui.min.css" />
+	<link rel="stylesheet" href="/resources/lib/jquery.jgrowl/jquery.jgrowl.min.css" />
+	<link rel="stylesheet" href="/resources/lib/jquery.qTip3/jquery.qtip.min.css" />
+	<link rel="stylesheet" href="/resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
+	<link rel="stylesheet" href="/resources/lib/DatetimePicker/jquery.datetimepicker.css" />
+	<link rel="stylesheet" href="/resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.min.css" />
+	<link rel="stylesheet" href="/resources/lib/period_picker.2.7.8.pro/build/jquery.timepicker.css" />
+	<link rel="stylesheet" href="/resources/lib/boneVojage/bonevojage.css">
+	<link rel="stylesheet" href="/resources/lib/mediaelement/build/mediaelementplayer.min.css">
 
 	<!-- jQuery UI Theme Modifications -->
-	<link rel="stylesheet" href="resources/css/dot-luv.css">
+	<link rel="stylesheet" href="/resources/css/dot-luv.css">
 
 	<!-- Helioviewer CSS -->
 	<?php
 	if ($debug){
 	?>
-		<link rel="stylesheet" href="resources/css/helioviewer-base.css" />
-		<link rel="stylesheet" href="resources/css/zoom-control.css" />
-		<link rel="stylesheet" href="resources/css/helioviewer-web.css" />
-		<link rel="stylesheet" href="resources/css/layout.css" />
-		<link rel="stylesheet" href="resources/css/accordions.css" />
-		<link rel="stylesheet" href="resources/css/dialogs.css" />
-		<link rel="stylesheet" href="resources/css/events.css" />
-		<link rel="stylesheet" href="resources/css/media-manager.css" />
-		<link rel="stylesheet" href="resources/css/timeline.css" />
-		<link rel="stylesheet" href="resources/css/timenav.css" />
-		<link rel="stylesheet" href="resources/css/video-gallery.css" />
-		<link rel="stylesheet" href="resources/css/youtube.css" />
-		<link rel="stylesheet" href="resources/css/font-awesome.min.css" />
-		<link rel="stylesheet" href="resources/css/helioviewer-views.css" />
-		<link rel="stylesheet" href="resources/css/celestial-bodies.css" />
+		<link rel="stylesheet" href="/resources/css/helioviewer-base.css" />
+		<link rel="stylesheet" href="/resources/css/zoom-control.css" />
+		<link rel="stylesheet" href="/resources/css/helioviewer-web.css" />
+		<link rel="stylesheet" href="/resources/css/layout.css" />
+		<link rel="stylesheet" href="/resources/css/accordions.css" />
+		<link rel="stylesheet" href="/resources/css/dialogs.css" />
+		<link rel="stylesheet" href="/resources/css/events.css" />
+		<link rel="stylesheet" href="/resources/css/media-manager.css" />
+		<link rel="stylesheet" href="/resources/css/timeline.css" />
+		<link rel="stylesheet" href="/resources/css/timenav.css" />
+		<link rel="stylesheet" href="/resources/css/video-gallery.css" />
+		<link rel="stylesheet" href="/resources/css/youtube.css" />
+		<link rel="stylesheet" href="/resources/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="/resources/css/helioviewer-views.css" />
+		<link rel="stylesheet" href="/resources/css/celestial-bodies.css" />
 	<?php
 	} else {
 	?>
-		<link rel="stylesheet" href="resources/compressed/helioviewer.min.css?v=<?=filemtime('resources/compressed/helioviewer.min.css')?>" />
+		<link rel="stylesheet" href="/resources/compressed/helioviewer.min.css?v=<?=filemtime('resources/compressed/helioviewer.min.css')?>" />
 		<!-- Google Analytics -->
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
@@ -1095,7 +1095,7 @@
 			<!-- Upload Form -->
 			<div id='upload-form'>
 				<div>
-					<img id='youtube-logo-large' src="resources/images/yt_logo_rgb_dark.png" alt='YouTube logo'/>
+					<img id='youtube-logo-large' src="/resources/images/yt_logo_rgb_dark.png" alt='YouTube logo'/>
 				</div>
 				<br><br><br>
 				<div><h1>Upload Video</h1></div>
@@ -1470,101 +1470,101 @@
 	</div>
 
 	<!-- Library JavaScript -->
-	<script src="resources/lib/jquery/jquery-3.6.0.min.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery-ui-1.13.1/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery.mousewheel/jquery.mousewheel.3.1.13.min.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery.browser/dist/jquery.browser.min.js" type="text/javascript" language="javascript"></script>
-	<script src="resources/lib/jquery.qTip3/jquery.qtip.min.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery-number-master/jquery.number.min.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery.json-2.3/jquery.json-2.3.min.js" type="text/javascript" ></script>
-	<script src="resources/lib/jquery.cookie/jquery.cookie.min.js" type="text/javascript" ></script>
-	<script src="resources/lib/Cookiejar/jquery.cookiejar.pack.js" type="text/javascript"></script>
-	<script src="resources/lib/Highstock-4.2.1/js/highstock.js" type="text/javascript"></script>
-	<script src="resources/lib/Highstock-4.2.1/js/highcharts-more.js" type="text/javascript"></script>
-	<script src="resources/lib/custom_events-master/customEvents.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery.jgrowl/jquery.jgrowl.min.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery.imgareaselect-0.9.8/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
-	<script src="resources/lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
-	<script src="resources/lib/jquery.jsTree-1.0rc/jquery.jstree.js"></script>
-	<script src="resources/lib/DatetimePicker/build/jquery.datetimepicker.full.js" type="text/javascript" language="javascript"></script>
-	<script src="resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.full.min.js" type="text/javascript" language="javascript"></script>
-	<script src="resources/lib/period_picker.2.7.8.pro/jquery.timepicker.js" type="text/javascript" language="javascript"></script>
-	<script src="resources/lib/boneVojage/jquery.bonevojage.js" type="text/javascript" language="javascript"></script>
-	<script src="resources/lib/mediaelement/build/mediaelement-and-player.min.js" type="text/javascript" language="javascript"></script>
+	<script src="/resources/lib/jquery/jquery-3.6.0.min.js" type="text/javascript"></script>
+	<script src="/resources/lib/jquery-ui-1.13.1/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="/resources/lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
+	<script src="/resources/lib/jquery.mousewheel/jquery.mousewheel.3.1.13.min.js" type="text/javascript"></script>
+	<script src="/resources/lib/jquery.browser/dist/jquery.browser.min.js" type="text/javascript" language="javascript"></script>
+	<script src="/resources/lib/jquery.qTip3/jquery.qtip.min.js" type="text/javascript"></script>
+	<script src="/resources/lib/jquery-number-master/jquery.number.min.js" type="text/javascript"></script>
+	<script src="/resources/lib/jquery.json-2.3/jquery.json-2.3.min.js" type="text/javascript" ></script>
+	<script src="/resources/lib/jquery.cookie/jquery.cookie.min.js" type="text/javascript" ></script>
+	<script src="/resources/lib/Cookiejar/jquery.cookiejar.pack.js" type="text/javascript"></script>
+	<script src="/resources/lib/Highstock-4.2.1/js/highstock.js" type="text/javascript"></script>
+	<script src="/resources/lib/Highstock-4.2.1/js/highcharts-more.js" type="text/javascript"></script>
+	<script src="/resources/lib/custom_events-master/customEvents.js" type="text/javascript"></script>
+	<script src="/resources/lib/jquery.jgrowl/jquery.jgrowl.min.js" type="text/javascript"></script>
+	<script src="/resources/lib/jquery.imgareaselect-0.9.8/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
+	<script src="/resources/lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
+	<script src="/resources/lib/jquery.jsTree-1.0rc/jquery.jstree.js"></script>
+	<script src="/resources/lib/DatetimePicker/build/jquery.datetimepicker.full.js" type="text/javascript" language="javascript"></script>
+	<script src="/resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.full.min.js" type="text/javascript" language="javascript"></script>
+	<script src="/resources/lib/period_picker.2.7.8.pro/jquery.timepicker.js" type="text/javascript" language="javascript"></script>
+	<script src="/resources/lib/boneVojage/jquery.bonevojage.js" type="text/javascript" language="javascript"></script>
+	<script src="/resources/lib/mediaelement/build/mediaelement-and-player.min.js" type="text/javascript" language="javascript"></script>
 
 	<!-- Helioviewer JavaScript -->
 	<?php
 	if ($debug){
 	?>
-		<script src="resources/js/Utility/Config.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/HelperFunctions.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Layer/Layer.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Layer/TileLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Layer/TileLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Layer/HelioviewerTileLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/KeyboardManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Manager/LayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Manager/TileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Manager/HelioviewerTileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Image/JP2Image.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/MouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/HelioviewerMouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/SandboxHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/ViewportMovementHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/HelioviewerViewport.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/HelioviewerClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/ZoomControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/ImageScale.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/Timeline.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/TimelineEvents.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/TimeSelector.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/InputValidator.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/SettingsLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/UserSettings.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/Tutorial.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Manager/LayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventType.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventTree.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventFeatureRecognitionMethod.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventMarker.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/HelioviewerEventLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/HelioviewerEventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/TreeSelect.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/ImageSelectTool.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Media/MediaManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Media/MediaManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Media/MovieManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Media/MovieManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Media/ScreenshotManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Media/ScreenshotManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/TileLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/EventLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/MessageConsole.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/TimeControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/FullscreenControl.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/HelioviewerWebClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/UserVideoGallery.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/Glossary.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/jquery.ui.dynaccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/ImagePresets.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/TileLayerData.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/CelestialBodiesSatellites.js?v=<?=debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/Config.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/HelperFunctions.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Layer/Layer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Layer/TileLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Layer/TileLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Layer/HelioviewerTileLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/KeyboardManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Manager/LayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Manager/TileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Manager/HelioviewerTileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Image/JP2Image.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/MouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/HelioviewerMouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/SandboxHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/ViewportMovementHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/HelioviewerViewport.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/HelioviewerClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/ZoomControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/ImageScale.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/Timeline.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/TimelineEvents.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/TimeSelector.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/InputValidator.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/SettingsLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/UserSettings.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/Tutorial.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Manager/LayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventType.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventTree.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventFeatureRecognitionMethod.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventMarker.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/HelioviewerEventLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/HelioviewerEventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/TreeSelect.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/ImageSelectTool.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Media/MediaManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Media/MediaManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Media/MovieManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Media/MovieManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Media/ScreenshotManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Media/ScreenshotManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/TileLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/EventLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/MessageConsole.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/TimeControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/FullscreenControl.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/HelioviewerWebClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/UserVideoGallery.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/Glossary.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/jquery.ui.dynaccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/ImagePresets.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/TileLayerData.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/CelestialBodiesSatellites.js?v=<?=debugTime?>" type="text/javascript"></script>
 	<?php
 	} else {
 	?>
-		<script src="resources/compressed/helioviewer.min.js?v=<?=filemtime('resources/compressed/helioviewer.min.js')?>" type="text/javascript"></script>
+		<script src="/resources/compressed/helioviewer.min.js?v=<?=filemtime('resources/compressed/helioviewer.min.js')?>" type="text/javascript"></script>
 
 
 	<?php
 	}
 	?>
 
-	<script src="resources/lib/hvbrowserspecific/hv_browserspecific.js" type="text/javascript"></script>
-	<script src="resources/js/CustomHandling/CustomHandling.js?chrndnm=<?php echo (rand(9999,9999999)); ?>" type="text/javascript"></script>
+	<script src="/resources/lib/hvbrowserspecific/hv_browserspecific.js" type="text/javascript"></script>
+	<script src="/resources/js/CustomHandling/CustomHandling.js?chrndnm=<?php echo (rand(9999,9999999)); ?>" type="text/javascript"></script>
 	
 	<!-- Launch Helioviewer -->
 	<script type="text/javascript">
