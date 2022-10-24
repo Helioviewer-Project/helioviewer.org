@@ -550,7 +550,7 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 
 // Show/Hide Empty Rows button
 let emptyrowsmode='hide';
-$('.toggle_empty').on('click',function(){
+$(document.body).on('click','.toggle_empty',function(){
    if(emptyrowsmode=='hide') {
       $(this).text('Show Empty Rows');
       emptyrowsmode='show';
