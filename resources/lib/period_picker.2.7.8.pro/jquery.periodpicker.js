@@ -8,6 +8,7 @@
     'use strict';
     var uniqueid = 0;
 
+    window.moment = moment;
     function TimeWrapper(str, format, date) {
         var that = date || new Date(), value;
         that.isTW = true;

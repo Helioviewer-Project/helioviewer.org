@@ -1488,7 +1488,7 @@
 	<script src="/resources/lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
 	<script src="/resources/lib/jquery.jsTree-1.0rc/jquery.jstree.js"></script>
 	<script src="/resources/lib/DatetimePicker/build/jquery.datetimepicker.full.js" type="text/javascript" language="javascript"></script>
-	<script src="/resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.full.min.js" type="text/javascript" language="javascript"></script>
+	<script src="/resources/lib/period_picker.2.7.8.pro/jquery.periodpicker.min.js" type="text/javascript" language="javascript"></script>
 	<script src="/resources/lib/period_picker.2.7.8.pro/jquery.timepicker.js" type="text/javascript" language="javascript"></script>
 	<script src="/resources/lib/boneVojage/jquery.bonevojage.js" type="text/javascript" language="javascript"></script>
 	<script src="/resources/lib/mediaelement/build/mediaelement-and-player.min.js" type="text/javascript" language="javascript"></script>
