@@ -562,6 +562,18 @@ $(document.body).on('click','.celestial-bodies-label', function(){
 // END Celestial Bodies popups 
 
 
+// START PSP marker/label code
+let cbpointertime='';
+$(document.body).on('click','.celestial-pointer',function() {
+	$('.hover-date-container').hide();
+	cbpointertime= $(this).attr('time');
+	$('#soho-psp-container-hover-date-'+cbpointertime).show();
+});
+// END PSP marker/label code
+
+
+
+
 // Show/Hide Empty Rows button
 let emptyrowsmode='hide';
 $(document.body).on('click','.toggle_empty',function(){
@@ -583,6 +595,7 @@ $(document.body).on('click','.toggle_empty',function(){
 	});
 
 
+	
 
 
 }); // END onload
