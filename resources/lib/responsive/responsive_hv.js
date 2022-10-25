@@ -568,6 +568,7 @@ $(document.body).on('click','.celestial-pointer',function() {
 	//$('.hover-date-container').hide();
 	cbpointertime= $(this).attr('time');
 	$('#soho-psp-container-hover-date-'+cbpointertime).show();
+	showEncounter();
 });
 // END PSP marker/label code
 
