@@ -1312,6 +1312,10 @@
 		width:100%;
 	}
 	
+	#accordion-youtube .content {
+		display: block !important;
+	}
+	
 	
 	.celestial-pointer cirlcle {
 		r: 4.5 !important;
