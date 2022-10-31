@@ -596,7 +596,12 @@ $(document.body).on('click','.toggle_empty',function(){
 	});
 
 
-	
+// ensure that the recently youtube shared videos are open
+$(document.body).on('click','.hvmobmenuitems[drawersec="hv-drawer-youtube"]',function(){
+	if($('#accordion-youtube-current .disclosure-triangle').hasClass('closed')) {
+	   $('#accordion-youtube-current .disclosure-triangle').trigger('click');
+	}
+});
 
 
 }); // END onload
