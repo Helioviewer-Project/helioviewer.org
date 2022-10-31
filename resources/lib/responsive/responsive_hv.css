@@ -1312,6 +1312,10 @@
 		width:100%;
 	}
 	
+	#user-video-gallery-spinner {
+		display:none;
+	}
+	
 	#accordion-youtube .content {
 		display: block !important;
 	}
