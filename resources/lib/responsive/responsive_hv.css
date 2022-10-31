@@ -903,7 +903,7 @@
 	}
 	
 	.disclosure-triangle {
-		display: none !important;
+		display: block !important;
 		width: 0px;
 		padding: 0px;
 	}
