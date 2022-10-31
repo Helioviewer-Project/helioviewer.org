@@ -903,9 +903,13 @@
 	}
 	
 	.disclosure-triangle {
-		display: none !important;
+		display: none;
 		width: 0px;
 		padding: 0px;
+	}
+	
+	#accordion-youtube .disclosure-triangle {
+		display: unset;
 	}
 
 	.drawer-contents .ui-accordion-header .fa.fa-fw {
@@ -1317,7 +1321,7 @@
 	}
 	
 	#accordion-youtube .content {
-		display: block !important;
+		/*display: block !important;*/
 	}
 	
 	
