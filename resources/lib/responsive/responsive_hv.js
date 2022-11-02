@@ -599,6 +599,7 @@ $(document.body).on('click','.toggle_empty',function(){
 // TESTING: ensure that the recently youtube shared videos are open
 setTimeout(function() {
 	if($('#accordion-youtube .header .disclosure-triangle').hasClass('closed')) {
+		// this is marked closed
 		$('#accordion-youtube').trigger('click');
 	}
 
