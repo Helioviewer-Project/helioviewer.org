@@ -597,9 +597,14 @@ $(document.body).on('click','.toggle_empty',function(){
 
 
 // TESTING: ensure that the recently youtube shared videos are open
-if($('#accordion-youtube .disclosure-triangle').hasClass('closed')) {
-	$('#accordion-youtube .disclosure-triangle').trigger('click');
-}
+setTimeout(function() {
+	if($('#accordion-youtube .disclosure-triangle').hasClass('closed')) {
+		$('#accordion-youtube .disclosure-triangle').trigger('click');
+	}
+
+	$('#accordion-youtube .disclosure-triangle').removeClass('closed');
+	$('#accordion-youtube .disclosure-triangle').addClass('opened');
+}, 2500);
 
 
 
