@@ -909,7 +909,7 @@
 	}
 	
 	#accordion-youtube .disclosure-triangle {
-		display: unset;
+		display: block;
 	}
 
 	.drawer-contents .ui-accordion-header .fa.fa-fw {
