@@ -598,12 +598,12 @@ $(document.body).on('click','.toggle_empty',function(){
 
 // TESTING: ensure that the recently youtube shared videos are open
 setTimeout(function() {
-	if($('#accordion-youtube .disclosure-triangle').hasClass('closed')) {
-		$('#accordion-youtube .disclosure-triangle')[0].click();
+	if($('#accordion-youtube .header .disclosure-triangle')[0].hasClass('closed')) {
+		$('#accordion-youtube .header .disclosure-triangle')[0].click();
 	}
 
-	$('#accordion-youtube .disclosure-triangle').removeClass('closed');
-	$('#accordion-youtube .disclosure-triangle').addClass('opened');
+	$('#accordion-youtube .header .disclosure-triangle')[0].removeClass('closed');
+	$('#accordion-youtube .header .disclosure-triangle')[0].addClass('opened');
 }, 2500);
 
 
