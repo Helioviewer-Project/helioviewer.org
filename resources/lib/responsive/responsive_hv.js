@@ -600,7 +600,7 @@ $(document.body).on('click','.toggle_empty',function(){
 setTimeout(function() {
 	if($('#accordion-youtube .header .disclosure-triangle').hasClass('closed')) {
 		console.log('this is marked closed');
-		//$('#accordion-youtube').trigger('click');
+		$('#accordion-youtube .header').trigger('click');
 	}
 
 	$('#accordion-youtube .header .disclosure-triangle').removeClass('closed');
