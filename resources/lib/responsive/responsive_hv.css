@@ -913,8 +913,9 @@
 	}
 	
 	#accordion-youtube-current .header h1 {
-		display: block !important;
+		display: inline-block !important;
 		padding-top: 20px;
+		margin-left: 15px;
 	}
 	
 	#accordion-youtube .header {
@@ -922,7 +923,7 @@
 	}
 	
 	#accordion-youtube .header h1 {
-		display: block !important;
+		display: inline-block !important;
 		padding-top: 20px;
 	}	
 	
