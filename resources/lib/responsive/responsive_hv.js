@@ -600,11 +600,11 @@ $(document.body).on('click','.toggle_empty',function(){
 setTimeout(function() {
 	if($('#accordion-youtube .header .disclosure-triangle').hasClass('closed')) {
 		console.log('this is marked closed');
-		//$('#accordion-youtube .header').trigger('click');
+		$('#accordion-youtube .header').trigger('click');
 		$('#accordion-youtube .header').click();
 	}
 
-	$('#accordion-youtube .header .disclosure-triangle').removeClass('closed');
+	//$('#accordion-youtube .header .disclosure-triangle').removeClass('closed');
 	//$('#accordion-youtube .header .disclosure-triangle').addClass('opened');
 }, 2500);
 
