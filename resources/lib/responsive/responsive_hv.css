@@ -912,6 +912,10 @@
 		overflow: auto;
 	}
 	
+	#accordion-youtube-current .header h1 {
+		display: block;
+	}
+	
 	#accordion-youtube .header {
 		
 	}
