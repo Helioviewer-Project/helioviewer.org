@@ -913,12 +913,17 @@
 	}
 	
 	#accordion-youtube-current .header h1 {
-		display: block;
+		display: block !important;
+		padding-top: 20px;
 	}
 	
 	#accordion-youtube .header {
 		
 	}
+	
+	#accordion-youtube .header h1 {
+		padding-top: 20px;
+	}	
 	
 	#accordion-youtube .disclosure-triangle {
 		display: inline-block;
