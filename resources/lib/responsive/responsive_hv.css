@@ -908,10 +908,23 @@
 		padding: 0px;
 	}
 	
+	#accordion-youtube {
+		display:none;
+	}
+	
 	#accordion-youtube .disclosure-triangle {
 		display: inline-block;
 		padding: 0 .1em 0 .5em;
 		width: 1em;
+	}
+
+	#hv-drawer-youtube .drawer-contents {
+		padding-bottom: 50px;
+		height: 100%;
+	}
+
+	#hv-drawer-youtube .content {
+	   position: absolute;
 	}
 
 	.drawer-contents .ui-accordion-header .fa.fa-fw {
