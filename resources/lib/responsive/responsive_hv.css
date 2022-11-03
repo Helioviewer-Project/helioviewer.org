@@ -922,6 +922,7 @@
 	}
 	
 	#accordion-youtube .header h1 {
+		display: block !important;
 		padding-top: 20px;
 	}	
 	
