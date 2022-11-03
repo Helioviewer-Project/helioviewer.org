@@ -1,7 +1,8 @@
 // START onload 
 $(function() {
 
-
+	// shared to youtube menu open
+	let shareytopen='no';
 
 	// positioning movie player
 	$('.ui-dialog:has(div.movie-player-dialog)').css({'width':'100%','top':'37px'});
@@ -67,6 +68,7 @@ $(function() {
 	
 	$(".hvmobmenuclose").click();
 
+	
 
 	// current datasource that's open
 	var currdsopen= 'nonexistentds';
@@ -88,6 +90,10 @@ $(function() {
 		$('#hv-drawer-left').attr('style', 'display: none');
 		$('.hvmobdstabs .hvmobds_icon').css('filter','invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%)');
 		$('.hvmobdstabs span').css({'color':'silver'});
+		if(shareytopen=='yes'){
+			$('#youtube-button').trigger('click');
+			shareytopen='no';					
+		}
 		currdsopen= 'nonexistentds';
 	});
 
@@ -258,7 +264,10 @@ $(function() {
 					break;
 			}
 		document.getElementById(thisdrawersect2).scrollIntoView();
-		if(thisdrawersect2=='hv-drawer-youtube'){$('#youtube-button').trigger('click');};
+		if(thisdrawersect2=='hv-drawer-youtube'){
+			$('#youtube-button').trigger('click');
+			shareytopen='yes';
+		}
 		
 		
 		
