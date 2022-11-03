@@ -221,6 +221,9 @@ $(function() {
 		
 		var thisdrawersect2= $(this).attr('drawersec');
 		
+		if(thisdrawersect2=='hv-drawer-youtube'){
+			$('#youtube-button').trigger('click');
+		}
 		$('#'+thisdrawersect2).css('display','block');
 		$('#'+thisdrawersect2+' .hvmobmenuclose_div').css('display','block');
 
@@ -257,10 +260,6 @@ $(function() {
 					break;
 			}
 		document.getElementById(thisdrawersect2).scrollIntoView();
-		if(thisdrawersect2=='hv-drawer-youtube'){
-			$('#hv-drawer-youtube').css('display','block');
-			$('#youtube-button').trigger('click');
-		}
 		
 		
 		
