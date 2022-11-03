@@ -908,7 +908,11 @@
 		padding: 0px;
 	}
 	
-	#accordion-youtube {
+	#hv-drawer-youtube {
+		overflow: auto;
+	}
+	
+	#accordion-youtube .header {
 		display:none;
 	}
 	
