@@ -909,7 +909,9 @@
 	}
 	
 	#accordion-youtube .disclosure-triangle {
-		display: block;
+		display: inline-block;
+		padding: 0 .1em 0 .5em;
+		width: 1em;
 	}
 
 	.drawer-contents .ui-accordion-header .fa.fa-fw {
@@ -1322,8 +1324,6 @@
 	
 	#accordion-youtube .content {
 		/*display: block !important;*/
-		position: absolute;
-		top: 0px;
 	}
 	
 	
