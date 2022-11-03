@@ -1,9 +1,6 @@
 // START onload 
 $(function() {
 
-	// shared to youtube menu open
-	let shareytopen='no';
-
 	// positioning movie player
 	$('.ui-dialog:has(div.movie-player-dialog)').css({'width':'100%','top':'37px'});
 
@@ -90,10 +87,6 @@ $(function() {
 		$('#hv-drawer-left').attr('style', 'display: none');
 		$('.hvmobdstabs .hvmobds_icon').css('filter','invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%)');
 		$('.hvmobdstabs span').css({'color':'silver'});
-		if(shareytopen=='yes'){
-			$('#youtube-button').trigger('click');
-			shareytopen='no';					
-		}
 		currdsopen= 'nonexistentds';
 	});
 
@@ -265,8 +258,8 @@ $(function() {
 			}
 		document.getElementById(thisdrawersect2).scrollIntoView();
 		if(thisdrawersect2=='hv-drawer-youtube'){
+			$('#hv-drawer-youtube').css('display','block');
 			$('#youtube-button').trigger('click');
-			shareytopen='yes';
 		}
 		
 		
