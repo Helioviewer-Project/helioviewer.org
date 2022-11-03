@@ -601,7 +601,7 @@ setTimeout(function() {
 	if($('#accordion-youtube .header .disclosure-triangle').hasClass('closed')) {
 		console.log('this is marked closed');
 		$('#accordion-youtube .header').trigger('click');
-		$('#accordion-youtube .header').click();
+		//$('#accordion-youtube .header').click();
 	}
 
 	//$('#accordion-youtube .header .disclosure-triangle').removeClass('closed');
