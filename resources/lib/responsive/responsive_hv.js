@@ -607,8 +607,8 @@ $(document.body).on('click','.toggle_empty',function(){
 	$('#accordion-youtube .header .disclosure-triangle').removeClass('closed');
 	//$('#accordion-youtube .header .disclosure-triangle').addClass('opened');
 }, 2500);*/
-$('#accordion-youtube .header').trigger('click');
-
+//$('#accordion-youtube .header').click();
+$('#youtube-button').click();
 
 
 }); // END onload
