@@ -604,7 +604,7 @@ setTimeout(function() {
 		$('#accordion-youtube .header').click();
 	}
 
-	//$('#accordion-youtube .header .disclosure-triangle').removeClass('closed');
+	$('#accordion-youtube .header .disclosure-triangle').removeClass('closed');
 	//$('#accordion-youtube .header .disclosure-triangle').addClass('opened');
 }, 2500);
 
