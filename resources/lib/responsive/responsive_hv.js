@@ -258,6 +258,7 @@ $(function() {
 					break;
 			}
 		document.getElementById(thisdrawersect2).scrollIntoView();
+		if(thisdrawersect2=='hv-drawer-youtube'){$('#youtube-button').trigger('click');};
 		
 		
 		
@@ -597,7 +598,7 @@ $(document.body).on('click','.toggle_empty',function(){
 
 
 // TESTING: ensure that the recently youtube shared videos are open
-setTimeout(function() {
+/*setTimeout(function() {
 	if($('#accordion-youtube .header .disclosure-triangle').hasClass('closed')) {
 		console.log('this is marked closed');
 		//$('#accordion-youtube .header').trigger('click');
@@ -609,7 +610,7 @@ setTimeout(function() {
 
 	//$('#accordion-youtube .header .disclosure-triangle').removeClass('closed');
 	//$('#accordion-youtube .header .disclosure-triangle').addClass('opened');
-}, 2500);
+}, 2500);*/
 //$('#accordion-youtube .header').click();
 //$('#youtube-button').click();
 
