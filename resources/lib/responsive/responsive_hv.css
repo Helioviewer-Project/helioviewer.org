@@ -946,6 +946,10 @@
 	   position: absolute;
 	}
 
+	.user-video-thumbnail-container:last-child {
+		margin-bottom:250px;
+	}
+
 	.drawer-contents .ui-accordion-header .fa.fa-fw {
 		display: none;
 	}
