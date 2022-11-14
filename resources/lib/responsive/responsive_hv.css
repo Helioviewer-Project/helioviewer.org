@@ -1475,5 +1475,9 @@
 		overflow: auto;
 		padding-bottom: 80px;
 	}
+	
+	#movie-settings-submit {
+		padding-bottom: 150px;
+	}
 
 }
