@@ -346,7 +346,7 @@
 	}
 	
 	#message-console {
-		display: none !important;
+		 /* display: none !important; */
 	}
 	
 	.qtip {
