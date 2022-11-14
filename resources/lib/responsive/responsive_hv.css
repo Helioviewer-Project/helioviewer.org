@@ -1470,5 +1470,10 @@
 		max-width: 300px;
 	}	
 	
+	#accordion-movies {
+		height: 300px;
+		overflow: auto;
+		padding-bottom: 80px;
+	}
 
 }
