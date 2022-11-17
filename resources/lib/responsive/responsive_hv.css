@@ -732,7 +732,7 @@
 	*/
 	
 	#zoom, #zoomControls, #zoomSliderContainer, #zoomControlSlider {
-		display: none !important;
+		display: block !important; /* none !important; */
 		z-index: 1 !important;
 	}
 	
