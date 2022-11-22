@@ -151,18 +151,18 @@
 	<script type="text/javascript">var outputType = <?php if($outputType){ echo "'".$outputType."'"; } else { echo 'false'; }?>;</script>
 	
 	<!-- START responsive CSS files 
-	<link rel='stylesheet' href='resources/css/zeynep.css?rng=<?php echo(rand(2145, 999999)); ?>'>
-	<link href="resources/css/hamburger.min.css?rng=<?php echo(rand(2145, 999999)); ?>" rel="stylesheet">
-	<link rel="stylesheet" href="resources/css/responsive_hv.css?rng=<?php echo(rand(2145, 999999)); ?>" media="only screen and (max-width: 991px)">
+	<link rel='stylesheet' href='resources/css/zeynep.css'>
+	<link href="resources/css/hamburger.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="resources/css/responsive_hv.css" media="only screen and (max-width: 991px)">
 	END responsive CSS files -->
 <?php	
 if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {      
-$cssfilesrndnum= rand(2145, 999999);
+//$cssfilesrndnum= rand(2145, 999999);
 $hvmobcssfiles= <<<MCF
 <!-- START responsive CSS files -->
-<link rel='stylesheet' href='resources/lib/responsive/zeynep.css?rng=$cssfilesrndnum'>
-<link href="resources/lib/responsive/hamburger.min.css?rng=$cssfilesrndnum" rel="stylesheet">
-<link rel="stylesheet" href="resources/lib/responsive/responsive_hv.css?rng=$cssfilesrndnum">
+<link rel='stylesheet' href='resources/lib/responsive/zeynep.css'>
+<link href="resources/lib/responsive/hamburger.min.css" rel="stylesheet">
+<link rel="stylesheet" href="resources/lib/responsive/responsive_hv.css">
 <!-- END responsive CSS files -->
 MCF;
 echo $hvmobcssfiles;	
@@ -1896,12 +1896,12 @@ echo $hvdesktopcsshides;
 
 <?php
 if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {      
-$jsfilesrndnum= rand(2145, 999999);
+//$jsfilesrndnum= rand(2145, 999999);
 $hvmobjsfiles= <<<MJF
 <!-- START responsive JS files -->
-<script src='resources/lib/responsive/zeynep1.js?rng=$jsfilesrndnum'></script>
-<script src="resources/lib/responsive/interact.min.js?rng=$jsfilesrndnum"></script>
-<script src="resources/lib/responsive/responsive_hv.js?rng=$jsfilesrndnum"></script>
+<script src='resources/lib/responsive/zeynep1.js'></script>
+<script src="resources/lib/responsive/interact.min.js"></script>
+<script src="resources/lib/responsive/responsive_hv.js"></script>
 <!-- END responsive JS files -->
 MJF;
 echo $hvmobjsfiles;
