@@ -91,24 +91,24 @@
 	<meta id="fb-og-image" property="og:image" content="//helioviewer.org/resources/images/logos/hvlogo1s_transparent.png" />
 
 	<!-- Library CSS -->
-	<link rel="stylesheet" href="resources/lib/yui-2.8.2r1/reset-fonts.css" />
-	<link rel="stylesheet" href="resources/lib/jquery-ui-1.13.1/jquery-ui.min.css?rndnm=<?php echo (rand(9999,9999999)); ?>" />
-	<link rel="stylesheet" href="resources/lib/jquery.jgrowl/jquery.jgrowl.min.css" />
-	<link rel="stylesheet" href="resources/lib/jquery.qTip3/jquery.qtip.min.css" />
-	<link rel="stylesheet" href="resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
-	<link rel="stylesheet" href="resources/lib/DatetimePicker/jquery.datetimepicker.css" />
-	<link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.min.css" />
-	<link rel="stylesheet" href="resources/lib/period_picker.2.7.8.pro/build/jquery.timepicker.css" />
-	<link rel="stylesheet" href="resources/lib/boneVojage/bonevojage.css">
-	<link rel="stylesheet" href="resources/lib/mediaelement/build/mediaelementplayer.min.css">
+	<link rel="stylesheet" href="/resources/lib/yui-2.8.2r1/reset-fonts.css" />
+	<link rel="stylesheet" href="/resources/lib/jquery-ui-1.13.1/jquery-ui.min.css?rndnm=<?php echo (rand(9999,9999999)); ?>" />
+	<link rel="stylesheet" href="/resources/lib/jquery.jgrowl/jquery.jgrowl.min.css" />
+	<link rel="stylesheet" href="/resources/lib/jquery.qTip3/jquery.qtip.min.css" />
+	<link rel="stylesheet" href="/resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
+	<link rel="stylesheet" href="/resources/lib/DatetimePicker/jquery.datetimepicker.css" />
+	<link rel="stylesheet" href="/resources/lib/period_picker.2.7.8.pro/build/jquery.periodpicker.min.css" />
+	<link rel="stylesheet" href="/resources/lib/period_picker.2.7.8.pro/build/jquery.timepicker.css" />
+	<link rel="stylesheet" href="/resources/lib/boneVojage/bonevojage.css">
+	<link rel="stylesheet" href="/resources/lib/mediaelement/build/mediaelementplayer.min.css">
 
 	<!-- jQuery UI Theme Modifications -->
 	<link rel="stylesheet" href="/resources/css/dot-luv.css">
 
-	
 
-	
-	
+
+
+
 	<!-- Helioviewer CSS -->
 	<?php
 	if ($debug){
@@ -149,23 +149,23 @@
 	}
 	?>
 	<script type="text/javascript">var outputType = <?php if($outputType){ echo "'".$outputType."'"; } else { echo 'false'; }?>;</script>
-	
-	<!-- START responsive CSS files 
-	<link rel='stylesheet' href='resources/css/zeynep.css'>
-	<link href="resources/css/hamburger.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="resources/css/responsive_hv.css" media="only screen and (max-width: 991px)">
+
+	<!-- START responsive CSS files
+	<link rel='stylesheet' href='/resources/css/zeynep.css'>
+	<link href="/resources/css/hamburger.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/resources/css/responsive_hv.css" media="only screen and (max-width: 991px)">
 	END responsive CSS files -->
-<?php	
-if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {      
+<?php
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
 //$cssfilesrndnum= rand(2145, 999999);
 $hvmobcssfiles= <<<MCF
 <!-- START responsive CSS files -->
-<link rel='stylesheet' href='resources/lib/responsive/zeynep.css'>
-<link href="resources/lib/responsive/hamburger.min.css" rel="stylesheet">
-<link rel="stylesheet" href="resources/lib/responsive/responsive_hv.css">
+<link rel='stylesheet' href='/resources/lib/responsive/zeynep.css'>
+<link href="/resources/lib/responsive/hamburger.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/resources/lib/responsive/responsive_hv.css">
 <!-- END responsive CSS files -->
 MCF;
-echo $hvmobcssfiles;	
+echo $hvmobcssfiles;
 }
 else {
 $hvdesktopcsshides= <<<DCH
@@ -198,11 +198,11 @@ echo $hvdesktopcsshides;
 ?>
 </head>
 <body <?php echo ($outputType ? 'class="helioviewer-view-type-'.$outputType.'"' : '')?>>
-	
+
 <!-- Previously dynamic-made elements, created for selecting purposes -->
 <a class="text-btn" style="display:none;"></a>
-	
-<!-- START mobile menu -->	
+
+<!-- START mobile menu -->
 <div class="zeynep" style="background-color:none;">
 	<ul>
 
@@ -212,7 +212,7 @@ echo $hvdesktopcsshides;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0" style="margin-top: 50px;">
 				<td class="hvmobmenu_left_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-news">
-						<img src="resources/images/projectanounce_icon_transp.png">&nbsp;&nbsp;
+						<img src="/resources/images/projectanounce_icon_transp.png">&nbsp;&nbsp;
 					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -220,12 +220,12 @@ echo $hvdesktopcsshides;
 				</td>
 			</table>
 		</li>
-		
+
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-youtube">
-						<img src="resources/images/viewyoutube_icon_transp.png">&nbsp;&nbsp;
+						<img src="/resources/images/viewyoutube_icon_transp.png">&nbsp;&nbsp;
 					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -233,13 +233,13 @@ echo $hvdesktopcsshides;
 				</td>
 			</table>
 		</li>
-		
-		
+
+
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-movies">
-						<img src="resources/images/createmovie_icon_transp.png">&nbsp;&nbsp;
+						<img src="/resources/images/createmovie_icon_transp.png">&nbsp;&nbsp;
 					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -247,26 +247,26 @@ echo $hvdesktopcsshides;
 				</td>
 			</table>
 		</li>
-		
+
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-screenshots">
-						<img src="resources/images/screenshot_icon_transp.png">&nbsp;&nbsp;
+						<img src="/resources/images/screenshot_icon_transp.png">&nbsp;&nbsp;
 					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-screenshots">Create a screenshot.</span>
 				</td>
-			</table>				
-		</li>		
-		
+			</table>
+		</li>
+
 		<!--
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="">
-						<img class="hvmobmenuitems" drawersec="hv-drawer-data" src="resources/images/datadownload_icon_transp.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="hv-drawer-data" src="/resources/images/datadownload_icon_transp.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -275,12 +275,12 @@ echo $hvdesktopcsshides;
 			</table>
 		</li>
 		-->
-		
+
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-share">
-						<img src="resources/images/shareviewport_icon_transp.png">&nbsp;&nbsp;
+						<img src="/resources/images/shareviewport_icon_transp.png">&nbsp;&nbsp;
 					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -293,14 +293,14 @@ echo $hvdesktopcsshides;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="#" data-submenu="hvhelp">
-						<img src="resources/images/help_icon_transp.png">&nbsp;&nbsp;
+						<img src="/resources/images/help_icon_transp.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
 					<a href="#" data-submenu="hvhelp">Get Help with Helioviewer.</a>
 				</td>
 			</table>
-			
+
 				<div id="hvhelp" class="submenu">
 
 					<div class="submenu-header">
@@ -339,17 +339,17 @@ echo $hvdesktopcsshides;
 							<a target="_blank" href="https://github.com/Helioviewer-Project/helioviewer.org/issues">Report Problem</a>
 						</li>
 					</ul>
-				
+
 				</div>
-			
-			
+
+
 		</li>
 		<!--
 		<li>
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="">
-						<img class="hvmobmenuitems" drawersec="" src="resources/images/setting_icon_transp.png">&nbsp;&nbsp;
+						<img class="hvmobmenuitems" drawersec="" src="/resources/images/setting_icon_transp.png">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -373,16 +373,16 @@ echo $hvdesktopcsshides;
 <div class="zeynep-overlay"></div>
 
 
-<!-- END mobile menu -->			
-	
-	
+<!-- END mobile menu -->
+
+
 <!-- START Mobile toolbar -->
 
 <div id="hvmobscale_div"></div>
 
-<!-- END Mobile toolbar -->	
-	
-	
+<!-- END Mobile toolbar -->
+
+
 <!-- START Mobile Drawer Tabs -->
 <div class="hvmobdstab_wrap">
 	<!--
@@ -391,7 +391,7 @@ echo $hvdesktopcsshides;
 	<div class="hvmobdstabs" id="accordion-events_mobtab" drawersec="accordion-events">Features & Events</div>&nbsp;
 	<div class="hvmobdstabs" id="accordion-bodies_mobtab" drawersec="accordion-bodies">Celestial Bodies</div>
 	-->
-	
+
 <!-- START: Mobile Data source menu -->
 <table class="hvmobds_table" cellpadding="0" cellspacing="0" border="0">
 	<tr class="hvmobds_tr">
@@ -416,17 +416,17 @@ echo $hvdesktopcsshides;
 	</tr>
 </table>
 <!-- END: Mobile Data source menu -->
-	
+
 </div>
-<!-- END Mobile Drawer Tabs -->	
+<!-- END Mobile Drawer Tabs -->
 
 <!-- START Mobile DateTime field -->
 <div class="hvbottombar" style="">
 	<div class="dtcycle">
-		
+
 		<table class="dtcycle_table2" cellpadding="0" cellspacing="0" border="0" style="width: 100%;height: 100%;">
 			<tr>
-				<td class="dtcycle_arrows_td" hvdtcontrol="day_down" style="text-align:left;"><img hvdtcontrol="day_down" class="dtcycle_arrows" src="resources/images/mobile/leftarrow1.png"></td>
+				<td class="dtcycle_arrows_td" hvdtcontrol="day_down" style="text-align:left;"><img hvdtcontrol="day_down" class="dtcycle_arrows" src="/resources/images/mobile/leftarrow1.png"></td>
 
 				<!--
 				<td id="dt_monthyear_td" style="">
@@ -440,7 +440,7 @@ echo $hvdesktopcsshides;
 
 				<td id="hvmobtime_td" style=""></td>
 
-				<td class="dtcycle_arrows_td" hvdtcontrol="day_up" style="text-align:right;"><img hvdtcontrol="day_up" class="dtcycle_arrows" src="resources/images/mobile/rightarrow1.png"></td>
+				<td class="dtcycle_arrows_td" hvdtcontrol="day_up" style="text-align:right;"><img hvdtcontrol="day_up" class="dtcycle_arrows" src="/resources/images/mobile/rightarrow1.png"></td>
 			</tr>
 
 			<tr>
@@ -455,22 +455,22 @@ echo $hvdesktopcsshides;
 
 	</div>
 </div>
-<!-- END Mobile DateTime field -->	
-	
+<!-- END Mobile DateTime field -->
+
 <!-- START mobile bottom calendar tool -->
 
 <div class="hvbottomcal_wrap">
-<img src="resources/images/mobile/calendar1.png" class="hvbottomcal_img">
+<img src="/resources/images/mobile/calendar1.png" class="hvbottomcal_img">
 </div>
 
-<!-- END mobile bottom calendar tool -->	
-	
+<!-- END mobile bottom calendar tool -->
+
 <!-- START Mobile Event Popup -->
 <!--<div id="invispopupbg"></div>-->
 <div id="event-popup_mob"></div>
 <!-- END Mobile Event Popup -->
-	
-	
+
+
 	<?php if($outputType != 'embed'){ ?>
 	<div class="user-select-none" style="width: 100%; margin: 0; padding: 0; text-align: center; z-index: 9;">
 		<!-- Image area select tool -->
@@ -1779,9 +1779,9 @@ echo $hvdesktopcsshides;
 	<div id="helioviewer-viewport-container-outer" class="user-select-none">
 		<div id="helioviewer-viewport-container-inner">
 			<div id="helioviewer-viewport">
-                <!-- START mobile touchscreen viewport div -->	
+                <!-- START mobile touchscreen viewport div -->
                 <div id="toptouchlayer" style=""></div>
-                 <!-- END mobile touchscreen viewport div -->	
+                 <!-- END mobile touchscreen viewport div -->
 
 				<!-- Movement sandbox -->
 				<div id="sandbox" style="position: absolute;">
@@ -1825,65 +1825,65 @@ echo $hvdesktopcsshides;
 	<?php
 	if ($debug){
 	?>
-		<script src="resources/js/Utility/Config.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/HelperFunctions.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Layer/Layer.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Layer/TileLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Layer/TileLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Layer/HelioviewerTileLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/KeyboardManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Manager/LayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Manager/TileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Manager/HelioviewerTileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Image/JP2Image.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/PinchDetector.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/HelioviewerZoomer.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/TouchMover.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/MouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/HelioviewerMouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/SandboxHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/Helper/ViewportMovementHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/HelioviewerViewport.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/HelioviewerClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/ZoomControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/ImageScale.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/Timeline.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/TimelineEvents.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/TimeSelector.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/InputValidator.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/SettingsLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/UserSettings.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/Tutorial.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Tiling/Manager/LayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventType.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventTree.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventFeatureRecognitionMethod.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventMarker.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/HelioviewerEventLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Events/HelioviewerEventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/TreeSelect.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/ImageSelectTool.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Media/MediaManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Media/MediaManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Media/MovieManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Media/MovieManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Media/ScreenshotManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Media/ScreenshotManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/TileLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/EventLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/MessageConsole.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/TimeControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Utility/FullscreenControl.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/HelioviewerWebClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/UserVideoGallery.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/Glossary.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/jquery.ui.dynaccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/ImagePresets.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/UI/TileLayerData.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="resources/js/Viewport/CelestialBodiesSatellites.js?v=<?=debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/Config.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/HelperFunctions.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Layer/Layer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Layer/TileLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Layer/TileLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Layer/HelioviewerTileLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/KeyboardManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Manager/LayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Manager/TileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Manager/HelioviewerTileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Image/JP2Image.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/PinchDetector.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/HelioviewerZoomer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/TouchMover.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/MouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/HelioviewerMouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/SandboxHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/ViewportMovementHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/HelioviewerViewport.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/HelioviewerClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/ZoomControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/ImageScale.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/Timeline.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/TimelineEvents.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/TimeSelector.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/InputValidator.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/SettingsLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/UserSettings.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/Tutorial.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Tiling/Manager/LayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventType.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventTree.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventFeatureRecognitionMethod.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventMarker.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/HelioviewerEventLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/HelioviewerEventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/TreeSelect.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/ImageSelectTool.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Media/MediaManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Media/MediaManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Media/MovieManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Media/MovieManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Media/ScreenshotManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Media/ScreenshotManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/TileLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/EventLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/MessageConsole.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/TimeControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/FullscreenControl.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/HelioviewerWebClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/UserVideoGallery.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/Glossary.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/jquery.ui.dynaccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/ImagePresets.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/UI/TileLayerData.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/CelestialBodiesSatellites.js?v=<?=debugTime?>" type="text/javascript"></script>
 	<?php
 	} else {
 	?>
@@ -1895,22 +1895,22 @@ echo $hvdesktopcsshides;
 	?>
 
 <?php
-if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {      
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
 //$jsfilesrndnum= rand(2145, 999999);
 $hvmobjsfiles= <<<MJF
 <!-- START responsive JS files -->
-<script src='resources/lib/responsive/zeynep1.js'></script>
-<script src="resources/lib/responsive/interact.min.js"></script>
-<script src="resources/lib/responsive/responsive_hv.js"></script>
+<script src='/resources/lib/responsive/zeynep1.js'></script>
+<script src="/resources/lib/responsive/interact.min.js"></script>
+<script src="/resources/lib/responsive/responsive_hv.js"></script>
 <!-- END responsive JS files -->
 MJF;
 echo $hvmobjsfiles;
 }
-?>	
-	
-	<script src="resources/lib/hvbrowserspecific/hv_browserspecific.js" type="text/javascript"></script>
-	<script src="resources/js/CustomHandling/CustomHandling.js?chrndnm=<?php echo (rand(9999,9999999)); ?>" type="text/javascript"></script>
-	
+?>
+
+	<script src="/resources/lib/hvbrowserspecific/hv_browserspecific.js" type="text/javascript"></script>
+	<script src="/resources/js/CustomHandling/CustomHandling.js?chrndnm=<?php echo (rand(9999,9999999)); ?>" type="text/javascript"></script>
+
 	<!-- Launch Helioviewer -->
 	<script type="text/javascript">
 		var serverSettings, settingsJSON, urlSettings, debug, scrollLock = false, embedView = false;
@@ -2000,10 +2000,10 @@ echo $hvmobjsfiles;
 			}
 		});
 	</script>
-	
+
 	<!--
-	<script src='resources/js/responsive/zeynep1.js?rng=<?php echo(rand(2145, 999999)); ?>'></script>
-	<script src="resources/js/responsive/responsive_hv.js?rng=<?php echo(rand(2145, 999999)); ?>"></script>
+	<script src='/resources/js/responsive/zeynep1.js?rng=<?php echo(rand(2145, 999999)); ?>'></script>
+	<script src="/resources/js/responsive/responsive_hv.js?rng=<?php echo(rand(2145, 999999)); ?>"></script>
 	-->
 
 	<?php
