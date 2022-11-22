@@ -294,6 +294,10 @@ $(function() {
 		
 	});
 
+	// NEWEST button replication on mobile
+	$('#timeNowBtn_mob').click(function(){
+		$('#timeNowBtn').trigger('click');
+	});
 
 
 	// move zoom controls to the body
