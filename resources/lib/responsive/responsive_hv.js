@@ -14,7 +14,7 @@ $(function() {
 	$('.hv-drawer-right').prepend('<span class="mobmenutopanchor"></span>');
 
 	// add closing X to #hv-drawer-right
-	$('.hv-drawer-right').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+	$('.hv-drawer-right').prepend('<div class="hvmobmenuclose_div"><div class="hvmobmenutitle_div"></div><img class="hvmobmenuclose" src="resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
 	// show updated HEK top nav
 	$('.event-info').on('click', function(){
@@ -77,7 +77,7 @@ $(function() {
 	$('#hv-drawer-left').prepend('<span id="mobdrawertopanchor"></span>');
 
 	// add closing X to #hv-drawer-left
-	$('#hv-drawer-left').prepend('<div id="hvmobdrawerclose_div"><div id="hvmobdrawertitle_div"></div><img id="hvmobdrawerclose" src="https://develop.helioviewer.org/resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
+	$('#hv-drawer-left').prepend('<div id="hvmobdrawerclose_div"><div id="hvmobdrawertitle_div"></div><img id="hvmobdrawerclose" src="resources/images/mobile/mobdsclose2.png">&nbsp;&nbsp;</div>');
 
 	// closing drawer function
 	$("#hvmobdrawerclose").click(function(){
