@@ -1299,6 +1299,7 @@
 		width: 135px;
 		background: transparent;
 		color: #ffffff;
+		text-align:center;
 	}
 	
 	#timestep-select option {
