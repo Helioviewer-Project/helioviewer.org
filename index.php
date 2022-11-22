@@ -445,12 +445,12 @@ echo $hvdesktopcsshides;
 
 			<tr>
 				<td class="dtcycle_jump_td" colspan="2" style="">
-					<span style="color:white;">JUMP:</span>&nbsp;
+					<span style="color:#ffffff;">JUMP:</span>&nbsp;
 					<span id="hvmobjump_div"></span>
 				</td>
 				
 				<td class="dtcycle_jump_td" colsan="2" >
-					<div id="timeNowBtn_mob">NEWEST</div>
+					<div id="timeNowBtn_mob" style="color:#ffffff;">NEWEST</div>
 				</td>
 			</tr>
 
