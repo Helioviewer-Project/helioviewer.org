@@ -449,8 +449,8 @@ echo $hvdesktopcsshides;
 					<span id="hvmobjump_div"></span>
 				</td>
 				
-				<td class="dtcycle_jump_td" id="timeNowBtn_mob_td" colsan="2" >
-					<!--<div id="timeNowBtn_mob" style="color:#ffffff;">NEWEST</div>-->
+				<td class="dtcycle_jump_td" id="timeNowBtn_mob_td" colspan="2" >
+
 				</td>
 			</tr>
 
