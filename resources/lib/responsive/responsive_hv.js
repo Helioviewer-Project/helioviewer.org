@@ -295,10 +295,12 @@ $(function() {
 	});
 
 	// NEWEST button replication on mobile
-	$('#timeNowBtn_mob').click(function(){
+	$('#timeNowBtn').clone().appendTo("#timeNowBtn_mob_td");
+	
+	/*$('#timeNowBtn_mob').click(function(){
 		//$('#timeNowBtn').click();
 		$('#timeNowBtn').trigger('click');
-	});
+	});*/
 
 
 	// move zoom controls to the body
