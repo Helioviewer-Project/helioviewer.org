@@ -357,6 +357,10 @@
 		display: none  !important;
 	}
 	
+	#desktop_firsttime_tutorial_span {
+	   display: none !important;
+	}
+	
 	[aria-describedby="event-info-dialog"] {
 		position: fixed;
 		top: 40px !important;
