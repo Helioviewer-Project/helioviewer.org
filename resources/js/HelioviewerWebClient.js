@@ -1710,8 +1710,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         }
 
         $(document).trigger("message-console-info",
-            ["<b>Welcome to Helioviewer.org</b>, a solar data browser. First time here? Be sure to complete our " +
-             "<a href=\"javascript:void(0);\" class=\"message-console-link\" onclick=\"startTutorial();\"> Interactive Tutorial</a>.</br>",
+            ["<b>Welcome to Helioviewer.org</b>, a solar data browser. <span id=\"desktop_firsttime_tutorial_span\">First time here? Be sure to complete our " +
+             "<a href=\"javascript:void(0);\" class=\"message-console-link\" onclick=\"startTutorial();\"> Interactive Tutorial</a>.</span></br>",
              {"sticky": true,"group":"tutorial-greeting"}]
         );
 
