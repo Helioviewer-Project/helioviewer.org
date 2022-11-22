@@ -296,7 +296,7 @@ $(function() {
 
 	// NEWEST button replication on mobile
 	$('#timeNowBtn_mob').click(function(){
-		$('#timeNowBtn').trigger('click');
+		$('#timeNowBtn').click();
 	});
 
 
