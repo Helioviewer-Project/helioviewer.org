@@ -155,7 +155,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'
         <link href="/resources/lib/responsive/hamburger.min.css" rel="stylesheet">
         <link rel="stylesheet" href="/resources/lib/responsive/responsive_hv.css">
         <!-- END responsive CSS files -->
-    MCF;
+MCF;
     echo $hvmobcssfiles;
 } else {
     $hvdesktopcsshides= <<<DCH
@@ -182,7 +182,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'
             display: none;
         }
         </style>
-    DCH;
+DCH;
     echo $hvdesktopcsshides;
 }
 ?>
