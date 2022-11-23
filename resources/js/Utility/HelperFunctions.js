@@ -437,35 +437,48 @@ var parseEventString = function (str) {
  *
  * @see http://ross.posterous.com/2008/08/19/iphone-touch-events-in-javascript/
  */
+var htmltwofingersdown=0;
+
 function touchHandler(event)
 {
-    var touches, first, type, simulatedEvent;
+	
+	if(event.targetTouches.length == 1 && event.changedTouches.length == 1 && htmltwofingersdown<2) { 
 
-    touches = event.changedTouches;
-    first   = touches[0];
-    type    = "";
+		var touches, first, type, simulatedEvent;
 
-    switch (event.type) {
-    case "touchstart":
-        type = "mousedown";
-        break;
-    case "touchmove":
-        type = "mousemove";
-        break;
-    case "touchend":
-        type = "mouseup";
-        break;
-    default:
-        return;
-    }
+		touches = event.changedTouches;
+		first   = touches[0];
+		type    = "";
 
-    simulatedEvent = document.createEvent("MouseEvent");
-    simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY,
-                                  first.clientX, first.clientY, false, false, false, false, 0, null);
+		switch (event.type) {
+		case "touchstart":
+		type = "mousedown";
+		break;
+		case "touchmove":
+		type = "mousemove";
+		break;
+		case "touchend":
+		type = "mouseup";
+		break;
+		case "touchcancel":
+		type = "mouseup";
+		break;		
+		default:
+		return;
+		}
 
-    first.target.dispatchEvent(simulatedEvent);
-    event.preventDefault();
+		simulatedEvent = document.createEvent("MouseEvent");
+		simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY,
+					  first.clientX, first.clientY, false, false, false, false, 0, null);
+
+		first.target.dispatchEvent(simulatedEvent);
+		event.preventDefault();
+
+	}
+	
 }
+
+
 
 /**
  * Maps the touch handler events to mouse events for a given element using the touchHandler event listener above
@@ -474,14 +487,22 @@ function touchHandler(event)
  *
  * @return void
  */
+
+
 function assignTouchHandlers(element) {
-    if (typeof element == 'undefined' || !element.addEventListener) {
-        return; // IE 8 and under
-    }
-    element.addEventListener("touchstart", touchHandler, true);
-    element.addEventListener("touchmove", touchHandler, true);
-    element.addEventListener("touchend", touchHandler, true);
-    element.addEventListener("touchcancel", touchHandler, true);
+    return;
+	if(htmltwofingersdown<2) {
+	
+		if (typeof element == 'undefined' || !element.addEventListener) {
+		return; // IE 8 and under
+		}
+		element.addEventListener("touchstart", touchHandler, true);
+		element.addEventListener("touchmove", touchHandler, true);
+		element.addEventListener("touchend", touchHandler, true);
+		element.addEventListener("touchcancel", touchHandler, true);
+		
+	}
+
 }
 
 

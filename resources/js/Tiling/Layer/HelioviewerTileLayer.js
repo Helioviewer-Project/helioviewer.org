@@ -82,20 +82,46 @@ var HelioviewerTileLayer = TileLayer.extend(
     },
 
     /**
+     * Preloads a tile for the next zoom level
+     * @param {Event} event The event that was dispatched to execute this function
+     * @param {bool} zoom If true, then uses the next zoom image scale, if false uses the next zoom-out image scale
+     * @param {number} x X tile
+     * @param {number} y Y tile
+     */
+    preloadTile: function (event, zoom, x, y) {
+        let scale = zoom ? this.viewportScale / 2 : this.viewportScale * 2;
+        let url = this.getTileURL(x, y, scale);
+        // Only preload if the image isn't already cached/preloaded
+        let preloaded = document.querySelectorAll("[href='"+url+"']");
+        if (preloaded.length == 0) {
+            // Create preload <link> element to tell the browser to cache the image
+            let preloader = document.createElement("link");
+            preloader.rel = "preload";
+            preloader.as = "image";
+            preloader.href = url;
+            document.body.appendChild(preloader);
+        }
+    },
+
+    /**
      * Returns a formatted string representing a query for a single tile
      */
-    getTileURL: function (x, y) {
+    getTileURL: function (x, y, scale) {
         var baseDiffTimeStr = this.baseDiffTime;
         if(typeof baseDiffTimeStr == 'number' || baseDiffTimeStr == null){
 			baseDiffTimeStr = $('#date').val()+' '+$('#time').val();
 		}
 		
         baseDiffTimeStr = baseDiffTimeStr.replace(' ', 'T').replace(/\//g, '-').replace(/.000Z/g, '') + '.000Z';
+        // If scale is given via input, then let it override the global viewport scale
+        let imageScale = (scale == undefined) ? this.viewportScale : scale;
+        // Limit the scale to two decimal places so that the excess precision digits don't break caching
+        imageScale = imageScale.toFixed(3);
         
         var params = {
             "action"      : "getTile",
             "id"          : this.image.id,
-            "imageScale"  : this.viewportScale,
+            "imageScale"  : imageScale,
             "x"           : x,
             "y"           : y,
             "difference"  : this.difference, 
@@ -140,6 +166,7 @@ var HelioviewerTileLayer = TileLayer.extend(
      */
     _setupEventHandlers: function () {
         $(this.domNode).bind('get-tile', $.proxy(this.getTile, this));
+        $(this.domNode).bind('preload-tile', $.proxy(this.preloadTile, this));
         $(document).bind('toggle-layer-visibility', $.proxy(this.toggleVisibility, this));
     }
 });

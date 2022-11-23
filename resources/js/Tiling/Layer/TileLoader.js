@@ -45,17 +45,19 @@ var TileLoader = Class.extend(
         this.width  = width;
         this.height = height;
     },
-    
+
     /**
      * @description Determines the boundaries for the valid tile range
+     * @param {number} width Image width
+     * @param {number} height Image height
      * @return {Array} An array containing the tile boundaries
      */
-    getValidTileRange: function () {
+    _getValidTileRangeForDimensions: function (width, height) {
         var numTilesX, numTilesY, boundaries, ts = this.tileSize;
 
         // Number of tiles for the entire image
-        numTilesX = Math.max(2, Math.ceil(this.width  / ts));
-        numTilesY = Math.max(2, Math.ceil(this.height  / ts));
+        numTilesX = Math.max(2, Math.ceil(width  / ts));
+        numTilesY = Math.max(2, Math.ceil(height  / ts));
         
         // Tile placement architecture expects an even number of tiles along each dimension
         if ((numTilesX % 2) !== 0) {
@@ -76,7 +78,15 @@ var TileLoader = Class.extend(
 
         return boundaries;
     },
-    
+
+    /**
+     * Gets the valid tile range for the current width/height
+     * @return {Array} An array containing the tile boundaries
+     */
+    getValidTileRange: function () {
+        return this._getValidTileRangeForDimensions(this.width, this.height);
+    },
+
     /**
      * 
      */
@@ -115,7 +125,20 @@ var TileLoader = Class.extend(
         
         return tiles;
     },
-    
+
+    /**
+     * Executes a function over the given visibility range
+     * @param {Object} visibilityRange the x/yStart and x/yEnd fields
+     * @param {function} fn function to execute for each tile. input parameters must be (x, y)
+     */
+    _iterateVisibilityRange: function (visibilityRange, fn) {
+        for (let i = visibilityRange.xStart; i <= visibilityRange.xEnd; i += 1) {
+            for (let j = visibilityRange.yStart; j <= visibilityRange.yEnd; j += 1) {
+                fn(i, j);
+            }
+        }
+    },
+
     /**
      * @description reloads displayed tiles
      * @param {Boolean} removeOldTilesFirst Whether old tiles should be removed before or after new ones are loaded.
@@ -137,20 +160,38 @@ var TileLoader = Class.extend(
         this.numTiles = 0;
         
         // Load tiles that lie within the current viewport
-        for (i = this.tileVisibilityRange.xStart; i <= this.tileVisibilityRange.xEnd; i += 1) {
-            for (j = this.tileVisibilityRange.yStart; j <= this.tileVisibilityRange.yEnd; j += 1) {
-                if (this.validTiles[i] && this.validTiles[i][j]) {
-                    this.numTiles += 1;
-                    $(this.domNode).trigger('get-tile', [i, j, $.proxy(this.onTileLoadComplete, this)]);
-                                        
-                    if (!this.loadedTiles[i]) {
-                        this.loadedTiles[i] = {};
-                    }
-    
-                    this.loadedTiles[i][j] = true;
+        this._iterateVisibilityRange(this.tileVisibilityRange, (i, j) => {
+            if (this.validTiles[i] && this.validTiles[i][j]) {
+                this.numTiles += 1;
+                $(this.domNode).trigger('get-tile', [i, j, $.proxy(this.onTileLoadComplete, this)]);
+
+                if (!this.loadedTiles[i]) {
+                    this.loadedTiles[i] = {};
                 }
+
+                this.loadedTiles[i][j] = true;
             }
-        }        
+        });
+
+        // Enable eager loading
+        this._preloadNextScale(true);
+        this._preloadNextScale(false);
+    },
+
+    _preloadNextScale: function (zoomIn) {
+        // If zooming in, then the next width/height is * 2
+        // If zooming out, then the next width/height is * 0.5
+        let multiplier = zoomIn ? 2 : 0.5;
+        let nextWidth = this.width * multiplier;
+        let nextHeight = this.height * multiplier;
+        // Maximum scale is 4k, so if the next zoom level is highter, then don't
+        // Minimum scale is 15 pixels. So less than that should also be ignored
+        if (nextWidth >= 15 && nextWidth <= 4000) {
+            let visibilityRange = this._getValidTileRangeForDimensions(nextWidth, nextHeight);
+            this._iterateVisibilityRange(visibilityRange, (i, j) => {
+                $(this.domNode).trigger('preload-tile', [zoomIn, i, j]);
+            });
+        }
     },
     
     onTileLoadComplete: function () {
