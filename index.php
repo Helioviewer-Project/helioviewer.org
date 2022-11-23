@@ -92,7 +92,7 @@
 
 	<!-- Library CSS -->
 	<link rel="stylesheet" href="/resources/lib/yui-2.8.2r1/reset-fonts.css" />
-	<link rel="stylesheet" href="/resources/lib/jquery-ui-1.13.1/jquery-ui.min.css?rndnm=<?php echo (rand(9999,9999999)); ?>" />
+	<link rel="stylesheet" href="/resources/lib/jquery-ui-1.13.1/jquery-ui.min.css" />
 	<link rel="stylesheet" href="/resources/lib/jquery.jgrowl/jquery.jgrowl.min.css" />
 	<link rel="stylesheet" href="/resources/lib/jquery.qTip3/jquery.qtip.min.css" />
 	<link rel="stylesheet" href="/resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
@@ -104,10 +104,6 @@
 
 	<!-- jQuery UI Theme Modifications -->
 	<link rel="stylesheet" href="/resources/css/dot-luv.css">
-
-
-
-
 
 	<!-- Helioviewer CSS -->
 	<?php
@@ -150,50 +146,44 @@
 	?>
 	<script type="text/javascript">var outputType = <?php if($outputType){ echo "'".$outputType."'"; } else { echo 'false'; }?>;</script>
 
-	<!-- START responsive CSS files
-	<link rel='stylesheet' href='/resources/css/zeynep.css'>
-	<link href="/resources/css/hamburger.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="/resources/css/responsive_hv.css" media="only screen and (max-width: 991px)">
-	END responsive CSS files -->
 <?php
 if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
-//$cssfilesrndnum= rand(2145, 999999);
-$hvmobcssfiles= <<<MCF
-<!-- START responsive CSS files -->
-<link rel='stylesheet' href='/resources/lib/responsive/zeynep.css'>
-<link href="/resources/lib/responsive/hamburger.min.css" rel="stylesheet">
-<link rel="stylesheet" href="/resources/lib/responsive/responsive_hv.css">
-<!-- END responsive CSS files -->
-MCF;
-echo $hvmobcssfiles;
-}
-else {
-$hvdesktopcsshides= <<<DCH
-<style>
-.zeynep {
-display: none;
-}
-#hvmobilemenu_btn {
-display: none;
-}
-.zeynep-overlay {
-display: none;
-}
-.hvmobdstab_wrap {
-display: none;
-}
-.hvmobds_table {
-display: none;
-}
-.hvbottombar {
-display: none;
-}
-.hvbottomcal_wrap {
-display: none;
-}
-</style>
-DCH;
-echo $hvdesktopcsshides;
+    //$cssfilesrndnum= rand(2145, 999999);
+    $hvmobcssfiles= <<<MCF
+        <!-- START responsive CSS files -->
+        <link rel='stylesheet' href='/resources/lib/responsive/zeynep.css'>
+        <link href="/resources/lib/responsive/hamburger.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/resources/lib/responsive/responsive_hv.css">
+        <!-- END responsive CSS files -->
+    MCF;
+    echo $hvmobcssfiles;
+} else {
+    $hvdesktopcsshides= <<<DCH
+        <style>
+        .zeynep {
+            display: none;
+        }
+        #hvmobilemenu_btn {
+            display: none;
+        }
+        .zeynep-overlay {
+            display: none;
+        }
+        .hvmobdstab_wrap {
+            display: none;
+        }
+        .hvmobds_table {
+            display: none;
+        }
+        .hvbottombar {
+            display: none;
+        }
+        .hvbottomcal_wrap {
+            display: none;
+        }
+        </style>
+    DCH;
+    echo $hvdesktopcsshides;
 }
 ?>
 </head>
@@ -448,7 +438,7 @@ echo $hvdesktopcsshides;
 					<span style="color:#ffffff;">JUMP:</span>&nbsp;
 					<span id="hvmobjump_div"></span>
 				</td>
-				
+
 				<td class="dtcycle_jump_td" id="timeNowBtn_mob_td" colspan="2" >
 
 				</td>
@@ -603,7 +593,7 @@ echo $hvdesktopcsshides;
 
 									<div class="suffix dateSelector" data-tip-pisition="right" data-date-field="date" data-time-field="time">UTC</div>
 
-									<div id="timeNowBtn" class="fa fa-clock-o right" style="font-size: 1em;" title="Jump to the most recent available image's for the currently loaded layer(s).">
+									<div id="timeNowBtn" class="fa fa-clock-o right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the most recent available image's for the currently loaded layer(s).">
 										<span class="ui-icon-label">NEWEST</span>
 									</div>
 								</div>
@@ -2004,11 +1994,6 @@ echo $hvmobjsfiles;
 			}
 		});
 	</script>
-
-	<!--
-	<script src='/resources/js/responsive/zeynep1.js?rng=<?php echo(rand(2145, 999999)); ?>'></script>
-	<script src="/resources/js/responsive/responsive_hv.js?rng=<?php echo(rand(2145, 999999)); ?>"></script>
-	-->
 
 	<?php
 		if($outputType=='embed' && (!isset($_GET['hideWatermark']) || $_GET['hideWatermark'] != 'true')){

@@ -197,20 +197,19 @@
 	background-image: url("/resources/lib/mediaelement/build/mejs-controls.svg");
 }
 
+#hv-drawer-movies {
+   overflow: none !important;
+}
 
-   #hv-drawer-movies {
-      overflow: none !important;
-   }
+#movie-manager-container {
+   overflow: auto !important;
+   max-height: 500px !important;
+}
 
-   #movie-manager-container { 
-      overflow: auto !important;
-      max-height: 500px !important;
-   }
-	
-   #movie-history {
-	overflow: auto !important;   
-   }
+#movie-history {
+ overflow: auto !important;
+}
 
 #google {
-	display: none;	
+	display: none;
 }
