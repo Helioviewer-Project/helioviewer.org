@@ -172,7 +172,11 @@ var ViewportMovementHelper = Class.extend(
         var sb, mc, left, top, vpWidth, vpHeight;
 
         sb = this.sandbox.position();
-        mc = this.movingContainer.position();
+        // mc = this.movingContainer.position();
+        mc = {
+            left: parseFloat(this.movingContainer[0].style.left),
+            top: parseFloat(this.movingContainer[0].style.top)
+        };
 
         left = -(sb.left + mc.left);
         top  = -(sb.top + mc.top);
@@ -275,7 +279,11 @@ var ViewportMovementHelper = Class.extend(
      * @returns {Object} The X & Y coordinates of the viewport's top-left corner
      */
     _getContainerPos: function () {
-        var position = this.movingContainer.position();
+        // var position = this.movingContainer.position();
+        var position = {
+            left: parseFloat(this.movingContainer[0].style.left),
+            top: parseFloat(this.movingContainer[0].style.top)
+        };
 
         return {
             x: position.left,

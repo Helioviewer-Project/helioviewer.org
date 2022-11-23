@@ -1,0 +1,221 @@
+/*!
+* zeynepjs v2.2.0
+* A light-weight multi-level jQuery side menu plugin.
+* It's fully customizable and is compatible with modern browsers such as Google Chrome, Mozilla Firefox, Safari, Edge and Internet Explorer
+* MIT License
+* by Huseyin ELMAS
+*/
+.zeynep {
+  bottom:0;
+  overflow:hidden;
+  -webkit-overflow-scrolling:touch;
+  overflow-y:auto;
+  pointer-events:none;
+  position:fixed;
+  top:0;
+  /*right: 0;*/
+  transform:translateX(2000px) translateZ(0px); /*translateX(-100%) translateZ(0px)*/
+  z-index:1011;
+    right: 0;
+    left: auto;
+}
+
+.zeynep-opened body {
+  overflow: hidden;
+}
+
+
+.zeynep:not(.no-transition),
+.zeynep .submenu:not(.no-transition){
+  transition:all 500ms;
+}
+
+.zeynep-overlay{
+  background-color:rgba(0, 0, 0, .42);
+  bottom:0;
+  display:none;
+  left:0;
+  position:fixed;
+  right:0;
+  top:0;
+  z-index:1010;
+}
+
+.zeynep-opened .zeynep-overlay{
+  display:block;
+}
+
+.zeynep.opened{
+  pointer-events:auto;
+  transform:translateX(0px) translateZ(0px);
+}
+
+.zeynep.submenu-opened{
+  overflow:hidden;
+}
+
+.zeynep .submenu{
+  bottom:0;
+  min-height:100%;
+  overflow:hidden;
+  -webkit-overflow-scrolling:touch;
+  overflow-y:auto;
+  pointer-events:none;
+  position:fixed;
+  top:0;
+  width:100%;
+}
+
+.zeynep .submenu.opened{
+  left:0;
+  pointer-events:auto;
+}
+
+.zeynep .submenu.opened:not(.current){
+  overflow:hidden;
+}
+
+
+/************   ************/
+
+
+
+
+.lead {
+  font-size: 16px;
+  line-height: 1.44;
+  max-width: 260px;
+  margin: 0 auto;
+  margin-bottom: 25px;
+}
+
+main {
+  text-align: center;
+  padding: 55px 20px;
+}
+
+.btn-open {
+  border: 0;
+  border-radius: 27.5px;
+  box-shadow: 0 2px 14px 0 rgba(0, 0, 0, .05);
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
+  min-width: 150px;
+  outline: 0;
+  padding-bottom: 15px;
+  padding-top: 15px;
+  cursor: pointer;
+  margin: 0 6px;
+}
+.btn-open:active {
+  box-shadow: inset 0 3px 5px 0px rgba(0, 0, 0, .1);
+}
+
+.btn-open.first {
+  background-color: none;
+  color: #ffffff;
+}
+.btn-open.second {
+  background-color: #ffffff;
+  color: #fd698d;
+}
+
+
+/* zeynepjs menu styles */
+.zeynep {
+  background-color: none;
+  color: #404143;
+  width: 295px;
+}
+
+.zeynep ul {
+  list-style-type: none;
+  padding: 0;
+  padding-left: 20px;
+  -webkit-overflow-scrolling: touch;
+}
+.zeynep ul > li {
+  display: block;
+}
+
+.zeynep ul > li > a {
+  color: inherit;
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 18px 20px;
+  text-decoration: none;
+  transition: all 150ms;
+}
+.zeynep ul > li > a:hover {
+  background-color: #efefef;
+  border-radius: 3px;
+}
+
+.zeynep ul > li:not(:last-child) > a {
+  border-bottom: 1px solid #efefef;
+}
+
+.zeynep ul > li.has-submenu > a {
+  background-image: url("../images/submenu-arrow.svg");
+  background-position: right 20px center;
+  background-repeat: no-repeat;
+  background-size: 8px 14px;
+}
+
+.zeynep ul > li.has-submenu > a:hover {
+  background-image: url("../images/submenu-arrow-active.svg");
+}
+
+/* zeynepjs submenu styles */
+.zeynep .submenu {
+  background-color: #ffffff;
+  left: 295px;
+}
+
+.zeynep .submenu-header {
+  background-image: url("../images/menu-back.svg");
+  background-position: left 20px center;
+  background-repeat: no-repeat;
+  background-size: 8px 14px;
+  border-bottom: solid 1px #efefef;
+  cursor: pointer;
+  position: relative;
+}
+
+.zeynep .submenu-header > a {
+  color: inherit;
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 18px 20px;
+  padding-left: 40px;
+  text-decoration: none;
+}
+
+.zeynep .submenu-header > a:before {
+  background-image: url("../images/submenu-arrow.svg");
+  background-position: right 20px center;
+  background-repeat: no-repeat;
+  background-size: 8px 14px;
+  content: "";
+  height: 100%;
+  left: 26px;
+  position: absolute;
+  top: 0;
+  transform: rotate(-180deg);
+  width: 20px;
+}
+
+.zeynep .submenu > label {
+  color: #e77691;
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  margin-top: 19px;
+  opacity: .5;
+  padding-left: 40px;
+  width: 100%;
+}

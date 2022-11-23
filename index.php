@@ -67,6 +67,8 @@
 	<!-- Helioviewer.org 3.2 2017/03/31 -->
 	<title><?=($debug ? '[DEBUG]' : '')?> Helioviewer.org - Solar and heliospheric image visualization tool</title>
 	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="noindex">
 	<meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
 	<meta name="keywords" content="Helioviewer, JPEG 2000, JP2, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, SDO, STEREO, AIA, HMI, EUVI, COR, EIT, LASCO, SDO, MDI, coronagraph, " />
 	<!--if ($this->config["disable_cache"])-->
@@ -144,8 +146,325 @@
 	?>
 	<script type="text/javascript">var outputType = <?php if($outputType){ echo "'".$outputType."'"; } else { echo 'false'; }?>;</script>
 
+<?php
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
+    //$cssfilesrndnum= rand(2145, 999999);
+    $hvmobcssfiles= <<<MCF
+        <!-- START responsive CSS files -->
+        <link rel='stylesheet' href='/resources/lib/responsive/zeynep.css'>
+        <link href="/resources/lib/responsive/hamburger.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/resources/lib/responsive/responsive_hv.css">
+        <!-- END responsive CSS files -->
+    MCF;
+    echo $hvmobcssfiles;
+} else {
+    $hvdesktopcsshides= <<<DCH
+        <style>
+        .zeynep {
+            display: none;
+        }
+        #hvmobilemenu_btn {
+            display: none;
+        }
+        .zeynep-overlay {
+            display: none;
+        }
+        .hvmobdstab_wrap {
+            display: none;
+        }
+        .hvmobds_table {
+            display: none;
+        }
+        .hvbottombar {
+            display: none;
+        }
+        .hvbottomcal_wrap {
+            display: none;
+        }
+        </style>
+    DCH;
+    echo $hvdesktopcsshides;
+}
+?>
 </head>
 <body <?php echo ($outputType ? 'class="helioviewer-view-type-'.$outputType.'"' : '')?>>
+
+<!-- Previously dynamic-made elements, created for selecting purposes -->
+<a class="text-btn" style="display:none;"></a>
+
+<!-- START mobile menu -->
+<div class="zeynep" style="background-color:none;">
+	<ul>
+
+		<li id="hvmobscale_li"></li>
+
+		<li>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0" style="margin-top: 50px;">
+				<td class="hvmobmenu_left_td">
+					<span class="hvmobmenuitems" drawersec="hv-drawer-news">
+						<img src="/resources/images/projectanounce_icon_transp.png">&nbsp;&nbsp;
+					</span>
+				</td>
+				<td class="hvmobmenu_right_td">
+					<span class="hvmobmenuitems" drawersec="hv-drawer-news">Helioviewer Project Announcements.</span>
+				</td>
+			</table>
+		</li>
+
+		<li>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<span class="hvmobmenuitems" drawersec="hv-drawer-youtube">
+						<img src="/resources/images/viewyoutube_icon_transp.png">&nbsp;&nbsp;
+					</span>
+				</td>
+				<td class="hvmobmenu_right_td">
+					<span class="hvmobmenuitems" drawersec="hv-drawer-youtube">View Helioviewer Movies<br>Shared to YouTube.</span>
+				</td>
+			</table>
+		</li>
+
+
+		<li>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<span class="hvmobmenuitems" drawersec="hv-drawer-movies">
+						<img src="/resources/images/createmovie_icon_transp.png">&nbsp;&nbsp;
+					</span>
+				</td>
+				<td class="hvmobmenu_right_td">
+					<span class="hvmobmenuitems" drawersec="hv-drawer-movies">Create a movie.</span>
+				</td>
+			</table>
+		</li>
+
+		<li>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<span class="hvmobmenuitems" drawersec="hv-drawer-screenshots">
+						<img src="/resources/images/screenshot_icon_transp.png">&nbsp;&nbsp;
+					</span>
+				</td>
+				<td class="hvmobmenu_right_td">
+					<span class="hvmobmenuitems" drawersec="hv-drawer-screenshots">Create a screenshot.</span>
+				</td>
+			</table>
+		</li>
+
+		<!--
+		<li>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<a href="">
+						<img class="hvmobmenuitems" drawersec="hv-drawer-data" src="/resources/images/datadownload_icon_transp.png">&nbsp;&nbsp;
+					</a>
+				</td>
+				<td class="hvmobmenu_right_td">
+					<span class="hvmobmenuitems" drawersec="hv-drawer-data">Request Science Data Download from External Partners.</span>
+				</td>
+			</table>
+		</li>
+		-->
+
+		<li>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<span class="hvmobmenuitems" drawersec="hv-drawer-share">
+						<img src="/resources/images/shareviewport_icon_transp.png">&nbsp;&nbsp;
+					</span>
+				</td>
+				<td class="hvmobmenu_right_td">
+					<span class="hvmobmenuitems" drawersec="hv-drawer-share">Share the current viewport on social media.</span>
+				</td>
+			</table>
+		</li>
+
+		<li class="has-submenu">
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<a href="#" data-submenu="hvhelp">
+						<img src="/resources/images/help_icon_transp.png">&nbsp;&nbsp;
+					</a>
+				</td>
+				<td class="hvmobmenu_right_td">
+					<a href="#" data-submenu="hvhelp">Get Help with Helioviewer.</a>
+				</td>
+			</table>
+
+				<div id="hvhelp" class="submenu">
+
+					<div class="submenu-header">
+						<a href="#" data-submenu-close="hvhelp"><span style="font-weight:bold;">&#60;</span>&nbsp;&nbsp;Main Menu</a>
+					</div>
+
+					<label>Get Help With Helioviewer</label>
+
+					<ul>
+						<li id="about_hv_mobmenu_link">
+							<span class="hvmobmenuitems" drawersec="hv-drawer-about" style="display:block;padding:8px;">About Helioviewer</span>
+						</li>
+						<!--
+						<li>
+							<a href="">User's Guide</a>
+						</li>
+						-->
+						<li>
+							<span class="hvmobmenuitems" drawersec="hv-drawer-glossary" style="display:block;padding:8px;">Visual Glossary</span>
+						</li>
+						<!--
+						<li>
+							<a href="">Documentation</a>
+						</li>
+						-->
+						<li>
+							<a target="_blank" href="https://api.helioviewer.org/docs/v2/">Public API Documentation</a>
+						</li>
+						<li>
+							<a target="_blank" href="https://helioviewer-project.github.io/">Blog</a>
+						</li>
+						<li>
+							<a target="_blank" href="mailto: HelioViewerDevelopment@nasa.onmicrosoft.com;">Contact</a>
+						</li>
+						<li>
+							<a target="_blank" href="https://github.com/Helioviewer-Project/helioviewer.org/issues">Report Problem</a>
+						</li>
+					</ul>
+
+				</div>
+
+
+		</li>
+		<!--
+		<li>
+			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
+				<td class="hvmobmenu_left_td">
+					<a href="">
+						<img class="hvmobmenuitems" drawersec="" src="/resources/images/setting_icon_transp.png">&nbsp;&nbsp;
+					</a>
+				</td>
+				<td class="hvmobmenu_right_td">
+					<span class="hvmobmenuitems" drawersec="">Edit Settings & Defaults</span>
+				</td>
+			</table>
+		</li>
+		-->
+	</ul>
+
+</div>
+
+
+<button id="hvmobilemenu_btn" class="hamburger hamburger--emphatic btn-open first" type="button">
+  <span class="hamburger-box">
+    <span class="hamburger-inner"></span>
+  </span>
+</button>
+
+
+<div class="zeynep-overlay"></div>
+
+
+<!-- END mobile menu -->
+
+
+<!-- START Mobile toolbar -->
+
+<div id="hvmobscale_div"></div>
+
+<!-- END Mobile toolbar -->
+
+
+<!-- START Mobile Drawer Tabs -->
+<div class="hvmobdstab_wrap">
+	<!--
+	<div class="hvmobdstabs" id="accordion-date_mobtab" drawersec="accordion-date">Observation Date</div>&nbsp;
+	<div class="hvmobdstabs" id="accordion-images_mobtab" drawersec="accordion-images">Images</div>&nbsp;
+	<div class="hvmobdstabs" id="accordion-events_mobtab" drawersec="accordion-events">Features & Events</div>&nbsp;
+	<div class="hvmobdstabs" id="accordion-bodies_mobtab" drawersec="accordion-bodies">Celestial Bodies</div>
+	-->
+
+<!-- START: Mobile Data source menu -->
+<table class="hvmobds_table" cellpadding="0" cellspacing="0" border="0">
+	<tr class="hvmobds_tr">
+		<td class="hvmobds_td">
+			<a class="hvmobdstabs" drawersec="accordion-images">
+				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/images_icon1.png">
+				<br><span>Images &amp;<span class="hvmobbs_br"><br></span> Layers</span>
+			</a>
+		</td>
+		<td class="hvmobds_td">
+			<a class="hvmobdstabs" drawersec="accordion-events">
+				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/events_icon1.png">
+				<br><span>Features &amp;<span class="hvmobbs_br"><br></span> Events</span>
+			</a>
+		</td>
+		<td class="hvmobds_td">
+			<a class="hvmobdstabs" drawersec="accordion-bodies">
+				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/celestial_icon2.png">
+				<br><span>Celestial<span class="hvmobbs_br"><br></span> Bodies</span>
+			</a>
+		</td>
+	</tr>
+</table>
+<!-- END: Mobile Data source menu -->
+
+</div>
+<!-- END Mobile Drawer Tabs -->
+
+<!-- START Mobile DateTime field -->
+<div class="hvbottombar" style="">
+	<div class="dtcycle">
+
+		<table class="dtcycle_table2" cellpadding="0" cellspacing="0" border="0" style="width: 100%;height: 100%;">
+			<tr>
+				<td class="dtcycle_arrows_td" hvdtcontrol="day_down" style="text-align:left;"><img hvdtcontrol="day_down" class="dtcycle_arrows" src="/resources/images/mobile/leftarrow1.png"></td>
+
+				<!--
+				<td id="dt_monthyear_td" style="">
+					<span id="dt_month_td"></span><br>
+					<span id="dt_year_td"></span>
+				</td>
+				<td id="dtday_td" style=""><span id="dt_day_spaces1">&nbsp;&nbsp;&nbsp;</span><span id="dt_day_td"></span></td>
+				-->
+
+				<td id="hvmobdate_td" style=""></td>
+
+				<td id="hvmobtime_td" style=""></td>
+
+				<td class="dtcycle_arrows_td" hvdtcontrol="day_up" style="text-align:right;"><img hvdtcontrol="day_up" class="dtcycle_arrows" src="/resources/images/mobile/rightarrow1.png"></td>
+			</tr>
+
+			<tr>
+				<td class="dtcycle_jump_td" colspan="2" style="">
+					<span style="color:#ffffff;">JUMP:</span>&nbsp;
+					<span id="hvmobjump_div"></span>
+				</td>
+
+				<td class="dtcycle_jump_td" id="timeNowBtn_mob_td" colspan="2" >
+
+				</td>
+			</tr>
+
+		</table>
+
+
+	</div>
+</div>
+<!-- END Mobile DateTime field -->
+
+<!-- START mobile bottom calendar tool -->
+
+<div class="hvbottomcal_wrap">
+<img src="/resources/images/mobile/calendar1.png" class="hvbottomcal_img">
+</div>
+
+<!-- END mobile bottom calendar tool -->
+
+<!-- START Mobile Event Popup -->
+<!--<div id="invispopupbg"></div>-->
+<div id="event-popup_mob"></div>
+<!-- END Mobile Event Popup -->
+
+
 	<?php if($outputType != 'embed'){ ?>
 	<div class="user-select-none" style="width: 100%; margin: 0; padding: 0; text-align: center; z-index: 9;">
 		<!-- Image area select tool -->
@@ -1454,6 +1773,9 @@
 	<div id="helioviewer-viewport-container-outer" class="user-select-none">
 		<div id="helioviewer-viewport-container-inner">
 			<div id="helioviewer-viewport">
+                <!-- START mobile touchscreen viewport div -->
+                <div id="toptouchlayer" style=""></div>
+                 <!-- END mobile touchscreen viewport div -->
 
 				<!-- Movement sandbox -->
 				<div id="sandbox" style="position: absolute;">
@@ -1508,6 +1830,9 @@
 		<script src="/resources/js/Tiling/Manager/TileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Tiling/Manager/HelioviewerTileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Image/JP2Image.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/PinchDetector.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/HelioviewerZoomer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/TouchMover.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Viewport/Helper/MouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Viewport/Helper/HelioviewerMouseCoordinates.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Viewport/Helper/SandboxHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
@@ -1563,9 +1888,23 @@
 	}
 	?>
 
+<?php
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
+//$jsfilesrndnum= rand(2145, 999999);
+$hvmobjsfiles= <<<MJF
+<!-- START responsive JS files -->
+<script src='/resources/lib/responsive/zeynep1.js'></script>
+<script src="/resources/lib/responsive/interact.min.js"></script>
+<script src="/resources/lib/responsive/responsive_hv.js"></script>
+<!-- END responsive JS files -->
+MJF;
+echo $hvmobjsfiles;
+}
+?>
+
 	<script src="/resources/lib/hvbrowserspecific/hv_browserspecific.js" type="text/javascript"></script>
 	<script src="/resources/js/CustomHandling/CustomHandling.js?chrndnm=<?php echo (rand(9999,9999999)); ?>" type="text/javascript"></script>
-	
+
 	<!-- Launch Helioviewer -->
 	<script type="text/javascript">
 		var serverSettings, settingsJSON, urlSettings, debug, scrollLock = false, embedView = false;
@@ -1655,6 +1994,7 @@
 			}
 		});
 	</script>
+
 	<?php
 		if($outputType=='embed' && (!isset($_GET['hideWatermark']) || $_GET['hideWatermark'] != 'true')){
 			$link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("output=embed", "", $_SERVER['REQUEST_URI']));

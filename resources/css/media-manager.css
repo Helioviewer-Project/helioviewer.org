@@ -196,3 +196,20 @@
 .mejs__button > button {
 	background-image: url("/resources/lib/mediaelement/build/mejs-controls.svg");
 }
+
+#hv-drawer-movies {
+   overflow: none !important;
+}
+
+#movie-manager-container {
+   overflow: auto !important;
+   max-height: 500px !important;
+}
+
+#movie-history {
+ overflow: auto !important;
+}
+
+#google {
+	display: none;
+}
