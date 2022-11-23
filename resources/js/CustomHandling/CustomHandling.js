@@ -129,6 +129,8 @@ function showEncounter() {
 						$('#stereo_a-psp-tree-trajectory .button, #stereo_a-psp-tree-trajectory .decoration').css('display','inline');
 					
 					// END generate encounter "pagination"
+					
+					datetimemobModule();
 				}
 				
 			});
@@ -222,6 +224,22 @@ $(document).ready(function() {
 		HVcustomHandling('hvtutorial_CB_click');
 	});
 	
+	// Show/Hide Empty Rows button in HEK Data
+	let emptyrowsmode='hide';
+	$(document.body).on('click','.toggle_empty',function(){
+	   if(emptyrowsmode=='hide') {
+	      $(this).text('Show Empty Rows');
+	      emptyrowsmode='show';
+	   }
+	   else if(emptyrowsmode=='show') {
+	      $(this).text('Hide Empty Rows');
+	      emptyrowsmode='hide';
+	   }
+	});
+	
+	// hide Legacy Helioviewer link in the Get Help section
+	$(".social-btns").has("#help-links-legacy").css("display", "none");
+
 	
 }); // end of doc ready
 
