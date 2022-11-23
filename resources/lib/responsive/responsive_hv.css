@@ -1315,6 +1315,7 @@
 	#timeNowBtn_mob_td #timeNowBtn {
 		color: yellow !important;
 		float: none;
+		padding-bottom: 5px;
 	}
 
 	/* END datetime field */
