@@ -603,7 +603,7 @@ echo $hvdesktopcsshides;
 
 									<div class="suffix dateSelector" data-tip-pisition="right" data-date-field="date" data-time-field="time">UTC</div>
 
-									<div id="timeNowBtn" class="fa fa-clock-o right" style="padding-top: 0.4em; font-size: 1em;" title="Jump to the most recent available image's for the currently loaded layer(s).">
+									<div id="timeNowBtn" class="fa fa-clock-o right" style="font-size: 1em;" title="Jump to the most recent available image's for the currently loaded layer(s).">
 										<span class="ui-icon-label">NEWEST</span>
 									</div>
 								</div>
