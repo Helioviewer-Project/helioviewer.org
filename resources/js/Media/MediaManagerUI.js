@@ -16,8 +16,9 @@ var MediaManagerUI = Class.extend(
      * Creates a new ScreenshotManagerUI instance
      *
      * @param {ScreenshotManager} model ScreenshotManager instance
+     * @param {bool} enable_helios Determines whether or not to render helios links on movies
      */
-    init: function (type) {
+    init: function (type, enable_helios = false) {
         this._type = type;
 
         this._btn              = $("#" + type + "-button");
@@ -30,6 +31,7 @@ var MediaManagerUI = Class.extend(
         this._clearBtn         = $("#" + type + "-clear-history-button");
         this._tooltips         = $("#social-buttons div");
         this._cleanupFunctions = [];
+        this._enable_helios = enable_helios;
 
         this._loadSavedItems();
     },
@@ -81,7 +83,7 @@ var MediaManagerUI = Class.extend(
      * @param {Object} The movie or screenshot to be added
      */
     _addItem: function (item) {
-        var htmlId, html, last, url, name = item.name;
+        var htmlId, html, last, url, name = item.name, helios_link = "";
 
         // HTML for a single row in the history dialog
         htmlId = this._type + "-" + item.id;
@@ -89,14 +91,17 @@ var MediaManagerUI = Class.extend(
         // Link
         if (this._type === "movie") {
             url = "?movieId=" + item.id;
+            if (this._enable_helios) {
+                helios_link = "&nbsp;&nbsp;&nbsp;<a class='text-btn' href='https://gl.helioviewer.org/?movie=" + item.id + "'>View on Helios</a>";
+            }
         }
         else {
             url = Helioviewer.api + "?action=downloadScreenshot&id=" + item.id;
         }
 
         html = $("<div id='" + htmlId + "' class='history-entry'>" +
-               "<div class='label' data-id='" + item.id + "'><a class='text-btn' style='float: left' href='" + url +
-               "'>" + name + "</a></div>" +
+               "<div class='label' data-id='" + item.id + "'><p style='float: left'><a class='text-btn' href='" + url +
+               "'>" + name + "</a>"+ helios_link +"</p></div>" +
                "<div class='status'></div>" +
                "</div>");
 
