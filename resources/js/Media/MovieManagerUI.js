@@ -18,11 +18,12 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Creates a new MovieManagerUI instance
      *
      * @param {int} regenerateMovieThreshold Number of days to wait before displaying the "regenerate" option on an old movie.
+     * @param {bool} enable_helios Determines whether or not to render helios links on movies
      */
-    init: function (regenerateMovieThreshold = 90) {
+    init: function (regenerateMovieThreshold = 90, enable_helios = false) {
         var movies = Helioviewer.userSettings.get('history.movies');
         this._manager = new MovieManager(movies);
-        this._super("movie");
+        this._super("movie", enable_helios);
         this._settingsDialog   = $("#movie-settings-container");
         this._advancedSettings = $("#movie-settings-advanced");
         this._settingsHelp     = $("#movie-settings-help");
@@ -588,6 +589,11 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     _onMovieClick: function (event) {
         var id, movie, dialog, action, dateRequested;
+
+        if (event.target.href.indexOf("gl.helioviewer.org") != -1) {
+            window.open(event.target.href, '_blank');
+            return false;
+        }
 
         id    = $(event.currentTarget).data('id');
         movie = this._manager.get(id);

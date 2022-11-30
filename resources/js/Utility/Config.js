@@ -25,7 +25,8 @@ var Config = Class.extend(
         'news_url'                  : "https://helioviewer-project.github.io/",
         'user_video_feed'           : "https://api.helioviewer.org/",
         'contact_email'             : "HelioViewerDevelopment@nasa.onmicrosoft.com",
-        'regenerate_movie_threshold': 90
+        'regenerate_movie_threshold': 90,
+        'enable_helios_backlinks'   : true
      },
 
     /**
@@ -92,7 +93,8 @@ var Config = Class.extend(
             'videoFeed'               : this.params["user_video_feed"],
             'contactEmail'            : this.params["contact_email"],
             'apiURL'                  : this.params["back_end"],
-            'regenerateMovieThreshold': this.params["regenerate_movie_threshold"]
+            'regenerateMovieThreshold': this.params["regenerate_movie_threshold"],
+            'enableHelios'            : this.params["enable_helios_backlinks"]
         };
     }
 });
