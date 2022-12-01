@@ -201,13 +201,13 @@
   overflow: none !important;
 }
 
-#movie-manager-container { 
+#movie-manager-container {
   overflow: auto !important;
   max-height: 500px !important;
 }
 
 #movie-history {
-overflow: auto !important;   
+  overflow: auto !important;
 }
 
 #google {
