@@ -709,7 +709,7 @@
 	position: absolute;
 	width: 50px;
 	top: 0;
-	right: 0;
+	right: 80px;
 }
 
 .video-links div:nth-child(3) {
@@ -1381,7 +1381,13 @@
 		r: 4.5 !important;
 	}
 	
-	
+	#youtube-video-info {
+		position: fixed;
+	}
+
+	#youtube-logo-large {
+		display: none;
+	}
 
 }
 
@@ -1492,6 +1498,10 @@
 	
 	#movie-settings-submit {
 		padding-bottom: 150px;
+	}
+
+	#youtube-video-info {
+		bottom: 70px;
 	}
 
 }
