@@ -680,6 +680,9 @@
 	bottom: -30px;
 }
 	
+.ui-dialog .movie-player-dialog {
+   overflow: none !important;
+}	
 	
 .movie-player-dialog, .mejs__video {
    width: 90% !important;
