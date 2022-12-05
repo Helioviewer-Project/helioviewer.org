@@ -663,7 +663,7 @@
 }
 
 .mejs__container {
-   max-height: 400px;
+   /*max-height: 400px;*/
 }
 
 .movie-player-dialog {
@@ -676,9 +676,13 @@
 }
 
 .mejs__controls {
-   bottom: -30px;
+	position: absolute;
+	bottom: -30px;
 }
 	
+.ui-dialog .movie-player-dialog {
+   overflow: none !important;
+}	
 	
 .movie-player-dialog, .mejs__video {
    width: 90% !important;
@@ -691,7 +695,7 @@
 .mejs__mediaelement div video {
 	margin: auto;
 	display: block;
-	max-height: 400px;
+	/*max-height: 400px;*/
 }
 
 .mejs__overlay {
@@ -709,7 +713,7 @@
 	position: absolute;
 	width: 50px;
 	top: 0;
-	right: 0;
+	right: 80px;
 }
 
 .video-links div:nth-child(3) {
@@ -1381,7 +1385,13 @@
 		r: 4.5 !important;
 	}
 	
-	
+	#youtube-video-info {
+		position: fixed;
+	}
+
+	#youtube-logo-large {
+		display: none;
+	}
 
 }
 
@@ -1492,6 +1502,10 @@
 	
 	#movie-settings-submit {
 		padding-bottom: 150px;
+	}
+
+	#youtube-video-info {
+		bottom: 70px;
 	}
 
 }
