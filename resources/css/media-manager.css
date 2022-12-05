@@ -87,7 +87,7 @@
 
 .history-entry .label {
     float: left;
-    width: 50%;
+    max-width: 70%;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
