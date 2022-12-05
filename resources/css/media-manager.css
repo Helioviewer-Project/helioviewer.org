@@ -198,16 +198,16 @@
 }
 
 #hv-drawer-movies {
-   overflow: none !important;
+  overflow: none !important;
 }
 
 #movie-manager-container {
-   overflow: auto !important;
-   max-height: 500px !important;
+  overflow: auto !important;
+  max-height: 500px !important;
 }
 
 #movie-history {
- overflow: auto !important;
+  overflow: auto !important;
 }
 
 #google {
