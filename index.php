@@ -498,7 +498,7 @@ DCH;
 
 			<div id="logo">
 				<h1>
-					<span><a class="logo-icon fa fa-sun-o fa-fw" href="" title="The Open-Source Solar and Heliospheric Data Browser"></a><a class="logo-text" href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewers.org</a></span>
+					<span><a class="logo-icon fa fa-sun-o fa-fw" href="" title="The Open-Source Solar and Heliospheric Data Browser"></a><a class="logo-text" href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a></span>
 				</h1>
 			</div>
 
