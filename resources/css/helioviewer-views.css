@@ -76,7 +76,7 @@
    -webkit-border-radius: 0.2em;
    border-radius: 0.2em;
    border-color: black;
-   
+
 }
 .helioviewer-view-type-minimal #movies-button.opened:hover {
    color: rgba(175,0,255,1);
@@ -91,6 +91,13 @@
    color: rgba(175,0,255,0.75);
 }
 
+.helios-link {
+    display: none;
+}
+
+.label:hover .helios-link {
+    display: inline;
+}
 
 /* SCREENSHOTS */
 .helioviewer-view-type-minimal #screenshots-button:hover,
