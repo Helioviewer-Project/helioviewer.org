@@ -92,7 +92,7 @@ var MediaManagerUI = Class.extend(
         if (this._type === "movie") {
             url = "?movieId=" + item.id;
             if (this._enable_helios) {
-                helios_link = "&nbsp;&nbsp;&nbsp;<a class='text-btn' href='https://gl.helioviewer.org/?movie=" + item.id + "'>View on Helios</a>";
+                helios_link = "&nbsp;&nbsp;&nbsp;<a class='text-btn helios-link' href='https://gl.helioviewer.org/?movie=" + item.id + "'>View on Helios</a>";
             }
         }
         else {
