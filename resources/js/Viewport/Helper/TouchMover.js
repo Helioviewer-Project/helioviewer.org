@@ -39,13 +39,10 @@ class TouchMover {
         if (this.element) {
             // Hide element from touch events.
             this.element.style.display = "none";
-            // See if there was an element that needs to be clicked
+            // Get the element behind the touch layer
             let untouched_element = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
-            // If so, click it.
-            if ($(untouched_element).parents("#event-container").length == 1) {
-                untouched_element.click();
-            }
-
+            // And click it
+            untouched_element.click();
             // Allow touch events again.
             this.element.style.display = "block";
         }
