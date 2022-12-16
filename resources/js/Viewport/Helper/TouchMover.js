@@ -15,6 +15,7 @@ class TouchMover {
         this.moveViewport = moveFn;
         this._initTouchListeners(el);
         this.element = el;
+        this._wasPinching = false;
     }
 
     /**
@@ -48,17 +49,21 @@ class TouchMover {
         }
     }
 
+    _prepareForPinch(touches) {
+        this.pinchDetector.onTouchStart(touches);
+        this._wasPinching = true;
+    }
 
     onTouchStart(touches) {
-        if (touches.length >= 2 || simulate_pinch) {
-            this.pinchDetector.onTouchStart(touches);
-            this._wasPinching = true;
-        } else {
+        if (touches.length < 2) {
             this._setReferenceTouch(touches[0]);
         }
     }
     onTouchMove(touches) {
         if (touches.length >= 2 || simulate_pinch) {
+            if (this._wasPinching == false) {
+                this._prepareForPinch(touches);
+            }
             this.pinchDetector.onTouchMove(touches);
         } else {
             this._moveViewportForTouch(touches[0]);
