@@ -353,7 +353,7 @@ DCH;
 </div>
 
 
-<button id="hvmobilemenu_btn" class="hamburger hamburger--emphatic btn-open first" type="button" alt="Mobile hamburger menu button">
+<button id="hvmobilemenu_btn" class="hamburger hamburger--emphatic btn-open first" type="button" aria-label="Mobile hamburger menu button">
   <span class="hamburger-box">
     <span class="hamburger-inner"></span>
   </span>
@@ -1311,11 +1311,11 @@ DCH;
 				<div id="hv-drawer-timeline-logarithmic-holder" style="display:block;position:absolute;top:10px;left:10px;z-index:5;"><input type="checkbox" id="hv-drawer-timeline-logarithmic"> Logarithmic View</div>
 				<div class="drawer-items">
 					<div id="data-coverage-timeline" style="width:100%;height:315px;"></div>
-					<button id="btn-prev" alt="Previous button">&larr; 7 days</button>
+					<button id="btn-prev" aria-label="Previous button">&larr; 7 days</button>
 					<div id="btn-center" class="viewport-action fa fa-crosshairs qtip-topleft" title="Center Timeline at Observation Date"></div>
 					<div id="btn-zoom-out" class="viewport-action fa fa-search-minus qtip-topleft" title="Zoom Out Timeline"></div>
 					<div id="btn-zoom-in" class="viewport-action fa fa-search-plus qtip-topleft" title="Zoom In Timeline"></div>
-					<button id="btn-next" alt="Next button">7 days &rarr;</button>
+					<button id="btn-next" aria-label="Next button">7 days &rarr;</button>
 				</div>
 			</div>
 		</div>
@@ -1326,11 +1326,11 @@ DCH;
 				<div id="hv-drawer-timeline-events-logarithmic-holder" style="display:none;position:absolute;top:10px;left:10px;z-index:5;"><input type="checkbox" id="hv-drawer-timeline-events-logarithmic"> Logarithmic View</div>
 				<div class="drawer-items">
 					<div id="data-coverage-timeline-events" style="width:100%;height:315px;"></div>
-					<button id="timeline-events-btn-prev" alt="Timeline previous button">&larr; 7 days</button>
+					<button id="timeline-events-btn-prev" aria-label="Timeline previous button">&larr; 7 days</button>
 					<div id="timeline-events-btn-center" class="viewport-action fa fa-crosshairs qtip-topleft" title="Center Timeline at Observation Date"></div>
 					<div id="timeline-events-btn-zoom-out" class="viewport-action fa fa-search-minus qtip-topleft" title="Zoom Out Timeline"></div>
 					<div id="timeline-events-btn-zoom-in" class="viewport-action fa fa-search-plus qtip-topleft" title="Zoom In Timeline"></div>
-					<button id="timeline-events-btn-next" alt="Timeline next button">7 days &rarr;</button>
+					<button id="timeline-events-btn-next" aria-label="Timeline next button">7 days &rarr;</button>
 				</div>
 			</div>
 		</div>
