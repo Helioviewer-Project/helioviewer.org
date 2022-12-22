@@ -492,8 +492,7 @@ let cbgetpopupid='';
 let thiscbtype='';
 
 // when celestial bodies are clicked
-$(document.body).on('click','.celestial-bodies-label', function(){
-	
+$(document.body).on('click','.celestial-bodies-label', function(){	
 	
 	closeMobEventPopup();
 	mobpopupopen= 'no';
