@@ -587,9 +587,9 @@ DCH;
 							<div id="observation-controls" class="row">
 								<div class="label">Date:</div>
 								<div class="field">
-									<input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+									<input aria-label="Observation date" type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
 
-									<input id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+									<input aria-label="Observation time" id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
 
 									<div class="suffix dateSelector" data-tip-pisition="right" data-date-field="date" data-time-field="time">UTC</div>
 
@@ -804,25 +804,25 @@ DCH;
 									<!-- Movie Start/End Time -->
 									<fieldset style='padding: 0px; margin: 5px 0px 8px' class="movie-time-box">
 										<label for='movie-start-date' style='width: 40px; font-style: italic;'>Start </label>
-										<input type="text" id="movie-start-date" name="movie-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
-										<input id="movie-start-time" name="movie-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/> UTC<br/>
+										<input aria-label="Start date" type="text" id="movie-start-date" name="movie-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+										<input aria-label="Start time" id="movie-start-time" name="movie-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/> UTC<br/>
 
 										<label for='movie-end-date' style='width: 40px; font-style: italic;'>End </label>
-										<input type="text" id="movie-end-date" name="movie-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
-										<input id="movie-end-time" name="movie-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/> UTC<br/>
+										<input aria-label="End date" type="text" id="movie-end-date" name="movie-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+										<input aria-label="End time" id="movie-end-time" name="movie-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/> UTC<br/>
 									</fieldset>
 
 									<!-- Movie Speed -->
 									<fieldset id='movie-settings-speed'>
 										<legend>Speed</legend>
 										<div style='padding:10px;'>
-											<input type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
-											<label for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
-											<input id='frame-rate' maxlength='2' size='3' type="text" name="framerate" min="1" max="30" value="15" pattern='^(0?[1-9]|[1-2][0-9]|30)$' />(1-30)<br />
+											<input aria-labelledby="speed-method-fps" type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
+											<label id="speed-method-fps" for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
+											<input aria-labelledby="speed-method-fps" id='frame-rate' maxlength='2' size='3' type="text" name="framerate" min="1" max="30" value="15" pattern='^(0?[1-9]|[1-2][0-9]|30)$' />(1-30)<br />
 
-											<input type="radio" name="speed-method" id="speed-method-l" value="length" />
-											<label for="speed-method-l" style='width: 62px;'>Length (s)</label>
-											<input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
+											<input aria-labelledby="speed-method-length" type="radio" name="speed-method" id="speed-method-l" value="length" />
+											<label id="speed-method-length" for="speed-method-l" style='width: 62px;'>Length (s)</label>
+											<input aria-labelledby="speed-method-length" id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
 										</div>
 									</fieldset>
 
@@ -856,8 +856,8 @@ DCH;
 								<div id='movie-settings-submit'>
 									<a href="#" class="movie-settings-more-btn" style="float:left;margin-top:17px;text-decoration: underline;">Advanced Settings</a>
 									<a href="#" class="movie-settings-less-btn" style="float:left;margin-top:17px;text-decoration: underline;">Less Settings</a>
-									<input type="button" id='movie-settings-cancel-btn' value="Cancel" />
-									<input type="submit" id='movie-settings-submit-btn' value="Ok" />
+									<input aria-label="Cancel" type="button" id='movie-settings-cancel-btn' value="Cancel" />
+									<input aria-label="Submit" type="submit" id='movie-settings-submit-btn' value="Ok" />
 								</div>
 
 								</form>
@@ -952,22 +952,22 @@ DCH;
 							<h1>Request Image Sequence from VSO</h1>
 							<div>
 								<div class="row">
-									<div class="label inactive">Start Date:</div>
+									<div id="vso-start-date-label" class="label inactive">Start Date:</div>
 									<div class="field">
-										<input type="text" id="vso-start-date" name="vso-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" disabled />
+										<input aria-labelledby="vso-start-date-label" type="text" id="vso-start-date" name="vso-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" disabled />
 
-										<input id="vso-start-time" name="vso-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
+										<input aria-label="Start time" id="vso-start-time" name="vso-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
 
 										<div class="suffix dateSelector" data-tip-pisition="left" data-date-field="vso-start-date" data-time-field="vso-start-time">UTC</div>
 									</div>
 								</div>
 
 								<div class="row">
-									<div class="label inactive">End Date:</div>
+									<div id="vso-end-date-label" class="label inactive">End Date:</div>
 									<div class="field">
-										<input type="text" id="vso-end-date" name="vso-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" disabled />
+										<input aria-labelledby="vso-end-date-label" type="text" id="vso-end-date" name="vso-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" disabled />
 
-										<input id="vso-end-time" name="vso-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
+										<input aria-label="End time" id="vso-end-time" name="vso-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
 
 										<div class="suffix inactive dateSelector" data-tip-pisition="left" data-date-field="vso-end-date" data-time-field="vso-end-time">UTC</div>
 									</div>
@@ -1001,22 +1001,22 @@ DCH;
 							<h1>Request Image Sequence from Cut-out Service</h1>
 							<div style="padding-bottom:50px">
 								<div class="row">
-									<div class="label inactive">Start Date:</div>
+									<div id="sdo-start-date-label" class="label inactive">Start Date:</div>
 									<div class="field">
-										<input type="text" id="sdo-start-date" name="sdo-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" disabled />
+										<input aria-labelledby="sdo-start-date-label" type="text" id="sdo-start-date" name="sdo-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" disabled />
 
-										<input id="sdo-start-time" name="sdo-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
+										<input aria-label="Start time" id="sdo-start-time" name="sdo-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
 
 										<div class="suffix inactive dateSelector" data-tip-pisition="left" data-date-field="sdo-start-date" data-time-field="sdo-start-time">UTC</div>
 									</div>
 								</div>
 
 								<div class="row">
-									<div class="label inactive">End Date:</div>
+									<div id="sdo-end-date-label" class="label inactive">End Date:</div>
 									<div class="field">
-										<input type="text" id="sdo-end-date" name="sdo-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" disabled />
+										<input aria-labelledby="sdo-end-date-label" type="text" id="sdo-end-date" name="sdo-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" disabled />
 
-										<input id="sdo-end-time" name="sdo-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
+										<input aria-label="End time" id="sdo-end-time" name="sdo-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" disabled />
 
 										<div class="suffix inactive dateSelector" data-tip-pisition="left" data-date-field="sdo-end-date" data-time-field="sdo-end-time">UTC</div></div>
 								</div>
@@ -1043,24 +1043,24 @@ DCH;
 								<div class="row">
 									<div class="label inactive">Center (x,y):</div>
 									<div class="field">
-										<input type="text" id="sdo-center-x" name="sdo-center-x" value="0" maxlength="6" disabled />
-										<input id="sdo-center-y" name="sdo-center-y" value="0" type="text" maxlength="6" disabled />
+										<input aria-label="Center X" type="text" id="sdo-center-x" name="sdo-center-x" value="0" maxlength="6" disabled />
+										<input aria-label="Center Y" id="sdo-center-y" name="sdo-center-y" value="0" type="text" maxlength="6" disabled />
 										<div class="suffix inactive">arcsec</div>
 									</div>
 								</div>
 
 								<div class="row">
-									<div class="label inactive">Width:</div>
+									<div id="sdo-width-label" class="label inactive">Width:</div>
 									<div class="field" style="text-align: left;">
-										<input type="text" id="sdo-width" name="sdo-width" value="2000" maxlength="6" disabled />
+										<input aria-labelledby="sdo-width-label" type="text" id="sdo-width" name="sdo-width" value="2000" maxlength="6" disabled />
 										<div class="suffix inactive">arcsec</div>
 									</div>
 								</div>
 
 								<div class="row">
-									<div class="label inactive">Height:</div>
+									<div id="sdo-height-label" class="label inactive">Height:</div>
 									<div class="field">
-										<input type="text" id="sdo-height" name="sdo-height" value="2000" maxlength="6" disabled />
+										<input aria-labelledby="sdo-height-label" type="text" id="sdo-height" name="sdo-height" value="2000" maxlength="6" disabled />
 										<div class="suffix inactive">arcsec</div>
 									</div>
 								</div>
@@ -1099,9 +1099,9 @@ DCH;
 							<div id="helioviewer-url-box" style="font-size: 1em;">
 								<span id="helioviewer-url-box-msg"></span>
 								<form style="margin-top: 5px; text-align: center;">
-									<input type="text" class="helioviewer-url-input-box helioviewer-url-input-box-menu" style="width:98%;" value="https://helioviewer.org" />
+									<input aria-label="Viewport URL" type="text" class="helioviewer-url-input-box helioviewer-url-input-box-menu" style="width:98%;" value="https://helioviewer.org" />
 									<label for="helioviewer-url-shorten">Shorten with bit.ly? </label>
-									<input type="checkbox" class="helioviewer-url-shorten" />
+									<input id="helioviewer-url-shorten" type="checkbox" class="helioviewer-url-shorten" />
 									<input type="hidden" class="helioviewer-short-url" value="" />
 									<input type="hidden" class="helioviewer-long-url" value="" />
 								</form>
@@ -1308,7 +1308,7 @@ DCH;
 		<div id="hv-drawer-tab-timeline" class="drawer-tab drawer-tab-bottom">Image Timeline</div>
 		<div id="hv-drawer-timeline" class="helioviewer-drawer-bottom">
 			<div class="drawer-contents" style="height:350px;">
-				<div id="hv-drawer-timeline-logarithmic-holder" style="display:block;position:absolute;top:10px;left:10px;z-index:5;"><input type="checkbox" id="hv-drawer-timeline-logarithmic"> Logarithmic View</div>
+				<div id="hv-drawer-timeline-logarithmic-holder" style="display:block;position:absolute;top:10px;left:10px;z-index:5;"><input aria-labelledby="hv-drawer-timeline-logarithmic-holder" type="checkbox" id="hv-drawer-timeline-logarithmic"> Logarithmic View</div>
 				<div class="drawer-items">
 					<div id="data-coverage-timeline" style="width:100%;height:315px;"></div>
 					<button id="btn-prev" aria-label="Previous button">&larr; 7 days</button>
@@ -1323,7 +1323,7 @@ DCH;
 		<div id="hv-drawer-tab-timeline-events" class="drawer-tab drawer-tab-bottom">Events Timeline</div>
 		<div id="hv-drawer-timeline-events" class="helioviewer-drawer-bottom">
 			<div class="drawer-contents" style="height:350px;">
-				<div id="hv-drawer-timeline-events-logarithmic-holder" style="display:none;position:absolute;top:10px;left:10px;z-index:5;"><input type="checkbox" id="hv-drawer-timeline-events-logarithmic"> Logarithmic View</div>
+				<div id="hv-drawer-timeline-events-logarithmic-holder" style="display:none;position:absolute;top:10px;left:10px;z-index:5;"><input aria-labelledby="hv-drawer-timeline-events-logarithmic-holder" type="checkbox" id="hv-drawer-timeline-events-logarithmic"> Logarithmic View</div>
 				<div class="drawer-items">
 					<div id="data-coverage-timeline-events" style="width:100%;height:315px;"></div>
 					<button id="timeline-events-btn-prev" aria-label="Timeline previous button">&larr; 7 days</button>
@@ -1394,9 +1394,9 @@ DCH;
 			<div id="helioviewer-url-box">
 				<span id="helioviewer-url-box-msg"></span>
 				<form style="margin-top: 5px;">
-					<input type="text" class="helioviewer-url-input-box helioviewer-url-input-box-video" style="width:98%;" value="https://helioviewer.org" />
+					<input aria-label="Viewport URL" type="text" class="helioviewer-url-input-box helioviewer-url-input-box-video" style="width:98%;" value="https://helioviewer.org" />
 					<label for="helioviewer-url-shorten">Shorten with bit.ly? </label>
-					<input type="checkbox" class="helioviewer-url-shorten" />
+					<input id="helioviewer-url-shorten" type="checkbox" class="helioviewer-url-shorten" />
 					<input type="hidden" class="helioviewer-short-url" value="" />
 					<input type="hidden" class="helioviewer-long-url" value="" />
 				</form>
@@ -1513,10 +1513,10 @@ DCH;
 							<div id='date-manager-container' class='date-manager-container'>
 								<div class="section">
 									<div id="observation-controls" class="row">
-										<div class="label" style="margin-top: 0.1em">Date</div>
+										<div id="date-input-label" class="label" style="margin-top: 0.1em">Date</div>
 										<div class="field">
-											<input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
-											<input id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+											<input aria-labelledby="date-input-label" type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+											<input aria-label="Time" id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
 											<div class="suffix" data-tip-pisition="right" title="Coordinated Universal Time">UTC </div>
 
 										</div>
@@ -1622,11 +1622,11 @@ DCH;
 										<fieldset style='padding: 0px; margin: 5px 0px 8px' class="movie-time-box">
 											<label for='movie-start-date' style='width: 55px; font-style: italic;'>Start </label>
 											<input type="text" id="movie-start-date" name="movie-start-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
-											<input id="movie-start-time" name="movie-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/> UTC<br/>
+											<input aria-label="Time" id="movie-start-time" name="movie-start-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/> UTC<br/>
 
 											<label for='movie-end-date' style='width: 55px; font-style: italic;'>End </label>
 											<input type="text" id="movie-end-date" name="movie-end-date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
-											<input id="movie-end-time" name="movie-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/> UTC<br/>
+											<input aria-label="Time" id="movie-end-time" name="movie-end-time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/> UTC<br/>
 										</fieldset>
 
 										<!-- Movie Speed -->
@@ -1637,8 +1637,8 @@ DCH;
 												<input id='frame-rate' maxlength='2' size='3' type="text" name="framerate" min="1" max="30" value="15" pattern='^(0?[1-9]|[1-2][0-9]|30)$' />(1-30)<br />
 												-->
 												<input type="hidden" name="speed-method" id="speed-method-l" value="length" checked="checked" />
-												<label for="speed-method-l" style='width: 55px; font-style: italic;'>Length (s)</label>
-												<input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$'  />(10-100)<br />
+												<label id="for-speed-method-l-label" for="speed-method-l" style='width: 55px; font-style: italic;'>Length (s)</label>
+												<input aria-labelledby="for-speed-method-l-label" id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$'  />(10-100)<br />
 
 										</fieldset>
 
