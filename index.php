@@ -202,7 +202,7 @@ DCH;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0" style="margin-top: 50px;">
 				<td class="hvmobmenu_left_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-news">
-						<img src="/resources/images/projectanounce_icon_transp.png">&nbsp;&nbsp;
+						<img src="/resources/images/projectanounce_icon_transp.png" alt="HV project transparent image">&nbsp;&nbsp;
 					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -215,7 +215,7 @@ DCH;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-youtube">
-						<img src="/resources/images/viewyoutube_icon_transp.png">&nbsp;&nbsp;
+						<img src="/resources/images/viewyoutube_icon_transp.png" alt="Youtube icon">&nbsp;&nbsp;
 					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -229,7 +229,7 @@ DCH;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-movies">
-						<img src="/resources/images/createmovie_icon_transp.png">&nbsp;&nbsp;
+						<img src="/resources/images/createmovie_icon_transp.png" alt="Create movie transparent icon">&nbsp;&nbsp;
 					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -242,7 +242,7 @@ DCH;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-screenshots">
-						<img src="/resources/images/screenshot_icon_transp.png">&nbsp;&nbsp;
+						<img src="/resources/images/screenshot_icon_transp.png" alt="Screenshot transparent icon">&nbsp;&nbsp;
 					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -270,7 +270,7 @@ DCH;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-share">
-						<img src="/resources/images/shareviewport_icon_transp.png">&nbsp;&nbsp;
+						<img src="/resources/images/shareviewport_icon_transp.png" alt="Share viewport transparent icon">&nbsp;&nbsp;
 					</span>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -283,7 +283,7 @@ DCH;
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<a href="#" data-submenu="hvhelp">
-						<img src="/resources/images/help_icon_transp.png">&nbsp;&nbsp;
+						<img src="/resources/images/help_icon_transp.png" alt="Help transparent icon">&nbsp;&nbsp;
 					</a>
 				</td>
 				<td class="hvmobmenu_right_td">
@@ -387,19 +387,19 @@ DCH;
 	<tr class="hvmobds_tr">
 		<td class="hvmobds_td">
 			<a class="hvmobdstabs" drawersec="accordion-images">
-				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/images_icon1.png">
+				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/images_icon1.png" alt="Layers icon">
 				<br><span>Images &amp;<span class="hvmobbs_br"><br></span> Layers</span>
 			</a>
 		</td>
 		<td class="hvmobds_td">
 			<a class="hvmobdstabs" drawersec="accordion-events">
-				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/events_icon1.png">
+				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/events_icon1.png" alt="Events icon">
 				<br><span>Features &amp;<span class="hvmobbs_br"><br></span> Events</span>
 			</a>
 		</td>
 		<td class="hvmobds_td">
 			<a class="hvmobdstabs" drawersec="accordion-bodies">
-				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/celestial_icon2.png">
+				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/celestial_icon2.png" alt="Celestial Bodies icon">
 				<br><span>Celestial<span class="hvmobbs_br"><br></span> Bodies</span>
 			</a>
 		</td>
@@ -416,7 +416,7 @@ DCH;
 
 		<table class="dtcycle_table2" cellpadding="0" cellspacing="0" border="0" style="width: 100%;height: 100%;">
 			<tr>
-				<td class="dtcycle_arrows_td" hvdtcontrol="day_down" style="text-align:left;"><img hvdtcontrol="day_down" class="dtcycle_arrows" src="/resources/images/mobile/leftarrow1.png"></td>
+				<td class="dtcycle_arrows_td" hvdtcontrol="day_down" style="text-align:left;"><img hvdtcontrol="day_down" class="dtcycle_arrows" src="/resources/images/mobile/leftarrow1.png" alt="Timeframe left arrow"></td>
 
 				<!--
 				<td id="dt_monthyear_td" style="">
@@ -430,7 +430,7 @@ DCH;
 
 				<td id="hvmobtime_td" style=""></td>
 
-				<td class="dtcycle_arrows_td" hvdtcontrol="day_up" style="text-align:right;"><img hvdtcontrol="day_up" class="dtcycle_arrows" src="/resources/images/mobile/rightarrow1.png"></td>
+				<td class="dtcycle_arrows_td" hvdtcontrol="day_up" style="text-align:right;"><img hvdtcontrol="day_up" class="dtcycle_arrows" src="/resources/images/mobile/rightarrow1.png" alt="Timeframe right arrow"></td>
 			</tr>
 
 			<tr>
@@ -454,7 +454,7 @@ DCH;
 <!-- START mobile bottom calendar tool -->
 
 <div class="hvbottomcal_wrap">
-<img src="/resources/images/mobile/calendar1.png" class="hvbottomcal_img">
+<img src="/resources/images/mobile/calendar1.png" class="hvbottomcal_img" alt="Calendar icon">
 </div>
 
 <!-- END mobile bottom calendar tool -->
