@@ -440,13 +440,13 @@ var UserLayersPresets = Class.extend({
 		listHTML += '<li>\
 							<div class="text-button fa fa-plus userlist-add-item"> Add Item</div>\
 							<div class="item-add-form" style="display:none;">\
-								<div>Name: <input type="text" value="" name="item-name" class="item-name" style="width:130px;"></div>\
+								<div><label for="item-name-input">Name:</label> <input type="text" value="" name="item-name" class="item-name" style="width:130px;"></div>\
 								<div>\
 									Data:<br/>\
 									<div style="padding:0px 0px 0px 40px;">\
-										<input type="checkbox" value="" name="item-date" class="item-date" checked="checked"> Observation Date<br/>\
-										<input type="checkbox" value="" name="item-sources" class="item-sources" checked="checked"> Data Sources<br/>\
-										<input type="checkbox" value="" name="item-events" class="item-events" checked="checked"> Events<br/>\
+										<input type="checkbox" value="" name="item-date" class="item-date" checked="checked" id="item-date-input"> <label for="item-date-input">Observation Date</label><br/>\
+										<input type="checkbox" value="" name="item-sources" class="item-sources" checked="checked" id="item-sources-input"> <label for="item-sources-input">Data Sources</label><br/>\
+										<input type="checkbox" value="" name="item-events" class="item-events" checked="checked" id="item-events-input"> <label for="item-events-input">Events</label><br/>\
 									</div>\
 									<div>\
 										<div class="text-button userlist-cancel-item" style="float:left;">Cancel</div>\
