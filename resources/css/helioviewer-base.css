@@ -88,3 +88,7 @@ a.light:hover {
     width: 40%;
     display: inline-block;
 }
+
+.sr-only {
+    visibility: hidden;
+}
