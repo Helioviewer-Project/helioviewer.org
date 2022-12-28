@@ -6,6 +6,19 @@
 				embed
 				minimal
 	*/
+
+    function url(){
+      $url = sprintf(
+        "%s://%s",
+        isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
+        $_SERVER['SERVER_NAME']
+      );
+      // Deal with localhost nonstandard ports
+      if ($_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) {
+          $url .= ":".$_SERVER['SERVER_PORT'];
+      }
+      return $url;
+    }
 	$hv_output = getenv('HV_OUTPUT');
 	$outputType = false;
 
@@ -498,7 +511,7 @@ DCH;
 
 			<div id="logo">
 				<h1>
-					<span><a class="logo-icon fa fa-sun-o fa-fw" href="" title="The Open-Source Solar and Heliospheric Data Browser"></a><a class="logo-text" href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a></span>
+					<span><a class="logo-icon fa fa-sun-o fa-fw" href="<?php echo url(); ?>" title="The Open-Source Solar and Heliospheric Data Browser"></a><a class="logo-text" href="<?php echo url(); ?>" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a></span>
 				</h1>
 			</div>
 
