@@ -440,7 +440,7 @@ var UserLayersPresets = Class.extend({
 		listHTML += '<li>\
 							<div class="text-button fa fa-plus userlist-add-item"> Add Item</div>\
 							<div class="item-add-form" style="display:none;">\
-								<div><label for="item-name-input">Name:</label> <input type="text" value="" name="item-name" class="item-name" style="width:130px;"></div>\
+								<div><label for="item-name-input">Name:</label> <input id="item-name-input" type="text" value="" name="item-name" class="item-name" style="width:130px;"></div>\
 								<div>\
 									Data:<br/>\
 									<div style="padding:0px 0px 0px 40px;">\
