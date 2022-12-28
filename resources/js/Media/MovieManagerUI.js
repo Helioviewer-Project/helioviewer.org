@@ -448,22 +448,28 @@ var MovieManagerUI = MediaManagerUI.extend(
             time_24hr: true,
 			theme:'dark'
 		});
-		$('#movie-start-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
-		$('#movie-end-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+        if ($('#movie-start-time').length > 0) {
+            $('#movie-start-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
+            $('#movie-end-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+        }
 
 		$(document).on('observation-time-changed', function(e){
 	        var duration = Math.round(Helioviewer.userSettings.get("options.movies.duration") / 2) * 1000;
-	        $('#movie-start-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
-			$('#movie-end-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
-	        $('#movie-start-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
-			$('#movie-end-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+            if ($('#movie-start-date').length > 0) {
+                $('#movie-start-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
+                $('#movie-end-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
+                $('#movie-start-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
+                $('#movie-end-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+            }
         });
         $(document).on('movies-setting-duration-trigger', function(e){
 	        var duration = Math.round(Helioviewer.userSettings.get("options.movies.duration") / 2) * 1000;
-	        $('#movie-start-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
-			$('#movie-end-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
-	        $('#movie-start-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
-			$('#movie-end-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+            if ($('#movie-start-date').length > 0) {
+                $('#movie-start-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
+                $('#movie-end-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
+                $('#movie-start-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
+                $('#movie-end-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+            }
         });
 
         // Advanced movie settings

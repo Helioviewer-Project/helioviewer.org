@@ -340,7 +340,7 @@ var TimeControls = Class.extend(
      * @description Updates the HTML form fields associated with the time manager.
      */
     _updateInputFields: function () {
-        if (this._dateInput._flatpickr) {
+        if (this._dateInput._flatpickr && this._dateInput._flatpickr.setDate) {
             this._dateInput._flatpickr.setDate(this._date.toUTCDateString());
             this._timeInput._flatpickr.setDate(this._date.toUTCTimeString());
         }
