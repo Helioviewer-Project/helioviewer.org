@@ -501,47 +501,35 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             self.updateExternalDataSourceIntegration(self, false);
         });
 
-        $('#vso-start-date').datetimepicker({
-			timepicker:false,
-			format:'Y/m/d',
-			theme:'dark',
-			onShow:function( ct ){
-				this.setOptions({
-					maxDate:$('#vso-end-date').val()?$('#vso-end-date').val():false
-				})
+        $('#vso-start-date').flatpickr({
+            allowInput: true,
+            dateFormat: 'Y/m/d',
+			onOpen:function(selectedDates, str, instance){
+				instance.set('maxDate',$('#vso-end-date').val() ? $('#vso-end-date').val():null);
 			}
 		});
 
-		$('#vso-end-date').datetimepicker({
-			timepicker:false,
-			format:'Y/m/d',
-			theme:'dark',
-			onShow:function( ct ){
-				this.setOptions({
-					minDate:$('#vso-start-date').val()?$('#vso-start-date').val():false
-				})
+		$('#vso-end-date').flatpickr({
+            allowInput: true,
+            dateFormat: 'Y/m/d',
+			onOpen:function(selectedDates, str, instance){
+				instance.set('minDate', $('#vso-start-date').val() ? $('#vso-start-date').val() : null);
 			}
 		});
 
-		$('#sdo-start-date').datetimepicker({
-			timepicker:false,
-			format:'Y/m/d',
-			theme:'dark',
-			onShow:function( ct ){
-				this.setOptions({
-					maxDate:$('#vso-end-date').val()?$('#vso-end-date').val():false
-				})
+		$('#sdo-start-date').flatpickr({
+            allowInput: true,
+            dateFormat: 'Y/m/d',
+			onOpen:function(selectedDates, str, instance){
+				instance.set('maxDate',$('#vso-end-date').val() ? $('#vso-end-date').val():null);
 			}
 		});
 
-		$('#sdo-end-date').datetimepicker({
-			timepicker:false,
-			format:'Y/m/d',
-			theme:'dark',
-			onShow:function( ct ){
-				this.setOptions({
-					minDate:$('#vso-start-date').val()?$('#vso-start-date').val():false
-				})
+		$('#sdo-end-date').flatpickr({
+            allowInput: true,
+            dateFormat: 'Y/m/d',
+			onOpen:function(selectedDates, str, instance){
+				instance.set('minDate', $('#vso-start-date').val() ? $('#vso-start-date').val() : null);
 			}
 		});
 
@@ -550,78 +538,75 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 		var time2 = '';
 		var time3 = '';
 		var time4 = '';
-		$('#vso-start-time').TimePickerAlone({
-			twelveHoursFormat:false,
-			seconds:true,
-			ampm:false,
-			saveOnChange: false,
-			//mouseWheel:false,
-			theme:'dark',
-			onHide: function ($input) {
+		$('#vso-start-time').flatpickr({
+            allowInput: true,
+            noCalendar: true,
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            onClose: function (selectedDates, str, instance) {
 				if(time1 != ''){
-					$input.val(time1).change();
+					instance.setDate(time1, true);
 				}
 
 				return true;
-			},
-			onChange: function (str, datetime) {
+
+            },
+			onChange: function (selectedDates, str, instance) {
 				time1 = str;
 			}
 		});
 
-		$('#vso-end-time').TimePickerAlone({
-			twelveHoursFormat:false,
-			seconds:true,
-			ampm:false,
-			saveOnChange: false,
-			//mouseWheel:false,
-			theme:'dark',
-			onHide: function ($input) {
+		$('#vso-end-time').flatpickr({
+            allowInput: true,
+            noCalendar: true,
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+			onClose: function (selectedDates, str, instance) {
 				if(time2 != ''){
-					$input.val(time2).change();
+					instance.setDate(time2, true);
 				}
 
 				return true;
 			},
-			onChange: function (str, datetime) {
+			onChange: function (selected, str, instance) {
 				time2 = str;
 			}
 		});
 
-		$('#sdo-start-time').TimePickerAlone({
-			twelveHoursFormat:false,
-			seconds:true,
-			ampm:false,
-			saveOnChange: false,
-			//mouseWheel:false,
-			theme:'dark',
-			onHide: function ($input) {
+		$('#sdo-start-time').flatpickr({
+            allowInput: true,
+            noCalendar: true,
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+			onClose: function (selected, str, instance) {
 				if(time3 != ''){
-					$input.val(time3).change();
+					instance.setDate(time3, true);
 				}
 
 				return true;
 			},
-			onChange: function (str, datetime) {
+			onChange: function (selected, str, instance) {
 				time3 = str;
 			}
 		});
 
-		$('#sdo-end-time').TimePickerAlone({
-			twelveHoursFormat:false,
-			seconds:true,
-			ampm:false,
-			saveOnChange: false,
-			//mouseWheel:false,
-			theme:'dark',
-			onHide: function ($input) {
+		$('#sdo-end-time').flatpickr({
+            allowInput: true,
+            noCalendar: true,
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+			onClose: function (selected, str, instance) {
 				if(time4 != ''){
-					$input.val(time4).change();
+					instance.setDate(time4, true);
 				}
 
 				return true;
 			},
-			onChange: function (str, datetime) {
+			onChange: function (selected, str, instance) {
 				time4 = str;
 			}
 		});
@@ -631,15 +616,15 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 			$('.periodpicker_timepicker_dialog').removeClass('visible');
 			$('#vso-start-time, #vso-end-time, #sdo-start-time, #sdo-end-time').blur() ;
 
-			$('#vso-start-date').datetimepicker('hide') ;
-			$('#vso-end-date').datetimepicker('hide') ;
-			$('#sdo-start-date').datetimepicker('hide') ;
-			$('#sdo-end-date').datetimepicker('hide') ;
+			$('#vso-start-date')[0]._flatpickr.close();
+			$('#vso-end-date')[0]._flatpickr.close();
+			$('#sdo-start-date')[0]._flatpickr.close();
+			$('#sdo-end-date')[0]._flatpickr.close();
 		});
 		$('#hv-drawer-left').on( 'scroll', function(){
 			$('.periodpicker_timepicker_dialog').removeClass('visible');
 			$('#time').blur() ;
-			$('#date').datetimepicker('hide') ;
+			$('#date')[0]._flatpickr.close();
 		});
 
 
@@ -2559,10 +2544,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 imageScale, sdoGlobal);
         }
 
-        $('#vso-start-time').TimePickerAlone('setValue', $('#vso-start-time').val());
-        $('#vso-end-time').TimePickerAlone('setValue', $('#vso-end-time').val());
-        $('#sdo-start-time').TimePickerAlone('setValue', $('#sdo-start-time').val());
-        $('#sdo-end-time').TimePickerAlone('setValue', $('#sdo-end-time').val());
+        $('#vso-start-time')[0]._flatpickr.setDate($('#vso-start-time').val());
+        $('#vso-end-time')[0]._flatpickr.setDate($('#vso-end-time').val());
+        $('#sdo-start-time')[0]._flatpickr.setDate($('#sdo-start-time').val());
+        $('#sdo-end-time')[0]._flatpickr.setDate($('#sdo-end-time').val());
 
         if($('#vso-start-date').val() == 'NaN/NaN/NaN'){
 	        setTimeout(function(){ self.updateExternalDataSourceIntegration(true,this); }, 500);

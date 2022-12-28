@@ -39,8 +39,8 @@ var TimeControls = Class.extend(
         this._incrementSelect = $(incrementSelect);
 
         this._addTimeIncrements();
-        this._updateInputFields();
         this._initDatePicker();
+        this._updateInputFields();
         this._initEventHandlers();
     },
 
@@ -270,32 +270,31 @@ var TimeControls = Class.extend(
      */
     _initDatePicker: function () {
         var btnId, btn, self = this;
-		this._dateInput.datetimepicker({
-			timepicker:false,
-			format:'Y/m/d',
-			theme:'dark'
-		});
+        this._dateInput._flatpickr = this._dateInput.flatpickr({
+            allowInput: true,
+            dateFormat: 'Y/m/d'
+        });
 		
 		//TimePicker
 		var time = '';
-		this._timeInput.TimePickerAlone({
-			twelveHoursFormat:false,
-			seconds:true,
-			ampm:false,
-			saveOnChange: false,
-			//mouseWheel:false,
-			theme:'dark',
-			onHide: function ($input) {
+        this._timeInput._flatpickr = this._timeInput.flatpickr({
+            allowInput: true,
+            noCalendar: true,
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            onClose: function (selected, str, instance) {
 				if(time != ''){
+                    let $input = $(instance.input);
 					$input.val(time).change();
 				}
 				
 				return true;
-			},
-			onChange: function (str, datetime) {
-				time = str;
-			}
-		});
+            },
+            onChange: function (selected, str, instance) {
+                time = str;
+            }
+        });
     },
 
     /**
@@ -341,8 +340,10 @@ var TimeControls = Class.extend(
      * @description Updates the HTML form fields associated with the time manager.
      */
     _updateInputFields: function () {
-        this._dateInput.val(this._date.toUTCDateString());
-        this._timeInput.val(this._date.toUTCTimeString());
+        if (this._dateInput._flatpickr) {
+            this._dateInput._flatpickr.setDate(this._date.toUTCDateString());
+            this._timeInput._flatpickr.setDate(this._date.toUTCTimeString());
+        }
     },
 
     /**

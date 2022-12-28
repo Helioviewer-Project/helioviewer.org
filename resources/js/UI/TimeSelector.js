@@ -194,7 +194,7 @@ var TimeSelector = Class.extend({
 
 	    $('#'+dateFiled).val($('.dateSelectorUTC').val());
 	    $('#'+timeFiled).val($('.timeSelectorUTC').val());
-	    $('#'+timeFiled).TimePickerAlone('setValue', currentDate.toUTCTimeString());
+	    flatpickr('#'+timeFiled, {}).setDate(currentDate.toUTCTimeString());
 	    
 	    if(dateFiled == 'date' && timeFiled == 'time'){
 		    helioviewer.timeControls.setDate( new Date($('.dateSelectorUTC').val().replace(/\//gi,'-') +'T'+ $('.timeSelectorUTC').val()+".000Z") );
@@ -271,38 +271,38 @@ var TimeSelector = Class.extend({
      */
     _initEvents: function () {
         var self = this;
-		$('.dateSelectorUTC').datetimepicker({
-			timepicker:false,
-			format:'Y/m/d',
-			theme:'dark',
-			onSelectDate:function(dt,$i){
-				var currentDate = new Date($('.dateSelectorUTC').val() +' '+ $('.timeSelectorUTC').val());
+        $('.dateSelectorUTC').flatpickr({
+            allowInput: true,
+            dateFormat: 'Y/m/d',
+            onChange: function(selected, datestr, instance) {
+				var currentDate = new Date($(instance.input).val() +' '+ $('.timeSelectorUTC').val());
 				
 				$('.timeSelectorJulian').val(dt.Date2Julian().toFixed(5));
 				$('.timeSelectorCarrington').val(timestamp_to_carrington(dt.getTime()).toFixed(7));
 				
 				return true;
-			}
-		});
+            }
+        });
 		
 		//TimePicker
 		var time = '';
-		$('.timeSelectorUTC').TimePickerAlone({
-			twelveHoursFormat:false,
-			seconds:true,
-			ampm:false,
-			saveOnChange: true,
-			//mouseWheel:false,
-			theme:'dark',
-			onHide: function ($input) {
+		$('.timeSelectorUTC').flatpickr({
+            allowInput: true,
+            position: 'bottom',
+            noCalendar: true,
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            onClose: function (selected, str, instance) {
+                let $input = $(instance.input);
 				if(time != ''){
 					updateTimeField = true;
 					$input.val(time).change();
 				}
 				
 				return true;
-			},
-			onChange: function (str, dt) {
+            },
+			onChange: function (selected, str, instance) {
 				time = str;
 				var currentDate = new Date($('.dateSelectorUTC').val()+' '+str);
 				if(updateTimeField){
@@ -310,7 +310,7 @@ var TimeSelector = Class.extend({
 					$('.timeSelectorCarrington').val(timestamp_to_carrington(currentDate.getTime()).toFixed(8));
 				}
 			}
-		});
+        });
 		
 		$("body").on('keyup', '.timeSelectorJulian',  function(event) {
 			var julianDate = parseFloat($(this).val());
@@ -318,7 +318,7 @@ var TimeSelector = Class.extend({
 			$('.dateSelectorUTC').val(currentDate.toUTCDateString());
 			$('.timeSelectorUTC').val(currentDate.toUTCTimeString());
 			updateTimeField = false;
-			$('.timeSelectorUTC').TimePickerAlone('setValue', currentDate.toUTCTimeString());
+			flatpickr('.timeSelectorUTC', {}).setDate(currentDate.toUTCTimeString());
 			$('.timeSelectorCarrington').val(timestamp_to_carrington(currentDate.getTime()).toFixed(8));
 		});
 		
@@ -327,27 +327,8 @@ var TimeSelector = Class.extend({
 			$('.dateSelectorUTC').val(currentDate.toUTCDateString());
 			$('.timeSelectorUTC').val(currentDate.toUTCTimeString());
 			updateTimeField = false;
-			$('.timeSelectorUTC').TimePickerAlone('setValue', currentDate.toUTCTimeString());
+			flatpickr('.timeSelectorUTC', {}).setDate(currentDate.toUTCTimeString());
 			$('.timeSelectorJulian').val(currentDate.Date2Julian().toFixed(5));
 		});
-		
-		//Fix to hide time input popup
-		/*$("body").on('click', '.timeSelectorDialog, .timeSelectorDialog input, .timeSelectorDialog .text-btn',  function(event, el) {
-			$('.dateSelectorUTC').datetimepicker('hide');
-			$('.timeSelectorUTC').blur();
-			$('.periodpicker_timepicker_dialog').removeClass('visible');
-		});
-		$("body").on('focus', '.timeSelectorDialog input',  function(event, el) {
-			$('.dateSelectorUTC').datetimepicker('hide');
-			$('.timeSelectorUTC').blur();
-			$('.periodpicker_timepicker_dialog').removeClass('visible');
-		});*/
-		
-		//this._timeInput.bind('change', $.proxy(this._onTextFieldChange, this));
-		//$('#vso-start-time').TimePickerAlone('setValue', $('#vso-start-time').val());
-		//$('.periodpicker_timepicker_dialog').removeClass('visible');
-		//$('#time').blur() ;
-		//$('#date').datetimepicker('hide') 
-		//this._timeInput.val(this._date.toUTCTimeString());
     },
 });    

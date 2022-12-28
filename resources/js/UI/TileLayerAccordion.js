@@ -253,7 +253,7 @@ var TileLayerAccordion = Layer.extend(
 			}
 			var diffDate = baseDiffTime.toString().split(" ");
 			
-			$('#'+id+' .diffdate').val(diffDate[0]);//.change();
+			$('#'+id+' .diffdate').val("2022/11/30");//.change();
 			$('#'+id+' .difftime').val(diffDate[1]);//.change();
 			//$('#'+id+' .difftime').TimePickerAlone('setValue', diffDate[1]);
 		}else{
@@ -301,46 +301,42 @@ var TileLayerAccordion = Layer.extend(
 		//	onDiffDate($(this).val());
 		//});
 		
-		$('#'+id+' .diffdate').datetimepicker({
-			timepicker:false,
-			format:'Y/m/d',
-			theme:'dark',
-			onChangeDateTime:function(dp,$input){
+		$('#'+id+' .diffdate').flatpickr({
+            allowInput: true,
+            dateFormat: 'Y/m/d',
+            position: 'below',
+			onChange:function(selected, datestr, instance){
+                let $input = $(instance.input);
                 onDiffDate($input.val()+' '+$('#'+id+' .difftime').val());
 				$(document).trigger("save-tile-layers");
 				self._reloadLayerTiles(id, name, sourceId, hierarchy);
 			}
-		});
-		
+        });
+			
 		//TimePicker
 		var time = '';
-		$('#'+id+' .difftime').TimePickerAlone({
-			twelveHoursFormat:false,
-			seconds:true,
-			ampm:false,
-			saveOnChange: false,
-			//mouseWheel:false,
-			theme:'dark',
-			onHide: function ($input) {
+		$('#'+id+' .difftime').flatpickr({
+            allowInput: true,
+            position: 'bottom',
+            noCalendar: true,
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            onClose: function (selected, datestr, instance) {
 				if(time != ''){
+                    let $input = $(instance.input);
 					$input.val(time).change();
 				}
 				
 				return true;
-			},
-			onChange: function (str, $input) {
-				time = str;
-				onDiffDate($('#'+id+' .diffdate').val()+' '+str);
+            },
+            onChange: function (selected, datestr, instance) {
+				time = datestr;
+				onDiffDate($('#'+id+' .diffdate').val()+' '+datestr);
                 $(document).trigger("save-tile-layers");
 				self._reloadLayerTiles(id, name, sourceId, hierarchy);
-			}
-		});
-		$('#'+id+' .difftime').change(function(){
-			onDiffDate($('#'+id+' .diffdate').val()+' '+$(this).val());
-            $(document).trigger("save-tile-layers");
-			self._reloadLayerTiles(id, name, sourceId, hierarchy);
-		});
-		
+            }
+        });
 	},
 	
 	_reloadLayerTiles: function(id, name, sourceId, hierarchy){
@@ -766,9 +762,9 @@ var TileLayerAccordion = Layer.extend(
 				var baseDiffTime = $('#date').val()+' '+$('#time').val();
 			}
 			var diffDate = baseDiffTime.toString().split(" ");
-			$('#'+id+' .diffdate').val(diffDate[0]);
-			$('#'+id+' .difftime').val(diffDate[1]);
-			$('#'+id+' .difftime').TimePickerAlone('setValue', diffDate[1]);
+			$('#'+id+' .diffdate')[0]._flatpickr.setDate(diffDate[0]);
+			$('#'+id+' .difftime')[0]._flatpickr.setDate(diffDate[1]);
+			// $('#'+id+' .difftime').TimePickerAlone('setValue', diffDate[1]);
 		}else{
 			$('#'+id+' .difference-type1-block').hide();
 			$('#'+id+' .difference-type2-block').hide();
