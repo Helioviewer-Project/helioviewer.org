@@ -498,7 +498,7 @@ DCH;
 
 			<div id="logo">
 				<h1>
-					<span><a class="logo-icon fa fa-sun-o fa-fw" href="" title="The Open-Source Solar and Heliospheric Data Browser"></a><a class="logo-text" href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a></span>
+					<span><a class="logo-icon fa fa-sun-o fa-fw" href="" title="The Open-Source Solar and Heliospheric Data Browser"><span class="sr-only">Helioviewer.org</span></a><a class="logo-text" href="" title="The Open-Source Solar and Heliospheric Data Browser">Helioviewer.org</a></span>
 				</h1>
 			</div>
 
@@ -621,7 +621,7 @@ DCH;
 							<div class="dropdown-holder layersPresetsList" style="display:inline-block;">
 							    <ul class="clearfix">
 							        <li class="dropdown-main" style="width:30px">
-							            <a href="#" id="images-presets-dropdown" class="text-button" title="Images presets" style="font-size:0.75em;width:15px"><span class="fa fa-th"></span> <!--fa-server fa-bars--></a>
+							            <a href="#" id="images-presets-dropdown" class="text-button" title="Images presets" style="font-size:0.75em;width:15px"><span class="fa fa-th"></span> <!--fa-server fa-bars--><span class="sr-only">Layer presets</span></a>
 							            <ul class="sub-menu">
 
 							            </ul>
