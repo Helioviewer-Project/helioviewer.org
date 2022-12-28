@@ -2544,10 +2544,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 imageScale, sdoGlobal);
         }
 
-        $('#vso-start-time')[0]._flatpickr.setDate($('#vso-start-time').val());
-        $('#vso-end-time')[0]._flatpickr.setDate($('#vso-end-time').val());
-        $('#sdo-start-time')[0]._flatpickr.setDate($('#sdo-start-time').val());
-        $('#sdo-end-time')[0]._flatpickr.setDate($('#sdo-end-time').val());
+        if ($('#vso-start-time').length > 0) {
+            $('#vso-start-time')[0]._flatpickr.setDate($('#vso-start-time').val());
+            $('#vso-end-time')[0]._flatpickr.setDate($('#vso-end-time').val());
+            $('#sdo-start-time')[0]._flatpickr.setDate($('#sdo-start-time').val());
+            $('#sdo-end-time')[0]._flatpickr.setDate($('#sdo-end-time').val());
+        }
 
         if($('#vso-start-date').val() == 'NaN/NaN/NaN'){
 	        setTimeout(function(){ self.updateExternalDataSourceIntegration(true,this); }, 500);

@@ -599,10 +599,10 @@ DCH;
 								</div>
 							</div>
 							<div class="row">
-								<div class="label">Jump:</div>
+								<div id="time-step-jump" class="label">Jump:</div>
 								<div class="field">
 
-									<select id="timestep-select" name="time-step"></select>
+									<select aria-labelledby="time-step-jump" id="timestep-select" name="time-step"></select>
 
 									<div id="timeBackBtn" class="inline fa fa-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
 									<div id="timeForwardBtn" class="inline fa fa-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
@@ -1522,9 +1522,9 @@ DCH;
 										</div>
 									</div>
 									<div class="row">
-										<div class="label">Time Step</div>
+										<div id="time-step-label" class="label">Time Step</div>
 										<div class="field">
-											<select id="timestep-select" name="time-step"></select>
+											<select aria-labelledby="time-step-label" id="timestep-select" name="time-step"></select>
 											<div id="timeBackBtn" class="inline fa fa-arrow-circle-left" style="font-size: 1.5em;" title="Jump Backward in Time."></div>
 											<div id="timeForwardBtn" class="inline fa fa-arrow-circle-right" style="font-size: 1.5em;" title="Jump Forward in Time."></div>
 											<div id="timeNowBtn" class="inline fa fa-clock-o right k12-timeNowBtn" style="font-size: 1em;" title="Jump to the most recent available image's for the currently loaded layer(s).">
@@ -1533,9 +1533,9 @@ DCH;
 										</div>
 									</div>
 									<div class="row">
-										<div class="label" style="margin-top:0.4em;">Make an Observation</div>
+										<div id="observation-label" class="label" style="margin-top:0.4em;">Make an Observation</div>
 										<div id="image-layer-select-container" class="field" style="margin-top:0.95em; padding-bottom:0.5em;">
-											<select id="image-layer-select" name="image-select-layers" style="width:18.5em;">
+											<select aria-labelledby="observation-label" id="image-layer-select" name="image-select-layers" style="width:18.5em;">
 												<option value="0" class="image-layer-switch" data-id="0" data-name="NOAA flares and active regions" data-date="" data-layers="[SDO,AIA,171,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[AR,NOAA_SWPC_Observer,1],[FL,SWPC,1]">Flares and Active Regions</option>
 												<option value="1" class="image-layer-switch" data-id="1" data-name="Eruption Monitor" data-date="" data-layers="[SDO,AIA,304,1,100,0,60,1,2017-11-16T09:02:20.000Z],[SOHO,LASCO,C2,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z],[SOHO,LASCO,C3,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z]" data-events="[CE,all,1],[ER,all,1],[FI,all,1],[FA,all,1],[FE,all,1]">Eruptions and CMEs</option>
 												<option value="2" class="image-layer-switch" data-id="2" data-name="Magnetic flux Monitor" data-date="" data-layers="[SDO,HMI,magnetogram,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[EF,all,1]">Magnetic Field</option>

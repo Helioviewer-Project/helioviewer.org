@@ -429,12 +429,13 @@ var TileLayerAccordion = Layer.extend(
                 display = 'display: none;';
                 label = '';
             }
+            var html_id = letter + '-label-' + id;
             popups += '<div style="' + display + '" '
                    +       'class="layer-select-label" '
-                   +       'id="' + letter + '-label-' + id +'">'
+                   +       'id="' + html_id +'">'
                    +     label
                    +  '</div> '
-                   +  '<select style="' + display + '" '
+                   +  '<select aria-labelledby='+ html_id +' style="' + display + '" '
                    +          'name="' + letter + '" '
                    +          'class="layer-select" '
                    +          'id="' + letter + '-select-' + id + '">'
@@ -762,8 +763,10 @@ var TileLayerAccordion = Layer.extend(
 				var baseDiffTime = $('#date').val()+' '+$('#time').val();
 			}
 			var diffDate = baseDiffTime.toString().split(" ");
-			$('#'+id+' .diffdate')[0]._flatpickr.setDate(diffDate[0]);
-			$('#'+id+' .difftime')[0]._flatpickr.setDate(diffDate[1]);
+            if ($('#'+id+' .diffdate').length > 0) {
+                $('#'+id+' .diffdate')[0]._flatpickr.setDate(diffDate[0]);
+                $('#'+id+' .difftime')[0]._flatpickr.setDate(diffDate[1]);
+            }
 			// $('#'+id+' .difftime').TimePickerAlone('setValue', diffDate[1]);
 		}else{
 			$('#'+id+' .difference-type1-block').hide();
