@@ -98,7 +98,7 @@
 	<link rel="stylesheet" href="/resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
 	<link rel="stylesheet" href="/resources/lib/DatetimePicker/jquery.datetimepicker.css" />
 	<link rel="stylesheet" href="/resources/lib/flatpickr/flatpickr.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+	<link rel="stylesheet" type="text/css" href="/resources/lib/flatpickr/flatpickr.style.css" />
 	<link rel="stylesheet" href="/resources/lib/boneVojage/bonevojage.css">
 	<link rel="stylesheet" href="/resources/lib/mediaelement/build/mediaelementplayer.min.css">
 
