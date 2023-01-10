@@ -272,28 +272,21 @@ var TimeControls = Class.extend(
         var btnId, btn, self = this;
         this._dateInput._flatpickr = this._dateInput.flatpickr({
             allowInput: true,
-            dateFormat: 'Y/m/d'
+            dateFormat: 'Y/m/d',
+            disableMobile: true
         });
 		
 		//TimePicker
-		var time = '';
         this._timeInput._flatpickr = this._timeInput.flatpickr({
             allowInput: true,
             noCalendar: true,
             enableTime: true,
             enableSeconds: true,
             time_24hr: true,
-            onClose: function (selected, str, instance) {
-				if(time != ''){
-                    let $input = $(instance.input);
-					$input.val(time).change();
-				}
-				
-				return true;
-            },
-            onChange: function (selected, str, instance) {
-                time = str;
-            }
+            minuteIncrement: 1,
+            secondIncrement: 1,
+            disableMobile: true,
+            position: "above"
         });
     },
 

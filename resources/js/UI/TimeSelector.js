@@ -293,6 +293,8 @@ var TimeSelector = Class.extend({
             enableTime: true,
             enableSeconds: true,
             time_24hr: true,
+            minuteIncrement: 1,
+            secondIncrement: 1,
             onClose: function (selected, str, instance) {
                 let $input = $(instance.input);
 				if(time != ''){

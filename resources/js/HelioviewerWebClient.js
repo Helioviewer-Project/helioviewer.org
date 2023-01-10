@@ -544,6 +544,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             enableTime: true,
             enableSeconds: true,
             time_24hr: true,
+            minuteIncrement: 1,
+            secondIncrement: 1,
             onClose: function (selectedDates, str, instance) {
 				if(time1 != ''){
 					instance.setDate(time1, true);
@@ -563,6 +565,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             enableTime: true,
             enableSeconds: true,
             time_24hr: true,
+            minuteIncrement: 1,
+            secondIncrement: 1,
 			onClose: function (selectedDates, str, instance) {
 				if(time2 != ''){
 					instance.setDate(time2, true);
@@ -581,6 +585,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             enableTime: true,
             enableSeconds: true,
             time_24hr: true,
+            minuteIncrement: 1,
+            secondIncrement: 1,
 			onClose: function (selected, str, instance) {
 				if(time3 != ''){
 					instance.setDate(time3, true);
@@ -599,6 +605,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             enableTime: true,
             enableSeconds: true,
             time_24hr: true,
+            minuteIncrement: 1,
+            secondIncrement: 1,
 			onClose: function (selected, str, instance) {
 				if(time4 != ''){
 					instance.setDate(time4, true);

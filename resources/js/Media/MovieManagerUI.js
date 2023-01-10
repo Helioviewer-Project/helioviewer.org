@@ -439,6 +439,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             enableTime: true,
             enableSeconds: true,
             time_24hr: true,
+            minuteIncrement: 1,
+            secondIncrement: 1,
 		});
 		$('#movie-end-time').flatpickr({
             allowInput: true,
@@ -446,6 +448,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             enableTime: true,
             enableSeconds: true,
             time_24hr: true,
+            minuteIncrement: 1,
+            secondIncrement: 1,
 			theme:'dark'
 		});
         if ($('#movie-start-time').length > 0) {
