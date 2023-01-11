@@ -1,3 +1,4 @@
+
 // detect the browser
 function hvBrowserDetect(){
                  
@@ -43,6 +44,5 @@ if(hvBrowserName== "edge" || hvBrowserName== "firefox" || hvBrowserName== "chrom
 }
 
 }
-
 
 hvBrowserDetect();

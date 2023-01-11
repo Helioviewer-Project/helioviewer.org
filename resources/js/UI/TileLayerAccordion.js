@@ -77,14 +77,14 @@ var TileLayerAccordion = Layer.extend(
         }
 
         // store tile layer params in bundle object
-        var tileLayerData = new TileLayerData(id, sourceId, difference, diffCount, 
+        var tileLayerData = new TileLayerData(id, sourceId, difference, diffCount,
             diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate,
             hierarchy, index, name, visible, startOpened, opacity, onOpacityChange);
 
         this._createAccordionEntry(tileLayerData);
         this._initTreeSelect(tileLayerData);
         this._initOpacitySlider(tileLayerData);
-		this._initDifference(tileLayerData);
+        this._initDifference(tileLayerData);
         this._setupEventHandlers(id);
         //this._updateTimeStamp(id, date);
     },
@@ -208,12 +208,12 @@ var TileLayerAccordion = Layer.extend(
             }
         });
     },
-    
-	/**
+
+    /**
      *
      */
     _initDifference: function (tileLayerData){
-        
+
         //extract necessary params from data object
         var self        = this,
         id              = tileLayerData.id,
@@ -234,88 +234,88 @@ var TileLayerAccordion = Layer.extend(
         $('#'+id+' .layer-select-difference-period-count').unbind('change');
         $('#'+id+' .difftime').unbind('change');
 
-		if(difference == 1){
-			$('#'+id+' .layer-select-difference').val('1');
-			$('#'+id+' .difference-type2-block').hide();
-			$('#'+id+' .difference-type1-block').show();
-			$('#'+id+' .layer-select-difference-period-count').val(diffCount);//.change();
-			
-			if(diffTime < 0 || diffTime > 6){
-				diffTime = 0;
-			}
-			$('#'+id+' .layer-select-difference-period').val(diffTime);//.change();
-		}else if(difference == 2){
-			$('#'+id+' .layer-select-difference').val('2');
-			$('#'+id+' .difference-type1-block').hide();
-			$('#'+id+' .difference-type2-block').show();
-			if(typeof baseDiffTime == 'number' || baseDiffTime == null){
-				var baseDiffTime = $('#date').val()+' '+$('#time').val();
-			}
-			var diffDate = baseDiffTime.toString().split(" ");
-			
-			$('#'+id+' .diffdate').val("2022/11/30");//.change();
-			$('#'+id+' .difftime').val(diffDate[1]);//.change();
-			//$('#'+id+' .difftime').TimePickerAlone('setValue', diffDate[1]);
-		}else{
-			$('#'+id+' .layer-select-difference').val('0');
-			$('#'+id+' .difference-type1-block').hide();
-			$('#'+id+' .difference-type2-block').hide();
-		}
-        
-		//Difference
-		$('#'+id+' .layer-select-difference').change(function(){
-			var difference = parseInt($(this).val());
-			onDifference(difference);
-			
-			if(difference == 1){
-				$('#'+id+' .layer-select-difference').val('1');
-				$('#'+id+' .difference-type2-block').hide();
-				$('#'+id+' .difference-type1-block').show();
-			}else if(difference == 2){
-				$('#'+id+' .layer-select-difference').val('2');
-				$('#'+id+' .difference-type1-block').hide();
-				$('#'+id+' .difference-type2-block').show();
-			}else{
-				$('#'+id+' .layer-select-difference').val('0');
-				$('#'+id+' .difference-type1-block').hide();
-				$('#'+id+' .difference-type2-block').hide();
-			}
-            
+        if(difference == 1){
+            $('#'+id+' .layer-select-difference').val('1');
+            $('#'+id+' .difference-type2-block').hide();
+            $('#'+id+' .difference-type1-block').show();
+            $('#'+id+' .layer-select-difference-period-count').val(diffCount);//.change();
+
+            if(diffTime < 0 || diffTime > 6){
+                diffTime = 0;
+            }
+            $('#'+id+' .layer-select-difference-period').val(diffTime);//.change();
+        }else if(difference == 2){
+            $('#'+id+' .layer-select-difference').val('2');
+            $('#'+id+' .difference-type1-block').hide();
+            $('#'+id+' .difference-type2-block').show();
+            if(typeof baseDiffTime == 'number' || baseDiffTime == null){
+                var baseDiffTime = $('#date').val()+' '+$('#time').val();
+            }
+            var diffDate = baseDiffTime.toString().split(" ");
+
+            $('#'+id+' .diffdate').val("2022/11/30");//.change();
+            $('#'+id+' .difftime').val(diffDate[1]);//.change();
+            //$('#'+id+' .difftime').TimePickerAlone('setValue', diffDate[1]);
+        }else{
+            $('#'+id+' .layer-select-difference').val('0');
+            $('#'+id+' .difference-type1-block').hide();
+            $('#'+id+' .difference-type2-block').hide();
+        }
+
+        //Difference
+        $('#'+id+' .layer-select-difference').change(function(){
+            var difference = parseInt($(this).val());
+            onDifference(difference);
+
+            if(difference == 1){
+                $('#'+id+' .layer-select-difference').val('1');
+                $('#'+id+' .difference-type2-block').hide();
+                $('#'+id+' .difference-type1-block').show();
+            }else if(difference == 2){
+                $('#'+id+' .layer-select-difference').val('2');
+                $('#'+id+' .difference-type1-block').hide();
+                $('#'+id+' .difference-type2-block').show();
+            }else{
+                $('#'+id+' .layer-select-difference').val('0');
+                $('#'+id+' .difference-type1-block').hide();
+                $('#'+id+' .difference-type2-block').hide();
+            }
+
             $(document).trigger("save-tile-layers");
-			self._reloadLayerTiles(id, name, sourceId, hierarchy);
-		});
-		//Difference Count
-		$('#'+id+' .layer-select-difference-period-count').change(function(){
+            self._reloadLayerTiles(id, name, sourceId, hierarchy);
+        });
+        //Difference Count
+        $('#'+id+' .layer-select-difference-period-count').change(function(){
             onDiffCount($(this).val());
-			$(document).trigger("save-tile-layers");
-			self._reloadLayerTiles(id, name, sourceId, hierarchy);
-		});
-		//Difference Time
-		$('#'+id+' .layer-select-difference-period').change(function(){
+            $(document).trigger("save-tile-layers");
+            self._reloadLayerTiles(id, name, sourceId, hierarchy);
+        });
+        //Difference Time
+        $('#'+id+' .layer-select-difference-period').change(function(){
             onDiffTime($(this).val());
-			$(document).trigger("save-tile-layers");
-			self._reloadLayerTiles(id, name, sourceId, hierarchy);
-		});
-		//Difference Base Time
-		//$('#'+id+' .layer-select-difference').change(function(){
-		//	onDiffDate($(this).val());
-		//});
-		
-		$('#'+id+' .diffdate').flatpickr({
+            $(document).trigger("save-tile-layers");
+            self._reloadLayerTiles(id, name, sourceId, hierarchy);
+        });
+        //Difference Base Time
+        //$('#'+id+' .layer-select-difference').change(function(){
+        //    onDiffDate($(this).val());
+        //});
+
+        $('#'+id+' .diffdate').flatpickr({
             allowInput: true,
             dateFormat: 'Y/m/d',
             position: 'below',
-			onChange:function(selected, datestr, instance){
+            onChange:function(selected, datestr, instance){
                 let $input = $(instance.input);
                 onDiffDate($input.val()+' '+$('#'+id+' .difftime').val());
-				$(document).trigger("save-tile-layers");
-				self._reloadLayerTiles(id, name, sourceId, hierarchy);
-			}
+                $(document).trigger("save-tile-layers");
+                self._reloadLayerTiles(id, name, sourceId, hierarchy);
+            }
         });
-			
-		//TimePicker
-		var time = '';
-		$('#'+id+' .difftime').flatpickr({
+
+        //TimePicker
+        var time = '';
+        $('#'+id+' .difftime').flatpickr({
             allowInput: true,
             position: 'bottom',
             noCalendar: true,
@@ -325,28 +325,28 @@ var TileLayerAccordion = Layer.extend(
             minuteIncrement: 1,
             secondIncrement: 1,
             onClose: function (selected, datestr, instance) {
-				if(time != ''){
+                if(time != ''){
                     let $input = $(instance.input);
-					$input.val(time).change();
-				}
-				
-				return true;
+                    $input.val(time).change();
+                }
+
+                return true;
             },
             onChange: function (selected, datestr, instance) {
-				time = datestr;
-				onDiffDate($('#'+id+' .diffdate').val()+' '+datestr);
+                time = datestr;
+                onDiffDate($('#'+id+' .diffdate').val()+' '+datestr);
                 $(document).trigger("save-tile-layers");
-				self._reloadLayerTiles(id, name, sourceId, hierarchy);
+                self._reloadLayerTiles(id, name, sourceId, hierarchy);
             }
         });
-	},
-	
-	_reloadLayerTiles: function(id, name, sourceId, hierarchy){
-		var selected = new Array(),
+    },
+
+    _reloadLayerTiles: function(id, name, sourceId, hierarchy){
+        var selected = new Array(),
             letters  = ['a','b','c','d','e'],
             self     = this,
             difference = parseInt($('#'+id+' .layer-select-difference').val());
-        
+
         $.each( letters, function (i, letter) {
             var value = $('#'+letter+'-select-'+id).val();
             if (typeof value != 'undefined' && value != null) {
@@ -355,18 +355,18 @@ var TileLayerAccordion = Layer.extend(
                 selected[i]['name'] = value;
             }
         });
-        
+
         var layerOrder = 0;
         $.each($('#TileLayerAccordion-Container > div'), function(k, el){
-	        var elId = $(el).attr('id');
-	        if(elId == id){
-		        layerOrder = k;
-	        }
+            var elId = $(el).attr('id');
+            if(elId == id){
+                layerOrder = k;
+            }
         });
 
         $(document).trigger("tile-layer-data-source-changed", [id, selected, sourceId, name, layerOrder, difference]);
     },
-    
+
     /**
      * @description Builds the body section of a single TileLayerAccordion entry. NOTE: width and height
      * must be hardcoded for slider to function properly.
@@ -383,40 +383,40 @@ var TileLayerAccordion = Layer.extend(
                       + '<div class="opacity-slider-track" '
                       +      'id="opacity-slider-track-' + id + '">'
                       + '</div>';
-		
-		
-		layer = hierarchy = Helioviewer.userSettings._defaults.state.tileLayers[0];
-		var diffStr = layer.baseDiffTime;
-		var diffDate = diffStr.split(" ");
-		diffHTML = '<div class="difference-block">'
-				   +  '<div id="difference-label" class="layer-select-label">Difference</div> '
-                   +  	'<select aria-labelledby="difference-label" name="layer-select-difference" class="layer-select layer-select-difference">'
-                   +  	'<option value="0" '+(parseInt(layer.difference) == 0 || typeof layer.difference == 'undefined' ? 'selected="selected"' : '')+'>No difference image</option>'
-                   +  	'<option value="1" '+(parseInt(layer.difference) == 1 ? 'selected="selected"' : '')+'>Running difference</option>'
-                   +  	'<option value="2" '+(parseInt(layer.difference) == 2 ? 'selected="selected"' : '')+'>Base difference</option>'
-                   +  '</select>'        
-				   + '<div style="display: none;" class="difference-type1-block">'
-				   +	'<div id="running-difference-label" class="layer-select-label">Running difference</div> '
-                   +  		'<input aria-labelledby="running-difference-label" type="text" value="'+layer.diffCount+'" name="layer-select-difference-period-count" class="layer-select-difference-period-count" style="width:30px;height:11px;font-size:9.5px;">&nbsp;'
-                   +  		'<select aria-label="time unit" name="layer-select-difference-period" class="layer-select layer-select-difference-period" style="width:110px;">'
-                   +  			'<option value="0" '+(parseInt(layer.diffTime) == 0 || typeof layer.diffTime == 'undefined' ? 'selected="selected"' : '')+'>Seconds</option>'
-                   +  			'<option value="1" '+(parseInt(layer.diffTime) == 1 ? 'selected="selected"' : '')+'>Minutes</option>'
-                   +  			'<option value="2" '+(parseInt(layer.diffTime) == 2 ? 'selected="selected"' : '')+'>Hours</option>'
-                   +  			'<option value="3" '+(parseInt(layer.diffTime) == 3 ? 'selected="selected"' : '')+'>Days</option>'
-                   +  			'<option value="4" '+(parseInt(layer.diffTime) == 4 ? 'selected="selected"' : '')+'>Weeks</option>'
-                   +  			'<option value="5" '+(parseInt(layer.diffTime) == 5 ? 'selected="selected"' : '')+'>Months</option>'
-                   +  			'<option value="6" '+(parseInt(layer.diffTime) == 6 ? 'selected="selected"' : '')+'>Years</option>'
-                   +  		'</select>'
-                   + 	'</div>'       
-				   + 	'<div style="display: none;" class="difference-type2-block">'
-				   +		'<div id="base-difference-label" class="layer-select-label">Base difference</div> '
-                   +  		'<input aria-labelledby="base-difference-label" type="text" id="diffdate-'+id+'" class="diffdate" name="diffdate" value="'+diffDate[0]+'" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" style="width:70px;height:11px;font-size:9.5px;"/>&nbsp;'
-				   +		'<input aria-label="Time" type="text" id="difftime-'+id+'" class="difftime" name="difftime" value="'+diffDate[1]+'" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" style="width:60px;height:11px;font-size:9.5px;"/>&nbsp;'
-				   +		'<div class="suffix dateSelector" data-tip-pisition="right" data-date-field="diffdate-'+id+'" data-time-field="difftime-'+id+'" style="display: inline-block;font-size:9.75px;">UTC</div>'
-                   + 	'</div>'
-				   + '</div>';
-                   
-		
+
+
+        layer = hierarchy = Helioviewer.userSettings._defaults.state.tileLayers[0];
+        var diffStr = layer.baseDiffTime;
+        var diffDate = diffStr.split(" ");
+        diffHTML = '<div class="difference-block">'
+                   +  '<div id="difference-label" class="layer-select-label">Difference</div> '
+                   +      '<select aria-labelledby="difference-label" name="layer-select-difference" class="layer-select layer-select-difference">'
+                   +      '<option value="0" '+(parseInt(layer.difference) == 0 || typeof layer.difference == 'undefined' ? 'selected="selected"' : '')+'>No difference image</option>'
+                   +      '<option value="1" '+(parseInt(layer.difference) == 1 ? 'selected="selected"' : '')+'>Running difference</option>'
+                   +      '<option value="2" '+(parseInt(layer.difference) == 2 ? 'selected="selected"' : '')+'>Base difference</option>'
+                   +  '</select>'
+                   + '<div style="display: none;" class="difference-type1-block">'
+                   +    '<div id="running-difference-label" class="layer-select-label">Running difference</div> '
+                   +          '<input aria-labelledby="running-difference-label" type="text" value="'+layer.diffCount+'" name="layer-select-difference-period-count" class="layer-select-difference-period-count" style="width:30px;height:11px;font-size:9.5px;">&nbsp;'
+                   +          '<select aria-label="time unit" name="layer-select-difference-period" class="layer-select layer-select-difference-period" style="width:110px;">'
+                   +              '<option value="0" '+(parseInt(layer.diffTime) == 0 || typeof layer.diffTime == 'undefined' ? 'selected="selected"' : '')+'>Seconds</option>'
+                   +              '<option value="1" '+(parseInt(layer.diffTime) == 1 ? 'selected="selected"' : '')+'>Minutes</option>'
+                   +              '<option value="2" '+(parseInt(layer.diffTime) == 2 ? 'selected="selected"' : '')+'>Hours</option>'
+                   +              '<option value="3" '+(parseInt(layer.diffTime) == 3 ? 'selected="selected"' : '')+'>Days</option>'
+                   +              '<option value="4" '+(parseInt(layer.diffTime) == 4 ? 'selected="selected"' : '')+'>Weeks</option>'
+                   +              '<option value="5" '+(parseInt(layer.diffTime) == 5 ? 'selected="selected"' : '')+'>Months</option>'
+                   +              '<option value="6" '+(parseInt(layer.diffTime) == 6 ? 'selected="selected"' : '')+'>Years</option>'
+                   +          '</select>'
+                   +     '</div>'
+                   +     '<div style="display: none;" class="difference-type2-block">'
+                   +        '<div id="base-difference-label" class="layer-select-label">Base difference</div> '
+                   +          '<input aria-labelledby="base-difference-label" type="text" id="diffdate-'+id+'" class="diffdate" name="diffdate" value="'+diffDate[0]+'" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker" style="width:70px;height:11px;font-size:9.5px;"/>&nbsp;'
+                   +        '<input aria-label="Time" type="text" id="difftime-'+id+'" class="difftime" name="difftime" value="'+diffDate[1]+'" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" style="width:60px;height:11px;font-size:9.5px;"/>&nbsp;'
+                   +        '<div class="suffix dateSelector" data-tip-pisition="right" data-date-field="diffdate-'+id+'" data-time-field="difftime-'+id+'" style="display: inline-block;font-size:9.75px;">UTC</div>'
+                   +     '</div>'
+                   + '</div>';
+
+
         // Default labels
         letters = ['a','b','c','d','e'];
         hierarchy = Helioviewer.userSettings._defaults.state.tileLayers[0]['uiLabels'];
@@ -500,7 +500,7 @@ var TileLayerAccordion = Layer.extend(
             $("#visibilityBtn-" + id).toggleClass('hidden');
             $("#visibilityBtn-" + id).toggleClass('fa-eye');
             $("#visibilityBtn-" + id).toggleClass('fa-eye-slash');
-            
+
             $(document).trigger("save-tile-layers");
             e.stopPropagation();
         };
@@ -510,7 +510,7 @@ var TileLayerAccordion = Layer.extend(
             $(document).trigger("remove-tile-layer", [id]);
             self._removeTooltips(id);
             self.domNode.dynaccordion('removeSection', {id: id});
-            
+
             $(document).trigger("save-tile-layers");
             $(document).trigger("save-tile-layers-from-accordion");
             e.stopPropagation();
@@ -747,34 +747,34 @@ var TileLayerAccordion = Layer.extend(
             window.open(Helioviewer.api + "?action=getJP2Image&id=" + imageId);
             return false;
         });
-		
-		//Difference
-		if(difference == 1){
-			$('#'+id+' .difference-type2-block').hide();
-			$('#'+id+' .difference-type1-block').show();
-			$('#'+id+' .layer-select-difference-period-count').val(diffCount);
-			
-			if(diffTime < 0 || diffTime > 6){
-				diffTime = 0;
-			}
-			$('#'+id+' .layer-select-difference-period').val(diffTime);
-		}else if(difference == 2){
-			$('#'+id+' .difference-type1-block').hide();
-			$('#'+id+' .difference-type2-block').show();
-			if(typeof baseDiffTime == 'number' || baseDiffTime == null){
-				var baseDiffTime = $('#date').val()+' '+$('#time').val();
-			}
-			var diffDate = baseDiffTime.toString().split(" ");
+
+        //Difference
+        if(difference == 1){
+            $('#'+id+' .difference-type2-block').hide();
+            $('#'+id+' .difference-type1-block').show();
+            $('#'+id+' .layer-select-difference-period-count').val(diffCount);
+
+            if(diffTime < 0 || diffTime > 6){
+                diffTime = 0;
+            }
+            $('#'+id+' .layer-select-difference-period').val(diffTime);
+        }else if(difference == 2){
+            $('#'+id+' .difference-type1-block').hide();
+            $('#'+id+' .difference-type2-block').show();
+            if(typeof baseDiffTime == 'number' || baseDiffTime == null){
+                var baseDiffTime = $('#date').val()+' '+$('#time').val();
+            }
+            var diffDate = baseDiffTime.toString().split(" ");
             if ($('#'+id+' .diffdate').length > 0) {
                 $('#'+id+' .diffdate')[0]._flatpickr.setDate(diffDate[0]);
                 $('#'+id+' .difftime')[0]._flatpickr.setDate(diffDate[1]);
             }
-			// $('#'+id+' .difftime').TimePickerAlone('setValue', diffDate[1]);
-		}else{
-			$('#'+id+' .difference-type1-block').hide();
-			$('#'+id+' .difference-type2-block').hide();
-		}
-		
+            // $('#'+id+' .difftime').TimePickerAlone('setValue', diffDate[1]);
+        }else{
+            $('#'+id+' .difference-type1-block').hide();
+            $('#'+id+' .difference-type2-block').hide();
+        }
+
         $(document).trigger('update-external-datasource-integration');
     },
 
@@ -785,14 +785,14 @@ var TileLayerAccordion = Layer.extend(
     _updateTimeStamp: function (id, date) {
         var weight = this._getScaledTimeDifference(date, this._observationDate);
 
-        $("#" + id).find('.timestamp').html(date.toUTCDateString() 
-        	+ " " + date.toUTCTimeString() 
-        	+ " <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+date.toUTCDateString()+" "+date.toUTCTimeString()+"\">UTC</span>")
+        $("#" + id).find('.timestamp').html(date.toUTCDateString()
+            + " " + date.toUTCTimeString()
+            + " <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+date.toUTCDateString()+" "+date.toUTCTimeString()+"\">UTC</span>")
                    .css("color", this._chooseTimeStampColor(weight, 0, 0, 0));
-        
+
         if(typeof helioviewer !== 'undefined'){
-	        helioviewer._timeSelector = new TimeSelector();
-		}
+            helioviewer._timeSelector = new TimeSelector();
+        }
     },
 
     /**

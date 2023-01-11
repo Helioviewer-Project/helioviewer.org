@@ -114,14 +114,14 @@ var TimeControls = Class.extend(
                     });
                 }
             );
-            
+
             if(layerHierarchy.length == 0){
-	            var savedLayers = Helioviewer.userSettings.get('state.tileLayers');
-	            $.each( savedLayers, function (i, layer) {
-		            layerHierarchy.push(layer.uiLabels);
-	            });
+                var savedLayers = Helioviewer.userSettings.get('state.tileLayers');
+                $.each( savedLayers, function (i, layer) {
+                    layerHierarchy.push(layer.uiLabels);
+                });
             }
-            
+
             // For each data tile-layer accordion, get the data source "end"
             // date (which is the date/time of the most current piece of data
             // for that source).  Keep the overall most current "end" date.
@@ -130,11 +130,11 @@ var TimeControls = Class.extend(
                 $.each( hierarchy, function (j, property) {
                     leaf = leaf[property['name']];
                 });
-				
-				if(leaf['end'] == null){
-					leaf['end'] = new Date().toUTCString();
-				}
-				
+
+                if(leaf['end'] == null){
+                    leaf['end'] = new Date().toUTCString();
+                }
+
                 date = Date.parseUTCDate(leaf['end']);
                 if (date > mostRecent) {
                     mostRecent = date;
@@ -227,7 +227,7 @@ var TimeControls = Class.extend(
      * @param {int} seconds The number of seconds to adjust the date by
      */
     _addSeconds: function (seconds) {
-	    this._date = new Date(this._date.getTime() + seconds*1000);
+        this._date = new Date(this._date.getTime() + seconds*1000);
         this._onDateChange();
     },
 
@@ -275,8 +275,8 @@ var TimeControls = Class.extend(
             dateFormat: 'Y/m/d',
             disableMobile: true
         });
-		
-		//TimePicker
+
+        //TimePicker
         this._timeInput._flatpickr = this._timeInput.flatpickr({
             allowInput: true,
             noCalendar: true,
@@ -298,7 +298,7 @@ var TimeControls = Class.extend(
         Helioviewer.userSettings.set("state.date", this._date.getTime());
         $(document).trigger("observation-time-changed", [this._date]);
         if(typeof updateTimeline == 'undefined'){
-	        $(document).trigger("observation-time-changed-update-timeline", [this._date]);
+            $(document).trigger("observation-time-changed-update-timeline", [this._date]);
         }
     },
 
