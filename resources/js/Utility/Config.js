@@ -26,7 +26,7 @@ var Config = Class.extend(
         'user_video_feed'           : "https://api.helioviewer.org/",
         'contact_email'             : "HelioViewerDevelopment@nasa.onmicrosoft.com",
         'regenerate_movie_threshold': 90,
-        'enable_helios_backlinks'   : true
+        'enable_helios_backlinks'   : false
      },
 
     /**
