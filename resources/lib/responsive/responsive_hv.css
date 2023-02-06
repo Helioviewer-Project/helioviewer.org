@@ -1016,7 +1016,7 @@
 	}
 	
 	.timestamp {
-		display:none;
+		display:inline;
 	}
 	
 	#hv-drawer-timeline-events, #hv-drawer-timeline {
