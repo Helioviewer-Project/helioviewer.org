@@ -11,1081 +11,1078 @@ newcap: true, immed: true, maxlen: 80, sub: true */
  */
 "use strict";
 var MovieManagerUI = MediaManagerUI.extend(
-    /** @lends MovieManagerUI */
-    {
-    /**
-     * @constructs
-     * Creates a new MovieManagerUI instance
-     *
-     * @param {int} regenerateMovieThreshold Number of days to wait before displaying the "regenerate" option on an old movie.
-     * @param {bool} enable_helios Determines whether or not to render helios links on movies
-     */
-    init: function (regenerateMovieThreshold = 90, enable_helios = false) {
-        var movies = Helioviewer.userSettings.get('history.movies');
-        this._manager = new MovieManager(movies);
-        this._super("movie", enable_helios);
-        this._settingsDialog   = $("#movie-settings-container");
-        this._advancedSettings = $("#movie-settings-advanced");
-        this._settingsHelp     = $("#movie-settings-help");
-        this._settingsForm     = $("#movie-settings-form-container");
-        this._settingsConsole  = $("#movie-settings-validation-console");
-        this._movieScale = null;
-        this._movieROI = null;
-        this._movieLayers = null;
-        this._movieEvents = null;
-        this._movieEventsLabels = null;
-        this._regenerateMovieThreshold = regenerateMovieThreshold;
-        this._initEvents();
-        this._initSettings();
+	/** @lends MovieManagerUI */
+	{
+	/**
+	 * @constructs
+	 * Creates a new MovieManagerUI instance
+	 *
+	 * @param {int} regenerateMovieThreshold Number of days to wait before displaying the "regenerate" option on an old movie.
+	 * @param {bool} enable_helios Determines whether or not to render helios links on movies
+	 */
+	init: function (regenerateMovieThreshold = 90, enable_helios = false) {
+		var movies = Helioviewer.userSettings.get('history.movies');
+		this._manager = new MovieManager(movies);
+		this._super("movie", enable_helios);
+		this._settingsDialog   = $("#movie-settings-container");
+		this._advancedSettings = $("#movie-settings-advanced");
+		this._settingsHelp	 = $("#movie-settings-help");
+		this._settingsForm	 = $("#movie-settings-form-container");
+		this._settingsConsole  = $("#movie-settings-validation-console");
+		this._movieScale = null;
+		this._movieROI = null;
+		this._movieLayers = null;
+		this._movieEvents = null;
+		this._movieEventsLabels = null;
+		this._regenerateMovieThreshold = regenerateMovieThreshold;
+		this._initEvents();
+		this._initSettings();
 
-        this.show();
-    },
+		this.show();
+	},
 
-    /**
-     * Plays the movie with the specified id if it is ready
-     */
-    playMovie: function (id) {
-        var movie = this._manager.get(id);
+	/**
+	 * Plays the movie with the specified id if it is ready
+	 */
+	playMovie: function (id) {
+		var movie = this._manager.get(id);
 
-        // If the movie is ready, open movie player
-        if (movie.status === 2) {
-            this._createMoviePlayerDialog(movie);
-        } else {
-            return;
-        }
-    },
+		// If the movie is ready, open movie player
+		if (movie.status === 2) {
+			this._createMoviePlayerDialog(movie);
+		} else {
+			return;
+		}
+	},
 
-    /**
-     * Uses the layers passed in to send an Ajax request to api.php, to have it
-     * build a movie. Upon completion, it displays a notification that lets the
-     * user click to view it in a popup.
-     */
-    _buildMovieRequest: function (serializedFormParams) {
-        var formParams, baseParams, params, frameRate, celestialBodiesLabels, celestialBodiesTrajectories;
+	/**
+	 * Uses the layers passed in to send an Ajax request to api.php, to have it
+	 * build a movie. Upon completion, it displays a notification that lets the
+	 * user click to view it in a popup.
+	 */
+	_buildMovieRequest: function (serializedFormParams) {
+		var formParams, baseParams, params, frameRate, celestialBodiesLabels, celestialBodiesTrajectories;
 
-        // Convert to an associative array for easier processing
-        formParams = {};
+		// Convert to an associative array for easier processing
+		formParams = {};
 
-        $.each(serializedFormParams, function (i, field) {
-            formParams[field.name] = field.value;
-        });
+		$.each(serializedFormParams, function (i, field) {
+			formParams[field.name] = field.value;
+		});
 
-        this.building = true;
+		this.building = true;
 
-        if ( Helioviewer.userSettings.get("state.eventLayerVisible") === false ) {
-            this._movieEvents = '';
-            this._movieEventsLabels = false;
-        }
+		if ( Helioviewer.userSettings.get("state.eventLayerVisible") === false ) {
+			this._movieEvents = '';
+			this._movieEventsLabels = false;
+		}
 
 		/*if(typeof formParams['startTime'] != 'undefined'){
-	        var roi = helioviewer.getViewportRegionOfInterest();
-	        var layers = helioviewer.getVisibleLayers(roi);
-	        var events = helioviewer.getEvents();
+			var roi = helioviewer.getViewportRegionOfInterest();
+			var layers = helioviewer.getVisibleLayers(roi);
+			var events = helioviewer.getEvents();
 
-	        // Make sure selection region and number of layers are acceptible
-	        if (!this._validateRequest(roi, layers)) {
-	            return;
-	        }
+			// Make sure selection region and number of layers are acceptible
+			if (!this._validateRequest(roi, layers)) {
+				return;
+			}
 
-	        // Store chosen ROI and layers
-	        this._movieScale  = helioviewer.getImageScale();
-	        this._movieROI    = this._toArcsecCoords(roi, this._movieScale);
-	        this._movieLayers = layers;
-	        this._movieEvents = events;
-	        this._movieEventsLabels = helioviewer.getEventsLabels();
-	    }*/
+			// Store chosen ROI and layers
+			this._movieScale  = helioviewer.getImageScale();
+			this._movieROI	= this._toArcsecCoords(roi, this._movieScale);
+			this._movieLayers = layers;
+			this._movieEvents = events;
+			this._movieEventsLabels = helioviewer.getEventsLabels();
+		}*/
 
 		var switchSources = false;
 		if(outputType == 'minimal'){
 			switchSources = true;
-        }
+		}
 
-        celestialBodiesLabels = helioviewer.getCelestialBodiesLabels();
-        celestialBodiesTrajectories = helioviewer.getCelestialBodiesTrajectories();
+		celestialBodiesLabels = helioviewer.getCelestialBodiesLabels();
+		celestialBodiesTrajectories = helioviewer.getCelestialBodiesTrajectories();
 
-        // Movie request parameters
-        baseParams = {
-            action       : "queueMovie",
-            imageScale   : this._movieScale,
-            layers       : this._movieLayers,
-            events       : this._movieEvents,
-            eventsLabels : this._movieEventsLabels,
-            scale        : Helioviewer.userSettings.get("state.scale"),
-            scaleType    : Helioviewer.userSettings.get("state.scaleType"),
-            scaleX       : Helioviewer.userSettings.get("state.scaleX"),
-            scaleY       : Helioviewer.userSettings.get("state.scaleY"),
-            format       : this._manager.format,
-            size         : 0,
-            movieIcons   : 0,
-            followViewport   : 0,
-            reqObservationDate   : new Date(Helioviewer.userSettings.get("state.date")).toISOString(),
-            switchSources   : switchSources,
-            celestialBodiesLabels : celestialBodiesLabels,
-            celestialBodiesTrajectories : celestialBodiesTrajectories
-        };
+		// Movie request parameters
+		baseParams = {
+			action	   : "queueMovie",
+			imageScale   : this._movieScale,
+			layers	   : this._movieLayers,
+			events	   : this._movieEvents,
+			eventsLabels : this._movieEventsLabels,
+			scale		: Helioviewer.userSettings.get("state.scale"),
+			scaleType	: Helioviewer.userSettings.get("state.scaleType"),
+			scaleX	   : Helioviewer.userSettings.get("state.scaleX"),
+			scaleY	   : Helioviewer.userSettings.get("state.scaleY"),
+			format	   : this._manager.format,
+			size		 : 0,
+			movieIcons   : 0,
+			followViewport   : 0,
+			reqObservationDate   : new Date(Helioviewer.userSettings.get("state.date")).toISOString(),
+			switchSources   : switchSources,
+			celestialBodiesLabels : celestialBodiesLabels,
+			celestialBodiesTrajectories : celestialBodiesTrajectories
+		};
 
-        // Add ROI and start and end dates
-        if(typeof formParams['startTime'] != 'undefined'){
-	        var dates =  {
-	            "startTime": formParams['startTime'],
-	            "endTime"  : formParams['endTime']
-	        };
-	        params = $.extend(baseParams, this._movieROI, dates);
-        }else{
-	        params = $.extend(baseParams, this._movieROI, this._getMovieTimeWindow());
-        }
+		// Add ROI and start and end dates
+		if(typeof formParams['startTime'] != 'undefined'){
+			var dates =  {
+				"startTime": formParams['startTime'],
+				"endTime"  : formParams['endTime']
+			};
+			params = $.extend(baseParams, this._movieROI, dates);
+		}else{
+			params = $.extend(baseParams, this._movieROI, this._getMovieTimeWindow());
+		}
 
-        // (Optional) Frame-rate or movie-length
-        if (formParams['speed-method'] === "framerate") {
-            frameRate = parseInt(formParams['framerate'], 10);
-            if (frameRate < 1 || frameRate > 30) {
-                throw "Frame-rate must be between 1 and 30.";
-            }
-            params['frameRate'] = parseInt(formParams['framerate']);
-        }
-        else {
-            if (formParams['framerate'] < 5 ||
-                formParams['framerate'] > 100) {
-                throw "Movie length must be between 5 and 100 seconds.";
-            }
-            params['movieLength'] = parseInt(formParams['framerate']);
-        }
+		// (Optional) Frame-rate or movie-length
+		if (formParams['speed-method'] === "framerate") {
+			frameRate = parseInt(formParams['framerate'], 10);
+			if (frameRate < 1 || frameRate > 30) {
+				throw "Frame-rate must be between 1 and 30.";
+			}
+			params['frameRate'] = parseInt(formParams['framerate']);
+		}
+		else {
+			if (formParams['framerate'] < 5 ||
+				formParams['framerate'] > 100) {
+				throw "Movie length must be between 5 and 100 seconds.";
+			}
+			params['movieLength'] = parseInt(formParams['framerate']);
+		}
 
-        if(typeof formParams['size'] != 'undefined' && (parseInt(formParams['size']) >=0 || parseInt(formParams['size']) <=5)){
-	        params['size'] = parseInt(formParams['size']);
-        }
+		if(typeof formParams['size'] != 'undefined' && (parseInt(formParams['size']) >=0 || parseInt(formParams['size']) <=5)){
+			params['size'] = parseInt(formParams['size']);
+		}
 
-        if(typeof formParams['movie-icons'] != 'undefined' && parseInt(formParams['movie-icons']) >0){
-	        params['movieIcons'] = true;
-        }
+		if(typeof formParams['movie-icons'] != 'undefined' && parseInt(formParams['movie-icons']) >0){
+			params['movieIcons'] = true;
+		}
 
-        if(typeof formParams['followViewport'] != 'undefined' && parseInt(formParams['followViewport']) >0){
-	        params['followViewport'] = true;
-        }
+		if(typeof formParams['followViewport'] != 'undefined' && parseInt(formParams['followViewport']) >0){
+			params['followViewport'] = true;
+		}
 
-        // Submit request
-        this._queueMovie(params);
+		// Submit request
+		this._queueMovie(params);
 
-        this._advancedSettings.hide();
-        this._settingsDialog.hide();
+		this._advancedSettings.hide();
+		this._settingsDialog.hide();
 
-        this.show();
+		this.show();
 
-        this.building = false;
-    },
+		this.building = false;
+	},
 
-    /**
-     * Determines the start and end dates to use when requesting a movie
-     */
-    _getMovieTimeWindow: function () {
-        var movieLength, currentTime, endTime, startTimeStr, endTimeStr,
-            now, diff;
+	/**
+	 * Determines the start and end dates to use when requesting a movie
+	 */
+	_getMovieTimeWindow: function () {
+		var movieLength, currentTime, endTime, startTimeStr, endTimeStr,
+			now, diff;
 
-        movieLength = Helioviewer.userSettings.get("options.movies.duration");
+		movieLength = Helioviewer.userSettings.get("options.movies.duration");
 
-        // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
-        currentTime = helioviewer.getDate();
+		// Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
+		currentTime = helioviewer.getDate();
 
-        // We want shift start and end time if needed to ensure that entire
-        // duration will be used. For now, we will assume that the most
-        // recent data available is close to now() to make things simple
+		// We want shift start and end time if needed to ensure that entire
+		// duration will be used. For now, we will assume that the most
+		// recent data available is close to now() to make things simple
 
-        endTime = new Date(helioviewer.getDate().getTime() + (movieLength / 2) * 1000);
+		endTime = new Date(helioviewer.getDate().getTime() + (movieLength / 2) * 1000);
 
-        now = new Date();
-        diff = endTime.getTime() - now.getTime();
-        currentTime = new Date(currentTime.getTime() + Math.min(0, -diff));
+		now = new Date();
+		diff = endTime.getTime() - now.getTime();
+		currentTime = new Date(currentTime.getTime() + Math.min(0, -diff));
 
 		startTimeStr = new Date(currentTime.getTime() + (-movieLength / 2) * 1000);
 		endTimeStr = new Date(currentTime.getTime() + (movieLength / 2) * 1000);
-        // Start and end datetime strings
-        return {
-            "startTime": startTimeStr.toISOString(),
-            "endTime"  : endTimeStr.toISOString()
-        };
-    },
+		// Start and end datetime strings
+		return {
+			"startTime": startTimeStr.toISOString(),
+			"endTime"  : endTimeStr.toISOString()
+		};
+	},
 
-    /**
-     * Displays movie settings dialog
-     */
-    _showMovieSettings: function (roi) {
-        if (typeof roi === "undefined") {
-            roi = helioviewer.getViewportRegionOfInterest();
-        }
+	/**
+	 * Displays movie settings dialog
+	 */
+	_showMovieSettings: function (roi) {
+		if (typeof roi === "undefined") {
+			roi = helioviewer.getViewportRegionOfInterest();
+		}
 
-        var layers = helioviewer.getVisibleLayers(roi);
-        var events = helioviewer.getEvents();
+		var layers = helioviewer.getVisibleLayers(roi);
+		var events = helioviewer.getEvents();
 
-        // Make sure selection region and number of layers are acceptible
-        if (!this._validateRequest(roi, layers)) {
-            return;
-        }
+		// Make sure selection region and number of layers are acceptible
+		if (!this._validateRequest(roi, layers)) {
+			return;
+		}
 
-        // Store chosen ROI and layers
-        this._movieScale  = helioviewer.getImageScale();
-        this._movieROI    = this._toArcsecCoords(roi, this._movieScale);
-        this._movieLayers = layers;
-        this._movieEvents = events;
-        this._movieEventsLabels = helioviewer.getEventsLabels();
+		// Store chosen ROI and layers
+		this._movieScale  = helioviewer.getImageScale();
+		this._movieROI	= this._toArcsecCoords(roi, this._movieScale);
+		this._movieLayers = layers;
+		this._movieEvents = events;
+		this._movieEventsLabels = helioviewer.getEventsLabels();
 
-        //Choose dialog format
-        if(Helioviewer.userSettings.get("options.movies.dialog") == 'advanced'){
-	        $('.movie-duration-box').hide();
-            $('.movie-time-box').show();
-            $('.movie-format-box').show();
-            $('.movie-icons-box').show();
-            $('.movie-follow-viewport-box').show();
-	        $('.movie-settings-more-btn').hide();
-            $('.movie-settings-less-btn').show();
-        }else{
-	        $('.movie-time-box').hide();
-            $('.movie-format-box').hide();
-            $('.movie-icons-box').hide();
-            $('.movie-follow-viewport-box').hide();
-            $('.movie-duration-box').show();
-            $('.movie-settings-less-btn').hide();
-	        $('.movie-settings-more-btn').show();
-        }
+		//Choose dialog format
+		if(Helioviewer.userSettings.get("options.movies.dialog") == 'advanced'){
+			$('.movie-duration-box').hide();
+			$('.movie-time-box').show();
+			$('.movie-format-box').show();
+			$('.movie-icons-box').show();
+			$('.movie-follow-viewport-box').show();
+			$('.movie-settings-more-btn').hide();
+			$('.movie-settings-less-btn').show();
+		}else{
+			$('.movie-time-box').hide();
+			$('.movie-format-box').hide();
+			$('.movie-icons-box').hide();
+			$('.movie-follow-viewport-box').hide();
+			$('.movie-duration-box').show();
+			$('.movie-settings-less-btn').hide();
+			$('.movie-settings-more-btn').show();
+		}
 
-        this.hide();
-        this._settingsConsole.hide();
-        this._settingsDialog.show();
-        this._advancedSettings.show();
-    },
+		this.hide();
+		this._settingsConsole.hide();
+		this._settingsDialog.show();
+		this._advancedSettings.show();
+	},
 
-    /**
-     * Queues a movie request
-     */
-    _queueMovie: function (params) {
-        var callback, self = this;
+	/**
+	 * Queues a movie request
+	 */
+	_queueMovie: function (params) {
+		var callback, self = this;
 
-        // AJAX Responder
-        callback = function (response) {
-            var msg, movie, waitTime;
+		// AJAX Responder
+		callback = function (response) {
+			var msg, movie, waitTime;
 
-            if ((response === null) || response.error) {
-                // Queue full
-                if (response.errno === 40) {
-                    msg = response.error;
-                } else {
-                    // Other error
-                    msg = "We are unable to create a movie for the time you " +
-                        "requested. Please select a different time range " +
-                        "and try again. ("+response.error+")";
-                }
-                $(document).trigger("message-console-info", msg);
-                return;
-            } else if (response.warning) {
-                $(document).trigger("message-console-info", response.warning);
-                return;
-            }
+			if ((response === null) || response.error) {
+				// Queue full
+				if (response.errno === 40) {
+					msg = response.error;
+				} else {
+					// Other error
+					msg = "We are unable to create a movie for the time you " +
+						"requested. Please select a different time range " +
+						"and try again. ("+response.error+")";
+				}
+				$(document).trigger("message-console-info", msg);
+				return;
+			} else if (response.warning) {
+				$(document).trigger("message-console-info", response.warning);
+				return;
+			}
 
-            movie = self._manager.queue(
-                response.id, response.eta, response.token,
-                params.imageScale, params.layers, params.events,
-                params.eventsLabels, params.scale, params.scaleType,
-                params.scaleX, params.scaleY, new Date().toISOString(),
-                params.startTime, params.endTime, params.x1, params.x2,
-                params.y1, params.y2, params.size
-            );
+			movie = self._manager.queue(
+				response.id, response.eta, response.token,
+				params.imageScale, params.layers, params.events,
+				params.eventsLabels, params.scale, params.scaleType,
+				params.scaleX, params.scaleY, new Date().toISOString(),
+				params.startTime, params.endTime, params.x1, params.x2,
+				params.y1, params.y2, params.size
+			);
 
-            self._addItem(movie);
+			self._addItem(movie);
 
-            waitTime = humanReadableNumSeconds(response.eta);
-            msg = "Your video is processing and will be available in " +
-                  "approximately " + waitTime + ". You may view it at any " +
-                  "time after it is ready by clicking the 'Movie' button";
-            $(document).trigger("message-console-info", msg);
-            self._refresh();
-        };
+			waitTime = humanReadableNumSeconds(response.eta);
+			msg = "Your video is processing and will be available in " +
+				  "approximately " + waitTime + ". You may view it at any " +
+				  "time after it is ready by clicking the 'Movie' button";
+			$(document).trigger("message-console-info", msg);
+			self._refresh();
+		};
 
-        // Notification Permission
-        if("Notification" in window){//if browser supports notifications
-            var savedMovieNotificationsState = Helioviewer.userSettings.get("options.movieNotifications");
-            if (savedMovieNotificationsState == undefined || savedMovieNotificationsState == null || savedMovieNotificationsState !== Notification.permission){
-                if (Notification.permission !== "denied"){//if the user has not denied the notification
-                    Notification.requestPermission();//get notification permission
-                }
-                if(Notification.permission == "denied" || Notification.permission == "granted"){
-                    var notifParams = {
-                        action: 'logNotificationStatistics',
-                        notifications: Notification.permission
-                    }
-                    $.get(Helioviewer.api, notifParams, null , "json");
-                    Helioviewer.userSettings.set("options.movieNotifications", Notification.permission);
-                }
-            }
-        }
+		// Notification Permission
+		if("Notification" in window){//if browser supports notifications
+			var savedMovieNotificationsState = Helioviewer.userSettings.get("options.movieNotifications");
+			if (savedMovieNotificationsState == undefined || savedMovieNotificationsState == null || savedMovieNotificationsState !== Notification.permission){
+				if (Notification.permission !== "denied"){//if the user has not denied the notification
+					Notification.requestPermission();//get notification permission
+				}
+				if(Notification.permission == "denied" || Notification.permission == "granted"){
+					var notifParams = {
+						action: 'logNotificationStatistics',
+						notifications: Notification.permission
+					}
+					$.get(Helioviewer.api, notifParams, null , "json");
+					Helioviewer.userSettings.set("options.movieNotifications", Notification.permission);
+				}
+			}
+		}
 
-        // Make request
-        $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
-    },
-
-
-    /**
-     * Initializes MovieManager-related event handlers
-     */
-    _initEvents: function () {
-        var timer, self = this;
-
-        this._super();
-
-        // ROI selection buttons
-        this._fullViewportBtn.click(function () {
-            self._showMovieSettings();
-        });
-
-        this._selectAreaBtn.click(function () {
-            self._cleanupFunctions = [];
-
-            if ( helioviewer.drawerLeftOpened ) {
-                self._cleanupFunctions.push('helioviewer.drawerLeftClick()');
-                helioviewer.drawerLeftClick();
-            }
-            self._cleanupFunctions.push('helioviewer.drawerMoviesClick()');
-            helioviewer.drawerMoviesClick();
-
-            $(document).trigger("enable-select-tool",
-                                [$.proxy(self._showMovieSettings, self),
-                                 $.proxy(self._cleanup, self)]);
-        });
-
-        // Setup hover and click handlers for movie history items
-        $("#movie-history").on('click', '.history-entry', $.proxy(this._onMovieClick, this));
-        $("#message-console").on('click', '.message-console-movie-ready', $.proxy(this._onMovieClick, this));
-        $("#movie-history .history-entry").on('mouseover mouseout', $.proxy(this._onMovieHover, this));
+		// Make request
+		$.get(Helioviewer.api, params, callback, Helioviewer.dataType);
+	},
 
 
-        // Download completion notification link
-        $(".message-console-movie-ready").on('click', function (event) {
-            var movie = $(event.currentTarget).data('movie');
-            self._createMoviePlayerDialog(movie);
-        });
+	/**
+	 * Initializes MovieManager-related event handlers
+	 */
+	_initEvents: function () {
+		var timer, self = this;
 
-        // Update tooltip when movie is finished downloading
-        $(document).bind("movie-ready", function (event, movie) {
-            $("#" + self._type + "-" + movie.id).qtip("destroy");
-            self._buildPreviewTooltip(movie);
-            self._refresh();
-        });
+		this._super();
 
-        // Upload form submission
-        $("#youtube-video-info").submit(function () {
-            self.submitVideoUploadForm();
-            return false;
-        });
+		// ROI selection buttons
+		this._fullViewportBtn.click(function () {
+			self._showMovieSettings();
+		});
 
-        // Toggle advanced settings display
-        $("#movie-settings-toggle-advanced").click(function () {
-            // If help is visible, simply hide
-            if (self._settingsHelp.is(":visible")) {
-                self._settingsHelp.hide();
-                self._settingsForm.show();
-                return;
-            }
+		this._selectAreaBtn.click(function () {
+			self._cleanupFunctions = [];
 
-            // Otherwise, toggle advanced settings visibility
-            if (self._advancedSettings.is(":visible")) {
-                self._advancedSettings.animate({"height": 0}, function () {
-                    self._advancedSettings.hide();
-                });
-            } else {
-                self._advancedSettings.css('height', 0).show();
-                self._advancedSettings.animate({"height": 85}, function () {
-                });
-            }
-        });
+			if ( helioviewer.drawerLeftOpened ) {
+				self._cleanupFunctions.push('helioviewer.drawerLeftClick()');
+				helioviewer.drawerLeftClick();
+			}
+			self._cleanupFunctions.push('helioviewer.drawerMoviesClick()');
+			helioviewer.drawerMoviesClick();
 
-        // Toggle help display
-        $("#movie-settings-toggle-help").click(function () {
-            self._settingsForm.toggle();
-            self._settingsHelp.toggle();
-        });
-    },
+			$(document).trigger("enable-select-tool",
+								[$.proxy(self._showMovieSettings, self),
+								 $.proxy(self._cleanup, self)]);
+		});
 
-    /**
-     * Initializes movie settings events
-     */
-    _initSettings: function () {
-        var length, lengthInput, duration, durationSelect,
-            frameRateInput, settingsForm, self = this;
+		// Setup hover and click handlers for movie history items
+		$("#movie-history").on('click', '.history-entry', $.proxy(this._onMovieClick, this));
+		$("#message-console").on('click', '.message-console-movie-ready', $.proxy(this._onMovieClick, this));
+		$("#movie-history .history-entry").on('mouseover mouseout', $.proxy(this._onMovieHover, this));
+
+
+		// Download completion notification link
+		$(".message-console-movie-ready").on('click', function (event) {
+			var movie = $(event.currentTarget).data('movie');
+			self._createMoviePlayerDialog(movie);
+		});
+
+		// Update tooltip when movie is finished downloading
+		$(document).bind("movie-ready", function (event, movie) {
+			$("#" + self._type + "-" + movie.id).qtip("destroy");
+			self._buildPreviewTooltip(movie);
+			self._refresh();
+		});
+
+		// Upload form submission
+		$("#youtube-video-info").submit(function () {
+			self.submitVideoUploadForm();
+			return false;
+		});
+
+		// Toggle advanced settings display
+		$("#movie-settings-toggle-advanced").click(function () {
+			// If help is visible, simply hide
+			if (self._settingsHelp.is(":visible")) {
+				self._settingsHelp.hide();
+				self._settingsForm.show();
+				return;
+			}
+
+			// Otherwise, toggle advanced settings visibility
+			if (self._advancedSettings.is(":visible")) {
+				self._advancedSettings.animate({"height": 0}, function () {
+					self._advancedSettings.hide();
+				});
+			} else {
+				self._advancedSettings.css('height', 0).show();
+				self._advancedSettings.animate({"height": 85}, function () {
+				});
+			}
+		});
+
+		// Toggle help display
+		$("#movie-settings-toggle-help").click(function () {
+			self._settingsForm.toggle();
+			self._settingsHelp.toggle();
+		});
+	},
+
+	/**
+	 * Initializes movie settings events
+	 */
+	_initSettings: function () {
+		var length, lengthInput, duration, durationSelect,
+			frameRateInput, settingsForm, self = this;
 
 		duration = Math.round(Helioviewer.userSettings.get("options.movies.duration") / 2) * 1000;
 
 		//Movie Generation time pickers
-		$('#movie-start-date').datetimepicker({
-			timepicker:false,
-			format:'Y/m/d',
-			theme:'dark',
-			onShow:function( ct ){
+		$('#movie-start-date').flatpickr({
+			allowInput: true,
+			dateFormat: 'Y/m/d',
+			onOpen: function (selected, str, instance) {
 				var observationDate = new Date(Helioviewer.userSettings.get("state.date") - duration);
-				this.setOptions({
-					maxDate: observationDate.toUTCDateString()
-				})
+				instance.set('maxDate', observationDate.toUTCDateString());
 			}
 		});
-		$('#movie-end-date').datetimepicker({
-			timepicker:false,
-			format:'Y/m/d',
-			theme:'dark',
-			onShow:function( ct ){
+		$('#movie-end-date').flatpickr({
+			allowInput: true,
+			dateFormat: 'Y/m/d',
+			onOpen: function (selected, str, instance) {
 				var observationDate = new Date(Helioviewer.userSettings.get("state.date") + duration);
-				this.setOptions({
-					maxDate: observationDate.toUTCDateString()
-				})
+				instance.set('maxDate', observationDate.toUTCDateString());
 			}
 		});
 		$('#movie-start-date').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
 		$('#movie-end-date').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
 
 		//TimePicker
-		$('#movie-start-time').TimePickerAlone({
-			twelveHoursFormat:false,
-			seconds:true,
-			ampm:false,
-			saveOnChange: false,
-			//mouseWheel:false,
+		$('#movie-start-time').flatpickr({
+			allowInput: true,
+			noCalendar: true,
+			enableTime: true,
+			enableSeconds: true,
+			time_24hr: true,
+			minuteIncrement: 1,
+			secondIncrement: 1,
+		});
+		$('#movie-end-time').flatpickr({
+			allowInput: true,
+			noCalendar: true,
+			enableTime: true,
+			enableSeconds: true,
+			time_24hr: true,
+			minuteIncrement: 1,
+			secondIncrement: 1,
 			theme:'dark'
 		});
-		$('#movie-end-time').TimePickerAlone({
-			twelveHoursFormat:false,
-			seconds:true,
-			ampm:false,
-			saveOnChange: false,
-			//mouseWheel:false,
-			theme:'dark'
-		});
-		$('#movie-start-time').TimePickerAlone('setValue', new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
-		$('#movie-end-time').TimePickerAlone('setValue', new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
-		$('#movie-start-time').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
-		$('#movie-end-time').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+		if ($('#movie-start-time').length > 0) {
+			$('#movie-start-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
+			$('#movie-end-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+		}
 
 		$(document).on('observation-time-changed', function(e){
-	        var duration = Math.round(Helioviewer.userSettings.get("options.movies.duration") / 2) * 1000;
-	        $('#movie-start-date').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
-			$('#movie-end-date').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
-	        $('#movie-start-time').TimePickerAlone('setValue', new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
-			$('#movie-end-time').TimePickerAlone('setValue', new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
-			$('#movie-start-time').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
-			$('#movie-end-time').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
-        });
-        $(document).on('movies-setting-duration-trigger', function(e){
-	        var duration = Math.round(Helioviewer.userSettings.get("options.movies.duration") / 2) * 1000;
-	        $('#movie-start-date').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
-			$('#movie-end-date').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
-	        $('#movie-start-time').TimePickerAlone('setValue', new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
-			$('#movie-end-time').TimePickerAlone('setValue', new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
-			$('#movie-start-time').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
-			$('#movie-end-time').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
-        });
+			var duration = Math.round(Helioviewer.userSettings.get("options.movies.duration") / 2) * 1000;
+			if ($('#movie-start-date').length > 0) {
+				$('#movie-start-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
+				$('#movie-end-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
+				$('#movie-start-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
+				$('#movie-end-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+			}
+		});
+		$(document).on('movies-setting-duration-trigger', function(e){
+			var duration = Math.round(Helioviewer.userSettings.get("options.movies.duration") / 2) * 1000;
+			if ($('#movie-start-date').length > 0) {
+				$('#movie-start-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
+				$('#movie-end-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
+				$('#movie-start-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCTimeString());
+				$('#movie-end-time')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCTimeString());
+			}
+		});
 
-        // Advanced movie settings
-        frameRateInput = $("#frame-rate");
-        lengthInput    = $("#movie-length");
-        durationSelect = $("#movie-duration");
+		// Advanced movie settings
+		frameRateInput = $("#frame-rate");
+		lengthInput	= $("#movie-length");
+		durationSelect = $("#movie-duration");
 
-        // Speed method enable/disable
-        $("#speed-method-f").change(function () {
-            lengthInput.attr("disabled", true);
-            frameRateInput.attr("disabled", false);
-        }).attr("checked", "checked").change();
+		// Speed method enable/disable
+		$("#speed-method-f").change(function () {
+			lengthInput.attr("disabled", true);
+			frameRateInput.attr("disabled", false);
+		}).attr("checked", "checked").change();
 
-        $("#speed-method-l").change(function () {
-            frameRateInput.attr("disabled", true);
-            lengthInput.attr("disabled", false);
-        });
+		$("#speed-method-l").change(function () {
+			frameRateInput.attr("disabled", true);
+			lengthInput.attr("disabled", false);
+		});
 
-        // Cancel button
-        $("#movie-settings-cancel-btn").button().click(function (e) {
-            self._advancedSettings.hide();
-            self._settingsDialog.hide();
-            self.show();
-        });
+		// Cancel button
+		$("#movie-settings-cancel-btn").button().click(function (e) {
+			self._advancedSettings.hide();
+			self._settingsDialog.hide();
+			self.show();
+		});
 
-        // More button
-        $(".movie-settings-more-btn").click(function (e) {
-            $('.movie-duration-box').hide();
-            $('.movie-time-box').show();
-            $('.movie-format-box').show();
-            $('.movie-icon-box').show();
-            $('.movie-follow-viewport-box').show();
-	        $('.movie-settings-more-btn').hide();
-            $('.movie-settings-less-btn').show();
-            Helioviewer.userSettings.set("options.movies.dialog", 'advanced');
-        });
+		// More button
+		$(".movie-settings-more-btn").click(function (e) {
+			$('.movie-duration-box').hide();
+			$('.movie-time-box').show();
+			$('.movie-format-box').show();
+			$('.movie-icon-box').show();
+			$('.movie-follow-viewport-box').show();
+			$('.movie-settings-more-btn').hide();
+			$('.movie-settings-less-btn').show();
+			Helioviewer.userSettings.set("options.movies.dialog", 'advanced');
+		});
 
-        // less button
-        $(".movie-settings-less-btn").click(function (e) {
-            $('.movie-time-box').hide();
-            $('.movie-format-box').hide();
-            $('.movie-icon-box').hide();
-            $('.movie-follow-viewport-box').hide();
-            $('.movie-duration-box').show();
-            $('.movie-settings-less-btn').hide();
-	        $('.movie-settings-more-btn').show();
-            Helioviewer.userSettings.set("options.movies.dialog", 'default');
-        });
+		// less button
+		$(".movie-settings-less-btn").click(function (e) {
+			$('.movie-time-box').hide();
+			$('.movie-format-box').hide();
+			$('.movie-icon-box').hide();
+			$('.movie-follow-viewport-box').hide();
+			$('.movie-duration-box').show();
+			$('.movie-settings-less-btn').hide();
+			$('.movie-settings-more-btn').show();
+			Helioviewer.userSettings.set("options.movies.dialog", 'default');
+		});
 
-        // Duration event listener
-        durationSelect.bind('change', function (e) {
-            Helioviewer.userSettings.set("options.movies.duration",
-            parseInt(this.value, 10));
-            $(document).trigger('movies-setting-duration-trigger');
-        });
+		// Duration event listener
+		durationSelect.bind('change', function (e) {
+			Helioviewer.userSettings.set("options.movies.duration",
+			parseInt(this.value, 10));
+			$(document).trigger('movies-setting-duration-trigger');
+		});
 
-        durationSelect.find("[value=" + Helioviewer.userSettings.get("options.movies.duration") + "]").attr("selected", "selected");
+		durationSelect.find("[value=" + Helioviewer.userSettings.get("options.movies.duration") + "]").attr("selected", "selected");
 
-        // Reset to default values
-        frameRateInput.val(15);
-        lengthInput.val(20);
+		// Reset to default values
+		frameRateInput.val(15);
+		lengthInput.val(20);
 
 
-        // Submit button
-        settingsForm = $("#movie-settings-form");
+		// Submit button
+		settingsForm = $("#movie-settings-form");
 
-        $("#movie-settings-submit-btn").button().click(function (e) {
-            // Validate and submit movie request
-            try {
-                var speedMethodVal = $('#speed-method-f').is(':checked') ? 'framerate' : 'length';
-                var frameRateVal = $('#speed-method-f').is(':checked') ? $('#frame-rate').val() : $('#movie-length').val();
-                var startTimeVal = $('#movie-start-date').val().replace(/\//g, '-') + 'T' + $('#movie-start-time').val() + '.000Z';
-                var endTimeVal = $('#movie-end-date').val().replace(/\//g, '-') + 'T' + $('#movie-end-time').val() + '.000Z';
-                var sizeVal = $('#movie-size').val();
-                var durationVal = $('#movie-duration').val();
-                var movieIcons = $('#movie-icons').is(':checked') ? 1 : 0;
-                var followViewport = $('#follow-viewport').is(':checked') ? 1 : 0;
+		$("#movie-settings-submit-btn").button().click(function (e) {
+			// Validate and submit movie request
+			try {
+				var speedMethodVal = $('#speed-method-f').is(':checked') ? 'framerate' : 'length';
+				var frameRateVal = $('#speed-method-f').is(':checked') ? $('#frame-rate').val() : $('#movie-length').val();
+				var startTimeVal = $('#movie-start-date').val().replace(/\//g, '-') + 'T' + $('#movie-start-time').val() + '.000Z';
+				var endTimeVal = $('#movie-end-date').val().replace(/\//g, '-') + 'T' + $('#movie-end-time').val() + '.000Z';
+				var sizeVal = $('#movie-size').val();
+				var durationVal = $('#movie-duration').val();
+				var movieIcons = $('#movie-icons').is(':checked') ? 1 : 0;
+				var followViewport = $('#follow-viewport').is(':checked') ? 1 : 0;
 
-                var formSettings = [
-		            {name : 'speed-method', value : speedMethodVal},
-		            {name : 'framerate', value : frameRateVal},
-		            {name : 'startTime', value : startTimeVal},
-		            {name : 'endTime', value : endTimeVal},
-		            {name : 'size', value : sizeVal},
-		            {name : 'movie-icons', value : movieIcons},
-		            {name : 'followViewport', value : followViewport}
-	            ];
+				var formSettings = [
+					{name : 'speed-method', value : speedMethodVal},
+					{name : 'framerate', value : frameRateVal},
+					{name : 'startTime', value : startTimeVal},
+					{name : 'endTime', value : endTimeVal},
+					{name : 'size', value : sizeVal},
+					{name : 'movie-icons', value : movieIcons},
+					{name : 'followViewport', value : followViewport}
+				];
 
-                if(Helioviewer.userSettings.get("options.movies.dialog") !== 'advanced'){
-	                formSettings['size'] = 0;
-                }
+				if(Helioviewer.userSettings.get("options.movies.dialog") !== 'advanced'){
+					formSettings['size'] = 0;
+				}
 
-                self._buildMovieRequest(formSettings);
-            } catch (ex) {
-                // Display an error message if invalid values are specified
-                // for movie settings
-                self._settingsConsole.text(ex).fadeIn(1000, function () {
-                    setTimeout(function () {
-                        self._settingsConsole.text(ex).fadeOut(1000);
-                    }, 10000);
-                });
-            }
-            return false;
-        });
-    },
+				self._buildMovieRequest(formSettings);
+			} catch (ex) {
+				// Display an error message if invalid values are specified
+				// for movie settings
+				self._settingsConsole.text(ex).fadeIn(1000, function () {
+					setTimeout(function () {
+						self._settingsConsole.text(ex).fadeOut(1000);
+					}, 10000);
+				});
+			}
+			return false;
+		});
+	},
 
-    /**
-     * If the movie is ready, play the movie in a popup dialog. Otherwise do
-     * nothing.
-     */
-    _onMovieClick: function (event) {
-        var id, movie, dialog, action, dateRequested;
+	/**
+	 * If the movie is ready, play the movie in a popup dialog. Otherwise do
+	 * nothing.
+	 */
+	_onMovieClick: function (event) {
+		var id, movie, dialog, action, dateRequested;
 
-        if (event.target.href.indexOf("gl.helioviewer.org") != -1) {
-            window.open(event.target.href, '_blank');
-            return false;
-        }
+		if (event.target.href.indexOf("gl.helioviewer.org") != -1) {
+			window.open(event.target.href, '_blank');
+			return false;
+		}
 
-        id    = $(event.currentTarget).data('id');
-        movie = this._manager.get(id);
+		id	= $(event.currentTarget).data('id');
+		movie = this._manager.get(id);
 
 		dateRequested = Date.parseUTCDate(movie.dateRequested);
-        if((new Date) - dateRequested >= this._regenerateMovieThreshold * 24 * 60 * 60 * 1000 || movie.status === 3){
+		if((new Date) - dateRequested >= this._regenerateMovieThreshold * 24 * 60 * 60 * 1000 || movie.status === 3){
 			this._rebuildItem(movie);
 			return false;
-        }
+		}
 
-        if(helioviewer.keyboard.ctrlPressed){//ctrl + click to copy movie link
-            // copy the link to the clipboard by creating a placeholder textinput
-            var $temp = $('<input>');
-            $('body').append($temp);
-            $temp.val('http://' + document.domain + '/?movieId=' + movie.id).select();
-            document.execCommand("copy");//perform copy
-            $temp.remove();
-        }else{
-            // If the movie is ready, open movie player
-            if (movie.status === 2) {
-                dialog = $("#movie-player-" + id);
-                // If the dialog has already been created, toggle display
-                if (dialog.length > 0) {
-                    action = dialog.dialog('isOpen') ? "close" : "open";
-                    dialog.dialog(action);
+		if(helioviewer.keyboard.ctrlPressed){//ctrl + click to copy movie link
+			// copy the link to the clipboard by creating a placeholder textinput
+			var $temp = $('<input>');
+			$('body').append($temp);
+			$temp.val('http://' + document.domain + '/?movieId=' + movie.id).select();
+			document.execCommand("copy");//perform copy
+			$temp.remove();
+		}else{
+			// If the movie is ready, open movie player
+			if (movie.status === 2) {
+				dialog = $("#movie-player-" + id);
+				// If the dialog has already been created, toggle display
+				if (dialog.length > 0) {
+					action = dialog.dialog('isOpen') ? "close" : "open";
+					dialog.dialog(action);
 
-                // Otherwise create and display the movie player dialog
-                } else {
-                    this._createMoviePlayerDialog(movie);
-                }
-            }
-        }
+				// Otherwise create and display the movie player dialog
+				} else {
+					this._createMoviePlayerDialog(movie);
+				}
+			}
+		}
 
-        return false;
-    },
+		return false;
+	},
 
    /**
-    * Shows movie details and preview.
-    */
-    _onMovieHover: function (event) {
-        if (event.type === 'mouseover') {
-            //console.log('hover on');
-        } else {
-            //console.log('hover off');
-        }
-    },
+	* Shows movie details and preview.
+	*/
+	_onMovieHover: function (event) {
+		if (event.type === 'mouseover') {
+			//console.log('hover on');
+		} else {
+			//console.log('hover off');
+		}
+	},
 
-    /**
-     * Creates HTML for a preview tooltip with a preview thumbnail,
-     * if available, and some basic information about the screenshot or movie
-     */
-    _buildPreviewTooltipHTML: function (movie) {
-        var width, height, thumbnail, html = "", dateRequested;
+	/**
+	 * Creates HTML for a preview tooltip with a preview thumbnail,
+	 * if available, and some basic information about the screenshot or movie
+	 */
+	_buildPreviewTooltipHTML: function (movie) {
+		var width, height, thumbnail, html = "", dateRequested;
 
 		dateRequested = Date.parseUTCDate(movie.dateRequested);
 
-        if (movie.status === 2 && (new Date) - dateRequested <= 180 * 24 * 60 * 60 * 1000) {
-            thumbnail = movie.thumbnail;
+		if (movie.status === 2 && (new Date) - dateRequested <= 180 * 24 * 60 * 60 * 1000) {
+			thumbnail = movie.thumbnail;
 
-            html += "<div style='text-align: center;'>" +
-                "<img src='" + thumbnail +
-                "' width='95%' alt='preview thumbnail' /></div>";
+			html += "<div style='text-align: center;'>" +
+				"<img src='" + thumbnail +
+				"' width='95%' alt='preview thumbnail' /></div>";
 
-            width  = movie.width;
-            height = movie.height;
-        } else {
-            width  = Math.round(movie.x2 - movie.x1);
+			width  = movie.width;
+			height = movie.height;
+		} else {
+			width  = Math.round(movie.x2 - movie.x1);
 			height = Math.round(movie.y2 - movie.y1);
 
-            if(typeof movie.size != 'undefined'){
-	            if(movie.size == 0){
-			        width = Math.round(width / movie.imageScale);
-			        height = Math.round(height / movie.imageScale);
-		        }else if(movie.size == 1){
-			        width = 1280;
-			        height = 720;
-		        }else if(movie.size == 2){
-			        width = 1920;
-			        height = 1080;
-		        }else if(movie.size == 3){
-			        width = 2560;
-			        height = 1440;
-		        }else if(movie.size == 4){
-			        width = 3840;
-			        height = 2160;
-		        }
-            }else{
-	            width = Math.round(width / movie.imageScale);
-			    height = Math.round(height / movie.imageScale);
-            }
-        }
+			if(typeof movie.size != 'undefined'){
+				if(movie.size == 0){
+					width = Math.round(width / movie.imageScale);
+					height = Math.round(height / movie.imageScale);
+				}else if(movie.size == 1){
+					width = 1280;
+					height = 720;
+				}else if(movie.size == 2){
+					width = 1920;
+					height = 1080;
+				}else if(movie.size == 3){
+					width = 2560;
+					height = 1440;
+				}else if(movie.size == 4){
+					width = 3840;
+					height = 2160;
+				}
+			}else{
+				width = Math.round(width / movie.imageScale);
+				height = Math.round(height / movie.imageScale);
+			}
+		}
 
-        html += "<table class='preview-tooltip'>" +
-            "<tr><td><b>Start:</b></td><td>" + movie.startDate + "</td></tr>" +
-            "<tr><td><b>End:</b></td><td>"   + movie.endDate   + "</td></tr>" +
-            "<tr><td><b>Scale:</b></td><td>" + movie.imageScale.toFixed(2) +
-            " arcsec/px</td></tr>" +
-            "<tr><td><b>Dimensions:</b></td><td>" + width +
-            "x" + height +
-            " px</td></tr>" +
-            "<tr><td><b><i>Control + Click</i>:</b></td><td><i>Copy Link to Movie</i></td></tr>" +
-            "</table>";
+		html += "<table class='preview-tooltip'>" +
+			"<tr><td><b>Start:</b></td><td>" + movie.startDate + "</td></tr>" +
+			"<tr><td><b>End:</b></td><td>"   + movie.endDate   + "</td></tr>" +
+			"<tr><td><b>Scale:</b></td><td>" + movie.imageScale.toFixed(2) +
+			" arcsec/px</td></tr>" +
+			"<tr><td><b>Dimensions:</b></td><td>" + width +
+			"x" + height +
+			" px</td></tr>" +
+			"<tr><td><b><i>Control + Click</i>:</b></td><td><i>Copy Link to Movie</i></td></tr>" +
+			"</table>";
 
-        return html;
-    },
+		return html;
+	},
 
-    /**
-     * @description Opens a pop-up with the movie player in it.
-     */
-    _createMoviePlayerDialog: function (movie) {
-        var dimensions, title, uploadURL, flvURL, swfURL, html, dialog,
-            screenshot, callback, self = this;
+	/**
+	 * @description Opens a pop-up with the movie player in it.
+	 */
+	_createMoviePlayerDialog: function (movie) {
+		var dimensions, title, uploadURL, flvURL, swfURL, html, dialog,
+			screenshot, callback, self = this;
 
-        // Make sure dialog fits nicely inside the browser window
-        dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
+		// Make sure dialog fits nicely inside the browser window
+		dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
 
-        // Movie player HTML
-        if(outputType!='minimal'){
-            //regular helioviewer video player
-            html = self.getVideoPlayerHTML(movie, dimensions.width, dimensions.height);
-        }else{
-            //k12 helioviewer video player
-            html = self.getK12VideoPlayerHTML(movie, dimensions.width, dimensions.height);
-        }
+		// Movie player HTML
+		if(outputType!='minimal'){
+			//regular helioviewer video player
+			html = self.getVideoPlayerHTML(movie, dimensions.width, dimensions.height);
+		}else{
+			//k12 helioviewer video player
+			html = self.getK12VideoPlayerHTML(movie, dimensions.width, dimensions.height);
+		}
 
-        // Movie player dialog
-        dialog = $(
-            "<div id='movie-player-" + movie.id + "' " +
-            "class='movie-player-dialog'></div>"
-        ).append(html);
+		// Movie player dialog
+		dialog = $(
+			"<div id='movie-player-" + movie.id + "' " +
+			"class='movie-player-dialog'></div>"
+		).append(html);
 
-        dialog.find(".video-download-icon").click(function () {
-            // Google analytics event
-            if (typeof(_gaq) != "undefined") {
-                _gaq.push(['_trackEvent', 'Movies', 'Download']);
-            }
-        });
+		dialog.find(".video-download-icon").click(function () {
+			// Google analytics event
+			if (typeof(_gaq) != "undefined") {
+				_gaq.push(['_trackEvent', 'Movies', 'Download']);
+			}
+		});
 
-        // Movie dialog title
-        title = movie.name + " (" + movie.startDate + " - " +
-                movie.endDate + " UTC)";
+		// Movie dialog title
+		title = movie.name + " (" + movie.startDate + " - " +
+				movie.endDate + " UTC)";
 
-        // Have to append the video player here, otherwise adding it to the div
-        // beforehand results in the browser attempting to download it.
-        dialog.dialog({
-            dialogClass: "movie-player-dialog-" + movie.id,
-            title     : "Movie Player: " + title,
-            width     : ((dimensions.width < 575)?600:dimensions.width+25),
-            height    : dimensions.height + 90,
-            resizable : $.support.h264 || $.support.vp8,
-            close     : function () {
-                            $(this).remove();
-                        },
-            zIndex    : 9999,
-            show      : 'fade'
-        });
+		// Have to append the video player here, otherwise adding it to the div
+		// beforehand results in the browser attempting to download it.
+		dialog.dialog({
+			dialogClass: "movie-player-dialog-" + movie.id,
+			title	 : "Movie Player: " + title,
+			width	 : ((dimensions.width < 575)?600:dimensions.width+25),
+			height	: dimensions.height + 90,
+			resizable : $.support.h264 || $.support.vp8,
+			close	 : function () {
+							$(this).remove();
+						},
+			zIndex	: 9999,
+			show	  : 'fade'
+		});
 
-        // TODO 2011/01/04: Disable keyboard shortcuts when in text fields!
-        // (already done for input fields...)
+		// TODO 2011/01/04: Disable keyboard shortcuts when in text fields!
+		// (already done for input fields...)
 
-        // Initialize YouTube upload button
-        $('#youtube-upload-' + movie.id).on('click', function () {
-            self.showYouTubeUploadDialog(movie);
-            return false;
-        });
+		// Initialize YouTube upload button
+		$('#youtube-upload-' + movie.id).on('click', function () {
+			self.showYouTubeUploadDialog(movie);
+			return false;
+		});
 
-        // Initialize video link button
-        $('#video-link-' + movie.id).on('click', function () {
-            // Hide flash movies to prevent blocking
-            if (!($.support.h264 || $.support.vp8)) {
-                $(".movie-player-dialog").dialog("close");
-            }
-            helioviewer.displayMovieURL(movie.id);
-            return false;
-        });
+		// Initialize video link button
+		$('#video-link-' + movie.id).on('click', function () {
+			// Hide flash movies to prevent blocking
+			if (!($.support.h264 || $.support.vp8)) {
+				$(".movie-player-dialog").dialog("close");
+			}
+			helioviewer.displayMovieURL(movie.id);
+			return false;
+		});
 
-        // Flash video URL
-        flvURL = Helioviewer.api +
-                "?action=downloadMovie&format=flv&id=" + movie.id;
+		// Flash video URL
+		flvURL = Helioviewer.api +
+				"?action=downloadMovie&format=flv&id=" + movie.id;
 
-        // SWF URL (The flowplayer SWF directly provides best Facebook support)
-        swfURL = Helioviewer.root +
-                 "/lib/flowplayer/flowplayer-3.2.8.swf?config=" +
-                 encodeURIComponent("{'clip':{'url': '../../" + flvURL + "'}}");
+		// SWF URL (The flowplayer SWF directly provides best Facebook support)
+		swfURL = Helioviewer.root +
+				 "/lib/flowplayer/flowplayer-3.2.8.swf?config=" +
+				 encodeURIComponent("{'clip':{'url': '../../" + flvURL + "'}}");
 
-        screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) + "full.png";
+		screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) + "full.png";
 
-        const playPauseFn = function (player, media) {
-            if (player.paused) {
-                player.play();
-            } else {
-                player.pause();
-            }
-        }
-        $("video").mediaelementplayer({
+		const playPauseFn = function (player, media) {
+			if (player.paused) {
+				player.play();
+			} else {
+				player.pause();
+			}
+		}
+		$("video").mediaelementplayer({
 			enableAutosize: true,
 			features: ["playpause","progress","current","duration", "fullscreen"],
 			alwaysShowControls: false,
-            iconSprite: "/resources/lib/mediaelement/build/mejs-controls.svg",
-            enableKeyboard: true,
-            keyActions: [{keys: [32], action: playPauseFn}]
+			iconSprite: "/resources/lib/mediaelement/build/mejs-controls.svg",
+			enableKeyboard: true,
+			keyActions: [{keys: [32], action: playPauseFn}]
 		});
-    },
+	},
 
-    /**
-     * Opens YouTube uploader either in a separate tab or in a dialog
-     */
-    showYouTubeUploadDialog: function (movie) {
-        var title, tags, url1, url2, description;
+	/**
+	 * Opens YouTube uploader either in a separate tab or in a dialog
+	 */
+	showYouTubeUploadDialog: function (movie) {
+		var title, tags, url1, url2, description;
 
-        // Suggested movie title
-        title = movie.name + " (" + movie.startDate + " - " +
-                movie.endDate + " UTC)";
+		// Suggested movie title
+		title = movie.name + " (" + movie.startDate + " - " +
+				movie.endDate + " UTC)";
 
-        // Suggested YouTube tags
-        tags = [];
+		// Suggested YouTube tags
+		tags = [];
 
-        $.each(movie.layers.split("],["), function (i, layerStr) {
+		$.each(movie.layers.split("],["), function (i, layerStr) {
 			//console.error('MovieManagerUI.showYouTubeUploadDialog() assumes 4-level hierarchy in layerStr');
-            var parts = layerStr.replace(']', "").replace('[', "")
-                        .split(",").slice(0, 4);
+			var parts = layerStr.replace(']', "").replace('[', "")
+						.split(",").slice(0, 4);
 
-            // Add observatories, instruments, detectors and measurements
-            $.each(parts, function (i, item) {
-                if ($.inArray(item, tags) === -1) {
-                    tags.push(item);
-                }
-            });
-        });
+			// Add observatories, instruments, detectors and measurements
+			$.each(parts, function (i, item) {
+				if ($.inArray(item, tags) === -1) {
+					tags.push(item);
+				}
+			});
+		});
 
-        // URLs
-        url1 = Helioviewer.api + "?action=playMovie&id=" + movie.id +
-               "&format=mp4&hq=true";
-        url2 = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
-               "&format=mp4&hq=true";
+		// URLs
+		url1 = Helioviewer.api + "?action=playMovie&id=" + movie.id +
+			   "&format=mp4&hq=true";
+		url2 = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
+			   "&format=mp4&hq=true";
 
-        // Suggested Description
-        description = "This movie was produced by Helioviewer.org. See the " +
-                      "original at " + url1 + " or download a high-quality " +
-                      "version from " + url2;
+		// Suggested Description
+		description = "This movie was produced by Helioviewer.org. See the " +
+					  "original at " + url1 + " or download a high-quality " +
+					  "version from " + url2;
 
-        // Update form defaults
-        $("#youtube-title").val(title);
-        $("#youtube-tags").val(tags);
-        $("#youtube-desc").val(description);
-        $("#youtube-movie-id").val(movie.id);
+		// Update form defaults
+		$("#youtube-title").val(title);
+		$("#youtube-tags").val(tags);
+		$("#youtube-desc").val(description);
+		$("#youtube-movie-id").val(movie.id);
 
-        // Hide movie dialogs (Flash player blocks upload form)
-        $(".movie-player-dialog").dialog("close");
+		// Hide movie dialogs (Flash player blocks upload form)
+		$(".movie-player-dialog").dialog("close");
 
-        // Open upload dialog
-        $("#upload-dialog").dialog({
-            "title" : "Upload video to YouTube",
-            "width" : 550,
-            "height": 500
-        });
-    },
+		// Open upload dialog
+		$("#upload-dialog").dialog({
+			"title" : "Upload video to YouTube",
+			"width" : 550,
+			"height": 500
+		});
+	},
 
-    /**
-     * Processes form and submits video upload request to YouTube
-     */
-    submitVideoUploadForm: function (event) {
-        var params, successMsg, uploadDialog, url, form, loader, callback,
-            self = this;
+	/**
+	 * Processes form and submits video upload request to YouTube
+	 */
+	submitVideoUploadForm: function (event) {
+		var params, successMsg, uploadDialog, url, form, loader, callback,
+			self = this;
 
-        // Validate and submit form
-        try {
-            this._validateVideoUploadForm();
-        } catch (ex) {
-            this._displayValidationErrorMsg(ex);
-            return false;
-        }
+		// Validate and submit form
+		try {
+			this._validateVideoUploadForm();
+		} catch (ex) {
+			this._displayValidationErrorMsg(ex);
+			return false;
+		}
 
-        // Clear any remaining error messages before continuing
-        $("#upload-error-console").hide();
+		// Clear any remaining error messages before continuing
+		$("#upload-error-console").hide();
 
-        form = $("#upload-form").hide();
-        loader = $("#youtube-auth-loading-indicator").show();
+		form = $("#upload-form").hide();
+		loader = $("#youtube-auth-loading-indicator").show();
 
-        // Callback function
-        callback = function (auth) {
-            loader.hide();
-            form.show();
+		// Callback function
+		callback = function (auth) {
+			loader.hide();
+			form.show();
 
-            // Base URL
-            url = Helioviewer.api + "?" + $("#youtube-video-info").serialize();
+			// Base URL
+			url = Helioviewer.api + "?" + $("#youtube-video-info").serialize();
 
-            // If the user has already authorized Helioviewer, upload the movie
-            if (auth) {
-                $.get(url, {"action": "uploadMovieToYouTube"},
-                    function (response) {
-                        if (response.error) {
-                            self.hide();
-                            $(document).trigger("message-console-warn",
-                                                [response.error]);
-                        }
-                }, "json");
-            } else {
-                // Otherwise open an authorization page in a new tab/window
-                window.open(url + "&action=getYouTubeAuth", "_blank");
-            }
+			// If the user has already authorized Helioviewer, upload the movie
+			if (auth) {
+				$.get(url, {"action": "uploadMovieToYouTube"},
+					function (response) {
+						if (response.error) {
+							self.hide();
+							$(document).trigger("message-console-warn",
+												[response.error]);
+						}
+				}, "json");
+			} else {
+				// Otherwise open an authorization page in a new tab/window
+				window.open(url + "&action=getYouTubeAuth", "_blank");
+			}
 
-            // Close the dialog
-            $("#upload-dialog").dialog("close");
-            return false;
-        }
+			// Close the dialog
+			$("#upload-dialog").dialog("close");
+			return false;
+		}
 
-        // Check YouTube authorization
-        $.ajax({
-            url : Helioviewer.api + "?action=checkYouTubeAuth",
-            dataType: Helioviewer.dataType,
-            success: callback
-        });
-    },
+		// Check YouTube authorization
+		$.ajax({
+			url : Helioviewer.api + "?action=checkYouTubeAuth",
+			dataType: Helioviewer.dataType,
+			success: callback
+		});
+	},
 
-    /**
-     * Displays an error message in the YouTube upload dialog
-     *
-     * @param string Error message
-     */
-    _displayValidationErrorMsg: function (ex) {
-        var errorConsole = $("#upload-error-console");
+	/**
+	 * Displays an error message in the YouTube upload dialog
+	 *
+	 * @param string Error message
+	 */
+	_displayValidationErrorMsg: function (ex) {
+		var errorConsole = $("#upload-error-console");
 
-        errorConsole.html("<b>Error:</b> " + ex).fadeIn(function () {
-            window.setTimeout(function () {
-                errorConsole.fadeOut();
-            }, 15000);
-        });
-    },
+		errorConsole.html("<b>Error:</b> " + ex).fadeIn(function () {
+			window.setTimeout(function () {
+				errorConsole.fadeOut();
+			}, 15000);
+		});
+	},
 
-    /**
-     * Validates title, description and keyword fields for YouTube upload.
-     *
-     * @see http://code.google.com/apis/youtube/2.0/reference.html
-     *      #Media_RSS_elements_reference
-     */
-    _validateVideoUploadForm: function () {
-        var keywords         = $("#youtube-tags").val(),
-            keywordMinLength = 1,
-            keywordMaxLength = 30;
+	/**
+	 * Validates title, description and keyword fields for YouTube upload.
+	 *
+	 * @see http://code.google.com/apis/youtube/2.0/reference.html
+	 *	  #Media_RSS_elements_reference
+	 */
+	_validateVideoUploadForm: function () {
+		var keywords		 = $("#youtube-tags").val(),
+			keywordMinLength = 1,
+			keywordMaxLength = 30;
 
-        // Make sure the title field is not empty
-        if ($("#youtube-title").val().length === 0) {
-            throw "Please specify a title for the movie.";
-        }
+		// Make sure the title field is not empty
+		if ($("#youtube-title").val().length === 0) {
+			throw "Please specify a title for the movie.";
+		}
 
-        // User must specify at least one keyword
-        if (keywords.length === 0) {
-            throw "You must specifiy at least one tag for your video.";
-        }
+		// User must specify at least one keyword
+		if (keywords.length === 0) {
+			throw "You must specifiy at least one tag for your video.";
+		}
 
-        // Make sure each keywords are between 2 and 30 characters each
-        $.each(keywords.split(","), function (i, keyword) {
-            var len = $.trim(keyword).length;
+		// Make sure each keywords are between 2 and 30 characters each
+		$.each(keywords.split(","), function (i, keyword) {
+			var len = $.trim(keyword).length;
 
-            if (len > keywordMaxLength) {
-                throw "YouTube tags must not be longer than " +
-                      keywordMaxLength + " characters each.";
-            } else if (len < keywordMinLength) {
-                throw "YouTube tags must be at least " + keywordMinLength +
-                      " characters each.";
-            }
-            return;
-        });
+			if (len > keywordMaxLength) {
+				throw "YouTube tags must not be longer than " +
+					  keywordMaxLength + " characters each.";
+			} else if (len < keywordMinLength) {
+				throw "YouTube tags must be at least " + keywordMinLength +
+					  " characters each.";
+			}
+			return;
+		});
 
-        // < and > are not allowed in title, description or keywords
-        $.each($("#youtube-video-info input[type='text'], " +
-                 "#youtube-video-info textarea"), function (i, input) {
-            if ($(input).val().match(/[<>]/)) {
-                throw "< and > characters are not allowed";
-            }
-            return;
-        });
-    },
+		// < and > are not allowed in title, description or keywords
+		$.each($("#youtube-video-info input[type='text'], " +
+				 "#youtube-video-info textarea"), function (i, input) {
+			if ($(input).val().match(/[<>]/)) {
+				throw "< and > characters are not allowed";
+			}
+			return;
+		});
+	},
 
-    /**
-     * Adds a movie to the history using it's id
-     */
-    addMovieUsingId: function (id) {
-        var callback, params, movie, self = this;
+	/**
+	 * Adds a movie to the history using it's id
+	 */
+	addMovieUsingId: function (id) {
+		var callback, params, movie, self = this;
 
-        callback = function (response) {
-            if (response.status === 2) {
-                movie = self._manager.add(
-                    id,
-                    response.duration,
-                    response.imageScale,
-                    response.layers,
-                    response.events,
-                    response.eventsLabels,
-                    response.scale,
-                    response.scaleType,
-                    response.scaleX,
-                    response.scaleY,
-                    response.timestamp.replace(" ", "T") + ".000Z",
-                    response.startDate,
-                    response.endDate,
-                    response.frameRate,
-                    response.numFrames,
-                    response.x1,
-                    response.x2,
-                    response.y1,
-                    response.y2,
-                    response.width,
-                    response.height,
-                    response.thumbnails.small,
-                    response.url
-                );
+		callback = function (response) {
+			if (response.status === 2) {
+				movie = self._manager.add(
+					id,
+					response.duration,
+					response.imageScale,
+					response.layers,
+					response.events,
+					response.eventsLabels,
+					response.scale,
+					response.scaleType,
+					response.scaleX,
+					response.scaleY,
+					response.timestamp.replace(" ", "T") + ".000Z",
+					response.startDate,
+					response.endDate,
+					response.frameRate,
+					response.numFrames,
+					response.x1,
+					response.x2,
+					response.y1,
+					response.y2,
+					response.width,
+					response.height,
+					response.thumbnails.small,
+					response.url
+				);
 
-                self._addItem(movie);
-                self._createMoviePlayerDialog(movie);
-            }
-        };
+				self._addItem(movie);
+				self._createMoviePlayerDialog(movie);
+			}
+		};
 
-        params = {
-            "action" : "getMovieStatus",
-            "id"     : id,
-            "format" : self._manager.format,
-            "verbose": true
-        };
-        $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
-    },
+		params = {
+			"action" : "getMovieStatus",
+			"id"	 : id,
+			"format" : self._manager.format,
+			"verbose": true
+		};
+		$.get(Helioviewer.api, params, callback, Helioviewer.dataType);
+	},
 
-    /**
-     * Determines dimensions for which movie should be displayed
-     */
-    getVideoPlayerDimensions: function (width, height) {
-        var maxWidth    = $(window).width() * 0.80,
-            maxHeight   = $(window).height() * 0.80,
-            scaleFactor = Math.max(1, width / maxWidth, height / maxHeight);
+	/**
+	 * Determines dimensions for which movie should be displayed
+	 */
+	getVideoPlayerDimensions: function (width, height) {
+		var maxWidth	= $(window).width() * 0.80,
+			maxHeight   = $(window).height() * 0.80,
+			scaleFactor = Math.max(1, width / maxWidth, height / maxHeight);
 
-        return {
-            "width"  : Math.floor(width  / scaleFactor),
-            "height" : Math.floor(height / scaleFactor)
-        };
-    },
+		return {
+			"width"  : Math.floor(width  / scaleFactor),
+			"height" : Math.floor(height / scaleFactor)
+		};
+	},
 
-    /**
-     * Decides how to display video and returns HTML corresponding to that
-     * method
-     */
-    getVideoPlayerHTML: function (movie, width, height) {
-        var downloadURL, downloadLink, youtubeBtn,
-            linkBtn, linkURL, gifLink, gifURL, tweetBtn, facebookBtn;
+	/**
+	 * Decides how to display video and returns HTML corresponding to that
+	 * method
+	 */
+	getVideoPlayerHTML: function (movie, width, height) {
+		var downloadURL, downloadLink, youtubeBtn,
+			linkBtn, linkURL, gifLink, gifURL, tweetBtn, facebookBtn;
 
-        // Download
-        downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
-                      "&format=mp4&hq=true";
-        var gifURLEncoded = movie.url;
-        gifURL = encodeURIComponent(gifURLEncoded).replace(/'/g,"%27").replace(/"/g,"%22");
-        //gifURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
-        //              "&format=gif";
+		// Download
+		downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
+					  "&format=mp4&hq=true";
+		var gifURLEncoded = movie.url;
+		gifURL = encodeURIComponent(gifURLEncoded).replace(/'/g,"%27").replace(/"/g,"%22");
+		//gifURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
+		//			  "&format=gif";
 
-        downloadLink = "<div style='float:left;'><a target='_parent' href='" + downloadURL +
-            "' title='Download high-quality video'>" +
-            "<img style='width:93px; height:32px;' class='video-download-icon' " +
-            "src='resources/images/download_93x32.png' /></a></div>";
+		downloadLink = "<div style='float:left;'><a target='_parent' href='" + downloadURL +
+			"' title='Download high-quality video'>" +
+			"<img style='width:93px; height:32px;' class='video-download-icon' " +
+			"src='resources/images/download_93x32.png' /></a></div>";
 
-        gifLink = "<div style='float:left;'><a target='_blank' href='http://imgur.com/vidgif/video?url=" + gifURL +
-            "' title='Create animated GIF image with Imgur'>" +
-            "<img style='width:93px; height:32px;' class='video-download-icon' " +
-            "src='resources/images/gif_imgur_93x32.png' /></a></div>";
+		gifLink = "<div style='float:left;'><a target='_blank' href='http://imgur.com/vidgif/video?url=" + gifURL +
+			"' title='Create animated GIF image with Imgur'>" +
+			"<img style='width:93px; height:32px;' class='video-download-icon' " +
+			"src='resources/images/gif_imgur_93x32.png' /></a></div>";
 
-        //gifLink = "<div style='float:left;'><a target='_parent' href='" + gifURL +
-        //    "' title='Download animated GIF image'>" +
-        //    "<img style='width:93px; height:32px;' class='video-download-icon' " +
-        //    "src='resources/images/gif_93x32.png' /></a></div>";
+		//gifLink = "<div style='float:left;'><a target='_parent' href='" + gifURL +
+		//	"' title='Download animated GIF image'>" +
+		//	"<img style='width:93px; height:32px;' class='video-download-icon' " +
+		//	"src='resources/images/gif_93x32.png' /></a></div>";
 
-        // Upload to YouTube
-        youtubeBtn = '<div style="float:left;"><a id="youtube-upload-' + movie.id + '" href="#" ' +
-            'target="_blank"><img class="youtube-icon" ' +
-            'title="Upload video to YouTube" style="width:124px;height:32px;" ' +
-            'src="resources/images/yt_upload_logo_rgb_light.png" /></a></div>';
+		// Upload to YouTube
+		youtubeBtn = '<div style="float:left;"><a id="youtube-upload-' + movie.id + '" href="#" ' +
+			'target="_blank"><img class="youtube-icon" ' +
+			'title="Upload video to YouTube" style="width:124px;height:32px;" ' +
+			'src="resources/images/yt_upload_logo_rgb_light.png" /></a></div>';
 
-        // Link
-        linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
+		// Link
+		linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
 
-        linkBtn = "<div style='float:left;'><a id='video-link-" + movie.id + "' href='" + linkURL +
-            "' title='Get a link to the movie' " +
-            "target='_blank'><img class='video-link-icon' " +
-            "style='width:79px; height:32px;' " +
-            "src='resources/images/link_79x32.png' /></a></div>";
+		linkBtn = "<div style='float:left;'><a id='video-link-" + movie.id + "' href='" + linkURL +
+			"' title='Get a link to the movie' " +
+			"target='_blank'><img class='video-link-icon' " +
+			"style='width:79px; height:32px;' " +
+			"src='resources/images/link_79x32.png' /></a></div>";
 
-        // Tweet Movie Button
-        tweetBtn = '<div style="float:right;"><a href="https://twitter.com/share" class="twitter-share-button" data-related="helioviewer" data-lang="en" data-size="medium" data-count="horizontal" data-url="http://'+document.domain+'/?movieId='+movie.id+'" data-text="Movie of the Sun created on Helioviewer.org:" data-hashtags="helioviewer" data-related="helioviewer">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>';
+		// Tweet Movie Button
+		tweetBtn = '<div style="float:right;"><a href="https://twitter.com/share" class="twitter-share-button" data-related="helioviewer" data-lang="en" data-size="medium" data-count="horizontal" data-url="http://'+document.domain+'/?movieId='+movie.id+'" data-text="Movie of the Sun created on Helioviewer.org:" data-hashtags="helioviewer" data-related="helioviewer">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>';
 
-        // Like Movie on Facebook Button
-        facebookBtn = '<div style="float:right;"><iframe src="//www.facebook.com/plugins/like.php?href='+encodeURIComponent('http://'+document.domain+'/?movieId='+movie.id)+'&amp;width=90&amp;height=21&amp;colorscheme=dark&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;send=false&amp;appId=6899099925" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px; width:90px;" allowTransparency="false"></iframe></div>';
+		// Like Movie on Facebook Button
+		facebookBtn = '<div style="float:right;"><iframe src="//www.facebook.com/plugins/like.php?href='+encodeURIComponent('http://'+document.domain+'/?movieId='+movie.id)+'&amp;width=90&amp;height=21&amp;colorscheme=dark&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;send=false&amp;appId=6899099925" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px; width:90px;" allowTransparency="false"></iframe></div>';
 
-        // HTML5 Video (H.264 or WebM)
-        //if ($.support.vp8 || $.support.h264) {
-            // Work-around: use relative paths to simplify debugging
+		// HTML5 Video (H.264 or WebM)
+		//if ($.support.vp8 || $.support.h264) {
+			// Work-around: use relative paths to simplify debugging
 			var url = movie.url.substr(movie.url.search("cache"));
 			var fileNameIndex = url.lastIndexOf("/") + 1;
 			var filename = url.substr(fileNameIndex);
@@ -1095,15 +1092,15 @@ var MovieManagerUI = MediaManagerUI.extend(
 			var autoplay = (Helioviewer.userSettings.get("options.movieautoplay") ? 'autoplay="autoplay"' : '');
 
 			return '<style>.mejs-container .mejs-controls {bottom: -20px;}.mejs-container.mejs-container-fullscreen .mejs-controls{bottom: 0px;}</style>\
-				    <div>\
+					<div>\
 						<video id="movie-player-' + movie.id + '" width="'+(width - 15)+'" height="'+(height - 20)+'" poster="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" controls="controls" preload="none" '+autoplay+'>\
-						    <source type="video/mp4" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameHQ+'" />\
-						    <source type="video/webm" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameWebM+'" />\
-						    <object width="'+width+'" height="'+(height - 20)+'" type="application/x-shockwave-flash" data="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf">\
-						        <param name="movie" value="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf" />\
-						        <param name="flashvars" value="controls=true&amp;poster='+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png&amp;file='+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filename+'" />\
-						        <img src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" width="'+width+'" height="'+height+'" title="No video playback capabilities" />\
-						    </object>\
+							<source type="video/mp4" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameHQ+'" />\
+							<source type="video/webm" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameWebM+'" />\
+							<object width="'+width+'" height="'+(height - 20)+'" type="application/x-shockwave-flash" data="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf">\
+								<param name="movie" value="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf" />\
+								<param name="flashvars" value="controls=true&amp;poster='+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png&amp;file='+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filename+'" />\
+								<img src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" width="'+width+'" height="'+height+'" title="No video playback capabilities" />\
+							</object>\
 						</video>\
 					</div>\
 					<div style="width:100%;padding-top: 25px;">\
@@ -1114,47 +1111,47 @@ var MovieManagerUI = MediaManagerUI.extend(
 					</div>';
 
 
-        /*}
+		/*}
 
-        // Fallback (flash player)
-        else {
-            var url = Helioviewer.api + '?action=playMovie&id=' + movie.id +
-                  '&width=' + width + "&height=" + height +
-                  '&format=flv';
+		// Fallback (flash player)
+		else {
+			var url = Helioviewer.api + '?action=playMovie&id=' + movie.id +
+				  '&width=' + width + "&height=" + height +
+				  '&format=flv';
 
-            return '<div id="movie-player-' + movie.id + '">' +
-                       '<iframe id="movie-player-iframe" src="' + url + '" width="' + width +
-                       '" height="' + height + '" marginheight="0" marginwidth="0" ' +
-                       'scrolling="no" frameborder="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"/>' +
-                   '</div>' +
-                   '<div style="width:100%;">' +
-                       '<div style="float:left;" class="video-links">' +
-                        youtubeBtn + linkBtn + downloadLink + gifLink +
-                   '</div>' +
-                   '<div style="float:right;">' + facebookBtn + tweetBtn +
-                   '</div>';
-        }*/
-    },
+			return '<div id="movie-player-' + movie.id + '">' +
+					   '<iframe id="movie-player-iframe" src="' + url + '" width="' + width +
+					   '" height="' + height + '" marginheight="0" marginwidth="0" ' +
+					   'scrolling="no" frameborder="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"/>' +
+				   '</div>' +
+				   '<div style="width:100%;">' +
+					   '<div style="float:left;" class="video-links">' +
+						youtubeBtn + linkBtn + downloadLink + gifLink +
+				   '</div>' +
+				   '<div style="float:right;">' + facebookBtn + tweetBtn +
+				   '</div>';
+		}*/
+	},
 
-    /**
-     * Decides how to display video and returns HTML corresponding to that
-     * method
-     */
-    getK12VideoPlayerHTML: function (movie, width, height) {
-        var downloadURL, downloadLink;
+	/**
+	 * Decides how to display video and returns HTML corresponding to that
+	 * method
+	 */
+	getK12VideoPlayerHTML: function (movie, width, height) {
+		var downloadURL, downloadLink;
 
-        // Download
-        downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
-                      "&format=mp4&hq=true";
+		// Download
+		downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
+					  "&format=mp4&hq=true";
 
-        downloadLink = "<div style='float:left;'><a target='_parent' href='" + downloadURL +
-            "' title='Download high-quality video'>" +
-            "<img style='width:93px; height:32px;' class='video-download-icon' " +
-            "src='resources/images/download_93x32.png' /></a></div>";
+		downloadLink = "<div style='float:left;'><a target='_parent' href='" + downloadURL +
+			"' title='Download high-quality video'>" +
+			"<img style='width:93px; height:32px;' class='video-download-icon' " +
+			"src='resources/images/download_93x32.png' /></a></div>";
 
-        // HTML5 Video (H.264 or WebM)
-        //if ($.support.vp8 || $.support.h264) {
-            // Work-around: use relative paths to simplify debugging
+		// HTML5 Video (H.264 or WebM)
+		//if ($.support.vp8 || $.support.h264) {
+			// Work-around: use relative paths to simplify debugging
 			var url = movie.url.substr(movie.url.search("cache"));
 			var fileNameIndex = url.lastIndexOf("/") + 1;
 			var filename = url.substr(fileNameIndex);
@@ -1164,15 +1161,15 @@ var MovieManagerUI = MediaManagerUI.extend(
 			var autoplay = (Helioviewer.userSettings.get("options.movieautoplay") ? 'autoplay="autoplay"' : '');
 
 			return '<style>.mejs-container .mejs-controls {bottom: -20px;}.mejs-container.mejs-container-fullscreen .mejs-controls{bottom: 0px;}</style>\
-				    <div>\
+					<div>\
 						<video id="movie-player-' + movie.id + '" width="'+(width - 15)+'" height="'+(height - 20)+'" poster="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" controls="controls" preload="none" '+autoplay+'>\
-						    <source type="video/mp4" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameHQ+'" />\
-						    <source type="video/webm" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameWebM+'" />\
-						    <object width="'+width+'" height="'+(height - 20)+'" type="application/x-shockwave-flash" data="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf">\
-						        <param name="movie" value="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf" />\
-						        <param name="flashvars" value="controls=true&amp;poster='+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png&amp;file='+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filename+'" />\
-						        <img src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" width="'+width+'" height="'+height+'" title="No video playback capabilities" />\
-						    </object>\
+							<source type="video/mp4" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameHQ+'" />\
+							<source type="video/webm" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameWebM+'" />\
+							<object width="'+width+'" height="'+(height - 20)+'" type="application/x-shockwave-flash" data="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf">\
+								<param name="movie" value="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf" />\
+								<param name="flashvars" value="controls=true&amp;poster='+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png&amp;file='+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filename+'" />\
+								<img src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" width="'+width+'" height="'+height+'" title="No video playback capabilities" />\
+							</object>\
 						</video>\
 					</div>\
 					<div style="width:100%;padding-top: 25px;">\
@@ -1181,66 +1178,66 @@ var MovieManagerUI = MediaManagerUI.extend(
 					</div>';
 
 
-        /*}
+		/*}
 
-        // Fallback (flash player)
-        else {
-            var url = Helioviewer.api + '?action=playMovie&id=' + movie.id +
-                  '&width=' + width + "&height=" + height +
-                  '&format=flv';
+		// Fallback (flash player)
+		else {
+			var url = Helioviewer.api + '?action=playMovie&id=' + movie.id +
+				  '&width=' + width + "&height=" + height +
+				  '&format=flv';
 
-            return '<div id="movie-player-' + movie.id + '">' +
-                       '<iframe id="movie-player-iframe" src="' + url + '" width="' + width +
-                       '" height="' + height + '" marginheight="0" marginwidth="0" ' +
-                       'scrolling="no" frameborder="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"/>' +
-                   '</div>' +
-                   '<div style="width:100%;">' +
-                       '<div style="float:left;" class="video-links">' +
-                        youtubeBtn + linkBtn + downloadLink + gifLink +
-                   '</div>' +
-                   '<div style="float:right;">' + facebookBtn + tweetBtn +
-                   '</div>';
-        }*/
-    },
+			return '<div id="movie-player-' + movie.id + '">' +
+					   '<iframe id="movie-player-iframe" src="' + url + '" width="' + width +
+					   '" height="' + height + '" marginheight="0" marginwidth="0" ' +
+					   'scrolling="no" frameborder="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"/>' +
+				   '</div>' +
+				   '<div style="width:100%;">' +
+					   '<div style="float:left;" class="video-links">' +
+						youtubeBtn + linkBtn + downloadLink + gifLink +
+				   '</div>' +
+				   '<div style="float:right;">' + facebookBtn + tweetBtn +
+				   '</div>';
+		}*/
+	},
 
-    /**
-     * Refreshes status information for movies in the history
-     */
-    _refresh: function () {
-        var status, statusMsg, dateRequested;
+	/**
+	 * Refreshes status information for movies in the history
+	 */
+	_refresh: function () {
+		var status, statusMsg, dateRequested;
 
-        let regenThreshold = this._regenerateMovieThreshold;
-        // Update the status information for each row in the history
-        $.each(this._manager.toArray(), function (i, item) {
-            status = $("#movie-" + item.id).find(".status");
+		let regenThreshold = this._regenerateMovieThreshold;
+		// Update the status information for each row in the history
+		$.each(this._manager.toArray(), function (i, item) {
+			status = $("#movie-" + item.id).find(".status");
 
-            // For completed entries, display elapsed time
-            if (item.status === 2) {
-                dateRequested = Date.parseUTCDate(item.dateRequested);
-                if((new Date) - dateRequested >= regenThreshold * 24 * 60 * 60 * 1000){
+			// For completed entries, display elapsed time
+			if (item.status === 2) {
+				dateRequested = Date.parseUTCDate(item.dateRequested);
+				if((new Date) - dateRequested >= regenThreshold * 24 * 60 * 60 * 1000){
 					statusMsg = '<span class="rebuild-item" data-id="'+item.id+'" title="Regenerate movie"> regenerate <span class="fa fa-refresh"></span></span>';
-                }else{
-	                statusMsg = dateRequested.getElapsedTime();
-                }
-            // For failed movie requests, display an error
-            } else if (item.status === 3) {
-                statusMsg = '<span style="color:LightCoral;" class="rebuild-item" data-id="'+item.id+'">error</span>';
-            // Otherwise show the item as processing
-            } else if (item.status === 1) {
-                statusMsg = '<span class="processing">processing '+item.progress+'%</span>';
-            // Otherwise show the item as processing
-            } else {
-                statusMsg = '<span style="color:#f9a331">queued</span>';
-            }
-            status.html(statusMsg);
-        });
-    },
+				}else{
+					statusMsg = dateRequested.getElapsedTime();
+				}
+			// For failed movie requests, display an error
+			} else if (item.status === 3) {
+				statusMsg = '<span style="color:LightCoral;" class="rebuild-item" data-id="'+item.id+'">error</span>';
+			// Otherwise show the item as processing
+			} else if (item.status === 1) {
+				statusMsg = '<span class="processing">processing '+item.progress+'%</span>';
+			// Otherwise show the item as processing
+			} else {
+				statusMsg = '<span style="color:#f9a331">queued</span>';
+			}
+			status.html(statusMsg);
+		});
+	},
 
-    /**
-     * Refreshes status information for movies in the history
-     */
-    _rebuildItem: function (movie) {
-	    var callback, self = this, params = {};
+	/**
+	 * Refreshes status information for movies in the history
+	 */
+	_rebuildItem: function (movie) {
+		var callback, self = this, params = {};
 
 		params = {
 			'action': 'reQueueMovie',
@@ -1248,70 +1245,70 @@ var MovieManagerUI = MediaManagerUI.extend(
 			'force': true
 		};
 
-        // AJAX Responder
-        callback = function (response) {
-            var msg, waitTime;
+		// AJAX Responder
+		callback = function (response) {
+			var msg, waitTime;
 
-            if ((response === null) || response.error) {
-                // Queue full
-                if (response.errno === 40) {
-                    msg = response.error;
-                } else {
-                    // Other error
-                    msg = "We are unable to create a movie for the time you " +
-                        "requested. Please select a different time range " +
-                        "and try again. ("+response.error+")";
-                }
-                $(document).trigger("message-console-info", msg);
-                return;
-            } else if (response.warning) {
-                $(document).trigger("message-console-info", response.warning);
-                return;
-            }
+			if ((response === null) || response.error) {
+				// Queue full
+				if (response.errno === 40) {
+					msg = response.error;
+				} else {
+					// Other error
+					msg = "We are unable to create a movie for the time you " +
+						"requested. Please select a different time range " +
+						"and try again. ("+response.error+")";
+				}
+				$(document).trigger("message-console-info", msg);
+				return;
+			} else if (response.warning) {
+				$(document).trigger("message-console-info", response.warning);
+				return;
+			}
 
-            self._manager.update( movie.id, {'status':0, 'dateRequested':new Date().toISOString(), 'token': response.token});
-            self._manager._monitorQueuedMovie(movie.id, new Date().toISOString(), response.token, 5);
+			self._manager.update( movie.id, {'status':0, 'dateRequested':new Date().toISOString(), 'token': response.token});
+			self._manager._monitorQueuedMovie(movie.id, new Date().toISOString(), response.token, 5);
 
-            waitTime = humanReadableNumSeconds(response.eta);
-            msg = "Your video is processing and will be available in " +
-                  "approximately " + waitTime + ". You may view it at any " +
-                  "time after it is ready by clicking the 'Movie' button";
-            $(document).trigger("message-console-info", msg);
-            self._refresh();
-        };
+			waitTime = humanReadableNumSeconds(response.eta);
+			msg = "Your video is processing and will be available in " +
+				  "approximately " + waitTime + ". You may view it at any " +
+				  "time after it is ready by clicking the 'Movie' button";
+			$(document).trigger("message-console-info", msg);
+			self._refresh();
+		};
 
-        // Make request
-        $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
-    },
+		// Make request
+		$.get(Helioviewer.api, params, callback, Helioviewer.dataType);
+	},
 
-    /**
-     * Validates the request and returns false if any of the requirements are
-     * not met
-     */
-    _validateRequest: function (roi, layerString) {
-        var layers, visibleLayers, message;
+	/**
+	 * Validates the request and returns false if any of the requirements are
+	 * not met
+	 */
+	_validateRequest: function (roi, layerString) {
+		var layers, visibleLayers, message;
 
-        layers = layerStringToLayerArray(layerString);
-        visibleLayers = $.grep(layers, function (layer, i) {
-            var parts = layer.split(",");
-            return (parts[4] === "1" && parts[5] !== "0");
-        });
+		layers = layerStringToLayerArray(layerString);
+		visibleLayers = $.grep(layers, function (layer, i) {
+			var parts = layer.split(",");
+			return (parts[4] === "1" && parts[5] !== "0");
+		});
 
-        if (visibleLayers.length > 3) {
-            message = "Movies cannot have more than three layers. " +
-                      "Please hide/remove layers until there are no more " +
-                      "than three layers visible.";
+		if (visibleLayers.length > 3) {
+			message = "Movies cannot have more than three layers. " +
+					  "Please hide/remove layers until there are no more " +
+					  "than three layers visible.";
 
-            $(document).trigger("message-console-warn", [message]);
+			$(document).trigger("message-console-warn", [message]);
 
-            return false;
-        }
-        return this._super(roi, layerString);
-    },
+			return false;
+		}
+		return this._super(roi, layerString);
+	},
 
-    _cleanup: function () {
-        $.each(this._cleanupFunctions, function(i, func) {
-            eval(func);
-        });
-    }
+	_cleanup: function () {
+		$.each(this._cleanupFunctions, function(i, func) {
+			eval(func);
+		});
+	}
 });

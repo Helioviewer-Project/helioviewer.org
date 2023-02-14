@@ -1,3 +1,9 @@
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+    );
+}
+
 // START onload 
 $(function() {
 
@@ -312,6 +318,7 @@ $(function() {
 	
 	// clone the #date element and make it readonly so the keyboard doesn't show
 	$("#date").clone().appendTo("#hvmobdate_td");
+	$("#hvmobdate_td #date").attr("inputmode", "none");
 	//$("#date").attr('readonly', 'readonly');
 	
 	// delete the old element
@@ -341,6 +348,7 @@ $(function() {
 	// clone the #time element and make it readonly so the keyboard doesn't show
 	$("#time").clone().appendTo("#hvmobtime_td");
 	$("#time").attr('readonly', 'readonly');
+	$("#time").attr('inputmode', 'none');
 	
 	// take the time element out of focus after changed
 	$("#time").change(function(){
