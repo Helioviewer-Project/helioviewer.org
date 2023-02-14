@@ -147,43 +147,45 @@
 	<script type="text/javascript">var outputType = <?php if($outputType){ echo "'".$outputType."'"; } else { echo 'false'; }?>;</script>
 
 <?php
-if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
-    //$cssfilesrndnum= rand(2145, 999999);
-    $hvmobcssfiles= <<<MCF
-        <!-- START responsive CSS files -->
-        <link rel='stylesheet' href='/resources/lib/responsive/zeynep.css'>
-        <link href="/resources/lib/responsive/hamburger.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="/resources/lib/responsive/responsive_hv.css">
-        <!-- END responsive CSS files -->
-MCF;
-    echo $hvmobcssfiles;
-} else {
-    $hvdesktopcsshides= <<<DCH
-        <style>
-        .zeynep {
-            display: none;
-        }
-        #hvmobilemenu_btn {
-            display: none;
-        }
-        .zeynep-overlay {
-            display: none;
-        }
-        .hvmobdstab_wrap {
-            display: none;
-        }
-        .hvmobds_table {
-            display: none;
-        }
-        .hvbottombar {
-            display: none;
-        }
-        .hvbottomcal_wrap {
-            display: none;
-        }
-        </style>
-DCH;
-    echo $hvdesktopcsshides;
+if(isset($_SERVER['HTTP_USER_AGENT'])) {
+	if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
+		//$cssfilesrndnum= rand(2145, 999999);
+		$hvmobcssfiles= <<<MCF
+			<!-- START responsive CSS files -->
+			<link rel='stylesheet' href='/resources/lib/responsive/zeynep.css'>
+			<link href="/resources/lib/responsive/hamburger.min.css" rel="stylesheet">
+			<link rel="stylesheet" href="/resources/lib/responsive/responsive_hv.css">
+			<!-- END responsive CSS files -->
+	MCF;
+		echo $hvmobcssfiles;
+	} else {
+		$hvdesktopcsshides= <<<DCH
+			<style>
+			.zeynep {
+				display: none;
+			}
+			#hvmobilemenu_btn {
+				display: none;
+			}
+			.zeynep-overlay {
+				display: none;
+			}
+			.hvmobdstab_wrap {
+				display: none;
+			}
+			.hvmobds_table {
+				display: none;
+			}
+			.hvbottombar {
+				display: none;
+			}
+			.hvbottomcal_wrap {
+				display: none;
+			}
+			</style>
+	DCH;
+		echo $hvdesktopcsshides;
+	}
 }
 ?>
 </head>
@@ -1888,16 +1890,18 @@ DCH;
 	?>
 
 <?php
-if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
-//$jsfilesrndnum= rand(2145, 999999);
-$hvmobjsfiles= <<<MJF
-<!-- START responsive JS files -->
-<script src='/resources/lib/responsive/zeynep1.js'></script>
-<script src="/resources/lib/responsive/interact.min.js"></script>
-<script src="/resources/lib/responsive/responsive_hv.js"></script>
-<!-- END responsive JS files -->
-MJF;
-echo $hvmobjsfiles;
+if(isset($_SERVER['HTTP_USER_AGENT'])) {
+	if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
+	//$jsfilesrndnum= rand(2145, 999999);
+	$hvmobjsfiles= <<<MJF
+	<!-- START responsive JS files -->
+	<script src='/resources/lib/responsive/zeynep1.js'></script>
+	<script src="/resources/lib/responsive/interact.min.js"></script>
+	<script src="/resources/lib/responsive/responsive_hv.js"></script>
+	<!-- END responsive JS files -->
+	MJF;
+	echo $hvmobjsfiles;
+	}
 }
 ?>
 
