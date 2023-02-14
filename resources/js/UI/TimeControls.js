@@ -39,8 +39,8 @@ var TimeControls = Class.extend(
         this._incrementSelect = $(incrementSelect);
 
         this._addTimeIncrements();
-        this._updateInputFields();
         this._initDatePicker();
+        this._updateInputFields();
         this._initEventHandlers();
     },
 
@@ -114,14 +114,14 @@ var TimeControls = Class.extend(
                     });
                 }
             );
-            
+
             if(layerHierarchy.length == 0){
-	            var savedLayers = Helioviewer.userSettings.get('state.tileLayers');
-	            $.each( savedLayers, function (i, layer) {
-		            layerHierarchy.push(layer.uiLabels);
-	            });
+                var savedLayers = Helioviewer.userSettings.get('state.tileLayers');
+                $.each( savedLayers, function (i, layer) {
+                    layerHierarchy.push(layer.uiLabels);
+                });
             }
-            
+
             // For each data tile-layer accordion, get the data source "end"
             // date (which is the date/time of the most current piece of data
             // for that source).  Keep the overall most current "end" date.
@@ -130,11 +130,11 @@ var TimeControls = Class.extend(
                 $.each( hierarchy, function (j, property) {
                     leaf = leaf[property['name']];
                 });
-				
-				if(leaf['end'] == null){
-					leaf['end'] = new Date().toUTCString();
-				}
-				
+
+                if(leaf['end'] == null){
+                    leaf['end'] = new Date().toUTCString();
+                }
+
                 date = Date.parseUTCDate(leaf['end']);
                 if (date > mostRecent) {
                     mostRecent = date;
@@ -227,7 +227,7 @@ var TimeControls = Class.extend(
      * @param {int} seconds The number of seconds to adjust the date by
      */
     _addSeconds: function (seconds) {
-	    this._date = new Date(this._date.getTime() + seconds*1000);
+        this._date = new Date(this._date.getTime() + seconds*1000);
         this._onDateChange();
     },
 
@@ -270,32 +270,24 @@ var TimeControls = Class.extend(
      */
     _initDatePicker: function () {
         var btnId, btn, self = this;
-		this._dateInput.datetimepicker({
-			timepicker:false,
-			format:'Y/m/d',
-			theme:'dark'
-		});
-		
-		//TimePicker
-		var time = '';
-		this._timeInput.TimePickerAlone({
-			twelveHoursFormat:false,
-			seconds:true,
-			ampm:false,
-			saveOnChange: false,
-			//mouseWheel:false,
-			theme:'dark',
-			onHide: function ($input) {
-				if(time != ''){
-					$input.val(time).change();
-				}
-				
-				return true;
-			},
-			onChange: function (str, datetime) {
-				time = str;
-			}
-		});
+        this._dateInput._flatpickr = this._dateInput.flatpickr({
+            allowInput: true,
+            dateFormat: 'Y/m/d',
+            disableMobile: true
+        });
+
+        //TimePicker
+        this._timeInput._flatpickr = this._timeInput.flatpickr({
+            allowInput: true,
+            noCalendar: true,
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            minuteIncrement: 1,
+            secondIncrement: 1,
+            disableMobile: true,
+            position: "above"
+        });
     },
 
     /**
@@ -306,7 +298,7 @@ var TimeControls = Class.extend(
         Helioviewer.userSettings.set("state.date", this._date.getTime());
         $(document).trigger("observation-time-changed", [this._date]);
         if(typeof updateTimeline == 'undefined'){
-	        $(document).trigger("observation-time-changed-update-timeline", [this._date]);
+            $(document).trigger("observation-time-changed-update-timeline", [this._date]);
         }
     },
 
@@ -341,8 +333,10 @@ var TimeControls = Class.extend(
      * @description Updates the HTML form fields associated with the time manager.
      */
     _updateInputFields: function () {
-        this._dateInput.val(this._date.toUTCDateString());
-        this._timeInput.val(this._date.toUTCTimeString());
+        if (this._dateInput._flatpickr && this._dateInput._flatpickr.setDate) {
+            this._dateInput._flatpickr.setDate(this._date.toUTCDateString());
+            this._timeInput._flatpickr.setDate(this._date.toUTCTimeString());
+        }
     },
 
     /**
