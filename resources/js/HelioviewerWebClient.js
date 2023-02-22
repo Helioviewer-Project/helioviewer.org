@@ -1092,7 +1092,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
              + '&events=&eventLabels=false'
              + '&scale=false&scaleType=earth&scaleX=0&scaleY=0'
              + '&date='      + endDate
-             + '&x0=0&y0=0&width=256&height=256&display=true&watermark=false" class="preview end" /> '
+             + '&x0=0&y0=0&width=256&height=256&display=true&watermark=false" class="preview end"  onerror="this.src=\'/resources/images/img_fail_2.png\'" /> '
              + '</div>';
 
         return html;
@@ -1386,7 +1386,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                                                     $('#sdo-height').val()
                                                   )
                                           ) + ';"'
-                     +     ' />'
+                     +     ' onerror="this.src=\'/resources/images/img_fail_2.png\'"  />'
                      + '</div>';
 
                 sdoPreviews.append(html);
