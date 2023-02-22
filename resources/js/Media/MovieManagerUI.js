@@ -417,7 +417,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 			allowInput: true,
 			dateFormat: 'Y/m/d',
 			onOpen: function (selected, str, instance) {
-				var observationDate = new Date(Helioviewer.userSettings.get("state.date") - duration);
+				var observationDate = new Date(Helioviewer.userSettings.get("state.date"));
 				instance.set('maxDate', observationDate.toUTCDateString());
 			}
 		});
@@ -425,12 +425,14 @@ var MovieManagerUI = MediaManagerUI.extend(
 			allowInput: true,
 			dateFormat: 'Y/m/d',
 			onOpen: function (selected, str, instance) {
-				var observationDate = new Date(Helioviewer.userSettings.get("state.date") + duration);
-				instance.set('maxDate', observationDate.toUTCDateString());
+				var observationDate = new Date(Helioviewer.userSettings.get("state.date"));
+				instance.set('minDate', observationDate.toUTCDateString());
 			}
 		});
-		$('#movie-start-date').val(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
-		$('#movie-end-date').val(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
+		if ($('#movie-start-date').length > 0) {
+			$('#movie-start-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
+			$('#movie-end-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") + duration).toUTCDateString());
+		}
 
 		//TimePicker
 		$('#movie-start-time').flatpickr({
