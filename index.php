@@ -1878,7 +1878,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		<script src="/resources/js/UI/jquery.ui.dynaccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/ImagePresets.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/TileLayerData.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Viewport/CelestialBodiesSatellites.js?v=<?=debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/CelestialBodiesSatellites.js?v=<?=$debugTime?>" type="text/javascript"></script>
 	<?php
 	} else {
 	?>
