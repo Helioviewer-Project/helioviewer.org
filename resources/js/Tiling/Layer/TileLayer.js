@@ -97,7 +97,8 @@ var TileLayer = Layer.extend(
 	    if(typeof layerDateStr == 'number' || layerDateStr == null){
 			layerDateStr = $('#date').val()+' '+$('#time').val();
 		} 
-	    layerDateStr = layerDateStr.replace(' ', 'T').replace(/\//g, '-') + '.000Z';
+
+		layerDateStr = formatLyrDateString(layerDateStr);
         return this.image.getLayerName() + "," + (this.visible ? this.layeringOrder : "0") + "," + this.opacity + "," + this.difference + "," + this.diffCount + "," + this.diffTime + "," + layerDateStr;
     },
 
