@@ -112,8 +112,9 @@ var HelioviewerTileLayer = TileLayer.extend(
 			baseDiffTimeStr = $('#date').val()+' '+$('#time').val();
 		}
 		
-        baseDiffTimeStr = baseDiffTimeStr.replace(' ', 'T').replace(/\//g, '-').replace(/.000Z/g, '') + '.000Z';
-        // If scale is given via input, then let it override the global viewport scale
+        baseDiffTimeStr = formatLyrDateString(baseDiffTimeStr);
+		
+		// If scale is given via input, then let it override the global viewport scale
         let imageScale = (scale == undefined) ? this.viewportScale : scale;
         // Limit the scale to two decimal places so that the excess precision digits don't break caching
         imageScale = imageScale.toFixed(3);
