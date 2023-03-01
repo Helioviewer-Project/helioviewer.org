@@ -677,3 +677,14 @@ function carringtons_to_timestamps(carringtons){
 	
 	return timestamps;
 }
+
+
+
+// Formatting of timestamps to remove excessive .000z
+function formatLyrDateString(tmpLayerDateStr) {
+
+   let frmtTmpDateStr= tmpLayerDateStr.replace(' ', 'T').replace(/\//g, '-').replace(/.000Z/g, '') + '.000Z';
+
+   return frmtTmpDateStr;
+
+}
