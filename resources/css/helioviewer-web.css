@@ -675,7 +675,10 @@ _:-ms-fullscreen, :root .accordion select option{
    cursor: help;
 }
 
-
+#images-presets-dropdown {
+   display: inline-flex;
+   height: 10px;
+}
 
 
 
