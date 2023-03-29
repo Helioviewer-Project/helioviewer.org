@@ -18,7 +18,7 @@ var timelineMouseValueX = 0;
 var timelineMouseValueY = 0;
 
 $(function () {
-	
+
 		/**
 	 * Highcharts X-range series plugin
 	 */
@@ -36,7 +36,7 @@ $(function () {
 			/**
 			 * Borrow the column series metrics, but with swapped axes. This gives free access
 			 * to features like groupPadding, grouping, pointWidth etc.
-			 */  
+			 */
 			getColumnMetrics: function () {
 				var metrics,
 					chart = this.chart,
@@ -54,7 +54,7 @@ $(function () {
 				metrics = columnType.prototype.getColumnMetrics.call(this);
 
 				swapAxes();
-				
+
 				return metrics;
 			},
 			translate: function () {
@@ -97,23 +97,23 @@ $(function () {
 				if (dataMax > Number.MIN_VALUE) {
 					axis.dataMax = dataMax;
 				}
-			}				
+			}
 		});
 	}(Highcharts));
 });
 
 var TimelineEvents = Class.extend({
-	
+
 	minNavDate:0,
 	maxNavDate:0,
-	
+
 	init: function () {
 		var layers = [];
 
 		this._container		= $('#data-coverage-timeline-events-events');
 		this._seriesOptions	= [];
 		this._timeline = null;
-		
+
 		//Set Hightcharts options
 		this.setHighchartsOptions();
 		//Set Hightcharts Theme
@@ -137,7 +137,7 @@ var TimelineEvents = Class.extend({
 
 	setTimelineOptions: function (options) {
 		var self = this;
-		
+
 		if ( options !== undefined ) {
 			this._timelineOptions = options;
 			return true;
@@ -156,20 +156,20 @@ var TimelineEvents = Class.extend({
 							timelineExtremesChanged = false;
 							var chart = $('#data-coverage-timeline-events').highcharts();
 							chart.xAxis[0].setExtremes(event.xAxis[0].min, event.xAxis[0].max);
-							
+
 							var span	 = event.xAxis[0].max - event.xAxis[0].min;
-			
+
 							if(span < 180 * 60 * 1000){
 								return false;
 							}
-								
+
 							if(event.xAxis[0].min < 0) event.xAxis[0].min = 0;
-							
+
 							self.afterSetExtremes({min:event.xAxis[0].min, max:event.xAxis[0].max});
 						}else{
 							//console.log('drag');
 						}
-						return true;	
+						return true;
 					}
 				},
 				resetZoomButton: {
@@ -232,17 +232,17 @@ var TimelineEvents = Class.extend({
 					var columnOffset = this.minPointOffset;
 					var info = this.tickPositions.info;
 					timelineTick = this.tickPositions.info.unitName;
-					
+
 					if(timelineRes == 'm'){
 						columnOffset = 0;
 					}
-					
+
 					$.each(this.tickPositions, function(k,v){
 						positions[k] = (v-columnOffset);
 					});
-					
+
 					positions.info = info;
-					
+
 					return positions;
 				},
 				labels: {
@@ -257,7 +257,7 @@ var TimelineEvents = Class.extend({
 			                month: '%b \'%y',
 			                year: '%Y'
 						};
-			            
+
 			            //Add new grid lines (boundaries)
 			            var minutes = new Date(this.value+this.axis.minPointOffset).getMinutes()
 			            if(minutes == 0){
@@ -268,7 +268,7 @@ var TimelineEvents = Class.extend({
 					            zIndex: 1
 					        });
 			            }
-						
+
 						if(timelineRes == 'm'){
 							return Highcharts.dateFormat(dateTimeLabelFormats[timelineTick], this.value);
 						}else{
@@ -326,12 +326,12 @@ var TimelineEvents = Class.extend({
 						events: {
 							dblclick: function(e){
 								var minRange = 180 * 60 * 1000;
-								
+
 								var minTime = this.x;
 								var maxTime = this.x + this.series.closestPointRange;
-								
+
 								var columnCenter = this.x + (this.series.closestPointRange / 2);
-								
+
 								var date = new Date(columnCenter);
 								helioviewer.timeControls.setDate(date, true);
 								self.btnCenter();
@@ -340,7 +340,7 @@ var TimelineEvents = Class.extend({
 						}
 					}
 				},
-	
+
 				xrange: {
 					cropThreshold: 1000,
 					pointPadding: 0.25,
@@ -358,22 +358,22 @@ var TimelineEvents = Class.extend({
 								if(typeof this.zeroSeconds != 'undefined'){
 									var date = new Date(this.x + this.modifier);
 								}
-								
-								helioviewer.timeControls.setDate(date);	
+
+								helioviewer.timeControls.setDate(date);
 							},
 							mouseOver: function(e){
 								this.selected = true;
 								this.graphic.attr('fill', '#fff');
-								
+
 								if(typeof this.kb_archivid != 'undefined'){
 									var id = this.kb_archivid;
 									id = id.replace(/\(|\)|\.|\+|\:/g, "");
 									if($("#marker_" + id).length != 0) {
-										$("#event-container .event-layer > div[id!='marker_"+id+"']").css({'opacity':'0'});
-										$("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'0'});
-										$("#event-container .event-layer > div[id='marker_"+id+"']").parent().css({'opacity':'1'});
-										$("#event-container .event-layer > div[id='marker_"+id+"']").css({'z-index':'1000'}); 
-										$("#event-container .event-layer > div[id='region_"+id+"']").css({'opacity':'1'});
+										$(".event-container .event-layer > div[id!='marker_"+id+"']").css({'opacity':'0'});
+										$(".event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'0'});
+										$(".event-container .event-layer > div[id='marker_"+id+"']").parent().css({'opacity':'1'});
+										$(".event-container .event-layer > div[id='marker_"+id+"']").css({'z-index':'1000'});
+										$(".event-container .event-layer > div[id='region_"+id+"']").css({'opacity':'1'});
 										$('.movie-viewport-icon').hide();
 									}
 								}
@@ -382,21 +382,21 @@ var TimelineEvents = Class.extend({
 								var point = this;
 								if(this.graphic){
 									this.graphic.attr('fill', this.color);
-									
+
 									setTimeout(function() { point.selected = false; }, 100);
 									if(typeof this.kb_archivid != 'undefined'){
 										var id = this.kb_archivid;
 										id = id.replace(/\(|\)|\.|\+|\:/g, "");
-										$("#event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'1'});
-									 	$("#event-container .event-layer > div").css({'opacity':'1.0', 'z-index':'997'});
+										$(".event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'1'});
+									 	$(".event-container .event-layer > div").css({'opacity':'1.0', 'z-index':'997'});
 									 	$('.movie-viewport-icon').show();
 								 	}
-								}	
+								}
 							}
 						}
 					}
 				},
-				
+
 				series:{
 					animation: false,
 					turboThreshold: 100000000,
@@ -431,13 +431,13 @@ var TimelineEvents = Class.extend({
 
 					if(typeof this.points != "undefined"){
 						var from = this.x;
-						
+
 						var index = this.points[0].series.xData.indexOf(this.x);
 						//var to = this.x+this.points[0].series.closestPointRange;
 						var to = (this.points[0].series.xData[index + 1] - 1);
-						
+
 						zoomTickTime = parseInt( (from + to) * 0.5 );
-						
+
 						str += '<div style="width:340px;">\
 									<b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', from)+' - '+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', to)+' UTC</b>\
 								</div>';
@@ -447,13 +447,13 @@ var TimelineEvents = Class.extend({
 							if(point.y != 1){
 								ext = 'entries';
 							}
-							
+
 							str += '<p style="font-size:10px;line-height:12px;padding-left:5px;"><span style="color:'+point.series.color+';">'+point.series.name+'</span>: <b>'+Highcharts.numberFormat(point.y,0,'.',',')+' '+ext+'</b></p>';
 						});
-						
+
 					}else{//return false;
 						var point = this.point;
-						
+
 						var headingText = '';
 						if ( point.hasOwnProperty('hv_labels_formatted') && Object.keys(point.hv_labels_formatted).length > 0 ) {
 							headingText = point.concept+': ' + point.hv_labels_formatted[Object.keys(point.hv_labels_formatted)[0]];
@@ -461,15 +461,15 @@ var TimelineEvents = Class.extend({
 						else {
 							headingText = point.concept + ': ' + point.frm_name + ' ' + point.frm_specificid;
 						}
-						
+
 						headingText = headingText.replace(/u03b1/g, "α");
 				        headingText = headingText.replace(/u03b2/g, "β");
 				        headingText = headingText.replace(/u03b3/g, "γ");
 						headingText = headingText.replace(/u00b1/g, "±");
 						headingText = headingText.replace(/u00b2/g, "²");
-						
+
 						str	 += '<h1 class="user-selectable" style="font-size:13px;margin-bottom:0px;">'+headingText+'</h1>'+"\n";
-				
+
 						if ( point.event_peaktime != null && point.event_peaktime != '' && point.event_peaktime != '0000-00-00 00:00:00') {
 							point.event_peaktime = point.event_peaktime.replace(/-/g, "/");
 							str += '<div class="container">'+"\n"
@@ -477,7 +477,7 @@ var TimelineEvents = Class.extend({
 									+	  "\t"+'<div class="value-container"><div class="param-value user-selectable">'+point.event_peaktime+' UTC</div><div class="ui-icon ui-icon-arrowstop-1-n" title="Jump to Event Peak Time"></div></div>'+"\n"
 									+  '</div>'+"\n";
 						}
-						
+
 						str	 += '<div class="container">'+"\n"
 									+	  "\t"+'<div class="param-container"><div class="param-label user-selectable">Start Time: </div></div>'+"\n"
 									+	  "\t"+'<div class="value-container"><div class="param-value user-selectable">'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', (this.x + point.modifier))+'</div><div class="ui-icon ui-icon-arrowstop-1-w" title="Jump to Event Start Time"></div></div>'+"\n"
@@ -486,7 +486,7 @@ var TimelineEvents = Class.extend({
 									+	  "\t"+'<div class="param-container"><div class="param-label user-selectable">End Time: </div></div>'+"\n"
 									+	  "\t"+'<div class="value-container"><div class="param-value user-selectable">'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', (point.x2 - point.modifier))+'</div><div class="ui-icon ui-icon-arrowstop-1-e" title="Jump to Event End Time"></div>'+"\n"
 									+  '</div>'+"\n";
-				
+
 						if ( point.hasOwnProperty('hv_labels_formatted') && Object.keys(point.hv_labels_formatted).length > 0 ) {
 							$.each( point.hv_labels_formatted, function (param, value) {
 								value = value.replace(/u03b1/g, "α");
@@ -500,7 +500,7 @@ var TimelineEvents = Class.extend({
 										+  '</div>'+"\n";
 							});
 						}
-						
+
 						var noaaSearch = '';
 						if( point.frm_name == "NOAA SWPC Observer" || point.frm_name == "HMI SHARP"){
 							var eventName = point.hv_labels_formatted[Object.keys(point.hv_labels_formatted)[0]];
@@ -509,7 +509,7 @@ var TimelineEvents = Class.extend({
 										<div class="btn-label btn event-search-external text-btn" style="line-height: 14px;" data-url="https://arxiv.org/search/?query='+eventName+'&searchtype=all" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
 										<div style=\"clear:both\"></div>';
 						}
-						
+
 						str	 += '<div class="btn-container">'+"\n"
 									+	   "\t"+'<div class="btn-label btn event-info-event text-btn" style="line-height: 14px;" data-kbarchivid="'+ point.kb_archivid +'"><i class="fa fa-info-circle fa-fw"></i> View HEK data</div>'+"\n"
 									+ 		"<div style=\"clear:both\"></div>\n"
@@ -518,8 +518,8 @@ var TimelineEvents = Class.extend({
 									+		noaaSearch
 									+		"\t"+'<div class="btn-label btn copy-to-data-event text-btn" style="line-height: 14px;" data-start="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', this.x)+'" data-end="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', point.x2)+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>'+"\n"
 									+  '</div>'+"\n";
-						
-						
+
+
 						$("body").off('click', '.copy-to-data-event');
 						$("body").off('click', '.event-create-movie-event');
 						$("body").off('click', '.event-info-event');
@@ -527,7 +527,7 @@ var TimelineEvents = Class.extend({
 						$("body").off('click', '.ui-icon-arrowstop-1-w');
 						$("body").off('click', '.ui-icon-arrowstop-1-n');
 						$("body").off('click', '.ui-icon-arrowstop-1-e');
-						
+
 						// Event bindings
 						$("body").on('click', ".ui-icon-arrowstop-1-w", function () {
 							helioviewer.timeControls.setDate( new Date(point.event_starttime+".000Z") );
@@ -538,14 +538,14 @@ var TimelineEvents = Class.extend({
 						$("body").on('click', ".ui-icon-arrowstop-1-e", function () {
 							helioviewer.timeControls.setDate( new Date(point.event_endtime+".000Z") );
 						});
-						
+
 						$("body").on('click', '.copy-to-data-event',function() {
 							var start = $(this).data('start');
 							var end = $(this).data('end');
-							
+
 							var startArr = start.split(" ");
 							var endArr = end.split(" ");
-							
+
 							//Set dates
 							if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-data.open") == false){
 								helioviewer.drawerDataClick(true);
@@ -555,12 +555,12 @@ var TimelineEvents = Class.extend({
 							$('#vso-end-date, #sdo-end-date').val(endArr[0]);
 							$('#vso-end-time, #sdo-end-time').val(endArr[1]).change();
 						});
-						
+
 						//Create Movie from event popup
 						$("body").on('click', '.event-create-movie-event', function() {
 							var start = $(this).data('start') + '.000Z';
 							var end = $(this).data('end') + '.000Z';
-							
+
 							//build an movie settings object
 							var formSettings = [
 								{name : 'speed-method', value : 'framerate'},
@@ -568,29 +568,29 @@ var TimelineEvents = Class.extend({
 								{name : 'startTime', value : start},
 								{name : 'endTime', value : end},
 							];
-							
+
 							helioviewer._movieManagerUI._buildMovieRequest(formSettings);
 						});
-						
+
 						$("body").on('click', '.event-info-event', function(){
 							var kb_archivid = $(this).data('kbarchivid');
 							self._showEventInfoDialog(kb_archivid);
 						});
-						
+
 						$("body").on('click', '.event-search-external',  function() {
 							var url = $(this).data('url');
 							window.open(url, '_blank');
 						});
-						
+
 						//str += '<center><span style="color:'+this.points[0].series.color+'">'+this.points[0].series.name+'</span><br><b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x)+' - '+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.points[0].x2)+'</b></center>';
 					}
 					return str + '</div>';
 				},
 				positioner: function (boxWidth, boxHeight, point, e) {
 					var tooltipX = 0, tooltipY = 0;
-					if(typeof this.chart == 'undefined' || 
-						typeof this.chart.mouseCoords == 'undefined' || 
-						typeof this.chart.mouseCoords.x == 'undefined' || 
+					if(typeof this.chart == 'undefined' ||
+						typeof this.chart.mouseCoords == 'undefined' ||
+						typeof this.chart.mouseCoords.x == 'undefined' ||
 						typeof this.chart.mouseCoords.y == 'undefined'
 					){
 						return {x: 0, y: 0}
@@ -618,7 +618,7 @@ var TimelineEvents = Class.extend({
 					}else{
 						tooltipY = y - (eventPopUpHeight - timelineRectHeight) - 19;
 					}
-					
+
 					if(isShared){
 						tooltipY = 17;
 					}
@@ -636,7 +636,7 @@ var TimelineEvents = Class.extend({
 					};
 				}
 			},
-			
+
 			navigator: {
 				adaptToUpdatedData: false,
 				enabled: false,
@@ -661,7 +661,7 @@ var TimelineEvents = Class.extend({
 					ordinal: false
 				}
 			},
-			
+
 			scrollbar: {
 				enabled: false,
 				liveRedraw: false
@@ -677,7 +677,7 @@ var TimelineEvents = Class.extend({
 
 		return true;
 	},
-	
+
 	setHighchartsOptions: function(){
 		Highcharts.setOptions({
 			global: {
@@ -692,7 +692,7 @@ var TimelineEvents = Class.extend({
 			}
 		});
 	},
-	
+
 	setHighchartsTheme: function(){
 		// Custom Fonts
 		Highcharts.createElement('link', {
@@ -921,10 +921,10 @@ var TimelineEvents = Class.extend({
 		// Apply the theme
 		Highcharts.setOptions(Highcharts.theme);
 	},
-	
+
 	_setupEventHandlers: function(){
 		var self = this;
-		
+
 		$('#timeline-events-btn-zoom-in').on('click', $.proxy(this.btnZoomIn, this));
 		$('#timeline-events-btn-zoom-out').on('click', $.proxy(this.btnZoomOut, this));
 		$('#timeline-events-btn-prev').on('click', $.proxy(this.btnPrev, this));
@@ -935,10 +935,10 @@ var TimelineEvents = Class.extend({
 		//$(document).on('update-external-datasource-integration', $.proxy(this._updateTimeline, this));
 		$(document).on('change-feature-events-state', $.proxy(this._updateTimeline, this));
 		$("#hv-drawer-timeline-events-logarithmic").on('click', $.proxy(this._updateTimeline, this));
-		
-		
+
+
 	},
-	
+
 	btnZoomIn: function() {
 		var extremes, center, newMin, newMax, offsetMin, offsetMax, centerOffset, span, scaleFactor = 0.25;
 
@@ -949,15 +949,15 @@ var TimelineEvents = Class.extend({
 		center 	 = extremes.min + (span * 0.5);
 		var oldOffset = zoomTickTime - center;
 		var newOffset = oldOffset * 0.5;
-		
+
 		if(span > 180 * 60 * 1000){
 			//zoom offset
 			extremes.min = zoomTickTime - (span * 0.5);
-			extremes.max = zoomTickTime + (span * 0.5);		
-		
+			extremes.max = zoomTickTime + (span * 0.5);
+
 			newMin   = extremes.min + (span * scaleFactor);
 			newMax   = extremes.max - (span * scaleFactor);
-			
+
 			//keep same timestamp on where mouse pointer is
 			if(centerOffset > 0){
 				newMin   = newMin + newOffset;
@@ -970,7 +970,7 @@ var TimelineEvents = Class.extend({
 			newMin	 = extremes.min;
 			newMax	 = extremes.max;
 		}
-		
+
 		if(newMin < 0)  newMin = 0;
 
 		chart.xAxis[0].setExtremes(newMin, newMax);
@@ -992,7 +992,7 @@ var TimelineEvents = Class.extend({
 		//zoom offset
 		newMin = zoomTickTime - span;
 		newMax = zoomTickTime + span;
-		
+
 		//keep same timestamp on where mouse pointer is
 		if(newOffset > 0){
 			newMin   = newMin - newOffset;
@@ -1001,51 +1001,51 @@ var TimelineEvents = Class.extend({
 			newMin   = newMin - newOffset;
 			newMax   = newMax - newOffset;
 		}
-			
+
 		var today = Date.now() + 24 * 60 * 60 * 1000;
 		if(newMax > today){
 			newMax = today;
 		}
-		
+
 		var minDay = new Date(1991, 9, 11, 0, 0, 0).getTime();
 		if(newMin < minDay){
 			newMin = minDay;
 		}
-		
+
 		chart.xAxis[0].setExtremes(newMin, newMax);
 		this.afterSetExtremes({min:newMin, max:newMax});
 	},
-	
+
 	btnPrev: function() {
 		var extremes, newMin, newMax, span;
 
 		var chart = $('#data-coverage-timeline-events').highcharts();
 
 		extremes = chart.xAxis[0].getExtremes();
-		
+
 		span	 = parseInt((extremes.max - extremes.min)/2);
 		newMin   = extremes.min - span;
 		newMax   = extremes.max - span;
-		
+
 		if(newMin < 0){
 			newMin = 0;
 		}
-		
+
 		chart.xAxis[0].setExtremes(newMin, newMax);
 		this.afterSetExtremes({min:newMin, max:newMax});
 	},
-	
+
 	btnNext: function() {
 		var extremes, newMin, newMax, span;
 
 		var chart = $('#data-coverage-timeline-events').highcharts();
 
 		extremes = chart.xAxis[0].getExtremes();
-		
+
 		span	 = parseInt((extremes.max - extremes.min)/2);
 		newMin   = extremes.min + span;
 		newMax   = extremes.max + span;
-		
+
 		if(newMin < 0){
 			newMin = 0;
 		}
@@ -1053,7 +1053,7 @@ var TimelineEvents = Class.extend({
 		chart.xAxis[0].setExtremes(newMin, newMax);
 		this.afterSetExtremes({min:newMin, max:newMax});
 	},
-	
+
 	btnCenter: function() {
 		var extremes, newMin, newMax, span;
 
@@ -1062,7 +1062,7 @@ var TimelineEvents = Class.extend({
 		var date = parseInt(Helioviewer.userSettings.get("state.date"));
 
 		extremes = chart.xAxis[0].getExtremes();
-		
+
 		span	 = parseInt((extremes.max - extremes.min)/2);
 		newMin   = date - span;
 		newMax   = date + span;
@@ -1070,12 +1070,12 @@ var TimelineEvents = Class.extend({
 		chart.xAxis[0].setExtremes(newMin, newMax);
 		this.afterSetExtremes({min:newMin, max:newMax});
 	},
-	
+
 	render: function(){
 		var _url, eventLayersStr = '', layers = [], eventLayers=[], date, startDate, endDate, self, chartTypeX = 'xrange', isShared = false;
-		
+
 		self = this;
-		
+
 		//Get current HV time
 		date = parseInt(Helioviewer.userSettings.get("state.date"));
 		timelineMouseValueX = date;
@@ -1083,16 +1083,16 @@ var TimelineEvents = Class.extend({
 		//endDate = date + (7 * 24 * 60 * 60 * 1000);//7 DAYS
 		startDate = date - (10 * 60 * 60 * 1000);//7 DAYS
 		endDate = date + (10 * 60 * 60 * 1000);//7 DAYS
-		
+
 		zoomTickTime = date;
-		
+
 		//Build instruments string for url
 		eventLayersStr = helioviewer.getEvents();
-		
+
 		if(startDate < 0 || endDate < 0 || startDate > endDate){
 			return false;
 		}
-		
+
 		if(timelineStartDate > 0 && timelineEndDate > 0){
 			startDate = timelineStartDate;
 			endDate = timelineEndDate;
@@ -1100,14 +1100,14 @@ var TimelineEvents = Class.extend({
 			timelineStartDate = startDate;
 			timelineEndDate = endDate;
 		}
-		
+
 		self._timelineOptions.series = [];
-			
+
 		//Draggble start and end dates
 		var visibleAreaInSeconds = endDate - startDate;
 		var draggbleStart = (startDate - visibleAreaInSeconds * 5);
 		var draggbleEnd = (endDate + visibleAreaInSeconds * 5);
-		
+
 		var series = [];
 		series.unshift({
 			'x': draggbleStart-1,
@@ -1135,29 +1135,29 @@ var TimelineEvents = Class.extend({
 			'event_starttime': '',
 			'event_endtime': ''
 		});
-		
+
 		self._timelineOptions.series[0] = {
 			name: 'Empty',
 			data: series,
 			showInLegend: false,
 			color: '#ffffff'
 		};
-		
+
 		// create the chart
 		$('#data-coverage-timeline-events').highcharts( self._timelineOptions,function(chart){
 			$('#data-coverage-timeline-events').on('mouseup',function(){
 				if (timelineExtremesChanged) {
-					
+
 					var extremes, newMin, newMax, span;
-			
+
 					extremes = chart.xAxis[0].getExtremes();
-					
+
 					newMin   = extremes.min;
 					newMax   = extremes.max;
-					
+
 					if(newMin < 0)  newMin = 0;
 					if(newMax < 0)  newMax = 0;
-					
+
 					self.afterSetExtremes({min:newMin, max:newMax});
 					timelineExtremesChanged = false;
 				}
@@ -1170,7 +1170,7 @@ var TimelineEvents = Class.extend({
 				var container = $(chart.container),
 					offset = container.offset(),
 					x, y, isInside;
-				
+
 				if(scrollLock){
 					return false;
 				}
@@ -1179,11 +1179,11 @@ var TimelineEvents = Class.extend({
 				window.setTimeout(function(){
 					scrollLock = false;
 				},500);
-				
+
 				x = event.clientX - chart.plotLeft - offset.left;
 				y = event.clientY - chart.plotTop - offset.top;
 				isInside = chart.isInsidePlot(x, y);
-				
+
 				event.preventDefault();
 				if (event.originalEvent.deltaY < 0 || event.originalEvent.detail < 0) {
 					self.btnZoomIn();
@@ -1191,27 +1191,27 @@ var TimelineEvents = Class.extend({
 					self.btnZoomOut();
 				}
 			});
-		   	
+
 		    //$('#data-coverage-timeline-events').on('dblclick',function(e){
 			//	if(timelineRes == 'm'){
 			//		var date = new Date(timelineMouseValueX);
 			//		helioviewer.timeControls.setDate(date);
 			//	}
 			//});
-		   	 
+
 			chart.container.addEventListener('mouseover', function(e) {
 				chart.container.addEventListener('mousemove', chartEventsContainerMouseMove);
 			});
 			chart.container.addEventListener('mouseout', function(e) {
 				chart.container.removeEventListener('mousemove', chartEventsContainerMouseMove);
 			});
-			
+
 			function chartEventsContainerMouseMove(event) {
 				var containerCoords = $(chart.container).position();//element_position(chart.container);
 				var relativeMouseX = event.pageX - containerCoords.x;
 				var relativeMouseY = event.pageY - containerCoords.y;
 				chart.mouseCoords = { x: event.chartX, y: event.chartY };
-				
+
 				if(chart.isInsidePlot(event.chartX - chart.plotLeft, event.chartY - chart.plotTop)){
 					event = chart.pointer.normalize(event);
 					timelineMouseCoordX = event.chartX - chart.plotLeft;
@@ -1220,38 +1220,38 @@ var TimelineEvents = Class.extend({
 					timelineMouseValueY = chart.yAxis[0].toValue(event.chartY);
 				}
 			}
-			
+
 			self.drawPlotLine(chartTypeX);
 			self.drawCarringtonLines(startDate, endDate, chartTypeX);
-					
+
 			var chart = $('#data-coverage-timeline-events').highcharts();
 			chart.pointer.cmd = chart.pointer.onContainerMouseDown;
 			chart.pointer.onContainerMouseDown = function (a){
 				this.zoomX=this.zoomHor=this.hasZoom=a.shiftKey;
 				this.cmd(a);
-			}; 
+			};
 			chart.tooltip.shared = isShared;
-			
+
 			$('div.highcharts-tooltip, div.highcharts-tooltip span').css({'z-index': '99999', 'background-color':'#000'});
-			
+
 			self.minNavDate = startDate;
 			self.maxNavDate = endDate;
-				
+
 			self.setTitle({min:startDate,max:endDate});
 			self.setNavigationButtonsTitles({min:startDate, max:endDate});
-			
+
 			$('#data-coverage-timeline-events').highcharts().xAxis[0].setExtremes(startDate, endDate);
 			self.afterSetExtremes({min:startDate, max:endDate});
 		});
-		
-		
+
+
 	},
-	
+
 	drawCarringtonLines: function(Start, End, chartTypeX){
 		if(typeof chartTypeX == "undefined"){
 			var chartTypeX = 'column';
 		}
-		
+
 		var chart = $('#data-coverage-timeline-events').highcharts();
 
 		if(chartTypeX == 'xrange'){
@@ -1259,22 +1259,22 @@ var TimelineEvents = Class.extend({
 		}else{
 			var offset = chart.xAxis[0].minPointOffset;
 		}
-		
-		
+
+
 		var Period = End - Start;
 		var From = Start - Period;
 		var To = End + Period;
-		
-		
+
+
 		var carringtons = get_carringtons_between_timestamps(From, To);
 		var timestamps = carringtons_to_timestamps(carringtons);
 
 		carringtons.forEach(function( carrington ){
-			
+
 			var t = carrington_to_timestamp(carrington);
-			
+
 			chart.xAxis[0].removePlotLine('viewport-plotline-carrington-' + carrington);
-			
+
 			if(Period < 60 * 60 * 24 * 365 * 2 * 1000){
 				chart.xAxis[0].addPlotLine({
 					value: t.getTime() - offset,
@@ -1298,24 +1298,24 @@ var TimelineEvents = Class.extend({
 			}
 		});
 	},
-	
+
 	drawPlotLine: function(chartTypeX){
-		
+
 		if(typeof chartTypeX == "undefined"){
 			var chartTypeX = 'column';
 		}
-		
+
 		var chart = $('#data-coverage-timeline-events').highcharts();
-		
+
 		//Get current HV time
 		if(chartTypeX == 'xrange'){
 			var date = Helioviewer.userSettings.get("state.date");
 		}else{
 			var date = Helioviewer.userSettings.get("state.date") - chart.xAxis[0].minPointOffset;
 		}
-		
+
 		chart.xAxis[0].removePlotLine('viewport-plotline');
-		
+
 		chart.xAxis[0].addPlotLine({
 			value: date,
 			width: 2,
@@ -1343,47 +1343,47 @@ var TimelineEvents = Class.extend({
 			}
 		});
 	},
-	
+
 	_updateTimelineDate: function(){
 		var extremes, newMin, newMax, span;
-		
+
 		var chart = $('#data-coverage-timeline-events').highcharts();
-		
+
 		//Get current HV time
 		var date = parseInt(Helioviewer.userSettings.get("state.date"));
 		zoomTickTime = date;
-		
+
 		extremes = chart.xAxis[0].getExtremes();
-		
+
 		span	 = parseInt((extremes.max - extremes.min)/2);
 		newMin   = date - span;
 		newMax   = date + span;
-		
+
 		timelineStartDate = Math.round(newMin);
         timelineEndDate = Math.round(newMax);
-		
+
 		if($('#hv-drawer-timeline-events').is(":visible") != true){
 			return;
 		}
-		
+
 		chart.xAxis[0].setExtremes(newMin, newMax);
 		this.afterSetExtremes({min:newMin, max:newMax});
 	},
-	
+
 	_updateTimeline: function(){
 		var extremes, newMin, newMax, span;
-		
+
 		if($('#hv-drawer-timeline-events').is(":visible") != true){
 			return;
 		}
-		
+
 		var chart = $('#data-coverage-timeline-events').highcharts();
 
-		
+
 		if(typeof chart == "undefined"){
 			return;
 		}
-		
+
 		extremes = chart.xAxis[0].getExtremes();
 		newMin   = extremes.min;
 		newMax   = extremes.max;
@@ -1391,23 +1391,23 @@ var TimelineEvents = Class.extend({
 		chart.xAxis[0].setExtremes(newMin, newMax);
 		this.afterSetExtremes({min:newMin, max:newMax});
 	},
-	
+
 	/**
 	 * Load new data depending on the selected min and max
 	 */
 	afterSetExtremes: function(e) {
 		var self = this;
-		
+
 		var chart = $('#data-coverage-timeline-events').highcharts();
 		var chartTypeX = 'column';
 		var chartTypeY = 'linear';
-		
+
 		if($("#hv-drawer-timeline-events-logarithmic").is(':checked')){
 			chartTypeY = 'logarithmic';
 		}
-		
+
 		var eventLayersStr = helioviewer.getEvents();
-		
+
 		if(eventLayersStr == ''){
 			chart.showLoading('No event types selected.<br/>Use the Feature and Event selector to choose event types.');
 			while(chart.series.length > 0) {
@@ -1415,46 +1415,46 @@ var TimelineEvents = Class.extend({
 			}
 			return;
 		}else{
-		   	chart.showLoading('Loading data from server...'); 
+		   	chart.showLoading('Loading data from server...');
 		}
-		
+
 		if(e.min < 0 || e.max < 0 || e.min > e.max){
 			return false;
 		}
-		
+
 		if((e.max - e.min) / 1000 / 60 < 180){
 			var center = (e.max + e.min) / 2;
 			e.min = center - (90 * 60 * 1000);
 			e.max = center + (90 * 60 * 1000);
 		}
-		
+
 		timelineStartDate = Math.round(e.min);
 		timelineEndDate = Math.round(e.max);
 		var date = parseInt(Helioviewer.userSettings.get("state.date"));
-		
+
 		var _url = Helioviewer.api+'?action=getDataCoverage&eventLayers='+ eventLayersStr +'&currentDate='+ date +'&startDate='+ Math.round(e.min) +'&endDate='+ Math.round(e.max) +'&callback=?';
 		$.getJSON(_url, function(data) {
-		
+
 			//Remove previosly generated plot lines
 			chart.xAxis[0].removePlotBand();
-			
+
 			var seriesVisability = [];
-			
+
 			if(typeof data.error != 'undefined'){
 				alert(data.error);
-			}	
-			
+			}
+
 			while(chart.series.length > 0) {
 				seriesVisability[ chart.series[0].name ] = chart.series[0].visible;
 				chart.series[0].remove(false);
 			}
-			
-			
+
+
 			//Draggble start and end dates
 			var visibleAreaInSeconds = Math.round(e.max) - Math.round(e.min);
 			var draggbleStart = Math.round(e.min) - visibleAreaInSeconds;
 			var draggbleEnd = Math.round(e.max) + visibleAreaInSeconds;
-			
+
 			var count = 0;
 			$.each(data, function (sourceId, series) {
 				if(series['res'] == 'm' && !series['showInLegend']){
@@ -1472,7 +1472,7 @@ var TimelineEvents = Class.extend({
 						'event_endtime': ''
 					});
 				}
-				
+
 				chart.addSeries({
 					name: (typeof _eventsSeries[series.event_type] == 'undefined' ? series['name']: _eventsSeries[series.event_type].name ),
 					data: series['data'],
@@ -1480,9 +1480,9 @@ var TimelineEvents = Class.extend({
 					showInLegend: series['showInLegend'],
 					color: _eventsSeries[series.event_type].color
 				}, false, false);
-				
+
 				count++;
-				
+
 				timelineRes = series.res;
 				if(series.res == 'm'){
 					isShared = false;
@@ -1492,7 +1492,7 @@ var TimelineEvents = Class.extend({
 					chartTypeX = 'column';
 				}
 			});
-			
+
 			if(chartTypeX == 'xrange'){
 				$('#hv-drawer-timeline-events-logarithmic-holder').hide();
 				chartTypeY = 'linear';
@@ -1508,16 +1508,16 @@ var TimelineEvents = Class.extend({
 				}
 				chart.series[id].update({type: chartTypeX}, false);
 			});
-			
+
 			chart.yAxis[0].update({ type: chartTypeY}, false);
 			chart.tooltip.shared = isShared;
-			
+
 			self.minNavDate = e.min;
 			self.maxNavDate = e.max;
-			
+
 			self.setNavigationButtonsTitles(e);
-				
-			
+
+
 			chart.redraw();
 			self.drawPlotLine(chartTypeX);
 			self.drawCarringtonLines(e.min, e.max, chartTypeX);
@@ -1535,92 +1535,92 @@ var TimelineEvents = Class.extend({
 							var pointClassType= point.event_type;
 							$( '.highcharts-series-' + id ).find( "rect" ).eq( pointIndex ).addClass( 'point_' + pointClass ).addClass( 'point_name_' + pointClassName ).addClass( 'point_type_' + pointClassType );
 							pointIndex++;
-						}   
+						}
 					});
 				});
 			}
 		});
 		return true;
 	},
-	
+
 	setTitle: function(e){
 		var chart = $('#data-coverage-timeline-events').highcharts();
-		
+
 		if(timelineRes != 'm'){
 			if(
 				typeof chart.xAxis == 'undefined' ||
 				typeof chart.xAxis[0] == 'undefined' ||
-				typeof chart.xAxis[0].series == 'undefined' || 
-				typeof chart.xAxis[0].series[0] == 'undefined' || 
-				typeof chart.xAxis[0].series[0].points == 'undefined' || 
-				typeof chart.xAxis[0].series[0].points[0] == 'undefined' || 
+				typeof chart.xAxis[0].series == 'undefined' ||
+				typeof chart.xAxis[0].series[0] == 'undefined' ||
+				typeof chart.xAxis[0].series[0].points == 'undefined' ||
+				typeof chart.xAxis[0].series[0].points[0] == 'undefined' ||
 				chart.xAxis[0].series[0].points[0].x < 0){
-				return false;	
+				return false;
 			}
-	
+
 			var minTime = chart.xAxis[0].series[0].points[0].x;
-			
+
 			if(typeof chart.xAxis[0].closestPointRange != 'undefined'){
 				e.max = e.max + chart.xAxis[0].closestPointRange;
 			}
-			
+
 			if(minTime > e.min){
 				e.min = minTime;
 			}
 		}
-		
-		chart.setTitle({ 
-			text: 
+
+		chart.setTitle({
+			text:
 				Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min) +' - ' + Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.max)
 				+' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+'"'
 				+' data-date-time-end="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.max)+'">UTC</span>' });
-		
+
 		helioviewer._timeSelector = new TimeSelector();
-		
+
 		return e;
 	},
-	
+
 	setNavigationButtonsTitles: function(e) {
 		var msPerMinute = 60 * 1000;
 		var msPerHour = msPerMinute * 60;
 		var msPerDay = msPerHour * 24;
 		var msPerMonth = msPerDay * 30;
 		var msPerYear = msPerDay * 365;
-	
+
 		var elapsed = parseInt((e.max - e.min) / 2);
-		
+
 		var extension = '';
 		var time = 0;
 		if (elapsed < msPerMinute) {
 			time = Math.round(elapsed/1000);
-			extension =  time + ' second' + (time > 1 ? 's' : '');   
+			extension =  time + ' second' + (time > 1 ? 's' : '');
 		}
-	
+
 		else if (elapsed < msPerHour) {
 			time = Math.round(elapsed/msPerMinute);
-			extension =  time + ' minute' + (time > 1 ? 's' : '');	
+			extension =  time + ' minute' + (time > 1 ? 's' : '');
 		}
-	
+
 		else if (elapsed < msPerDay ) {
 			time = Math.round(elapsed/msPerHour );
-			extension =  time + ' hour' + (time > 1 ? 's' : '');	
+			extension =  time + ' hour' + (time > 1 ? 's' : '');
 		}
-	
+
 		else if (elapsed < msPerMonth) {
 			time = Math.round(elapsed/msPerDay);
-			extension =  time + ' day' + (time > 1 ? 's' : '');	 
+			extension =  time + ' day' + (time > 1 ? 's' : '');
 		}
-	
+
 		else if (elapsed < msPerYear) {
 			time = Math.round(elapsed/msPerMonth);
-			extension =  time + ' month' + (time > 1 ? 's' : '');	 
+			extension =  time + ' month' + (time > 1 ? 's' : '');
 		}
-	
+
 		else {
 			time = Math.round(elapsed/msPerYear );
-			extension =  time + ' year' + (time > 1 ? 's' : '');	 
+			extension =  time + ' year' + (time > 1 ? 's' : '');
 		}
-		
+
 		$('#timeline-events-btn-prev').html('&larr; ' + extension);
 		$('#timeline-events-btn-next').html(extension + ' &rarr;');
 	},
@@ -1630,7 +1630,7 @@ var TimelineEvents = Class.extend({
 	 */
 	_showEventInfoDialog: function (kb_archivid) {
 		var self = this;
-		
+
 		$.ajax({
 			url: Helioviewer.api,
 			dataType: Helioviewer.dataType,
@@ -1651,8 +1651,8 @@ var TimelineEvents = Class.extend({
 	 */
 	_buildEventInfoDialog: function (data,self) {
 		var dialog, sortBtn, tabs, html='', tag, json, headingText;
-		
-		
+
+
 
 		// Format results
 		dialog =  $("<div id='event-info-dialog' class='event-info-dialog' />");
@@ -1798,7 +1798,7 @@ var TimelineEvents = Class.extend({
 				});
 			}
 		});
-		
+
 		// Format numbers for human readability
 		$('.event-header-value.integer').number(true);
 		$('.event-header-value.float').each( function (i, num) {
@@ -1816,9 +1816,9 @@ var TimelineEvents = Class.extend({
 
 	_generateEventKeywordsSection: function (tab, event) {
 		var formatted, tag, tags = [], lookup, attr, domClass, icon, list= {}, self=this;
-		
+
 		var _eventGlossary = helioviewer._eventLayerAccordion._eventManager._eventGlossary;
-		
+
 		if ( tab == 'obs' ) {
 			$.each( event, function (key, value) {
 				if ( key.substring(0, 4) == 'obs_' ) {
@@ -2004,7 +2004,7 @@ var TimelineEvents = Class.extend({
 
 		return formatted;
 	}
-});	
+});
 
 
 var _eventsSeries  = {

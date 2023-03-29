@@ -12,11 +12,14 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 
 var EventTree = Class.extend({
 
-    init: function (data, container) {
+    init: function (id, data, container, eventManager) {
+        this._id = id;
         this._container = container;
-        this._build(data);
+        this._EventManager = eventManager;
+        this._visibleEventLayerKey = "state.events." + this._id + ".visible";
+        this._activeEventLayersKey = "state.events." + this._id + ".layers";
 
-        $(document).bind("toggle-checkboxes", $.proxy(this.toggle_checkboxes, this));
+        this._build(data);
         $(document).bind("toggle-checkboxes-to-state", $.proxy(this.toggle_checkboxes_state, this));
     },
 
@@ -37,54 +40,45 @@ var EventTree = Class.extend({
         this._container.jstree("open_all",null,true);
     },
 
-    toggle_checkboxes: function () {
-        var numChecked;
-        numChecked = Helioviewer.userSettings.get("state.eventLayers").length;
-        if ( numChecked > 0 ) {
-            this._container.jstree("uncheck_all",null,true);
-        }
-        else {
+    toggle_checkboxes_state: function (e, trigger_id, toState) {
+        if (trigger_id == this._id) {
             // Unbind event handler that normally triggers when checkboxes are checked/unchecked
             // because we're about to do that a lot
             this._container.unbind("change_state.jstree", $.proxy(this._treeChangedState, this));
-            
-            this._container.jstree("check_all",null,true);
+
+            if (toState == 'off') {
+                this._container.jstree("uncheck_all",null,true);
+            }
+            else if (toState == 'on') {
+                this._container.jstree("check_all",null,true);
+            }
 
             $(document).trigger("fetch-eventFRMs");
 
             // Bind event handler that triggers whenever checkboxes are checked/unchecked
             this._container.bind("change_state.jstree", $.proxy(this._treeChangedState, this));
-            $(document).trigger("change_state.jstree", this);
+            this._treeChangedState();
         }
-
-    },
-
-    toggle_checkboxes_state: function (e, toState) {
-
-        // Unbind event handler that normally triggers when checkboxes are checked/unchecked
-        // because we're about to do that a lot
-        this._container.unbind("change_state.jstree", $.proxy(this._treeChangedState, this));
-        
-        if (toState == 'off') {
-            this._container.jstree("uncheck_all",null,true);
-        }
-        else if (toState == 'on') {
-            this._container.jstree("check_all",null,true);
-        }
-        else {
-            this.toggle_checkboxes();
-            return;
-        }
-
-        $(document).trigger("fetch-eventFRMs");
-
-        // Bind event handler that triggers whenever checkboxes are checked/unchecked
-        this._container.bind("change_state.jstree", $.proxy(this._treeChangedState, this));
-        this._treeChangedState();
     },
 
     jstreeFunc: function (name, args) {
         this._container.jstree(name, args);
+    },
+
+    getVisibleEventState: function () {
+        return Helioviewer.userSettings.get(this._visibleEventLayerKey);
+    },
+
+    setVisibleEventState: function (state) {
+        Helioviewer.userSettings.set(this._visibleEventLayerKey, state);
+    },
+
+    getSavedEventLayers: function () {
+        return Helioviewer.userSettings.get(this._activeEventLayersKey);
+    },
+
+    setSavedEventLayers: function (checked) {
+        Helioviewer.userSettings.set(this._activeEventLayersKey, checked);
     },
 
     _build: function (jsTreeData) {
@@ -106,10 +100,10 @@ var EventTree = Class.extend({
             if ( event_type.children.length == 0 ) {
                 $('#'+event_type['attr'].id).css({'opacity':'0.5'});
                 $('#'+event_type['attr'].id).addClass('empty-element');
-                
-                var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
+
+                var visState = self.getVisibleEventState();
 	            if(visState != true){
-		            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
+                    self.setVisibleEventState(false)
 					$('#'+event_type['attr'].id).hide();
 	            }
             }
@@ -125,7 +119,7 @@ var EventTree = Class.extend({
         this._container.unbind("change_state.jstree", $.proxy(this._treeChangedState, this));
 
         // Loop over saved eventLayer state, checking the appropriate checkboxes to match.
-        saved = Helioviewer.userSettings.get("state.eventLayers");
+        saved = self.getSavedEventLayers();
         $.each(saved, function(i,eventLayer) {
             if (eventLayer.frms[0] == 'all') {
                 node = "#"+eventLayer.event_type;
@@ -193,17 +187,17 @@ var EventTree = Class.extend({
         );
 
         // Save eventLayers state to localStorage
-        Helioviewer.userSettings.set("state.eventLayers", checked);
+        this.setSavedEventLayers(checked)
 
         // Show/Hide events to match new state of the checkboxes
-        $(document).trigger("toggle-events");
+        this._EventManager._toggleEvents(checked);
         $(document).trigger("change-feature-events-state");
     },
 
     hoverOn: function (event) {
         var emphasisNodes, eventLayerNodes, found;
         emphasisNodes  = $("[id^="+this['attr'].id+"__]");
-        eventLayerNodes = $("#event-container > div.event-layer");
+        eventLayerNodes = $(".event-container > div.event-layer");
 
         $.each( eventLayerNodes, function(i, obj) {
             found = false;
@@ -228,7 +222,7 @@ var EventTree = Class.extend({
     },
 
     hoverOff: function (event) {
-        $("#event-container > div.event-layer").css({'opacity':'1.0'});
+        $(".event-container > div.event-layer").css({'opacity':'1.0'});
 		$(".highcharts-series > rect").show();
 		$('.movie-viewport-icon').show();
     },
@@ -241,7 +235,7 @@ var EventTree = Class.extend({
         emphasisNode  = $("#"+this['attr'].id.replace("--", "__"));
         deEmphasisNodes = $("[id^="+eventTypeAbbr+"__]");
 
-        eventLayerNodes = $("#event-container > div.event-layer");
+        eventLayerNodes = $(".event-container > div.event-layer");
 
         $.each( eventLayerNodes, function(i, obj) {
 
@@ -277,7 +271,7 @@ var EventTree = Class.extend({
         emphasisNode  = $("#"+this['attr'].id.replace("--", "__"));
         deEmphasisNodes = $("[id^="+eventTypeAbbr+"__]");
 
-        eventLayerNodes = $("#event-container > div.event-layer");
+        eventLayerNodes = $(".event-container > div.event-layer");
 
         $.each( eventLayerNodes, function(i, obj) {
 
