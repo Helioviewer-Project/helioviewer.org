@@ -39,6 +39,12 @@ var EventMarker = Class.extend(
         $(document).bind('toggle-event-label-off', $.proxy(this.toggleEventLabel, this));
     },
 
+    /**
+     * Returns true if this event data contains polygon information
+     */
+    hasBoundingBox: function () {
+        return this.hasOwnProperty('hpc_boundcc') && this.hpc_boundcc != '';
+    },
 
     /**
      * @description Creates the marker and adds it to the viewport
@@ -51,41 +57,41 @@ var EventMarker = Class.extend(
         this.eventMarkerDomNode.attr({
             'class' : "event-marker"
         });
-        
-        var id = this.kb_archivid;
+
+        var id = this.id;
         id = id.replace(/ivo:\/\/helio-informatics.org\//g, "")
         id = id.replace(/\(|\)|\.|\:/g, "");
         this.eventMarkerDomNode.attr({
             'rel' : id,
             'id' : 'marker_'+id
         });
-        if ( this.hpc_boundcc != '') {
+        if ( this.hasBoundingBox() ) {
 	        var polygonCenterX = (this.hv_poly_width_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
 	        var polygonCenterY = (this.hv_poly_height_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
 
 	        var scaledMarkerX = this.hv_marker_offset_x *( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale );
 	        var scaledMarkerY = this.hv_marker_offset_y *( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale );
-	       
+
 	        var polygonPosX = ( this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale);
 	        var polygonPosY = ( this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale);
 
 	        var markerX = Math.round(polygonPosX + polygonCenterX + scaledMarkerX);
 	        var markerY = Math.round(polygonPosY + polygonCenterY + scaledMarkerY);
-	        
+
 	        this.pos = {
 	            x: markerX - 12,
 	            y: markerY - 38
 	        };
         }else{
 	        this.pos = {
-	            x: Math.round( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) -12,
-	            y: Math.round(-this.hv_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale) -38
+	            x: Math.round( this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale) -12,
+	            y: Math.round(-this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale) -38
 	        };
         }
-        
-        
-        
-        markerURL = serverSettings['rootURL']+'/resources/images/eventMarkers/'+this.event_type.toUpperCase()+'@2x'+'.png';
+
+
+
+        markerURL = serverSettings['rootURL']+'/resources/images/eventMarkers/'+this.type.toUpperCase()+'@2x'+'.png';
         this.eventMarkerDomNode.css({
                          'left' :  this.pos.x + 'px',
                           'top' :  this.pos.y + 'px',
@@ -116,7 +122,7 @@ var EventMarker = Class.extend(
      * @description Creates the marker and adds it to the viewport
      */
     createRegion: function (zIndex) {
-        if ( this.hpc_boundcc != '' ) {
+        if ( this.hasBoundingBox() ) {
             var regionURL;
 
             // Create event region DOM node
@@ -124,15 +130,15 @@ var EventMarker = Class.extend(
             this.eventRegionDomNode.attr({
                 'class' : "event-region"
             });
-            
-            var id = this.kb_archivid;
+
+            var id = this.id;
 	        id = id.replace(/ivo:\/\/helio-informatics.org\//g, "")
 	        id = id.replace(/\(|\)|\.|\:/g, "");
 	        this.eventRegionDomNode.attr({
 	            'rel' : id,
 				'id' : 'region_'+id
 	        });
-        
+
             this.region_scaled = {
                 width:  this.hv_poly_width_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale ),
                 height: this.hv_poly_height_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )
@@ -172,12 +178,14 @@ var EventMarker = Class.extend(
 
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
             this.labelText = "";
-            $.each( this.hv_labels_formatted, function (key,value) {
-                self.labelText += self.fixTitles(value) + "<br/>\n";
-            });
+
+            let labels = this.label.split("\n");
+            labels.forEach((line) => {
+                self.labelText += self.fixTitles(line) + "<br/>\n";
+            })
         }
         else {
-            this.labelText = this.fixTitles(this.frm_name) + ' ' + this.fixTitles(this.frm_specificid);
+            this.labelText = this.fixTitles(this.name) + ' ' + this.fixTitles(this.version);
         }
     },
 
@@ -190,7 +198,7 @@ var EventMarker = Class.extend(
         this.eventMarkerDomNode.unbind();
         this.eventMarkerDomNode.remove();
 
-        if ( this.hpc_boundcc != '' ) {
+        if ( this.hasBoundingBox() ) {
             this.eventRegionDomNode.qtip("destroy");
             this.eventRegionDomNode.unbind();
             this.eventRegionDomNode.remove();
@@ -203,27 +211,27 @@ var EventMarker = Class.extend(
     refresh: function () {
 
         // Re-position Event Marker pin
-        if ( this.hpc_boundcc != '') {
+        if ( this.hasBoundingBox()) {
 	        var polygonCenterX = (this.hv_poly_width_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
 	        var polygonCenterY = (this.hv_poly_height_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
 
 	        var scaledMarkerX = this.hv_marker_offset_x *( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale );
 	        var scaledMarkerY = this.hv_marker_offset_y *( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale );
-	       
+
 	        var polygonPosX = this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale;
 	        var polygonPosY = this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale;
-	        
+
 	        var markerX = Math.round(polygonPosX + polygonCenterX + scaledMarkerX);
 	        var markerY = Math.round(polygonPosY + polygonCenterY + scaledMarkerY);
-	        
+
 	        this.pos = {
 	            x: markerX - 12,
 	            y: markerY - 38
 	        };
         }else{
 	        this.pos = {
-	            x: Math.round( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) -12,
-	            y: Math.round(-this.hv_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale) -38
+	            x: Math.round( this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale) -12,
+	            y: Math.round(-this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale) -38
 	        };
         }
 
@@ -233,7 +241,7 @@ var EventMarker = Class.extend(
         });
 
         // Re-position and re-scale Event Region polygon
-        if ( this.hpc_boundcc != '' ) {
+        if ( this.hasBoundingBox() ) {
             this.region_scaled = {
                 width: this.hv_poly_width_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale /   Helioviewer.userSettings.settings.state.imageScale ),
                 height: this.hv_poly_height_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale /   Helioviewer.userSettings.settings.state.imageScale )
@@ -257,10 +265,10 @@ var EventMarker = Class.extend(
         // Re-position Event Popup
         if ( this._popupVisible ) {
             this.popup_pos = {
-                x: ( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) +12,
-                y: (-this.hv_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale) -38
+                x: ( this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale) +12,
+                y: (-this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale) -38
             };
-            if ( this.hv_hpc_x_final > 400 ) {
+            if ( this.hv_hpc_x > 400 ) {
                 this.popup_pos.x -= this.eventPopupDomNode.width() + 38;
             }
             this.eventPopupDomNode.css({
@@ -283,47 +291,47 @@ var EventMarker = Class.extend(
 
     toggleEventLabel: function (event) {
 
-        if ( !this.label ) {
-            this.label = $('<div/>');
-            this.label.hide();
-            this.label.attr({
+        if ( !this._label ) {
+            this._label = $('<div/>');
+            this._label.hide();
+            this._label.attr({
                 'class' : "event-label"
                 // Styles found in events.css
             });
-            this.label.html(this.labelText);
-            this.label.click(function(event){
+            this._label.html(this.labelText);
+            this._label.click(function(event){
                 event.stopImmediatePropagation();
             });
-            this.label.mousedown(function(event){
+            this._label.mousedown(function(event){
                 event.stopImmediatePropagation();
             });
-            this.label.dblclick(function(event){
+            this._label.dblclick(function(event){
                 event.stopImmediatePropagation();
             });
-            this.label.enableSelection();
+            this._label.enableSelection();
 
-            this.eventMarkerDomNode.append(this.label);
+            this.eventMarkerDomNode.append(this._label);
         }
 
         if ( event.type == 'toggle-event-label-on' ) {
             this.eventMarkerDomNode.css('zIndex', '997');
             this._labelVisible = true;
             document.getSelection().removeAllRanges();
-            this.label.show();
+            this._label.show();
             Helioviewer.userSettings.set("state.eventLabels", true);
         }
         else if ( event.type == 'toggle-event-label-off' ) {
             this._labelVisible = false;
-            this.label.hide();
+            this._label.hide();
             this.eventMarkerDomNode.css('zIndex', this._zIndex);
             document.getSelection().removeAllRanges();
             Helioviewer.userSettings.set("state.eventLabels", false);
         }
         else if ( event.type == 'mouseenter' ) {
             this.eventMarkerDomNode.css('zIndex', '997');
-            this.label.addClass("event-label-hover");
-            this.label.show();
-            
+            this._label.addClass("event-label-hover");
+            this._label.show();
+
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
 	            var eventID = $(event.currentTarget).attr('rel');
 	            $(".highcharts-series > rect:not(.point_"+eventID+")").hide();
@@ -331,11 +339,11 @@ var EventMarker = Class.extend(
         }
         else if ( event.type == 'mouseleave' ) {
             if ( !this._labelVisible) {
-                this.label.hide();
+                this._label.hide();
             }
-            this.label.removeClass("event-label-hover");
+            this._label.removeClass("event-label-hover");
             this.eventMarkerDomNode.css('zIndex', this._zIndex);
-            
+
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
 	            $(".highcharts-series > rect").show();
             }
@@ -355,10 +363,10 @@ var EventMarker = Class.extend(
         }
         else {
             this.popup_pos = {
-                x: ( this.hv_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale) +12,
-                y: (-this.hv_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale) -38
+                x: ( this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale) +12,
+                y: (-this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale) -38
             };
-            if ( this.hv_hpc_x_final > 400 ) {
+            if ( this.hv_hpc_x > 400 ) {
                 this.popup_pos.x -= this.eventPopupDomNode.width() + 38;
             }
             this.eventPopupDomNode.css({
@@ -416,29 +424,39 @@ var EventMarker = Class.extend(
             headingText = this.concept+': ' + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
         }
         else {
-            headingText = this.concept + ' ' + this.fixTitles(this.frm_name) + ' ' + this.fixTitles(this.frm_specificid);
+            headingText = this.category + ' ' + this.fixTitles(this.name) + ' ' + this.fixTitles(this.version);
         }
 
         // Header Tabs
-        html += '<div class="event-info-dialog-menu">'
-             +     '<a class="show-tags-btn event-type selected">'+this.concept+'</a>'
-             +     '<a class="show-tags-btn obs">Observation</a>'
-             +     '<a class="show-tags-btn frm">Recognition Method</a>'
-             +     '<a class="show-tags-btn ref">Ref<span class="hek_ref_txt1">erences</span></a>'
-             +     '<a class="show-tags-btn all right">All</a>'
-             + '</div>';
+        if (this._IsHekEvent()) {
+            html += '<div class="event-info-dialog-menu">'
+            +     '<a class="show-tags-btn event-type selected">'+this.category+'</a>'
+            +     '<a class="show-tags-btn obs">Observation</a>'
+            +     '<a class="show-tags-btn frm">Recognition Method</a>'
+            +     '<a class="show-tags-btn ref">Ref<span class="hek_ref_txt1">erences</span></a>'
+            +     '<a class="show-tags-btn all right">All</a>'
+            + '</div>';
 
-        // Tab contents
-        html += '<div class="event-header event-type" style="height: 400px; overflow: auto;">'
-             +   this._generateEventKeywordsSection(this.event_type) + '</div>'
-             +  '<div class="event-header obs" style="display: none; height: 400px; overflow: auto;">'
-             +   this._generateEventKeywordsSection("obs") + '</div>'
-             +  '<div class="event-header frm" style="display: none; height: 400px; overflow: auto;">'
-             +   this._generateEventKeywordsSection("frm") + '</div>'
-             +  '<div class="event-header ref" style="display: none; height: 400px; overflow: auto;">'
-             +   this._generateEventKeywordsSection("ref") + '</div>'
-             +  '<div class="event-header all" style="display: none; height: 400px; overflow: auto;">'
-             +   this._generateEventKeywordsSection("all") + '</div>';
+            // Tab contents
+            let sections = [this.type, "obs", "frm", "ref", "all"];
+            sections.forEach((section, idx) => {
+                let content = this._generateEventKeywordsSection(section);
+                if (content != "<div></div>") {
+                    let class_name = idx == 0 ? "event-type" : section;
+                    let hide = idx != 0 ? "display: none;" : "";
+                    html += '<div class="event-header '+class_name+'" style="'+hide+' height: 400px; overflow: auto;">'
+                            + content + "</div>";
+                }
+            })
+        } else {
+            html += `<div class="event-info-dialog-menu">
+                        <a class="show-tags-btn all">${this.category}</a>
+                     </div>
+                     <div class="event-header all" style="height: 400px; overflow: auto;">
+                        ${this._generateEventKeywordsSection("all")}
+                     </div>`
+        }
+
 
         dialog.append(html).appendTo("body").dialog({
             autoOpen : true,
@@ -550,6 +568,12 @@ var EventMarker = Class.extend(
         });
     },
 
+    /**
+     * This is for legacy support and this method shouldn't be used more than this
+     */
+    _IsHekEvent() {
+        return this.hasOwnProperty('hv_labels_formatted');
+    },
 
     _generateEventKeywordsSection: function (tab) {
         var formatted, tag, tags = [], lookup, attr, domClass, icon, list= {}, self=this;
@@ -744,11 +768,11 @@ var EventMarker = Class.extend(
     _populatePopup: function () {
         var content = '', headingText = '', self = this;
 
-        if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
-            headingText = this.concept+': ' + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
+        if ( this.hasOwnProperty('label') && this.label.length > 0 ) {
+            headingText = this.category+': ' + this.fixTitles(this.label.split("\n")[0]);
         }
         else {
-            headingText = this.concept + ': ' + this.fixTitles(this.frm_name) + ' ' + this.fixTitles(this.frm_specificid);
+            headingText = this.category + ': ' + this.fixTitles(this.name) + ' ' + this.fixTitles(this.version);
         }
 
         content     += '<div class="close-button ui-icon ui-icon-closethick" title="Close PopUp Window"></div>'+"\n"
@@ -764,14 +788,14 @@ var EventMarker = Class.extend(
         }
         content     += '<div class="container">'+"\n"
                     +      "\t"+'<div class="param-container"><div class="param-label user-selectable">Start Time: </div></div>'+"\n"
-                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_starttime.replace('T',' ')
-                    +	   ' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_starttime.replace('T',' ')+'">UTC</span></div>'
+                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.start.replace('T',' ')
+                    +	   ' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.start.replace('T',' ')+'">UTC</span></div>'
                     +		(embedView ? '' : '<div class="ui-icon ui-icon-arrowstop-1-w" title="Jump to Event Start Time"></div></div>')+"\n"
                     +  '</div>'+"\n"
                     +  '<div class="container">'+"\n"
                     +      "\t"+'<div class="param-container"><div class="param-label user-selectable">End Time: </div></div>'+"\n"
-                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.event_endtime.replace('T',' ')
-                    +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.event_endtime.replace('T',' ')+'">UTC</span></div>'
+                    +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+this.end.replace('T',' ')
+                    +		' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+this.end.replace('T',' ')+'">UTC</span></div>'
                     +		(embedView ? '' : '<div class="ui-icon ui-icon-arrowstop-1-e" title="Jump to Event End Time"></div>')+"\n"
                     +  '</div>'+"\n";
 
@@ -783,27 +807,33 @@ var EventMarker = Class.extend(
                         +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+value+'</div></div>'+"\n"
                         +  '</div>'+"\n";
             });
+        } else {
+            let lines = this.label.replace("\n", " ");
+            content += '<div class="container">'+"\n"
+                        +      "\t"+'<div class="param-container"><div class="param-label user-selectable">title: </div></div>'+"\n"
+                        +      "\t"+'<div class="value-container"><div class="param-value user-selectable">'+lines+'</div></div>'+"\n"
+                        +  '</div>'+"\n";
         }
-		
+
 		var noaaSearch = '';
-        if( this.frm_name == "NOAA SWPC Observer" || this.frm_name == "HMI SHARP"){
+        if( this.name == "NOAA SWPC Observer" || this.name == "HMI SHARP"){
 			var eventName = this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
 			noaaSearch = '<div class="btn-label btn event-search-external text-btn" data-url=\'https://ui.adsabs.harvard.edu/#search/q="'+eventName+'"&sort=date desc\' target="_blank"><i class="fa fa-search fa-fw"></i>ADS search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
 						<div style=\"clear:both\"></div>\
 						<div class="btn-label btn event-search-external text-btn" data-url="https://arxiv.org/search/?query='+eventName+'&searchtype=all" target="_blank"><i class="fa fa-search fa-fw"></i>arXiv search for '+eventName+'<i class="fa fa-external-link fa-fw"></i></div>\
 						<div style=\"clear:both\"></div>';
 		}
-        
+
         //Only add buttons to main site event pop-ups, remove buttons from k12
-        if(outputType!='minimal'){
+        if(outputType!='minimal' && this.hasOwnProperty('start') && this.hasOwnProperty('end')){
             content     += '<div class="btn-container">'+"\n"
                         +       "\t"+'<div class="btn-label btn event-info text-btn"><i class="fa fa-info-circle fa-fw"></i> View HEK data</div>'+"\n"
                         + 		"<div style=\"clear:both\"></div>\n"
-                        +       "\t"+(embedView ? '' : '<div class="btn-label btn event-create-movie text-btn" data-start="'+this.event_starttime+'" data-end="'+this.event_endtime+'"><i class="fa fa-video-camera fa-fw"></i> Make movie using event times and current field of view</div>')+"\n"
+                        +       "\t"+(embedView ? '' : '<div class="btn-label btn event-create-movie text-btn" data-start="'+this.start+'" data-end="'+this.end+'"><i class="fa fa-video-camera fa-fw"></i> Make movie using event times and current field of view</div>')+"\n"
                         + 		"<div style=\"clear:both\"></div>\n"
-                        //+       "\t"+'<div class="ui-icon ui-icon-copy btn copy-to-data" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"></div>'
+                        //+       "\t"+'<div class="ui-icon ui-icon-copy btn copy-to-data" data-start="'+this.start.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.end.replace('T',' ').replace(/-/gi,'/')+'"></div>'
                         +		noaaSearch
-                        +		"\t"+(embedView ? '' : '<div class="btn-label btn copy-to-data text-btn" data-start="'+this.event_starttime.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.event_endtime.replace('T',' ').replace(/-/gi,'/')+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>')+"\n"
+                        +		"\t"+(embedView ? '' : '<div class="btn-label btn copy-to-data text-btn" data-start="'+this.start.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.end.replace('T',' ').replace(/-/gi,'/')+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>')+"\n"
                         //+       "\t"+'<div class="ui-icon ui-icon-video btn event-movie"></div><div class="btn-label btn event-movie">Generate Movie</div>'+"\n"
                         +  '</div>'+"\n";
         }
@@ -818,13 +848,13 @@ var EventMarker = Class.extend(
 
         // Event bindings
         this.eventPopupDomNode.find(".ui-icon-arrowstop-1-w").bind('click', function () {
-            helioviewer.timeControls.setDate( new Date(self.event_starttime+".000Z") );
+            helioviewer.timeControls.setDate( new Date(self.start+".000Z") );
         });
         this.eventPopupDomNode.find(".ui-icon-arrowstop-1-n").bind('click', function () {
             helioviewer.timeControls.setDate( new Date(self.event_peaktime+".000Z") );
         });
         this.eventPopupDomNode.find(".ui-icon-arrowstop-1-e").bind('click', function () {
-            helioviewer.timeControls.setDate( new Date(self.event_endtime+".000Z") );
+            helioviewer.timeControls.setDate( new Date(self.end+".000Z") );
         });
         this.eventPopupDomNode.find(".event-movie").bind('click', function() {
             alert('Event-based movie generation not yet implemented.')
@@ -832,10 +862,10 @@ var EventMarker = Class.extend(
         this.eventPopupDomNode.find(".copy-to-data").bind('click', function() {
             var start = $(this).data('start');
             var end = $(this).data('end');
-            
+
             var startArr = start.split(" ");
             var endArr = end.split(" ");
-            
+
             //Set dates
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-data.open") == false){
 				helioviewer.drawerDataClick(true);
@@ -845,12 +875,12 @@ var EventMarker = Class.extend(
             $('#vso-end-date, #sdo-end-date').val(endArr[0]);
             $('#vso-end-time, #sdo-end-time').val(endArr[1]).change();
         });
-		
+
 		//Create Movie from event popup
 		this.eventPopupDomNode.find(".event-create-movie").bind('click', function() {
 	        var start = $(this).data('start') + '.000Z';
             var end = $(this).data('end') + '.000Z';
-            
+
             //build an movie settings object
             var formSettings = [
 	            {name : 'speed-method', value : 'framerate'},
@@ -858,10 +888,10 @@ var EventMarker = Class.extend(
 	            {name : 'startTime', value : start},
 	            {name : 'endTime', value : end},
             ];
-            
+
             helioviewer._movieManagerUI._buildMovieRequest(formSettings);
         });
-        
+
         this.eventPopupDomNode.find(".event-search-external").bind('click', function() {
             var url = $(this).data('url');
             window.open(url, '_blank');
@@ -887,14 +917,14 @@ var EventMarker = Class.extend(
         this.parentFRM.domNode.append(this.eventPopupDomNode);
         helioviewer._timeSelector = new TimeSelector();
     },
-    
+
     fixTitles: function(s){
 	    s = s.replace(/u03b1/g, "α");
         s = s.replace(/u03b2/g, "β");
         s = s.replace(/u03b3/g, "γ");
 		s = s.replace(/u00b1/g, "±");
 		s = s.replace(/u00b2/g, "²");
-		
+
 		return s;
     }
 

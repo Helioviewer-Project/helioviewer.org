@@ -91,8 +91,7 @@ var HelioviewerViewport = Class.extend(
         // Initialize event layers
 
         this._eventLayerManager = new HelioviewerEventLayerManager(this.requestDate, this.eventTypes,
-                                  this.imageScale, this.rsun, this.savedEventLayers,
-                                  this.urlEventLayers);
+                                  this.imageScale);
 
         //$(document).trigger("update-viewport");
     },

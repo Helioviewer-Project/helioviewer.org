@@ -3,17 +3,17 @@
 		/*border-left: 3px solid #404143;*/
 		box-shadow: 9pt 9pt 4pt 9pt rgb(255 255 255 / 75%);
 	}
-	
+
 	.zeynep .submenu {
 		background-image: url(../../images/mobile/backmobilemenubg3.png);
 	}
-	
+
 	.zeynep .submenu-header > a {
 		color:#ffffff;
 		text-align:center;
 		padding-left: 0px;
 	}
-	
+
 	.zeynep .submenu > label {
 		color: #f7e057;
 		padding-left: 0px;
@@ -47,36 +47,36 @@
 		right:0;
 		z-index:9999;
 	}
-	
+
 	.hamburger {
 		display: none;
 	}
-	
+
 	.btn-open {
 		min-width: 0px !important;
 	}
-	
+
 	.hvmobmenu_table {
 		width: 100%;
 		margin-top: 20px;
 	}
-	
-	
+
+
 	.hvmobmenu_left_td {
 		width: 50px;
 		text-align: center;
 	}
-	
+
 		.hvmobmenu_left_td a {
 			text-decoration: none;
 		}
-	
+
 	.hvmobmenu_right_td {
 		text-align: left;
 		color: white;
 		text-decoration: none;
 	}
-	
+
 	.hvmobmenu_right_td a {
 		color: white;
 		text-decoration: none;
@@ -84,7 +84,7 @@
 		font-family: 'Helvetica Neue','Helvetica',sans-serif !important;
 		font-size: 14px;
 	}
-	
+
 	.hvmobmenuitems {
 		cursor: pointer;
 		color: #ffffff !important;
@@ -93,8 +93,8 @@
 		font-weight: normal !important;
 		font-family: 'Helvetica Neue','Helvetica',sans-serif !important;
 	}
-	
-	
+
+
 	.hvmobdstab_wrap {
 		display: none;
 		position: fixed;
@@ -105,7 +105,7 @@
 		width: 100%;
 		text-align: center;
 	}
-	
+
 	.hvmobdstabs {
 		display: inline-block;
 		max-width:135px;
@@ -125,17 +125,17 @@
 		-o-user-select: none;
 		user-select: none;
 	}
-	
+
 	.hvmobds_table {
 		width: 100%;
 		height: 100%;
 		box-shadow: 9pt 9pt 4pt 9pt rgb(255 255 255 / 75%);
 	}
-	
+
 	.hvmobds_tr {
-		
+
 	}
-	
+
 	.hvmobds_td {
 		padding-top: 4px;
 		text-align:center;
@@ -143,42 +143,42 @@
 		font-size: 9px;
 		color: white;
 	}
-	
+
 	.hvmobds_td a {
 		background: transparent;
 		text-decoration: none;
 		border: 0px solid white;
 		cursor: pointer;
 	}
-	
+
 	.hvmobds_td span {
 		line-height: 6.5px;
 		color: silver;
 	}
-	
+
 	.hvmobds_td span:hover {
 		color: #ffffff;
 	}
-	
+
 	.hvmobds_icon {
 		width: 30px;
 		height: 26px;
 		filter: invert(81%) sepia(7%) saturate(4%) hue-rotate(6deg) brightness(95%) contrast(91%);
 	}
-	
+
 	.hvmobds_icon:hover {
 		filter: invert(100%) sepia(5%) saturate(7409%) hue-rotate(183deg) brightness(123%) contrast(95%);
 	}
-	
+
 	.hvmobmenuclose_div {
 		z-index:4;
 		display: none;
 		text-align:right;
 		position: fixed;
 		width: 100%;
-		background: transparent;	
+		background: transparent;
 	}
-	
+
 	.hvmobmenutitle_div	{
 		position: absolute;
 		background: silver;
@@ -192,7 +192,7 @@
 		font-size: 16px;
 		z-index: 8;
 	}
-	
+
 	.hvmobmenuclose {
 		width:30px;
 		height:30px;
@@ -201,7 +201,7 @@
 		position: absolute;
 		right: 0;
 	}
-	
+
 	#hvmobdrawerclose_div {
 		display: none;
 		text-align:right;
@@ -210,7 +210,7 @@
 		z-index: 9;
 		background: transparent;
 	}
-	
+
 	#hvmobdrawertitle_div {
 		position: absolute;
 		background: silver;
@@ -224,7 +224,7 @@
 		font-size: 16px;
 		z-index: 8;
 	}
-	
+
 	#hvmobdrawerclose {
 		width:30px;
 		height:30px;
@@ -233,11 +233,11 @@
 		position: absolute;
 		right: 0;
 	}
-	
-	.hvbottombar { 
+
+	.hvbottombar {
 		display:none;
 	}
-	
+
 	.hvbottomcal_wrap {
 		display: none;
 		position:absolute;
@@ -253,14 +253,14 @@
 		box-shadow: 1pt 1pt 4pt 1pt rgb(68 63 63 / 75%);
 		background-image: url(../../images/mobile/backmobilemenubg2.png);
 	}
-	
+
 	.hvbottomcal_img {
 		width: 35px;
 		height: 35px;
 		filter: invert(93%) sepia(99%) saturate(2049%) hue-rotate(318deg) brightness(113%) contrast(94%);
 	}
-	
-	
+
+
 	#event-popup_mob {
 		position: fixed !important;
 		z-index: 1000;
@@ -270,47 +270,47 @@
 		top: 190px !important;
 		left: 4px !important;
 	}
-	
-	
+
+
 /* desktops */
-@media screen and (min-width: 1025px) {	
+@media screen and (min-width: 1025px) {
 	.zeynep {
 		display: none;
 	}
-	
+
 	#hvmobdrawerclose_div {
 		display: none;
 	}
-	
+
 	.hamburger {
 		display: none !important;
 	}
- 
+
 	#hv-drawer-left {
 		display: block;
 		height: 100%;
 		max-height: 100%;
 		width: 354px !important;
 	}
-	
+
 	.hvmobmenuclose_div {
 		display: none;
 	}
-	
+
 }
 
 /* phones & tablets */
 @media screen and (max-width: 1024px) {  /* (max-width: 991px) and (orientation : portrait) */
-	
+
 	html, body {
 		min-width: 300px !important;
 		min-height: 400px;
 	}
-	
+
 	body {
 		touch-action: none;
 	}
-	
+
 	#toptouchlayer {
 		touch-action: none;
 		position: absolute;
@@ -333,34 +333,34 @@
 		min-width: 100%;
 		min-height: 100%;
 		width: 100%;
-		height: 100% !important;	
-	}	
-	
+		height: 100% !important;
+	}
+
 	#helioviewer-viewport-container-inner {
 		height: 100%; /* 800px */
 		/* touch-action: pinch-zoom; */
 	}
-	
+
 	#moving-container {
 		/* touch-action: manipulation; */
 	}
-	
+
 	#message-console {
 		 /* display: none !important; */
 	}
-	
+
 	.qtip {
 		display: none !important;
 	}
-	
+
 	#tooltip {
 		display: none  !important;
 	}
-	
+
 	#desktop_firsttime_tutorial_span {
 	   display: none !important;
 	}
-	
+
 	[aria-describedby="event-info-dialog"] {
 		position: fixed;
 		top: 40px !important;
@@ -370,33 +370,33 @@
 		display: block;
 		top: auto;
 	}
-	
+
 	#event-info-dialog {
 		position: absolute;
 		width: 100% !important;
 		max-width: 100% !important; /*300px; */
 		height: 800px !important;
 		top: 90px !important;
-	}	
-	
+	}
+
 	#event-info-dialog .event-header {
 		height: 100% !important;
 		width: 100% !important;
 	}
-	
+
 	.event-info-dialog-menu {
 		display: block;
 	}
-	
+
 	.event-header-tag {
 		padding-top: 10px;
 	}
-	
+
 	.event-header-value {
 		padding-top: 10px;
 		width: 100px;
 	}
-	
+
 	#invispopupbg {
 		position: absolute;
 		display: none;
@@ -404,14 +404,14 @@
 		width: 100%;
 		height: 100%;
 	}
-	
-	#event-container .event-popup {
+
+	.event-container .event-popup {
 		display: none !important;
 		position: fixed !important;
 		top:-135px !important;
 		left:-298px !important;
 	}
-	
+
 	#event-popup_mob {
 		position: fixed !important;
 		z-index: 1000;
@@ -420,7 +420,7 @@
 		height: 200px !important;
 		top: 190px !important;
 		left: 4px !important;
-		
+
 		background-color: rgba(24,24,24,0.9);
 		border: 2px solid black;
 		box-shadow: 0 0 12px black;
@@ -432,11 +432,11 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
-	
+
 	#event-popup_mob {
 		display:none;
 	}
-	
+
 	#event-popup_mob h1 {
     display: inline-block;
     font-size: 14px;
@@ -501,18 +501,18 @@
     text-align: left;
     margin: 0 6px 0 1px;
 }
-	
+
 	#event-popup_mob .close-button {
 		background: transparent;
 		background-image: url('../../images/mobile/evpopup_clostbtn1.png');
 		width: 24px;
 		height: 24px;
 	}
-	
+
 .copy-to-data {
 	display: none !important;
-}	
-	
+}
+
 #bodies-container .body-popup {
 	display:none !important;
 }
@@ -520,37 +520,37 @@
 .celestial-bodies-label {
 	z-index: 11;
 }
-	
-	
+
+
 	.hek_ref_txt1 {
 	   display:none;
-	}	
-	
+	}
+
 	a.show-tags-btn {
 		padding: 2px;
 		font-size: 11px;
 		margin: 0px !important;
 		margin-left: 5px !important;
 	}
-	
+
 	.show-tags-btn.right {
 		float: none !important;
 	}
-	
+
 	/* pop-up boxes */
 	.ui-dialog {
 		top: 0px;
 		left: 0px;
-		width:100% !important; 
+		width:100% !important;
 		height:800px !important; /* 800px */
 		border: 0px solid #ffffff;
 		z-index: 9 !important;
 	}
-	
+
 	.ui-corner-all {
-	   border-radius: 0px	
+	   border-radius: 0px
 	}
-	
+
 	#hv-drawer-left {
 		display: none;
 		position: fixed !important;
@@ -572,7 +572,7 @@
 		/*padding-bottom: 130px;*/
 		z-index: 8 !important;
 	}
-	
+
 	.hv-drawer-right {
 		/*top: 46px;*/
 		top: 0px;
@@ -581,61 +581,61 @@
 		background-image: url(../../images/backmobilemenubg2.png);
 		overflow: hidden;
 	}
-	
+
 	.hvmobmenuclose_div {
 		display: block;
 	}
-	
+
 	.hv-drawer-right .drawer-contents {
 		padding-top: 30px;
 	}
-	
+
 	.drawer-contents {
 		display: block;
 		padding-bottom: 130px;
 	}
-	
+
 	.drawer-contents .header {
 		display: block; /*none;*/
 	}
-	
+
 	#accordion-events .header {
 		display: none;
 	}
-	
+
 	#accordion-bodies .header {
 		display: none;
 	}
-	
+
 	.drawer-contents .content .section {
 		background: transparent;
 	}
-	
+
 	.accordion .header {
 		background-color: transparent;
 	}
-	
+
 	.accordion .header:hover {
 		background-color: transparent;
 	}
-	
+
 	.accordion .header h1 {
 		display: none !important;
 	}
-	
+
 	.accordion .content {
-		background-color: transparent;	
+		background-color: transparent;
 	}
-	
+
 	#hv-drawer-tab-timeline, #hv-drawer-tab-timeline-events {
 		display: none;
 	}
-	
+
 	.dynaccordion-section {
 		background: transparent !important;
 	}
-	
-	
+
+
 .ui-dialog-titlebar {
    /*display: none;*/
    background: silver;
@@ -679,11 +679,11 @@
 	position: absolute;
 	bottom: -30px;
 }
-	
+
 .ui-dialog .movie-player-dialog {
    overflow: none !important;
-}	
-	
+}
+
 .movie-player-dialog, .mejs__video {
    width: 90% !important;
 }
@@ -718,36 +718,36 @@
 
 .video-links div:nth-child(3) {
    clear:both;
-}	
-	
+}
+
 	#logo {
 		text-align: left !important;
 		margin-top: 5px;
 	}
-	
+
 	#logo h1 {
 		font-size: 1.8em;
-	}	
-	
+	}
+
 	#loading {
 		display: none !important;
 	}
-	
+
 	#menus {
 		display: none;
 	}
-	
+
 	/*
 	#zoom {
 		display: none;
 	}
 	*/
-	
+
 	#zoom, #zoomControls, #zoomSliderContainer, #zoomControlSlider {
 		display: none !important;
 		z-index: 1 !important;
 	}
-	
+
 	#zoomSliderContainer {
 		background-color: black;
 		border: 1px solid silver;
@@ -774,7 +774,7 @@
 		width:0px !important;
 		height:0px !important;
 	}
-	
+
 	#hvmobscale_div {
 		height: 35px;
 		position: absolute;
@@ -782,7 +782,7 @@
 		width: 110px;
 		border: 0px silver solid;
 		z-index: 1;
-	}	
+	}
 
 	#scale {
 		display: block;
@@ -791,7 +791,7 @@
 		width: 100%;
 		text-align:left;
 	}
-	
+
 	#center-button {
 		display: none;
 		margin-left: 6px;
@@ -800,7 +800,7 @@
 		border: 1px solid rgb(136, 136, 136);
 		box-shadow: black 0px 0px 5px;
 	}
-	
+
 	#earth-button {
 		margin-left: 5px;
 		padding: 3px;
@@ -808,7 +808,7 @@
 		border: 1px solid rgb(136, 136, 136);
 		box-shadow: black 0px 0px 5px;
 	}
-	
+
 	#scalebar-button {
 		border-left: 1px solid rgb(136, 136, 136) !important;
 		padding: 3px;
@@ -817,21 +817,21 @@
 		border: 1px solid rgb(136, 136, 136);
 		box-shadow: black 0px 0px 5px;
 	}
-	
+
 	#mouse-coords-box {
 		display: none;
 	}
-	
+
 	#earth-container {
 		display:none;
 		top: 110px !important;
 		left: 7px !important;
 	}
-	
+
 	#earthLabel {
 		background-color: rgba(17, 17, 17, 0.5) !important;
 	}
-	
+
 	#hvmobilemenu_btn {
 		display: block;
 		padding: 8px;
@@ -839,14 +839,14 @@
 		border-radius: 0px;
 		box-shadow: none;
 	}
-	
+
 	.hamburger-inner, .hamburger-inner:after, .hamburger-inner:before {
 		background-color: #ffffff !important;
 	}
-	
+
 	.hamburger.is-active .hamburger-inner, .hamburger.is-active .hamburger-inner:after, .hamburger.is-active .hamburger-inner:before {
 		background-color: #ffffff;
-	}	
+	}
 
 	.btn-open.first {
 		background-color: none !important;
@@ -862,7 +862,7 @@
 		background-image: url(../../images/mobile/backmobilemenubg3.png);
 		z-index: 10;
 	}
-	
+
 
 	#hv-header #menus {
 		float: none;
@@ -891,20 +891,20 @@
 		border-top-left-radius: 0px;
 		border-bottom-left-radius: 0px;
 		border-bottom-right-radius: 4pt;
-		
-		
+
+
 	}
-	
+
 	#hvmobdrawertitle_div {
 		display:block;
 	}
-	
+
 	.div.accordion-arrow {
 		display:none;
 	}
-	
+
 	.drawer-contents {
-		display: block !important;	
+		display: block !important;
 	}
 
 	.drawer-contents .header {
@@ -913,36 +913,36 @@
 		text-align: center;
 		font-size: 16px;
 	}
-	
+
 	.disclosure-triangle {
 		display: none;
 		width: 0px;
 		padding: 0px;
 	}
-	
+
 	#hv-drawer-youtube {
 		overflow: auto;
 	}
-	
+
 	#accordion-youtube-current .header .disclosure-triangle {
 		display: inline-block;
 	}
-	
+
 	#accordion-youtube-current .header h1 {
 		display: inline-block !important;
 		padding-top: 20px;
 		margin-left: 15px;
 	}
-	
+
 	#accordion-youtube .header {
 		padding-top: 70px;
 	}
-	
+
 	#accordion-youtube .header h1 {
 		display: inline-block !important;
 		padding-top: 20px;
-	}	
-	
+	}
+
 	#accordion-youtube .disclosure-triangle {
 		display: inline-block;
 		padding: 0 .1em 0 .5em;
@@ -965,7 +965,7 @@
 	.drawer-contents .ui-accordion-header .fa.fa-fw {
 		display: none;
 	}
-	
+
 	.removeBtn {
 		display: inline-block !important;
 	}
@@ -976,8 +976,8 @@
 
 	.image-download-btn {
 		display: none !important;
-	}	
-	
+	}
+
 	.drawer-contents .content {
 		display: block;
 		width: 100%;
@@ -1000,98 +1000,98 @@
 	.opacity-slider-track {
 		margin-bottom: 28px;
 		top: 5px !important;
-	}	
-	
+	}
+
 
 	#accordion-date, #accordion-images, #accordion-events, #accordion-bodies {
 		display: none;
 	}
-	
+
 	#accordian-images .header .disclosure-triangle h1:first-child {
 		margin-left: 100px;
 	}
-	
+
 	.accordion .content .ui-icon {
 		display: none;
 	}
-	
+
 	.timestamp {
 		display:none;
 	}
-	
+
 	#hv-drawer-timeline-events, #hv-drawer-timeline {
 	   display: none !important;
 	}
-	
+
 	.hvmobdstab_wrap {
 		display: block;
 	}
-	
+
 	.hvmobbs_br {
 		display: inline;
 	}
-	
-	.dynaccordion-section {	
+
+	.dynaccordion-section {
 		padding-top: 13px !important;
 		padding-bottom: 30px !important;
 		border-bottom: 1px solid #34282C;
 	}
-	
+
 	#TileLayerAccordion-Container .dynaccordion-section:first-child {
 		padding-top: 0px !important;
 	}
-	
+
 	#EventLayerAccordion-Container .dynaccordion-section:first-child {
 		padding-top: 30px !important;
 	}
-	
+
 	#SolarBodiesAccordion-Container .dynaccordion-section:first-child {
 		padding-top: 30px !important;
 	}
-	
+
 	.dynaccordion-section:last-child {
 		padding-bottom: 130px !important;
 		border-bottom: 0px solid #34282C;
 	}
-	
+
 	#add-new-tile-layer-btn {
 		font-size: 12px;
 	}
-	
+
 	.jstree > ul > li:first-child, .jstree > ul > li:nth-child(2) {
 		margin-top: 20px;
 	}
 
-	
+
 	.jstree > ul > li {
 		margin-left: 0px;
 		margin-bottom: 10px;
 		width: 50%;
 		float: left;
-	}	
-	
+	}
+
 	#soho-psp-tree-branch, #stereo_a-psp-tree-branch {
 		clear:both;
 	}
-	
+
 	.fa-question-circle {
 		display: none;
 	}
-	
+
 	div.dropdown-holder.layersPresetsList {
 		display: none !important;
 	}
 
-	#eventJSTree a {
+	.eventJSTree a {
 		font-family: arial, helvetica, verdana;
 		color: #ffffff !important;
 	}
-	
+
 	.observer-jstree a {
 		font-family: arial, helvetica, verdana;
 		color: #ffffff !important;
 	}
-	
+
 	#screenshot-manager-select-area {
 	   display: none;
 	}
@@ -1103,11 +1103,11 @@
 		width: 120px;
 		text-align: center;
 	}
-	
+
 	#movie-manager-select-area {
 	   display: none;
 	}
-	
+
 	#movie-manager-full-viewport {
 		float: none;
 		margin: auto;
@@ -1115,9 +1115,9 @@
 		width: 120px;
 		text-align: center;
 	}
-	
+
 	/*  START datetime field   */
-	
+
 	.hvbottombar {
 		display: block;
 		z-index: 1;
@@ -1134,14 +1134,14 @@
 		width: 100%;
 		border-top-right-radius: 0px;
 		border-bottom-right-radius: 0px;
-		height: 75px; 
+		height: 75px;
 		border: 1px solid #3a3a3a;
 		border-left:0px solid #000000;
 		box-shadow: 0pt 0pt 2pt 0pt rgb(255 255 255 / 75%);
 }
 
-	
-	
+
+
 	.dtcycle {
 		height:100%;
 		width: 96%; /* 175px */
@@ -1243,14 +1243,14 @@
 		-webkit-filter: invert(77%) sepia(100%) saturate(0%) hue-rotate(272deg) brightness(108%) contrast(106%);
 		filter: invert(77%) sepia(100%) saturate(0%) hue-rotate(272deg) brightness(108%) contrast(106%);
 	}
-	
+
 	#dt_monthyear_td {
 		text-align:center;
 		vertical-align:middle;
 		color:#ffffff;
 		font-size: 18px;
 	}
-	
+
 	#dtday_td {
 		text-align:center;
 		vertical-align:middle;
@@ -1264,40 +1264,40 @@
 		opacity:0.7;
 		width:0px;
 	}
-	
+
 	#hvmobdate_td {
 		text-align:center;
 		font-size:18px;
 	}
-	
+
 	#hvmobtime_td {
 		border-left:1px solid #555;
 		text-align:center;
 		font-size:18px;
 		width: 132px;
 	}
-	
+
 	#time {
 		background: transparent;
 		color: #ffffff;
 		border: 0px solid #000000;
 		text-align: center;
 	}
-	
+
 	#date {
 		background: transparent;
 		color: #ffffff;
 		border: 0px solid #000000;
-		text-align: center;	
+		text-align: center;
 	}
-	
+
 	.periodpicker_timepicker_dialog.visible {
 		right: 0px;
 		left: 185px;
 		top: auto !important;
 		bottom: 164px !important;
 	}
-	
+
 	#timestep-select {
 		float: none;
 		width: 135px;
@@ -1305,17 +1305,17 @@
 		color: #ffffff;
 		text-align:center;
 	}
-	
+
 	#timestep-select option {
 		background: #000000;
 		color: #ffffff;
 	}
-	
+
 	.dtcycle_jump_td {
 		text-align: center;
 		border-top: 1px solid #555;
 	}
-	
+
 	#timeNowBtn_mob_td #timeNowBtn {
 		color: yellow !important;
 		float: none;
@@ -1371,20 +1371,20 @@
 	#about-dialog img {
 		width:100%;
 	}
-	
+
 	#user-video-gallery-spinner {
 		display:none;
 	}
-	
+
 	#accordion-youtube .content {
 		/*display: block !important;*/
 	}
-	
-	
+
+
 	.celestial-pointer cirlcle {
 		r: 4.5 !important;
 	}
-	
+
 	#youtube-video-info {
 		position: fixed;
 	}
@@ -1421,45 +1421,45 @@
 		margin-bottom: 50px !important;
 		padding-bottom: 7px !important;
 	}
-	
+
 	.ui-widget.ui-widget-content {
-		top: 105px;	
+		top: 105px;
 	}
-	
-	
+
+
 	#zoom {
 		z-index:0 !important;
 		top: 10px;
 	}
-	
+
 	#zoomSliderContainer {
 		top: 40px;
 		height: 130px;
 	}
-	
+
 	#zoomControlSlider {
 		height: 130px;
 	}
-	
+
 	.dtcycle_arrows_td {
 		width: 20%;
 	}
-	
+
 	#dt_monthyear_td {
 		text-align: right;
 		width: 20%;
 	}
-	
+
 	#dtday_td {
 		text-align: left;
 		width: 20%;
 	}
-	
+
 	#hvmobtime_td {
 		width: 20%;
 		border-left: 0px solid black;
 	}
-	
+
 	.periodpicker_timepicker_dialog.visible {
 		bottom: 117px !important;
 	}
@@ -1475,31 +1475,31 @@
 	.mejs__mediaelement div video {
 	   max-height: 200px;
 	}
-	
+
 	#event-info-dialog {
 	   width: 100% !important;
-	   max-width: 100% !important;	
+	   max-width: 100% !important;
 	}
 
-	
+
 	#event-popup_mob {
 		position: fixed !important;
 		width: 400px !important;
 		padding: 10px !important;
 		top: 40px !important;
-		left: 112px !important;		
+		left: 112px !important;
 	}
-	
+
 	table#glossary-contents td {
 		max-width: 300px;
-	}	
-	
+	}
+
 	#accordion-movies {
 		height: 300px;
 		overflow: auto;
 		padding-bottom: 80px;
 	}
-	
+
 	#movie-settings-submit {
 		padding-bottom: 150px;
 	}

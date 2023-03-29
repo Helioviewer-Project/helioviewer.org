@@ -132,8 +132,8 @@ var UserSettings = Class.extend(
         }
 
         // Update settings
-        var lookup = key.split(".");	
-		
+        var lookup = key.split(".");
+
         if (lookup.length === 1) {
             this.settings[key] = value;
         }
@@ -146,7 +146,7 @@ var UserSettings = Class.extend(
             if(typeof this.settings[lookup[0]] == 'undefined'){ this.settings[lookup[0]] = {}; }
             if(typeof this.settings[lookup[0]][lookup[1]] == 'undefined'){ this.settings[lookup[0]][lookup[1]] = {}; }
             if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]] = ''; }
-            
+
             this.settings[lookup[0]][lookup[1]][lookup[2]] = value;
         }
         else if (lookup.length === 4) {
@@ -154,7 +154,7 @@ var UserSettings = Class.extend(
             if(typeof this.settings[lookup[0]][lookup[1]] == 'undefined'){ this.settings[lookup[0]][lookup[1]] = {}; }
             if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]] = {}; }
             if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] = ''; }
-            
+
             this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] = value;
         }
         else if (lookup.length === 5) {
@@ -163,7 +163,7 @@ var UserSettings = Class.extend(
             if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]] = {}; }
             if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]] = {}; }
             if(typeof this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]] == 'undefined'){ this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]] = ''; }
-            
+
             this.settings[lookup[0]][lookup[1]][lookup[2]][lookup[3]][lookup[4]] = value;
         }
         else if (lookup.length === 6) {
@@ -333,9 +333,13 @@ var UserSettings = Class.extend(
         }
 
         if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers == 'None') {
-            this.set("state.eventLayers", []);
+            Object.keys(this.get("state.events")).forEach((section) => {
+                this.set("state.events." + section + ".layers", [])
+            });
         }else if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
-            this.set("state.eventLayers", this._parseURLStringEvents(urlSettings.eventLayers));
+            Object.keys(this.get("state.events")).forEach((section) => {
+                this.set("state.events." + section + ".layers", this._parseURLStringEvents(urlSettings.eventLayers))
+            });
         }
 
         // Event labels are ON by default
@@ -385,38 +389,38 @@ var UserSettings = Class.extend(
             $.each(layerObj.uiLabels, function (i, labelObj) {
                 layerString += labelObj.name + ",";
             });
-            
+
             if(typeof layerObj.layeringOrder == 'undefined'){
 	            layerString += "1,";
             }else{
 	            layerString += parseInt(layerObj.layeringOrder) + ",";
             }
             layerString += parseInt(layerObj.opacity) + ",";
-            
+
             if(typeof layerObj.difference != 'undefined'){
 	            layerString += parseInt(layerObj.difference) + ",";
             }else{
 	            layerString += "0,";
             }
-            
+
             if(typeof layerObj.diffCount != 'undefined'){
 	            layerString += parseInt(layerObj.diffCount) + ",";
             }else{
 	            layerString += "0,";
             }
-            
+
             if(typeof layerObj.diffTime != 'undefined'){
 	            layerString += parseInt(layerObj.diffTime) + ",";
             }else{
 	            layerString += "0,";
             }
-            
+
             if(typeof layerObj.baseDiffTime != 'undefined'){
 	            var layerDateStr = layerObj.baseDiffTime;
 	            if(typeof layerDateStr == 'number' || layerDateStr == null){
 					var baseDiffTime = $('#date').val()+' '+$('#time').val();
 				}
-				
+
 	            layerString += layerDateStr.replace(' ', 'T').replace(/\//g, '-') + '.000Z';
             }else{
 	            layerString += "";
@@ -448,7 +452,11 @@ var UserSettings = Class.extend(
         var eventLayerString = '';
 
         if ( typeof eventLayerArray == "undefined" ) {
-            eventLayerArray = this.get("state.eventLayers");
+            eventLayerArray = [];
+            let events = this.get("state.events");
+            Object.keys(events).forEach((section) => {
+                eventLayerArray = eventLayerArray.concat(events[section].layers)
+            })
         }
 
         $.each(eventLayerArray, function (i, eventLayerObj) {
