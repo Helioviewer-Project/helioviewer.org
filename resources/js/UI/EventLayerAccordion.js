@@ -28,6 +28,7 @@ var EventLayerAccordion = Layer.extend(
         this._eventTypes      = eventTypes;
         this._date            = date;
         this._maximumTimeDiff = 12 * 60 * 60 * 1000; // 12 hours in miliseconds
+		this._eventManagers = [];
 
         this.options = {};
 
@@ -88,6 +89,8 @@ var EventLayerAccordion = Layer.extend(
 
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, head, body, self=this;
 		
+		let treeid='tree-'+id;
+		
 		var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
         if ( typeof visState == 'undefined') {
             Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
@@ -132,7 +135,7 @@ var EventLayerAccordion = Layer.extend(
         // Create accordion entry body
         body  = '<div class="row" style="text-align: left;"><div class="buttons"><div id="checkboxBtn-On-'+id+'" title="Toggle All Event Checkboxes On" class="text-button inline-block"><div class="fa fa-check-square fa-fw"></div>check all</div>';
         body += '<div id="checkboxBtn-Off-'+id+'" title="Toggle All Event Checkboxes Off" class="text-button inline-block"><div class="fa fa-square fa-fw"></div>check none</div></div>';
-        body += '<div id="eventJSTree" style="margin-bottom: 5px;"></div></div>';
+        body += '<div id="'+treeid+'" style="margin-bottom: 5px;"></div></div>';
 
 
         //Add to accordion
@@ -144,7 +147,8 @@ var EventLayerAccordion = Layer.extend(
             open:   startOpened
         });
 
-        this.getEventGlossary();
+		
+        this.getEventGlossary(treeid);
 
         this.domNode.find("#checkboxBtn-"+id).click( function() {
             $(document).trigger("toggle-checkboxes");
@@ -168,11 +172,11 @@ var EventLayerAccordion = Layer.extend(
             if(visState == true){
 	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
 	            $(this).addClass('hidden');
-				$('#eventJSTree .empty-element').hide();
+				$('#'+treeid+' .empty-element').hide();
             }else{
 	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
 	            $(this).removeClass('hidden');
-	            $('#eventJSTree .empty-element').show();
+	            $('#'+treeid+' .empty-element').show();
             }
             e.stopPropagation();
         });
@@ -185,6 +189,8 @@ var EventLayerAccordion = Layer.extend(
 
     _createK12VisibilityBtn: function(index, id, name, markersVisible, labelsVisible, startOpened) {
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, eventsDiv, self=this;
+		
+		let treeid='tree-'+id;
 		
 		var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
         if ( typeof visState == 'undefined') {
@@ -211,7 +217,7 @@ var EventLayerAccordion = Layer.extend(
         //Add to accordion
         this.domNode.append(eventsDiv);
 
-        this.getEventGlossary();
+        this.getEventGlossary(treeid);
 
         //this.domNode.find("#visibilityAvailableBtn-"+id).click( function(e) {
         this.domNode.find("#k12-events-visibility-btn-"+id).click( function(e) {
@@ -219,11 +225,11 @@ var EventLayerAccordion = Layer.extend(
             if(visState == true){
 	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
 	            $(this).addClass('hidden');
-				$('#eventJSTree .empty-element').hide();
+				$('#'+treeid+' .empty-element').hide();
             }else{
 	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
 	            $(this).removeClass('hidden');
-	            $('#eventJSTree .empty-element').show();
+	            $('#'+treeid+' .empty-element').show();
             }
             e.stopPropagation();
         });
@@ -235,18 +241,19 @@ var EventLayerAccordion = Layer.extend(
      * classes.
      *
      */
-    getEventGlossary: function () {
+    getEventGlossary: function (id) {
         var params = {
             "action": "getEventGlossary"
         };
-        $.get(Helioviewer.api, params, $.proxy(this._setEventGlossary, this), "json");
+        $.get(Helioviewer.api, params, $.proxy(this._setEventGlossary, this, id), "json");
     },
 
 
-    _setEventGlossary: function(response) {
-        this._eventManager = new EventManager(response, this._date);
+    _setEventGlossary: function(response, id) {
+        this._eventManagers.push(new EventManager(response, this._date, id));
     },
 
+	
 
     /**
      * @description Handles setting up an empty tile layer accordion.

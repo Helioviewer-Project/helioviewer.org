@@ -24,14 +24,14 @@ var EventManager = Class.extend({
      *
      * @constructs
      */
-    init: function (eventGlossary, date) {
+    init: function (eventGlossary, date, treeid) {
         var visState, scale;
 
         this._eventLayers    = [];
         this._events         = [];
         this._eventMarkers   = [];
         this._eventTypes     = {};
-        this._treeContainer  = $("#eventJSTree");
+        this._treeContainer  = $('#'+treeid); 
         this._jsTreeData     = [];
         this._date           = date;
         this._queEvents      = false;
