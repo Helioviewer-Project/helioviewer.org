@@ -52,6 +52,11 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
             new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
                 'HEK', true, Helioviewer.userSettings.get("state.eventLabels"))
         );
+
+        this.addEventLayer(
+            new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
+                'CCMC Flare Predictions', true, true)
+        );
     },
 
     /**

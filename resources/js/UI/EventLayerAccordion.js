@@ -88,9 +88,9 @@ var EventLayerAccordion = Layer.extend(
     _createAccordionEntry: function (index, id, name, markersVisible, labelsVisible, startOpened) {
 
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, head, body, self=this;
-		
-		let treeid='tree-'+id;
-		
+
+		let treeid = 'tree-'+id;
+
 		var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
         if ( typeof visState == 'undefined') {
             Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
@@ -101,13 +101,13 @@ var EventLayerAccordion = Layer.extend(
         markersHidden = (markersVisible ? "" : " hidden");
         labelsHidden  = ( labelsVisible ? "" : " hidden");
         availableHidden  = ( visState ? "" : " hidden");
-		
+
 		availableBtn = '<span class="fa fa-bullseye fa-fw layerAvailableBtn visible'
                       + availableHidden + '" '
                       + 'id="visibilityAvailableBtn-' + id + '" '
                       + 'title="Toggle visibility of empty elements inside Features and Events list" '
                       + '></span>';
-		
+
         visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
                       + markersHidden + '" '
                       + 'id="visibilityBtn-' + id + '" '
@@ -147,7 +147,7 @@ var EventLayerAccordion = Layer.extend(
             open:   startOpened
         });
 
-		
+
         this.getEventGlossary(treeid);
 
         this.domNode.find("#checkboxBtn-"+id).click( function() {
@@ -189,9 +189,9 @@ var EventLayerAccordion = Layer.extend(
 
     _createK12VisibilityBtn: function(index, id, name, markersVisible, labelsVisible, startOpened) {
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, eventsDiv, self=this;
-		
-		let treeid='tree-'+id;
-		
+
+		let treeid = 'tree-'+id;
+
 		var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
         if ( typeof visState == 'undefined') {
             Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
@@ -202,7 +202,7 @@ var EventLayerAccordion = Layer.extend(
         markersHidden = (markersVisible ? "" : " hidden");
         labelsHidden  = ( labelsVisible ? "" : " hidden");
         availableHidden  = ( visState ? "" : " hidden");
-		
+
         visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
                       + markersHidden + '" '
                       + 'id="visibilityBtn-' + id + '" '
@@ -249,11 +249,11 @@ var EventLayerAccordion = Layer.extend(
     },
 
 
-    _setEventGlossary: function(response, id) {
+    _setEventGlossary: function(id, response) {
         this._eventManagers.push(new EventManager(response, this._date, id));
     },
 
-	
+
 
     /**
      * @description Handles setting up an empty tile layer accordion.
@@ -359,7 +359,7 @@ var EventLayerAccordion = Layer.extend(
         // For HEK events, we can _always_ use the exact same date as the requestDate
         $("#EventLayerAccordion-Container .timestamp").each(function (i, item) {
             domNode = $(this);
-            domNode.html(self._date.toUTCDateString() + " " + self._date.toUTCTimeString() 
+            domNode.html(self._date.toUTCDateString() + " " + self._date.toUTCTimeString()
            		 +" <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+self._date.toUTCDateString() + " " + self._date.toUTCTimeString()+"\">UTC</span>")
                     .css("color", self._chooseTimeStampColor(0, 0, 0, 0));
 
@@ -392,7 +392,7 @@ var EventLayerAccordion = Layer.extend(
         $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString()
         		+" <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+date.toUTCDateString() + " " + date.toUTCTimeString()+"\">UTC</span>")
 					.css("color", this._chooseTimeStampColor(weight, 0, 0, 0));
-					
+
 		//helioviewer._timeSelector = new TimeSelector();
     },
 
