@@ -41,7 +41,7 @@ var SettingsLoader = (
         // Use current date (UTC) for default observation time
         var date = new Date(+new Date());
 		var dateDiff = new Date(+new Date() - 60*60*1000);
-		
+
         return {
             // Default settings
             options: {
@@ -161,7 +161,16 @@ var SettingsLoader = (
                         "open": false
                     }
                 },
-                "eventLayers": [],
+                "events": {
+                    "tree_HEK": {
+                        "visible": true,
+                        "layers": [],
+                    },
+                    "tree_CCMC": {
+                        "visible": true,
+                        "layers": [],
+                    },
+                },
                 "eventLabels": true,
                 "imageScale" : serverSettings.defaultImageScale,
                 "scale"      : true,

@@ -7,7 +7,7 @@
 var CelestialBodiesSatellites = Class.extend(
 {
     init: function(){
-        
+
         this.enableTrajectories = 1;// 0 = disable, 1 = partial, 2 = full trajectories
         // array of body names as they appear in the glossary, used with partial mode.
         this.enabledTrajectoriesNames;
@@ -37,9 +37,9 @@ var CelestialBodiesSatellites = Class.extend(
 
     /**
      *  Returns a string of available celestial bodies
-     * 
+     *
      *  @return {String} currently selected celestial bodies from the sidebar
-     */ 
+     */
     serializeCelestialBodiesLabels: function(){
         var savedState = Helioviewer.userSettings.get("state.celestialBodiesChecked");
         var serializedString = '';
@@ -64,9 +64,9 @@ var CelestialBodiesSatellites = Class.extend(
 
     /**
      *  Returns a string of available celestial bodies
-     * 
+     *
      *  @return {String} currently selected celestial bodies from the sidebar
-     */ 
+     */
     // TO DO: parse and serialize trajectory string
     serializeCelestialBodiesTrajectories: function(){
         var savedState = Helioviewer.userSettings.get("state.celestialBodiesChecked");
@@ -103,7 +103,7 @@ var CelestialBodiesSatellites = Class.extend(
 
     _buildDOM: function() {
         this.movingContainer = $("#moving-container");//upper level dom node that supports dragging
-        
+
         this.bodiesContainer = $('<div/>');//new container for the solar bodies
         this.bodiesContainer.attr('id','bodies-container').css({'position' : 'absolute'}).appendTo(this.movingContainer);
 
@@ -227,7 +227,7 @@ var CelestialBodiesSatellites = Class.extend(
         }else{//this was a local response to refresh
             var trajectories = this.trajectories;
         }
-        
+
         /**
          * create or find the svgUnderlineContainer DOM Object
          * this underline object is reused and its coordinates updated to move around the page
@@ -327,7 +327,7 @@ var CelestialBodiesSatellites = Class.extend(
                             textDate = textDate.toUTCString().slice(5);
                             textDate = textDate.slice(0,textDate.length-3);
                             textDate += "UTC";
-                            var bodyTextDate = bodyCapitalized + ' on <br/>' + textDate; 
+                            var bodyTextDate = bodyCapitalized + ' on <br/>' + textDate;
                             var hoverDateContainer = $('<div/>').attr({
                                 'id' : containerName+'-hover-date-'+point
                             }).addClass('hover-date-container').css({
@@ -436,9 +436,9 @@ var CelestialBodiesSatellites = Class.extend(
     },
     /**
      * Main callback on receiving data from the api. Can be called locally with the use of the ajax boolean flag
-     * 
+     *
      * Input:   @data - (object) all the data from the api
-     * 
+     *
      */
     _outputSolarBodies: function(ajax,data){
         var firstRun = true;
@@ -565,7 +565,7 @@ var CelestialBodiesSatellites = Class.extend(
                 }
             }
         }
-        
+
         var observers = Object.keys(this.trajectories);
         for(var observer of observers){
             var bodies = Object.keys(this.trajectories[observer]);
@@ -625,7 +625,7 @@ var CelestialBodiesSatellites = Class.extend(
                             height : pointBoundingBox,
                             'time' : timeAttribute,
                             'target':'#'+containerName+'-hover-date-'+point,
-                            'behind': currentPoint.b 
+                            'behind': currentPoint.b
                         }).css({
                             'position'  :   'absolute',
                             'left'      :  ( currentPoint.x - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
@@ -637,7 +637,7 @@ var CelestialBodiesSatellites = Class.extend(
                         textDate = textDate.toUTCString().slice(5);
                         textDate = textDate.slice(0,textDate.length-3);
                         textDate += "UTC";
-                        var bodyTextDate = bodyCapitalized + ' on <br/>' + textDate; 
+                        var bodyTextDate = bodyCapitalized + ' on <br/>' + textDate;
                         var hoverDateContainer = $('<div/>').attr({
                             'id' : containerName+'-hover-date-'+point
                         }).addClass('hover-date-container').css({
@@ -680,7 +680,7 @@ var CelestialBodiesSatellites = Class.extend(
                                 svgUnderlineContainer.hide();
                             });
                         }
-                        
+
                         $(document.createElementNS('http://www.w3.org/2000/svg','circle')).attr({
                             id:containerName+'-point-'+point,
                             cx: Math.floor(pointBoundingBox/2),
@@ -811,7 +811,7 @@ var CelestialBodiesSatellites = Class.extend(
                         +   bodyCapitalized+' is '+(behind_plane_of_sun ? ' behind ' : ' in front of ')+' the plane of the sun.'
                         +   '</div></div>'+"\n";
             }
-            
+
             //URL
             content += '<div class="btn-label btn event-search-external text-btn" data-url=\"'+url+'\" target="_blank"><i class="fa fa-search fa-fw"></i>Learn more about '+bodyCapitalized+'<i class="fa fa-external-link fa-fw"></i></div>\
                         <div style=\"clear:both\"></div>'
@@ -836,7 +836,7 @@ var CelestialBodiesSatellites = Class.extend(
             this.popupsContainer.append(eventPopupDomNode);
 
             eventPopupDomNode.find('.close-button').bind('click', $.proxy(this._toggleBodyInfoPopup, this, eventPopupDomNode));
-            
+
             eventPopupDomNode.bind("mousedown", function () { return false; });
             eventPopupDomNode.bind('dblclick', function () { return false; });
             eventPopupDomNode.draggable();
@@ -857,7 +857,7 @@ var CelestialBodiesSatellites = Class.extend(
             eventPopupDomNode.find("h1, .param-label, .param-value, .btn-container .btn").dblclick(function(event){
                 event.stopImmediatePropagation();
             });
-            eventPopupDomNode.find("h1, .param-label, .param-value").enableSelection(); 
+            eventPopupDomNode.find("h1, .param-label, .param-value").enableSelection();
 
             eventPopupDomNode.click(function(event){
                 event.stopImmediatePropagation();
@@ -920,7 +920,7 @@ var CelestialBodiesSatellites = Class.extend(
         var observers = Object.keys(glossary['observers']);
         for(var observer of observers){
             var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, trajectoriesHidden, labelsHidden, availableHidden, head, body,checkboxBtnOn, checkboxBtnOff,jsTreeDiv, self=this;
-            
+
             var stateVersion = "state.celestialBodiesVersion";
             var savedVersion =  Helioviewer.userSettings.get(stateVersion);
             var resetFromVersionChange = parseInt(glossary.version) != parseInt(savedVersion);
@@ -950,14 +950,14 @@ var CelestialBodiesSatellites = Class.extend(
             trajectoriesHidden = (trajectoriesVisible ? "" : " hidden");
             labelsHidden  = ( labelsVisible ? "" : " hidden");
             availableHidden  = ( availableVisible ? "" : " hidden");
-            
+
             availableBtn = '<span class="fa fa-bullseye fa-fw layerAvailableBtn visible'
                             + availableHidden + '" '
                             + 'id="visibilityAvailableBtn-' + observer + '" '
                             + 'title="Toggle visibility of checkboxes for planets not currently in viewport" '
                             + 'observer="'+observer+'"'
                             + '></span>';
-            
+
             visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
                             + trajectoriesHidden + '" '
                             + 'id="visibilityTrajectories-' + observer + '" '
@@ -1006,7 +1006,7 @@ var CelestialBodiesSatellites = Class.extend(
                   + '</div>'
                   + jsTreeDiv
                   + '</div>'
-            
+
             //Add to accordion
             this.domNode.dynaccordion("addSection", {
                 id:     observer+idDescriptor,
@@ -1016,10 +1016,6 @@ var CelestialBodiesSatellites = Class.extend(
                 open:   accordionOpen,
                 observer: observer
             });
-
-            // this.domNode.find("#checkboxBtn-"+observer).click( function() {
-            //     $(document).trigger("toggle-checkboxes");
-            // });
 
             this.domNode.find("#checkboxBtn-On-"+observer).click( function() {
                 var myObserver = $(this).attr('observer');
@@ -1108,7 +1104,7 @@ var CelestialBodiesSatellites = Class.extend(
             "themes"    : { "theme":"default", "dots":true, "icons":false },
             "plugins"   : [ "json_data", "themes", "ui", "checkbox" ],
         });
-        
+
         //restore tree state
         var stateObserver = "state.celestialBodiesChecked."+observer;
         var savedState = Helioviewer.userSettings.get(stateObserver);
@@ -1124,7 +1120,7 @@ var CelestialBodiesSatellites = Class.extend(
             });
         }
 
-        
+
         var bodies = glossary['observers'][observer];
         for(var body of bodies){
             var treeNode = $('#'+observer+"-"+body+'-tree-trajectory');
@@ -1327,7 +1323,7 @@ var CelestialBodiesSatellites = Class.extend(
                     bodyObject.data = bodyCapitalized;
                     trajectoryTreeData.push(bodyObject);
                 }
-            }            
+            }
         }else{//full trajectories
             var trajectoryTreeData = [];
             var glossaryModsKeys = Object.keys(glossaryMods);
@@ -1336,7 +1332,7 @@ var CelestialBodiesSatellites = Class.extend(
             var observerObject = Object();
             observerObject.attr = { id: observer+"-tree-branch", target: observer, type: "branch"};
             observerObject.data = observerCapitalized + " Perspective";
-            observerObject.state = "open"; 
+            observerObject.state = "open";
             observerObject.children = [];
             //end trajectories+labels grouping block
             var bodies = glossary['observers'][observer];
@@ -1368,7 +1364,7 @@ var CelestialBodiesSatellites = Class.extend(
                 //end trajectories+labels block
                 trajectoryTreeData.push(bodyObject);
             }
-            
+
         }
         return trajectoryTreeData;
     },
@@ -1398,7 +1394,7 @@ var CelestialBodiesSatellites = Class.extend(
                 }
             }
         }
-        
+
         var trajectoryObservers = Object.keys(trajectories);
         for(var observer of trajectoryObservers){
             var bodies = Object.keys(trajectories[observer]);
@@ -1417,7 +1413,7 @@ var CelestialBodiesSatellites = Class.extend(
                 }
             }
         }
-        
+
         if(visState == false){
             $(this).addClass('hidden');
             $('#'+observer+'-jstree .empty-element').hide();
