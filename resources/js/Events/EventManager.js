@@ -24,59 +24,43 @@ var EventManager = Class.extend({
      *
      * @constructs
      */
-    init: function (eventGlossary, date) {
+    init: function (eventGlossary, date, treeid, apiSource) {
         var visState, scale;
 
+        this._apiSource = apiSource;
         this._eventLayers    = [];
         this._events         = [];
         this._eventMarkers   = [];
         this._eventTypes     = {};
-        this._treeContainer  = $("#eventJSTree");
+        this._treeContainer  = $('#'+treeid);
         this._jsTreeData     = [];
         this._date           = date;
         this._queEvents      = false;
         this._eventLabelsVis = Helioviewer.userSettings.get("state.eventLabels");
         this._eventGlossary  = eventGlossary;
+        this._eventContainer = $('<div id="'+treeid+'-event-container" class="event-container"></div>');
+        this._uniqueId = treeid
 
         scale = new ImageScale();
-        
-		$("#event-container").remove();
-        $('<div id="event-container"></div>').appendTo("#moving-container");
 
-        visState = Helioviewer.userSettings.get("state.eventLayerVisible");
-        if ( typeof visState == 'undefined') {
-            Helioviewer.userSettings.set("state.eventLayerVisible", true);
-            visState = true;
-        }
-
-        if ( visState === false && $("#event-container").css('display') != 'none' ) {
-            $('span[id^="visibilityBtn-event-layer-"]').click();
-        }
-        else if ( visState === true && $("#event-container").css('display') == 'none' ) {
-            $('span[id^="visibilityBtn-event-layer-"]').click();
-        }
-
-        // Populate event_type/frm_name checkbox hierarchy with placeholder data
-        // (important in case the JSON event cache is missing and would take
-        //  a while to re-generate.)
-        this._queryDefaultEventTypes();
-
-        // Populate event_type/frm_name checkbox hierarchy with actual data
-        //this._queryEventFRMs();
+        this.updateRequestTime();
 		setTimeout($.proxy(this._queryEventFRMs, this), 100);
-		
+
         // Set up javascript event handlers
         $(document).bind("fetch-eventFRMs", $.proxy(this._queryEventFRMs, this));
-        $(document).bind("toggle-events", $.proxy(this._toggleEvents, this));
         $(document).bind('toggle-event-labels',  $.proxy(this.toggleEventLabels, this));
-        $(document).bind('reinit-events-list',  $.proxy(this.reinit, this));
+        $(document).bind('reinit-events-list',  $.proxy(this.trigger_reinit, this));
     },
 
-    reinit: function(event, date) {
+    trigger_reinit: function (e, date) {
+        this.reinit(date);
+    },
+
+    reinit: function(date) {
         var visState;
-		
-        $("#event-container").remove();
-        $('<div id="event-container"></div>').appendTo("#moving-container");
+
+        this._eventContainer.remove();
+        this._eventContainer.appendTo("#moving-container");
 
         visState = Helioviewer.userSettings.get("state.eventLayerVisible");
         if ( typeof visState == 'undefined') {
@@ -84,10 +68,10 @@ var EventManager = Class.extend({
             visState = true;
         }
 
-        if ( visState === false && $("#event-container").css('display') != 'none' ) {
+        if ( visState === false && this._eventContainer.css('display') != 'none' ) {
             $('span[id^="visibilityBtn-event-layer-"]').click();
         }
-        else if ( visState === true && $("#event-container").css('display') == 'none' ) {
+        else if ( visState === true && this._eventContainer.css('display') == 'none' ) {
             $('span[id^="visibilityBtn-event-layer-"]').click();
         }
 
@@ -100,6 +84,10 @@ var EventManager = Class.extend({
         this._date          = date;
 
         this._queryEventFRMs();
+    },
+
+    _getCheckedEvents: function () {
+        return Helioviewer.userSettings.get("state.events." + this._uniqueId + ".layers");
     },
 
     /**
@@ -123,7 +111,7 @@ var EventManager = Class.extend({
     _queryEventFRMs: function () {
         if (this._events.length == 0 ) {
             var params = {
-                "action"     : "getEventFRMs",
+                "action"     : this._apiSource,
                 "startTime"  : new Date(this._date.getTime()).toISOString(),
                 "ar_filter"  : true
             };
@@ -137,39 +125,34 @@ var EventManager = Class.extend({
      * creating the EventTypes and EventFeatureRecognitionMethods from the JSON
      * data and then calling generateTreeData to build the jsTree.
      */
-    _parseEventFRMs: function (result, queryEvents) {
-        var self = this, domNode, eventAbbr, settings;
+    _parseEventFRMs: function (result) {
+        var self = this, domNode, eventAbbr;
 
-        $("#event-container").empty();
+        this._eventContainer.empty();
 
         self._eventTypes = {};
-        $.each(result, function (eventType, eventFRMs) {
-            eventAbbr = eventType.split('/');
-            eventAbbr = eventAbbr[1];
+        result.forEach((event_group) => {
+            let eventAbbr = event_group.pin;
 
             // Create and store an EventType
             self._eventTypes[eventAbbr] = new EventType(eventAbbr);
 
             // Process event FRMs
-            $.each(eventFRMs, function (frmName, eventFRM) {
-                self._eventTypes[eventAbbr]._eventFRMs[frmName]
-                    = new EventFeatureRecognitionMethod(frmName, self.eventGlossary);
+            event_group.groups.forEach((group) => {
+                self._eventTypes[eventAbbr]._eventFRMs[group.name]
+                    = new EventFeatureRecognitionMethod(group.name, self.eventGlossary);
 
                 domNode = '<div class="event-layer" id="'
-                        + eventAbbr + '__' + frmName.replace(/ /g,'_')
+                        + eventAbbr + '__' + group.name.replace(/ /g,'_')
                         + '" style="position: absolute;">';
 
-                self._eventTypes[eventAbbr]._eventFRMs[frmName].setDomNode(
-                    $(domNode).appendTo("#event-container") );
+                self._eventTypes[eventAbbr]._eventFRMs[group.name].setDomNode(
+                    $(domNode).appendTo('#' + self._eventContainer.attr('id')) );
             });
         });
 
         this._generateTreeData(result);
-
-        // Fetch events for any selected event_type/frm_name pairs
-        if(this._queEvents){
-	        this._queryEvents();
-        }
+        this._parseEvents(result);
     },
 
     /**
@@ -191,7 +174,7 @@ var EventManager = Class.extend({
      * Save data returned from _queryEvents
      */
     _parseEvents: function (result) {
-        var eventMarker, self=this, parentDomNode, eventGlossary;
+        var self=this, eventGlossary;
 
         eventGlossary = this._eventGlossary;
 
@@ -199,13 +182,25 @@ var EventManager = Class.extend({
             eventMarker.remove();
         });
         this._eventMarkers = [];
-        this._events = result;
+        // combine all events into one giant event list
+        let all_events = [];
+        result.forEach((event_category) => {
+            event_category.groups.forEach((group) => {
+                group.data.forEach((item) => {
+                    item['pin'] = event_category['pin'];
+                    item['name'] = group['name'];
+                    item['category'] = event_category['name'];
+                })
+                all_events = all_events.concat(group.data);
+            });
+        });
+        this._events = all_events;
 
         $.each( this._events, function(i, event) {
-            if ( typeof self._eventTypes[event['event_type']] != 'undefined' ) {
+            if ( typeof self._eventTypes[event['pin']] != 'undefined' ) {
                 self._eventMarkers.push(
                     new EventMarker(eventGlossary,
-                        self._eventTypes[event['event_type']]._eventFRMs[event['frm_name']],
+                        self._eventTypes[event['pin']]._eventFRMs[event['name']],
                         event, i+1)
                 );
             }
@@ -222,13 +217,14 @@ var EventManager = Class.extend({
     _generateTreeData: function (data) {
 
         var self = this, obj, index=0, event_type_arr, type_count=0, count_str;
-		
+
         // Re-initialize _jsTreeData in case it contains old values
         self._jsTreeData = [];
 
-        $.each(data, function (event_type, event_type_obj) {
+        data.forEach((event_category) => {
+        // $.each(data, function (event_type, event_type_obj) {
             // Split event_type into a text label and an abbreviation
-            event_type_arr = event_type.split('/');
+            event_type_arr = [event_category.name, event_category.pin];
 
             // Remove trailing space from "concept" property, if necessary
             if (event_type_arr[0].charAt(event_type_arr[0].length-1) == " ") {
@@ -257,21 +253,22 @@ var EventManager = Class.extend({
             self._jsTreeData.push(obj);
 
             type_count = 0;
-            $.each(event_type_obj, function(frm_name, frm_obj) {
-                type_count += frm_obj['count'];
+            event_category.groups.forEach((group) => {
+                let group_count = group.data.length;
+                type_count += group_count;
 
                 count_str = '';
-                if ( frm_obj['count'] > 0 ) {
-                    count_str = " ("+frm_obj['count']+")";
+                if ( group_count > 0 ) {
+                    count_str = " ("+group_count+")";
                 }
                 self._jsTreeData[index].children.push(
                     {
-                        'data': frm_name+count_str,
+                        'data': group.name+count_str,
                         'attr':
                             {
                                 'id': event_type_arr[1]
                                     + '--'
-                                    + self._escapeInvalidCssChars(frm_name)
+                                    + self._escapeInvalidCssChars(group.name)
                             }
                     }
                 );
@@ -289,7 +286,7 @@ var EventManager = Class.extend({
 
         // Create a new EventTree object only if one hasn't already been created
         if (!self._eventTree) {
-            self._eventTree = new EventTree(this._jsTreeData, this._treeContainer);
+            self._eventTree = new EventTree(this._uniqueId, this._jsTreeData, this._treeContainer, self);
         }
 
         self._eventTree.reload(this._jsTreeData);
@@ -307,9 +304,7 @@ var EventManager = Class.extend({
      *
      */
     updateRequestTime: function () {
-        var managerStartDate, managerEndDate, eventStartDate, eventEndDate, self = this;
-
-        this.reinit(false, new Date($("#date").val().replace(/\//g,"-") +"T"+ $("#time").val()+"Z"));
+        this.reinit(new Date($("#date").val().replace(/\//g,"-") +"T"+ $("#time").val()+"Z"));
     },
 
 
@@ -363,10 +358,10 @@ var EventManager = Class.extend({
         return eventLayers;
     },
 
-    _toggleEvents: function (event) {
+    _toggleEvents: function () {
         var newState, checkedEventTypes = [], checkedFRMs = {}, self = this;
 
-        newState = Helioviewer.userSettings.get("state.eventLayers");
+        newState = this._getCheckedEvents();
 
         // Populate checkedEventTypes and checkedFRMs to make it easier to
         // compare the state of the checkbox hierarchy with the all stored

@@ -5,21 +5,21 @@
 "use strict";
 
 var UserLayersPresets = Class.extend({
-	
+
     init: function () {
         var self = this;
-        
+
         //Empty current list
         $('.layersPresetsList .dropdown-main > .sub-menu').html('');
-        
+
         //Build HTML list of layers presets
         var html = this.buildList(SystemLayersPresets) + this.buildUserList();
         $('.layersPresetsList .dropdown-main > .sub-menu').html(html);
-        
+
 		//Init events
 		this.initEvents();
     },
-    
+
     initEvents: function(){
 		var self = this;
 		var firstInitMinimalLayerSelection = true;
@@ -33,23 +33,14 @@ var UserLayersPresets = Class.extend({
 				$('.qtip').hide();
             }
         );
-        
+
         $( '.dropdown-main' ).click(
             function(event){
 	            event.stopPropagation();
                 $(this).children('.sub-menu').slideDown(200);
             }
         );
-        
-        $( '.dropdown-main' ).hover(
-            function(event){
-                $(this).children('.sub-menu').slideDown(200);
-            },
-            function(event){
-                $(this).children('.sub-menu').slideUp(200);
-            }
-        );
-        
+
         $( '.dropdown' ).hover(
             function(event){
                 $(this).children('.sub-menu').slideDown(200);
@@ -58,50 +49,47 @@ var UserLayersPresets = Class.extend({
                 $(this).children('.sub-menu').slideUp(200);
             }
         );
-        
+
         $('.userlist-add-item').click(function(event){
 	        event.stopPropagation();
 	        self.setName();
-	        
+
 	        $('.userlist-add-item').hide();
 	        $('.item-add-form').show();
         });
-        
+
         $('.userlist-cancel-item').click(function(event){
 	        event.stopPropagation();
 	        $('.item-add-form').hide();
 	        $('.userlist-add-item').show();
         });
-        
+
         $('.userlist-save-item').click(function(event){
 	        event.stopPropagation();
 	        $('.item-add-form').hide();
 	        $('.userlist-add-item').show();
-	        
+
 	        var date = helioviewer.viewport._tileLayerManager.getRequestDateAsISOString();
-	        var dateObj = getDateFromUTCString(date);
-	        var dateStr = dateObj.toDateString();
-	        var timeStr = dateObj.toTimeString();
 	        var imageLayersStr = helioviewer.viewport.serialize();
 	        var eventsLayersStr = helioviewer.viewport.serializeEvents();
-	        
+
 	        var item = {
 				'name':$('.item-name').val(),
 				'observationDate':'',
 				'events':'',
 				'layers':''
 			};
-	        
+
 	        //Add observation date
 	        if($('input.item-date').is(':checked')){
 				item.observationDate = date;
 	        }
-	        
+
 	        //Add datasources
 	        if($('input.item-sources').is(':checked')){
-		         item.layers = imageLayersStr; 
+		         item.layers = imageLayersStr;
 	        }
-	        
+
 	        //Add events
 	        if($('input.item-events').is(':checked')){
 		        if(eventsLayersStr != ''){
@@ -109,9 +97,9 @@ var UserLayersPresets = Class.extend({
 		        }else{
 			        item.events = 'None';
 		        }
-		        
+
 	        }
-	        
+
 	        var currentList = Helioviewer.userSettings.get("state.userTileLayers");
 	        if(typeof currentList == 'undefined'){
 		        currentList = [];
@@ -119,19 +107,19 @@ var UserLayersPresets = Class.extend({
 	        var nextItemId = currentList.length;
 	        currentList.push(item);
 	        Helioviewer.userSettings.set("state.userTileLayers", currentList);
-			
+
 			$('.item-add-form').hide();
 			$('.userlist-add-item').show();
-				
+
 	        //add new item to the list
 	        $('.layersPresetsList .dropdown-main > .sub-menu').find(' > li:nth-last-child(1)').before(self.listItem(nextItemId, item, true));
 	        self.init();
         });
-        
+
         $('.item-list-remove').click(function(event){
 	        //event.stopPropagation();
 	        var id = $(this).data('id');
-	        
+
 	        var currentList = Helioviewer.userSettings.get("state.userTileLayers");
 	        var newList = [];
 	        $.each(currentList, function(key, item){
@@ -144,21 +132,21 @@ var UserLayersPresets = Class.extend({
 	        $('.item-list-'+id).qtip('api').toggle(false);
 	        $('.item-list-'+id).qtip('destroy', true);
 	        $('.item-list-'+id).remove();
-	        
+
 	        self.init();
         });
-        
+
         $('#image-layer-select').change(function(event){
 	        event.stopPropagation();
 			var optionSelected = $("option:selected", this);
 			self._loadData(optionSelected);
         });
-        
+
         $('.item-list, .image-layer-switch').click(function(event){
 	        event.stopPropagation();
 	        self._loadData(this);
         });
-        
+
         $('.item-list').hover(
 			function() {
 				$('.qtip').hide();
@@ -167,7 +155,7 @@ var UserLayersPresets = Class.extend({
 		        var date = $(this).data('date');
 		        var layers = $(this).data('layers');
 		        var events = $(this).data('events');
-		        
+
 		        if(typeof id != 'undefined' && parseInt(id) >= 0){
 			        if(typeof $(this).qtip('api') == 'undefined'){
 				        var qt = $(this).qtip({
@@ -197,7 +185,7 @@ var UserLayersPresets = Class.extend({
 				//$(this).qtip('destroy', true);
 			}
 		);
-		
+
 		if(outputType == 'minimal'){
 	        var selectValue = Helioviewer.userSettings.get('state.dropdownLayerSelectID');
 	        if(typeof selectValue == 'undefined' || $('#image-layer-select').length < selectValue){
@@ -215,22 +203,20 @@ var UserLayersPresets = Class.extend({
 				$("#image-layer-select").val(selectValue);
 			}
         }
-		
+
 	},
-	
+
 	_loadData: function(el){
-		var id = $(el).data('id');
-        var name = $(el).data('name');
         var date = $(el).data('date');
         var layers = $(el).data('layers');
         var events = $(el).data('events');
         var settings = {};
-        
+
         if(outputType == 'minimal'){
 	        var selectValue = parseInt($(el).val());
 	        Helioviewer.userSettings.set('state.dropdownLayerSelectID', selectValue);
         }
-		
+
 		if(typeof date != 'undefined' && date != ''){
 			helioviewer.timeControls.setDate(Date.parseUTCDate(date), true);
         }else{
@@ -240,34 +226,34 @@ var UserLayersPresets = Class.extend({
         if(typeof layers != 'undefined' && layers != ''){
 	        layers = layers.slice(1, -1);
 			settings['imageLayers'] = layers.split("],[");
-			
+
 			helioviewer.viewport._tileLayerManager.each(function(){
 		        $(document).trigger("remove-tile-layer", [this.id]);
 		        $("#" + this.id + " *[oldtitle]").qtip("destroy");
 				$('#TileLayerAccordion-Container').dynaccordion('removeSection', {id: this.id});
-				
+
 				//$(document).trigger("save-tile-layers");
 	            //$(document).trigger("save-tile-layers-from-accordion");
 	            //e.stopPropagation();
 		    });
 		    //$(document).trigger("save-tile-layers-from-accordion");
-		    
+
 		    Helioviewer.userSettings._processURLSettings(settings);
 		    helioviewer.viewport.tileLayers = Helioviewer.userSettings.get('state.tileLayers');
 		    //$('#TileLayerAccordion-Container').dynaccordion();
 		    //helioviewer.viewport._tileLayerManager._layers = [];
 		    //helioviewer.viewport._tileLayerManager._loadStartingLayers(helioviewer.viewport.tileLayers);
 		    //helioviewer.viewport.loadDataSources();
-		    
+
 		    helioviewer.viewport._tileLayerManager = new HelioviewerTileLayerManager(
-		    	helioviewer.viewport.requestDate, 
-		    	helioviewer.viewport.dataSources, 
-		    	helioviewer.viewport.tileSize, 
-		    	helioviewer.viewport.imageScale, 
-		    	helioviewer.viewport.maxTileLayers, 
+		    	helioviewer.viewport.requestDate,
+		    	helioviewer.viewport.dataSources,
+		    	helioviewer.viewport.tileSize,
+		    	helioviewer.viewport.imageScale,
+		    	helioviewer.viewport.maxTileLayers,
 		    	Helioviewer.userSettings.get('state.tileLayers')
 		    );
-		    
+
 		    $(document).trigger("save-tile-layers");
 		    if(outputType != 'minimal'){
 			    $(document).trigger("save-tile-layers-from-accordion");
@@ -275,75 +261,79 @@ var UserLayersPresets = Class.extend({
 		    //_updateTimeStamp(id, date);
 		    //console.log(helioviewer.timeControls.getDate());
 		    //helioviewer._initViewport(helioviewer.timeControls.getDate(), 0, 0);
-		    
+
 		    $(document).trigger("update-viewport");
 		    //helioviewer._tileLayerAccordion._initTreeSelect(id, hierarchy);
         }
-        
-        
+
+
         if(typeof events != 'undefined' && events != ''){
-	        
+
 			if(events == 'None'){
 				settings['eventLayers'] = 'None';
 			}else{
 				events = events.slice(1, -1);
 				settings['eventLayers'] = events.split("],[");
 			}
-			
+
 			Helioviewer.userSettings._processURLSettings(settings);
 			$(document).trigger("reinit-events-list", [helioviewer.timeControls.getDate()]);
         }
-        
+
         if(typeof date != 'undefined' && date != ''){
 			helioviewer.timeControls.setDate(Date.parseUTCDate(date), true);
         }else{
 	        helioviewer.timeControls._onDateChange();
         }
-        
+
 		//$(document).trigger("observation-time-changed", [new Date(Helioviewer.userSettings.get("state.date"))]);
-        
+
         if($(el).qtip('api')){
 	        $(el).qtip('api').toggle(false);
         }
-        
+
         $('.dropdown-main').children('.sub-menu').slideUp(200);
         $('.item-add-form').hide();
-		$('.userlist-add-item').show();	
+		$('.userlist-add-item').show();
 	},
-	
+
 	setName: function(){
 		var dateString = '';
 		var layerString = '';
 		var eventsString = 'Events: ';
-        
+
         //Add observation date
         if($('input.item-date').is(':checked')){
 	        var date = helioviewer.viewport._tileLayerManager.getRequestDateAsISOString();
 	        var dateObj = getDateFromUTCString(date);
-	        dateString = dateObj.toDateString()+' '+dateObj.toTimeString();  
+	        dateString = dateObj.toDateString()+' '+dateObj.toTimeString();
         }
-        
+
         //Add datasources
         if($('input.item-sources').is(':checked')){
 	        //var imageLayersStr = Helioviewer.userSettings.parseLayersURLString();
-	        
+
 	        var layerArray = Helioviewer.userSettings.get("state.tileLayers");
-			
-			
+
+
 	        $.each(layerArray, function (i, layerObj) {
-	
+
 	            $.each(layerObj.uiLabels, function (i, labelObj) {
 	                layerString += ' '+labelObj.name;
 	            });
-	            
+
 	            layerString += ",";
-	        });	    
-	        layerString = layerString.trim().replace(/,\s*$/, "");    
+	        });
+	        layerString = layerString.trim().replace(/,\s*$/, "");
         }
-        
+
         //Add events
         if($('input.item-events').is(':checked')){
-	        var eventLayerArray = Helioviewer.userSettings.get("state.eventLayers");
+			var eventLayerArray = [];
+			let events = Helioviewer.userSettings.get("state.events");
+	        Object.keys(events).forEach((section) => {
+				eventLayerArray = eventLayerArray.concat(events[section].layers)
+			});
 	        if(eventLayerArray.length == 20){
 		        eventsString += 'All';
 	        }else{
@@ -354,9 +344,9 @@ var UserLayersPresets = Class.extend({
 		        });
 		        eventsString = eventsString.trim().replace(/,\s*$/, "");
 	        }
-	        
+
         }
-        
+
         if(layerString !== ''){
 	        name = layerString;
         }else if(dateString !== ''){
@@ -366,10 +356,10 @@ var UserLayersPresets = Class.extend({
         }
 
 		$('.item-name').val(name);
-		
+
         return;
 	},
-	
+
 	listItem: function(k,v, user){
 		return '<li class="item-list-'+k+' item-list" data-id="'+k+'" data-name="'+v.name+'" data-date="'+v.observationDate+'" data-layers="'+v.layers+'" data-events="'+v.events+'">\
 			<a href="#" class="" >\
@@ -378,54 +368,54 @@ var UserLayersPresets = Class.extend({
 			</a>\
 		</li>';
 	},
-	
+
 	buildList: function(obj){
 		var self = this;
 		var listHTML = '';
-		
+
 		//Build System layers first
 		$.each(obj, function(k, v){
-			
+
 			if(typeof v.submenu != 'undefined'){
 				listHTML += '<li class="dropdown"><a href="#">'+v.name+' <i class="arrow arrow-right"></i></a><ul class="sub-menu">';
-				
+
 				if(v.submenu.length > 0){
 					listHTML += self.buildList(v.submenu);
 				}else{
 					listHTML += '<li><a href="#" class="item-list">Empty</a></li>';
 				}
 				listHTML += '</ul>';
-				
+
 				if(typeof v.items != 'undefined' && v.items.length > 0){
 					listHTML += '<li class="divider"></li>';
-					
+
 					$.each(v.items, function(key, value){
 						listHTML += self.listItem(key,value);
 					});
 				}
-				
+
 			}else{
 				listHTML += self.listItem(k,v);
 			}
 
 		});
-		
+
 		//Build User layers
 		var userTileLayers = Helioviewer.userSettings.get("state.userTileLayers");
 		var userTileLayersHTML = '';
 		if(typeof userTileLayers != 'undefined' && userTileLayers.length > 0){
 			var userTileLayersHTML = '<li class="divider"></li>';
 		}else{
-			
+
 		}
-		
+
 		return listHTML;
 	},
-	
+
 	buildUserList: function(obj){
 		var self = this;
 		var listHTML = '';
-		
+
 		//Build User layers
 		var userTileLayers = Helioviewer.userSettings.get("state.userTileLayers");
 		if(typeof userTileLayers != 'undefined' && userTileLayers.length > 0){
@@ -434,9 +424,9 @@ var UserLayersPresets = Class.extend({
 				listHTML += self.listItem(k, v, true);
 			});
 		}else{
-			
+
 		}
-		
+
 		listHTML += '<li>\
 							<div class="text-button fa fa-plus userlist-add-item"> Add Item</div>\
 							<div class="item-add-form" style="display:none;">\
@@ -456,15 +446,15 @@ var UserLayersPresets = Class.extend({
 								</div>\
 							</div>\
 						</li>';
-		
+
 		return listHTML;
 	},
-	
+
 	_buildPreviewTooltipHTML: function (id, name, date, layers, events) {
 		var dateFormated = '', layersFormated = '', eventsFormated = '', urlDate = '', urlLayers = '', urlEvents = '';
         var eventLabels = 'false';
-        
-        
+
+
         var vport = helioviewer.viewport.getViewportInformation();
         var roi = {
 	          'left': vport['coordinates']['left'],
@@ -472,22 +462,22 @@ var UserLayersPresets = Class.extend({
 	           'top': vport['coordinates']['top'],
 	        'bottom': vport['coordinates']['bottom']
 	    };
-		
+
         var imageScale = vport['imageScale'];
 		var x0 = (imageScale * (roi.left + roi.right) / 2).toFixed(2);
 	    var y0 = (imageScale * (roi.bottom + roi.top) / 2).toFixed(2);
 	    var width  = (( roi.right - roi.left ) * imageScale).toFixed(2);
 	    var height = (( roi.bottom - roi.top ) * imageScale).toFixed(2);
-		
+
 		var x1 = Math.round(parseFloat(x0) - parseFloat(width / 2));
 	    var x2 = Math.round(parseFloat(x0) + parseFloat(width / 2));
-	
+
 	    var y1 = Math.round(parseFloat(y0) - parseFloat(height / 2));
 	    var y2 = Math.round(parseFloat(y0) + parseFloat(height / 2));
-        
+
         if(typeof date != 'undefined' && date != ''){
 	        urlDate = date;
-	        
+
 	        dateFormated = '<tr>\
 	            		<td width="100px"><b>Observation Date:</b></td>\
 	            		<td>' + date.substr(0, 19).replace(/T/, " ") + '</td>\
@@ -505,7 +495,7 @@ var UserLayersPresets = Class.extend({
 		        var layerArr = v.split(",");
 		        layerString += layerArr[0]+' '+ layerArr[1]+' '+ layerArr[2]+ (layerArr[3] == 1 || layerArr[3] == 0  ? '' : ' '+ layerArr[3]) +';<br/>';
 	        });
-	        
+
 	        layersFormated = '<tr>\
 						<td><b>Data Sources:</b></td>\
 						<td>'+layerString+'</td>\
@@ -513,17 +503,17 @@ var UserLayersPresets = Class.extend({
         }else{
 	        urlLayers = vport.layers;
         }
-        
-        
+
+
         if(typeof events != 'undefined' && events != ''){
 	        eventLabels = 'true';
-	        
+
 	        if(events == 'None'){
 		        urlEvents = '';
 		        eventString = 'None';
 	        }else{
 		        urlEvents = events;
-	        
+
 		        var eventLayersString = events.slice(1, -1);
 		        var eventLayersArr = eventLayersString.split("],[");
 		        var eventString = '';
@@ -531,10 +521,10 @@ var UserLayersPresets = Class.extend({
 			        var layerArr = v.split(",");
 			        eventString += ' '+layerArr[0]+',';
 		        });
-		        
+
 		        eventString = eventString.trim().replace(/,\s*$/, "");
 	        }
-	        
+
 	        eventsFormated = '<tr>\
 						<td><b>Events:</b></td>\
 						<td>'+eventString+'</td>\
@@ -542,9 +532,9 @@ var UserLayersPresets = Class.extend({
         }else{
 	        urlEvents = vport.events;
         }
-        
 
-        
+
+
         var screenshotUrl = Helioviewer.api+'?action=takeScreenshot&imageScale='+imageScale+'&layers='+urlLayers+'&events='+urlEvents+'&eventLabels='+eventLabels+'&scale=false&scaleType=earth&scaleX=0&scaleY=0&date='+urlDate+'&x1='+x1+'&x2='+x2+'&y1='+y1+'&y2='+y2+'&display=true&watermark=false&switchSources=true';
         var html = '<div style="text-align: center;">\
             		<img style="width:200px;" src="'+screenshotUrl+'" alt="preview thumbnail" class="screenshot-preview" />\
@@ -555,8 +545,8 @@ var UserLayersPresets = Class.extend({
 
         return html;
     }
-    
-});    
+
+});
 
 var SystemLayersPresets = [
 	/*{

@@ -16,11 +16,9 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (requestDate, defaultEventTypes, viewportScale, rsun,
-                    savedEventLayers, urlEventLayers) {
+    init: function (requestDate, defaultEventTypes, viewportScale) {
 
-        this._super(requestDate, defaultEventTypes, viewportScale, rsun,
-                    savedEventLayers, urlEventLayers);
+        this._super(requestDate, defaultEventTypes, viewportScale);
 
         this._loadStartingLayers(defaultEventTypes);
     },
@@ -35,10 +33,6 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
             new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
                 'HEK', true, true)
         );
-
-        // Don't save the event layer here.  We're just adding the accordion stuff,
-        // not checking checkboxes.  Differs from how tile layers are managed.
-        /// this.save();
     },
 
     /**
@@ -50,7 +44,12 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
         // Add the event layer
         this.addEventLayer(
             new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                'HEK', true, Helioviewer.userSettings.get("state.eventLabels"))
+                'HEK', true, Helioviewer.userSettings.get("state.eventLabels"), "events")
+        );
+
+        this.addEventLayer(
+            new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
+                'CCMC', true, true, "getFlarePredictions")
         );
     },
 

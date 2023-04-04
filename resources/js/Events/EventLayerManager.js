@@ -15,13 +15,10 @@ var EventLayerManager = EventManager.extend(
      * @constructs
      * @description Creates a new EventLayerManager instance
      */
-    init: function (requestDate, defaultEventTypes, viewportScale, rsun,
-                    savedEventLayers, urlEventLayers) {
-
+    init: function (requestDate, defaultEventTypes, viewportScale) {
         this._eventLayers   = [];
         this._events        = [];
         this._eventMarkers  = [];
-        this._treeContainer = $("#eventJSTree");
         this._eventTypes    = {};
         this._jsTreeData    = [];
 
@@ -39,15 +36,6 @@ var EventLayerManager = EventManager.extend(
                    .bind("save-event-layers",            $.proxy(this.save, this))
                    .bind("add-new-event-layer",          $.proxy(this.addNewLayer, this))
                    .bind("remove-event-layer",           $.proxy(this._onLayerRemove, this));
-    },
-
-    /**
-     * @description Updates the list of loaded event layers stored in
-     *              localStorage and cookies
-     */
-    save: function () {
-        var eventLayers = this.toJSON();
-        Helioviewer.userSettings.set("state.eventLayers", eventLayers);
     },
 
     /**

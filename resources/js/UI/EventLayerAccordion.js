@@ -28,6 +28,7 @@ var EventLayerAccordion = Layer.extend(
         this._eventTypes      = eventTypes;
         this._date            = date;
         this._maximumTimeDiff = 12 * 60 * 60 * 1000; // 12 hours in miliseconds
+		this._eventManagers = [];
 
         this.options = {};
 
@@ -69,25 +70,26 @@ var EventLayerAccordion = Layer.extend(
      *
      * @param {Object} layer The new layer to add
      */
-    addLayer: function (event, index, id, name, date, startOpened, markersVisible, labelsVisible) {
+    addLayer: function (event, index, id, name, date, startOpened, markersVisible, labelsVisible, apiSource) {
         if(outputType!='minimal'){
-            this._createAccordionEntry(index, id, name, markersVisible, labelsVisible, startOpened);
+            this._createAccordionEntry(index, id, name, markersVisible, labelsVisible, startOpened, apiSource);
             this._setupEventHandlers(id);
             this._updateTimeStamp(id, date);
         }else{
-            this._createK12VisibilityBtn(index, id, name, markersVisible, labelsVisible, startOpened);
+            this._createK12VisibilityBtn(index, id, name, markersVisible, labelsVisible, startOpened, apiSource);
             this._setupK12EventHandlers(id);
-            //this._updateTimeStamp(id, date);
         }
     },
 
     /**
      *
      */
-    _createAccordionEntry: function (index, id, name, markersVisible, labelsVisible, startOpened) {
+    _createAccordionEntry: function (index, id, name, markersVisible, labelsVisible, startOpened, apiSource) {
 
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, head, body, self=this;
-		
+
+		let treeid = 'tree_'+name;
+
 		var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
         if ( typeof visState == 'undefined') {
             Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
@@ -98,13 +100,13 @@ var EventLayerAccordion = Layer.extend(
         markersHidden = (markersVisible ? "" : " hidden");
         labelsHidden  = ( labelsVisible ? "" : " hidden");
         availableHidden  = ( visState ? "" : " hidden");
-		
+
 		availableBtn = '<span class="fa fa-bullseye fa-fw layerAvailableBtn visible'
                       + availableHidden + '" '
                       + 'id="visibilityAvailableBtn-' + id + '" '
                       + 'title="Toggle visibility of empty elements inside Features and Events list" '
                       + '></span>';
-		
+
         visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
                       + markersHidden + '" '
                       + 'id="visibilityBtn-' + id + '" '
@@ -132,7 +134,7 @@ var EventLayerAccordion = Layer.extend(
         // Create accordion entry body
         body  = '<div class="row" style="text-align: left;"><div class="buttons"><div id="checkboxBtn-On-'+id+'" title="Toggle All Event Checkboxes On" class="text-button inline-block"><div class="fa fa-check-square fa-fw"></div>check all</div>';
         body += '<div id="checkboxBtn-Off-'+id+'" title="Toggle All Event Checkboxes Off" class="text-button inline-block"><div class="fa fa-square fa-fw"></div>check none</div></div>';
-        body += '<div id="eventJSTree" style="margin-bottom: 5px;"></div></div>';
+        body += '<div id="'+treeid+'" style="margin-bottom: 5px;"></div></div>';
 
 
         //Add to accordion
@@ -144,18 +146,14 @@ var EventLayerAccordion = Layer.extend(
             open:   startOpened
         });
 
-        this.getEventGlossary();
-
-        this.domNode.find("#checkboxBtn-"+id).click( function() {
-            $(document).trigger("toggle-checkboxes");
-        });
+        this._loadEvents(treeid, apiSource);
 
         this.domNode.find("#checkboxBtn-On-"+id).click( function() {
-            $(document).trigger("toggle-checkboxes-to-state", ['on']);
+            $(document).trigger("toggle-checkboxes-to-state", [treeid, 'on']);
         });
 
         this.domNode.find("#checkboxBtn-Off-"+id).click( function() {
-            $(document).trigger("toggle-checkboxes-to-state", ['off']);
+            $(document).trigger("toggle-checkboxes-to-state", [treeid, 'off']);
         });
 
         this.domNode.find("#labelsBtn-"+id).click( function(e) {
@@ -168,11 +166,11 @@ var EventLayerAccordion = Layer.extend(
             if(visState == true){
 	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
 	            $(this).addClass('hidden');
-				$('#eventJSTree .empty-element').hide();
+				$('#'+treeid+' .empty-element').hide();
             }else{
 	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
 	            $(this).removeClass('hidden');
-	            $('#eventJSTree .empty-element').show();
+	            $('#'+treeid+' .empty-element').show();
             }
             e.stopPropagation();
         });
@@ -183,9 +181,19 @@ var EventLayerAccordion = Layer.extend(
 
     },
 
-    _createK12VisibilityBtn: function(index, id, name, markersVisible, labelsVisible, startOpened) {
+    /**
+     * Begins the process of loading events
+     * @param {string} id
+     */
+    _loadEvents: function (id, apiSource) {
+        this.getEventGlossary(id, $.proxy(this._createEventManager, this, id, apiSource));
+    },
+
+    _createK12VisibilityBtn: function(index, id, name, markersVisible, labelsVisible, startOpened, apiSource) {
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, eventsDiv, self=this;
-		
+
+		let treeid = 'tree-'+id;
+
 		var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
         if ( typeof visState == 'undefined') {
             Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
@@ -196,7 +204,7 @@ var EventLayerAccordion = Layer.extend(
         markersHidden = (markersVisible ? "" : " hidden");
         labelsHidden  = ( labelsVisible ? "" : " hidden");
         availableHidden  = ( visState ? "" : " hidden");
-		
+
         visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
                       + markersHidden + '" '
                       + 'id="visibilityBtn-' + id + '" '
@@ -211,7 +219,7 @@ var EventLayerAccordion = Layer.extend(
         //Add to accordion
         this.domNode.append(eventsDiv);
 
-        this.getEventGlossary();
+        this._loadEvents(treeid, apiSource);
 
         //this.domNode.find("#visibilityAvailableBtn-"+id).click( function(e) {
         this.domNode.find("#k12-events-visibility-btn-"+id).click( function(e) {
@@ -219,11 +227,11 @@ var EventLayerAccordion = Layer.extend(
             if(visState == true){
 	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
 	            $(this).addClass('hidden');
-				$('#eventJSTree .empty-element').hide();
+				$('#'+treeid+' .empty-element').hide();
             }else{
 	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
 	            $(this).removeClass('hidden');
-	            $('#eventJSTree .empty-element').show();
+	            $('#'+treeid+' .empty-element').show();
             }
             e.stopPropagation();
         });
@@ -235,18 +243,16 @@ var EventLayerAccordion = Layer.extend(
      * classes.
      *
      */
-    getEventGlossary: function () {
+    getEventGlossary: function (id, callback) {
         var params = {
             "action": "getEventGlossary"
         };
-        $.get(Helioviewer.api, params, $.proxy(this._setEventGlossary, this), "json");
+        $.get(Helioviewer.api, params, callback, "json");
     },
 
-
-    _setEventGlossary: function(response) {
-        this._eventManager = new EventManager(response, this._date);
+    _createEventManager: function(id, apiSource, eventGlossary) {
+        this._eventManagers.push(new EventManager(eventGlossary, this._date, id, apiSource));
     },
-
 
     /**
      * @description Handles setting up an empty tile layer accordion.
@@ -268,7 +274,7 @@ var EventLayerAccordion = Layer.extend(
         toggleVisibility = function (e) {
             var domNode;
 
-            domNode = $(document).find("#event-container");
+            domNode = $(document).find(".event-container");
             if ( domNode.css('display') == 'none') {
                 domNode.show();
                 Helioviewer.userSettings.set("state.eventLayerVisible", true);
@@ -303,7 +309,7 @@ var EventLayerAccordion = Layer.extend(
         toggleVisibility = function (e) {
             var domNode;
 
-            domNode = $(document).find("#event-container");
+            domNode = $(document).find(".event-container");
             if ( domNode.css('display') == 'none') {
                 domNode.show();
                 Helioviewer.userSettings.set("state.eventLayerVisible", true);
@@ -342,17 +348,19 @@ var EventLayerAccordion = Layer.extend(
      * requests a reload of the event type checkbox hierarchy for the new timestamp
      */
     _onObservationTimeChange: function (event, requestDate) {
-        var actualDate, weight, domNode, self = this;
+        var domNode, self = this;
         this._date = requestDate;
 
         // Refresh Event/FRM checkbox hierarchy and EventMarkers
-        this._eventManager.updateRequestTime();
+        this._eventManagers.forEach((eventManager) => {
+            eventManager.updateRequestTime();
+        })
 
         // Update value/color of timestamp(s)
         // For HEK events, we can _always_ use the exact same date as the requestDate
         $("#EventLayerAccordion-Container .timestamp").each(function (i, item) {
             domNode = $(this);
-            domNode.html(self._date.toUTCDateString() + " " + self._date.toUTCTimeString() 
+            domNode.html(self._date.toUTCDateString() + " " + self._date.toUTCTimeString()
            		 +" <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+self._date.toUTCDateString() + " " + self._date.toUTCTimeString()+"\">UTC</span>")
                     .css("color", self._chooseTimeStampColor(0, 0, 0, 0));
 
@@ -385,7 +393,7 @@ var EventLayerAccordion = Layer.extend(
         $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString()
         		+" <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+date.toUTCDateString() + " " + date.toUTCTimeString()+"\">UTC</span>")
 					.css("color", this._chooseTimeStampColor(weight, 0, 0, 0));
-					
+
 		//helioviewer._timeSelector = new TimeSelector();
     },
 

@@ -1,21 +1,21 @@
-#eventJSTree {
+.eventJSTree {
     white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-#eventJSTree a {
+.eventJSTree a {
     font-family: 'Courier New', Courier, monospace;
     font-size: 1em;
     font-weight: 400;
     overflow: ellipsis;
     color: white;
 }
-#eventJSTree a:hover {
+.eventJSTree a:hover {
     background-color: black;
     border: 1px solid black;
 }
-#eventJSTree a .checkbox {
+.eventJSTree a .checkbox {
     margin-right: 0.4em;
 }
 
