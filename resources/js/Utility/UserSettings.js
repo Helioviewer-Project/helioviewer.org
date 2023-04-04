@@ -455,7 +455,9 @@ var UserSettings = Class.extend(
             eventLayerArray = [];
             let events = this.get("state.events");
             Object.keys(events).forEach((section) => {
-                eventLayerArray = eventLayerArray.concat(events[section].layers)
+                if (events[section].hasOwnProperty('layers')) {
+                    eventLayerArray = eventLayerArray.concat(events[section].layers)
+                }
             })
         }
 
