@@ -176,7 +176,7 @@ var EventMarker = Class.extend(
     formatLabels: function () {
         var self = this;
 
-        if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
+        if ( this.hasOwnProperty('label') && Object.keys(this.label).length > 0 ) {
             this.labelText = "";
 
             let labels = this.label.split("\n");
@@ -827,7 +827,7 @@ var EventMarker = Class.extend(
         //Only add buttons to main site event pop-ups, remove buttons from k12
         if(outputType!='minimal' && this.hasOwnProperty('start') && this.hasOwnProperty('end')){
             content     += '<div class="btn-container">'+"\n"
-                        +       "\t"+'<div class="btn-label btn event-info text-btn"><i class="fa fa-info-circle fa-fw"></i> View HEK data</div>'+"\n"
+                        +       "\t"+'<div class="btn-label btn event-info text-btn"><i class="fa fa-info-circle fa-fw"></i> View source data</div>'+"\n"
                         + 		"<div style=\"clear:both\"></div>\n"
                         +       "\t"+(embedView ? '' : '<div class="btn-label btn event-create-movie text-btn" data-start="'+this.start+'" data-end="'+this.end+'"><i class="fa fa-video-camera fa-fw"></i> Make movie using event times and current field of view</div>')+"\n"
                         + 		"<div style=\"clear:both\"></div>\n"

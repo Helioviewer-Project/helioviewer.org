@@ -511,7 +511,7 @@ var TimelineEvents = Class.extend({
 						}
 
 						str	 += '<div class="btn-container">'+"\n"
-									+	   "\t"+'<div class="btn-label btn event-info-event text-btn" style="line-height: 14px;" data-kbarchivid="'+ point.kb_archivid +'"><i class="fa fa-info-circle fa-fw"></i> View HEK data</div>'+"\n"
+									+	   "\t"+'<div class="btn-label btn event-info-event text-btn" style="line-height: 14px;" data-kbarchivid="'+ point.kb_archivid +'"><i class="fa fa-info-circle fa-fw"></i> View source data</div>'+"\n"
 									+ 		"<div style=\"clear:both\"></div>\n"
 									+	   "\t"+'<div class="btn-label btn event-create-movie-event text-btn" style="line-height: 14px;" data-start="'+Highcharts.dateFormat('%Y/%m/%dT%H:%M:%S', this.x)+'" data-end="'+Highcharts.dateFormat('%Y/%m/%dT%H:%M:%S', point.x2)+'"><i class="fa fa-video-camera fa-fw"></i> Make movie using event times and current field of view</div>'+"\n"
 									+ 		"<div style=\"clear:both\"></div>\n"
