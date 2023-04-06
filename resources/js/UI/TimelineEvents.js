@@ -2018,6 +2018,7 @@ var _eventsSeries  = {
 	FE: {color: '#a3ff8d', name: 'Filament Eruption'},
 	FA: {color: '#7bff8e', name: 'Filament Activation'},
 	FL: {color: '#7affae', name: 'Flare'},
+	FP: {color: '#74b0c5', name: 'Flare Prediction'},
 	LP: {color: '#7cffc9', name: 'Loop'},
 	OS: {color: '#81fffc', name: 'Oscillation'},
 	SS: {color: '#8ce6ff', name: 'Sunspot'},
