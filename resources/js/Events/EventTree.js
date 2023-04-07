@@ -228,73 +228,80 @@ var EventTree = Class.extend({
     },
 
     hoverOnFRM: function (event) {
-        var emphasisNode, deEmphasisNodes, eventTypeAbbr, eventLayerNodes, found, eventTypeAbbrName;
-        eventTypeAbbr = this['attr'].id.split("--")[0];
-        eventTypeAbbrName = this['attr'].id.split("--")[1];
+        let $target = $('#'+this['attr'].id);
 
-        emphasisNode  = $("#"+this['attr'].id.replace("--", "__"));
-        deEmphasisNodes = $("[id^="+eventTypeAbbr+"__]");
+        if ($target.hasClass('jstree-checked')) {
+            var emphasisNode, deEmphasisNodes, eventTypeAbbr, eventLayerNodes, found, eventTypeAbbrName;
+            eventTypeAbbr = this['attr'].id.split("--")[0];
+            eventTypeAbbrName = this['attr'].id.split("--")[1];
 
-        eventLayerNodes = $(".event-container > div.event-layer");
+            emphasisNode  = $("#"+this['attr'].id.replace("--", "__"));
+            deEmphasisNodes = $("[id^="+eventTypeAbbr+"__]");
 
-        $.each( eventLayerNodes, function(i, obj) {
+            eventLayerNodes = $(".event-container > div.event-layer");
 
-            if ( $(obj)[0].id == $(emphasisNode)[0].id ) {
-                $(obj).css({'opacity':'1.00'});
-            }
-            else {
-                found = false;
-                $.each( deEmphasisNodes, function(j, deEmphObj) {
-                    if ( $(obj)[0].id == $(deEmphObj)[0].id ) {
-                        found = true;
-                    }
-                });
-                if ( found === true ) {
-                    //$(obj).css({'opacity':'0.50'});
-                    $(obj).css({'opacity':'0'});
+            $.each( eventLayerNodes, function(i, obj) {
+
+                if ( $(obj)[0].id == $(emphasisNode)[0].id ) {
+                    $(obj).css({'opacity':'1.00'});
                 }
                 else {
-                    $(obj).css({'opacity':'0'});
+                    found = false;
+                    $.each( deEmphasisNodes, function(j, deEmphObj) {
+                        if ( $(obj)[0].id == $(deEmphObj)[0].id ) {
+                            found = true;
+                        }
+                    });
+                    if ( found === true ) {
+                        //$(obj).css({'opacity':'0.50'});
+                        $(obj).css({'opacity':'0'});
+                    }
+                    else {
+                        $(obj).css({'opacity':'0'});
+                    }
+                    $('.movie-viewport-icon').hide();
                 }
-                $('.movie-viewport-icon').hide();
+            });
+            if(timelineRes == 'm'){
+                $(".highcharts-series > rect:not(.point_name_"+eventTypeAbbrName+")").hide();
             }
-        });
-        if(timelineRes == 'm'){
-	        $(".highcharts-series > rect:not(.point_name_"+eventTypeAbbrName+")").hide();
         }
     },
 
     hoverOffFRM: function (event) {
-        var emphasisNode, deEmphasisNodes, eventTypeAbbr, eventLayerNodes, found;
-        eventTypeAbbr = this['attr'].id.split("--")[0];
+        let $target = $('#'+this['attr'].id);
+        if ($target.hasClass('jstree-checked')) {
+            var emphasisNode, deEmphasisNodes, eventTypeAbbr, eventLayerNodes, found;
+            eventTypeAbbr = this['attr'].id.split("--")[0];
 
-        emphasisNode  = $("#"+this['attr'].id.replace("--", "__"));
-        deEmphasisNodes = $("[id^="+eventTypeAbbr+"__]");
+            emphasisNode  = $("#"+this['attr'].id.replace("--", "__"));
+            deEmphasisNodes = $("[id^="+eventTypeAbbr+"__]");
 
-        eventLayerNodes = $(".event-container > div.event-layer");
+            eventLayerNodes = $(".event-container > div.event-layer");
 
-        $.each( eventLayerNodes, function(i, obj) {
+            $.each( eventLayerNodes, function(i, obj) {
 
-            if ( $(obj)[0].id == $(emphasisNode)[0].id ) {
-                $(obj).css({'opacity':'1.0'});
-            }
-            else {
-                found = false;
-                $.each( deEmphasisNodes, function(j, deEmphObj) {
-                    if ( $(obj)[0].id == $(deEmphObj)[0].id ) {
-                        found = true;
-                    }
-                });
-                if ( found === true ) {
-                    //$(obj).css({'opacity':'0.50'});
+                if ( $(obj)[0].id == $(emphasisNode)[0].id ) {
                     $(obj).css({'opacity':'1.0'});
                 }
                 else {
-                    $(obj).css({'opacity':'1.0'});
+                    found = false;
+                    $.each( deEmphasisNodes, function(j, deEmphObj) {
+                        if ( $(obj)[0].id == $(deEmphObj)[0].id ) {
+                            found = true;
+                        }
+                    });
+                    if ( found === true ) {
+                        //$(obj).css({'opacity':'0.50'});
+                        $(obj).css({'opacity':'1.0'});
+                    }
+                    else {
+                        $(obj).css({'opacity':'1.0'});
+                    }
+                    $('.movie-viewport-icon').show();
                 }
-                $('.movie-viewport-icon').show();
-            }
-        });
-		$(".highcharts-series > rect").show();
+            });
+            $(".highcharts-series > rect").show();
+        }
     }
 });
