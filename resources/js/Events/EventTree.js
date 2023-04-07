@@ -156,7 +156,7 @@ var EventTree = Class.extend({
     _treeChangedState: function (event, data) {
         var checked = [], event_types = [], index;
 
-        this._container.jstree("get_checked",null,false).each(
+        this._container.find("li.jstree-checked").each(
             function () {
                 var eventLayer, event_type, frm;
                 event_type = this.id.split("--");
@@ -164,7 +164,7 @@ var EventTree = Class.extend({
                     frm = event_type[1];
                 }
                 else {
-                    frm = 'all';
+                    return;
                 }
                 event_type = event_type[0];
 
