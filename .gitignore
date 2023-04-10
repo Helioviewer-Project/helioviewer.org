@@ -12,6 +12,7 @@ api/lib/phpvideotoolkit/config.php
 build/css/*
 build/*.js
 cache/*
+dialogs/version.ini
 log/*
 install/tools/icons
 settings/Config.ini
