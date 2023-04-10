@@ -1,25 +1,36 @@
 <?php
+
+function load_version_info() {
+    // Try to use the user-defined version.ini
+    $user_defined_version_file = __DIR__ . "/version.ini";
+    if (file_exists($user_defined_version_file)) {
+        return parse_ini_file($user_defined_version_file);
+    } else {
+        // Otherwise use the default one
+        return parse_ini_file(__DIR__ . "/version.default.ini");
+    }
+}
+
+// Load the version information
+$ini = load_version_info();
+
 // Returns the latest git tag, which is equivalent to the latest
 // version string.
 function get_version() {
-    // Gets the most recent tag even if it's not the current commit.
-    $result = shell_exec("git describe --tags --abbrev=0");
-    // Command will fail if git isn't installed or if it's not a git repository.
-    // In that case, return version unknown.
-    if (!$result) {
-        return "Unknown";
+    global $ini;
+    if ($ini && array_key_exists("version", $ini)) {
+        return $ini["version"];
     }
-
-    return trim($result);
+    return "Unknown";
 }
 
 // Get the current commit date to show as the "Last Updated" time.
 function get_date() {
-    $result = shell_exec("git show -s --format=%as");
-    if (!$result) {
-        return "Unknown";
+    global $ini;
+    if ($ini && array_key_exists("date", $ini)) {
+        return $ini["date"];
     }
-    return trim($result);
+    return "Unknown";
 }
 
 function print_version_info() {
