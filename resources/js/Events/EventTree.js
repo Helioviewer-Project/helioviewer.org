@@ -18,6 +18,7 @@ var EventTree = Class.extend({
         this._EventManager = eventManager;
         this._visibleEventLayerKey = "state.events." + this._id + ".visible";
         this._activeEventLayersKey = "state.events." + this._id + ".layers";
+        this._selectedEventCache = new SelectedEventsCache();
 
         this._build(data);
         $(document).bind("toggle-checkboxes-to-state", $.proxy(this.toggle_checkboxes_state, this));
@@ -119,7 +120,8 @@ var EventTree = Class.extend({
         this._container.unbind("change_state.jstree", $.proxy(this._treeChangedState, this));
 
         // Loop over saved eventLayer state, checking the appropriate checkboxes to match.
-        saved = self.getSavedEventLayers();
+        saved = self.getSavedEventLayers().concat(this._selectedEventCache.get());
+
         $.each(saved, function(i,eventLayer) {
             if (eventLayer.frms[0] == 'all') {
                 node = "#"+eventLayer.event_type;
@@ -131,7 +133,13 @@ var EventTree = Class.extend({
                 $.each(eventLayer.frms, function(j,frm) {
                     node = "#"+eventLayer.event_type+"--"+frm;
                     if ( $(node).length != 0 ) {
+                        self._selectedEventCache.remove(eventLayer.event_type, frm);
                         self.jstreeFunc("check_node", node);
+                    } else {
+                        // It's possible that we had a specific event type selected,
+                        // then the observation time changes so that we have nothing selected.
+                        // The user had this specific FRM selected, so we should remember it for next time its available instead of defaulting to "all"
+                        self._selectedEventCache.add(eventLayer.event_type, frm);
                     }
                 });
             }
@@ -139,7 +147,7 @@ var EventTree = Class.extend({
 
         // Re-bind event handler that triggers whenever checkboxes are checked/unchecked
         this._container.bind("change_state.jstree", $.proxy(this._treeChangedState, this));
-        $(document).trigger("change_state.jstree", this);
+        this._treeChangedState();
     },
 
     _escapeInvalidJQueryChars: function (selector) {
@@ -152,37 +160,76 @@ var EventTree = Class.extend({
         return selector;
     },
 
+    /**
+     * Returns the FRM portion of the given ID
+     * @param {string} id HTML id of element that contains FRM information
+     * @returns {string|null} The FRM portion or null if it doesn't exist in the ID.
+     */
+    _getFrmFromId: function (id) {
+        let data = id.split("--");
+        if (data.length > 1) {
+            return data[1];
+        } else {
+            return null;
+        }
+    },
+
+    /**
+     * Returns the Event Type portion of the given ID
+     * @param {string} id HTML id of element that contains Event information
+     * @returns {string} The Event portion of the ID.
+     */
+    _getEventTypeFromId: function (id) {
+        let data = id.split("--");
+        return data[0];
+    },
 
     _treeChangedState: function (event, data) {
         var checked = [], event_types = [], index;
+        let EventTree = this;
 
-        this._container.find("li.jstree-checked").each(
+        this._container.jstree("get_checked",null,false).each(
             function () {
-                var eventLayer, event_type, frm;
-                event_type = this.id.split("--");
-                if (event_type.length > 1) {
-                    frm = event_type[1];
+                var eventLayer, event_type, frms;
+                // If there is no current data in this checked event dropdown, then default to all
+                if (this.classList.contains("empty-element")) {
+                    frms = ["all"];
+                } else {
+                    // If the selected item is for a specific FRM, then specify that FRM here.
+                    let frm = EventTree._getFrmFromId(this.id);
+                    if (frm != null) {
+                        frms = [frm];
+                    }
+                    else {
+                        // At this point the selected item is not empty, and since it's not a specific FRM, it means all FRMs are selected.
+                        // In this case we want to specify each individual FRM. This handles the case where all items shown in the UI are checked, which may be different from all items available when a movie is created.
+                        // Check for checked subitems that are checked in the group
+                        frms = [];
+                        $(this).find(".jstree-checked").each(((idx, el) => {
+                            // Grab the FRM on each checked subitem
+                            frms.push(EventTree._getFrmFromId(el.id));
+                        }))
+                    }
                 }
-                else {
-                    return;
-                }
-                event_type = event_type[0];
+                event_type = EventTree._getEventTypeFromId(this.id);
 
-                // Determine if an entry for this event type already exists
-                index = $.inArray(event_type, event_types)
+                frms.forEach((frm) => {
+                    // Determine if an entry for this event type already exists
+                    index = $.inArray(event_type, event_types)
 
-                // New event type to add to array
-                if ( index == -1 ) {
-                    eventLayer = { 'event_type' : event_type,
-                                         'frms' : [frm],
-                                         'open' : 1};
-                    checked.push(eventLayer);
-                    event_types.push(event_type);
-                }
-                // Append FRM to existing event type in array
-                else {
-                    checked[index].frms.push(frm);
-                }
+                    // New event type to add to array
+                    if ( index == -1 ) {
+                        eventLayer = { 'event_type' : event_type,
+                                            'frms' : [frm],
+                                            'open' : 1};
+                        checked.push(eventLayer);
+                        event_types.push(event_type);
+                    }
+                    // Append FRM to existing event type in array
+                    else {
+                        checked[index].frms.push(frm);
+                    }
+                })
             }
         );
 

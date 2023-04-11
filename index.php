@@ -1850,6 +1850,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		<script src="/resources/js/Utility/UserSettings.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Utility/Tutorial.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Tiling/Manager/LayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Events/SelectedEventsCache.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Events/EventManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Events/EventType.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Events/EventTree.js?v=<?=$debugTime?>" type="text/javascript"></script>
