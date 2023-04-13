@@ -48,7 +48,11 @@ var UserSettings = Class.extend(
     get: function (key) {
         // Nesting depth is limited to three levels
         try {
-            return this._get(key);
+            let tentative_value = this._get(key);
+            if (tentative_value == null) {
+                throw "Use default key";
+            }
+            return tentative_value;
         } catch (ex) {
             // If an error is encountered, then settings are likely outdated;
             // use the default value
