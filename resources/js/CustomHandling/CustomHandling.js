@@ -130,7 +130,10 @@ function showEncounter() {
 					
 					// END generate encounter "pagination"
 					
-					datetimemobModule();
+					
+					if(typeof datetimemobModule === 'function') {
+						datetimemobModule();
+					}
 				}
 				
 			});
