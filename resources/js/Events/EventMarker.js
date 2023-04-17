@@ -830,10 +830,9 @@ var EventMarker = Class.extend(
 
         let sourceLink = '';
         if (this.hasOwnProperty('link') && this.link !== null) {
-            sourceLink += `
-            <div class="btn-label btn event-search-external text-btn" data-url="${this.link}" target="_blank">Go to source <i class="fa fa-external-link fa-fw"></i></div>\
-            <div style=\"clear:both\"></div>
-            `;
+            sourceLink += '\
+            <div class="btn-label btn event-search-external text-btn" data-url="'+this.link+'" target="_blank">Go to source <i class="fa fa-external-link fa-fw"></i></div>\
+            <div style=\"clear:both\"></div>';
         }
 
         //Only add buttons to main site event pop-ups, remove buttons from k12
