@@ -752,6 +752,10 @@ var EventMarker = Class.extend(
                 tag = '<div class="empty"><span class="event-header-tag empty"'+attr+'>' + key + ': </span>' +
                       '<span class="event-header-value empty">' + obj.value + '</span></div>';
             }
+            else if (typeof obj.value === 'object') {
+                tag = '<div><span class="event-header-tag "'+attr+'>' + key + ': </span>' +
+                      '<pre style="white-space: pre-wrap" class="event-header-value string">' + JSON.stringify(obj.value, null, 4) + '</pre></div>';
+            }
             else {
                 tag = '<div><span class="event-header-tag"'+attr+'>' + key + ': </span>' +
                       '<span class="event-header-value'+domClass+'">' + obj.value + '</span></div>';
