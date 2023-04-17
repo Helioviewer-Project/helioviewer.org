@@ -291,7 +291,6 @@ var EventManager = Class.extend({
 
         self._eventTree.reload(this._jsTreeData);
         self._jsTreeData = this._jsTreeData;
-        console.log(self);
     },
 
     _resetEventTree: function () {
