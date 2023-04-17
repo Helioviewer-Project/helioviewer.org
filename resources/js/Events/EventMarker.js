@@ -828,6 +828,14 @@ var EventMarker = Class.extend(
 						<div style=\"clear:both\"></div>';
 		}
 
+        let sourceLink = '';
+        if (this.hasOwnProperty('link') && this.link !== null) {
+            sourceLink += `
+            <div class="btn-label btn event-search-external text-btn" data-url="${this.link}" target="_blank">Go to source <i class="fa fa-external-link fa-fw"></i></div>\
+            <div style=\"clear:both\"></div>
+            `;
+        }
+
         //Only add buttons to main site event pop-ups, remove buttons from k12
         if(outputType!='minimal' && this.hasOwnProperty('start') && this.hasOwnProperty('end')){
             content     += '<div class="btn-container">'+"\n"
@@ -839,6 +847,8 @@ var EventMarker = Class.extend(
                         +		noaaSearch
                         +		"\t"+(embedView ? '' : '<div class="btn-label btn copy-to-data text-btn" data-start="'+this.start.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.end.replace('T',' ').replace(/-/gi,'/')+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>')+"\n"
                         //+       "\t"+'<div class="ui-icon ui-icon-video btn event-movie"></div><div class="btn-label btn event-movie">Generate Movie</div>'+"\n"
+                        + 		"<div style=\"clear:both\"></div>\n"
+                        +       sourceLink
                         +  '</div>'+"\n";
         }
 
