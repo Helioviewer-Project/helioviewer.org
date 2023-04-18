@@ -1817,6 +1817,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<script src="/resources/lib/mediaelement/build/mediaelement-and-player.min.js" type="text/javascript" language="javascript"></script>
 
 	<!-- Helioviewer JavaScript -->
+	<script src="/resources/js/dist/EventMarker.js" type="text/javascript"></script>
 	<?php
 	if ($debug){
 	?>
@@ -1856,7 +1857,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		<script src="/resources/js/Events/EventTree.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Events/EventFeatureRecognitionMethod.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Events/EventMarker.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Events/HelioviewerEventLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Events/HelioviewerEventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
@@ -1884,8 +1884,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	} else {
 	?>
 		<script src="/resources/compressed/helioviewer.min.js?v=<?=filemtime('resources/compressed/helioviewer.min.js')?>" type="text/javascript"></script>
-
-
 	<?php
 	}
 	?>

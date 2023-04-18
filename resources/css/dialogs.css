@@ -124,8 +124,13 @@ a.show-tags-btn {
 }
 
 .event-header {
-    padding: 10px;
+    padding: 15px;
     font-size: 12px;
+    line-height: 1.5em;
+}
+
+.event-contents {
+    padding: 15px;
     line-height: 1.5em;
 }
 
@@ -157,19 +162,17 @@ a.show-tags-btn {
 .event-header-value.boolean.false {
     /*color: #DC143C;*/
 }
-.event-header-value a {
+.event-header-value a, .event-contents a {
     text-decoration: none;
-    /*color: #6495ED;*/
+    color: #6495ED;
 }
-.event-header-value a:hover {
+.event-header-value a:hover, .event-contents a:hover {
     color: #1E90FF;
 }
 
 .event-header .empty {
     color: #444;
 }
-
-
 
 /* Video links */
 .video-links a {

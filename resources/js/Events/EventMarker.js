@@ -7,7 +7,33 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, getUTCTimestamp */
-"use strict";
+// "use strict";
+
+import { createRoot } from 'react-dom/client';
+import React from 'react';
+// import EventContent from './EventContent'
+import { JsonViewer } from '@textea/json-viewer';
+const theme = {
+    scheme: 'Helioviewer (Based on Ocean by Chris Kempson (http://chriskempson.com))',
+    author: 'Daniel Garcia-Briseno',
+    base00: '#000000',
+    base01: '#343d46',
+    base02: '#000000',
+    base03: '#65737e',
+    base04: '#a7adba',
+    base05: '#c0c5ce',
+    base06: '#dfe1e8',
+    base07: '#eff1f5',
+    base08: '#bf616a',
+    base09: '#d0A7C0',
+    base0A: '#ebcb8b',
+    base0B: '#a3be8c',
+    base0C: '#96b5b4',
+    base0D: '#8fa1b3',
+    base0E: '#b48ead',
+    base0F: '#ab7967'
+}
+
 var EventMarker = Class.extend(
     /** @lends EventMarker.prototype */
     {
@@ -26,6 +52,7 @@ var EventMarker = Class.extend(
         this._popupVisible = false;
         this._zIndex = zIndex;
         this._eventGlossary = eventGlossary;
+        this._uniqueId = Math.random().toString().substring(2)
 
         // Format LabelText (for mouse-over and "d")
         this.formatLabels();
@@ -452,22 +479,15 @@ var EventMarker = Class.extend(
             html += `<div class="event-info-dialog-menu">
                         <a class="show-tags-btn all">${this.category}</a>
                      </div>
-                     <div class="event-header all" style="height: 400px; overflow: auto;">
-                        ${this._generateEventKeywordsSection("all")}
+                     <div class="event-contents all" style="height: 400px; overflow: auto;">
+                        <div id="${this._uniqueId}"></div>
                      </div>`
         }
 
-
-        dialog.append(html).appendTo("body").dialog({
-            autoOpen : true,
-            title    : headingText,
-            minWidth : 746,
-            width    : 746,
-            maxWidth : 746,
-            height   : 550,
-            draggable: true,
-            resizable: false,
-            buttons  : [ {  text  : 'Hide Empty Rows',
+        let buttons = [];
+        if (self._IsHekEvent()) {
+            buttons = [
+                {  text  : 'Hide Empty Rows',
                           'class' : 'toggle_empty',
                            click  : function () {
 
@@ -488,7 +508,20 @@ var EventMarker = Class.extend(
                         else {
                             text.html('Hide Empty Rows');
                         }
-                }} ],
+                }}
+            ];
+        }
+
+        dialog.append(html).appendTo("body").dialog({
+            autoOpen : true,
+            title    : headingText,
+            minWidth : 746,
+            width    : 746,
+            maxWidth : 746,
+            height   : 550,
+            draggable: true,
+            resizable: false,
+            buttons  : buttons,
             create   : function (event, ui) {
 
                 dialog.css('overflow', 'hidden');
@@ -564,6 +597,24 @@ var EventMarker = Class.extend(
                     dialog.find(".event-header.ref").hide();
                     dialog.find(".event-header.all").show();
                 });
+
+
+                // This is used to populate the dialog for non-HEK events.
+                let reactContainer = dialog.find('#' + self._uniqueId);
+                if (reactContainer.length == 1) {
+                    const root = createRoot(reactContainer[0]);
+                    // root.render(<EventContent event={self.source} />);
+                    root.render(<JsonViewer
+                                    value={self.source}
+                                    theme={theme}
+                                    displayObjectSize={false}
+                                    displayDataTypes={false}
+                                    valueTypes={[{
+                                        is: (value) => typeof value === "string" && value.startsWith('http'),
+                                        Component: (props) => <a href={props.value} target='_blank'>{props.value}</a>
+                                    }]}
+                        />);
+                }
             }
         });
     },
@@ -754,7 +805,7 @@ var EventMarker = Class.extend(
             }
             else if (typeof obj.value === 'object') {
                 tag = '<div><span class="event-header-tag "'+attr+'>' + key + ': </span>' +
-                      '<pre style="white-space: pre-wrap" class="event-header-value string">' + JSON.stringify(obj.value, null, 4) + '</pre></div>';
+                '<span class="event-header-value'+domClass+'">' + obj.value + '</span></div>';
             }
             else {
                 tag = '<div><span class="event-header-tag"'+attr+'>' + key + ': </span>' +
@@ -942,3 +993,5 @@ var EventMarker = Class.extend(
     }
 
 });
+
+export { EventMarker }
