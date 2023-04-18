@@ -260,18 +260,18 @@ var EventManager = Class.extend({
                 count_str = '';
                 if ( group_count > 0 ) {
                     count_str = " ("+group_count+")";
+                    self._jsTreeData[index].children.push(
+                        {
+                            'data': group.name+count_str,
+                            'attr':
+                                {
+                                    'id': event_type_arr[1]
+                                        + '--'
+                                        + self._escapeInvalidCssChars(group.name)
+                                }
+                        }
+                    );
                 }
-                self._jsTreeData[index].children.push(
-                    {
-                        'data': group.name+count_str,
-                        'attr':
-                            {
-                                'id': event_type_arr[1]
-                                    + '--'
-                                    + self._escapeInvalidCssChars(group.name)
-                            }
-                    }
-                );
             });
 
             count_str = '';
