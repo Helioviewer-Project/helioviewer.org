@@ -882,7 +882,7 @@ var EventMarker = Class.extend(
         let sourceLink = '';
         if (this.hasOwnProperty('link') && this.link !== null) {
             sourceLink += '\
-            <div class="btn-label btn event-search-external text-btn" data-url="'+this.link.url+'" target="_blank">'+this.link.text+'<i class="fa fa-external-link fa-fw"></i></div>\
+            <div class="btn-label btn event-search-external text-btn" data-url="'+this.link.url+'" target="_blank">'+this.link.text+' <i class="fa fa-external-link fa-fw"></i></div>\
             <div style=\"clear:both\"></div>';
         }
 
