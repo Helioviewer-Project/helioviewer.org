@@ -162,11 +162,11 @@ a.show-tags-btn {
 .event-header-value.boolean.false {
     /*color: #DC143C;*/
 }
-.event-header-value a, .event-contents a {
+.event-header-value a, .data-key-pair a {
     text-decoration: none;
     color: #6495ED;
 }
-.event-header-value a:hover, .event-contents a:hover {
+.event-header-value a:hover, .data-key-pair a:hover {
     color: #1E90FF;
 }
 

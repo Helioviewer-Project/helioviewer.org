@@ -12,8 +12,8 @@ export default function EventViewer({views, source}) {
             {views.map((view, idx) => <Tab key={idx} name={view.name} selected={idx == tab} onClick={(_) => setTab(idx)} />)}
             <Tab key={'all'} name={'all'} extraClasses={'right'} selected={tab == 'all'} onClick={(_) => setTab('all')} />
         </div>
-        {tab != 'all' ? <Content data={views[tab].data} /> : <div></div>}
-        {tab == 'all' ? <div style={{padding: '15px'}}>
+        {tab != 'all' ? <Content data={views[tab].content} /> : <div></div>}
+        {tab == 'all' ? <div className='event-header' style={{height: '400px', overflow: 'auto'}}>
                             <JsonViewer
                                     value={source}
                                     theme={theme}
@@ -64,7 +64,9 @@ function Value({value}) {
 
 function StringValue({value, className}) {
     if (value.startsWith('http')) {
-        return <a href={value} target='_blank'>{value}</a>;
+        return <span className={className}>
+            <a href={value} target='_blank'>{value}</a>
+        </span>;
     } else {
         return <span className={className}>{value}</span>
     }
