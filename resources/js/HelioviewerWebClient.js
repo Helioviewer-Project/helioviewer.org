@@ -732,7 +732,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         //Help Links
         //Guide
         $('#help-links-guide').on('click', function(){
-            window.open('http://wiki.helioviewer.org/wiki/Helioviewer.org_User_Guide_3.1.0','_blank');
+            window.open('https://helioviewer-project.github.io/user_guide/','_blank');
         });
 
         //Glossary
