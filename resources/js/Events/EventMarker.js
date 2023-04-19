@@ -11,28 +11,8 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 
 import { createRoot } from 'react-dom/client';
 import React from 'react';
-// import EventContent from './EventContent'
-import { JsonViewer } from '@textea/json-viewer';
-const theme = {
-    scheme: 'Helioviewer (Based on Ocean by Chris Kempson (http://chriskempson.com))',
-    author: 'Daniel Garcia-Briseno',
-    base00: '#000000',
-    base01: '#343d46',
-    base02: '#000000',
-    base03: '#65737e',
-    base04: '#a7adba',
-    base05: '#c0c5ce',
-    base06: '#dfe1e8',
-    base07: '#eff1f5',
-    base08: '#bf616a',
-    base09: '#d0A7C0',
-    base0A: '#ebcb8b',
-    base0B: '#a3be8c',
-    base0C: '#96b5b4',
-    base0D: '#8fa1b3',
-    base0E: '#b48ead',
-    base0F: '#ab7967'
-}
+import EventViewer from './EventViewer'
+import {renderToString} from 'react-dom/server'
 
 var EventMarker = Class.extend(
     /** @lends EventMarker.prototype */
@@ -466,8 +446,9 @@ var EventMarker = Class.extend(
 
             // Tab contents
             let sections = [this.type, "obs", "frm", "ref", "all"];
+            let self = this;
             sections.forEach((section, idx) => {
-                let content = this._generateEventKeywordsSection(section);
+                let content = this._generateEventKeywordsSection(section, self);
                 if (content != "<div></div>") {
                     let class_name = idx == 0 ? "event-type" : section;
                     let hide = idx != 0 ? "display: none;" : "";
@@ -476,41 +457,33 @@ var EventMarker = Class.extend(
                 }
             })
         } else {
-            html += `<div class="event-info-dialog-menu">
-                        <a class="show-tags-btn all">${this.category}</a>
-                     </div>
-                     <div class="event-contents all" style="height: 400px; overflow: auto;">
-                        <div id="${this._uniqueId}"></div>
-                     </div>`
+            html += renderToString(<div id={this._uniqueId}></div>)
         }
 
-        let buttons = [];
-        if (self._IsHekEvent()) {
-            buttons = [
-                {  text  : 'Hide Empty Rows',
-                          'class' : 'toggle_empty',
-                           click  : function () {
+        let buttons = [
+            {  text  : 'Hide Empty Rows',
+                        'class' : 'toggle_empty',
+                        click  : function () {
 
-                        var text = $(this).parent().find('.toggle_empty span.ui-button-text');
+                    var text = $(this).parent().find('.toggle_empty span.ui-button-text');
 
-                        $.each( $(this).find("div.empty"), function (index,node) {
-                            if ( $(node).css('display') == 'none' ) {
-                                $(node).css('display', 'block');
-                            }
-                            else {
-                                $(node).css('display', 'none');
-                            }
-                        });
-
-                        if ( text.html() == 'Hide Empty Rows' ) {
-                            text.html('Show Empty Rows');
+                    $.each( $(this).find("div.empty"), function (index,node) {
+                        if ( $(node).css('display') == 'none' ) {
+                            $(node).css('display', 'block');
                         }
                         else {
-                            text.html('Hide Empty Rows');
+                            $(node).css('display', 'none');
                         }
-                }}
-            ];
-        }
+                    });
+
+                    if ( text.html() == 'Hide Empty Rows' ) {
+                        text.html('Show Empty Rows');
+                    }
+                    else {
+                        text.html('Hide Empty Rows');
+                    }
+            }}
+        ];
 
         dialog.append(html).appendTo("body").dialog({
             autoOpen : true,
@@ -603,17 +576,7 @@ var EventMarker = Class.extend(
                 let reactContainer = dialog.find('#' + self._uniqueId);
                 if (reactContainer.length == 1) {
                     const root = createRoot(reactContainer[0]);
-                    // root.render(<EventContent event={self.source} />);
-                    root.render(<JsonViewer
-                                    value={self.source}
-                                    theme={theme}
-                                    displayObjectSize={false}
-                                    displayDataTypes={false}
-                                    valueTypes={[{
-                                        is: (value) => typeof value === "string" && value.startsWith('http'),
-                                        Component: (props) => <a href={props.value} target='_blank'>{props.value}</a>
-                                    }]}
-                        />);
+                    root.render(<EventViewer views={self.views} source={self.source} />);
                 }
             }
         });
@@ -626,11 +589,11 @@ var EventMarker = Class.extend(
         return this.hasOwnProperty('hv_labels_formatted');
     },
 
-    _generateEventKeywordsSection: function (tab) {
+    _generateEventKeywordsSection: function (tab, data) {
         var formatted, tag, tags = [], lookup, attr, domClass, icon, list= {}, self=this;
 
         if ( tab == 'obs' ) {
-            $.each( this.event, function (key, value) {
+            $.each( data, function (key, value) {
                 if ( key.substring(0, 4) == 'obs_' ) {
 
                     lookup = self._eventGlossary[key];
@@ -645,7 +608,7 @@ var EventMarker = Class.extend(
             });
         }
         else if ( tab == 'frm' ) {
-                $.each( this.event, function (key, value) {
+                $.each( data, function (key, value) {
                     if ( key.substring(0, 4) == 'frm_' ) {
 
                         lookup = self._eventGlossary[key];
@@ -660,7 +623,7 @@ var EventMarker = Class.extend(
                 });
         }
         else if ( tab == 'ref' ) {
-                $.each( this.event['refs'], function (index, obj) {
+                $.each( data['refs'], function (index, obj) {
                     lookup = self._eventGlossary[obj['ref_name']];
                     if ( typeof lookup != 'undefined' ) {
                         list[obj['ref_name']] = lookup;
@@ -672,7 +635,7 @@ var EventMarker = Class.extend(
                 });
         }
         else if ( tab == 'all' ) {
-                $.each( this.event, function (key, value) {
+                $.each( data, function (key, value) {
                     if ( key.substring(0, 3) != 'hv_' && key != 'refs' ) {
 
                         lookup = self._eventGlossary[key];
@@ -687,7 +650,7 @@ var EventMarker = Class.extend(
                 });
         }
         else if ( tab.length == 2 ) {
-                $.each( this.event, function (key, value) {
+                $.each( data, function (key, value) {
                     if ( key.substring(0, 3) == tab.toLowerCase()+'_'
                       || key.substring(0, 5) == 'event'
                       || key == 'concept'
