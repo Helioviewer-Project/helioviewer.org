@@ -42,7 +42,7 @@ function Content({data}) {
 }
 
 function DataPair({label, value}) {
-    let emptyClass = value == null ? 'empty' : '';
+    let emptyClass = IsEmptyValue(value) ? 'empty' : '';
     return <div className={emptyClass}>
         <span className={`event-header-tag ${emptyClass}`}>{label}:</span>
         <Value value={value} />
@@ -91,4 +91,13 @@ const theme = {
     base0D: '#8fa1b3',
     base0E: '#b48ead',
     base0F: '#ab7967'
+}
+
+function IsEmptyValue(value) {
+    switch (typeof value) {
+        case "string":
+            return value.trim() === "";
+        default:
+            return value == null;
+    }
 }
