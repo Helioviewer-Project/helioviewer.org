@@ -460,6 +460,17 @@ var EventMarker = Class.extend(
             html += renderToString(<div id={this._uniqueId}></div>)
         }
 
+        let hidingEmpty = false;
+
+        function updateHiddenClasses() {
+            $.each( $(dialog).find("div.empty"), function (index,node) {
+                if (hidingEmpty) {
+                    $(node).css('display', 'none');
+                } else {
+                    $(node).css('display', 'block');
+                }
+            });
+        }
         dialog.append(html).appendTo("body").dialog({
             autoOpen : true,
             title    : headingText,
@@ -473,16 +484,11 @@ var EventMarker = Class.extend(
                           'class' : 'toggle_empty',
                            click  : function () {
 
+                        hidingEmpty = !hidingEmpty;
+
                         var text = $(this).parent().find('.toggle_empty span.ui-button-text');
 
-                        $.each( $(this).find("div.empty"), function (index,node) {
-                            if ( $(node).css('display') == 'none' ) {
-                                $(node).css('display', 'block');
-                            }
-                            else {
-                                $(node).css('display', 'none');
-                            }
-                        });
+                        updateHiddenClasses();
 
                         if ( text.html() == 'Hide Empty Rows' ) {
                             text.html('Show Empty Rows');
@@ -567,12 +573,11 @@ var EventMarker = Class.extend(
                     dialog.find(".event-header.all").show();
                 });
 
-
                 // This is used to populate the dialog for non-HEK events.
                 let reactContainer = dialog.find('#' + self._uniqueId);
                 if (reactContainer.length == 1) {
                     const root = createRoot(reactContainer[0]);
-                    root.render(<EventViewer views={self.views} source={self.source} />);
+                    root.render(<EventViewer views={self.views} source={self.source} onChange={updateHiddenClasses}/>);
                 }
             }
         });

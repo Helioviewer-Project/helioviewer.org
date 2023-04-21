@@ -1,5 +1,5 @@
 import { JsonViewer } from './JsonViewer';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 /**
  * React-based event viewer.
  * This is the content that shows up in dialog when viewing an event's source data.
@@ -11,13 +11,17 @@ import React, { useState } from 'react';
  * @param {Array<View>} views List of views (tabs) to display
  * @param {Object} source Raw JSON source data not distilled into views.
  */
-export default function EventViewer({views, source}) {
+export default function EventViewer({views, source, onChange}) {
     // Store the currently selected tab, used to index into the views array.
     const [tab, setTab] = useState(0)
+    useEffect(onChange);
+
     return <div>
         <div className='event-info-dialog-menu'>
             {/* Map each view to into its own unique Tab. When clicked, tab will be updated with the selected index */}
-            {views.map((view, idx) => views[idx].content != null ? <Tab key={idx} name={view.name} selected={idx == tab} onClick={(_) => setTab(idx)} /> : "")}
+            {
+                views.map((view, idx) => views[idx].content != null ? <Tab key={idx} name={view.name} selected={idx == tab} onClick={(_) => setTab(idx)} /> : "")
+            }
             {/* Then create the final tab on the right containing the "All" text */}
             <Tab key={'all'} name={'all'} extraClasses={'right'} selected={tab == 'all'} onClick={(_) => setTab('all')} />
         </div>
