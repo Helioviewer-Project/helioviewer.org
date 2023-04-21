@@ -685,14 +685,13 @@ var EventMarker = Class.extend(
 
             if ( obj.value != '' && obj.value != 'N/A' && obj.value != 'n/a'
                 && typeof obj['hv_type'] != 'undefined'
-                && (obj['hv_type'] == 'url' || obj['hv_type'] == 'image_url') ) {
+                && (obj['hv_type'] == 'url' || obj['hv_type'] == 'image_url')) {
 
                 if ( obj.value.indexOf('://') == -1) {
                     obj.value = 'http://'+obj.value;
                 }
                 obj.value = '<a href="'+obj.value+'" target="_blank">'+obj.value+'</a>';
             }
-
 
             if ( obj.value != '' && obj.value != 'N/A' && obj.value != 'n/a'
                 && typeof obj['hv_type'] != 'undefined' && obj['hv_type'] == 'email_or_url' ) {
@@ -759,15 +758,15 @@ var EventMarker = Class.extend(
             if (  typeof obj.value === 'undefined' || obj.value === null
                || obj.value === 'null' || obj.value === '' ) {
 
-                tag = '<div class="empty"><span class="event-header-tag empty"'+attr+'>' + key + ': </span>' +
+                tag = '<div class="empty"><span class="event-header-tag empty"'+attr+'>' + key + '</span>' +
                       '<span class="event-header-value empty">' + obj.value + '</span></div>';
             }
             else if (typeof obj.value === 'object') {
-                tag = '<div><span class="event-header-tag "'+attr+'>' + key + ': </span>' +
+                tag = '<div><span class="event-header-tag "'+attr+'>' + key + '</span>' +
                 '<span class="event-header-value'+domClass+'">' + obj.value + '</span></div>';
             }
             else {
-                tag = '<div><span class="event-header-tag"'+attr+'>' + key + ': </span>' +
+                tag = '<div><span class="event-header-tag"'+attr+'>' + key + '</span>' +
                       '<span class="event-header-value'+domClass+'">' + obj.value + '</span></div>';
             }
             tags.push(tag);

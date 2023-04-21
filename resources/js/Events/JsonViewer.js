@@ -35,7 +35,7 @@ function Row({prefix, name, value}) {
         // Check if the value is empty. These get a special 'empty' class in the HTML.
         let emptyClass = IsEmptyValue(value) ? 'empty' : '';
         return <div className={emptyClass}>
-            <span className={`event-header-tag ${emptyClass}`}>{label}:</span>
+            <span title={label} className={`event-header-tag ${emptyClass}`}>{label}</span>
             {/* Render the value. Using another component to handle special cases for certain types of values. */}
             <Value empty={IsEmptyValue(value)} value={value} />
         </div>
