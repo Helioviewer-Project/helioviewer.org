@@ -44,3 +44,5 @@ statistics/milestones.txt
 status/movieId.php
 log
 resources/compressed/*
+resources/js/dist/*
+node_modules

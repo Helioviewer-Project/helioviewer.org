@@ -80,8 +80,9 @@ var EventManager = Class.extend({
         this._events        = [];
         this._eventMarkers  = [];
         this._eventTypes    = {};
-        this._jsTreeData    = [];
         this._date          = date;
+        this._eventContainer.empty();
+        this._resetEventTree();
 
         this._queryEventFRMs();
     },
@@ -111,10 +112,9 @@ var EventManager = Class.extend({
     _queryEventFRMs: function () {
         if (this._events.length == 0 ) {
             var params = {
-                "action"     : this._apiSource,
-                "startTime"  : new Date(this._date.getTime()).toISOString(),
-                "ar_filter"  : true
+                "startTime"  : new Date(this._date.getTime()).toISOString()
             };
+            params = Object.assign(params, this._apiSource);
             this._queEvents = true;
             $.get(Helioviewer.api, params, $.proxy(this._parseEventFRMs, this), "json");
         }
@@ -260,18 +260,18 @@ var EventManager = Class.extend({
                 count_str = '';
                 if ( group_count > 0 ) {
                     count_str = " ("+group_count+")";
+                    self._jsTreeData[index].children.push(
+                        {
+                            'data': group.name+count_str,
+                            'attr':
+                                {
+                                    'id': event_type_arr[1]
+                                        + '--'
+                                        + self._escapeInvalidCssChars(group.name)
+                                }
+                        }
+                    );
                 }
-                self._jsTreeData[index].children.push(
-                    {
-                        'data': group.name+count_str,
-                        'attr':
-                            {
-                                'id': event_type_arr[1]
-                                    + '--'
-                                    + self._escapeInvalidCssChars(group.name)
-                            }
-                    }
-                );
             });
 
             count_str = '';
@@ -290,6 +290,22 @@ var EventManager = Class.extend({
         }
 
         self._eventTree.reload(this._jsTreeData);
+        self._jsTreeData = this._jsTreeData;
+    },
+
+    _resetEventTree: function () {
+        if (this._eventTree) {
+            // Reset each item in the list to an empty list.
+            // This preserves the overall skeleton structure without completely removing it.
+            this._jsTreeData.forEach(element => {
+                let label = element['data'];
+                // replace the trailing number in parentheses with nothing
+                label = label.replace(/\s\(\d+\)$/, "");
+                element['data'] = label;
+                element['children'] = [];
+            });
+            this._eventTree.reload(this._jsTreeData);
+        }
     },
 
     _escapeInvalidCssChars: function (selector) {
