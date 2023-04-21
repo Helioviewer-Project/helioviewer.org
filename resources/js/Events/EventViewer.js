@@ -17,7 +17,7 @@ export default function EventViewer({views, source}) {
     return <div>
         <div className='event-info-dialog-menu'>
             {/* Map each view to into its own unique Tab. When clicked, tab will be updated with the selected index */}
-            {views.map((view, idx) => <Tab key={idx} name={view.name} selected={idx == tab} onClick={(_) => setTab(idx)} />)}
+            {views.map((view, idx) => views[idx].content != null ? <Tab key={idx} name={view.name} selected={idx == tab} onClick={(_) => setTab(idx)} /> : "")}
             {/* Then create the final tab on the right containing the "All" text */}
             <Tab key={'all'} name={'all'} extraClasses={'right'} selected={tab == 'all'} onClick={(_) => setTab('all')} />
         </div>
