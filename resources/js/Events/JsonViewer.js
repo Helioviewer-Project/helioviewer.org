@@ -6,7 +6,6 @@ import React from 'react';
  * @returns
  */
 function JsonViewer({value}) {
-    console.log(value);
     return <div className='event-header' style={{height: '400px', overflow: 'auto'}}>
             <Rows object={value} />
         </div>
