@@ -170,6 +170,10 @@ var SettingsLoader = (
                         "visible": true,
                         "layers": [],
                     },
+                    "tree_DONKI": {
+                        "visible": true,
+                        "layers": [],
+                    }
                 },
                 "eventLabels": true,
                 "imageScale" : serverSettings.defaultImageScale,

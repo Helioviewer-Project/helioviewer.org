@@ -44,12 +44,17 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
         // Add the event layer
         this.addEventLayer(
             new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                'HEK', true, Helioviewer.userSettings.get("state.eventLabels"), "events")
+                'HEK', true, Helioviewer.userSettings.get("state.eventLabels"), {"action": "events", "sources": "HEK", "ar_filter": true})
         );
 
         this.addEventLayer(
             new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                'CCMC', true, true, "getFlarePredictions")
+                'CCMC', true, true, {"action": "getFlarePredictions"})
+        );
+
+        this.addEventLayer(
+            new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
+                'DONKI', true, true, {"action": "events", "sources": "DONKI"})
         );
     },
 

@@ -7,7 +7,13 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, getUTCTimestamp */
-"use strict";
+// "use strict";
+
+import { createRoot } from 'react-dom/client';
+import React from 'react';
+import EventViewer from './EventViewer'
+import {renderToString} from 'react-dom/server'
+
 var EventMarker = Class.extend(
     /** @lends EventMarker.prototype */
     {
@@ -26,6 +32,7 @@ var EventMarker = Class.extend(
         this._popupVisible = false;
         this._zIndex = zIndex;
         this._eventGlossary = eventGlossary;
+        this._uniqueId = Math.random().toString().substring(2)
 
         // Format LabelText (for mouse-over and "d")
         this.formatLabels();
@@ -439,8 +446,9 @@ var EventMarker = Class.extend(
 
             // Tab contents
             let sections = [this.type, "obs", "frm", "ref", "all"];
+            let self = this;
             sections.forEach((section, idx) => {
-                let content = this._generateEventKeywordsSection(section);
+                let content = this._generateEventKeywordsSection(section, self);
                 if (content != "<div></div>") {
                     let class_name = idx == 0 ? "event-type" : section;
                     let hide = idx != 0 ? "display: none;" : "";
@@ -449,14 +457,8 @@ var EventMarker = Class.extend(
                 }
             })
         } else {
-            html += `<div class="event-info-dialog-menu">
-                        <a class="show-tags-btn all">${this.category}</a>
-                     </div>
-                     <div class="event-header all" style="height: 400px; overflow: auto;">
-                        ${this._generateEventKeywordsSection("all")}
-                     </div>`
+            html += renderToString(<div id={this._uniqueId}></div>)
         }
-
 
         dialog.append(html).appendTo("body").dialog({
             autoOpen : true,
@@ -564,6 +566,14 @@ var EventMarker = Class.extend(
                     dialog.find(".event-header.ref").hide();
                     dialog.find(".event-header.all").show();
                 });
+
+
+                // This is used to populate the dialog for non-HEK events.
+                let reactContainer = dialog.find('#' + self._uniqueId);
+                if (reactContainer.length == 1) {
+                    const root = createRoot(reactContainer[0]);
+                    root.render(<EventViewer views={self.views} source={self.source} />);
+                }
             }
         });
     },
@@ -575,11 +585,11 @@ var EventMarker = Class.extend(
         return this.hasOwnProperty('hv_labels_formatted');
     },
 
-    _generateEventKeywordsSection: function (tab) {
+    _generateEventKeywordsSection: function (tab, data) {
         var formatted, tag, tags = [], lookup, attr, domClass, icon, list= {}, self=this;
 
         if ( tab == 'obs' ) {
-            $.each( this.event, function (key, value) {
+            $.each( data, function (key, value) {
                 if ( key.substring(0, 4) == 'obs_' ) {
 
                     lookup = self._eventGlossary[key];
@@ -594,7 +604,7 @@ var EventMarker = Class.extend(
             });
         }
         else if ( tab == 'frm' ) {
-                $.each( this.event, function (key, value) {
+                $.each( data, function (key, value) {
                     if ( key.substring(0, 4) == 'frm_' ) {
 
                         lookup = self._eventGlossary[key];
@@ -609,7 +619,7 @@ var EventMarker = Class.extend(
                 });
         }
         else if ( tab == 'ref' ) {
-                $.each( this.event['refs'], function (index, obj) {
+                $.each( data['refs'], function (index, obj) {
                     lookup = self._eventGlossary[obj['ref_name']];
                     if ( typeof lookup != 'undefined' ) {
                         list[obj['ref_name']] = lookup;
@@ -621,7 +631,7 @@ var EventMarker = Class.extend(
                 });
         }
         else if ( tab == 'all' ) {
-                $.each( this.event, function (key, value) {
+                $.each( data, function (key, value) {
                     if ( key.substring(0, 3) != 'hv_' && key != 'refs' ) {
 
                         lookup = self._eventGlossary[key];
@@ -636,7 +646,7 @@ var EventMarker = Class.extend(
                 });
         }
         else if ( tab.length == 2 ) {
-                $.each( this.event, function (key, value) {
+                $.each( data, function (key, value) {
                     if ( key.substring(0, 3) == tab.toLowerCase()+'_'
                       || key.substring(0, 5) == 'event'
                       || key == 'concept'
@@ -675,14 +685,13 @@ var EventMarker = Class.extend(
 
             if ( obj.value != '' && obj.value != 'N/A' && obj.value != 'n/a'
                 && typeof obj['hv_type'] != 'undefined'
-                && (obj['hv_type'] == 'url' || obj['hv_type'] == 'image_url') ) {
+                && (obj['hv_type'] == 'url' || obj['hv_type'] == 'image_url')) {
 
                 if ( obj.value.indexOf('://') == -1) {
                     obj.value = 'http://'+obj.value;
                 }
                 obj.value = '<a href="'+obj.value+'" target="_blank">'+obj.value+'</a>';
             }
-
 
             if ( obj.value != '' && obj.value != 'N/A' && obj.value != 'n/a'
                 && typeof obj['hv_type'] != 'undefined' && obj['hv_type'] == 'email_or_url' ) {
@@ -749,11 +758,15 @@ var EventMarker = Class.extend(
             if (  typeof obj.value === 'undefined' || obj.value === null
                || obj.value === 'null' || obj.value === '' ) {
 
-                tag = '<div class="empty"><span class="event-header-tag empty"'+attr+'>' + key + ': </span>' +
+                tag = '<div class="empty"><span class="event-header-tag empty"'+attr+'>' + key + '</span>' +
                       '<span class="event-header-value empty">' + obj.value + '</span></div>';
             }
+            else if (typeof obj.value === 'object') {
+                tag = '<div><span class="event-header-tag "'+attr+'>' + key + '</span>' +
+                '<span class="event-header-value'+domClass+'">' + obj.value + '</span></div>';
+            }
             else {
-                tag = '<div><span class="event-header-tag"'+attr+'>' + key + ': </span>' +
+                tag = '<div><span class="event-header-tag"'+attr+'>' + key + '</span>' +
                       '<span class="event-header-value'+domClass+'">' + obj.value + '</span></div>';
             }
             tags.push(tag);
@@ -824,6 +837,13 @@ var EventMarker = Class.extend(
 						<div style=\"clear:both\"></div>';
 		}
 
+        let sourceLink = '';
+        if (this.hasOwnProperty('link') && this.link !== null) {
+            sourceLink += '\
+            <div class="btn-label btn event-search-external text-btn" data-url="'+this.link.url+'" target="_blank">'+this.link.text+' <i class="fa fa-external-link fa-fw"></i></div>\
+            <div style=\"clear:both\"></div>';
+        }
+
         //Only add buttons to main site event pop-ups, remove buttons from k12
         if(outputType!='minimal' && this.hasOwnProperty('start') && this.hasOwnProperty('end')){
             content     += '<div class="btn-container">'+"\n"
@@ -835,6 +855,8 @@ var EventMarker = Class.extend(
                         +		noaaSearch
                         +		"\t"+(embedView ? '' : '<div class="btn-label btn copy-to-data text-btn" data-start="'+this.start.replace('T',' ').replace(/-/gi,'/')+'" data-end="'+this.end.replace('T',' ').replace(/-/gi,'/')+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>')+"\n"
                         //+       "\t"+'<div class="ui-icon ui-icon-video btn event-movie"></div><div class="btn-label btn event-movie">Generate Movie</div>'+"\n"
+                        + 		"<div style=\"clear:both\"></div>\n"
+                        +       sourceLink
                         +  '</div>'+"\n";
         }
 
@@ -929,3 +951,5 @@ var EventMarker = Class.extend(
     }
 
 });
+
+export { EventMarker }
