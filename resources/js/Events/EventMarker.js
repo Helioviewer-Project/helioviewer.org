@@ -460,31 +460,6 @@ var EventMarker = Class.extend(
             html += renderToString(<div id={this._uniqueId}></div>)
         }
 
-        let buttons = [
-            {  text  : 'Hide Empty Rows',
-                        'class' : 'toggle_empty',
-                        click  : function () {
-
-                    var text = $(this).parent().find('.toggle_empty span.ui-button-text');
-
-                    $.each( $(this).find("div.empty"), function (index,node) {
-                        if ( $(node).css('display') == 'none' ) {
-                            $(node).css('display', 'block');
-                        }
-                        else {
-                            $(node).css('display', 'none');
-                        }
-                    });
-
-                    if ( text.html() == 'Hide Empty Rows' ) {
-                        text.html('Show Empty Rows');
-                    }
-                    else {
-                        text.html('Hide Empty Rows');
-                    }
-            }}
-        ];
-
         dialog.append(html).appendTo("body").dialog({
             autoOpen : true,
             title    : headingText,
@@ -494,7 +469,28 @@ var EventMarker = Class.extend(
             height   : 550,
             draggable: true,
             resizable: false,
-            buttons  : buttons,
+            buttons  : [ {  text  : 'Hide Empty Rows',
+                          'class' : 'toggle_empty',
+                           click  : function () {
+
+                        var text = $(this).parent().find('.toggle_empty span.ui-button-text');
+
+                        $.each( $(this).find("div.empty"), function (index,node) {
+                            if ( $(node).css('display') == 'none' ) {
+                                $(node).css('display', 'block');
+                            }
+                            else {
+                                $(node).css('display', 'none');
+                            }
+                        });
+
+                        if ( text.html() == 'Hide Empty Rows' ) {
+                            text.html('Show Empty Rows');
+                        }
+                        else {
+                            text.html('Hide Empty Rows');
+                        }
+                }} ],
             create   : function (event, ui) {
 
                 dialog.css('overflow', 'hidden');
