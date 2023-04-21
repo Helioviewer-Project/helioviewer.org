@@ -131,14 +131,21 @@ a.show-tags-btn {
 
 .event-header-tag   {
     display: inline-block;
-    width: 188px;
+    width: 200px;
     text-align: right;
     vertical-align: top;
     font-weight: bold;
+    direction: rtl;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-header-tag::before {
+    content: ':';
 }
 .event-header-value {
     display: inline-block;
-    width: 482px;
+    width: 470px;
     margin-left: 6px;
     font-family: monospace;
 }
