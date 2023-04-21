@@ -12,7 +12,7 @@ function JsonViewer({value}) {
 }
 
 function Rows({object, prefix}) {
-    return Object.entries(object).map((entry, idx) => <Row key={idx} prefix={prefix} name={entry[0]} value={entry[1]} />);
+    return Object.entries(object).map((entry, idx) => <Row key={btoa(JSON.stringify(entry))} prefix={prefix} name={entry[0]} value={entry[1]} />);
 }
 
 function isNumeric(value) {
