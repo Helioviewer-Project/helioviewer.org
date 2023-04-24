@@ -231,19 +231,6 @@ var EventManager = Class.extend({
                 event_type_arr[0] = event_type_arr[0].slice(0,-1);
             }
 
-            // Pluralize event type text label
-            // TODO move this to a generic helper function
-            switch (event_type_arr[0].charAt(event_type_arr[0].length-1)) {
-                case 'x':
-                    event_type_arr[0] += 'es';
-                    break;
-                case 'y':
-                    event_type_arr[0] = event_type_arr[0].slice(0,-1) + 'ies';
-                    break;
-                default:
-                    event_type_arr[0] += 's';
-            }
-
             obj = Object();
             obj['data']     = event_type_arr[0];
             obj['attr']     = { 'id' : event_type_arr[1] };
