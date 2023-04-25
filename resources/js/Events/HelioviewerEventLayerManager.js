@@ -49,12 +49,7 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
 
         this.addEventLayer(
             new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                'CCMC', true, true, {"action": "getFlarePredictions"})
-        );
-
-        this.addEventLayer(
-            new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                'DONKI', true, true, {"action": "events", "sources": "DONKI"})
+                'CCMC', true, true, {"action": "events", "sources": "CCMC"})
         );
     },
 
