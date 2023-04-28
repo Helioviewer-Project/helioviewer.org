@@ -80,20 +80,36 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
     min-width: 646px;
 }
 
+.event-info-dialog-menu .tabgroup {
+    display: inline;
+}
+
 a.show-tags-btn {
     color: #CCC;
     text-shadow: 1px 1px 1px #000;
     background-color: #333;
     cursor: pointer;
     padding: 5px 10px;
-    -o-border-radius: 5px 5px 0 0;
-    -moz-border-radius: 5px 5px 0 0;
-    -webkit-border-radius: 5px 5px 0 0;
-    border-radius: 5px 5px 0 0;
     border: 1px solid #333;
     border-bottom: none;
     margin: 2px 0 0 13px;
     display: inline-block;
+}
+
+.event-info-dialog-menu .tabgroup a:first-child {
+    border-top-left-radius: 5px;
+}
+
+.event-info-dialog-menu .tabgroup a:not(:first-child) {
+    margin-left: 0px;
+}
+
+.event-info-dialog-menu .tabgroup a:last-child {
+    border-top-right-radius: 5px;
+}
+
+.event-info-dialog-menu > a.show-tags-btn {
+    border-radius: 5px 5px 0 0;
 }
 
 .show-tags-btn:hover {
