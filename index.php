@@ -1817,7 +1817,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<script src="/resources/lib/mediaelement/build/mediaelement-and-player.min.js" type="text/javascript" language="javascript"></script>
 
 	<!-- Helioviewer JavaScript -->
-	<script src="/resources/js/dist/EventMarker.js" type="text/javascript"></script>
+	<script src="/resources/js/dist/EventMarker.js?v=<?=filemtime('resources/js/dist/EventMarker.js')?>" type="text/javascript"></script>
 	<?php
 	if ($debug){
 	?>
