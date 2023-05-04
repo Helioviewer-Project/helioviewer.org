@@ -1102,7 +1102,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 								<span id="helioviewer-url-box-msg"></span>
 								<form style="margin-top: 5px; text-align: center;">
 									<input aria-label="Viewport URL" type="text" class="helioviewer-url-input-box helioviewer-url-input-box-menu" style="width:98%;" value="https://helioviewer.org" />
-									<label for="helioviewer-url-shorten-1">Shorten with bit.ly? </label>
+									<label for="helioviewer-url-shorten-1">Shorten link: </label>
 									<input id="helioviewer-url-shorten-1" type="checkbox" class="helioviewer-url-shorten" />
 									<input type="hidden" class="helioviewer-short-url" value="" />
 									<input type="hidden" class="helioviewer-long-url" value="" />
@@ -1397,7 +1397,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 				<span id="helioviewer-url-box-msg"></span>
 				<form style="margin-top: 5px;">
 					<input aria-label="Viewport URL" type="text" class="helioviewer-url-input-box helioviewer-url-input-box-video" style="width:98%;" value="https://helioviewer.org" />
-					<label for="helioviewer-url-shorten">Shorten with bit.ly? </label>
+					<label for="helioviewer-url-shorten">Shorten link: </label>
 					<input id="helioviewer-url-shorten" type="checkbox" class="helioviewer-url-shorten" />
 					<input type="hidden" class="helioviewer-short-url" value="" />
 					<input type="hidden" class="helioviewer-long-url" value="" />
