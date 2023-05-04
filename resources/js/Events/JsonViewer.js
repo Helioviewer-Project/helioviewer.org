@@ -52,10 +52,17 @@ function Row({prefix, name, value}) {
 function Value({empty, value}) {
     let className = `event-header-value ${empty ? 'empty' : ''}`;
     if (typeof value == 'string' && value.startsWith('http')) {
-        // If the string is a URL, make it a link
+        // If the string is an image, put the link in an image tag
+        if (IsImage(value)) {
         return <span className={className}>
-                   <a href={value} target='_blank'>{value}</a>
+                 <img src={value} />
                </span>
+        } else {
+            // If the string is a URL, make it a link
+        return <span className={className}>
+                 <a href={value} target='_blank'>{value}</a>
+               </span>
+        }
     } else {
         if (typeof value === "boolean") {
             value = value ? "true" : "false";
@@ -78,6 +85,20 @@ function IsEmptyValue(value) {
         default:
             return value == null;
     }
+}
+
+/**
+ * Checks if the given value is an image
+ * @param {string} link link to check
+ */
+function IsImage(link) {
+    let imageTypes = ['.gif', '.png', '.jpg', '.jpeg', '.webp'];
+    for (let i = 0; i < imageTypes.length; i++) {
+        if (link.endsWith(imageTypes[i])) {
+            return true;
+        }
+    }
+    return false;
 }
 
 export { JsonViewer }

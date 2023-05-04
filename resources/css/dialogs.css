@@ -154,6 +154,7 @@ a.show-tags-btn {
     direction: rtl;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .event-header-tag::before {
@@ -190,6 +191,10 @@ a.show-tags-btn {
 
 .event-header .empty {
     color: #444;
+}
+
+.event-header img {
+    max-width: 100%;
 }
 
 /* Video links */
