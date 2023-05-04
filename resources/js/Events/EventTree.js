@@ -241,30 +241,51 @@ var EventTree = Class.extend({
         $(document).trigger("change-feature-events-state");
     },
 
+    /**
+     * Hides all events that are not related to the item being hovered over.
+     * i.e. if the viewport shows CMEs and Solar flares, this hoverOn may trigger when
+     * hovering over the Solar Flare label. This will hide all CMEs and other events so that
+     * only Solar Flares are visible in the viewport while the mouse is hovering over the Solar Flares label.
+     *
+     * This should only happen if the item being hovered over is checked, otherwise this function will have no effect.
+     * @param {Event} event
+     */
     hoverOn: function (event) {
-        var emphasisNodes, eventLayerNodes, found;
-        emphasisNodes  = $("[id^="+this['attr'].id+"__]");
-        eventLayerNodes = $(".event-container > div.event-layer");
+        // Find the list item that is being hovered over
+        let trigger = $(event.target).parents('li');
+        if (trigger.length > 0) {
+            let hoverItem = trigger[0];
+            // Get the id of the DIV containing target event markers
+            let targetId = hoverItem.id.replace('--', '__');
+            // Get the div containing the target event markers
+            var emphasisNodes = $(`[id^=${targetId}]`);
+            // If the item is checked, then proceed to hide all other event marker divs.
+            // jstree-undetermined handles the case where the group label is hovered over instead of an individual event type.
+            if (hoverItem.classList.contains('jstree-checked') || hoverItem.classList.contains('jstree-undetermined')) {
+                var eventLayerNodes, found;
+                eventLayerNodes = $(".event-container > div.event-layer");
 
-        $.each( eventLayerNodes, function(i, obj) {
-            found = false;
-            $.each( emphasisNodes, function(j, emphObj) {
-                if ( $(obj)[0].id == $(emphObj)[0].id ) {
-                    found = true;
+                $.each( eventLayerNodes, function(i, obj) {
+                    found = false;
+                    $.each( emphasisNodes, function(j, emphObj) {
+                        if ( $(obj)[0].id == $(emphObj)[0].id ) {
+                            found = true;
+                        }
+                    });
+
+                    if ( found === false && emphasisNodes.length > 0 ) {
+                        $(obj).css({'opacity':'0'});
+                        $('.movie-viewport-icon').hide();
+                    }
+                    else {
+                        $(obj).css({'opacity':'1.00'});
+                    }
+                });
+                var className = 'point_type_'+this['attr'].id;
+                if(timelineRes == 'm'){
+                    $(".highcharts-series > rect:not(."+className+")").hide();
                 }
-            });
-
-            if ( found === false && emphasisNodes.length > 0 ) {
-                $(obj).css({'opacity':'0'});
-                $('.movie-viewport-icon').hide();
             }
-            else {
-                $(obj).css({'opacity':'1.00'});
-            }
-        });
-        var className = 'point_type_'+this['attr'].id;
-        if(timelineRes == 'm'){
-			$(".highcharts-series > rect:not(."+className+")").hide();
         }
     },
 
