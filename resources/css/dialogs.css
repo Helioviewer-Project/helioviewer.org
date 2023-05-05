@@ -101,7 +101,7 @@ a.show-tags-btn {
 }
 
 .event-info-dialog-menu .tabgroup a:not(:first-child) {
-    margin-left: 0px;
+    margin-left: 0px !important;
 }
 
 .event-info-dialog-menu .tabgroup a:last-child {
