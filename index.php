@@ -116,6 +116,7 @@
 		<link rel="stylesheet" href="/resources/css/accordions.css" />
 		<link rel="stylesheet" href="/resources/css/dialogs.css" />
 		<link rel="stylesheet" href="/resources/css/events.css" />
+		<link rel="stylesheet" href="/resources/css/event-viewer.css" />
 		<link rel="stylesheet" href="/resources/css/media-manager.css" />
 		<link rel="stylesheet" href="/resources/css/timeline.css" />
 		<link rel="stylesheet" href="/resources/css/timenav.css" />

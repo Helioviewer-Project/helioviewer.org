@@ -1,4 +1,5 @@
 import React from 'react';
+import ModalImage from 'react-modal-image';
 
 /**
  * Dumps JSON into a table
@@ -55,7 +56,7 @@ function Value({empty, value}) {
         // If the string is an image, put the link in an image tag
         if (IsImage(value)) {
         return <span className={className}>
-                 <img src={value} />
+                 <ModalImage small={value} large={value} hideDownload={true} hideZoom={true} />
                </span>
         } else {
             // If the string is a URL, make it a link
