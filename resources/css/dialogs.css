@@ -166,6 +166,9 @@ a.show-tags-btn {
     margin-left: 6px;
     font-family: monospace;
 }
+.event-header-value > div:first-child {
+    display: inline;
+}
 .event-header-value.date {
     /*color: #FFA07A;*/
 }
