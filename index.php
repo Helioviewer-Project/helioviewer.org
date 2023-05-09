@@ -150,12 +150,12 @@
 <?php
 if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
-		//$cssfilesrndnum= rand(2145, 999999);
+		$mtime = filemtime('resources/lib/responsive/responsive_hv.css');
 		$hvmobcssfiles= <<<MCF
 			<!-- START responsive CSS files -->
 			<link rel='stylesheet' href='/resources/lib/responsive/zeynep.css'>
 			<link href="/resources/lib/responsive/hamburger.min.css" rel="stylesheet">
-			<link rel="stylesheet" href="/resources/lib/responsive/responsive_hv.css">
+			<link rel="stylesheet" href="/resources/lib/responsive/responsive_hv.css?v=$mtime">
 			<!-- END responsive CSS files -->
 	MCF;
 		echo $hvmobcssfiles;
@@ -1892,7 +1892,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 <?php
 if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
-	//$jsfilesrndnum= rand(2145, 999999);
 	$hvmobjsfiles= <<<MJF
 	<!-- START responsive JS files -->
 	<script src='/resources/lib/responsive/zeynep1.js'></script>
