@@ -839,12 +839,6 @@
 		display: none;
 	}
 
-	#earth-container {
-		display:none;
-		top: 110px !important;
-		left: 7px !important;
-	}
-
 	#earthLabel {
 		background-color: rgba(17, 17, 17, 0.5) !important;
 	}
