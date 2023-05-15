@@ -1797,6 +1797,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<!-- Library JavaScript -->
 	<script src="/resources/lib/jquery/jquery-3.6.0.min.js" type="text/javascript"></script>
 	<script src="/resources/lib/jquery-ui-1.13.1/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="/resources/lib/jquery-ui-touch-punch/jquery.ui.touch-punch.js" type="text/javascript"></script>
 	<script src="/resources/lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 	<script src="/resources/lib/jquery.mousewheel/jquery.mousewheel.3.1.13.min.js" type="text/javascript"></script>
 	<script src="/resources/lib/jquery.browser/dist/jquery.browser.min.js" type="text/javascript" language="javascript"></script>
