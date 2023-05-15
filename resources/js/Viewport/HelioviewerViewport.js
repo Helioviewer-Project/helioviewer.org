@@ -288,7 +288,7 @@ var HelioviewerViewport = Class.extend(
             "top" : sbHeight - Math.max(0, Math.min(sbHeight, Math.round(sbHeight / 2 + centerY)))
         });
 
-        this.updateViewport();
+        $(document).trigger("update-viewport");
     },
 
     /**
@@ -320,6 +320,7 @@ var HelioviewerViewport = Class.extend(
 
         this.updateViewportRanges(coordinates);
         $(document).trigger('update-external-datasource-integration');
+        $(document).trigger('earth-scale');
     },
 
     /**

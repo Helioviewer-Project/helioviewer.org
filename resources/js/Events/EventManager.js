@@ -25,8 +25,6 @@ var EventManager = Class.extend({
      * @constructs
      */
     init: function (eventGlossary, date, treeid, apiSource) {
-        var visState, scale;
-
         this._apiSource = apiSource;
         this._eventLayers    = [];
         this._events         = [];
@@ -40,8 +38,6 @@ var EventManager = Class.extend({
         this._eventGlossary  = eventGlossary;
         this._eventContainer = $('<div id="'+treeid+'-event-container" class="event-container"></div>');
         this._uniqueId = treeid
-
-        scale = new ImageScale();
 
         this.updateRequestTime();
 		setTimeout($.proxy(this._queryEventFRMs, this), 100);
