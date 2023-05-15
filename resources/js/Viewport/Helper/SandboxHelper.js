@@ -3,7 +3,7 @@
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, document, window */
 "use strict";
@@ -21,17 +21,17 @@ var SandboxHelper = Class.extend(
      */
     center: function () {
         var top, left;
-        
+
         //Get ViewPort size offset
         var heightOffset = $(window).height();
         var widthOffset = $(window).width();
-        
+
         left = 0.5 * this.domNode.width();
         top  = 0.5 * this.domNode.height();
 
         this.moveContainerTo(left, top);
     },
-        
+
     /**
      * Find the center of the sandbox
      */
@@ -39,15 +39,15 @@ var SandboxHelper = Class.extend(
         //Get ViewPort size offset
         var heightOffset = $(window).height();
         var widthOffset = $(window).width();
-        
+
         return {
-            x: 0.5 * this.domNode.width(), 
+            x: 0.5 * this.domNode.width(),
             y: 0.5 * this.domNode.height()
         };
     },
-        
+
     /**
-     * Called when the viewport has moved or resized. Calculates the difference 
+     * Called when the viewport has moved or resized. Calculates the difference
      * between current sandbox's size and position and desired sandbox size,
      * and updates the css accordingly. Also repositions the movingContainer.
      */
@@ -55,18 +55,18 @@ var SandboxHelper = Class.extend(
         var change, oldCenter, newCenter, newHCLeft, newHCTop, containerPos;
 
         oldCenter = this.getCenter();
-        
+
         //Get ViewPort size offset
         var heightOffset = $(window).height();
         var widthOffset = $(window).width();
-        
-        
+
+
         // Update sandbox dimensions
         this.domNode.css({
             width  : (desiredSandboxSize.width + widthOffset)  + 'px',
             height : (desiredSandboxSize.height + heightOffset) + 'px',
             left   : (viewportCenter.x - ( widthOffset * 0.5 ) ) - (0.5 * desiredSandboxSize.width) + 'px',
-            top    : (viewportCenter.y - ( heightOffset * 0.5 ) ) - (0.5 * desiredSandboxSize.height) + 'px'            
+            top    : (viewportCenter.y - ( heightOffset * 0.5 ) ) - (0.5 * desiredSandboxSize.height) + 'px'
         });
         newCenter = this.getCenter();
 
@@ -84,10 +84,10 @@ var SandboxHelper = Class.extend(
         // Update moving container position
         newHCLeft = Math.max(0, Math.min(desiredSandboxSize.width,  containerPos.left + change.x));
         newHCTop  = Math.max(0, Math.min(desiredSandboxSize.height, containerPos.top  + change.y));
- 
+
         this.moveContainerTo(newHCLeft, newHCTop);
     },
-        
+
     moveContainerTo: function (x, y) {
         this.movingContainer.css({left: x, top: y});
     }

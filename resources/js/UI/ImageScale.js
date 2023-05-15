@@ -21,23 +21,23 @@ var ImageScale = Class.extend(
         this._rsunInArcseconds       = 959.705;
 
         this._earthSunRadiusFraction = 6367.5 / 695500.;  // km
-		
+
 		this.buttonEarth     	= $('#earth-button');
         this.buttonScaleBar 	= $('#scalebar-button');
         //this.container 			= $('#earth-container');
-		
+
         this._initScale();
 		this._initEventHandlers();
     },
 
     _initEventHandlers: function () {
-        
+
         $(document).bind('toggle-scale-window', $.proxy(this.toggleScale, this));
         $(document).bind('hide-scale-window', $.proxy(this.hideScale, this));
         $(document).bind('scalebar-scale-window', $.proxy(this.barScale, this));
-        $(document).bind('earch-scale-window', $.proxy(this.earthScale, this));        
+        $(document).bind('earch-scale-window', $.proxy(this.earthScale, this));
     },
-	
+
     _initScale: function() {
 
         if ( $('#earth-container').length > 0 ) {
@@ -84,13 +84,13 @@ var ImageScale = Class.extend(
      */
     hideScale: function () {
         this.container.hide();
-        
+
     	Helioviewer.userSettings.set("state.scale", false);
 		Helioviewer.userSettings.set("state.scaleType", 'disabled');
-		
+
 		this.buttonScaleBar.attr('title','Show Length scale Indicator');
 		this.buttonEarth.attr('title','Show Earth-Scale Indicator');
-        
+
         this.buttonEarth.removeClass("active");
         this.buttonScaleBar.removeClass("active");
     },
@@ -100,25 +100,25 @@ var ImageScale = Class.extend(
      */
     earthScale: function () {
 		var scaleXY = this.resetIfOutsideViewportBounds();
-		
+
         this.mouseCoords = "earth";
         this.container.show();
-        
+
     	Helioviewer.userSettings.set("state.scale", true);
 		Helioviewer.userSettings.set("state.scaleType", 'earth');
         Helioviewer.userSettings.set("state.scaleX", scaleXY.x);
 		Helioviewer.userSettings.set("state.scaleY", scaleXY.y);
-		
+
 		this.buttonScaleBar.attr('title','Show Length scale Indicator');
 		this.buttonEarth.attr('title','Hide Earth-Scale Indicator');
-        
+
         $('#earthLabel').html('Earth Scale');
         $('#earthScale').show();
         $('#barScaleBlock').hide();
         this.buttonScaleBar.removeClass("active");
         this.buttonEarth.addClass("active");
         this.buttonScaleBar.removeClass("active");
-        
+
 
         this._getScaleSettings();
     },
@@ -128,24 +128,24 @@ var ImageScale = Class.extend(
      */
     barScale: function () {
 		var scaleXY = this.resetIfOutsideViewportBounds();
-		
+
         this.mouseCoords = "scalebar";
         this.container.show();
-        
+
     	Helioviewer.userSettings.set("state.scale", true);
 		Helioviewer.userSettings.set("state.scaleType", 'scalebar');
         Helioviewer.userSettings.set("state.scaleX", scaleXY.x);
 		Helioviewer.userSettings.set("state.scaleY", scaleXY.y);
-		
+
 		this.buttonScaleBar.attr('title','Hide Length scale Indicator');
 		this.buttonEarth.attr('title','Show Earth-Scale Indicator');
-        
+
         $('#earthLabel').html('Bar Scale');
         $('#barScaleBlock').show();
         $('#earthScale').hide();
         this.buttonScaleBar.addClass("active");
         this.buttonEarth.removeClass("active");
-        
+
 
         this._getScaleSettings();
     },
@@ -192,9 +192,9 @@ var ImageScale = Class.extend(
             'width' : this.earthDiameterInPixels+'px',
             'height': this.earthDiameterInPixels+'px',
         });
-		
+
 		$('#barScaleLabel').html( this.scaleBarSizeInKM + ' km');
-		
+
         // Update X,Y position of scale container (in arcseconds)
         this.scaleContainerDragStop();
     },
@@ -210,7 +210,7 @@ var ImageScale = Class.extend(
 
     scaleContainerDragStop: function(event) {
         var scaleXY;
-        
+
         Helioviewer.userSettings.set("state.containerX",this.container.position().left);
         Helioviewer.userSettings.set("state.containerY",this.container.position().top);
 
@@ -250,9 +250,9 @@ var ImageScale = Class.extend(
                 Helioviewer.userSettings.get("state.containerY") <= ( $('#hv-header').height() || 0 ) ||
                 Helioviewer.userSettings.get("state.containerY") >= this.container.parent().height()-this.container.height()
                 ) ||
-                (Helioviewer.userSettings.get("state.containerX") <= dm.outerWidth(true)+dmOffset && 
+                (Helioviewer.userSettings.get("state.containerX") <= dm.outerWidth(true)+dmOffset &&
                  Helioviewer.userSettings.get("state.containerY") <= dm.outerHeight(true)+dmOffset )
-                ) {                
+                ) {
                 var sc = $('#scale');
                 this.containerX = sc.position().left + (sc.outerWidth()/2) - this.container.width()/2; //center the earth container
 	            this.containerY = sc.position().top - this.container.height() - 3;
@@ -264,11 +264,11 @@ var ImageScale = Class.extend(
                     'left'     : this.containerX+'px'
                 });
            }
-	        
-	        
+
+
         }
 
-        
+
 
         scaleXY = coords.computeMouseCoords(
             Helioviewer.userSettings.get("state.containerX"),
@@ -283,15 +283,15 @@ var ImageScale = Class.extend(
 
         return scaleXY;
     },
-	
+
 	_scaleBarSizeInKM: function(){
 		this.imageScale  = Helioviewer.userSettings.get("state.imageScale");
-		
+
 		var earthInPixels = 2 * this._earthSunRadiusFraction * (this._rsunInArcseconds / this.imageScale);
-		
+
 		var sizeInKM = Math.round((50 * (2 * 6367.5)) / earthInPixels);
 		var sizeInKMRounded = Math.round(sizeInKM/1000)*1000;
-		
+
 		this.scaleBarSizeInKM = sizeInKMRounded.toLocaleString();
 	},
 
@@ -314,14 +314,14 @@ var ImageScale = Class.extend(
 
         if ( parseInt(Helioviewer.userSettings.get("state.scaleX")) == 0 ||
              parseInt(Helioviewer.userSettings.get("state.scaleY")) == 0 ) {
-			
-			
+
+
             if (outputType != 'minimal'){
-			
+
 	            this.containerX = this.container.parent().width()*0.66 - this.container.width()/2; //center the earth container
 	            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
 	            this.scale = false;
-	            
+
 	        }else{
                 var sc = $('#scale');
                 this.containerX = sc.position().left + (sc.outerWidth()/2) - this.container.width()/2; //center the earth container
