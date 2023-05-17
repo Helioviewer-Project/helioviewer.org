@@ -589,7 +589,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 	_onMovieClick: function (event) {
 		var id, movie, dialog, action, dateRequested;
 
-		if (event.target.href.indexOf("gl.helioviewer.org") != -1) {
+		if (event.target.hasOwnProperty('href') && event.target.href.indexOf("gl.helioviewer.org") != -1) {
 			window.open(event.target.href, '_blank');
 			return false;
 		}
