@@ -56,6 +56,13 @@ var TileLayer = Layer.extend(
     },
 
     updateTileVisibilityRange: function (range) {
+        this.tileLoader.updateTileVisibilityRange(range, this.loaded);
+    },
+
+    /**
+     *
+     */
+    updateImageScale: function (scale, tileVisibilityRange) {
         // The general visibility range doesn't account for any x/y offsets.
         // Update the start/end values based on the known offset.
         let offset = this._getOffset();
@@ -63,27 +70,16 @@ var TileLayer = Layer.extend(
         let yTileOffset = Math.round(offset.y / this.tileSize);
         // Don't modify range directly since the object is shared across layers.
         // Instead, create a new object with the updated fields
-        this.tileLoader.updateTileVisibilityRange({
-            xStart: range.xStart + xTileOffset,
-            xEnd: range.xEnd + xTileOffset,
-            yStart: range.yStart + yTileOffset,
-            yEnd: range.yEnd + yTileOffset
-        }, this.loaded);
-    },
-
-    /**
-     *
-     */
-    updateImageScale: function (scale, tileVisibilityRange) {
         // With pinch scaling, these can end up being non-whole numbers from rounding
         // errors. Instead of -1, we get -0.9999999 which results in the whole
         // range being wrong.
         // Round everything to whole numbers to make sure this always works.
-        tileVisibilityRange.xStart = Math.round(tileVisibilityRange.xStart);
-        tileVisibilityRange.yStart = Math.round(tileVisibilityRange.yStart);
-        tileVisibilityRange.xEnd = Math.round(tileVisibilityRange.xEnd);
-        tileVisibilityRange.yEnd = Math.round(tileVisibilityRange.yEnd);
+        tileVisibilityRange.xStart = Math.round(tileVisibilityRange.xStart) + xTileOffset;
+        tileVisibilityRange.yStart = Math.round(tileVisibilityRange.yStart) + yTileOffset;
+        tileVisibilityRange.xEnd = Math.round(tileVisibilityRange.xEnd) + xTileOffset;
+        tileVisibilityRange.yEnd = Math.round(tileVisibilityRange.yEnd) + yTileOffset;
         this.viewportScale = scale;
+
         this._updateDimensions();
 
         this.tileLoader.setTileVisibilityRange(tileVisibilityRange);
