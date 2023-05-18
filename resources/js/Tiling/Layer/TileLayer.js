@@ -60,13 +60,15 @@ var TileLayer = Layer.extend(
         // Update the start/end values based on the known offset.
         let offset = this._getOffset();
         let xTileOffset = Math.round(offset.x / this.tileSize);
-        range.xStart += xTileOffset;
-        range.xEnd += xTileOffset;
-
         let yTileOffset = Math.round(offset.y / this.tileSize);
-        range.yStart += yTileOffset;
-        range.yEnd += yTileOffset;
-        this.tileLoader.updateTileVisibilityRange(range, this.loaded);
+        // Don't modify range directly since the object is shared across layers.
+        // Instead, create a new object with the updated fields
+        this.tileLoader.updateTileVisibilityRange({
+            xStart: range.xStart + xTileOffset,
+            xEnd: range.xEnd + xTileOffset,
+            yStart: range.yStart + yTileOffset,
+            yEnd: range.yEnd + yTileOffset
+        }, this.loaded);
     },
 
     /**
