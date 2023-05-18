@@ -56,6 +56,16 @@ var TileLayer = Layer.extend(
     },
 
     updateTileVisibilityRange: function (range) {
+        // The general visibility range doesn't account for any x/y offsets.
+        // Update the start/end values based on the known offset.
+        let offset = this._getOffset();
+        let xTileOffset = Math.round(offset.x / this.tileSize);
+        range.xStart += xTileOffset;
+        range.xEnd += xTileOffset;
+
+        let yTileOffset = Math.round(offset.y / this.tileSize);
+        range.yStart += yTileOffset;
+        range.yEnd += yTileOffset;
         this.tileLoader.updateTileVisibilityRange(range, this.loaded);
     },
 
@@ -96,7 +106,7 @@ var TileLayer = Layer.extend(
 	    var layerDateStr = this.baseDiffTime;
 	    if(typeof layerDateStr == 'number' || layerDateStr == null){
 			layerDateStr = $('#date').val()+' '+$('#time').val();
-		} 
+		}
 
 		layerDateStr = formatLyrDateString(layerDateStr);
         return this.image.getLayerName() + "," + (this.visible ? this.layeringOrder : "0") + "," + this.opacity + "," + this.difference + "," + this.diffCount + "," + this.diffTime + "," + layerDateStr;
@@ -109,14 +119,7 @@ var TileLayer = Layer.extend(
         }
     },
 
-    /**
-     * Computes layer parameters relative to the current viewport image scale
-     *
-     * Center offset:
-     *   The values for offsetX and offsetY reflect the x and y coordinates with the origin
-     *   at the bottom-left corner of the image, not the top-left corner.
-     */
-    _updateDimensions: function () {
+    _getOffset: function () {
         var scaleFactor, offsetX, offsetY;
 
         // Ratio of original JP2 image scale to the viewport/desired image scale
@@ -133,19 +136,34 @@ var TileLayer = Layer.extend(
         // Offset image
         offsetX = parseFloat((this.image.offsetX * scaleFactor).toPrecision(8));
         offsetY = parseFloat((this.image.offsetY * scaleFactor).toPrecision(8));
+        return {
+            x: offsetX,
+            y: offsetY
+        }
+    },
+
+    /**
+     * Computes layer parameters relative to the current viewport image scale
+     *
+     * Center offset:
+     *   The values for offsetX and offsetY reflect the x and y coordinates with the origin
+     *   at the bottom-left corner of the image, not the top-left corner.
+     */
+    _updateDimensions: function () {
+        let offset = this._getOffset();
 
         // Update layer dimensions
         this.dimensions = {
-            "left"   : Math.max(this.width  / 2, (this.width  / 2) - offsetX),
-            "top"    : Math.max(this.height / 2, (this.height / 2) - offsetY),
-            "bottom" : Math.max(this.height / 2, (this.height / 2) + offsetY),
-            "right"  : Math.max(this.width  / 2, (this.width  / 2) + offsetX)
+            "left"   : Math.max(this.width  / 2, (this.width  / 2) - offset.x),
+            "top"    : Math.max(this.height / 2, (this.height / 2) - offset.y),
+            "bottom" : Math.max(this.height / 2, (this.height / 2) + offset.y),
+            "right"  : Math.max(this.width  / 2, (this.width  / 2) + offset.x)
         };
 
         // Center of the tile layer
         this.domNode.css({
-            "left": - offsetX,
-            "top" : - offsetY
+            "left": - offset.x,
+            "top" : - offset.y
         });
     },
 
