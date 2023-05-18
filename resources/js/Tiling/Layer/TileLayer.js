@@ -63,15 +63,25 @@ var TileLayer = Layer.extend(
      *
      */
     updateImageScale: function (scale, tileVisibilityRange) {
+        this.viewportScale = scale;
+
+        // The general visibility range doesn't account for any x/y offsets.
+        // Update the start/end values based on the known offset.
+        let offset = this._getOffset(scale);
+        let xTileOffset = Math.round(offset.x / this.tileSize);
+        let yTileOffset = Math.round(offset.y / this.tileSize);
+        // Don't modify range directly since the object is shared across layers.
+        // Instead, create a new object with the updated fields
         // With pinch scaling, these can end up being non-whole numbers from rounding
         // errors. Instead of -1, we get -0.9999999 which results in the whole
         // range being wrong.
-        // Round everything to whole numbers to make sure this always works.
-        tileVisibilityRange.xStart = Math.round(tileVisibilityRange.xStart);
-        tileVisibilityRange.yStart = Math.round(tileVisibilityRange.yStart);
-        tileVisibilityRange.xEnd = Math.round(tileVisibilityRange.xEnd);
-        tileVisibilityRange.yEnd = Math.round(tileVisibilityRange.yEnd);
         this.viewportScale = scale;
+        // Round everything to whole numbers to make sure this always works.
+        tileVisibilityRange.xStart = Math.round(tileVisibilityRange.xStart) + xTileOffset;
+        tileVisibilityRange.yStart = Math.round(tileVisibilityRange.yStart) + yTileOffset;
+        tileVisibilityRange.xEnd = Math.round(tileVisibilityRange.xEnd) + xTileOffset;
+        tileVisibilityRange.yEnd = Math.round(tileVisibilityRange.yEnd) + yTileOffset;
+
         this._updateDimensions();
 
         this.tileLoader.setTileVisibilityRange(tileVisibilityRange);
@@ -96,7 +106,7 @@ var TileLayer = Layer.extend(
 	    var layerDateStr = this.baseDiffTime;
 	    if(typeof layerDateStr == 'number' || layerDateStr == null){
 			layerDateStr = $('#date').val()+' '+$('#time').val();
-		} 
+		}
 
 		layerDateStr = formatLyrDateString(layerDateStr);
         return this.image.getLayerName() + "," + (this.visible ? this.layeringOrder : "0") + "," + this.opacity + "," + this.difference + "," + this.diffCount + "," + this.diffTime + "," + layerDateStr;
@@ -109,18 +119,11 @@ var TileLayer = Layer.extend(
         }
     },
 
-    /**
-     * Computes layer parameters relative to the current viewport image scale
-     *
-     * Center offset:
-     *   The values for offsetX and offsetY reflect the x and y coordinates with the origin
-     *   at the bottom-left corner of the image, not the top-left corner.
-     */
-    _updateDimensions: function () {
+    _getOffset: function (viewportScale) {
         var scaleFactor, offsetX, offsetY;
 
         // Ratio of original JP2 image scale to the viewport/desired image scale
-        scaleFactor = this.image.scale / this.viewportScale;
+        scaleFactor = this.image.scale / viewportScale;
 
         this.width  = this.image.width  * scaleFactor;
         this.height = this.image.height * scaleFactor;
@@ -133,19 +136,34 @@ var TileLayer = Layer.extend(
         // Offset image
         offsetX = parseFloat((this.image.offsetX * scaleFactor).toPrecision(8));
         offsetY = parseFloat((this.image.offsetY * scaleFactor).toPrecision(8));
+        return {
+            x: offsetX,
+            y: offsetY
+        }
+    },
+
+    /**
+     * Computes layer parameters relative to the current viewport image scale
+     *
+     * Center offset:
+     *   The values for offsetX and offsetY reflect the x and y coordinates with the origin
+     *   at the bottom-left corner of the image, not the top-left corner.
+     */
+    _updateDimensions: function () {
+        let offset = this._getOffset(this.viewportScale);
 
         // Update layer dimensions
         this.dimensions = {
-            "left"   : Math.max(this.width  / 2, (this.width  / 2) - offsetX),
-            "top"    : Math.max(this.height / 2, (this.height / 2) - offsetY),
-            "bottom" : Math.max(this.height / 2, (this.height / 2) + offsetY),
-            "right"  : Math.max(this.width  / 2, (this.width  / 2) + offsetX)
+            "left"   : Math.max(this.width  / 2, (this.width  / 2) - offset.x),
+            "top"    : Math.max(this.height / 2, (this.height / 2) - offset.y),
+            "bottom" : Math.max(this.height / 2, (this.height / 2) + offset.y),
+            "right"  : Math.max(this.width  / 2, (this.width  / 2) + offset.x)
         };
 
         // Center of the tile layer
         this.domNode.css({
-            "left": - offsetX,
-            "top" : - offsetY
+            "left": - offset.x,
+            "top" : - offset.y
         });
     },
 
