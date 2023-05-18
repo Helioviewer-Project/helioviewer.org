@@ -63,9 +63,11 @@ var TileLayer = Layer.extend(
      *
      */
     updateImageScale: function (scale, tileVisibilityRange) {
+        this.viewportScale = scale;
+
         // The general visibility range doesn't account for any x/y offsets.
         // Update the start/end values based on the known offset.
-        let offset = this._getOffset();
+        let offset = this._getOffset(scale);
         let xTileOffset = Math.round(offset.x / this.tileSize);
         let yTileOffset = Math.round(offset.y / this.tileSize);
         // Don't modify range directly since the object is shared across layers.
@@ -73,12 +75,12 @@ var TileLayer = Layer.extend(
         // With pinch scaling, these can end up being non-whole numbers from rounding
         // errors. Instead of -1, we get -0.9999999 which results in the whole
         // range being wrong.
+        this.viewportScale = scale;
         // Round everything to whole numbers to make sure this always works.
         tileVisibilityRange.xStart = Math.round(tileVisibilityRange.xStart) + xTileOffset;
         tileVisibilityRange.yStart = Math.round(tileVisibilityRange.yStart) + yTileOffset;
         tileVisibilityRange.xEnd = Math.round(tileVisibilityRange.xEnd) + xTileOffset;
         tileVisibilityRange.yEnd = Math.round(tileVisibilityRange.yEnd) + yTileOffset;
-        this.viewportScale = scale;
 
         this._updateDimensions();
 
@@ -117,11 +119,11 @@ var TileLayer = Layer.extend(
         }
     },
 
-    _getOffset: function () {
+    _getOffset: function (viewportScale) {
         var scaleFactor, offsetX, offsetY;
 
         // Ratio of original JP2 image scale to the viewport/desired image scale
-        scaleFactor = this.image.scale / this.viewportScale;
+        scaleFactor = this.image.scale / viewportScale;
 
         this.width  = this.image.width  * scaleFactor;
         this.height = this.image.height * scaleFactor;
@@ -148,7 +150,7 @@ var TileLayer = Layer.extend(
      *   at the bottom-left corner of the image, not the top-left corner.
      */
     _updateDimensions: function () {
-        let offset = this._getOffset();
+        let offset = this._getOffset(this.viewportScale);
 
         // Update layer dimensions
         this.dimensions = {
