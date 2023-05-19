@@ -75,7 +75,6 @@ var TileLayer = Layer.extend(
         // With pinch scaling, these can end up being non-whole numbers from rounding
         // errors. Instead of -1, we get -0.9999999 which results in the whole
         // range being wrong.
-        this.viewportScale = scale;
         // Round everything to whole numbers to make sure this always works.
         tileVisibilityRange.xStart = Math.round(tileVisibilityRange.xStart) + xTileOffset;
         tileVisibilityRange.yStart = Math.round(tileVisibilityRange.yStart) + yTileOffset;
@@ -154,10 +153,10 @@ var TileLayer = Layer.extend(
 
         // Update layer dimensions
         this.dimensions = {
-            "left"   : Math.max(this.width  / 2, (this.width  / 2) - offset.x),
-            "top"    : Math.max(this.height / 2, (this.height / 2) - offset.y),
-            "bottom" : Math.max(this.height / 2, (this.height / 2) + offset.y),
-            "right"  : Math.max(this.width  / 2, (this.width  / 2) + offset.x)
+            "left"   : (this.width  / 2) - offset.x,
+            "top"    : (this.height / 2) - offset.y,
+            "bottom" : (this.height / 2) + offset.y,
+            "right"  : (this.width  / 2) + offset.x
         };
 
         // Center of the tile layer
