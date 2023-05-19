@@ -67,13 +67,13 @@ var TileLayerManager = LayerManager.extend(
     saveFromAccordion: function () {
         // Get hierarchy of label:name for each layer accordion
         var self = this, letters=Array('a','b','c','d','e'), layerHierarchy = {}, idOrder = {};
-        
+
         $.each( $("#TileLayerAccordion-Container .dynaccordion-section"),
             function (i, accordion) {
                 var idBase = $(accordion).attr('id'), label, name, layer = [];
-				
+
 				idOrder[i] = idBase;
-				
+
                 layerHierarchy[i] = {};
                 layerHierarchy[i]['visible'] = true;
                 layerHierarchy[i]['opacity'] = $("#opacity-slider-track-" + idBase).slider("value");
@@ -86,7 +86,7 @@ var TileLayerManager = LayerManager.extend(
                 if ( $(accordion).find('.visible').hasClass('hidden') ) {
                     layerHierarchy[i]['visible'] = false;
                 }
-                
+
                 $.each( letters, function (j, letter) {
                     if ( $('#'+letters[j]+'-select-'+idBase).css('display') != 'none' ) {
                         label = $('#'+letters[j]+'-label-'+idBase).html().slice(0,-1);
@@ -98,7 +98,7 @@ var TileLayerManager = LayerManager.extend(
                 });
             }
         );
-        
+
         //change Layers Order
         var startZIndex = -11;
         $.each(idOrder, function(i, id){
@@ -118,7 +118,7 @@ var TileLayerManager = LayerManager.extend(
 		        }
 	        });
         });
-        
+
         //save order
         Helioviewer.userSettings.set("state.tileLayers", layerHierarchy);
         $(document).trigger('update-external-datasource-integration');
@@ -344,8 +344,8 @@ var TileLayerManager = LayerManager.extend(
                 return;
             }
             // Check overlap
-            if ((roi.right <= -layer.dimensions.left + threshold) ||
-                (roi.bottom <= -layer.dimensions.top + threshold) ||
+            if ((roi.right <= layer.dimensions.left + threshold) ||
+                (roi.bottom <= layer.dimensions.top + threshold) ||
                 (roi.left >= layer.dimensions.right - threshold) ||
                 (roi.top >= layer.dimensions.bottom - threshold)) {
                 return;
@@ -360,7 +360,7 @@ var TileLayerManager = LayerManager.extend(
                     return;
                 }
             }
-            
+
             layers[layer.order] = layer;
         });
 

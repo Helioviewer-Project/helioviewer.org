@@ -153,8 +153,8 @@ var TileLayer = Layer.extend(
 
         // Update layer dimensions
         this.dimensions = {
-            "left"   : (this.width  / 2) - offset.x,
-            "top"    : (this.height / 2) - offset.y,
+            "left"   : (-this.width  / 2) - offset.x,
+            "top"    : (-this.height / 2) - offset.y,
             "bottom" : (this.height / 2) + offset.y,
             "right"  : (this.width  / 2) + offset.x
         };
