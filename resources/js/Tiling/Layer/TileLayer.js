@@ -76,14 +76,16 @@ var TileLayer = Layer.extend(
         // errors. Instead of -1, we get -0.9999999 which results in the whole
         // range being wrong.
         // Round everything to whole numbers to make sure this always works.
-        tileVisibilityRange.xStart = Math.round(tileVisibilityRange.xStart) + xTileOffset;
-        tileVisibilityRange.yStart = Math.round(tileVisibilityRange.yStart) + yTileOffset;
-        tileVisibilityRange.xEnd = Math.round(tileVisibilityRange.xEnd) + xTileOffset;
-        tileVisibilityRange.yEnd = Math.round(tileVisibilityRange.yEnd) + yTileOffset;
+        let offsetVisibilityRange = {
+            xStart: Math.round(tileVisibilityRange.xStart) + xTileOffset,
+            xEnd: Math.round(tileVisibilityRange.xEnd) + xTileOffset,
+            yStart: Math.round(tileVisibilityRange.yStart) + yTileOffset,
+            yEnd: Math.round(tileVisibilityRange.yEnd) + yTileOffset
+        }
 
         this._updateDimensions();
 
-        this.tileLoader.setTileVisibilityRange(tileVisibilityRange);
+        this.tileLoader.setTileVisibilityRange(offsetVisibilityRange);
 
         if (this.visible) {
             this.tileLoader.reloadTiles(true);
