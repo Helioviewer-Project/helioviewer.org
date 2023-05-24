@@ -68,8 +68,8 @@ var TileLayer = Layer.extend(
         // The general visibility range doesn't account for any x/y offsets.
         // Update the start/end values based on the known offset.
         let offset = this._getOffset(scale);
-        let xTileOffset = Math.round(offset.x / this.tileSize);
-        let yTileOffset = Math.round(offset.y / this.tileSize);
+        let xTileOffset = Math.floor(offset.x / this.tileSize);
+        let yTileOffset = Math.floor(offset.y / this.tileSize);
         // Don't modify range directly since the object is shared across layers.
         // Instead, create a new object with the updated fields
         // With pinch scaling, these can end up being non-whole numbers from rounding
