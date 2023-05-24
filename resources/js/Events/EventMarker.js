@@ -448,7 +448,7 @@ var EventMarker = Class.extend(
             let sections = [this.type, "obs", "frm", "ref", "all"];
             let self = this;
             sections.forEach((section, idx) => {
-                let content = this._generateEventKeywordsSection(section, self);
+                let content = this._generateEventKeywordsSection(section, self.event);
                 if (content != "<div></div>") {
                     let class_name = idx == 0 ? "event-type" : section;
                     let hide = idx != 0 ? "display: none;" : "";
