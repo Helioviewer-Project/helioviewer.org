@@ -380,5 +380,17 @@ var TileLayer = Layer.extend(
         img.galleryimg    = 'no';
 
         return img;
+    },
+
+    getArea: function () {
+        return this.width * this.height;
+    },
+
+    /**
+     * Returns the current positional offset
+     * @note Internal usage in this class should use _getOffset instead.
+     */
+    getCurrentOffset: function () {
+        return this._getOffset(this.viewportScale);
     }
 });
