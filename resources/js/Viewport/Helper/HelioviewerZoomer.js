@@ -17,7 +17,6 @@
         this._scale = 1;
         this._anchor = {left: 0, top: 0};
         this._last_size = 0;
-        this._zoomSlider = $('#zoomControlSlider');
     }
 
     _initializePinchListeners() {
@@ -80,12 +79,23 @@
     }
 
     /**
+     * Updates the size of the bounding box that contains the earth image
+     */
+    _updateScaleBoxSize(boxId, imgId) {
+        let el = document.getElementById(boxId);
+        let img = document.getElementById(imgId);
+        let rect = img.getBoundingClientRect();
+        el.style.minHeight = rect.height + 'px';
+    }
+
+    /**
      * Updates the size of the earth scale/bar scale
      * These elements are added dynamically, so can't be cached.
      */
     _updateReferenceScale(scale) {
         this._updateScaleForElementWithId('js-bar-scale', scale);
         this._updateScaleForElementWithId('earthScale', scale);
+        this._updateScaleBoxSize('js-earth-scale', 'earthScale');
     }
 
     setScale(scale) {
@@ -127,7 +137,7 @@
         let y = center.top - parseInt(this._sandbox.style.top) - container_pos.top;
         x = x / this._scale;
         y = y / this._scale;
-        /** for visualizing clicks 
+        /** for visualizing clicks
          let sandbox_pos = $('#sandbox').position();
          let div = document.createElement('div');
          div.style.width = "25px";
