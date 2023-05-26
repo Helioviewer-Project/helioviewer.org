@@ -72,7 +72,6 @@ var HelioviewerMouseCoordinates = MouseCoordinates.extend(
             this.buttonCartesian.removeClass("active");
         }
 
-        this._checkWarning();
         this._reassignEventHandlers();
     },
 
@@ -86,7 +85,6 @@ var HelioviewerMouseCoordinates = MouseCoordinates.extend(
         this.buttonCartesian.addClass("active");
         this.buttonPolar.removeClass("active");
 
-        this._checkWarning();
         this._reassignEventHandlers();
     },
 
@@ -99,7 +97,6 @@ var HelioviewerMouseCoordinates = MouseCoordinates.extend(
         this.buttonPolar.addClass("active");
         this.buttonCartesian.removeClass("active");
 
-        this._checkWarning();
         this._reassignEventHandlers();
     },
 

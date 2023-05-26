@@ -31,21 +31,21 @@ var HelioviewerTileLayer = TileLayer.extend(
      */
     init: function (index, date, tileSize, viewportScale, tileVisibilityRange,
         hierarchy, sourceId, name, visible, opacity, difference, diffCount, diffTime, baseDiffTime, layeringOrder, order) {
-		
+
 		// Create a random id which can be used to link tile layer with its corresponding tile layer accordion entry
         var id = "tile-layer-" + new Date().getTime();
-		
+
         this._super(index, date, tileSize, viewportScale, tileVisibilityRange,
             name, visible, opacity, difference, diffCount, diffTime, baseDiffTime, id);
-		
+
         this.id = id;
         this.order = order;
-		
+
         this._setupEventHandlers();
 
         $(document).trigger("create-tile-layer-accordion-entry",
             [index, this.id, name, sourceId, hierarchy, date, true, opacity, visible,
-             $.proxy(this.setOpacity, this), 
+             $.proxy(this.setOpacity, this),
              this.difference, this.diffCount, this.diffTime, this.baseDiffTime,
              $.proxy(this.setDifference, this), $.proxy(this.setDiffCount, this), $.proxy(this.setDiffTime, this), $.proxy(this.setDiffDate, this)
             ]
@@ -111,23 +111,23 @@ var HelioviewerTileLayer = TileLayer.extend(
         if(typeof baseDiffTimeStr == 'number' || baseDiffTimeStr == null){
 			baseDiffTimeStr = $('#date').val()+' '+$('#time').val();
 		}
-		
+
         baseDiffTimeStr = formatLyrDateString(baseDiffTimeStr);
-		
+
 		// If scale is given via input, then let it override the global viewport scale
         let imageScale = (scale == undefined) ? this.viewportScale : scale;
-        // Limit the scale to two decimal places so that the excess precision digits don't break caching
-        imageScale = imageScale.toFixed(3);
-        
+        // Limit the scale to 6 decimal places so that the excess precision digits don't break caching
+        imageScale = imageScale.toFixed(6);
+
         var params = {
             "action"      : "getTile",
             "id"          : this.image.id,
             "imageScale"  : imageScale,
             "x"           : x,
             "y"           : y,
-            "difference"  : this.difference, 
-            "diffCount"   : this.diffCount, 
-            "diffTime"    : this.diffTime, 
+            "difference"  : this.difference,
+            "diffCount"   : this.diffCount,
+            "diffTime"    : this.diffTime,
             "baseDiffTime": baseDiffTimeStr
         };
 
@@ -147,11 +147,11 @@ var HelioviewerTileLayer = TileLayer.extend(
                                                   'name' : obj['name'] };
             return_array[obj['label']] = obj['name'];
         });
-		
+
 		if(typeof this.baseDiffTime == 'number' || this.baseDiffTime == null){
 			this.baseDiffTime = $('#date').val()+' '+$('#time').val();
 		}
-		
+
         return_array['visible']  = this.visible;
         return_array['opacity']  = this.opacity;
         return_array['difference'] = this.difference;

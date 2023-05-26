@@ -203,13 +203,6 @@ var TileLayerManager = LayerManager.extend(
     },
 
     /**
-     * Returns a list of the layers which overlap the current viewport ROI
-     */
-    _getVisibleLayers: function () {
-
-    },
-
-    /**
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.
      */
     _loadStartingLayers: function (layers) {
@@ -319,7 +312,18 @@ var TileLayerManager = LayerManager.extend(
      *
      * @param array roi Region of interest in pixels
      */
-    getVisibleLayers: function(roi) {
+    getVisibleLayers: function (roi) {
+        let layers = getVisibleLayerInstances(roi);
+        return this._stringify(layers);
+    },
+
+    /**
+     * Returns a list of layer instances which are currently visible and overlap the
+     * specified region of interest by at least 10px
+     *
+     * @param array roi Region of interest in pixels
+     */
+    getVisibleLayerInstances: function(roi) {
         var rsunAS, rsun, radii, layers = {}, threshold = 10, self = this;
 
         // Coronagraph inner circle radii in arc-seconds
@@ -366,7 +370,7 @@ var TileLayerManager = LayerManager.extend(
             layers[layer.order] = layer;
         });
 
-        return this._stringify(layers);
+        return layers;
     },
 
     /**
