@@ -298,6 +298,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     _setupDialogs: function () {
         var self = this;
 
+        // Coordinates Dialog
+        this._setupDialog("#js-coord-help", "#mouse-coords-dialog", {
+            "title": "Helioviewer - Mouse Coordinates",
+        })
+
         // About dialog
         this._setupDialog("#help-links-about", "#about-dialog", {
             "title"  : "Helioviewer - About",

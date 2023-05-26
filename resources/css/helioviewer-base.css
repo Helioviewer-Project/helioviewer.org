@@ -71,24 +71,6 @@ a.light:hover {
     -moz-user-select: none;
 }
 
-/* Mouse coordinates */
-#mouse-coords {
-    background: transparent;
-    color: white;
-    font-size: 1em;
-    font-weight: 600;
-    width: 12em;
-    position: absolute;
-    top: 0;
-    left: -12em;
-    text-align: right;
-}
-
-#mouse-coords-x, #mouse-coords-y {
-    width: 40%;
-    display: inline-block;
-}
-
 .sr-only {
     visibility: hidden;
 }

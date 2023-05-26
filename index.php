@@ -561,13 +561,20 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			</div>
 
 			<!-- Mouse coordinates display -->
-			<!--<div id="mouse-coords-box">
+			<div id="mouse-coords-box">
 				<div id="mouse-coords">
-					<div id="mouse-coords-x"></div>
-					<div id="mouse-coords-y"></div>
+					<div id="js-coord-help" class="coord-notice" rel="/dialogs/mouse_coordinates.html"><span class="fa fa-info"></span></div>
+					<div class="mouse-coordinate-labels">
+						<span id="js-label-1">X: </span>
+						<span id="js-label-2">Y: </span>
+					</div>
+					<div class="mouse-coordinate-values">
+						<span><span id="mouse-coords-x"></span><span class="mouse-unit" id="js-unit-1"></span></span>
+						<span><span id="mouse-coords-y"></span><span class="mouse-unit" id="js-unit-2"></span></span>
+					</div>
 				</div>
 				<div id="mouse-cartesian" style="margin-top:4px;" class="viewport-action segmented-left fa fa-cube" title="Toggle Mouse Coordinates (Cartesian)"></div><div id="mouse-polar" class="viewport-action segmented-right fa fa-dot-circle-o" style="border-left: 0;margin-top:4px;" title="Toggle Mouse Coordinates (Polar)"></div>
-			</div>-->
+			</div>
 
 		</div>
 
@@ -1347,6 +1354,9 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 		<!-- About dialog -->
 		<div id='about-dialog'></div>
+
+		<!-- Mouse coordinates dialog -->
+		<div id='mouse-coords-dialog' class="dialog"></div>
 
 		<!-- Layer choice dialog -->
 		<div id='layer-choice-dialog'></div>
