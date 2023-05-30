@@ -210,12 +210,12 @@ var HelioviewerViewport = Class.extend(
                    .bind("layer-max-dimensions-changed",
                          $.proxy(this.updateMaxLayerDimensions, this))
                    .bind("center-viewport",
-                         $.proxy(this.centerViewport, this));
+                         $.proxy(this.centerViewportOnBiggestLayer, this));
 
         $(this.domNode).bind("mousedown", $.proxy(this.onMouseMove, this));
         this.domNode.dblclick($.proxy(this.doubleClick, this));
 
-        $('#center-button').click($.proxy(this.centerViewport, this));
+        $('#center-button').click($.proxy(this.centerViewportOnBiggestLayer, this));
         $(window).resize($.proxy(this.resize, this));
     },
 
@@ -339,6 +339,25 @@ var HelioviewerViewport = Class.extend(
         this.updateViewport();
         Helioviewer.userSettings.set("state.centerX", 0);
         Helioviewer.userSettings.set("state.centerY", 0);
+    },
+
+    /**
+     * Moves the image back to the center of the viewport.
+     */
+    centerViewportOnBiggestLayer: function () {
+        let biggestLayer = this._getBiggestLayer();
+        let offset = biggestLayer.getCurrentOffset();
+        this.movementHelper.centerViewportWithOffset(offset.x, offset.y);
+        this.updateViewport();
+        Helioviewer.userSettings.set("state.centerX", offset.x);
+        Helioviewer.userSettings.set("state.centerY", offset.y);
+    },
+
+    /**
+     * Returns the largest layer (by dimensions) that is currently displayed.
+     */
+    _getBiggestLayer: function () {
+        return this._tileLayerManager.getBiggestLayer();
     },
 
     /**

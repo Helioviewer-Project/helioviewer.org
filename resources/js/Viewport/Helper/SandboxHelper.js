@@ -20,26 +20,19 @@ var SandboxHelper = Class.extend(
      * Find the center of the sandbox and put the movingContainer there
      */
     center: function () {
-        var top, left;
+        let center = this.getCenter();
+        this.moveContainerTo(center.x, center.y);
+    },
 
-        //Get ViewPort size offset
-        var heightOffset = $(window).height();
-        var widthOffset = $(window).width();
-
-        left = 0.5 * this.domNode.width();
-        top  = 0.5 * this.domNode.height();
-
-        this.moveContainerTo(left, top);
+    centerWithOffset: function (x, y) {
+        let center = this.getCenter();
+        this.moveContainerTo(center.x + x, center.y + y);
     },
 
     /**
      * Find the center of the sandbox
      */
     getCenter: function () {
-        //Get ViewPort size offset
-        var heightOffset = $(window).height();
-        var widthOffset = $(window).width();
-
         return {
             x: 0.5 * this.domNode.width(),
             y: 0.5 * this.domNode.height()

@@ -54,6 +54,15 @@ var ViewportMovementHelper = Class.extend(
     },
 
     /**
+     * Centers the viewport on the given offset
+     * @param {number} x
+     * @param {number} y
+     */
+    centerViewportWithOffset: function (x, y) {
+        this.sandboxHelper.centerWithOffset(x, y);
+    },
+
+    /**
      * @description Fired when a mouse is pressed
      * @param {Event} event an Event object
      */
