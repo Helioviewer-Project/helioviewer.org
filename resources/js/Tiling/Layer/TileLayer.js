@@ -68,25 +68,45 @@ var TileLayer = Layer.extend(
         // The general visibility range doesn't account for any x/y offsets.
         // Update the start/end values based on the known offset.
         let offset = this._getOffset(scale);
-        let xTileOffset = Math.round(offset.x / this.tileSize);
-        let yTileOffset = Math.round(offset.y / this.tileSize);
+        let xTileOffset = this._computeTileOffset(offset.x, this.tileSize);
+        let yTileOffset = this._computeTileOffset(offset.y, this.tileSize);
         // Don't modify range directly since the object is shared across layers.
         // Instead, create a new object with the updated fields
         // With pinch scaling, these can end up being non-whole numbers from rounding
         // errors. Instead of -1, we get -0.9999999 which results in the whole
         // range being wrong.
         // Round everything to whole numbers to make sure this always works.
-        tileVisibilityRange.xStart = Math.round(tileVisibilityRange.xStart) + xTileOffset;
-        tileVisibilityRange.yStart = Math.round(tileVisibilityRange.yStart) + yTileOffset;
-        tileVisibilityRange.xEnd = Math.round(tileVisibilityRange.xEnd) + xTileOffset;
-        tileVisibilityRange.yEnd = Math.round(tileVisibilityRange.yEnd) + yTileOffset;
+        let offsetVisibilityRange = {
+            xStart: Math.round(tileVisibilityRange.xStart) + xTileOffset,
+            xEnd: Math.round(tileVisibilityRange.xEnd) + xTileOffset,
+            yStart: Math.round(tileVisibilityRange.yStart) + yTileOffset,
+            yEnd: Math.round(tileVisibilityRange.yEnd) + yTileOffset
+        }
 
         this._updateDimensions();
 
-        this.tileLoader.setTileVisibilityRange(tileVisibilityRange);
+        this.tileLoader.setTileVisibilityRange(offsetVisibilityRange);
 
         if (this.visible) {
             this.tileLoader.reloadTiles(true);
+        }
+    },
+
+    /**
+     * Computes the tile index offset that is required based on the given position offset
+     * @param {number} posOffset
+     * @param {number} tileSize
+     */
+    _computeTileOffset: function(posOffset, tileSize) {
+        // The tile offset is determined by how many tiles over the tilesize the position is shifted.
+        // For example, the top left tile is usually (-1, -1). The viewport may be shifted to the right so that only tile (0, -1) should be visible.
+        // However, if the positional offset for this image is also shifted to the right, then it may be appropriate to still show tile (-1, -1).
+        // This calculation determines this tile value offset based on the images position in the viewport.
+        let tileOffset = Math.floor(Math.abs(posOffset / tileSize));
+        if (posOffset >= 0) {
+            return tileOffset;
+        } else {
+            return -tileOffset;
         }
     },
 
@@ -360,5 +380,17 @@ var TileLayer = Layer.extend(
         img.galleryimg    = 'no';
 
         return img;
+    },
+
+    getArea: function () {
+        return this.width * this.height;
+    },
+
+    /**
+     * Returns the current positional offset
+     * @note Internal usage in this class should use _getOffset instead.
+     */
+    getCurrentOffset: function () {
+        return this._getOffset(this.viewportScale);
     }
 });

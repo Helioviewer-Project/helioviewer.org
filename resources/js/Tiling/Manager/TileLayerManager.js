@@ -365,5 +365,21 @@ var TileLayerManager = LayerManager.extend(
         });
 
         return this._stringify(layers);
+    },
+
+    /**
+     * Returns the largest layer (by dimensions) that is currently displayed.
+     */
+    getBiggestLayer: function () {
+        let maxArea = 0;
+        let biggestLayer = this._layers[0];
+        this._layers.forEach((layer) => {
+            let layerArea = layer.getArea();
+            if (layerArea > maxArea) {
+                maxArea = layerArea;
+                biggestLayer = layer;
+            }
+        })
+        return biggestLayer;
     }
 });
