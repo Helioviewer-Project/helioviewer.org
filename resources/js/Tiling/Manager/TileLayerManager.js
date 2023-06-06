@@ -338,16 +338,18 @@ var TileLayerManager = LayerManager.extend(
         // Solar radius at 1au (TODO: compute for layer)
         rsunAS = 959.705;
 
+        let zoom = (Helioviewer.userSettings.get('mobileZoomScale') || 1)
         $.each(this._layers, function (i, layer) {
             // Check visibility
             if (!layer.visible || layer.opacity <= 5) {
                 return;
             }
+
             // Check overlap
-            if ((roi.right <= layer.dimensions.left + threshold) ||
-                (roi.bottom <= layer.dimensions.top + threshold) ||
-                (roi.left >= layer.dimensions.right - threshold) ||
-                (roi.top >= layer.dimensions.bottom - threshold)) {
+            if ((roi.right <= (layer.dimensions.left * zoom) + threshold) ||
+                (roi.bottom <= (layer.dimensions.top * zoom) + threshold) ||
+                (roi.left >= (layer.dimensions.right * zoom) - threshold) ||
+                (roi.top >= (layer.dimensions.bottom * zoom) - threshold)) {
                 return;
             }
 

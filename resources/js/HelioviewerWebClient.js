@@ -1782,6 +1782,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         return this.viewport.getImageScale();
     },
 
+    getZoomedImageScale: function () {
+        return this.viewport.getZoomedImageScale();
+    },
+
     /**
      * Returns the top-left and bottom-right coordinates for the viewport region of interest
      *
@@ -1789,6 +1793,27 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      */
     getViewportRegionOfInterest: function () {
         return this.viewport.getRegionOfInterest();
+    },
+
+    /**
+     * Returns the top-left and bottom-right coordinates for the viewport region of interest accounting for zoom
+     *
+     * @return {Object} Current ROI
+     */
+    getZoomedRegionOfInterest: function () {
+        let zoom = (Helioviewer.userSettings.get('mobileZoomScale') || 1);
+        let roi = this.viewport.getRegionOfInterest();
+
+        let roiWidth = roi.right - roi.left;
+        let roiXOffset = ((roiWidth * zoom) - roiWidth) / 2;
+        let roiHeight = roi.bottom - roi.top;
+        let roiYOffset = ((roiHeight * zoom) - roiHeight) / 2;
+        return {
+            left: roi.left * zoom + roiXOffset,
+            right: roi.left * zoom + roiXOffset + roiWidth,
+            top: roi.top * zoom + roiYOffset,
+            bottom: roi.top * zoom + roiYOffset + roiHeight
+        };
     },
 
     /**
