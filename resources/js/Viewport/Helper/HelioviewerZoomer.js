@@ -17,6 +17,8 @@
         this._scale = 1;
         this._anchor = {left: 0, top: 0};
         this._last_size = 0;
+        Helioviewer.userSettings.set('mobileZoomScale', 1);
+        $(document).bind("update-viewport", $.proxy(this.onUpdateViewport, this))
     }
 
     _initializePinchListeners() {
@@ -106,6 +108,7 @@
             } else if (scale <= 0.5) {
                 this._zoomHelioviewer(scale, false);
             } else {
+                Helioviewer.userSettings.set('mobileZoomScale', scale);
                 this._scale = scale;
                 this._mc.style.transform = "scale(" + this._scale + ")";
                 this._updateReferenceScale(scale)
@@ -137,19 +140,6 @@
         let y = center.top - parseInt(this._sandbox.style.top) - container_pos.top;
         x = x / this._scale;
         y = y / this._scale;
-        /** for visualizing clicks
-         let sandbox_pos = $('#sandbox').position();
-         let div = document.createElement('div');
-         div.style.width = "25px";
-         div.style.height = "25px";
-         div.style.position = "absolute";
-         div.style.left = (x)  + "px";
-         div.style.top = (y) + "px";
-         div.style.background = "purple";
-         div.style.transform = "translateX(-50%) translateY(-50%)";
-         $('#moving-container')[0].appendChild(div);
-         /**/
-        // return {left: 0, top: 0};
         this.setAnchor({left: x, top: y});
     }
 
@@ -171,6 +161,15 @@
     }
 
     pinchEnd() {
+    }
+
+    onUpdateViewport() {
+        // Set anchor to center screen
+        let center = {
+            left: window.innerWidth / 2,
+            top: window.innerHeight / 2
+        }
+        this.setAnchorForCenter(center);
     }
 
     /**

@@ -163,14 +163,14 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
      * viewport roi
      */
     _takeScreenshot: function (roi) {
-        var params, dataType, imageScale, layers, events, eventLabels, celestialBodiesLabels,
-        celestialBodiesTrajectories, scale, scaleType, scaleX, scaleY, screenshot, self = this;
+        var params, imageScale, layers, events, eventLabels, celestialBodiesLabels,
+        celestialBodiesTrajectories, screenshot, self = this;
 
         if (typeof roi === "undefined") {
-            roi = helioviewer.getViewportRegionOfInterest();
+            roi = helioviewer.getZoomedRegionOfInterest();
         }
 
-        imageScale  = helioviewer.getImageScale();
+        imageScale  = helioviewer.getZoomedImageScale();
         layers      = helioviewer.getVisibleLayers(roi);
         events      = helioviewer.getEvents();
         celestialBodiesLabels = helioviewer.getCelestialBodiesLabels();
@@ -185,12 +185,12 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         if (!this._validateRequest(roi, layers)) {
             return;
         }
-		
+
 		var switchSources = false;
 		if(outputType == 'minimal'){
 			switchSources = true;
 		}
-		
+
         params = $.extend({
             action        : "takeScreenshot",
             imageScale    : imageScale,

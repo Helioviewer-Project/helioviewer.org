@@ -146,7 +146,8 @@ var MouseCoordinates = Class.extend(
         };
 
         //scale
-        scale = this.imageScale;
+        let zoom = (Helioviewer.userSettings.get('mobileZoomScale') || 1);
+        scale = this.imageScale / zoom;
         x = Math.round((scale * MX.x));
         y = - Math.round((scale * MX.y));
 
