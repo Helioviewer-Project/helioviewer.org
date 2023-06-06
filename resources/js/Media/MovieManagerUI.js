@@ -77,24 +77,6 @@ var MovieManagerUI = MediaManagerUI.extend(
 			this._movieEventsLabels = false;
 		}
 
-		/*if(typeof formParams['startTime'] != 'undefined'){
-			var roi = helioviewer.getViewportRegionOfInterest();
-			var layers = helioviewer.getVisibleLayers(roi);
-			var events = helioviewer.getEvents();
-
-			// Make sure selection region and number of layers are acceptible
-			if (!this._validateRequest(roi, layers)) {
-				return;
-			}
-
-			// Store chosen ROI and layers
-			this._movieScale  = helioviewer.getImageScale();
-			this._movieROI	= this._toArcsecCoords(roi, this._movieScale);
-			this._movieLayers = layers;
-			this._movieEvents = events;
-			this._movieEventsLabels = helioviewer.getEventsLabels();
-		}*/
-
 		var switchSources = false;
 		if(outputType == 'minimal'){
 			switchSources = true;
@@ -210,7 +192,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 	 */
 	_showMovieSettings: function (roi) {
 		if (typeof roi === "undefined") {
-			roi = helioviewer.getViewportRegionOfInterest();
+			roi = helioviewer.getZoomedRegionOfInterest();
 		}
 
 		var layers = helioviewer.getVisibleLayers(roi);
@@ -222,7 +204,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 		}
 
 		// Store chosen ROI and layers
-		this._movieScale  = helioviewer.getImageScale();
+		this._movieScale  = helioviewer.getZoomedImageScale();
 		this._movieROI	= this._toArcsecCoords(roi, this._movieScale);
 		this._movieLayers = layers;
 		this._movieEvents = events;

@@ -190,16 +190,8 @@ var ViewportMovementHelper = Class.extend(
         left = -(sb.left + mc.left);
         top  = -(sb.top + mc.top);
 
-        // If dimension is an odd value, add one to ensure that (0, 0) is in center
         vpWidth  = this.domNode.width();
         vpHeight = this.domNode.height();
-
-        //if (vpWidth % 2 === 1) {
-        //    vpWidth += 1;
-        //}
-        //if (vpHeight % 2 === 1) {
-        //    vpHeight += 1;
-        //}
 
         return {
             left:  left,

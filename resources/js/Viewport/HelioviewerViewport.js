@@ -104,6 +104,14 @@ var HelioviewerViewport = Class.extend(
     },
 
     /**
+     * @description Returns the current image scale (in arc-seconds/px) accounting for mobile zoom.
+     */
+    getZoomedImageScale: function () {
+        let zoom = (Helioviewer.userSettings.get('mobileZoomScale') || 1);
+        return this.getImageScale() / zoom;
+    },
+
+    /**
      * Gets the window height and resizes the viewport to fit within it
      */
     resize: function () {
