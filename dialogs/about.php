@@ -7,7 +7,6 @@
 
 Helioviewer.org is part of the <a href="https://github.com/Helioviewer-Project" style="font-weight: normal;" class="light" target="_blank">Helioviewer Project</a>, an open-source project for the visualization of solar and heliospheric data.
 The Helioviewer Project is funded by <acronym title="European Space Agency">ESA</acronym> and <acronym title="National Aeronautics and Space Administration">NASA</acronym>.
-For more information, please visit our <a href="https://wiki.helioviewer.org/wiki/Main_Page" style="font-weight: normal;" class="light" target="_blank">Wiki</a>.
 
 <br /><br />
 
