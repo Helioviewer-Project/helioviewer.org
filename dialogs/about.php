@@ -26,7 +26,7 @@ The Helioviewer Project is funded by <acronym title="European Space Agency">ESA<
         <a href="http://umbra.nascom.nasa.gov/" title="Solar Data Analysis Center" target="_blank">SDAC</a>,
         <a href="http://sun.stanford.edu/" target="_blank">Stanford University</a>,
         <a href="https://www.cfa.harvard.edu/" target="_blank">Harvard-Smithsonian Astrophysical Observatory</a>,
-        <a href="http://www.montana.edu/solarphysics/" target="_blank">MSU/SDO-FFT</a>
+        <a href="https://doi.org/10.1007/s11207-010-9697-y" target="_blank">MSU/SDO-FFT</a>
     </span>
 </div>
 <br />
