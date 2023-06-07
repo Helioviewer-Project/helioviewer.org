@@ -48,7 +48,6 @@ function print_version_info() {
 
 Helioviewer.org is part of the <a href="https://github.com/Helioviewer-Project" style="font-weight: normal;" class="light" target="_blank">Helioviewer Project</a>, an open-source project for the visualization of solar and heliospheric data.
 The Helioviewer Project is funded by <acronym title="European Space Agency">ESA</acronym> and <acronym title="National Aeronautics and Space Administration">NASA</acronym>.
-For more information, please visit our <a href="http://helioviewer.org/wiki/Main_Page" style="font-weight: normal;" class="light" target="_blank">Wiki</a>.
 
 <br /><br />
 
@@ -60,7 +59,7 @@ For more information, please visit our <a href="http://helioviewer.org/wiki/Main
         <a href="http://sohowww.nascom.nasa.gov/" target="_blank">SOHO</a> (<a href="http://soho.esac.esa.int/" title="European Space Agency" target="_blank">ESA</a>/<a href="http://nasa.gov/" title="National Aeronautics and Space Administration" target="_blank">NASA</a>),
         <a href="http://www.nasa.gov/mission_pages/stereo/main/index.html" target="_blank">STEREO (NASA)</a>,
         <a href="http://sci.esa.int/proba2/" target="_blank">PROBA2 (ESA)</a>,
-        <a href="http://www.isas.ac.jp/e/enterp/missions/yohkoh/index.shtml" target="_blank">Yohkoh (JAXA/NASA/PPARC)</a>,
+        <a href="http://www.isas.jaxa.jp/en/missions/spacecraft/past/yohkoh.html" target="_blank">Yohkoh (JAXA/NASA/PPARC)</a>,
         <a href="http://www.isas.jaxa.jp/home/solar/" target="_blank">Hinode (JAXA/NASA/PPARC)</a>,
         <a href="http://www.nasa.gov/centers/goddard/home/index.html" title="Goddard Space Flight Center" target="_blank">GSFC</a>,
         <a href="http://www.astro.oma.be/" title="Royal Observatory of Belgium" target="_blank">Royal Observatory of Belgium</a>,
@@ -68,7 +67,7 @@ For more information, please visit our <a href="http://helioviewer.org/wiki/Main
         <a href="http://umbra.nascom.nasa.gov/" title="Solar Data Analysis Center" target="_blank">SDAC</a>,
         <a href="http://sun.stanford.edu/" target="_blank">Stanford University</a>,
         <a href="https://www.cfa.harvard.edu/" target="_blank">Harvard-Smithsonian Astrophysical Observatory</a>,
-        <a href="http://solar.physics.montana.edu/sol_phys/fft/" target="_blank">MSU/SDO-FFT</a>
+        <a href="https://doi.org/10.1007/s11207-010-9697-y" target="_blank">MSU/SDO-FFT</a>
     </span>
 </div>
 <br />
