@@ -590,9 +590,9 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 							<div id="observation-controls" class="row">
 								<div class="label">Date:</div>
 								<div class="field">
-									<input aria-label="Observation date" type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
+									<input aria-label="Observation date" type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="datepicker hasDatepicker"/>
 
-									<input aria-label="Observation time" id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+									<input aria-label="Observation time" id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" class="timepicker"/>
 
 									<div class="suffix dateSelector" data-tip-pisition="right" data-date-field="date" data-time-field="time">UTC</div>
 
@@ -1518,8 +1518,8 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 									<div id="observation-controls" class="row">
 										<div id="date-input-label" class="label" style="margin-top: 0.1em">Date</div>
 										<div class="field">
-											<input aria-labelledby="date-input-label" type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="hasDatepicker"/>
-											<input aria-label="Time" id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}"/>
+											<input aria-labelledby="date-input-label" type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength="10" class="datepicker hasDatepicker"/>
+											<input aria-label="Time" id="time" name="time" value="" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}" class="timepicker"/>
 											<div class="suffix" data-tip-pisition="right" title="Coordinated Universal Time">UTC </div>
 
 										</div>

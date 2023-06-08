@@ -273,25 +273,6 @@
   content: "";
   position: absolute;
 }
-.numInputWrapper span.arrowUp {
-  top: 0;
-  border-bottom: 0;
-}
-.numInputWrapper span.arrowUp:after {
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 4px solid rgba(255,255,255,0.6);
-  top: 26%;
-}
-.numInputWrapper span.arrowDown {
-  top: 50%;
-}
-.numInputWrapper span.arrowDown:after {
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid rgba(255,255,255,0.6);
-  top: 40%;
-}
 .numInputWrapper span svg {
   width: inherit;
   height: auto;
@@ -299,10 +280,7 @@
 .numInputWrapper span svg path {
   fill: rgba(255,255,255,0.5);
 }
-.numInputWrapper:hover {
-  background: rgba(238,238,238,0.05);
-}
-.numInputWrapper:hover span {
+.numInputWrapper span span {
   opacity: 1;
 }
 .flatpickr-current-month {
@@ -694,12 +672,6 @@ span.flatpickr-weekday {
   height: 40px;
   float: left;
 }
-.flatpickr-time .numInputWrapper span.arrowUp:after {
-  border-bottom-color: rgba(255,255,255,0.95);
-}
-.flatpickr-time .numInputWrapper span.arrowDown:after {
-  border-top-color: rgba(255,255,255,0.95);
-}
 .flatpickr-time.hasSeconds .numInputWrapper {
   width: 26%;
 }
@@ -725,8 +697,6 @@ span.flatpickr-weekday {
   -webkit-appearance: textfield;
   -moz-appearance: textfield;
   appearance: textfield;
-  -webkit-text-fill-color: rgba(255,255,255,0.95);
-  opacity: 1;
 }
 .flatpickr-time input.flatpickr-hour {
   font-weight: bold;
@@ -761,12 +731,6 @@ span.flatpickr-weekday {
   cursor: pointer;
   text-align: center;
   font-weight: 400;
-}
-.flatpickr-time input:hover,
-.flatpickr-time .flatpickr-am-pm:hover,
-.flatpickr-time input:focus,
-.flatpickr-time .flatpickr-am-pm:focus {
-  background: #555;
 }
 .flatpickr-input[readonly] {
   cursor: pointer;
