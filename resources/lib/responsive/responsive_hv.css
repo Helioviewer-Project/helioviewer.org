@@ -1292,14 +1292,14 @@
 		width: 132px;
 	}
 
-	#time {
+	.timepicker {
 		background: transparent;
 		color: #ffffff;
 		border: 0px solid #000000;
 		text-align: center;
 	}
 
-	#date {
+	.datepicker {
 		background: transparent;
 		color: #ffffff;
 		border: 0px solid #000000;

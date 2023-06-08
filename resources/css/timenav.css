@@ -55,12 +55,12 @@
 }
 
 /* Calendar */
-#date {
+.datepicker {
     width: 7em;
     vertical-align: middle;
     margin-right: 0.25em
 }
-#time {
+.timepicker {
     width: 6em;
     vertical-align: middle;
 }
