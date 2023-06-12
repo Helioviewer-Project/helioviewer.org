@@ -323,7 +323,6 @@ var EventMarker = Class.extend(
         if ( event.type == 'toggle-event-label-on' ) {
             this.eventMarkerDomNode.css('zIndex', '997');
             this._labelVisible = true;
-            document.getSelection().removeAllRanges();
             this._label.show();
             Helioviewer.userSettings.set("state.eventLabels", true);
         }
@@ -331,7 +330,6 @@ var EventMarker = Class.extend(
             this._labelVisible = false;
             this._label.hide();
             this.eventMarkerDomNode.css('zIndex', this._zIndex);
-            document.getSelection().removeAllRanges();
             Helioviewer.userSettings.set("state.eventLabels", false);
         }
         else if ( event.type == 'mouseenter' ) {
