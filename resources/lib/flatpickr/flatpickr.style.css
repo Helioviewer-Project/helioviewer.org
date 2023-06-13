@@ -67,7 +67,7 @@
   border-left: 0;
 }
 .flatpickr-calendar.hasTime .flatpickr-time {
-  height: 40px;
+  height: 50px;
   border-top: 1px solid #090909;
 }
 .flatpickr-calendar.noCalendar.hasTime .flatpickr-time {
@@ -252,11 +252,11 @@
 .numInputWrapper span {
   position: absolute;
   right: 0;
-  width: 14px;
+  width: 24px;
   padding: 0 4px 0 2px;
   height: 50%;
   line-height: 50%;
-  opacity: 0;
+  opacity: 1;
   cursor: pointer;
   border: 1px solid rgba(255,255,255,0.15);
   -webkit-box-sizing: border-box;
@@ -273,6 +273,27 @@
   content: "";
   position: absolute;
 }
+.numInputWrapper span.arrowUp {
+  top: 0;
+  border-bottom: 0;
+}
+.numInputWrapper span.arrowUp:after {
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 8px solid rgba(255,255,255,0.6);
+  top: 26%;
+  left: 5px;
+}
+.numInputWrapper span.arrowDown {
+  top: 50%;
+}
+.numInputWrapper span.arrowDown:after {
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid rgba(255,255,255,0.6);
+  top: 40%;
+  left: 5px;
+}
 .numInputWrapper span svg {
   width: inherit;
   height: auto;
@@ -280,8 +301,8 @@
 .numInputWrapper span svg path {
   fill: rgba(255,255,255,0.5);
 }
-.numInputWrapper span span {
-  opacity: 1;
+.numInputWrapper:hover {
+  background: rgba(238,238,238,0.05);
 }
 .flatpickr-current-month {
   font-size: 135%;
@@ -648,8 +669,8 @@ span.flatpickr-weekday {
   outline: 0;
   display: block;
   height: 0;
-  line-height: 40px;
-  max-height: 40px;
+  line-height: 50px;
+  max-height: 50px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   overflow: hidden;
@@ -669,8 +690,14 @@ span.flatpickr-weekday {
       -ms-flex: 1;
           flex: 1;
   width: 40%;
-  height: 40px;
+  height: 50px;
   float: left;
+}
+.flatpickr-time .numInputWrapper span.arrowUp:after {
+  border-bottom-color: rgba(255,255,255,0.95);
+}
+.flatpickr-time .numInputWrapper span.arrowDown:after {
+  border-top-color: rgba(255,255,255,0.95);
 }
 .flatpickr-time.hasSeconds .numInputWrapper {
   width: 26%;
@@ -731,6 +758,12 @@ span.flatpickr-weekday {
   cursor: pointer;
   text-align: center;
   font-weight: 400;
+}
+.flatpickr-time input:hover,
+.flatpickr-time .flatpickr-am-pm:hover,
+.flatpickr-time input:focus,
+.flatpickr-time .flatpickr-am-pm:focus {
+  background: #555;
 }
 .flatpickr-input[readonly] {
   cursor: pointer;
