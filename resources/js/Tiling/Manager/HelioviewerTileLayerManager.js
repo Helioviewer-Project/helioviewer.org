@@ -125,17 +125,17 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
 
         opacity = this._computeLayerStartingOpacity(
                     params.layeringOrder, false);
-		
+
 		if(typeof params.uiLabels == 'undefined'){
 			if(params.observatory == 'SOHO' || params.observatory == 'STEREO_A' || params.observatory == 'STEREO_B'){
-					params.uiLabels = [  
+					params.uiLabels = [
 			           {"label":"Observatory","name":params.observatory},
 			           {"label":"Instrument","name":params.instrument},
 			           {"label":"Detector","name":params.detector},
 			           {"label":"Measurement","name":params.measurement}
 			        ];
 				}else{
-					params.uiLabels = [  
+					params.uiLabels = [
 			           {"label":"Observatory","name":params.observatory},
 			           {"label":"Instrument","name":params.instrument},
 			           {"label":"Measurement","name":params.measurement}
@@ -164,23 +164,26 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         var layer, basicParams, j=0, self = this;
 
         $.each(layers, function (index, params) {
-
             basicParams = self.dataSources;
+            let prev = params.uiLabels[0]['name'];
+            if (params.uiLabels[0].name == "GONG" && params.uiLabels[1].name == "H-alpha") {
+                params.uiLabels.splice(1, 0, {label: "", name: "GONG"});
+            }
             $.each(params.uiLabels, function (uiOrder, obj) {
                 basicParams = basicParams[obj['name']];
             });
             $.extend(params, basicParams);
-			
+
 			if(typeof params.uiLabels == 'undefined'){
 				if(params.observatory == 'SOHO' || params.observatory == 'STEREO_A' || params.observatory == 'STEREO_B'){
-					params.uiLabels = [  
+					params.uiLabels = [
 			           {"label":"Observatory","name":params.observatory},
 			           {"label":"Instrument","name":params.instrument},
 			           {"label":"Detector","name":params.detector},
 			           {"label":"Measurement","name":params.measurement}
 			        ];
 				}else{
-					params.uiLabels = [  
+					params.uiLabels = [
 			           {"label":"Observatory","name":params.observatory},
 			           {"label":"Instrument","name":params.instrument},
 			           {"label":"Measurement","name":params.measurement}
