@@ -56,6 +56,18 @@ var MovieManagerUI = MediaManagerUI.extend(
 	},
 
 	/**
+	 * This function can be used to request a new movie from other parts of the helioviewer application.
+	 *
+	 * The movie requested will use the given serialized parameters, and the current viewport.
+	 */
+	requestQueueMovie: function (serializedFormParams) {
+		// Load parameters for the current viewport to be used in the movie request
+		this._loadMovieQueueParameters();
+		// Request the movie
+		this._buildMovieRequest(serializedFormParams);
+	},
+
+	/**
 	 * Uses the layers passed in to send an Ajax request to api.php, to have it
 	 * build a movie. Upon completion, it displays a notification that lets the
 	 * user click to view it in a popup.
@@ -188,9 +200,9 @@ var MovieManagerUI = MediaManagerUI.extend(
 	},
 
 	/**
-	 * Displays movie settings dialog
+	 * Prefills this._movie* settings to be used later on in a movie request.
 	 */
-	_showMovieSettings: function (roi) {
+	_loadMovieQueueParameters: function (roi) {
 		if (typeof roi === "undefined") {
 			roi = helioviewer.getZoomedRegionOfInterest();
 		}
@@ -209,6 +221,13 @@ var MovieManagerUI = MediaManagerUI.extend(
 		this._movieLayers = layers;
 		this._movieEvents = events;
 		this._movieEventsLabels = helioviewer.getEventsLabels();
+	},
+
+	/**
+	 * Displays movie settings dialog
+	 */
+	_showMovieSettings: function (roi) {
+		this._loadMovieQueueParameters(roi);
 
 		//Choose dialog format
 		if(Helioviewer.userSettings.get("options.movies.dialog") == 'advanced'){

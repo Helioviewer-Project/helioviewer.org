@@ -903,8 +903,8 @@ var EventMarker = Class.extend(
 
 		//Create Movie from event popup
 		this.eventPopupDomNode.find(".event-create-movie").bind('click', function() {
-	        var start = $(this).data('start') + '.000Z';
-            var end = $(this).data('end') + '.000Z';
+	        var start = $(this).data('start').replace(" ", "T") + '.000Z';
+            var end = $(this).data('end').replace(" ", "T") + '.000Z';
 
             //build an movie settings object
             var formSettings = [
@@ -914,7 +914,7 @@ var EventMarker = Class.extend(
 	            {name : 'endTime', value : end},
             ];
 
-            helioviewer._movieManagerUI._buildMovieRequest(formSettings);
+            helioviewer._movieManagerUI.requestQueueMovie(formSettings);
         });
 
         this.eventPopupDomNode.find(".event-search-external").bind('click', function() {
