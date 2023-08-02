@@ -273,27 +273,6 @@
   content: "";
   position: absolute;
 }
-.numInputWrapper span.arrowUp {
-  top: 0;
-  border-bottom: 0;
-}
-.numInputWrapper span.arrowUp:after {
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 8px solid rgba(255,255,255,0.6);
-  top: 26%;
-  left: 5px;
-}
-.numInputWrapper span.arrowDown {
-  top: 50%;
-}
-.numInputWrapper span.arrowDown:after {
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 8px solid rgba(255,255,255,0.6);
-  top: 40%;
-  left: 5px;
-}
 .numInputWrapper span svg {
   width: inherit;
   height: auto;
@@ -767,6 +746,49 @@ span.flatpickr-weekday {
 }
 .flatpickr-input[readonly] {
   cursor: pointer;
+}
+.flatpickr-time .numInputWrapper .arrowUp {
+  top: 0;
+  border-bottom: 0;
+}
+.flatpickr-time .numInputWrapper .arrowUp:after {
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 8px solid rgba(255,255,255,0.6);
+  top: 26%;
+  left: 5px;
+}
+.flatpickr-time .numInputWrapper .arrowDown {
+  top: 50%;
+}
+.flatpickr-time .numInputWrapper .arrowDown:after {
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid rgba(255,255,255,0.6);
+  top: 40%;
+  left: 5px;
+}
+.flatpickr-current-month .numInputWrapper span {
+  width: 14px;
+}
+.flatpickr-current-month .numInputWrapper span.arrowUp {
+  top: 0;
+  border-bottom: 0;
+}
+.flatpickr-current-month .numInputWrapper span.arrowUp:after {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid rgba(255,255,255,0.6);
+  top: 26%;
+}
+.flatpickr-current-month .numInputWrapper span.arrowDown {
+  top: 50%;
+}
+.flatpickr-current-month .numInputWrapper span.arrowDown:after {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid rgba(255,255,255,0.6);
+  top: 40%;
 }
 @-webkit-keyframes fpFadeInDown {
   from {
