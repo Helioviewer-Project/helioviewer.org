@@ -354,6 +354,14 @@ var HelioviewerViewport = Class.extend(
      */
     centerViewportOnBiggestLayer: function () {
         let biggestLayer = this._getBiggestLayer();
+        // Centering the viewport works by centering the reference pixel of the biggest layer.
+        // For C3, the reference doesn't seem to be the center of the sun, so in this case default to
+        // centering the whole viewport.
+        // p.s. Centering on the reference pixel is important for sub-disk images like IRIS and XRT.
+        //      In this case, centering to (0, 0) may move a sub-disk image way off the viewport.
+        if (biggestLayer.name.indexOf("LASCO C3") != -1) {
+            return this.centerViewport();
+        }
         let offset = biggestLayer.getCurrentOffset();
         this.movementHelper.centerViewportWithOffset(offset.x, offset.y);
         this.updateViewport();
