@@ -5,6 +5,7 @@
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global $, Class, MouseCoordinates */
 "use strict";
+let hv_mouse_coord_ref_count = 0;
 var HelioviewerMouseCoordinates = MouseCoordinates.extend(
     /** @lends HelioviewerMouseCoordinates.prototype */
     {
@@ -12,11 +13,21 @@ var HelioviewerMouseCoordinates = MouseCoordinates.extend(
      * @constructs
      */
     init: function (imageScale, rsun, showMouseCoordsWarning) {
+        hv_mouse_coord_ref_count += 1;
+        if (hv_mouse_coord_ref_count > 1) {
+            // This class binds event listeners when an instance is created.
+            // Either this needs to be refactored so that multiple instances of this class can be made, or you should be using the base MouseCoordinates class.
+            alert("Error, there should only be one instance of HelioviewerMouseCoordinates. See HelioviewerMouseCoordinates.js for details");
+        }
         this.rsun = rsun;
         this._super(imageScale, showMouseCoordsWarning);
 
         this.buttonPolar     = $('#mouse-polar');
         this.buttonCartesian = $('#mouse-cartesian');
+        this._unit_one_span = $('#js-unit-1');
+        this._unit_two_span = $('#js-unit-2');
+        this._label_one_span = $('#js-label-1');
+        this._label_two_span = $('#js-label-2');
 
         this._initEventHandlers();
     },
@@ -157,15 +168,23 @@ var HelioviewerMouseCoordinates = MouseCoordinates.extend(
      * Displays cartesian coordinates in arc-seconds
      */
     showCartesianCoordinates: function(x, y) {
-        this.mouseCoordsX.html("x: " + x + " &prime;&prime;");
-        this.mouseCoordsY.html("y: " + y + " &prime;&prime;");
+        this._unit_one_span.html("&prime;&prime;");
+        this._unit_two_span.html("&prime;&prime;");
+        this._label_one_span.html("θ<span style='vertical-align: sub; font-size:10px;'>x</span>:");
+        this._label_two_span.html("θ<span style='vertical-align: sub; font-size:10px;'>y</span>:");
+        this.mouseCoordsX.html(x);
+        this.mouseCoordsY.html(y);
     },
 
     /**
      * Displays cartesian coordinates in arc-seconds
      */
     showPolarCoordinates: function(r, theta) {
-            this.mouseCoordsX.html(r + " R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
-            this.mouseCoordsY.html(theta + " &#176;");
+            this._unit_one_span.html("R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
+            this._unit_two_span.html("&#176;");
+            this._label_one_span.text("ρ:");
+            this._label_two_span.text("ψ:");
+            this.mouseCoordsX.text(r);
+            this.mouseCoordsY.text(theta);
     }
 });
