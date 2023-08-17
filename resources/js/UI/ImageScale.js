@@ -227,7 +227,7 @@ var ImageScale = Class.extend(
     resetIfOutsideViewportBounds: function(event) {
         var scaleXY, coords;
 
-        coords = new HelioviewerMouseCoordinates(Helioviewer.userSettings.get("state.imageScale"), 959.705, false);
+        coords = new MouseCoordinates(Helioviewer.userSettings.get("state.imageScale"));
         // regular helioviewer
         if(outputType!='minimal'){
         // Snap back to default position if dragged outside of Viewport bounds

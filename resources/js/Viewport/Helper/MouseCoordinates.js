@@ -26,12 +26,6 @@ var MouseCoordinates = Class.extend(
         this.mouseCoords  = "disabled";
         this.mouseCoordsX = $('#mouse-coords-x');
         this.mouseCoordsY = $('#mouse-coords-y');
-
-        this._initEventHandlers();
-    },
-
-    _initEventHandlers: function () {
-        // $(document).bind('toggle-mouse-coords', $.proxy(this.toggleMouseCoords, this));
     },
 
     enable: function () {
@@ -88,30 +82,11 @@ var MouseCoordinates = Class.extend(
     _checkWarning: function () {
         // Warn once
         if (this.warnMouseCoords === true) {
-            /*
-	    var warning = "<b>Note:</b> Mouse coordinates should not be used " +
-                          "for operations.";
-            $(document).trigger("message-console-log", [warning, {"sticky": false, "life": 1000}]);
-            */
-	    Helioviewer.userSettings.set("notifications.coordinates", false);
+            var warning = "<b>Note:</b> Mouse coordinates should not be used for operations.";
+            $(document).trigger("message-console-log", [warning, {"sticky": false, "life": 20000}]);
+            Helioviewer.userSettings.set("notifications.coordinates", false);
             this.warnMouseCoords = false;
         }
-    },
-
-    /**
-     * updateMouseCoords. Displays cartesian coordinates by default.
-     */
-    updateMouseCoords: function (event) {
-        var cartesian;
-
-        if (!this.enabled) {
-            return;
-        }
-
-        // Compute coordinates relative to top-left corner of the viewport
-        cartesian = this.computeMouseCoords(event.pageX, event.pageY);
-        this.mouseCoordsX.html("x: " + cartesian.x + " &prime;&prime;");
-        this.mouseCoordsY.html("y: " + cartesian.y + " &prime;&prime;");
     },
 
     /**
