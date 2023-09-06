@@ -18,6 +18,7 @@ var Config = Class.extend(
         'web_root_url'              : "https://helioviewer.org",
         'build_num'                 : 700,
         'default_image_scale'       : 4.8408817,
+        'ref_image_scale'           : 0.60511022,
         'min_image_scale'           : 0.30255511,
         'max_image_scale'           : 154.90822,
         'max_tile_layers'           : 5,
@@ -83,6 +84,7 @@ var Config = Class.extend(
         return {
             'version'                 : this.params["build_num"],
             'defaultImageScale'       : this.params["default_image_scale"],
+            'refImageScale'           : this.params["ref_image_scale"],
             'minImageScale'           : this.params["min_image_scale"],
             'maxImageScale'           : this.params["max_image_scale"],
             'maxTileLayers'           : this.params["max_tile_layers"],

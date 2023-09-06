@@ -73,11 +73,12 @@ var EventMarker = Class.extend(
             'id' : 'marker_'+id
         });
         if ( this.hasBoundingBox() ) {
-	        var polygonCenterX = (this.hv_poly_width_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
-	        var polygonCenterY = (this.hv_poly_height_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
+            let refScale = Helioviewer.userSettings.get('state.refScale');
+	        var polygonCenterX = (this.hv_poly_width_max_zoom_pixels * ( refScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
+	        var polygonCenterY = (this.hv_poly_height_max_zoom_pixels * ( refScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
 
-	        var scaledMarkerX = this.hv_marker_offset_x *( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale );
-	        var scaledMarkerY = this.hv_marker_offset_y *( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale );
+	        var scaledMarkerX = this.hv_marker_offset_x *( refScale / Helioviewer.userSettings.settings.state.imageScale );
+	        var scaledMarkerY = this.hv_marker_offset_y *( refScale / Helioviewer.userSettings.settings.state.imageScale );
 
 	        var polygonPosX = ( this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale);
 	        var polygonPosY = ( this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale);
@@ -146,9 +147,11 @@ var EventMarker = Class.extend(
 				'id' : 'region_'+id
 	        });
 
+            let refScale = Helioviewer.userSettings.get('state.refScale');
+
             this.region_scaled = {
-                width:  this.hv_poly_width_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale ),
-                height: this.hv_poly_height_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )
+                width:  this.hv_poly_width_max_zoom_pixels * ( refScale / Helioviewer.userSettings.settings.state.imageScale ),
+                height: this.hv_poly_height_max_zoom_pixels * ( refScale / Helioviewer.userSettings.settings.state.imageScale )
             }
             this.region_pos = {
                 x: ( this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale),
@@ -219,11 +222,13 @@ var EventMarker = Class.extend(
 
         // Re-position Event Marker pin
         if ( this.hasBoundingBox()) {
-	        var polygonCenterX = (this.hv_poly_width_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
-	        var polygonCenterY = (this.hv_poly_height_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
+            let refScale = Helioviewer.userSettings.get('state.refScale');
 
-	        var scaledMarkerX = this.hv_marker_offset_x *( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale );
-	        var scaledMarkerY = this.hv_marker_offset_y *( Helioviewer.userSettings._constraints.minImageScale / Helioviewer.userSettings.settings.state.imageScale );
+	        var polygonCenterX = (this.hv_poly_width_max_zoom_pixels * ( refScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
+	        var polygonCenterY = (this.hv_poly_height_max_zoom_pixels * ( refScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
+
+	        var scaledMarkerX = this.hv_marker_offset_x *( refScale / Helioviewer.userSettings.settings.state.imageScale );
+	        var scaledMarkerY = this.hv_marker_offset_y *( refScale / Helioviewer.userSettings.settings.state.imageScale );
 
 	        var polygonPosX = this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale;
 	        var polygonPosY = this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale;
@@ -249,9 +254,11 @@ var EventMarker = Class.extend(
 
         // Re-position and re-scale Event Region polygon
         if ( this.hasBoundingBox() ) {
+            let refScale = Helioviewer.userSettings.get('state.refScale');
+
             this.region_scaled = {
-                width: this.hv_poly_width_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale /   Helioviewer.userSettings.settings.state.imageScale ),
-                height: this.hv_poly_height_max_zoom_pixels * ( Helioviewer.userSettings._constraints.minImageScale /   Helioviewer.userSettings.settings.state.imageScale )
+                width: this.hv_poly_width_max_zoom_pixels * ( refScale /   Helioviewer.userSettings.settings.state.imageScale ),
+                height: this.hv_poly_height_max_zoom_pixels * ( refScale /   Helioviewer.userSettings.settings.state.imageScale )
             }
             this.region_pos = {
                 x: ( this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale),
