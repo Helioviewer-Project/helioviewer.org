@@ -177,6 +177,7 @@ var SettingsLoader = (
                 },
                 "eventLabels": true,
                 "imageScale" : serverSettings.defaultImageScale,
+                "refScale"   : serverSettings.refImageScale,
                 "scale"      : true,
                 "scaleType"  :'earth',
                 "scaleX"     : 0,
