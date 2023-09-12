@@ -27,7 +27,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var urlDate, imageScale, paddingHeight, accordionsToOpen, self=this;
 
         this.header                    = $('#hv-header');
-        this.viewport                  = $('#helioviewer-viewport');
         this.drawerSpeed               = 0;
         this.drawerLeft                = $('#hv-drawer-left');
         this.drawerLeftOpened          = false;
