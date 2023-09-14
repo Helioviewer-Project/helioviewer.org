@@ -313,7 +313,7 @@ var TileLayerManager = LayerManager.extend(
      * @param array roi Region of interest in pixels
      */
     getVisibleLayers: function (roi) {
-        let layers = getVisibleLayerInstances(roi);
+        let layers = this.getVisibleLayerInstances(roi);
         return this._stringify(layers);
     },
 
