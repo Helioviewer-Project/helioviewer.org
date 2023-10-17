@@ -25,7 +25,7 @@ class _BrokenScreenshotNotifier {
                 header: "Just now"
             };
 
-            let message = `Due to some recent database issues, we were unable to store ${this.num_broken_screenshots} of your recent screenshots. These have been removed from your screenshot history.`;
+            let message = "Due to some recent database issues, we were unable to store " + this.num_broken_screenshots + " of your recent screenshots. These have been removed from your screenshot history.";
 
             // Schedule notification to appear when the notification system is ready.
             $(document).bind("helioviewer-ready", () => {
