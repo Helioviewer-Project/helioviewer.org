@@ -31,6 +31,8 @@ var HelioviewerClient = Class.extend(
         Helioviewer.api          = serverSettings['backEnd'];
         Helioviewer.dataType     = "json";
         Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
+        // Apply settings patches as soon as userSettings is set, before any further initialization is done.
+        ApplyPatch493_RemoveBrokenScreenshots();
 
         Helioviewer.root = serverSettings['rootURL'];
     },
