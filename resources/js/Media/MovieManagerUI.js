@@ -747,6 +747,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 			height	: dimensions.height + 90,
 			resizable : $.support.h264 || $.support.vp8,
 			close	 : function () {
+							reactApp.unmount();
 							$(this).remove();
 						},
 			zIndex	: 9999,

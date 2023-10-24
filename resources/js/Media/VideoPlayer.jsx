@@ -1,4 +1,5 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useId, useState } from "react"
+import { JhvRequest, JhvRequestBuilder, IsJhvRunning } from "jhvrequest";
 /**
  * @typedef {Object} VideoPlayerProps
  * @property {Movie} movie Movie URL
@@ -11,8 +12,10 @@ import React, { useEffect } from "react"
  * @typedef {Object} Movie
  * @property {string} id alphanumeric movie ID
  * @property {number} imageScale Image scale in arcseconds/pixel
- * @property {Array} layers Layer descriptions which make up the movie
+ * @property {string} layers Layer string which make up the movie
  * @property {string} url URL to movie mp4
+ * @property {string} startDate Movie start date string
+ * @property {string} endDate Movie end date string
  */
 
 /**
@@ -26,6 +29,7 @@ function VideoPlayer({
     height,
     onClickYoutubeBtn
 }) {
+    console.log(movie);
     useEffect(() => {
         const playPauseFn = function (player, media) {
             if (player.paused) {
@@ -52,7 +56,8 @@ function VideoPlayer({
                     <LinkButton id={movie.id} />
                     <DownloadButton id={movie.id} />
                 </div>
-                <div style={{float: 'right'}}>
+                <div className="video-share-buttons" style={{float: 'right'}}>
+                    <JHelioviewerButton movie={movie} />
                     <XShareLink id={movie.id} />
                 </div>
             </div>
@@ -142,7 +147,6 @@ function YoutubeButton({id, onClick}) {
  * @returns {React.JSX.Element}
  */
 function LinkButton({id}) {
-    let linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + id;
     let onClick = () => {
         // Hide flash movies to prevent blocking
         if (!($.support.h264 || $.support.vp8)) {
@@ -173,13 +177,83 @@ function XShareLink({id}) {
     let hashtags = "helioviewer";
     let shareUrl = `https://twitter.com/intent/tweet?text=${postText}&url=${postUrl}&hashtags=${hashtags}`
 	return (
-        <div style={{float: "right"}}>
+        <div>
             <a href={shareUrl} className="twitter-share-button" data-related="helioviewer" data-lang="en" data-size="medium" data-count="horizontal">
                 <i></i>
                 <span>Share on X</span>
             </a>
         </div>
     );
+}
+
+/**
+ * Creates a button which opens the movie in JHelioviewer
+ * @typedef {Object} JHelioviewerButtonProps
+ * @property {Movie} movie Movie details
+ * @param {JHelioviewerButtonProps}
+ * @returns {React.JSX.Element}
+ */
+function JHelioviewerButton({ movie }) {
+    let [visible, setVisible] = useState(false);
+    let initialText = "Open in JHelioviewer";
+    let [text, setText] = useState(initialText)
+    useEffect(() => {
+        // Setup a periodic function to show this button if JHV is running.
+        let interval = setInterval(async () => {
+            setVisible(await IsJhvRunning());
+        }, 1000)
+        // When component is removed, clear the above periodic function.
+        return () => {
+            clearInterval(interval);
+        }
+    }, []);
+    let request = GetJhvRequesForMovie(movie);
+    console.log(request);
+    let onClick = () => {
+        request.Send();
+        setText("Opened!");
+        setTimeout(() => {setText(initialText)}, 3000);
+    }
+    return visible ? <button className="jhelioviewer-btn" onClick={onClick}><img src="/resources/images/jhelioviewer.png"/><span>{text}</span></button> : <></>;
+}
+
+/**
+ * Compute the cadence of a movie given its metadata
+ * @param {Movie} movie
+ * @returns {number} The average time (in seconds) between each movie frame.
+ */
+function ComputeCadence(movie) {
+    let start = new Date(movie.startDate);
+    let end = new Date(movie.endDate);
+    // Get the length of the movie in seconds
+    let dt = (end.getTime() - start.getTime()) / 1000;
+    // Divide movie length by number of frames to compute the time between each frame.
+    return dt / movie.numFrames;
+}
+
+/**
+ * Creates a JhvRequest for the given movie.
+ * @param {Movie} movie
+ * @returns {JhvRequest}
+ */
+function GetJhvRequesForMovie(movie) {
+    let layerStrings = movie.layers.split('],[');
+    let requestBuilder = new JhvRequestBuilder();
+    requestBuilder.SetTimeRange(movie.startDate, movie.endDate);
+    requestBuilder.SetCadence(ComputeCadence(movie));
+    for (let layerString of layerStrings) {
+        // Remove the brackets
+        if (layerString.startsWith("[")) { layerString = layerString.substring(1)}
+        if (layerString.endsWith("]")) { layerString = layerString.substring(0, layerString.length - 1)}
+        let layer = layerString.split(",");
+        // This is almost definitely not enough for some movies
+        // More advanced parsing may be necessary. Needs testing.
+        let observatory = layer[0];
+        let dataset = `${layer[1]} ${layer[2]}`;
+        // TODO: set server from config file
+        requestBuilder.AddSource(observatory, dataset, 'GSFC');
+    }
+    return requestBuilder.Build();
 }
 
 export { VideoPlayer }

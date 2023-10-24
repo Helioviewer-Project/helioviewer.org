@@ -1571,11 +1571,9 @@ img.coordinate-option {
 }
 
 a.twitter-share-button {
-   position: relative;
    box-sizing: border-box;
    background-color: #1d9bf0;
    color: #fff;
-   border-radius: 9999px;
    font-weight: 500;
    cursor: pointer;
    height: 28px;
@@ -1602,10 +1600,47 @@ a.twitter-share-button span {
    white-space: nowrap;
 }
 
+button.jhelioviewer-btn {
+   border: none;
+   outline: none;
+   box-sizing: border-box;
+   background: linear-gradient(180deg, #aaa 0, #333 100%);
+   color: white;
+   font-weight: 500;
+   cursor: pointer;
+   height: 28px;
+   border-radius: 9999px;
+   padding: 1px 12px 1px 12px;
+   vertical-align: top;
+   text-decoration: none;
+   position: relative;
+   display: flex;
+   align-items: center;
+   margin-right: 10px;
+}
+
+button.jhelioviewer-btn img {
+   height: 24px;
+   width: 24px;
+   display: inline-block;
+   position: relative;
+}
+
+button.jhelioviewer-btn span {
+   margin-left: 4px;
+   white-space: nowrap;
+}
+
 button.btn-link {
    background: none;
    border: none;
    outline: none;
+}
+
+.video-share-buttons {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
 }
 
 .mejs-container .mejs-controls {
