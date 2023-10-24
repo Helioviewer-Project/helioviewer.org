@@ -260,3 +260,5 @@ var MediaManagerUI = Class.extend(
         return true;
     }
 });
+
+export { MediaManagerUI }
