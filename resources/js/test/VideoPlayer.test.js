@@ -14,6 +14,12 @@ Object.defineProperty(XMLHttpRequest.prototype, "responseXML", {
   set: function () {},
 });
 
+global.helioviewer = {
+  serverSettings: {
+    jhelioviewerHost: "GSFC",
+  },
+};
+
 /**
  * @typedef {Object} Layer
  * @property {string} observatory Parsed observatory (SDO, SOHO, etc)
@@ -247,5 +253,6 @@ function ValidateRequest(result, expected, layerString) {
       console.log(layers);
     }
     expect(foundLayer).toBeDefined();
+    expect(foundLayer.server).toBe(helioviewer.serverSettings.jhelioviewerHost);
   }
 }
