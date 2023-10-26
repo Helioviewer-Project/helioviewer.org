@@ -210,7 +210,7 @@ function JHelioviewerButton({ movie }) {
         }
     }, []);
     // Create the JhvRequest that can send info to JHelioviewer if it's running.
-    let request = GetJhvRequesForMovie(movie);
+    let request = GetJhvRequestForMovie(movie);
     let onClick = () => {
         // When the button is clicked, send the request to JHV
         request.Send();
@@ -246,7 +246,7 @@ function ComputeCadence(movie) {
  * @param {Movie} movie
  * @returns {JhvRequest}
  */
-function GetJhvRequesForMovie(movie) {
+function GetJhvRequestForMovie(movie) {
     let layerStrings = movie.layers.split('],[');
     let requestBuilder = new JhvRequestBuilder();
     requestBuilder.SetTimeRange(movie.startDate, movie.endDate);
@@ -266,4 +266,4 @@ function GetJhvRequesForMovie(movie) {
     return requestBuilder.Build();
 }
 
-export { VideoPlayer }
+export { VideoPlayer, GetJhvRequestForMovie }
