@@ -353,8 +353,11 @@ function GetJhvRequestForMovie(movie) {
     // Cut away the opacity/layer order info from the layer string
     let dataset = layer.slice(1, layer.length - 6).join(" ");
     dataset = PatchDataset(dataset);
-    // TODO: set server from config file
-    requestBuilder.AddSource(observatory, dataset, "GSFC");
+    requestBuilder.AddSource(
+      observatory,
+      dataset,
+      helioviewer.serverSettings.jhelioviewerHost,
+    );
   }
   return requestBuilder.Build();
 }
