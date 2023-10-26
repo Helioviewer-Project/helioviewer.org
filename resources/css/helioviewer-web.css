@@ -1628,36 +1628,13 @@ button.jhelioviewer-btn img {
 }
 
 button.jhelioviewer-btn span {
-   margin-left: 4px;
    white-space: nowrap;
+   flex-grow: 1;
+   text-align: center;
 }
 
-button.jhelioviewer-btn .clicked {
-   display: none;
-}
-
-button.jhelioviewer-btn.unsupported {
+button.jhelioviewer-btn:disabled {
    cursor: not-allowed;
-}
-
-button.jhelioviewer-btn span.unsupported {
-   display: none;
-}
-
-button.jhelioviewer-btn.btn-clicked .idle, button.jhelioviewer-btn.unsupported .idle {
-   display: none;
-}
-
-button.jhelioviewer-btn.btn-clicked .clicked {
-   display: block;
-   flex-grow: 1;
-   margin-left: 0;
-}
-
-button.jhelioviewer-btn.unsupported .unsupported {
-   display: block;
-   flex-grow: 1;
-   margin-left: 0;
 }
 
 button.btn-link {

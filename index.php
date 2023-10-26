@@ -1832,8 +1832,8 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<script src="/resources/lib/boneVojage/jquery.bonevojage.js" type="text/javascript" language="javascript"></script>
 	<script src="/resources/lib/mediaelement/build/mediaelement-and-player.min.js" type="text/javascript" language="javascript"></script>
 
-	<!-- Helioviewer JavaScript -->
 	<script src="/resources/js/dist/HelioviewerModules.js?v=<?=filemtime('resources/js/dist/HelioviewerModules.js')?>" type="text/javascript"></script>
+
 	<?php
 	if ($debug){
 	?>
@@ -1898,6 +1898,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<?php
 	} else {
 	?>
+	<!-- Helioviewer JavaScript -->
 		<script src="/resources/compressed/helioviewer.min.js?v=<?=filemtime('resources/compressed/helioviewer.min.js')?>" type="text/javascript"></script>
 	<?php
 	}
