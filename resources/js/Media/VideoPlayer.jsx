@@ -29,7 +29,6 @@ function VideoPlayer({
     height,
     onClickYoutubeBtn
 }) {
-    console.log(movie);
     useEffect(() => {
         const playPauseFn = function (player, media) {
             if (player.paused) {
@@ -211,7 +210,12 @@ function JHelioviewerButton({ movie }) {
     }, []);
     // Create the JhvRequest that can send info to JHelioviewer if it's running.
     let request = GetJhvRequestForMovie(movie);
+    // XRT is not supported.
+    let unsupported = movie.layers.indexOf("XRT") != -1;
     let onClick = () => {
+        if (unsupported) {
+            return;
+        }
         // When the button is clicked, send the request to JHV
         request.Send();
         // Set the animation class to btn-clicked, to animate the size of the button.
@@ -221,9 +225,10 @@ function JHelioviewerButton({ movie }) {
             setAnimationClass('');
         }, 3000);
     }
-    return visible ? <button className={`jhelioviewer-btn ${animationClass}`} onClick={onClick}><img src="/resources/images/jhelioviewer.png"/>
+    return visible ? <button className={`jhelioviewer-btn ${animationClass} ${unsupported ? 'unsupported' : ''}`} onClick={onClick} disabled={unsupported}><img src="/resources/images/jhelioviewer.png"/>
         <span className="idle">Open in JHelioviewer</span>
         <span className="clicked">Sent!</span>
+        <span className="unsupported">Movie Not Supported</span>
     </button> : <></>;
 }
 
@@ -258,12 +263,30 @@ function GetJhvRequestForMovie(movie) {
         let layer = layerString.split(",");
         // This is almost definitely not enough for some movies
         // More advanced parsing may be necessary. Needs testing.
-        let observatory = layer[0];
-        let dataset = `${layer[1]} ${layer[2]}`;
+        let observatory = layer[0].replace("_", "-");
+        // Cut away the opacity/layer order info from the layer string
+        let dataset = layer.slice(1, layer.length - 6).join(' ');
+        dataset = PatchDataset(dataset);
         // TODO: set server from config file
         requestBuilder.AddSource(observatory, dataset, 'GSFC');
     }
     return requestBuilder.Build();
+}
+
+/**
+ * Certain information doesn't need to be sent to JHelioviewer.
+ * Actually certain info will make the JHV request fail, clean that up here.
+ * @param {string} dataset Initial dataset string
+ * @returns {string} The patched string which can be sent to JHV
+ */
+function PatchDataset(dataset) {
+                  // LASCO C2/C3 must not have "white-light" in the request.
+    return dataset.replace("C2 white-light", "C2")
+                  .replace("C3 white-light", "C3")
+                  // For yohkoh "White Light" must be in the request.
+                  .replace("white-light", "White Light")
+                  // For yohkoh thin-Al
+                  .replace("thin-Al", "Thin Al");
 }
 
 export { VideoPlayer, GetJhvRequestForMovie }
