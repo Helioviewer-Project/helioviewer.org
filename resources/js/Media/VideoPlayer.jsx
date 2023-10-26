@@ -335,6 +335,7 @@ function ComputeCadence(movie) {
 function GetJhvRequestForMovie(movie) {
   let layerStrings = movie.layers.split("],[");
   let requestBuilder = new JhvRequestBuilder();
+  requestBuilder.SetName("Helioviewer.org");
   requestBuilder.SetTimeRange(movie.startDate, movie.endDate);
   requestBuilder.SetCadence(ComputeCadence(movie));
   for (let layerString of layerStrings) {

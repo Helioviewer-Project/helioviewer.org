@@ -20,6 +20,6 @@
     "xmlhttprequest": "^1.8.0"
   },
   "dependencies": {
-    "jhvrequest": "^0.0.8"
+    "jhvrequest": "^0.0.9"
   }
 }
