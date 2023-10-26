@@ -1617,6 +1617,8 @@ button.jhelioviewer-btn {
    display: flex;
    align-items: center;
    margin-right: 10px;
+   width: 180px;
+   text-align: center;
 }
 
 button.jhelioviewer-btn img {
@@ -1629,6 +1631,20 @@ button.jhelioviewer-btn img {
 button.jhelioviewer-btn span {
    margin-left: 4px;
    white-space: nowrap;
+}
+
+button.jhelioviewer-btn .clicked {
+   display: none;
+}
+
+button.jhelioviewer-btn.btn-clicked .idle {
+   display: none;
+}
+
+button.jhelioviewer-btn.btn-clicked .clicked {
+   display: block;
+   flex-grow: 1;
+   margin-left: 0;
 }
 
 button.btn-link {

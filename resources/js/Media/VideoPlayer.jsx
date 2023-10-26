@@ -194,9 +194,11 @@ function XShareLink({id}) {
  * @returns {React.JSX.Element}
  */
 function JHelioviewerButton({ movie }) {
+    // Visibility state determined by whether JHelioviewer is running or not.
     let [visible, setVisible] = useState(false);
-    let initialText = "Open in JHelioviewer";
-    let [text, setText] = useState(initialText)
+    // Class used to animate the button when it's clicked/reverts to normal.
+    let [animationClass, setAnimationClass] = useState('');
+    // Use effect to run JHelioviewer scan while the button is rendered.
     useEffect(() => {
         // Setup a periodic function to show this button if JHV is running.
         let interval = setInterval(async () => {
@@ -207,14 +209,22 @@ function JHelioviewerButton({ movie }) {
             clearInterval(interval);
         }
     }, []);
+    // Create the JhvRequest that can send info to JHelioviewer if it's running.
     let request = GetJhvRequesForMovie(movie);
-    console.log(request);
     let onClick = () => {
+        // When the button is clicked, send the request to JHV
         request.Send();
-        setText("Opened!");
-        setTimeout(() => {setText(initialText)}, 3000);
+        // Set the animation class to btn-clicked, to animate the size of the button.
+        setAnimationClass('btn-clicked');
+        // After 3 seconds, revert the text and size of the button.
+        setTimeout(() => {
+            setAnimationClass('');
+        }, 3000);
     }
-    return visible ? <button className="jhelioviewer-btn" onClick={onClick}><img src="/resources/images/jhelioviewer.png"/><span>{text}</span></button> : <></>;
+    return visible ? <button className={`jhelioviewer-btn ${animationClass}`} onClick={onClick}><img src="/resources/images/jhelioviewer.png"/>
+        <span className="idle">Open in JHelioviewer</span>
+        <span className="clicked">Sent!</span>
+    </button> : <></>;
 }
 
 /**
