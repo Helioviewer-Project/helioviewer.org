@@ -1,15 +1,19 @@
 const path = require('path');
 
 module.exports = {
-  entry: '../js/Events/EventMarker.js',
+  mode: 'development',
+  entry: '../js/index.js',
   output: {
-    filename: 'EventMarker.js',
+    filename: 'HelioviewerModules.js',
     path: path.resolve(__dirname, '../js/dist'),
+  },
+  resolve: {
+    extensions: ['.js', '.jsx']
   },
   module: {
     rules: [
         {
-          test: /\.m?js$/,
+          test: /\.m?jsx?$/,
           exclude: /node_modules/,
           use: {
             loader: "babel-loader",
@@ -19,15 +23,29 @@ module.exports = {
           }
         },
         {
-            test: /EventMarker\.js$/,
+          // If the application is migrated to import the appropriate modules in each script,
+          // then this expose loader can be removed so modules don't end up in the global space.
             use: [
                 {
                     loader: "expose-loader",
                     options: {
-                        exposes: {
+                      exposes: [
+                        {
                             globalName: "EventMarker",
                             moduleLocalName: "EventMarker",
+                            override: true
+                        },
+                        {
+                          globalName: "MovieManagerUI",
+                          moduleLocalName: "MovieManagerUI",
+                          override: true,
+                        },
+                        {
+                          globalName: "MediaManagerUI",
+                          moduleLocalName: "MediaManagerUI",
+                          override: true
                         }
+                      ]
                     }
                 },
                 {

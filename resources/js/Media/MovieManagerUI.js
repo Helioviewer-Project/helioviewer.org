@@ -10,6 +10,11 @@ newcap: true, immed: true, maxlen: 80, sub: true */
   layerStringToLayerArray, humanReadableNumSeconds
  */
 "use strict";
+
+import ReactDOM from 'react-dom/client';
+import React from 'react';
+import { MediaManagerUI } from './MediaManagerUI';
+
 var MovieManagerUI = MediaManagerUI.extend(
 	/** @lends MovieManagerUI */
 	{
@@ -703,7 +708,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 	/**
 	 * @description Opens a pop-up with the movie player in it.
 	 */
-	_createMoviePlayerDialog: function (movie) {
+	_createMoviePlayerDialog: async function (movie) {
 		var dimensions, title, uploadURL, flvURL, swfURL, html, dialog,
 			screenshot, callback, self = this;
 
@@ -713,24 +718,21 @@ var MovieManagerUI = MediaManagerUI.extend(
 		// Movie player HTML
 		if(outputType!='minimal'){
 			//regular helioviewer video player
-			html = self.getVideoPlayerHTML(movie, dimensions.width, dimensions.height);
+			html = await self.getVideoPlayerHTML(movie, dimensions.width, dimensions.height);
 		}else{
 			//k12 helioviewer video player
+			// TODO: This is important to fix too...
 			html = self.getK12VideoPlayerHTML(movie, dimensions.width, dimensions.height);
 		}
 
 		// Movie player dialog
+		let htmlId = "movie-player-" + movie.id;
 		dialog = $(
-			"<div id='movie-player-" + movie.id + "' " +
+			"<div id='"+htmlId+"' " +
 			"class='movie-player-dialog'></div>"
-		).append(html);
-
-		dialog.find(".video-download-icon").click(function () {
-			// Google analytics event
-			if (typeof(_gaq) != "undefined") {
-				_gaq.push(['_trackEvent', 'Movies', 'Download']);
-			}
-		});
+		);
+		let reactApp = ReactDOM.createRoot(dialog[0]);
+		reactApp.render(html);
 
 		// Movie dialog title
 		title = movie.name + " (" + movie.startDate + " - " +
@@ -745,56 +747,11 @@ var MovieManagerUI = MediaManagerUI.extend(
 			height	: dimensions.height + 90,
 			resizable : $.support.h264 || $.support.vp8,
 			close	 : function () {
+							reactApp.unmount();
 							$(this).remove();
 						},
 			zIndex	: 9999,
 			show	  : 'fade'
-		});
-
-		// TODO 2011/01/04: Disable keyboard shortcuts when in text fields!
-		// (already done for input fields...)
-
-		// Initialize YouTube upload button
-		$('#youtube-upload-' + movie.id).on('click', function () {
-			self.showYouTubeUploadDialog(movie);
-			return false;
-		});
-
-		// Initialize video link button
-		$('#video-link-' + movie.id).on('click', function () {
-			// Hide flash movies to prevent blocking
-			if (!($.support.h264 || $.support.vp8)) {
-				$(".movie-player-dialog").dialog("close");
-			}
-			helioviewer.displayMovieURL(movie.id);
-			return false;
-		});
-
-		// Flash video URL
-		flvURL = Helioviewer.api +
-				"?action=downloadMovie&format=flv&id=" + movie.id;
-
-		// SWF URL (The flowplayer SWF directly provides best Facebook support)
-		swfURL = Helioviewer.root +
-				 "/lib/flowplayer/flowplayer-3.2.8.swf?config=" +
-				 encodeURIComponent("{'clip':{'url': '../../" + flvURL + "'}}");
-
-		screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) + "full.png";
-
-		const playPauseFn = function (player, media) {
-			if (player.paused) {
-				player.play();
-			} else {
-				player.pause();
-			}
-		}
-		$("video").mediaelementplayer({
-			enableAutosize: true,
-			features: ["playpause","progress","current","duration", "fullscreen"],
-			alwaysShowControls: false,
-			iconSprite: "/resources/lib/mediaelement/build/mejs-controls.svg",
-			enableKeyboard: true,
-			keyActions: [{keys: [32], action: playPauseFn}]
 		});
 	},
 
@@ -1035,105 +992,11 @@ var MovieManagerUI = MediaManagerUI.extend(
 	 * Decides how to display video and returns HTML corresponding to that
 	 * method
 	 */
-	getVideoPlayerHTML: function (movie, width, height) {
-		var downloadURL, downloadLink, youtubeBtn,
-			linkBtn, linkURL, gifLink, gifURL, tweetBtn, facebookBtn;
-
-		// Download
-		downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
-					  "&format=mp4&hq=true";
-		var gifURLEncoded = movie.url;
-		gifURL = encodeURIComponent(gifURLEncoded).replace(/'/g,"%27").replace(/"/g,"%22");
-		//gifURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id +
-		//			  "&format=gif";
-
-		downloadLink = "<div style='float:left;'><a target='_parent' href='" + downloadURL +
-			"' title='Download high-quality video'>" +
-			"<img style='width:93px; height:32px;' class='video-download-icon' " +
-			"src='resources/images/download_93x32.png' /></a></div>";
-
-		gifLink = "<div style='float:left;'><a target='_blank' href='http://imgur.com/vidgif/video?url=" + gifURL +
-			"' title='Create animated GIF image with Imgur'>" +
-			"<img style='width:93px; height:32px;' class='video-download-icon' " +
-			"src='resources/images/gif_imgur_93x32.png' /></a></div>";
-
-		//gifLink = "<div style='float:left;'><a target='_parent' href='" + gifURL +
-		//	"' title='Download animated GIF image'>" +
-		//	"<img style='width:93px; height:32px;' class='video-download-icon' " +
-		//	"src='resources/images/gif_93x32.png' /></a></div>";
-
-		// Upload to YouTube
-		youtubeBtn = '<div style="float:left;"><a id="youtube-upload-' + movie.id + '" href="#" ' +
-			'target="_blank"><img class="youtube-icon" ' +
-			'title="Upload video to YouTube" style="width:124px;height:32px;" ' +
-			'src="resources/images/yt_upload_logo_rgb_light.png" /></a></div>';
-
-		// Link
-		linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
-
-		linkBtn = "<div style='float:left;'><a id='video-link-" + movie.id + "' href='" + linkURL +
-			"' title='Get a link to the movie' " +
-			"target='_blank'><img class='video-link-icon' " +
-			"style='width:79px; height:32px;' " +
-			"src='resources/images/link_79x32.png' /></a></div>";
-
-		// Tweet Movie Button
-		tweetBtn = '<div style="float:right;"><a href="https://twitter.com/share" class="twitter-share-button" data-related="helioviewer" data-lang="en" data-size="medium" data-count="horizontal" data-url="http://'+document.domain+'/?movieId='+movie.id+'" data-text="Movie of the Sun created on Helioviewer.org:" data-hashtags="helioviewer" data-related="helioviewer">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>';
-
-		// Like Movie on Facebook Button
-		facebookBtn = '<div style="float:right;"><iframe src="//www.facebook.com/plugins/like.php?href='+encodeURIComponent('http://'+document.domain+'/?movieId='+movie.id)+'&amp;width=90&amp;height=21&amp;colorscheme=dark&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;send=false&amp;appId=6899099925" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px; width:90px;" allowTransparency="false"></iframe></div>';
-
-		// HTML5 Video (H.264 or WebM)
-		//if ($.support.vp8 || $.support.h264) {
-			// Work-around: use relative paths to simplify debugging
-			var url = movie.url.substr(movie.url.search("cache"));
-			var fileNameIndex = url.lastIndexOf("/") + 1;
-			var filename = url.substr(fileNameIndex);
-			var filenameHQ = filename.replace('.mp4', '-hq.mp4');
-			var filenameWebM = filename.replace('.mp4', '-.webm');
-			var filePath = url.substring(0, url.lastIndexOf("/"));
-			var autoplay = (Helioviewer.userSettings.get("options.movieautoplay") ? 'autoplay="autoplay"' : '');
-
-			return '<style>.mejs-container .mejs-controls {bottom: -20px;}.mejs-container.mejs-container-fullscreen .mejs-controls{bottom: 0px;}</style>\
-					<div>\
-						<video id="movie-player-' + movie.id + '" width="'+(width - 15)+'" height="'+(height - 20)+'" poster="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" controls="controls" preload="none" '+autoplay+'>\
-							<source type="video/mp4" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameHQ+'" />\
-							<source type="video/webm" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameWebM+'" />\
-							<object width="'+width+'" height="'+(height - 20)+'" type="application/x-shockwave-flash" data="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf">\
-								<param name="movie" value="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf" />\
-								<param name="flashvars" value="controls=true&amp;poster='+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png&amp;file='+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filename+'" />\
-								<img src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" width="'+width+'" height="'+height+'" title="No video playback capabilities" />\
-							</object>\
-						</video>\
-					</div>\
-					<div style="width:100%;padding-top: 25px;">\
-						<div style="float:left;" class="video-links">' +
-							youtubeBtn + linkBtn + downloadLink + gifLink +
-						'</div>\
-						<div style="float:right;">' + facebookBtn + tweetBtn + '</div>\
-					</div>';
-
-
-		/*}
-
-		// Fallback (flash player)
-		else {
-			var url = Helioviewer.api + '?action=playMovie&id=' + movie.id +
-				  '&width=' + width + "&height=" + height +
-				  '&format=flv';
-
-			return '<div id="movie-player-' + movie.id + '">' +
-					   '<iframe id="movie-player-iframe" src="' + url + '" width="' + width +
-					   '" height="' + height + '" marginheight="0" marginwidth="0" ' +
-					   'scrolling="no" frameborder="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"/>' +
-				   '</div>' +
-				   '<div style="width:100%;">' +
-					   '<div style="float:left;" class="video-links">' +
-						youtubeBtn + linkBtn + downloadLink + gifLink +
-				   '</div>' +
-				   '<div style="float:right;">' + facebookBtn + tweetBtn +
-				   '</div>';
-		}*/
+	getVideoPlayerHTML: async function (movie, width, height) {
+		const { VideoPlayer } = (await import('./VideoPlayer'));
+		// Initialize YouTube upload button
+		let onYoutubeBtnClick = () => {this.showYouTubeUploadDialog(movie); return false;}
+		return <VideoPlayer movie={movie} width={width} height={height} onClickYoutubeBtn={onYoutubeBtnClick} />;
 	},
 
 	/**
@@ -1179,28 +1042,6 @@ var MovieManagerUI = MediaManagerUI.extend(
 						<div style="float:left;" class="video-links">' + downloadLink +
 						'</div>\
 					</div>';
-
-
-		/*}
-
-		// Fallback (flash player)
-		else {
-			var url = Helioviewer.api + '?action=playMovie&id=' + movie.id +
-				  '&width=' + width + "&height=" + height +
-				  '&format=flv';
-
-			return '<div id="movie-player-' + movie.id + '">' +
-					   '<iframe id="movie-player-iframe" src="' + url + '" width="' + width +
-					   '" height="' + height + '" marginheight="0" marginwidth="0" ' +
-					   'scrolling="no" frameborder="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"/>' +
-				   '</div>' +
-				   '<div style="width:100%;">' +
-					   '<div style="float:left;" class="video-links">' +
-						youtubeBtn + linkBtn + downloadLink + gifLink +
-				   '</div>' +
-				   '<div style="float:right;">' + facebookBtn + tweetBtn +
-				   '</div>';
-		}*/
 	},
 
 	/**
@@ -1315,3 +1156,5 @@ var MovieManagerUI = MediaManagerUI.extend(
 		});
 	}
 });
+
+export { MovieManagerUI }
