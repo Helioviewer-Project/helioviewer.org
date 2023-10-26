@@ -34,3 +34,6 @@ jobs:
 
     - name: Run js unit tests
       run: npm run test
+
+    - name: Prettier check (certain files)
+      run: npx prettier -c resources/js/test resources/js/Media/VideoPlayer.jsx

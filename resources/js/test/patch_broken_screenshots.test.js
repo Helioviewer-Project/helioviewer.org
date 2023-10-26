@@ -8,6 +8,7 @@
 const {
   _BrokenScreenshotNotifier,
 } = require("../Patches/broken_screenshots_493.js");
+
 // Mock global Helioviewer object for testing
 global.Helioviewer = {
   userSettings: {
@@ -61,7 +62,7 @@ describe("Broken screenshot patch", () => {
       { id: false },
       { id: 1337 },
     ]);
-    patch = new _BrokenScreenshotNotifier();
+    let patch = new _BrokenScreenshotNotifier();
     patch.Apply();
     // Expect the patch to set the screenshots list to the one valid screenshot
     expect(Helioviewer.userSettings.set.mock.calls.length).toBe(1);
@@ -80,7 +81,7 @@ describe("Broken screenshot patch", () => {
       { id: false },
       { id: 1337 },
     ]);
-    patch = new _BrokenScreenshotNotifier();
+    let patch = new _BrokenScreenshotNotifier();
     patch.NotifyIfAffected();
     // Expect a call to schedule the jgrowl notification via bind
     expect($().bind.mock.calls.length).toBe(1);

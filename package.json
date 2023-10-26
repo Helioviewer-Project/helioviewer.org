@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "test": "jest resources/js/test"
+    "test": "jest resources/js/test",
+    "prettier": "npx prettier -w resources/js/test resources/js/Media/VideoPlayer.jsx"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",
