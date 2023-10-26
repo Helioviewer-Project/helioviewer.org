@@ -1832,8 +1832,8 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<script src="/resources/lib/boneVojage/jquery.bonevojage.js" type="text/javascript" language="javascript"></script>
 	<script src="/resources/lib/mediaelement/build/mediaelement-and-player.min.js" type="text/javascript" language="javascript"></script>
 
-	<!-- Helioviewer JavaScript -->
-	<script src="/resources/js/dist/EventMarker.js?v=<?=filemtime('resources/js/dist/EventMarker.js')?>" type="text/javascript"></script>
+	<script src="/resources/js/dist/HelioviewerModules.js?v=<?=filemtime('resources/js/dist/HelioviewerModules.js')?>" type="text/javascript"></script>
+
 	<?php
 	if ($debug){
 	?>
@@ -1878,10 +1878,8 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		<script src="/resources/js/Events/HelioviewerEventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/TreeSelect.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/ImageSelectTool.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Media/MediaManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Media/MediaManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Media/MovieManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Media/MovieManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Media/ScreenshotManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Media/ScreenshotManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/TileLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
@@ -1900,6 +1898,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<?php
 	} else {
 	?>
+	<!-- Helioviewer JavaScript -->
 		<script src="/resources/compressed/helioviewer.min.js?v=<?=filemtime('resources/compressed/helioviewer.min.js')?>" type="text/javascript"></script>
 	<?php
 	}

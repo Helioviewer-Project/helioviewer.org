@@ -1,6 +1,7 @@
 /**
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
+ * @author <a href="mailto:daniel.garciabriseno@nasa.gov">Daniel Garcia Briseno</a>
  * @fileOverview This class handles the creation and validation of basic configuration parameters
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
@@ -27,7 +28,8 @@ var Config = Class.extend(
         'user_video_feed'           : "https://api.helioviewer.org/",
         'contact_email'             : "HelioViewerDevelopment@nasa.onmicrosoft.com",
         'regenerate_movie_threshold': 90,
-        'enable_helios_backlinks'   : false
+        'enable_helios_backlinks'   : false,
+        'jhelioviewer_host'         : 'GSFC' // Mirrors should set this to their server code.
      },
 
     /**
@@ -96,7 +98,8 @@ var Config = Class.extend(
             'contactEmail'            : this.params["contact_email"],
             'apiURL'                  : this.params["back_end"],
             'regenerateMovieThreshold': this.params["regenerate_movie_threshold"],
-            'enableHelios'            : this.params["enable_helios_backlinks"]
+            'enableHelios'            : this.params["enable_helios_backlinks"],
+            'jhelioviewerHost'        : this.params["jhelioviewer_host"]
         };
     }
 });
