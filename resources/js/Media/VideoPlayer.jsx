@@ -349,17 +349,29 @@ function GetJhvRequestForMovie(movie) {
     let layer = layerString.split(",");
     // This is almost definitely not enough for some movies
     // More advanced parsing may be necessary. Needs testing.
-    let observatory = layer[0].replace("_", "-");
+    let observatory = PatchObservatory(layer[0]);
     // Cut away the opacity/layer order info from the layer string
     let dataset = layer.slice(1, layer.length - 6).join(" ");
     dataset = PatchDataset(dataset);
     requestBuilder.AddSource(
       observatory,
       dataset,
-      helioviewer.serverSettings.jhelioviewerHost,
+      // Workaround to load GONG data. I couldn't figure out how to get GONG to load from GSFC.
+      observatory == "NSO-GONG"
+        ? "ROB"
+        : helioviewer.serverSettings.jhelioviewerHost,
     );
   }
   return requestBuilder.Build();
+}
+
+/**
+ * Patches the name of the observatory to a version supported by JHelioviewer.
+ * @param {string} observatory Helioviewer's observatory name
+ * @returns {string} JHelioviewer's observatory name
+ */
+function PatchObservatory(observatory) {
+  return observatory.replace("_", "-").replace("GONG", "NSO-GONG");
 }
 
 /**
