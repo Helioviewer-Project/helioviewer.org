@@ -67,12 +67,14 @@ test("GetJhvRequestForMovie can extract layers from layer strings", async () => 
     },
     {
       send: false,
+      startDate: "2023-01-01 00:00:00",
+      endDate: "2023-01-02 00:00:00",
       layerString:
         "[GONG,GONG,H-alpha,6562,1,100,0,60,1,2023-10-24T15:10:17.000Z]",
       expectedResult: [
         {
-          observatory: "GONG",
-          dataset: "GONG H-alpha 6562",
+          observatory: "NSO-GONG",
+          dataset: "GONG H-alpha 6562"
         },
       ],
     },
@@ -253,6 +255,11 @@ function ValidateRequest(result, expected, layerString) {
       console.log(layers);
     }
     expect(foundLayer).toBeDefined();
-    expect(foundLayer.server).toBe(helioviewer.serverSettings.jhelioviewerHost);
+    // GONG is a special case, must be loaded from ROB
+    if (foundLayer.observatory != "NSO-GONG") {
+      expect(foundLayer.server).toBe(helioviewer.serverSettings.jhelioviewerHost);
+    } else {
+      expect(foundLayer.server).toBe("ROB");
+    }
   }
 }
