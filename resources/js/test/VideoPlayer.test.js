@@ -74,7 +74,7 @@ test("GetJhvRequestForMovie can extract layers from layer strings", async () => 
       expectedResult: [
         {
           observatory: "NSO-GONG",
-          dataset: "GONG H-alpha 6562"
+          dataset: "GONG H-alpha 6562",
         },
       ],
     },
@@ -257,7 +257,9 @@ function ValidateRequest(result, expected, layerString) {
     expect(foundLayer).toBeDefined();
     // GONG is a special case, must be loaded from ROB
     if (foundLayer.observatory != "NSO-GONG") {
-      expect(foundLayer.server).toBe(helioviewer.serverSettings.jhelioviewerHost);
+      expect(foundLayer.server).toBe(
+        helioviewer.serverSettings.jhelioviewerHost,
+      );
     } else {
       expect(foundLayer.server).toBe("ROB");
     }

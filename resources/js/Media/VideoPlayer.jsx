@@ -357,7 +357,9 @@ function GetJhvRequestForMovie(movie) {
       observatory,
       dataset,
       // Workaround to load GONG data. I couldn't figure out how to get GONG to load from GSFC.
-      observatory == "NSO-GONG" ? "ROB" : helioviewer.serverSettings.jhelioviewerHost,
+      observatory == "NSO-GONG"
+        ? "ROB"
+        : helioviewer.serverSettings.jhelioviewerHost,
     );
   }
   return requestBuilder.Build();
@@ -369,8 +371,7 @@ function GetJhvRequestForMovie(movie) {
  * @returns {string} JHelioviewer's observatory name
  */
 function PatchObservatory(observatory) {
-    return observatory.replace("_", "-")
-                      .replace("GONG", "NSO-GONG");
+  return observatory.replace("_", "-").replace("GONG", "NSO-GONG");
 }
 
 /**
