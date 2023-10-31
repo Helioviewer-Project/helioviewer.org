@@ -269,7 +269,7 @@ function JHelioviewerButton({ movie }) {
     );
   }
 
-  let noJhvText = "JHV is not open";
+  let noJhvText = "JHelioviewer not open";
   let openText = "Open In JHelioviewer";
   let sentText = "Sent!";
   let [ready, setReadyState] = useState(false);
