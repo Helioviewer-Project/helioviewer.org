@@ -1259,6 +1259,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 
         // VSO Website Button
+        // Don't send wave parameters for instruments that don't support it.
+        let waveParameters = "";
+        if (waves.length > 0) {
+            waveParameters = '&wave='     + 'other'
+                           + '&wavemin='  + Math.min.apply(Math,waves)
+                           + '&wavemax='  + Math.max.apply(Math,waves)
+                           + '&waveunit=' + 'Angstrom';
+        }
         $('#vso-www').attr('href', 'http://virtualsolar.org/cgi-bin/vsoui.pl'
             + '?startyear='   +   startDate.split('/')[0]
             + '&startmonth='  +   startDate.split('/')[1]
@@ -1271,10 +1279,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             + '&endhour='     +     endDate.split('T')[1].split(':')[0]
             + '&endminute='   +     endDate.split('T')[1].split(':')[1]
             + '&instrument='  + instruments.join('&instrument=')
-            + '&wave='        +            'other'
-            + '&wavemin='     +    Math.min.apply(Math,waves)
-            + '&wavemax='     +    Math.max.apply(Math,waves)
-            + '&waveunit='    +            'Angstrom'
+            + waveParameters
         );
         $('#vso-www').removeClass('inactive');
 
