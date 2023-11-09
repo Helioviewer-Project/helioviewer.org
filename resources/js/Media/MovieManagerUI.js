@@ -14,6 +14,7 @@ newcap: true, immed: true, maxlen: 80, sub: true */
 import ReactDOM from 'react-dom/client';
 import React from 'react';
 import { MediaManagerUI } from './MediaManagerUI';
+import { VideoPlayer } from './VideoPlayer';
 
 var MovieManagerUI = MediaManagerUI.extend(
 	/** @lends MovieManagerUI */
@@ -993,7 +994,6 @@ var MovieManagerUI = MediaManagerUI.extend(
 	 * method
 	 */
 	getVideoPlayerHTML: async function (movie, width, height) {
-		const { VideoPlayer } = (await import('./VideoPlayer'));
 		// Initialize YouTube upload button
 		let onYoutubeBtnClick = () => {this.showYouTubeUploadDialog(movie); return false;}
 		return <VideoPlayer movie={movie} width={width} height={height} onClickYoutubeBtn={onYoutubeBtnClick} />;
