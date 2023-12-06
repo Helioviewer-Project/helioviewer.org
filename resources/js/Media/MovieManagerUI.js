@@ -425,7 +425,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 			dateFormat: 'Y/m/d',
 			onOpen: function (selected, str, instance) {
 				var observationDate = new Date(Helioviewer.userSettings.get("state.date"));
-				instance.set('maxDate', observationDate.toUTCDateString());
+				instance.set(observationDate.toUTCDateString());
 			}
 		});
 		$('#movie-end-date').flatpickr({
