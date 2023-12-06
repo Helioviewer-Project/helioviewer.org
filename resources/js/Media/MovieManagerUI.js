@@ -422,19 +422,11 @@ var MovieManagerUI = MediaManagerUI.extend(
 		//Movie Generation time pickers
 		$('#movie-start-date').flatpickr({
 			allowInput: true,
-			dateFormat: 'Y/m/d',
-			onOpen: function (selected, str, instance) {
-				var observationDate = new Date(Helioviewer.userSettings.get("state.date"));
-				instance.set(observationDate.toUTCDateString());
-			}
+			dateFormat: 'Y/m/d'
 		});
 		$('#movie-end-date').flatpickr({
 			allowInput: true,
-			dateFormat: 'Y/m/d',
-			onOpen: function (selected, str, instance) {
-				var observationDate = new Date(Helioviewer.userSettings.get("state.date"));
-				instance.set('minDate', observationDate.toUTCDateString());
-			}
+			dateFormat: 'Y/m/d'
 		});
 		if ($('#movie-start-date').length > 0) {
 			$('#movie-start-date')[0]._flatpickr.setDate(new Date(Helioviewer.userSettings.get("state.date") - duration).toUTCDateString());
