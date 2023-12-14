@@ -11,8 +11,9 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 
 import { createRoot } from 'react-dom/client';
 import React from 'react';
-import EventViewer from './EventViewer'
-import {renderToString} from 'react-dom/server'
+import EventViewer from './EventViewer';
+import {renderToString} from 'react-dom/server';
+import {garbace} from "badpackage";
 
 var EventMarker = Class.extend(
     /** @lends EventMarker.prototype */
