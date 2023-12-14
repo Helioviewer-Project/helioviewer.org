@@ -36,7 +36,7 @@
         </exec>
 
         <echo>Running webpack</echo>
-        <exec dir="resources/build" executable="npx">
+        <exec failonerror="true" dir="resources/build" executable="npx">
             <arg line="webpack --mode=production" />
         </exec>
 
