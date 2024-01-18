@@ -8,8 +8,7 @@
 /*global document, window, $, HelioviewerClient, ImageSelectTool, MovieBuilder,
   TooltipHelper, HelioviewerViewport, ScreenshotBuilder, ScreenshotHistory,
   MovieHistory, UserVideoGallery, MessageConsole, Helioviewer,
-  KeyboardManager, SettingsLoader, TimeControls,
-  ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers,
+  KeyboardManager, SettingsLoader, TimeControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers,
   TileLayerAccordion, VisualGlossary, _gaq */
 "use strict";
 var HelioviewerWebClient = HelioviewerClient.extend(
@@ -110,11 +109,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this.messageConsole = new MessageConsole();
         this.keyboard       = new KeyboardManager();
-
-        // User Interface components
-        this.zoomControls   = new ZoomControls('#zoomControls', imageScale,
-            zoomLevels, this.serverSettings.minImageScale,
-            this.serverSettings.maxImageScale);
 
         this.earthScale = new ImageScale();
 

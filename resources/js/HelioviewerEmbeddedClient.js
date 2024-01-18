@@ -6,7 +6,7 @@
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, window, $, HelioviewerClient, TooltipHelper,
   HelioviewerViewport, KeyboardManager, Helioviewer,
-  SettingsLoader, ZoomControls, assignTouchHandlers */
+  SettingsLoader, assignTouchHandlers */
 "use strict";
 var HelioviewerEmbeddedClient = HelioviewerClient.extend(
     /** @lends HelioviewerWebClient.prototype */
@@ -43,10 +43,6 @@ var HelioviewerEmbeddedClient = HelioviewerClient.extend(
 
         // Get available data sources and initialize viewport
         this._initViewport("body", date, 0, 0);
-
-        // User Interface components
-        this.zoomControls = new ZoomControls('#zoomControls', imageScale, zoomLevels,
-                                               this.serverSettings.minImageScale, this.serverSettings.maxImageScale);
     },
 
     /**
