@@ -27,6 +27,7 @@ var HelioviewerClient = Class.extend(
         this._checkBrowser(); // Determines browser support
 
         this.serverSettings = serverSettings;
+        this.zoomLevels = zoomLevels;
 
         Helioviewer.api          = serverSettings['backEnd'];
         Helioviewer.dataType     = "json";
@@ -98,7 +99,8 @@ var HelioviewerClient = Class.extend(
             marginTop      : marginTop,
             marginBottom   : marginBottom,
             warnMouseCoords: Helioviewer.userSettings.get(
-                                'notifications.coordinates')
+                                'notifications.coordinates'),
+            zoomLevels     : this.zoomLevels
         });
     },
 

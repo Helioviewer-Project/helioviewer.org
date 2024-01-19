@@ -6,9 +6,12 @@
     /**
      * @constructs
      * @param {PinchDetector} pinchDetector lib for detecting pinches
+     * @param {number[]} zoomLevels List of available zoom levels
      */
-    constructor(pinchDetector) {
+    constructor(pinchDetector, zoomLevels) {
         this.pinchDetector = pinchDetector;
+        this.zoomLevels = zoomLevels.reverse();
+        this._initZoomLevel();
         this._initializePinchListeners();
         this._zoomInBtn = document.getElementById('zoom-in-button');
         this._zoomOutBtn = document.getElementById('zoom-out-button');
@@ -18,13 +21,38 @@
         this._anchor = {left: 0, top: 0};
         this._last_size = 0;
         Helioviewer.userSettings.set('mobileZoomScale', 1);
-        $(document).bind("update-viewport", $.proxy(this.onUpdateViewport, this))
+        $(document).bind("update-viewport", $.proxy(this.onUpdateViewport, this));
+    }
+
+    /**
+     * Initializes the zoom level
+     */
+    _initZoomLevel() {
+        let imageScale = Helioviewer.userSettings.get("state.imageScale");
+        let value = $.inArray(imageScale, this.zoomLevels)
+        this._zoomIndex = value;
+    }
+
+    /**
+     * Updates the application's current zoom level.
+     *
+     * @param {number} level zoom index
+     */
+    _setAppImageScale(level) {
+        $(document).trigger('image-scale-changed', [this.zoomLevels[level]]);
+        $(document).trigger('replot-celestial-objects');
+        $(document).trigger('replot-event-markers');
+        $(document).trigger('earth-scale');
+        $(document).trigger('update-external-datasource-integration');
     }
 
     _initializePinchListeners() {
         this.pinchDetector.addPinchStartListener($.proxy(this.pinchStart, this));
         this.pinchDetector.addPinchUpdateListener($.proxy(this.pinchUpdate, this));
         this.pinchDetector.addPinchEndListener($.proxy(this.pinchEnd, this));
+        this._scrollzoom = new ScrollZoom();
+        this._scrollzoom.onstart($.proxy(this.pinchStart, this));
+        this._scrollzoom.onupdate($.proxy(this.pinchUpdate, this));
     }
 
     /**
@@ -69,9 +97,33 @@
         $(document).on('image-scale-changed', null, null, closure);
         // Trigger the zoom
         if (isZoomIn) {
-            this._zoomInBtn.click();
+            this._zoomIn();
         } else {
-            this._zoomOutBtn.click();
+            this._zoomOut();
+        }
+    }
+
+    /**
+     * Trigger application level zoom in.
+     * This increases the resolution of the displayed image
+     */
+    _zoomIn() {
+        let nextValue = this._zoomIndex + 1;
+        if (nextValue < this.zoomLevels.length) {
+            this._zoomIndex = nextValue;
+            this._setAppImageScale(this._zoomIndex);
+        }
+    }
+
+    /**
+     * Trigger application level zoom out.
+     * This decreases the resolution of the displayed image
+     */
+    _zoomOut() {
+        let nextValue = this._zoomIndex - 1;
+        if (nextValue >= 0) {
+            this._zoomIndex = nextValue;
+            this._setAppImageScale(this._zoomIndex);
         }
     }
 
