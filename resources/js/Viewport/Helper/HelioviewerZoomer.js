@@ -20,6 +20,7 @@
         this._scale = 1;
         this._anchor = {left: 0, top: 0};
         this._last_size = 0;
+        this._css_rule = -1;
         Helioviewer.userSettings.set('mobileZoomScale', 1);
         $(document).bind("update-viewport", $.proxy(this.onUpdateViewport, this));
     }
@@ -163,9 +164,21 @@
                 Helioviewer.userSettings.set('mobileZoomScale', scale);
                 this._scale = scale;
                 this._mc.style.transform = "scale(" + this._scale + ")";
+                this._updateEventMarkerScale(scale);
                 this._updateReferenceScale(scale)
             }
         }
+    }
+
+    _updateEventMarkerScale(scale) {
+        let scaleFactor = 1/scale;
+        /** @type {HTMLStyleElement} */
+        let js_styles = document.getElementById('js-styles');
+        if (this._css_rule != -1) {
+            js_styles.sheet.deleteRule(this._css_rule);
+        }
+        let rule = `.event-marker { transform: scale(${scaleFactor}); transform-origin: bottom; }`;
+        this._css_rule = js_styles.sheet.insertRule(rule);
     }
 
     shiftViewportForNewAnchor(anchor) {

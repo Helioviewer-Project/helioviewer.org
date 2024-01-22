@@ -193,6 +193,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	}
 }
 ?>
+	<style id="js-styles"></style>
 </head>
 <body <?php echo ($outputType ? 'class="helioviewer-view-type-'.$outputType.'"' : '')?>>
 
