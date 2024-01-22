@@ -80,17 +80,6 @@ var MouseCoordinates = Class.extend(
 
     /**
      * @description Computes the scaled mouse coordinates relative to the size and center of the Sun.
-     *
-     *  Explanation:
-     *
-     *    X = location of mouse-pointer
-     *    V = viewport top-left corner
-     *    S = sandbox top-left corner
-     *    M = moving container top-let corner
-     *
-     *  Each of the two-letter abbreviations represents the vector <x,y> going from one
-     *  location to the other. See wiki documentation below for more details.
-     *
      * @see http://helioviewer.org/wiki/Co-ordinate_System_I
      */
     computeMouseCoords: function (clientX, clientY) {
@@ -106,7 +95,6 @@ var MouseCoordinates = Class.extend(
         // TODO: Apply scaling fix depending on the current layer
         x = scale * mouse_pos.x;
         y = scale * mouse_pos.y;
-        console.log(mouse_pos, {scaleX: x, scaleY: y});
         let correctedCoord = this.correctCoordinate(scale, mouse_pos.x, -mouse_pos.y)
 
         // Return scaled coords
