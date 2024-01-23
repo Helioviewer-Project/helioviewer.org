@@ -24,7 +24,6 @@
         this._last_size = 0;
         this._css_rules = [];
         Helioviewer.userSettings.set('mobileZoomScale', 1);
-        $(document).bind("update-viewport", $.proxy(this.onUpdateViewport, this));
     }
 
     /**
@@ -168,6 +167,7 @@
                 this._mc.style.transform = "scale(" + this._scale + ")";
                 this._updateUIScale(scale);
                 this._updateReferenceScale(scale)
+                $(document).trigger('update-viewport');
             }
         }
     }
