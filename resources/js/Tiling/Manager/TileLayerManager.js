@@ -131,7 +131,8 @@ var TileLayerManager = LayerManager.extend(
         var old, ts, self, vp;
         old = this.tileVisibilityRange;
         // Expand to fit tile increment
-        ts = this.tileSize;
+        let zoom = (Helioviewer.userSettings.get('mobileZoomScale') || 1);
+        ts = this.tileSize * zoom;
         vp = {
             top:    vpCoords.top    - ts - (vpCoords.top    % ts),
             left:   vpCoords.left   - ts - (vpCoords.left   % ts),
@@ -141,10 +142,10 @@ var TileLayerManager = LayerManager.extend(
 
         // Indices to display (one subtracted from ends to account for "0th" tiles).
         this.tileVisibilityRange = {
-            xStart : vp.left / ts,
-            yStart : vp.top  / ts,
-            xEnd   : (vp.right  / ts) - 1,
-            yEnd   : (vp.bottom / ts) - 1
+            xStart : Math.round(vp.left / ts),
+            yStart : Math.round(vp.top  / ts),
+            xEnd   : Math.round((vp.right  / ts) - 1),
+            yEnd   : Math.round((vp.bottom / ts) - 1)
         };
 
         self = this;
