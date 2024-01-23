@@ -14,7 +14,9 @@
         this._initZoomLevel();
         this._initializePinchListeners();
         this._zoomInBtn = document.getElementById('zoom-in-button');
+        this._zoomInBtn.addEventListener('click', this._smoothZoomIn.bind(this));
         this._zoomOutBtn = document.getElementById('zoom-out-button');
+        this._zoomOutBtn.addEventListener('click', this._smoothZoomOut.bind(this));
         this._mc = document.getElementById('moving-container');
         this._sandbox = document.getElementById('sandbox');
         this._scale = 1;
@@ -261,5 +263,43 @@
      */
     getRealPosition(apparent, scale, anchor) {
         return apparent + (scale - 1) * anchor;
+    }
+
+    /**
+     * Automatically animate zooming.
+     * @param {number} factor The change in scale.
+     * @param {number} duration Length of animation in seconds
+     */
+    _animateZoom(factor, duration) {
+        // Compute animation frame details.
+        let fps = 120;
+        let frame_delay = 1/fps;
+        let num_frames = fps * duration;
+
+        // Compute the amount to change the scale each frame.
+        let target_scale = this._scale * factor;
+        let delta_scale = target_scale - this._scale;
+        let frame_delta = delta_scale / num_frames;
+
+        let ticks = 0;
+        let interval = setInterval(() => {
+            this.setScale(this._scale + frame_delta);
+            ticks += 1;
+            if (ticks == num_frames) { clearInterval(interval); }
+        }, frame_delay)
+    }
+
+    /**
+     * Executed when the zoom in button is clicked.
+     */
+    _smoothZoomIn() {
+        this._animateZoom(2, 0.25);
+    }
+
+    /**
+     * Executed when the zoom out button is clicked.
+     */
+    _smoothZoomOut() {
+        this._animateZoom(0.5, 0.25);
     }
 };
