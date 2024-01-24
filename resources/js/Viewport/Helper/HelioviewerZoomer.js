@@ -180,14 +180,8 @@
             js_styles.sheet.deleteRule(rule);
         });
         this._css_rules = [];
-        this._css_rules.push(js_styles.sheet.insertRule(`.event-marker, .event-popup {
-            transform: scale(${scaleFactor});
-        }`));
-        this._css_rules.push(js_styles.sheet.insertRule(`.event-marker {
-            transform-origin: bottom;
-        }`));
-        this._css_rules.push(js_styles.sheet.insertRule(`.event-popup {
-            transform-origin: left top;
+        this._css_rules.push(js_styles.sheet.insertRule(`.constant-size {
+            scale: ${scaleFactor};
         }`));
     }
 

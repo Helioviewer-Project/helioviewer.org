@@ -321,7 +321,7 @@ var CelestialBodiesSatellites = Class.extend(
                                 'left'      :  ( currentPoint.x - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
                                 'top'       :  ( currentPoint.y - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
                                 'z-index'   :  210+(pointRadius*2)
-                            }).addClass('celestial-pointer').appendTo(trajectoryContainer);
+                            }).addClass('celestial-pointer constant-size').appendTo(trajectoryContainer);
                             var textDate = new Date();
                             textDate.setTime(timeAttribute);
                             textDate = textDate.toUTCString().slice(5);
@@ -330,7 +330,7 @@ var CelestialBodiesSatellites = Class.extend(
                             var bodyTextDate = bodyCapitalized + ' on <br/>' + textDate;
                             var hoverDateContainer = $('<div/>').attr({
                                 'id' : containerName+'-hover-date-'+point
-                            }).addClass('hover-date-container').css({
+                            }).addClass('hover-date-container constant-size').css({
                                 'left'              : currentPoint.x + 'px',
                                 'bottom'            : -currentPoint.y + 'px'
                             }).html(bodyTextDate).hide().appendTo(trajectoryContainer);
@@ -461,7 +461,7 @@ var CelestialBodiesSatellites = Class.extend(
                 if($('#'+containerName).length == 0){//label container div does not exist yet
                     var labelContainer = $('<div/>');//make a new div
                     labelContainer.attr({'id':containerName, 'time':currentTime});//set the id
-                    labelContainer.addClass('celestial-bodies-label');
+                    labelContainer.addClass('celestial-bodies-label constant-size');
                     observerLabelsContainer.append(labelContainer);//append it to the observerLabelsContainer div
                 }else{//label ontainer div exists
                     firstRun = false;
@@ -525,6 +525,7 @@ var CelestialBodiesSatellites = Class.extend(
     },
 
     _replotCoordinates: function(){
+        console.log("Called replot coordinates");
         var self = this;
         var currentRequestTime = helioviewer.timeControls.getTimestamp();
 
@@ -567,6 +568,7 @@ var CelestialBodiesSatellites = Class.extend(
         }
 
         var observers = Object.keys(this.trajectories);
+        console.log(observers);
         for(var observer of observers){
             var bodies = Object.keys(this.trajectories[observer]);
             for(var body of bodies){
@@ -631,7 +633,7 @@ var CelestialBodiesSatellites = Class.extend(
                             'left'      :  ( currentPoint.x - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
                             'top'       :  ( currentPoint.y - Math.floor(pointBoundingBox/2) + 1 ) + 'px',
                             'z-index'   :  210+(pointRadius*2)
-                        }).addClass('celestial-pointer').appendTo(trajectoryContainer);
+                        }).addClass('celestial-pointer constant-size').appendTo(trajectoryContainer);
                         var textDate = new Date();
                         textDate.setTime(timeAttribute);
                         textDate = textDate.toUTCString().slice(5);
@@ -640,7 +642,7 @@ var CelestialBodiesSatellites = Class.extend(
                         var bodyTextDate = bodyCapitalized + ' on <br/>' + textDate;
                         var hoverDateContainer = $('<div/>').attr({
                             'id' : containerName+'-hover-date-'+point
-                        }).addClass('hover-date-container').css({
+                        }).addClass('hover-date-container constant-size').css({
                             'left'              : currentPoint.x + 'px',
                             'bottom'            : -currentPoint.y + 'px'
                         }).html(bodyTextDate).hide().appendTo(trajectoryContainer);
@@ -822,7 +824,7 @@ var CelestialBodiesSatellites = Class.extend(
             }
             eventPopupDomNode.attr({
                 'id' : observer + '_' + body + '_popup',
-                'class' : "body-popup",
+                'class' : "body-popup constant-size",
                 'time' : this.currentTime
             });
             eventPopupDomNode.css({
@@ -891,7 +893,7 @@ var CelestialBodiesSatellites = Class.extend(
             id      : "point-date-underline-container",
             width   : '200',
             height  : '200',
-        }).addClass('svg-underline').hide().appendTo(this.bodiesContainer);
+        }).addClass('svg-underline constant-size').hide().appendTo(this.bodiesContainer);
         //vertical line
         $(document.createElementNS('http://www.w3.org/2000/svg','line')).attr({
             x1: 1,

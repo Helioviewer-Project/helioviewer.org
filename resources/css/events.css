@@ -25,6 +25,7 @@
     height: 39px;
     position: absolute;
     width: 23px;
+    transform-origin: bottom;
 }
 .event-label, .event-label-hover {
     color: white;
@@ -69,6 +70,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 340px;
+    transform-origin: left top;
 }
 .event-popup h1 {
     display: inline-block;
