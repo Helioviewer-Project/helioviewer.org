@@ -111,7 +111,7 @@ var CelestialBodiesSatellites = Class.extend(
         this.labelsContainer.attr('id','labels-container').css({'position' : 'absolute', 'z-index' : '250'}).appendTo(this.bodiesContainer);
 
         this.trajectoriesContainer = $('<div/>');//new container for the trajectories
-        this.trajectoriesContainer.attr('id','trajectories-container').css({'position' : 'absolute'}).appendTo(this.bodiesContainer);
+        this.trajectoriesContainer.attr('id','trajectories-container').css({'position' : 'absolute', 'z-index': '0'}).appendTo(this.bodiesContainer);
 
         this.popupsContainer = $('<div/>');//new container for info popups
         this.popupsContainer.attr('id','popups-container').css({'position' : 'absolute', 'z-index' : '350'}).appendTo(this.bodiesContainer);
