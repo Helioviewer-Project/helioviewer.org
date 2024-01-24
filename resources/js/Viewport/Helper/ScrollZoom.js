@@ -35,7 +35,7 @@ class ScrollZoom {
      * @param {WheelEvent} event 
      */
     _UpdateScrolling(event) {
-        this._delta += event.deltaY;
+        this._delta -= event.deltaY;
         if (this._onupdate) {
             this._onupdate(this._delta);
         }
