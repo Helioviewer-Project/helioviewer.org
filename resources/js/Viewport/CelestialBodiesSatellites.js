@@ -525,7 +525,6 @@ var CelestialBodiesSatellites = Class.extend(
     },
 
     _replotCoordinates: function(){
-        console.log("Called replot coordinates");
         var self = this;
         var currentRequestTime = helioviewer.timeControls.getTimestamp();
 
@@ -568,7 +567,6 @@ var CelestialBodiesSatellites = Class.extend(
         }
 
         var observers = Object.keys(this.trajectories);
-        console.log(observers);
         for(var observer of observers){
             var bodies = Object.keys(this.trajectories[observer]);
             for(var body of bodies){
