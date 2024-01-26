@@ -210,7 +210,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 	 */
 	_loadMovieQueueParameters: function (roi) {
 		if (typeof roi === "undefined") {
-			roi = helioviewer.getZoomedRegionOfInterest();
+			roi = helioviewer.getViewportRegionOfInterest();
 		}
 
 		var layers = helioviewer.getVisibleLayers(roi);

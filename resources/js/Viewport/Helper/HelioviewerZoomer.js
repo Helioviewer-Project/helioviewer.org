@@ -6,25 +6,55 @@
     /**
      * @constructs
      * @param {PinchDetector} pinchDetector lib for detecting pinches
+     * @param {number[]} zoomLevels List of available zoom levels
      */
-    constructor(pinchDetector) {
+    constructor(pinchDetector, zoomLevels) {
         this.pinchDetector = pinchDetector;
+        this.zoomLevels = zoomLevels.reverse();
+        this._initZoomLevel();
         this._initializePinchListeners();
         this._zoomInBtn = document.getElementById('zoom-in-button');
+        this._zoomInBtn.addEventListener('click', this._smoothZoomIn.bind(this));
         this._zoomOutBtn = document.getElementById('zoom-out-button');
+        this._zoomOutBtn.addEventListener('click', this._smoothZoomOut.bind(this));
         this._mc = document.getElementById('moving-container');
         this._sandbox = document.getElementById('sandbox');
         this._scale = 1;
         this._anchor = {left: 0, top: 0};
         this._last_size = 0;
+        this._css_rules = [];
         Helioviewer.userSettings.set('mobileZoomScale', 1);
-        $(document).bind("update-viewport", $.proxy(this.onUpdateViewport, this))
+    }
+
+    /**
+     * Initializes the zoom level
+     */
+    _initZoomLevel() {
+        let imageScale = Helioviewer.userSettings.get("state.imageScale");
+        let value = $.inArray(imageScale, this.zoomLevels)
+        this._zoomIndex = value;
+    }
+
+    /**
+     * Updates the application's current zoom level.
+     *
+     * @param {number} level zoom index
+     */
+    _setAppImageScale(level) {
+        $(document).trigger('image-scale-changed', [this.zoomLevels[level]]);
+        $(document).trigger('replot-celestial-objects');
+        $(document).trigger('replot-event-markers');
+        $(document).trigger('earth-scale');
+        $(document).trigger('update-external-datasource-integration');
     }
 
     _initializePinchListeners() {
         this.pinchDetector.addPinchStartListener($.proxy(this.pinchStart, this));
         this.pinchDetector.addPinchUpdateListener($.proxy(this.pinchUpdate, this));
         this.pinchDetector.addPinchEndListener($.proxy(this.pinchEnd, this));
+        this._scrollzoom = new ScrollZoom();
+        this._scrollzoom.onstart($.proxy(this.pinchStart, this));
+        this._scrollzoom.onupdate($.proxy(this.pinchUpdate, this));
     }
 
     /**
@@ -69,9 +99,33 @@
         $(document).on('image-scale-changed', null, null, closure);
         // Trigger the zoom
         if (isZoomIn) {
-            this._zoomInBtn.click();
+            this._zoomIn();
         } else {
-            this._zoomOutBtn.click();
+            this._zoomOut();
+        }
+    }
+
+    /**
+     * Trigger application level zoom in.
+     * This increases the resolution of the displayed image
+     */
+    _zoomIn() {
+        let nextValue = this._zoomIndex + 1;
+        if (nextValue < this.zoomLevels.length) {
+            this._zoomIndex = nextValue;
+            this._setAppImageScale(this._zoomIndex);
+        }
+    }
+
+    /**
+     * Trigger application level zoom out.
+     * This decreases the resolution of the displayed image
+     */
+    _zoomOut() {
+        let nextValue = this._zoomIndex - 1;
+        if (nextValue >= 0) {
+            this._zoomIndex = nextValue;
+            this._setAppImageScale(this._zoomIndex);
         }
     }
 
@@ -111,9 +165,24 @@
                 Helioviewer.userSettings.set('mobileZoomScale', scale);
                 this._scale = scale;
                 this._mc.style.transform = "scale(" + this._scale + ")";
+                this._updateUIScale(scale);
                 this._updateReferenceScale(scale)
+                $(document).trigger('update-viewport');
             }
         }
+    }
+
+    _updateUIScale(scale) {
+        let scaleFactor = 1/scale;
+        /** @type {HTMLStyleElement} */
+        let js_styles = document.getElementById('js-styles');
+        this._css_rules.forEach((rule) => {
+            js_styles.sheet.deleteRule(rule);
+        });
+        this._css_rules = [];
+        this._css_rules.push(js_styles.sheet.insertRule(`.constant-size {
+            scale: ${scaleFactor};
+        }`));
     }
 
     shiftViewportForNewAnchor(anchor) {
@@ -188,5 +257,43 @@
      */
     getRealPosition(apparent, scale, anchor) {
         return apparent + (scale - 1) * anchor;
+    }
+
+    /**
+     * Automatically animate zooming.
+     * @param {number} factor The change in scale.
+     * @param {number} duration Length of animation in seconds
+     */
+    _animateZoom(factor, duration) {
+        // Compute animation frame details.
+        let fps = 120;
+        let frame_delay = 1/fps;
+        let num_frames = fps * duration;
+
+        // Compute the amount to change the scale each frame.
+        let target_scale = this._scale * factor;
+        let delta_scale = target_scale - this._scale;
+        let frame_delta = delta_scale / num_frames;
+
+        let ticks = 0;
+        let interval = setInterval(() => {
+            this.setScale(this._scale + frame_delta);
+            ticks += 1;
+            if (ticks == num_frames) { clearInterval(interval); }
+        }, frame_delay)
+    }
+
+    /**
+     * Executed when the zoom in button is clicked.
+     */
+    _smoothZoomIn() {
+        this._animateZoom(2, 0.25);
+    }
+
+    /**
+     * Executed when the zoom out button is clicked.
+     */
+    _smoothZoomOut() {
+        this._animateZoom(0.5, 0.25);
     }
 };

@@ -6,7 +6,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, window, $, Class, TooltipHelper, HelioviewerViewport,
-  KeyboardManager, SettingsLoader, ZoomControls, assignTouchHandlers
+  KeyboardManager, SettingsLoader, assignTouchHandlers
  */
 "use strict";
 
@@ -27,6 +27,7 @@ var HelioviewerClient = Class.extend(
         this._checkBrowser(); // Determines browser support
 
         this.serverSettings = serverSettings;
+        this.zoomLevels = zoomLevels;
 
         Helioviewer.api          = serverSettings['backEnd'];
         Helioviewer.dataType     = "json";
@@ -98,7 +99,8 @@ var HelioviewerClient = Class.extend(
             marginTop      : marginTop,
             marginBottom   : marginBottom,
             warnMouseCoords: Helioviewer.userSettings.get(
-                                'notifications.coordinates')
+                                'notifications.coordinates'),
+            zoomLevels     : this.zoomLevels
         });
     },
 

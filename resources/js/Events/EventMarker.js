@@ -62,7 +62,7 @@ var EventMarker = Class.extend(
         // Create event marker DOM node
         this.eventMarkerDomNode = $('<div/>');
         this.eventMarkerDomNode.attr({
-            'class' : "event-marker"
+            'class' : "event-marker constant-size"
         });
 
         var id = this.id;
@@ -873,7 +873,7 @@ var EventMarker = Class.extend(
         this.eventPopupDomNode = $('<div/>');
         this.eventPopupDomNode.hide();
         this.eventPopupDomNode.attr({
-            'class' : "event-popup"
+            'class' : "event-popup constant-size"
         });
 
         this.eventPopupDomNode.html(content);
