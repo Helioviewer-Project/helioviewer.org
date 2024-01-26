@@ -52,7 +52,7 @@ var HelioviewerViewport = Class.extend(
         this.movementHelper = new ViewportMovementHelper(this.domNode, this.mouseCoords, centerX, centerY);
 
         this.pinchDetector = new PinchDetector();
-        this.helioZoom = new HelioviewerZoomer(this.pinchDetector);
+        this.helioZoom = new HelioviewerZoomer(this.pinchDetector, this.zoomLevels);
         this.touchMover = new TouchMover(document.getElementById('toptouchlayer'), this.pinchDetector, $.proxy(this.movementHelper.moveViewport, this.movementHelper));
 // toptouchlayer
         this.loadDataSources();
@@ -66,7 +66,7 @@ var HelioviewerViewport = Class.extend(
      * and resizes when done.
      */
     loadDataSources: function () {
-        var callback, dataType, tileLayerAccordion, self = this;
+        var callback, self = this;
 
         callback = function (dataSources) {
             self.dataSources = dataSources;
@@ -322,7 +322,7 @@ var HelioviewerViewport = Class.extend(
         // Pixel coordinates for the ROI edges
         coordinates = this.movementHelper.getViewportCoords();
 
-        imageScale = this.getImageScale();
+        imageScale = this.getZoomedImageScale();
 
         // ROI Offset from solar center (in arc-seconds)
         offsetX = imageScale * ((coordinates.left + coordinates.right) / 2);
@@ -443,7 +443,7 @@ var HelioviewerViewport = Class.extend(
      * Returns the middle time of all of the layers currently loaded
      */
     getEarliestLayerDate: function () {
-        var startDate, endDate, difference, dates = [];
+        var startDate, dates = [];
 
         // Get the observation dates associated with each later
         $.each(this._tileLayerManager._layers, function (i, layer) {

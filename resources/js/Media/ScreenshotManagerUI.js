@@ -167,7 +167,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         celestialBodiesTrajectories, screenshot, self = this;
 
         if (typeof roi === "undefined") {
-            roi = helioviewer.getZoomedRegionOfInterest();
+            roi = helioviewer.getViewportRegionOfInterest();
         }
 
         imageScale  = helioviewer.getZoomedImageScale();

@@ -146,7 +146,7 @@ var HelioviewerMouseCoordinates = MouseCoordinates.extend(
         }
 
         // Compute coordinates relative to top-left corner of the viewport
-        cartesian = this.computeMouseCoords(event.pageX, event.pageY);
+        cartesian = this.computeMouseCoords(event.clientX, event.clientY);
 
         // Arc-seconds
         if (this.mouseCoords === "arcseconds") {
