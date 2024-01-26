@@ -68,6 +68,7 @@ a.light:hover {
     left: 0px;
     display: block;
     overflow: visible;
+    mix-blend-mode: plus-lighter;
     -moz-user-select: none;
 }
 

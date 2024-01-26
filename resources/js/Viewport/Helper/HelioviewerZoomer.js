@@ -131,7 +131,7 @@
 
     _updateScaleForElementWithId(id, scale) {
         let el = document.getElementById(id);
-        el.style.transform = "scale(" + scale + ")";
+        el.style.transform = "scale3d(" + scale + ", " + scale + ", 1)";
     }
 
     /**
@@ -164,7 +164,7 @@
             } else {
                 Helioviewer.userSettings.set('mobileZoomScale', scale);
                 this._scale = scale;
-                this._mc.style.transform = "scale(" + this._scale + ")";
+                this._updateScaleForElementWithId(this._mc.id, scale);
                 this._updateUIScale(scale);
                 this._updateReferenceScale(scale)
                 $(document).trigger('update-viewport');
