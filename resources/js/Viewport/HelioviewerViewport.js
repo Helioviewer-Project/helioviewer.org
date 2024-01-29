@@ -399,8 +399,11 @@ var HelioviewerViewport = Class.extend(
      * @param {Event} e Event class
      */
     doubleClick: function (event) {
-        this.movementHelper.doubleClick(event);
-
+        let anchor = {
+            left: event.pageX,
+            top: event.pageY
+        };
+        this.helioZoom.setAnchorForCenter(anchor);
         if (event.shiftKey) {
             $("#zoom-out-button").click();
         } else {

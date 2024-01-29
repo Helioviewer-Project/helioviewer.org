@@ -15,8 +15,10 @@
         this._initializePinchListeners();
         this._zoomInBtn = document.getElementById('zoom-in-button');
         this._zoomInBtn.addEventListener('click', this._smoothZoomIn.bind(this));
+        $(document).bind("zoom-in", this._smoothZoomIn.bind(this));
         this._zoomOutBtn = document.getElementById('zoom-out-button');
         this._zoomOutBtn.addEventListener('click', this._smoothZoomOut.bind(this));
+        $(document).bind("zoom-out", this._smoothZoomOut.bind(this));
         this._mc = document.getElementById('moving-container');
         this._sandbox = document.getElementById('sandbox');
         this._scale = 1;
