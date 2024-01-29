@@ -267,6 +267,7 @@
      * @param {number} duration Length of animation in seconds
      */
     _animateZoom(factor, duration) {
+        clearInterval(this._animate_interval);
         // Compute animation frame details.
         let fps = 120;
         let frame_delay = 1/fps;
@@ -278,10 +279,17 @@
         let frame_delta = delta_scale / num_frames;
 
         let ticks = 0;
-        let interval = setInterval(() => {
+        this._animate_interval = setInterval(() => {
+            let lastScale = this._scale;
             this.setScale(this._scale + frame_delta);
+            if ((factor > 1) && (this._scale < lastScale)) {
+                frame_delta /= 2;
+            }
+            if ((factor < 1) && (this._scale > lastScale)) {
+                frame_delta *= 2;
+            }
             ticks += 1;
-            if (ticks == num_frames) { clearInterval(interval); }
+            if (ticks == num_frames) { clearInterval(this._animate_interval); }
         }, frame_delay)
     }
 
@@ -289,13 +297,13 @@
      * Executed when the zoom in button is clicked.
      */
     _smoothZoomIn() {
-        this._animateZoom(2, 0.25);
+        this._animateZoom(2, 0.2);
     }
 
     /**
      * Executed when the zoom out button is clicked.
      */
     _smoothZoomOut() {
-        this._animateZoom(0.5, 0.25);
+        this._animateZoom(0.5, 0.2);
     }
 };
