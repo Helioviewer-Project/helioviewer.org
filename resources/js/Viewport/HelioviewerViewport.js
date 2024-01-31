@@ -231,7 +231,7 @@ var HelioviewerViewport = Class.extend(
         $(this.domNode).bind("mousedown", $.proxy(this.onMouseMove, this));
         this.domNode.dblclick($.proxy(this.doubleClick, this));
 
-        $('#center-button').click($.proxy(this.centerViewportOnBiggestLayer, this));
+        $('#center-button').click(() => {$(document).trigger('center-viewport');});
         $(window).resize($.proxy(this.resize, this));
     },
 

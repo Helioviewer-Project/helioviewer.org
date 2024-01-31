@@ -14,11 +14,7 @@
         this._initZoomLevel();
         this._initializePinchListeners();
         this._zoomInBtn = document.getElementById('zoom-in-button');
-        this._zoomInBtn.addEventListener('click', this._smoothZoomIn.bind(this));
-        $(document).bind("zoom-in", this._smoothZoomIn.bind(this));
         this._zoomOutBtn = document.getElementById('zoom-out-button');
-        this._zoomOutBtn.addEventListener('click', this._smoothZoomOut.bind(this));
-        $(document).bind("zoom-out", this._smoothZoomOut.bind(this));
         this._mc = document.getElementById('moving-container');
         this._sandbox = document.getElementById('sandbox');
         this._scale = 1;
@@ -26,6 +22,25 @@
         this._last_size = 0;
         this._css_rules = [];
         Helioviewer.userSettings.set('mobileZoomScale', 1);
+
+        // Make sure the sun is centered when the user requests centering the viewport
+        $(document).bind("center-viewport", this._resetOrigin.bind(this));
+
+        // Register zoom in button click and zoom-in event
+        this._zoomInBtn.addEventListener('click', this._smoothZoomIn.bind(this));
+        $(document).bind("zoom-in", this._smoothZoomIn.bind(this));
+
+        // Register zoom out button click and zoom-out event.
+        this._zoomOutBtn.addEventListener('click', this._smoothZoomOut.bind(this));
+        $(document).bind("zoom-out", this._smoothZoomOut.bind(this));
+    }
+
+    /**
+     * Resets the transform origin property from the moving container
+     * so that the transform origin is at sun center.
+     */
+    _resetOrigin() {
+        this.setAnchor({left: 0, top: 0});
     }
 
     /**
