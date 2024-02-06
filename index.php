@@ -1845,6 +1845,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		<script src="/resources/js/Tiling/Manager/TileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Tiling/Manager/HelioviewerTileLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Image/JP2Image.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Viewport/Helper/ScrollZoom.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Viewport/Helper/PinchDetector.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Viewport/Helper/HelioviewerZoomer.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Viewport/Helper/TouchMover.js?v=<?=$debugTime?>" type="text/javascript"></script>
@@ -1854,7 +1855,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		<script src="/resources/js/Viewport/Helper/ViewportMovementHelper.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Viewport/HelioviewerViewport.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/HelioviewerClient.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/UI/ZoomControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/ImageScale.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/Timeline.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/TimelineEvents.js?v=<?=$debugTime?>" type="text/javascript"></script>
