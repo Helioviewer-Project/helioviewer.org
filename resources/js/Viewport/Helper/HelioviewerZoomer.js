@@ -26,7 +26,7 @@ const MAX_THRESHOLD = 1.5;
         this._css_rules = [];
         this._maxImageScale = zoomLevels[0];
         this._minImageScale = zoomLevels[zoomLevels.length - 1];
-        this._slider = new ZoomControls(this._maxImageScale, zoomLevels.length, this._targetCenter.bind(this), this.jumpToZoomLevel.bind(this));
+        this._slider = new ZoomControls(this._maxImageScale, zoomLevels.length - 1, this._targetCenter.bind(this), this.jumpToZoomLevel.bind(this));
         Helioviewer.userSettings.set('mobileZoomScale', 1);
 
         // Make sure the sun is centered when the user requests centering the viewport
