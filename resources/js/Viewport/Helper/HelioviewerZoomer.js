@@ -1,3 +1,6 @@
+const MIN_THRESHOLD = 0.5;
+const MAX_THRESHOLD = 1.5;
+
 /**
  * This module helps with handling smooth zoom scaling via
  * CSS transforms.
@@ -14,16 +17,44 @@
         this._initZoomLevel();
         this._initializePinchListeners();
         this._zoomInBtn = document.getElementById('zoom-in-button');
-        this._zoomInBtn.addEventListener('click', this._smoothZoomIn.bind(this));
         this._zoomOutBtn = document.getElementById('zoom-out-button');
-        this._zoomOutBtn.addEventListener('click', this._smoothZoomOut.bind(this));
         this._mc = document.getElementById('moving-container');
         this._sandbox = document.getElementById('sandbox');
         this._scale = 1;
         this._anchor = {left: 0, top: 0};
         this._last_size = 0;
         this._css_rules = [];
+        this._maxImageScale = zoomLevels[0];
+        this._minImageScale = zoomLevels[zoomLevels.length - 1];
+        this._slider = new ZoomControls(this._maxImageScale, zoomLevels.length - 1, this._targetCenter.bind(this), this.jumpToZoomLevel.bind(this));
         Helioviewer.userSettings.set('mobileZoomScale', 1);
+
+        // Make sure the sun is centered when the user requests centering the viewport
+        $(document).bind("center-viewport", this._resetOrigin.bind(this));
+
+        // Register zoom in button click and zoom-in event
+        this._zoomInBtn.addEventListener('click', this._smoothZoomIn.bind(this));
+        $(document).bind("zoom-in", this._smoothZoomIn.bind(this));
+
+        // Register zoom out button click and zoom-out event.
+        this._zoomOutBtn.addEventListener('click', this._smoothZoomOut.bind(this));
+        $(document).bind("zoom-out", this._smoothZoomOut.bind(this));
+    }
+
+    /**
+     * Sets the anchor to the center of the viewport
+     */
+    _targetCenter() {
+        let center = {left: window.innerWidth / 2, top: window.innerHeight / 2};
+        this.setAnchorForCenter(center);
+    }
+
+    /**
+     * Resets the transform origin property from the moving container
+     * so that the transform origin is at sun center.
+     */
+    _resetOrigin() {
+        this.setAnchor({left: 0, top: 0});
     }
 
     /**
@@ -82,7 +113,6 @@
         let new_top = apparent_y + (targetScale - 1) * new_anchor_y;
 
         // Sandbox may shift, account for this by tracking its position.
-        // TODO: I'll have to deal with this later.
         let initial_sandbox_position = $(this._sandbox).position();
 
         let closure = () => {
@@ -111,10 +141,7 @@
      */
     _zoomIn() {
         let nextValue = this._zoomIndex + 1;
-        if (nextValue < this.zoomLevels.length) {
-            this._zoomIndex = nextValue;
-            this._setAppImageScale(this._zoomIndex);
-        }
+        this._setZoomLevel(nextValue);
     }
 
     /**
@@ -123,8 +150,18 @@
      */
     _zoomOut() {
         let nextValue = this._zoomIndex - 1;
-        if (nextValue >= 0) {
-            this._zoomIndex = nextValue;
+        this._setZoomLevel(nextValue);
+    }
+
+    /**
+     * Forces the application zoom resolution to the given level
+     * @param {number} level index into zoomLevels. Lower is lower res, higher is higher res.
+     */
+    _setZoomLevel(level) {
+        // Enforce that the given value is an integer
+        level = Math.ceil(level);
+        if (0 <= level && level < this.zoomLevels.length) {
+            this._zoomIndex = level;
             this._setAppImageScale(this._zoomIndex);
         }
     }
@@ -157,9 +194,9 @@
     setScale(scale) {
         // Limit scale to 2.5 and 0.25
         if (0.25 <= scale && scale <= 2.5) {
-            if (scale >= 1.5) {
+            if (scale >= MAX_THRESHOLD) {
                 this._zoomHelioviewer(scale, true);
-            } else if (scale <= 0.5) {
+            } else if (scale <= MIN_THRESHOLD) {
                 this._zoomHelioviewer(scale, false);
             } else {
                 Helioviewer.userSettings.set('mobileZoomScale', scale);
@@ -265,6 +302,7 @@
      * @param {number} duration Length of animation in seconds
      */
     _animateZoom(factor, duration) {
+        clearInterval(this._animate_interval);
         // Compute animation frame details.
         let fps = 120;
         let frame_delay = 1/fps;
@@ -276,10 +314,17 @@
         let frame_delta = delta_scale / num_frames;
 
         let ticks = 0;
-        let interval = setInterval(() => {
+        this._animate_interval = setInterval(() => {
+            let lastScale = this._scale;
             this.setScale(this._scale + frame_delta);
+            if ((factor > 1) && (this._scale < lastScale)) {
+                frame_delta /= 2;
+            }
+            if ((factor < 1) && (this._scale > lastScale)) {
+                frame_delta *= 2;
+            }
             ticks += 1;
-            if (ticks == num_frames) { clearInterval(interval); }
+            if (ticks == num_frames) { clearInterval(this._animate_interval); }
         }, frame_delay)
     }
 
@@ -287,13 +332,27 @@
      * Executed when the zoom in button is clicked.
      */
     _smoothZoomIn() {
-        this._animateZoom(2, 0.25);
+        this._animateZoom(2, 0.2);
     }
 
     /**
      * Executed when the zoom out button is clicked.
      */
     _smoothZoomOut() {
-        this._animateZoom(0.5, 0.25);
+        this._animateZoom(0.5, 0.2);
+    }
+
+    /**
+     * Sets the zoom to the given percentage without animation.
+     * @note This is used by the slider in mininal view for animating zoom.
+     * @param {number} level Continuous index into zoom levels (can be decimal)
+     */
+    jumpToZoomLevel(level) {
+        while (level > this._zoomIndex) {
+            this._zoomHelioviewer(2, true);
+        }
+        while (level < this._zoomIndex) {
+            this._zoomHelioviewer(0.5, false);
+        }
     }
 };

@@ -227,6 +227,10 @@ var UserLayersPresets = Class.extend({
 	        layers = layers.slice(1, -1);
 			settings['imageLayers'] = layers.split("],[");
 
+			if (typeof helioviewer.viewport._tileLayerManager == "undefined") {
+				return;
+			}
+
 			helioviewer.viewport._tileLayerManager.each(function(){
 		        $(document).trigger("remove-tile-layer", [this.id]);
 		        $("#" + this.id + " *[oldtitle]").qtip("destroy");

@@ -91,10 +91,10 @@ var MouseCoordinates = Class.extend(
 
         //scale
         let zoom = (Helioviewer.userSettings.get('mobileZoomScale') || 1);
-        scale = this.imageScale / zoom;
+        let scale = this.imageScale / zoom;
         // TODO: Apply scaling fix depending on the current layer
-        x = scale * mouse_pos.x;
-        y = scale * mouse_pos.y;
+        let x = scale * mouse_pos.x;
+        let y = scale * mouse_pos.y;
         let correctedCoord = this.correctCoordinate(scale, mouse_pos.x, -mouse_pos.y)
 
         // Return scaled coords
