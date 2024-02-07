@@ -192,7 +192,7 @@ var EventLayerAccordion = Layer.extend(
     _createK12VisibilityBtn: function(index, id, name, markersVisible, labelsVisible, startOpened, apiSource) {
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, eventsDiv, self=this;
 
-		let treeid = 'tree-'+id;
+		let treeid = 'tree_'+name;
 
 		var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
         if ( typeof visState == 'undefined') {

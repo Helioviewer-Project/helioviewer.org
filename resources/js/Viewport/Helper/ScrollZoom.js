@@ -1,8 +1,8 @@
 class ScrollZoom {
     constructor() {
+        this._MIN_SPEED = 3;
+        this._MAX_DURATION_MS = 25;
         this._scrolling = false;
-        this._delta = 0;
-        this._timeout = undefined;
         document.getElementById('sandbox').addEventListener("wheel", this._wheeling.bind(this));
     }
 
@@ -11,8 +11,6 @@ class ScrollZoom {
      * @param {WheelEvent} event 
      */
     _wheeling(event) {
-        this._ClearTimeout();
-        this._SetTimeout();
         if (!this._scrolling) {
             this._StartScrolling(event);
         } else {
@@ -29,30 +27,52 @@ class ScrollZoom {
             let position = { left: event.pageX, top: event.pageY };
             this._onstart(position);
         }
+        this._currentZoom = 0;
+        this._target = 0;
+        this._delta = 0;
+        this._interval = setInterval(this._rectifyScroll.bind(this), 1);
+    }
+
+    /**
+     * Smooths the scroll amount for a consistent scroll experience using
+     * different mice which send different deltas
+     */
+    _rectifyScroll() {
+        this._currentZoom += this._delta;
+        // Finish scrolling when the zoom crosses the target.
+        if (((this._delta > 0) && (this._currentZoom > this._target))
+           || ((this._delta < 0) && (this._currentZoom < this._target))) {
+            this._FinishScrolling();
+        } else if (this._onupdate) {
+            this._onupdate(this._currentZoom);
+        }
     }
 
     /**
      * @param {WheelEvent} event 
      */
     _UpdateScrolling(event) {
-        this._delta -= event.deltaY;
-        if (this._onupdate) {
-            this._onupdate(this._delta);
+        // Update the target with the amount of delta sent by the wheel input.
+        this._target -= event.deltaY;
+        // The rectify function is scheduled to run every 1ms.
+        // We would like the animation to complete in less than 50ms, so the zoom
+        // should change by 1/250 each 'frame'.
+        this._delta = (this._target - this._currentZoom) / this._MAX_DURATION_MS;
+        
+        // Enforce a minimum scroll speed.
+        // Otherwise small scrolls will do a painfully slow animation.
+        if ((this._delta < 0) && (this._delta > -this._MIN_SPEED)) {
+            this._delta = -2;
+        }
+        if ((this._delta > 0) && (this._delta < this._MIN_SPEED)) {
+            this._delta = 2;
         }
     }
 
-    _ClearTimeout() {
-        if (this._timeout) {
-            clearTimeout(this._timeout);
-        }
-    }
-
-    _SetTimeout() {
-        this._timeout = setTimeout(() => {
-            this._scrolling = false;
-            this._timeout = undefined;
-            this._delta = 0;
-        }, 250);
+    _FinishScrolling() {
+        this._scrolling = false;
+        this._delta = 0;
+        clearInterval(this._interval);
     }
 
     onstart(fn) {
