@@ -39,18 +39,18 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.
      */
     _loadStartingLayers: function (layers) {
-        var eventLayer, basicParams, self = this;
-
         // Add the event layer
         this.addEventLayer(
             new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
                 'HEK', true, Helioviewer.userSettings.get("state.eventLabels"), {"action": "events", "sources": "HEK", "ar_filter": true})
         );
 
-        this.addEventLayer(
-            new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                'CCMC', true, true, {"action": "events", "sources": "CCMC"})
-        );
+        if (outputType != 'minimal') {
+            this.addEventLayer(
+                new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
+                    'CCMC', true, true, {"action": "events", "sources": "CCMC"})
+            );
+        }
     },
 
     /**
