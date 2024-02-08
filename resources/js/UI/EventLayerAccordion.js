@@ -215,13 +215,15 @@ var EventLayerAccordion = Layer.extend(
         eventsDiv = '<div id="k12-events-visibility-btn-'+id+'" class="k12-eventsVisBtn" title="Toggle visibility of event marker pins" style="display: flex;">'
                     + visibilityBtn
                     + '<p id="k12-events-btn-text" style="margin-left:0.3em;">EVENTS ARE ON<p></div>';
+        
+        let jstree = '<div id=' + treeid + ' style="display: none"></div>';
 
         //Add to accordion
         this.domNode.append(eventsDiv);
+        this.domNode.append(jstree);
 
         this._loadEvents(treeid, apiSource);
 
-        //this.domNode.find("#visibilityAvailableBtn-"+id).click( function(e) {
         this.domNode.find("#k12-events-visibility-btn-"+id).click( function(e) {
             var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
             if(visState == true){
@@ -307,9 +309,7 @@ var EventLayerAccordion = Layer.extend(
 
         // Function for toggling layer visibility
         toggleVisibility = function (e) {
-            var domNode;
-
-            domNode = $(document).find(".event-container");
+            let domNode = $(document).find(".event-container");
             if ( domNode.css('display') == 'none') {
                 domNode.show();
                 Helioviewer.userSettings.set("state.eventLayerVisible", true);
