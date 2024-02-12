@@ -205,6 +205,10 @@ var SettingsLoader = (
                 "celestialBodiesLabelsVisible" : {},
                 "celestialBodiesTrajectoriesVisible" : {}
             },
+            zoom: {
+                type: 'continuous',
+                focus: 'center'
+            },
             version: serverSettings.version
         };
     }

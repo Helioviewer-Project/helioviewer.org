@@ -27,6 +27,10 @@ const MAX_THRESHOLD = 1.5;
         this._maxImageScale = zoomLevels[0];
         this._minImageScale = zoomLevels[zoomLevels.length - 1];
         this._slider = new ZoomControls(this._maxImageScale, zoomLevels.length - 1, this._targetCenter.bind(this), this.jumpToZoomLevel.bind(this));
+        this._step = {
+            lock: false,
+            lastVal: 0
+        };
         Helioviewer.userSettings.set('mobileZoomScale', 1);
 
         // Make sure the sun is centered when the user requests centering the viewport
@@ -253,20 +257,55 @@ const MAX_THRESHOLD = 1.5;
      * Fired when 2 fingers touch the screen
      */
     pinchStart(center) {
-        this.setAnchorForCenter(center);
+        if (Helioviewer.userSettings.get('zoom.focus') == 'center') {
+            // If setting is set to focus on the center of the screen, always do that.
+            this._targetCenter();
+        } else {
+            // Focus on the target that was given by the pinch/cursor.
+            this.setAnchorForCenter(center);
+        }
         this._last_size = 0;
+        this._step.lastVal = 0;
     }
 
     /**
      * Fires as a user pinches/stretches
      */
     pinchUpdate(size) {
+        // Don't do anything if the user has step zoom enabled.
+        if (Helioviewer.userSettings.get('zoom.type') == 'step') {
+            this._stepZoom(size)
+            return;
+        }
         let change = (size - this._last_size) / 200;
         this.setScale(this._scale + change);
         this._last_size = size;
     }
 
     pinchEnd() {
+    }
+
+    /**
+     * Handle step zooming if user has enabled it.
+     */
+    _stepZoom(size) {
+        // Debounce the step zoom. A lot of step events can come in at once.
+        if (this._step.lock) {
+            return;
+        }
+
+        if (size > this._step.lastVal) {
+            this._zoomHelioviewer(2, true);
+        } else if (size < this._step.lastVal) {
+            this._zoomHelioviewer(0.5, false);
+        } else {
+            // zoom didn't change, don't enable the scroll lock, just do nothing.
+            // this happens on some high resolution touchpads (mac)
+            return;
+        }
+        this._step.lastVal = size;
+        this._step.lock = true;
+        setTimeout(() => {this._step.lock = false;}, 500);
     }
 
     onUpdateViewport() {
@@ -332,14 +371,28 @@ const MAX_THRESHOLD = 1.5;
      * Executed when the zoom in button is clicked.
      */
     _smoothZoomIn() {
-        this._animateZoom(2, 0.2);
+        this._targetCenter();
+        // Non step zoom will use zoom animation.
+        if (Helioviewer.userSettings.get('zoom.type') != 'step') {
+            this._animateZoom(2, 0.2);
+        } else {
+            // Step zoom just jumps forward
+            this._zoomHelioviewer(2, true);
+        }
     }
 
     /**
      * Executed when the zoom out button is clicked.
      */
     _smoothZoomOut() {
-        this._animateZoom(0.5, 0.2);
+        this._targetCenter();
+        // Non step zoom will use zoom animation.
+        if (Helioviewer.userSettings.get('zoom.type') != 'step') {
+            this._animateZoom(0.5, 0.2);
+        } else {
+            // step zoom will just jump out.
+            this._zoomHelioviewer(0.5, false);
+        }
     }
 
     /**
