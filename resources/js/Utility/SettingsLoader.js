@@ -207,7 +207,7 @@ var SettingsLoader = (
             },
             zoom: {
                 type: 'continuous',
-                focus: 'center'
+                focus: 'cursor'
             },
             version: serverSettings.version
         };
