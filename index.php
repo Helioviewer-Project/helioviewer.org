@@ -1397,6 +1397,20 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 						<option value='604800'>1 week</option>
 						<option value='2419200'>28 days</option>
 					</select>
+					<br/>
+
+					<label id="js-zoom-label" for='js-zoom-type' class="jq-tooltip" title="Continuous zoom will smoothly zoom in and out while step zoom will leap between preprogrammed scales.">Zoom Type</label>
+					<select id='js-zoom-type' title="test" name='js-zoom-type'>
+						<option value='continuous'>continuous</option>
+						<option value='step'>step</option>
+					</select>
+					<br/>
+
+					<label id='js-focus-label' for='js-zoom-focus' class="jq-tooltip" title="Focus on mouse will make zoom operations zoom in on the mouse pointer. Focus on center will make zoom operations zoom in to the center of the viewport." >Zoom Focus</label>
+					<select id='js-zoom-focus' name='js-zoom-focus'>
+						<option value='cursor'>Focus on mouse</option>
+						<option value='center'>Focus on center</option>
+					</select>
 				</div>
 				</fieldset>
 			</form>

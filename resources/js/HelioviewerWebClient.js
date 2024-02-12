@@ -382,14 +382,35 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * initializes event-handlers
      */
     _setupSettingsUI: function () {
-        var form, dateLatest, datePrevious, autorefresh, autoplay, duration, self = this;
+        let self = this;
 
-        form         = $("#helioviewer-settings");
-        dateLatest   = $("#settings-date-latest");
-        datePrevious = $("#settings-date-previous");
-        autorefresh  = $("#settings-latest-image");
-        autoplay     = $("#settings-movie-play-automatic");
-        duration     = $("#settings-movie-duration");
+        let form         = $("#helioviewer-settings");
+        let dateLatest   = $("#settings-date-latest");
+        let datePrevious = $("#settings-date-previous");
+        let autorefresh  = $("#settings-latest-image");
+        let autoplay     = $("#settings-movie-play-automatic");
+        let duration     = $("#settings-movie-duration");
+        let zoom_type    = $("#js-zoom-type");
+        let zoom_focus   = $("#js-zoom-focus");
+        let zoom_label = $('#js-zoom-label')
+        zoom_label.qtip({
+            show: {
+                delay: 0
+            },
+            content: {
+                text: zoom_label.attr('title')
+            },
+        });
+
+        let focus_label = $('#js-focus-label');
+        focus_label.qtip({
+            show: {
+                delay: 0
+            },
+            content: {
+                text: focus_label.attr('title')
+            },
+        })
 
         // Starting date
         if (Helioviewer.userSettings.get("options.date") === "latest") {
@@ -417,6 +438,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         // Default movie duration
         duration.val(Helioviewer.userSettings.get("options.movies.duration"));
 
+        // Zoom config
+        zoom_type.val(Helioviewer.userSettings.get('zoom.type'));
+        zoom_focus.val(Helioviewer.userSettings.get('zoom.focus'));
+
         // Event-handlers
         dateLatest.change(function (e) {
             Helioviewer.userSettings.set("options.date", "latest");
@@ -439,7 +464,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         duration.change(function () {
             Helioviewer.userSettings.set("options.movies.duration", parseInt(this.value, 10));
         });
-
+        zoom_focus.change(function () {
+            Helioviewer.userSettings.set("zoom.focus", this.value);
+        });
+        zoom_type.change(function () {
+            Helioviewer.userSettings.set("zoom.type", this.value);
+        });
     },
 
     /**
