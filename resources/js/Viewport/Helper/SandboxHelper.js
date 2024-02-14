@@ -45,14 +45,12 @@ var SandboxHelper = Class.extend(
      * and updates the css accordingly. Also repositions the movingContainer.
      */
     updateSandbox: function (viewportCenter, desiredSandboxSize) {
-        var change, oldCenter, newCenter, newHCLeft, newHCTop, containerPos;
-
-        oldCenter = this.getCenter();
-
         //Get ViewPort size offset
-        var heightOffset = $(window).height();
-        var widthOffset = $(window).width();
+        let heightOffset = $(window).height();
+        let widthOffset = $(window).width();
 
+        // Get moving container position on screen
+        let mc_pos = this.movingContainer[0].getBoundingClientRect();
 
         // Update sandbox dimensions
         this.domNode.css({
@@ -61,24 +59,24 @@ var SandboxHelper = Class.extend(
             left   : (viewportCenter.x - ( widthOffset * 0.5 ) ) - (0.5 * desiredSandboxSize.width) + 'px',
             top    : (viewportCenter.y - ( heightOffset * 0.5 ) ) - (0.5 * desiredSandboxSize.height) + 'px'
         });
-        newCenter = this.getCenter();
 
-        // Difference
-        change = {
-            x: newCenter.x - oldCenter.x,
-            y: newCenter.y - oldCenter.y
+        // Get new container position after changing the sandbox size
+        let mc_shift = this.movingContainer[0].getBoundingClientRect();
+
+        // Get the delta needed to put the moving container back where it was.
+        let dt = {
+            left: mc_pos.x - mc_shift.x,
+            top: mc_pos.y - mc_shift.y
         };
 
-        if (Math.abs(change.x) < 0.01 && Math.abs(change.y) < 0.01) {
-            return;
-        }
-        containerPos = this.movingContainer.position();
+        // Add the delta to the current coordinates. This should put it back
+        // to where it appeared to be on screen.
+        let new_pos = {
+            left: parseFloat(this.movingContainer.css("left")) + dt.left,
+            top: parseFloat(this.movingContainer.css("top")) + dt.top
+        };
 
-        // Update moving container position
-        newHCLeft = Math.max(0, Math.min(desiredSandboxSize.width,  containerPos.left + change.x));
-        newHCTop  = Math.max(0, Math.min(desiredSandboxSize.height, containerPos.top  + change.y));
-
-        this.moveContainerTo(newHCLeft, newHCTop);
+        this.moveContainerTo(new_pos.left, new_pos.top);
     },
 
     moveContainerTo: function (x, y) {
