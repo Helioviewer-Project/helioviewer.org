@@ -1,8 +1,9 @@
 class ScrollZoom {
     constructor() {
-        this._MIN_SPEED = 3;
+        this._MIN_SPEED = 2;
         this._MAX_DURATION_MS = 25;
         this._scrolling = false;
+        this._no_change_count = 0;
         document.getElementById('sandbox').addEventListener("wheel", this._wheeling.bind(this));
     }
 
@@ -30,6 +31,7 @@ class ScrollZoom {
         this._currentZoom = 0;
         this._target = 0;
         this._delta = 0;
+        this._UpdateScrolling(event);
         this._interval = setInterval(this._rectifyScroll.bind(this), 1);
     }
 
@@ -39,12 +41,24 @@ class ScrollZoom {
      */
     _rectifyScroll() {
         this._currentZoom += this._delta;
-        // Finish scrolling when the zoom crosses the target.
-        if (((this._delta > 0) && (this._currentZoom > this._target))
-           || ((this._delta < 0) && (this._currentZoom < this._target))) {
-            this._FinishScrolling();
-        } else if (this._onupdate) {
+        // This smooths out fine-grained zooming if you're moving very slowly
+        // on a high resolution touchpad like the mac's.
+        if (Math.abs(this._delta) > Math.abs(this._target)) {
+            this._delta = Math.abs(this._delta) - Math.abs(this._target);
+        }
+        if (this._delta == 0) {
+            this._no_change_count += 1;
+        }
+        if (this._onupdate) {
             this._onupdate(this._currentZoom);
+        }
+        // Finish scrolling when the zoom crosses the target.
+        if (((this._delta > 0) && (this._currentZoom >= this._target))
+           || ((this._delta < 0) && (this._currentZoom <= this._target))
+            // Scrolling hasn't changed in 30 ticks, break out of infinite loop
+            // This can happen if the mouse sends a 0 delta scroll and nothing else.
+           || (this._no_change_count >= 30)) {
+            this._FinishScrolling();
         }
     }
 
@@ -72,6 +86,7 @@ class ScrollZoom {
     _FinishScrolling() {
         this._scrolling = false;
         this._delta = 0;
+        this._no_change_count = 0;
         clearInterval(this._interval);
     }
 
