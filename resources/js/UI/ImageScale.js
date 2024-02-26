@@ -317,21 +317,20 @@ var ImageScale = Class.extend(
         if ( parseInt(Helioviewer.userSettings.get("state.scaleX")) == 0 ||
              parseInt(Helioviewer.userSettings.get("state.scaleY")) == 0 ) {
 
-
-            if (outputType != 'minimal'){
-
-	            this.containerX = this.container.parent().width()*0.66 - this.container.width()/2; //center the earth container
-	            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
-	            this.scale = false;
-
-	        }else{
-                var sc = $('#scale');
-                this.containerX = sc.position().left + (sc.outerWidth()/2) - this.container.width()/2; //center the earth container
-	            this.containerY = sc.position().top - this.container.height() - 3;
-		        //this.containerX = this.container.parent().width() - 150;
-		        //this.containerY = this.container.parent().height() - 100;
-		        this.scale = true;
-	        }
+            switch(outputType) {
+                case "minimal":
+                case "embed":
+                    var sc = $('#scale');
+                    this.containerX = sc.position().left + (sc.outerWidth()/2) - this.container.width()/2; //center the earth container
+                    this.containerY = sc.position().top - this.container.height() - 3;
+                    this.scale = true;
+                    break;
+                default:
+                    this.containerX = this.container.parent().width()*0.66 - this.container.width()/2; //center the earth container
+                    this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
+                    this.scale = false;
+                    break;
+            }
         }
 
         this.scaleContainerDragTo(this.containerX, this.containerY);
