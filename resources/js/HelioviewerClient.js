@@ -42,9 +42,16 @@ var HelioviewerClient = Class.extend(
      * @description Checks browser support for various features used in Helioviewer
      */
     _checkBrowser: function () {
+        let localStorageSupport = true;
+        try {
+            localStorageSupport = ('localStorage' in window) && window['localStorage'] !== null;
+        } catch (e) {
+            localStorageSupport = false;
+        }
+
         // Base support
         $.extend($.support, {
-            "localStorage" : ('localStorage' in window) && window['localStorage'] !== null,
+            "localStorage" : localStorageSupport,
             "nativeJSON"   : typeof (JSON) !== "undefined",
             "video"        : !!document.createElement('video').canPlayType,
             "h264"         : false,

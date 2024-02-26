@@ -236,13 +236,24 @@ var ImageScale = Class.extend(
              Helioviewer.userSettings.get("state.containerY") <= ( $('#hv-header').height() || 0 ) ||
              Helioviewer.userSettings.get("state.containerY") >= this.container.parent().height()-this.container.height()
             ) {
-                this.containerX = this.container.parent().width()*0.66 - this.container.width()/2; //center the earth container
-	            this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
-                this.container.css({
-                    'position' : 'absolute',
-                    'top'      : this.containerY+'px',
-                    'left'     : this.containerX+'px'
-                });
+                if (outputType == 'embed') {
+                    this.containerX = 15;
+                    this.containerY = this.container.parent().height() - this.container.height() - 15;
+                    this.container.css({
+                        'position' : 'absolute',
+                        'top'      : this.containerY+'px',
+                        'left'     : this.containerX+'px'
+                    });
+                } else {
+                    this.containerX = this.container.parent().width()*0.66 - this.container.width()/2; //center the earth container
+                    this.containerY = $('#earth-button').position().top + $('#scale').position().top + this.container.height();
+                    this.container.css({
+                        'position' : 'absolute',
+                        'top'      : this.containerY+'px',
+                        'left'     : this.containerX+'px'
+                    });
+                }
+                
             }
         }else{// minimal helioviewer
             var dm = $('#date-manager-container');
@@ -319,11 +330,15 @@ var ImageScale = Class.extend(
 
             switch(outputType) {
                 case "minimal":
-                case "embed":
                     var sc = $('#scale');
                     this.containerX = sc.position().left + (sc.outerWidth()/2) - this.container.width()/2; //center the earth container
                     this.containerY = sc.position().top - this.container.height() - 3;
                     this.scale = true;
+                    break;
+                case "embed":
+                    this.scale = false;
+                    this.containerX = 15;
+                    this.containerY = this.container.parent().height() - this.container.height() - 15;
                     break;
                 default:
                     this.containerX = this.container.parent().width()*0.66 - this.container.width()/2; //center the earth container
