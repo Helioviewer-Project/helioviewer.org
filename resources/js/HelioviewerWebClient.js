@@ -778,6 +778,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             window.open('http://wiki.helioviewer.org/wiki/Main_Page','_blank');
         });
 
+        // Statistics page
+        let statsUrl = this.serverSettings.backEnd + "statistics";
+        $('#help-links-statistics')
+            .attr('role', 'link')
+            .attr('data-href', statsUrl)
+            .on('click', function () { window.open(statsUrl, '_blank'); })
+
         //API Documentation
         $('#help-links-api-documentation').on('click', function(){
             window.open(Helioviewer.api + '/docs/v2','_blank');
