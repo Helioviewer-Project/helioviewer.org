@@ -1,4 +1,6 @@
 function startTutorial(){
+	$(document).trigger("center-viewport");
+
 	if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-left.open") == false){
 		helioviewer.drawerLeftClick(true);
 	}
