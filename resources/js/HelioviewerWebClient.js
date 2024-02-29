@@ -778,6 +778,27 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             window.open('http://wiki.helioviewer.org/wiki/Main_Page','_blank');
         });
 
+        // Statistics page
+        let statsUrl = Helioviewer.api + "statistics";
+        $('#help-links-statistics')
+            .attr('role', 'link')
+            .attr('data-href', statsUrl)
+            .on('click', function () { window.open(statsUrl, '_blank'); })
+
+        // Status page
+        let statusPage = Helioviewer.api + "status";
+        $('#help-links-status')
+            .attr('role', 'link')
+            .attr('data-href', statusPage)
+            .on('click', function () { window.open(statusPage, '_blank'); })
+
+        // Data Coverage
+        let coveragePage = Helioviewer.api + "statistics/bokeh/coverages/";
+        $('#help-links-coverage')
+            .attr('role', 'link')
+            .attr('data-href', coveragePage)
+            .on('click', function () { window.open(coveragePage, '_blank'); })
+
         //API Documentation
         $('#help-links-api-documentation').on('click', function(){
             window.open(Helioviewer.api + '/docs/v2','_blank');
