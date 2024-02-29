@@ -779,21 +779,21 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         });
 
         // Statistics page
-        let statsUrl = this.serverSettings.backEnd + "statistics";
+        let statsUrl = Helioviewer.api + "statistics";
         $('#help-links-statistics')
             .attr('role', 'link')
             .attr('data-href', statsUrl)
             .on('click', function () { window.open(statsUrl, '_blank'); })
 
         // Status page
-        let statusPage = this.serverSettings.backEnd + "status";
+        let statusPage = Helioviewer.api + "status";
         $('#help-links-status')
             .attr('role', 'link')
             .attr('data-href', statusPage)
             .on('click', function () { window.open(statusPage, '_blank'); })
 
         // Data Coverage
-        let coveragePage = this.serverSettings.backEnd + "statistics/bokeh/coverages/";
+        let coveragePage = Helioviewer.api + "statistics/bokeh/coverages/";
         $('#help-links-coverage')
             .attr('role', 'link')
             .attr('data-href', coveragePage)
