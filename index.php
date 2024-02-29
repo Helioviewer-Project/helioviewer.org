@@ -1211,7 +1211,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 						<div class="section">
 							<div id="help-links-panel" class="">
 
-								<div id='' class='social-btns'>
+								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
 										<div id='help-links-tutorial' onclick="startTutorial();" class='text-btn qtip-left' style="width: 90%;border:none;" title="Interactive Tutorial" rel="/dialogs/about.php">
 											<span class='fa fa-compass fa-fw'></span>
@@ -1219,7 +1219,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 										</div>
 									</div>
 								</div>
-								<div id='' class='social-btns'>
+								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
 										<div id='help-links-about' class='text-btn qtip-left' style="width: 90%;border:none;" title="About Helioviewer.org" rel="/dialogs/about.php">
 											<span class='fa fa-question-circle fa-fw'></span>
@@ -1228,7 +1228,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 									</div>
 								</div>
 
-								<div id='' class='social-btns'>
+								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
 										<div id='help-links-guide' class='text-btn qtip-left' style="width: 90%;border:none;" title="User's Guide">
 											<span class='fa fa-bookmark-o fa-fw'></span>
@@ -1237,7 +1237,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 									</div>
 								</div>
 
-								<div id='' class='social-btns'>
+								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
 										<div id='help-links-glossary' class='text-btn qtip-left color-facebook' style="width: 90%;border:none;" title='Visual Glossary' rel="/dialogs/glossary.html">
 											<span class='fa fa-key fa-fw'></span>
@@ -1246,7 +1246,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 									</div>
 								</div>
 
-								<div id='' class='social-btns'>
+								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
 										<div id='help-links-shortcuts' class='text-btn qtip-left' style="width: 90%;border:none;" title='Keyboard Shortcuts' rel="/dialogs/usage.php">
 											<span class='fa fa-keyboard-o fa-fw'></span>
@@ -1255,7 +1255,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 									</div>
 								</div>
 
-								<div id='' class='social-btns'>
+								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
 										<div id='help-links-documentation' class='text-btn qtip-left' style="width: 90%;border:none;" title='Documentation'>
 											<span class='fa fa-book fa-fw'></span>
@@ -1264,7 +1264,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 									</div>
 								</div>
 
-								<div id='' class='social-btns'>
+								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
 										<div id='help-links-api-documentation' class='text-btn qtip-left' style="width: 90%;border:none;" title='Public API Documentation'>
 											<span class='fa fa-code fa-fw'></span>
@@ -1273,7 +1273,34 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 									</div>
 								</div>
 
-								<div id='' class='social-btns'>
+								<div class='social-btns'>
+									<div style="font-size: 1.5em;">
+										<div id="help-links-statistics" class='text-btn qtip-left' style="width: 90%;border:none;">
+											<span class='fa fa-bar-chart fa-fw'></span>
+											<span style='line-height: 1.6em'>Statistics</span>
+										</div>
+									</div>
+								</div>
+
+								<div class='social-btns'>
+									<div style="font-size: 1.5em;">
+										<div id="help-links-status" class='text-btn qtip-left' style="width: 90%;border:none;">
+											<span class='fa fa-cloud-download fa-fw'></span>
+											<span style='line-height: 1.6em'>Status</span>
+										</div>
+									</div>
+								</div>
+
+								<div class='social-btns'>
+									<div style="font-size: 1.5em;">
+										<div id="help-links-coverage" class='text-btn qtip-left' style="width: 90%;border:none;">
+											<span class='fa fa-calendar fa-fw'></span>
+											<span style='line-height: 1.6em'>Coverage</span>
+										</div>
+									</div>
+								</div>
+
+								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
 										<div id='help-links-blog' onclick="window.open('https://helioviewer-project.github.io/','_blank');" class='text-btn qtip-left' style="width: 90%;border:none;" title='Blog'>
 											<span class='fa fa-rss fa-fw'></span>
@@ -1282,7 +1309,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 									</div>
 								</div>
 
-								<div id='' class='social-btns'>
+								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
 										<div id='help-links-jhelioviewer' class='text-btn qtip-left' style="width: 90%;border:none;" title='JHelioviewer'>
 											<span class='fa fa-sun-o fa-fw'></span>
@@ -1291,7 +1318,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 									</div>
 								</div>
 
-								<div id='' class='social-btns'>
+								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
 										<div id='help-links-contact' class='text-btn qtip-left' style="width: 90%;border:none;" title='Contact'>
 											<span class='fa fa-envelope fa-fw'></span>
@@ -1300,7 +1327,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 									</div>
 								</div>
 
-								<div id='' class='social-btns'>
+								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
 										<div id='help-links-github' class='text-btn qtip-left' style="width: 90%;border:none;" title='Report problem'>
 											<span class='fa fa-exclamation fa-fw'></span>
