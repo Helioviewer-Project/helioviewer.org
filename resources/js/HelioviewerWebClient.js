@@ -792,6 +792,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             .attr('data-href', statusPage)
             .on('click', function () { window.open(statusPage, '_blank'); })
 
+        // Data Coverage
+        let coveragePage = this.serverSettings.backEnd + "statistics/bokeh/coverages/";
+        $('#help-links-coverage')
+            .attr('role', 'link')
+            .attr('data-href', coveragePage)
+            .on('click', function () { window.open(coveragePage, '_blank'); })
+
         //API Documentation
         $('#help-links-api-documentation').on('click', function(){
             window.open(Helioviewer.api + '/docs/v2','_blank');

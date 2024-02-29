@@ -1293,9 +1293,9 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
-										<div id="help-links-status" class='text-btn qtip-left' style="width: 90%;border:none;">
-											<span class='fa fa-cloud-download fa-fw'></span>
-											<span style='line-height: 1.6em'>Status</span>
+										<div id="help-links-coverage" class='text-btn qtip-left' style="width: 90%;border:none;">
+											<span class='fa fa-calendar fa-fw'></span>
+											<span style='line-height: 1.6em'>Coverage</span>
 										</div>
 									</div>
 								</div>
