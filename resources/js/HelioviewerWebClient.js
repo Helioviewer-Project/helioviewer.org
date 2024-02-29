@@ -785,6 +785,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             .attr('data-href', statsUrl)
             .on('click', function () { window.open(statsUrl, '_blank'); })
 
+        // Status page
+        let statusPage = this.serverSettings.backEnd + "status";
+        $('#help-links-status')
+            .attr('role', 'link')
+            .attr('data-href', statusPage)
+            .on('click', function () { window.open(statusPage, '_blank'); })
+
         //API Documentation
         $('#help-links-api-documentation').on('click', function(){
             window.open(Helioviewer.api + '/docs/v2','_blank');
