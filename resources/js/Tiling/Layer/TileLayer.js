@@ -171,12 +171,14 @@ var TileLayer = Layer.extend(
     _updateDimensions: function () {
         let offset = this._getOffset(this.viewportScale);
 
+        let left = (-this.width  / 2) - offset.x;
+        let top = (-this.height / 2) - offset.y;
         // Update layer dimensions
         this.dimensions = {
-            "left"   : (-this.width  / 2) - offset.x,
-            "top"    : (-this.height / 2) - offset.y,
-            "bottom" : (this.height / 2) + offset.y,
-            "right"  : (this.width  / 2) + offset.x
+            "left"   : left,
+            "top"    : top,
+            "bottom" : top + this.height,
+            "right"  : left + this.width
         };
 
         // Center of the tile layer
