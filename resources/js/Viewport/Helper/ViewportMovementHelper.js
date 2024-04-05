@@ -288,12 +288,9 @@ var ViewportMovementHelper = Class.extend(
      * @param {Int} y Y-value
      */
     _moveBy: function (x, y) {
-        let width = this.sandbox.width();
-        let height = this.sandbox.height();
-        // Compare against sandbox dimensions
-        var pos = {
-            x: Math.min(Math.max(this.startMovingPosition.x - x, -width), width),
-            y: Math.min(Math.max(this.startMovingPosition.y - y, -height), height)
+        let pos = {
+            x: this.startMovingPosition.x - x,
+            y: this.startMovingPosition.y - y
         };
 
         this.sandboxHelper.moveContainerTo(pos.x, pos.y);

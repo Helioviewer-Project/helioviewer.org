@@ -164,16 +164,15 @@ var TileLayer = Layer.extend(
     /**
      * Computes layer parameters relative to the current viewport image scale
      *
-     * Center offset:
-     *   The values for offsetX and offsetY reflect the x and y coordinates with the origin
-     *   at the bottom-left corner of the image, not the top-left corner.
+     * The values for offsetX and offsetY reflect the x and y coordinates
+     * of the reference pixel with an origin at the center of the image.
      */
     _updateDimensions: function () {
         let offset = this._getOffset(this.viewportScale);
 
+        // Update layer dimensions
         let left = (-this.width  / 2) - offset.x;
         let top = (-this.height / 2) - offset.y;
-        // Update layer dimensions
         this.dimensions = {
             "left"   : left,
             "top"    : top,
@@ -181,7 +180,7 @@ var TileLayer = Layer.extend(
             "right"  : left + this.width
         };
 
-        // Center of the tile layer
+        // Center of the tile layer i.e. center of the overall image.
         this.domNode.css({
             "left": - offset.x,
             "top" : - offset.y
