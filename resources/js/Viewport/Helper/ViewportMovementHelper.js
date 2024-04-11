@@ -185,14 +185,12 @@ var ViewportMovementHelper = Class.extend(
 
         let vpWidth  = this.domNode.width();
         let vpHeight = this.domNode.height();
-        let scale = Helioviewer.userSettings.get("mobileZoomScale");
 
-        // Return coordinates with zoom taken into account.
         return {
             left:  left,
             top :  top,
-            right:  (Math.round(vpWidth) / scale)  + left,
-            bottom: (Math.round(vpHeight) / scale) + top
+            right:  Math.round(vpWidth)  + left,
+            bottom: Math.round(vpHeight) + top
         };
     },
 
