@@ -314,8 +314,6 @@ var HelioviewerViewport = Class.extend(
      * Tells the viewport to update itself and its tile layers
      */
     updateViewport: function (storeCoordinates) {
-        var coordinates, imageScale, offsetX, offsetY;
-
         if (typeof storeCoordinates === "undefined") {
             storeCoordinates = false;
         }
@@ -323,16 +321,14 @@ var HelioviewerViewport = Class.extend(
         this.movementHelper.update();
 
         // Pixel coordinates for the ROI edges
-        coordinates = this.movementHelper.getViewportCoords();
-
-        imageScale = this.getZoomedImageScale();
-
-        // ROI Offset from solar center (in arc-seconds)
-        offsetX = imageScale * ((coordinates.left + coordinates.right) / 2);
-        offsetY = imageScale * ((coordinates.top + coordinates.bottom) / 2);
+        let coordinates = this.movementHelper.getViewportCoords();
 
         // Updated saved settings
         if (storeCoordinates) {
+            let imageScale = this.getZoomedImageScale();
+            // ROI Center (in arc-seconds)
+            let offsetX = imageScale * ((coordinates.left + coordinates.right) / 2);
+            let offsetY = imageScale * ((coordinates.top + coordinates.bottom) / 2);
             Helioviewer.userSettings.set("state.centerX", offsetX);
             Helioviewer.userSettings.set("state.centerY", offsetY);
         }

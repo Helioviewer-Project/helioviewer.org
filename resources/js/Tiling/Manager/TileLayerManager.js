@@ -128,32 +128,9 @@ var TileLayerManager = LayerManager.extend(
      *
      */
     updateTileVisibilityRange: function (vpCoords) {
-        var old, ts, self, vp;
-        old = this.tileVisibilityRange;
-        // Expand to fit tile increment
-        let zoom = (Helioviewer.userSettings.get('mobileZoomScale') || 1);
-        ts = this.tileSize * zoom;
-        vp = {
-            top:    vpCoords.top    - ts - (vpCoords.top    % ts),
-            left:   vpCoords.left   - ts - (vpCoords.left   % ts),
-            bottom: vpCoords.bottom + ts - (vpCoords.bottom % ts),
-            right:  vpCoords.right  + ts - (vpCoords.right  % ts)
-        };
-
-        // Indices to display (one subtracted from ends to account for "0th" tiles).
-        this.tileVisibilityRange = {
-            xStart : Math.round(vp.left / ts),
-            yStart : Math.round(vp.top  / ts),
-            xEnd   : Math.round((vp.right  / ts) - 1),
-            yEnd   : Math.round((vp.bottom / ts) - 1)
-        };
-
-        self = this;
-        if (this.tileVisibilityRange !== old) {
-            $.each(this._layers, function () {
-                this.updateTileVisibilityRange(self.tileVisibilityRange);
-            });
-        }
+        $.each(this._layers, function () {
+            this.updateTileVisibilityRange(vpCoords);
+        });
     },
 
     /**

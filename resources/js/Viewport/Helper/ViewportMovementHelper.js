@@ -174,7 +174,8 @@ var ViewportMovementHelper = Class.extend(
 
     /**
      * @description Returns the coordinates of the upper-left and bottom-right corners of the viewport
-     *              with respect to the center
+     *              with respect to the moving container, which represents sun center (0, 0).
+     * @note This takes the zoom amount into account in the returned width/height.
      * @returns {Object} The coordinates for the top-left and bottom-right corners of the viewport
      */
     getViewportCoords: function () {
@@ -184,12 +185,14 @@ var ViewportMovementHelper = Class.extend(
 
         let vpWidth  = this.domNode.width();
         let vpHeight = this.domNode.height();
+        let scale = Helioviewer.userSettings.get("mobileZoomScale");
 
+        // Return coordinates with zoom taken into account.
         return {
             left:  left,
             top :  top,
-            right:  Math.round(vpWidth)  + left,
-            bottom: Math.round(vpHeight) + top
+            right:  (Math.round(vpWidth) / scale)  + left,
+            bottom: (Math.round(vpHeight) / scale) + top
         };
     },
 
