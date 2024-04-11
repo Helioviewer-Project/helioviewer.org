@@ -53,6 +53,7 @@ var TileLayer = Layer.extend(
         var dateDiff 	   = new Date(+new Date() - 60*60*1000);
         this.baseDiffTime  = (typeof baseDiffTime == 'undefined' ? $('#date').val()+' '+$('#time').val() : baseDiffTime);
         this.name          = name;
+        this.tileVisibilityRange = {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0};
     },
 
     updateTileVisibilityRange: function (vpCoords) {
@@ -92,7 +93,15 @@ var TileLayer = Layer.extend(
             xEnd   : Math.round((vp.right  / ts) - 1),
             yEnd   : Math.round((vp.bottom / ts) - 1)
         };
-        this.tileLoader.updateTileVisibilityRange(tileVisibilityRange, this.loaded);
+
+        // Only load new tiles if anything has changed
+        if ((this.tileVisibilityRange.xStart != tileVisibilityRange.xStart)
+         || (this.tileVisibilityRange.xEnd   != tileVisibilityRange.xEnd)
+         || (this.tileVisibilityRange.yStart != tileVisibilityRange.yStart)
+         || (this.tileVisibilityRange.yEnd   != tileVisibilityRange.yEnd)) {
+            this.tileLoader.updateTileVisibilityRange(tileVisibilityRange, this.loaded);
+            this.tileVisibilityRange = tileVisibilityRange;
+        }
     },
 
     /**
