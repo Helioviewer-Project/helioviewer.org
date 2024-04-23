@@ -76,8 +76,12 @@
     line-height: 0.66em;
 }
 #zoomControls #zoom-in-button  {
+    justify-content:center;
+    align-items:center;
+    display:flex;
     top: 35px;
 }
+
 
 #zoomControls #center-button {
                 position: relative;
