@@ -45,6 +45,11 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
                 new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
                     'CCMC', ccmcTreeConf['markers_visible'], ccmcTreeConf['labels_visible'], ccmcTreeConf['layer_available_visible'], {"action": "events", "sources": "CCMC"})
             );
+
+            this.addEventLayer(
+                new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
+                    'RHESSI', true, true, {"action": "events", "sources": "RHESSI"})
+            );
         }
     },
 
