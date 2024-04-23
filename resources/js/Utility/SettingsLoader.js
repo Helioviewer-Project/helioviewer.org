@@ -229,7 +229,11 @@ var SettingsLoader = (
                         "labels_visible":true,
                         "layer_available_visible":true,
                         "layers": [],
-                    }
+                    },
+                    "tree_RHESSI": {
+                        "visible": true,
+                        "layers": [],
+                    },
                 },
                 "eventLabels": true,
                 "imageScale" : serverSettings.defaultImageScale,
