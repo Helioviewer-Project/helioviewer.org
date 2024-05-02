@@ -161,16 +161,12 @@ var SettingsLoader = (
                         "open": false
                     }
                 },
-                "events": {
+                "events_v2": {
                     "tree_HEK": {
                         "visible": true,
                         "layers": [],
                     },
                     "tree_CCMC": {
-                        "visible": true,
-                        "layers": [],
-                    },
-                    "tree_DONKI": {
                         "visible": true,
                         "layers": [],
                     }

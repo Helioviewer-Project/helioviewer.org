@@ -334,7 +334,7 @@ var UserLayersPresets = Class.extend({
         //Add events
         if($('input.item-events').is(':checked')){
 			var eventLayerArray = [];
-			let events = Helioviewer.userSettings.get("state.events");
+			let events = Helioviewer.userSettings.get("state.events_v2");
 	        Object.keys(events).forEach((section) => {
 				eventLayerArray = eventLayerArray.concat(events[section].layers)
 			});

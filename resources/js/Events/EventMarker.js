@@ -294,11 +294,15 @@ var EventMarker = Class.extend(
 
     setVisibility: function (visible) {
         if (visible) {
-            this.eventRegionDomNode.show();
+            if(this.eventRegionDomNode) {
+                this.eventRegionDomNode.show();
+            }
             this.eventMarkerDomNode.show();
         }
         else {
-            this.eventRegionDomNode.hide();
+            if(this.eventRegionDomNode) {
+                this.eventRegionDomNode.hide();
+            }
             this.eventMarkerDomNode.hide();
         }
     },
@@ -958,7 +962,43 @@ var EventMarker = Class.extend(
 		s = s.replace(/u00b2/g, "²");
 
 		return s;
-    }
+    },
+
+    /**
+     * Emphasize label of the marker, 
+     */
+    emphasize: function() {
+        this.eventMarkerDomNode.css('zIndex', '997');
+        this._label.addClass("event-label-hover");
+    },
+
+    /**
+     * deEmphasize label of the marker, 
+     */
+    deEmphasize: function() {
+        this.eventMarkerDomNode.css('zIndex', this._zIndex);
+        this._label.removeClass("event-label-hover");
+    },
+
+    /**
+     * Checks if the marker belongs to given FRM,
+     * @param {string} frmName, name of FRM, internally handles underscored frmNames as well
+     * @returns {booelan} 
+     */
+    belongsToFrm: function(frmName) {
+        // Usually frmNames has _ for space
+        let frmNameNonUnderScored = frmName.replace("_"," ");
+        return this.event.name == frmName || this.event.name == frmNameNonUnderScored;
+    },
+
+    /**
+     * Checks if the marker belongs to event type,
+     * @param {string} eventType, event type is the pin of event data
+     * @returns {booelan} 
+     */
+    belongsToEventType: function(eventType) {
+        return this.event.pin == eventType;
+    },
 
 });
 
