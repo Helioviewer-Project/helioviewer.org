@@ -337,12 +337,12 @@ var UserSettings = Class.extend(
         }
 
         if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers == 'None') {
-            Object.keys(this.get("state.events")).forEach((section) => {
-                this.set("state.events." + section + ".layers", [])
+            Object.keys(this.get("state.events_v2")).forEach((section) => {
+                this.set("state.events_v2." + section + ".layers", [])
             });
         }else if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
-            Object.keys(this.get("state.events")).forEach((section) => {
-                this.set("state.events." + section + ".layers", this._parseURLStringEvents(urlSettings.eventLayers))
+            Object.keys(this.get("state.events_v2")).forEach((section) => {
+                this.set("state.events_v2." + section + ".layers", this._parseURLStringEvents(urlSettings.eventLayers))
             });
         }
 
@@ -457,7 +457,7 @@ var UserSettings = Class.extend(
 
         if ( typeof eventLayerArray == "undefined" ) {
             eventLayerArray = [];
-            let events = this.get("state.events");
+            let events = this.get("state.events_v2");
             Object.keys(events).forEach((section) => {
                 if (events[section].hasOwnProperty('layers')) {
                     eventLayerArray = eventLayerArray.concat(events[section].layers)

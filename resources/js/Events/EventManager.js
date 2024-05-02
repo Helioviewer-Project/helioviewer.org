@@ -84,7 +84,7 @@ var EventManager = Class.extend({
     },
 
     _getCheckedEvents: function () {
-        return Helioviewer.userSettings.get("state.events." + this._uniqueId + ".layers");
+        return Helioviewer.userSettings.get("state.events_v2." + this._uniqueId + ".layers");
     },
 
     /**
@@ -191,17 +191,31 @@ var EventManager = Class.extend({
             });
         });
         this._events = all_events;
-
         $.each( this._events, function(i, event) {
             if ( typeof self._eventTypes[event['pin']] != 'undefined' ) {
-                self._eventMarkers.push(
-                    new EventMarker(eventGlossary,
-                        self._eventTypes[event['pin']]._eventFRMs[event['name']],
-                        event, i+1)
-                );
+
+                let parentFRM  = self._eventTypes[event['pin']]._eventFRMs[event['name']];
+                let eventMarker = new EventMarker(eventGlossary, parentFRM, event, i+1);
+
+                self._eventMarkers.push(eventMarker);
             }
         });
         this._toggleEvents();
+    },
+
+    /**
+     * @description generate event instance id from event variables from backend
+     * @param {string} evenType of eventInstance
+     * @param {string} frmName of eventInstance
+     * @param {string} eventID of eventInstance, this id is not css or jquery friendly , that is why we need base64 encode it to make it friendly
+     * @returns {string} generate event instance id
+     */
+    _makeEventInstanceTreeNodeID: function(eventType, frmName, eventID) {
+
+        let escapedFrmName = this._escapeInvalidCssChars(frmName);
+        let encodedEventID = this._escapeInvalidCssChars(btoa(eventID));
+
+        return `${eventType}--${escapedFrmName}--${encodedEventID}`;
     },
 
     /**
@@ -227,9 +241,13 @@ var EventManager = Class.extend({
                 event_type_arr[0] = event_type_arr[0].slice(0,-1);
             }
 
+            // console.log(event_type_arr);
             obj = Object();
             obj['data']     = event_type_arr[0];
-            obj['attr']     = { 'id' : event_type_arr[1] };
+            obj['attr']     = {
+                'id' : event_type_arr[1],
+                'hvtype': 'event_type',
+            };
             obj['state']    = 'open';
             obj['children'] = [];
 
@@ -240,18 +258,30 @@ var EventManager = Class.extend({
                 let group_count = group.data.length;
                 type_count += group_count;
 
+                // Generate event instances nodes for jstree
+                let group_children = group.data.map(d => {
+                    return {
+                        'data': d.label,
+                        'attr': {
+                            'id': self._makeEventInstanceTreeNodeID(event_type_arr[1], group.name, d.id),
+                            'hvtype': 'event_instance',
+                        },
+                        'children':[]
+                    }
+                });
+
                 count_str = '';
                 if ( group_count > 0 ) {
                     count_str = " ("+group_count+")";
                     self._jsTreeData[index].children.push(
                         {
                             'data': group.name+count_str,
-                            'attr':
-                                {
-                                    'id': event_type_arr[1]
-                                        + '--'
-                                        + self._escapeInvalidCssChars(group.name)
-                                }
+                            'attr': {
+                                'id': event_type_arr[1]+'--'+ self._escapeInvalidCssChars(group.name),
+                                'hvtype': 'frm'
+                            },
+                            'children': group_children,
+                            'state' : 'closed',
                         }
                     );
                 }
@@ -265,7 +295,6 @@ var EventManager = Class.extend({
 
             index++;
         });
-
 
         // Create a new EventTree object only if one hasn't already been created
         if (!self._eventTree) {
@@ -293,6 +322,7 @@ var EventManager = Class.extend({
 
     _escapeInvalidCssChars: function (selector) {
         selector = selector.replace(/ /g, "_");
+        selector = selector.replace(/=/g, "_");
         selector = selector.replace(/([\+\.\(\)])/g, '\\$1');
 
         return selector;
@@ -360,6 +390,10 @@ var EventManager = Class.extend({
     _toggleEvents: function () {
         var newState, checkedEventTypes = [], checkedFRMs = {}, self = this;
 
+        // This a tree structure, where keys are frms not partially selected
+        // values are the ids of event instances , selected under this frm inside jstree 
+        var notFullySelectedFRMSAndChildrens = {};
+
         newState = this._getCheckedEvents();
 
         // Populate checkedEventTypes and checkedFRMs to make it easier to
@@ -372,6 +406,27 @@ var EventManager = Class.extend({
             $.each ( checkedTypeObj['frms'], function(j, frmName) {
 	            var frmNameChanged = frmName.replace(/\\/g,'');
                 checkedFRMs[checkedTypeObj['event_type']].push(frmNameChanged);
+            });
+
+            // Iterate on partially selected events under frm
+            // we are going to build above state object: notFullySelectedFRMSAndChildrens
+            $.each ( checkedTypeObj['event_instances'], function(j, eventInstance) {
+	            var eventInstanceNewName = eventInstance.replace(/\\/g,'');
+                let parsedFrm = eventInstanceNewName.split("--")[1];
+                
+                // Frm for those event_instances, should be included into the visible frm list
+                if(!checkedFRMs[checkedTypeObj['event_type']].includes(parsedFrm)) {
+                    checkedFRMs[checkedTypeObj['event_type']].push(parsedFrm);
+                }
+
+                // If we haven't already seen frm , in our fake frm and childrens data, define it 
+                // or add it
+                if(!notFullySelectedFRMSAndChildrens.hasOwnProperty(parsedFrm)) {
+                    notFullySelectedFRMSAndChildrens[parsedFrm] = [eventInstanceNewName];
+                } else {
+                    notFullySelectedFRMSAndChildrens[parsedFrm].push(eventInstanceNewName);
+                }
+
             });
         });
 
@@ -386,10 +441,42 @@ var EventManager = Class.extend({
                 else {
                     // eventTypeName/frmName pair is checked
                     // so .show() this FRM's event layer
+                    let underScoredFrmName = frmName.replace(/ /g,'_');
                     if ( checkedFRMs[eventTypeName][0] == 'all' ||
-                          $.inArray(frmName.replace(/ /g,'_'), checkedFRMs[eventTypeName]) != -1 ) {
+                          $.inArray(underScoredFrmName, checkedFRMs[eventTypeName]) != -1 ) {
 
                         self._eventTypes[eventTypeName]._eventFRMs[frmName].domNode.show();
+    
+                        // For each event markers of frm , we need to make them visible. 
+                        // because we are hiding them occasionaly
+                        self._eventMarkers.filter(em => {
+                            return em.belongsToFrm(frmName) && em.belongsToEventType(eventTypeName)
+                        }).forEach(m => m.setVisibility(true));
+
+                        // if this frm is not fully selected
+                        // we are going to hide its children which are not in our checked event_instances
+                        // event_instances are the deepest level in the jstree, they are the individual markers 
+                        if(notFullySelectedFRMSAndChildrens.hasOwnProperty(underScoredFrmName)) {
+
+                            let eventsToBeShownForFRM = notFullySelectedFRMSAndChildrens[underScoredFrmName];
+
+                            let concerningEventMarkers = self._eventMarkers.forEach(em => {
+
+                                // generate jsTreeCheckBoxID from this marker
+                                // TODO _makeEventInstanceTreeNodeID can be moved to EventMarker
+                                let jsTreeCheckboxID = self._makeEventInstanceTreeNodeID(eventTypeName, underScoredFrmName, em.id);
+
+                                // if our id for this marker not in selected list
+                                let notClickedChildOfFRM = !eventsToBeShownForFRM.includes(jsTreeCheckboxID);
+                                let childToHide = em.belongsToEventType(eventTypeName) && em.belongsToFrm(frmName) && notClickedChildOfFRM;
+
+                                // please hide it
+                                if(childToHide) {
+                                    em.setVisibility(false);
+                                }
+
+                            })
+                        }
                     }
                     // eventTypeName/frmName pair is NOT checked
                     // so .hide() this FRM's event layer
@@ -401,6 +488,82 @@ var EventManager = Class.extend({
         });
 
         this.eventLabels();
+    },
+
+    /**
+     * @description emphasize markers matching the given jsTreeNodeID, this function parses jsTreeNodeID, decides it is frm or eventtype or eventinstance , then emphasize matching markers.
+     * @param {string} jsTreeNodeID. nodeIds generated when building the tree
+     * @returns void
+     */
+    emphasizeMarkers: function (jsTreeNodeID) {
+        self = this;
+        return (event) => {
+            let parts = jsTreeNodeID.split('--');
+
+            let markersToEmphasize = [];
+
+            // this is an event instance
+            if(parts.length == 3) { 
+                markersToEmphasize = this._eventMarkers.filter(em => {
+                    return jsTreeNodeID == self._makeEventInstanceTreeNodeID(em.pin, em.name, em.id);
+                });
+            }
+
+            // this is an frm
+            if(parts.length == 2) { 
+                markersToEmphasize = this._eventMarkers.filter(em => {
+                    return em.belongsToFrm(parts[1])
+                });
+            }
+
+            // this is an event type
+            if(parts.length == 1) { 
+                markersToEmphasize = this._eventMarkers.filter(em => {
+                    return em.belongsToEventType(parts[0])
+                });
+            }
+
+            markersToEmphasize.forEach(m => {
+                m.emphasize();
+            });
+        }
+    },
+
+    /**
+     * @description deEmphasize markers matching the given jsTreeNodeID, this function parses jsTreeNodeID, decides it is frm or eventtype or eventinstance , then deEmphasize matching markers.
+     * @param {string} jsTreeNodeID. nodeIds generated when building the tree
+     * @returns void
+     */
+    deEmphasizeMarkers: function (jsTreeNodeID) {
+        return (event) => {
+            let parts = jsTreeNodeID.split('--');
+            let markersToDeEmphasize = [];
+
+            // this is an event instance
+            if(parts.length == 3) { 
+                markersToDeEmphasize = this._eventMarkers.filter(em => {
+                    return jsTreeNodeID == self._makeEventInstanceTreeNodeID(em.pin, em.name, em.id);
+                });
+            }
+
+            // this is an frm
+            if(parts.length == 2) { 
+                markersToDeEmphasize = this._eventMarkers.filter(em => {
+                    return em.belongsToFrm(parts[1])
+                });
+            }
+
+            // this is an event type
+            if(parts.length == 1) { 
+                markersToDeEmphasize = this._eventMarkers.filter(em => {
+                    return em.belongsToEventType(parts[0])
+                });
+            }
+
+            markersToDeEmphasize.forEach(m => {
+                m.deEmphasize();
+            });
+        }
     },
 
     toggleEventLabels: function (event, labelsBtn) {
