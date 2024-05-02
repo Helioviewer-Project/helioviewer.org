@@ -16,8 +16,8 @@ var EventTree = Class.extend({
         this._id = id;
         this._container = container;
         this._EventManager = eventManager;
-        this._visibleEventLayerKey = "state.events." + this._id + ".visible";
-        this._activeEventLayersKey = "state.events." + this._id + ".layers";
+        this._visibleEventLayerKey = "state.events_v2." + this._id + ".visible";
+        this._activeEventLayersKey = "state.events_v2." + this._id + ".layers";
         this._selectedEventCache = new SelectedEventsCache();
 
         this._build(data);
@@ -83,6 +83,7 @@ var EventTree = Class.extend({
     },
 
     _build: function (jsTreeData) {
+
         var self = this, saved, node;
 
         this._container.jstree({
@@ -95,7 +96,9 @@ var EventTree = Class.extend({
         // Bind an event handler to each row that will trigger on hover
         $.each(jsTreeData, function(index, event_type) {
 
-            $('#'+event_type['attr'].id+' a').hover($.proxy(self.hoverOn,this), $.proxy(self.hoverOff,this));
+            // This is most upper level, event_type (like C3) in tree , we are attaching hover functionality from event_manager, 
+            // which will redirect it to concerning markers to emphisize themselves
+            $('#'+event_type['attr'].id+' > a').hover(self._EventManager.emphasizeMarkers(event_type['attr'].id), self._EventManager.deEmphasizeMarkers(event_type['attr'].id));
 
             // Dim rows that don't have associated features/events
             if ( event_type.children.length == 0 ) {
@@ -110,19 +113,30 @@ var EventTree = Class.extend({
             }
 
             $.each(event_type['children'], function(j, frm) {
-                $('#'+self._escapeInvalidJQueryChars(frm['attr'].id)+' a').hover($.proxy(self.hoverOnFRM,this), $.proxy(self.hoverOffFRM,this));
+
+                let frmID = self._escapeInvalidJQueryChars(frm['attr'].id);
+                $(`#${frmID} > a`).hover(self._EventManager.emphasizeMarkers(frmID), self._EventManager.deEmphasizeMarkers(frmID));
+
+                $.each(frm['children'], function(j, frmChild) {
+                    let frmChildrenID = self._escapeInvalidJQueryChars(frmChild['attr'].id);
+                    $(`#${frmChildrenID} > a`).hover(self._EventManager.emphasizeMarkers(frmChildrenID), self._EventManager.deEmphasizeMarkers(frmChildrenID));
+                });
+
+
             });
         });
-
 
         // Unbind event handler that normally triggers when checkboxes are checked/unchecked
         // because we're about to do that a lot
         this._container.unbind("change_state.jstree", $.proxy(this._treeChangedState, this));
 
         // Loop over saved eventLayer state, checking the appropriate checkboxes to match.
-        saved = self.getSavedEventLayers().concat(this._selectedEventCache.get());
+        let savedEventLayers = this.getSavedEventLayers();
+        let cachedEventLayers = this._selectedEventCache.get();
 
-        $.each(saved, function(i,eventLayer) {
+        saved = savedEventLayers.concat(cachedEventLayers);
+
+        saved.forEach(eventLayer => {
             if (eventLayer.frms[0] == 'all') {
                 node = "#"+eventLayer.event_type;
                 if ( $(node).length != 0 ) {
@@ -130,16 +144,52 @@ var EventTree = Class.extend({
                 }
             }
             else {
+
                 $.each(eventLayer.frms, function(j,frm) {
                     node = "#"+eventLayer.event_type+"--"+frm;
                     if ( $(node).length != 0 ) {
-                        self._selectedEventCache.remove(eventLayer.event_type, frm);
+                        // If the node is there ,we don't need to remember it is checked 
+                        // just remove it from the cached checked frms
+                        self._selectedEventCache.removeFRM(eventLayer.event_type, frm);
                         self.jstreeFunc("check_node", node);
                     } else {
-                        // It's possible that we had a specific event type selected,
-                        // then the observation time changes so that we have nothing selected.
+                        // It's possible that we had a specific event_type and FRM selected,
+                        // then the observation time changes , we still have the event_type node but not FRM node
                         // The user had this specific FRM selected, so we should remember it for next time its available instead of defaulting to "all"
-                        self._selectedEventCache.add(eventLayer.event_type, frm);
+                        self._selectedEventCache.addFRM(eventLayer.event_type, frm);
+                    }
+                });
+
+                // These are the event_instances, which are belongs to some frm, but not fully selected
+                // We are here checking them in jstree and also we are opening their parent frm, to be able to show them selected
+                eventLayer.event_instances.forEach(eI => {
+
+                    let eventInstanceNodeID = "#"+eI;
+                    let splitted = eI.split("--");
+                    let parentFrmNode = "#"+splitted[0]+"--"+splitted[1];
+
+                    if( $(eventInstanceNodeID).length != 0) {
+
+                        // console.log(`${eventInstanceNodeID} is there removing from cache`);
+
+                        // first get frm from id and parentFrmNode to open it
+                        self.jstreeFunc("open_node", parentFrmNode);
+
+                        // If the node is there ,we don't need to remember it is checked 
+                        // just remove it from the cached checked frms
+                        self._selectedEventCache.removeEventInstance(eventLayer.event_type, eI);
+
+                        // Now check that node and open its parent frm node
+                        self.jstreeFunc("check_node", eventInstanceNodeID);
+
+                    } else {
+
+                        // console.log(`${eventInstanceNodeID} is not there, adding to the cache`);
+
+                        // It's possible that we had a specific event_type and Event Instance selected,
+                        // then the observation time changes , we still have the event_type node but not Event Instance node
+                        // The user had this specific Event Instance selected, so we should remember it for next time
+                        self._selectedEventCache.addEventInstance(eventLayer.event_type, eI);
                     }
                 });
             }
@@ -190,27 +240,37 @@ var EventTree = Class.extend({
 
         this._container.jstree("get_checked",null,false).each(
             function () {
-                var eventLayer, event_type, frms;
+                var eventLayer, event_type, frms, frmsChildrens;
+                frms = [];
+                frmsChildrens = [];
                 // If there is no current data in this checked event dropdown, then default to all
                 if (this.classList.contains("empty-element")) {
                     frms = ["all"];
                 } else {
-                    // If the selected item is for a specific FRM, then specify that FRM here.
-                    let frm = EventTree._getFrmFromId(this.id);
-                    if (frm != null) {
-                        frms = [frm];
-                    }
-                    else {
-                        // At this point the selected item is not empty, and since it's not a specific FRM, it means all FRMs are selected.
-                        // In this case we want to specify each individual FRM. This handles the case where all items shown in the UI are checked, which may be different from all items available when a movie is created.
-                        // Check for checked subitems that are checked in the group
-                        frms = [];
+
+                    // Event type is checked
+                    if ($(this).attr('hvtype') == "event_type") {
+                        // add all frms below it
                         $(this).find(".jstree-checked").each(((idx, el) => {
                             // Grab the FRM on each checked subitem
-                            frms.push(EventTree._getFrmFromId(el.id));
+                            if ($(el).attr('hvtype') == "frm") {
+                                frms.push(EventTree._getFrmFromId(el.id));
+                            }
                         }))
                     }
+
+                    // If this is a frm just get the frm
+                    if ($(this).attr('hvtype') == "frm") {
+                        frms.push(EventTree._getFrmFromId(this.id));
+                    }
+
+                    // If this is a event_instance
+                    if ($(this).attr('hvtype') == "event_instance") {
+                        // Lets get the checked ones
+                        frmsChildrens.push(this.id);
+                    }
                 }
+
                 event_type = EventTree._getEventTypeFromId(this.id);
 
                 frms.forEach((frm) => {
@@ -219,15 +279,42 @@ var EventTree = Class.extend({
 
                     // New event type to add to array
                     if ( index == -1 ) {
-                        eventLayer = { 'event_type' : event_type,
-                                            'frms' : [frm],
-                                            'open' : 1};
+                        eventLayer = { 
+                            'event_type' : event_type,
+                            'frms' : [frm],
+                            'event_instances' : [],
+                            'open' : 1
+                        };
                         checked.push(eventLayer);
                         event_types.push(event_type);
                     }
                     // Append FRM to existing event type in array
                     else {
-                        checked[index].frms.push(frm);
+                        // Only put if it is not there
+                        if(!checked[index].frms.includes(frm)) {
+                            checked[index].frms.push(frm);
+                        }
+                    }
+                })
+
+                frmsChildrens.forEach((fc) => {
+                    // Determine if an entry for this event type already exists
+                    index = $.inArray(event_type, event_types)
+
+                    // New event type to add to array
+                    if ( index == -1 ) {
+                        eventLayer = { 
+                            'event_type' : event_type,
+                            'frms' : [],
+                            'event_instances' : [fc],
+                            'open' : 1
+                        };
+                        checked.push(eventLayer);
+                        event_types.push(event_type);
+                    }
+                    // Append FRM to existing event type in array
+                    else {
+                        checked[index].event_instances.push(fc);
                     }
                 })
             }
@@ -238,138 +325,7 @@ var EventTree = Class.extend({
 
         // Show/Hide events to match new state of the checkboxes
         this._EventManager._toggleEvents(checked);
+
         $(document).trigger("change-feature-events-state");
     },
-
-    /**
-     * Hides all events that are not related to the item being hovered over.
-     * i.e. if the viewport shows CMEs and Solar flares, this hoverOn may trigger when
-     * hovering over the Solar Flare label. This will hide all CMEs and other events so that
-     * only Solar Flares are visible in the viewport while the mouse is hovering over the Solar Flares label.
-     *
-     * This should only happen if the item being hovered over is checked, otherwise this function will have no effect.
-     * @param {Event} event
-     */
-    hoverOn: function (event) {
-        // Find the list item that is being hovered over
-        let trigger = $(event.target).parents('li');
-        if (trigger.length > 0) {
-            let hoverItem = trigger[0];
-            // Get the id of the DIV containing target event markers
-            let targetId = hoverItem.id.replace('--', '__');
-            // Get the div containing the target event markers
-            var emphasisNodes = $(`[id^=${targetId}]`);
-            // If the item is checked, then proceed to hide all other event marker divs.
-            // jstree-undetermined handles the case where the group label is hovered over instead of an individual event type.
-            if (hoverItem.classList.contains('jstree-checked') || hoverItem.classList.contains('jstree-undetermined')) {
-                var eventLayerNodes, found;
-                eventLayerNodes = $(".event-container > div.event-layer");
-
-                $.each( eventLayerNodes, function(i, obj) {
-                    found = false;
-                    $.each( emphasisNodes, function(j, emphObj) {
-                        if ( $(obj)[0].id == $(emphObj)[0].id ) {
-                            found = true;
-                        }
-                    });
-
-                    if ( found === false && emphasisNodes.length > 0 ) {
-                        $(obj).css({'opacity':'0'});
-                        $('.movie-viewport-icon').hide();
-                    }
-                    else {
-                        $(obj).css({'opacity':'1.00'});
-                    }
-                });
-                var className = 'point_type_'+this['attr'].id;
-                if(timelineRes == 'm'){
-                    $(".highcharts-series > rect:not(."+className+")").hide();
-                }
-            }
-        }
-    },
-
-    hoverOff: function (event) {
-        $(".event-container > div.event-layer").css({'opacity':'1.0'});
-		$(".highcharts-series > rect").show();
-		$('.movie-viewport-icon').show();
-    },
-
-    hoverOnFRM: function (event) {
-        let $target = $('#'+this['attr'].id);
-
-        if ($target.hasClass('jstree-checked')) {
-            var emphasisNode, deEmphasisNodes, eventTypeAbbr, eventLayerNodes, found, eventTypeAbbrName;
-            eventTypeAbbr = this['attr'].id.split("--")[0];
-            eventTypeAbbrName = this['attr'].id.split("--")[1];
-
-            emphasisNode  = $("#"+this['attr'].id.replace("--", "__"));
-            deEmphasisNodes = $("[id^="+eventTypeAbbr+"__]");
-
-            eventLayerNodes = $(".event-container > div.event-layer");
-
-            $.each( eventLayerNodes, function(i, obj) {
-
-                if ( $(obj)[0].id == $(emphasisNode)[0].id ) {
-                    $(obj).css({'opacity':'1.00'});
-                }
-                else {
-                    found = false;
-                    $.each( deEmphasisNodes, function(j, deEmphObj) {
-                        if ( $(obj)[0].id == $(deEmphObj)[0].id ) {
-                            found = true;
-                        }
-                    });
-                    if ( found === true ) {
-                        //$(obj).css({'opacity':'0.50'});
-                        $(obj).css({'opacity':'0'});
-                    }
-                    else {
-                        $(obj).css({'opacity':'0'});
-                    }
-                    $('.movie-viewport-icon').hide();
-                }
-            });
-            if(timelineRes == 'm'){
-                $(".highcharts-series > rect:not(.point_name_"+eventTypeAbbrName+")").hide();
-            }
-        }
-    },
-
-    hoverOffFRM: function (event) {
-        let $target = $('#'+this['attr'].id);
-        if ($target.hasClass('jstree-checked')) {
-            var emphasisNode, deEmphasisNodes, eventTypeAbbr, eventLayerNodes, found;
-            eventTypeAbbr = this['attr'].id.split("--")[0];
-
-            emphasisNode  = $("#"+this['attr'].id.replace("--", "__"));
-            deEmphasisNodes = $("[id^="+eventTypeAbbr+"__]");
-
-            eventLayerNodes = $(".event-container > div.event-layer");
-
-            $.each( eventLayerNodes, function(i, obj) {
-
-                if ( $(obj)[0].id == $(emphasisNode)[0].id ) {
-                    $(obj).css({'opacity':'1.0'});
-                }
-                else {
-                    found = false;
-                    $.each( deEmphasisNodes, function(j, deEmphObj) {
-                        if ( $(obj)[0].id == $(deEmphObj)[0].id ) {
-                            found = true;
-                        }
-                    });
-                    if ( found === true ) {
-                        //$(obj).css({'opacity':'0.50'});
-                        $(obj).css({'opacity':'1.0'});
-                    }
-                    else {
-                        $(obj).css({'opacity':'1.0'});
-                    }
-                    $('.movie-viewport-icon').show();
-                }
-            });
-            $(".highcharts-series > rect").show();
-        }
-    }
 });
