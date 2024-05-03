@@ -987,7 +987,7 @@ var EventMarker = Class.extend(
      */
     belongsToFrm: function(frmName) {
         // Usually frmNames has _ for space
-        let frmNameNonUnderScored = frmName.replace("_"," ");
+        let frmNameNonUnderScored = frmName.replaceAll("_"," ");
         return this.event.name == frmName || this.event.name == frmNameNonUnderScored;
     },
 
