@@ -332,7 +332,6 @@ var EventMarker = Class.extend(
         }
 
         if ( event.type == 'toggle-event-label-on' ) {
-            this.eventMarkerDomNode.css('zIndex', '997');
             this._labelVisible = true;
             this._label.show();
             Helioviewer.userSettings.set("state.eventLabels", true);
@@ -340,7 +339,6 @@ var EventMarker = Class.extend(
         else if ( event.type == 'toggle-event-label-off' ) {
             this._labelVisible = false;
             this._label.hide();
-            this.eventMarkerDomNode.css('zIndex', this._zIndex);
             Helioviewer.userSettings.set("state.eventLabels", false);
         }
         else if ( event.type == 'mouseenter' ) {
@@ -357,8 +355,8 @@ var EventMarker = Class.extend(
             if ( !this._labelVisible) {
                 this._label.hide();
             }
-            this._label.removeClass("event-label-hover");
             this.eventMarkerDomNode.css('zIndex', this._zIndex);
+            this._label.removeClass("event-label-hover");
 
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
 	            $(".highcharts-series > rect").show();
