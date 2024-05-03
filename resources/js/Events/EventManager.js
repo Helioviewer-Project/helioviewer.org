@@ -40,7 +40,7 @@ var EventManager = Class.extend({
         this._uniqueId = treeid
 
         this.updateRequestTime();
-		setTimeout($.proxy(this._queryEventFRMs, this), 100);
+        setTimeout($.proxy(this._queryEventFRMs, this), 100);
 
         // Set up javascript event handlers
         $(document).bind("fetch-eventFRMs", $.proxy(this._queryEventFRMs, this));
@@ -241,7 +241,6 @@ var EventManager = Class.extend({
                 event_type_arr[0] = event_type_arr[0].slice(0,-1);
             }
 
-            // console.log(event_type_arr);
             obj = Object();
             obj['data']     = event_type_arr[0];
             obj['attr']     = {
@@ -261,7 +260,7 @@ var EventManager = Class.extend({
                 // Generate event instances nodes for jstree
                 let group_children = group.data.map(d => {
                     return {
-                        'data': d.label,
+                        'data': d.short_label ?? d.label,
                         'attr': {
                             'id': self._makeEventInstanceTreeNodeID(event_type_arr[1], group.name, d.id),
                             'hvtype': 'event_instance',
@@ -404,16 +403,16 @@ var EventManager = Class.extend({
 
             checkedFRMs[checkedTypeObj['event_type']] = [];
             $.each ( checkedTypeObj['frms'], function(j, frmName) {
-	            var frmNameChanged = frmName.replace(/\\/g,'');
+                var frmNameChanged = frmName.replace(/\\/g,'');
                 checkedFRMs[checkedTypeObj['event_type']].push(frmNameChanged);
             });
 
             // Iterate on partially selected events under frm
             // we are going to build above state object: notFullySelectedFRMSAndChildrens
             $.each ( checkedTypeObj['event_instances'], function(j, eventInstance) {
-	            var eventInstanceNewName = eventInstance.replace(/\\/g,'');
+                var eventInstanceNewName = eventInstance.replace(/\\/g,'');
                 let parsedFrm = eventInstanceNewName.split("--")[1];
-                
+
                 // Frm for those event_instances, should be included into the visible frm list
                 if(!checkedFRMs[checkedTypeObj['event_type']].includes(parsedFrm)) {
                     checkedFRMs[checkedTypeObj['event_type']].push(parsedFrm);
