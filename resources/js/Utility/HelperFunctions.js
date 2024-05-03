@@ -427,6 +427,7 @@ var parseEventString = function (str) {
     return {
         event_type : params[0],
         frms       : frms,
+        event_instances : [],
         open       : Boolean(parseInt(params[2], 10))
     };
 };
