@@ -6,11 +6,11 @@ Enter a summary of the changes made, here.
 
 # Testing
 
-Enter the browser versions this change was tested on below.
+Enter the browsers and the output modes (minimal, normal, embed) this change was tested
 
-| browser | version  |
-| ------- | -------- |
-| firefox | untested |
-| chrome  | untested |
-| safari  | untested |
-| edge    | untested |
+| *browser* | *normal* | *minimal* | *embed* | 
+| ------- | -------- | -------- | -------- |
+| firefox | untested | untested | untested |
+| chrome  | untested | untested | untested |
+| safari  | untested | untested | untested |
+| edge    | untested | untested | untested |
