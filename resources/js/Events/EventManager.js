@@ -511,7 +511,7 @@ var EventManager = Class.extend({
             // this is an frm
             if(parts.length == 2) { 
                 markersToEmphasize = this._eventMarkers.filter(em => {
-                    return em.belongsToFrm(parts[1])
+                    return em.belongsToFrm(parts[1]);
                 });
             }
 
