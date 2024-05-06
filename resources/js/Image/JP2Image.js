@@ -151,8 +151,11 @@ var JP2Image = Class.extend(
         // "flash" by fading out and back in to let the user know it changed.
         if (notification.length > 0) {
             let text = $(notification).find('.jGrowl-message');
-            text.text(message);
-            notification.fadeOut(250, () => {notification.fadeIn(250);})
+            notification.fadeOut(250, () => {
+                // Update the tet after the old notification has faded out.
+                text.text(message);
+                notification.fadeIn(250);
+            })
         } else {
             // Else the notification didn't exist already, create a new notification.
             helioviewer.messageConsole.warn(
