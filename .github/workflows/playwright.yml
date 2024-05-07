@@ -24,6 +24,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: 'Helioviewer-Project/helioviewer.org-docker'
+        path: 'compose'
         sparse-checkout: |
           compose.yaml
         sparse-checkout-cone-mode: false
@@ -32,7 +33,7 @@ jobs:
         echo $(pwd)
         echo $(ls)
     - name: Start local Helioviewer environment
-      run: docker compose up -d --wait
+      run: docker compose -f compose/compose.yaml up -d --wait
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
