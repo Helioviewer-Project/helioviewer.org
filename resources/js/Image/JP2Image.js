@@ -107,11 +107,11 @@ var JP2Image = Class.extend(
         let obstTime = helioviewer.timeControls.getDate();
         // Get the time difference between the two times in seconds
         let delta = Math.abs(imageDate.getTime() - obstTime.getTime()) / 1000;
-        // Get the preset threshold in seconds (TODO: Add a user setting)
-        let threshold = 10 * 60; // 10 minutes
+        // Get the preset threshold in seconds
+        let threshold = Helioviewer.userSettings.get("thresholds.obstime");
         // Compare the time difference to the threshold
         // If the time difference is over the threshold, create an alert.
-        if (delta > threshold) {
+        if (delta >= threshold) {
             this._notifyStaleImage(metadata.name, delta);
         } else {
             // If the newest image isn't stale, but the notification is showing
