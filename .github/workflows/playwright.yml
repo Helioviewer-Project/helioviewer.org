@@ -24,6 +24,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: 'Helioviewer-Project/helioviewer.org-docker'
+        ref: 'api-before-cli'
         path: 'compose'
         sparse-checkout: |
           compose.yaml
@@ -37,9 +38,11 @@ jobs:
       run: |
         mv compose/compose.yaml .
         docker compose up -d --wait
-    - name: Docker logs
+    - name: Show docker compose logs
       if: always()
-      run: docker compose logs
+      run: |
+        docker compose logs
+        cat compose.yaml
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
