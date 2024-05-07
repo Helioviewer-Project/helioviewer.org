@@ -205,6 +205,15 @@ var SettingsLoader = (
                 type: 'continuous',
                 focus: 'cursor'
             },
+            thresholds: {
+                /**
+                 * The maximum time difference in seconds between an image and
+                 * the chosen observation time. If the time delta exceeds this
+                 * amount, then a warning is created.
+                 * default: 6 hours
+                 */
+                obstime: 21600
+            },
             version: serverSettings.version
         };
     }
