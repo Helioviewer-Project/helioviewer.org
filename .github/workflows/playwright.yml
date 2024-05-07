@@ -14,7 +14,7 @@ jobs:
       with:
         submodules: true
         path: 'helioviewer.org'
-    - name: Checkout the latest API
+    - name: Checkout the latest Helioviewer API
       uses: actions/checkout@v4
       with:
         repository: 'Helioviewer-Project/api'
@@ -23,11 +23,14 @@ jobs:
     - name: Checkout the Dockerfile for local Helioviewer
       uses: actions/checkout@v4
       with:
+        repository: 'Helioviewer-Project/helioviewer.org-docker'
         sparse-checkout: |
           compose.yaml
         sparse-checkout-cone-mode: false
     - name: Print current directory
-      run: ls
+      run: |
+        echo $(pwd)
+        echo $(ls)
     - name: Start local Helioviewer environment
       run: docker compose up -d --wait
     - uses: actions/setup-node@v4
