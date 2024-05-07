@@ -16,7 +16,7 @@ test('has title', async ({ page }) => {
  * sure the page appears how we expect it to appear.
  */
 test('Displays initial AIA 304 Image', async ({ page }) => {
-  await page.goto('http://localhost:8080/?debug');
+  await page.goto('http://localhost:8080/');
   // Open the Helioviewer Sidebar
   // Wait for the UI to finish loading before proceeding
   // TODO: This should not be a requirement to use Helioviewer.
