@@ -24,7 +24,6 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: 'Helioviewer-Project/helioviewer.org-docker'
-        ref: 'api-before-cli'
         path: 'compose'
         sparse-checkout: |
           compose.yaml
@@ -33,6 +32,14 @@ jobs:
       run: |
         echo $(pwd)
         echo $(ls)
+    - name: Make writeable configuration files
+      run: |
+        touch api/install/settings/settings.cfg
+        chmod o+rw api/install/settings/settings.cfg
+        touch api/settings/Config.ini
+        chmod o+rw api/settings/Config.ini
+        touch api/settings/Config.php
+        chmod o+rw api/settings/Config.php
     - name: Start local Helioviewer environment
       id: docker
       run: |
