@@ -28,13 +28,14 @@ jobs:
         sparse-checkout: |
           compose.yaml
         sparse-checkout-cone-mode: false
-      run: mv compose/compose.yaml .
     - name: Print current directory
       run: |
         echo $(pwd)
         echo $(ls)
     - name: Start local Helioviewer environment
-      run: docker compose up -d --wait
+      run: |
+        mv compose/compose.yaml .
+        docker compose up -d --wait
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
