@@ -161,7 +161,7 @@ var JP2Image = Class.extend(
             helioviewer.messageConsole.warn(
                 message,
                 {
-                    header: 'Stale Image',
+                    header: 'Note',
                     group: group,
                     sticky: true
                 }
