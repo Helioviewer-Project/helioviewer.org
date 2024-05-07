@@ -38,7 +38,7 @@ jobs:
         mv compose/compose.yaml .
         docker compose up -d --wait
     - name: Docker logs
-      if: steps.docker.outcome == 'failure'
+      if: always()
       run: docker compose logs
     - uses: actions/setup-node@v4
       with:
