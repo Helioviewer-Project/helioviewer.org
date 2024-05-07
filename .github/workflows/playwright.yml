@@ -12,8 +12,6 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Set up local Helioviewer environment
@@ -25,11 +23,17 @@ jobs:
         # Checkout the branch being tested
         cd helioviewer.org && git checkout $GITHUB_REF && cd ..
         docker compose up -d --wait
+    - name: Install dependencies
+      run: |
+        cd helioviewer.org-docker/helioviewer.org
+        npm ci
     - name: Run Playwright tests
-      run: npx playwright test
+      run: |
+        cd helioviewer.org-docker/helioviewer.org
+        npx playwright test
     - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: playwright-report
-        path: playwright-report/
+        path: helioviewer.org-docker/helioviewer.org/playwright-report/
         retention-days: 30
