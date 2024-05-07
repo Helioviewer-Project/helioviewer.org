@@ -214,8 +214,6 @@ var TimeControls = Class.extend(
     _initEventHandlers: function () {
         this._backBtn.bind('click', $.proxy(this.timePrevious, this));
         this._forwardBtn.bind('click', $.proxy(this.timeNext, this));
-        this._timeInput.bind('change', $.proxy(this._onTextFieldChange, this));
-        this._dateInput.bind('change', $.proxy(this._onTextFieldChange, this));
         $("#timeNowBtn").click($.proxy(this.goToPresent, this));
 
         $(document).bind('timestep-backward', $.proxy(this.timePrevious, this))
@@ -269,11 +267,11 @@ var TimeControls = Class.extend(
      * Initializes the observation time datepicker
      */
     _initDatePicker: function () {
-        var btnId, btn, self = this;
         this._dateInput._flatpickr = this._dateInput.flatpickr({
             allowInput: true,
             dateFormat: 'Y/m/d',
-            disableMobile: true
+            disableMobile: true,
+            onChange: $.proxy(this._onTextFieldChange, this)
         });
 
         //TimePicker
@@ -286,7 +284,8 @@ var TimeControls = Class.extend(
             minuteIncrement: 1,
             secondIncrement: 1,
             disableMobile: true,
-            position: "above"
+            position: "above",
+            onChange: $.proxy(this._onTextFieldChange, this)
         });
     },
 
