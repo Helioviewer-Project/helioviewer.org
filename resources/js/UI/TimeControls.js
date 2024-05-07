@@ -267,12 +267,22 @@ var TimeControls = Class.extend(
      * Initializes the observation time datepicker
      */
     _initDatePicker: function () {
+        let createCloseFunction = (element) => {
+            return (event) => {
+                if (event.key == "Enter") {
+                    element._flatpickr.close();
+                }
+            }
+        };
+
         this._dateInput._flatpickr = this._dateInput.flatpickr({
             allowInput: true,
             dateFormat: 'Y/m/d',
             disableMobile: true,
             onChange: $.proxy(this._onTextFieldChange, this)
         });
+
+        this._dateInput.keydown(createCloseFunction(this._dateInput));
 
         //TimePicker
         this._timeInput._flatpickr = this._timeInput.flatpickr({
@@ -287,6 +297,7 @@ var TimeControls = Class.extend(
             position: "above",
             onChange: $.proxy(this._onTextFieldChange, this)
         });
+        this._timeInput.keydown(createCloseFunction(this._timeInput));
     },
 
     /**
