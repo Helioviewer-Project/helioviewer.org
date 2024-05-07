@@ -33,12 +33,12 @@ jobs:
         echo $(pwd)
         echo $(ls)
     - name: Start local Helioviewer environment
-      id: start-docker
+      id: docker
       run: |
         mv compose/compose.yaml .
         docker compose up -d --wait
-    - name: Log docker failures
-      if: steps.start-docker.outcome == 'failure'
+    - name: Docker logs
+      if: steps.docker.outcome == 'failure'
       run: docker compose logs
     - uses: actions/setup-node@v4
       with:
