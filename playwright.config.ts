@@ -7,6 +7,14 @@ import { defineConfig, devices } from '@playwright/test';
 // require('dotenv').config();
 
 /**
+ * Test files must be prefixed with 'mobile_', 'desktop_' or 'all_'
+ */
+const Platforms = {
+  mobile: /(mobile|all)/,
+  desktop: /(desktop|all)/,
+}
+
+/**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
@@ -35,37 +43,38 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      grep: Platforms.desktop,
     },
 
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
+      grep: Platforms.desktop,
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      grep: Platforms.desktop,
+    },
+
+    {
+      name: 'edge',
+      use: { ...devices['Desktop Edge'] },
+      grep: Platforms.desktop,
     },
 
     /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+    {
+      name: 'Mobile Chrome',
+      use: { ...devices['Pixel 5'] },
+      grep: Platforms.mobile,
+    },
+    {
+      name: 'Mobile Safari',
+      use: { ...devices['iPhone 12'] },
+      grep: Platforms.mobile,
+    },
   ],
 
   /* Run your local dev server before starting the tests */

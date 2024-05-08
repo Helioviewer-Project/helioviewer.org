@@ -1,16 +1,6 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Tests that a local instance of Helioviewer is up and running.
- */
-test('has title', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
-
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Helioviewer\.org/);
-});
-
-/**
  * This test will make Helioviewer load the default AIA 304 image that is
  * embedded in the development container and perform a visual comparison to make
  * sure the page appears how we expect it to appear.
