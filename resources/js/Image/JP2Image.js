@@ -151,7 +151,7 @@ var JP2Image = Class.extend(
         // "flash" by fading out and back in to let the user know it changed.
         if (notification.length > 0) {
             let text = $(notification).find('.jGrowl-message');
-            notification.fadeOut(250, () => {
+            notification.stop().fadeOut(250, () => {
                 // Update the tet after the old notification has faded out.
                 text.text(message);
                 notification.fadeIn(250);
