@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-test('test', async ({ page }) => {
+test('Helioviewer shows a warning when the image displayed is at least 6 hours away from the observation time.', async ({ page }) => {
   await page.goto('http://localhost:8080/');
+  // The warning will appear on page load since the test environment data is always old.
+  await expect(page.getByText('The AIA 304 layer is')).toBeVisible();
   // Close the initial notifications that come up
   // The first time visit tutorial & the image warning will show
   await page.getByText('[ close all ]').click();
