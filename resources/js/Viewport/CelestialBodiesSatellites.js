@@ -127,7 +127,12 @@ var CelestialBodiesSatellites = Class.extend(
             "action"    : "getSolarBodiesGlossary"
         };
         //request data from the api
-        $.get(Helioviewer.api, params, $.proxy(this._receiveGlossary, this), "json");
+        this.glossaryReady = new Promise((resolve, reject) => {
+            $.get(Helioviewer.api, params, (glossary) => {
+                this._receiveGlossary(glossary);
+                resolve();
+            }, "json");
+        });
     },
 
     _receiveGlossary: function(glossary){
@@ -187,7 +192,7 @@ var CelestialBodiesSatellites = Class.extend(
         }
     },
 
-    _onTimeChanged: function(){
+    _onTimeChanged: async function(){
         this.currentTime = helioviewer.timeControls.getTimestamp();
         //assemble the request parameters
         var params = {
@@ -195,7 +200,11 @@ var CelestialBodiesSatellites = Class.extend(
             "time"      : this.currentTime
         };
         //request data from the api
-        $.get(Helioviewer.api, params, $.proxy(this._outputSolarBodies, this, true), "json");
+        $.get(Helioviewer.api, params, async (data) => {
+            // Glossary must be downloaded before processing data.
+            await this.glossaryReady;
+            this._outputSolarBodies(true, data);
+        }, "json");
     },
 
     _changeTimeTrajectory: function(direction,newTimestamp){
