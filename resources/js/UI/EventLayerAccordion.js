@@ -79,6 +79,21 @@ var EventLayerAccordion = Layer.extend(
         }
     },
 
+    /*
+     * TODO
+     */
+    isAllEventLayersTurnedOff: function() {
+
+        let weHaveAtLeastOneEvLabelsOn = false;
+
+        Object.entries(Helioviewer.userSettings.get('state.events_v2')).forEach(tC => {
+            weHaveAtLeastOneEvLabelsOn = weHaveAtLeastOneEvLabelsOn || tC['labels_visible']; 
+        });
+
+        return weHaveAtLeastOneEvLabelsOn;
+
+    },
+
     /**
      * TODO
      */
@@ -197,8 +212,10 @@ var EventLayerAccordion = Layer.extend(
             e.stopPropagation();
         });
 
-        let all_levels_dictated = true;
+        let all_levels_dictated = this.isAllEventLayersTurnedOff();
+
         $(document).bind("toggle-event-labels", (event) => {
+            // 
             all_levels_dictated = !all_levels_dictated;
 
             // We are going to force what it dictates
