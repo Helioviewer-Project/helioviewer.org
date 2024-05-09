@@ -27,11 +27,12 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-
         // Add the event layer
+        let hekTreeConf = Helioviewer.userSettings.getHelioViewerEventLayerSettings('HEK');
+
         this.addEventLayer(
             new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                'HEK', true, true)
+                'HEK', hekTreeConf['markers_visible'], hekTreeConf['labels_visible'], hekTreeConf['layer_available_visible'],{"action": "events", "sources": "HEK", "ar_filter": true})
         );
     },
 
@@ -39,16 +40,20 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.
      */
     _loadStartingLayers: function (layers) {
+
+        let hekTreeConf = Helioviewer.userSettings.getHelioViewerEventLayerSettings('HEK');
+
         // Add the event layer
         this.addEventLayer(
             new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                'HEK', true, Helioviewer.userSettings.get("state.eventLabels"), {"action": "events", "sources": "HEK", "ar_filter": true})
+                'HEK', hekTreeConf['markers_visible'], hekTreeConf['labels_visible'], hekTreeConf['layer_available_visible'],{"action": "events", "sources": "HEK", "ar_filter": true})
         );
 
         if (outputType != 'minimal') {
+            let ccmcTreeConf = Helioviewer.userSettings.getHelioViewerEventLayerSettings('CCMC');
             this.addEventLayer(
                 new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                    'CCMC', true, true, {"action": "events", "sources": "CCMC"})
+                    'CCMC', ccmcTreeConf['markers_visible'], ccmcTreeConf['labels_visible'], ccmcTreeConf['layer_available_visible'], {"action": "events", "sources": "CCMC"})
             );
         }
     },

@@ -29,13 +29,13 @@ var HelioviewerEventLayer = Class.extend(
      *      <b>opacity</b>     - Default opacity<br>
      * </div>
      */
-    init: function (index, date, viewportScale, name, markersVisible, labelsVisible, apiSource) {
+    init: function (index, date, viewportScale, name, markersVisible, labelsVisible, availabilityVisible, apiSource) {
 
         // Create a random id which can be used to link event layer with its corresponding event layer accordion entry
         this.id = "event-layer-" + name;
 
         $(document).trigger("create-event-layer-accordion-entry",
-            [index, this.id, name, date, true, markersVisible, labelsVisible, apiSource]
+            [index, this.id, name, date, true, markersVisible, labelsVisible,availabilityVisible, apiSource]
         );
     }
 });
