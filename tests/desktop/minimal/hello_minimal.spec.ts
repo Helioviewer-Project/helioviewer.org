@@ -1,4 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { screenshotOnFailure } from '../../util/screenshots';
+test.afterEach(screenshotOnFailure);
 
 /**
  * This test will make Helioviewer load the default AIA 304 image that is
