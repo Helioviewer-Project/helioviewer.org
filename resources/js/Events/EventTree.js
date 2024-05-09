@@ -319,7 +319,6 @@ var EventTree = Class.extend({
         $(document).trigger("change-feature-events-state");
     },
 
-
     /*TODO comments */
     toggleEmptyBranches: function(showEmptyBranches) {
         this._showEmptyBranches = showEmptyBranches;
