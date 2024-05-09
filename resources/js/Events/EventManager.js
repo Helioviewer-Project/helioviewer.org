@@ -24,7 +24,7 @@ var EventManager = Class.extend({
      *
      * @constructs
      */
-    init: function (eventGlossary, date, treeid, apiSource) {
+    init: function (eventGlossary, date, treeid, apiSource, markersVisible, labelsVisible, layerAvailableVisible) {
         this._apiSource = apiSource;
         this._eventLayers    = [];
         this._events         = [];
@@ -34,17 +34,18 @@ var EventManager = Class.extend({
         this._jsTreeData     = [];
         this._date           = date;
         this._queEvents      = false;
-        this._eventLabelsVis = Helioviewer.userSettings.get("state.eventLabels");
         this._eventGlossary  = eventGlossary;
         this._eventContainer = $('<div id="'+treeid+'-event-container" class="event-container"></div>');
         this._uniqueId = treeid
 
+        this.layerAvailableVisible = layerAvailableVisible;
+        this.labelsVisible = labelsVisible;
+        this.markersVisible = markersVisible;
         this.updateRequestTime();
         setTimeout($.proxy(this._queryEventFRMs, this), 100);
 
         // Set up javascript event handlers
         $(document).bind("fetch-eventFRMs", $.proxy(this._queryEventFRMs, this));
-        $(document).bind('toggle-event-labels',  $.proxy(this.toggleEventLabels, this));
         $(document).bind('reinit-events-list',  $.proxy(this.trigger_reinit, this));
     },
 
@@ -53,24 +54,9 @@ var EventManager = Class.extend({
     },
 
     reinit: function(date) {
-        var visState;
 
         this._eventContainer.remove();
         this._eventContainer.appendTo("#moving-container");
-
-        visState = Helioviewer.userSettings.get("state.eventLayerVisible");
-        if ( typeof visState == 'undefined') {
-            Helioviewer.userSettings.set("state.eventLayerVisible", true);
-            visState = true;
-        }
-
-        if ( visState === false && this._eventContainer.css('display') != 'none' ) {
-            $('span[id^="visibilityBtn-event-layer-"]').click();
-        }
-        else if ( visState === true && this._eventContainer.css('display') == 'none' ) {
-            $('span[id^="visibilityBtn-event-layer-"]').click();
-        }
-
 
         this._eventLayers   = [];
         this._events        = [];
@@ -81,6 +67,7 @@ var EventManager = Class.extend({
         this._resetEventTree();
 
         this._queryEventFRMs();
+
     },
 
     _getCheckedEvents: function () {
@@ -196,6 +183,9 @@ var EventManager = Class.extend({
 
                 let parentFRM  = self._eventTypes[event['pin']]._eventFRMs[event['name']];
                 let eventMarker = new EventMarker(eventGlossary, parentFRM, event, i+1);
+                
+                eventMarker.setLabelVisibility(self.labelsVisible);
+                eventMarker.setVisibility(self.markersVisible);
 
                 self._eventMarkers.push(eventMarker);
             }
@@ -297,8 +287,9 @@ var EventManager = Class.extend({
 
         // Create a new EventTree object only if one hasn't already been created
         if (!self._eventTree) {
-            self._eventTree = new EventTree(this._uniqueId, this._jsTreeData, this._treeContainer, self);
+            self._eventTree = new EventTree(this._uniqueId, this._jsTreeData, this._treeContainer, self, self.layerAvailableVisible);
         }
+
 
         self._eventTree.reload(this._jsTreeData);
         self._jsTreeData = this._jsTreeData;
@@ -448,9 +439,11 @@ var EventManager = Class.extend({
     
                         // For each event markers of frm , we need to make them visible. 
                         // because we are hiding them occasionaly
-                        self._eventMarkers.filter(em => {
-                            return em.belongsToFrm(frmName) && em.belongsToEventType(eventTypeName)
-                        }).forEach(m => m.setVisibility(true));
+                        if(self.markersVisible) {
+                            self._eventMarkers.filter(em => {
+                                return em.belongsToFrm(frmName) && em.belongsToEventType(eventTypeName)
+                            }).forEach(m => m.setVisibility(true));
+                        }
 
                         // if this frm is not fully selected
                         // we are going to hide its children which are not in our checked event_instances
@@ -485,8 +478,6 @@ var EventManager = Class.extend({
                 }
             });
         });
-
-        this.eventLabels();
     },
 
     /**
@@ -565,36 +556,39 @@ var EventManager = Class.extend({
         }
     },
 
-    toggleEventLabels: function (event, labelsBtn) {
-
-        if (typeof labelsBtn == 'undefined') {
-            labelsBtn = $('span[id^="labelsBtn-event-layer-"]');
-        }
-
-        if ( this._eventLabelsVis ) {
-            $(document).trigger('toggle-event-label-off');
-            labelsBtn.addClass('hidden');
-        }
-        else {
-            $(document).trigger('toggle-event-label-on');
-            labelsBtn.removeClass('hidden');
-        }
-
-        this._eventLabelsVis = !this._eventLabelsVis;
-        return true;
+    /* TODO comments */
+    filterID: function (name) {
+        return this._uniqueId === `tree_${name}`;
     },
 
-    eventLabels: function (event) {
-        this._eventLabelsVis = Helioviewer.userSettings.get("state.eventLabels");
+    /* TODO comments */
+    toggleLabels(labelsVisible) {
+        // it is not a bad thing to preserve state
+        this.labelsVisible = labelsVisible;
+        // populate all the markers, about the visibility change
+        this._eventMarkers.forEach(m => m.setLabelVisibility(labelsVisible));
+    },
 
-        if ( this._eventLabelsVis ) {
-            $(document).trigger('toggle-event-label-on');
-        }
-        else {
-            $(document).trigger('toggle-event-label-off');
-        }
+    /* TODO comments */
+    toggleMarkers(markersVisible) {
+        // it is not a bad thing to preserve state
+        this.markersVisible = markersVisible;
 
-        return true;
+        // populate all the markers, about the visibility change
+        this._eventMarkers.forEach(m => m.setVisibility(markersVisible));
+
+        // apply events to the viewport
+        this._toggleEvents();
+    },
+
+    /* TODO comments */
+    toggleNonAvailableLayers(layerAvailableVisible) {
+
+        // it is not a bad thing to preserve state
+        this.layerAvailableVisible = layerAvailableVisible;
+
+        // toggle event empty nodes
+        this._eventTree.toggleEmptyBranches(this.layerAvailableVisible);
+
     }
-
 });

@@ -42,8 +42,6 @@ var EventMarker = Class.extend(
         this.createMarker(zIndex);
 
         $(document).bind("replot-event-markers",   $.proxy(this.refresh, this));
-        $(document).bind('toggle-event-label-on',  $.proxy(this.toggleEventLabel, this));
-        $(document).bind('toggle-event-label-off', $.proxy(this.toggleEventLabel, this));
     },
 
     /**
@@ -171,10 +169,6 @@ var EventMarker = Class.extend(
             if ( typeof this.parentFRM != 'undefined' ) {
                 this.parentFRM.domNode.append(this.eventRegionDomNode);
             }
-
-            //this.eventRegionDomNode.bind("click", $.proxy(this.toggleEventPopUp, this));
-            //this.eventRegionDomNode.mouseenter($.proxy(this.toggleEventLabel, this));
-            //this.eventRegionDomNode.mouseleave($.proxy(this.toggleEventLabel, this));
         }
     },
 
@@ -292,23 +286,11 @@ var EventMarker = Class.extend(
         }
     },
 
-    setVisibility: function (visible) {
-        if (visible) {
-            if(this.eventRegionDomNode) {
-                this.eventRegionDomNode.show();
-            }
-            this.eventMarkerDomNode.show();
-        }
-        else {
-            if(this.eventRegionDomNode) {
-                this.eventRegionDomNode.hide();
-            }
-            this.eventMarkerDomNode.hide();
-        }
-    },
-
-    toggleEventLabel: function (event) {
-
+    /**
+     * @description Creates the event marker label domnode if it is not already set
+     * @returns void     
+     * */
+    _makeLabel: function() {
         if ( !this._label ) {
             this._label = $('<div/>');
             this._label.hide();
@@ -330,33 +312,56 @@ var EventMarker = Class.extend(
 
             this.eventMarkerDomNode.append(this._label);
         }
+    },
 
-        if ( event.type == 'toggle-event-label-on' ) {
+    setLabelVisibility: function(labelVisibility) {
+
+        this._makeLabel();
+
+        if(labelVisibility === true) {
             this._labelVisible = true;
             this._label.show();
-            Helioviewer.userSettings.set("state.eventLabels", true);
         }
-        else if ( event.type == 'toggle-event-label-off' ) {
+
+        if(labelVisibility === false) {
             this._labelVisible = false;
             this._label.hide();
-            Helioviewer.userSettings.set("state.eventLabels", false);
         }
-        else if ( event.type == 'mouseenter' ) {
-            this.eventMarkerDomNode.css('zIndex', '997');
-            this._label.addClass("event-label-hover");
-            this._label.show();
+    },
+
+    setVisibility: function (visible) {
+        if (visible) {
+            if(this.eventRegionDomNode) {
+                this.eventRegionDomNode.show();
+            }
+            this.eventMarkerDomNode.show();
+        }
+        else {
+            if(this.eventRegionDomNode) {
+                this.eventRegionDomNode.hide();
+            }
+            this.eventMarkerDomNode.hide();
+        }
+    },
+
+
+    toggleEventLabel: function (event) {
+
+        this._makeLabel();
+
+        if ( event.type == 'mouseenter' ) {
+            this.setLabelVisibility(true);
+            this.emphasize();
 
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
 	            var eventID = $(event.currentTarget).attr('rel');
 	            $(".highcharts-series > rect:not(.point_"+eventID+")").hide();
             }
         }
-        else if ( event.type == 'mouseleave' ) {
-            if ( !this._labelVisible) {
-                this._label.hide();
-            }
-            this.eventMarkerDomNode.css('zIndex', this._zIndex);
-            this._label.removeClass("event-label-hover");
+
+        if ( event.type == 'mouseleave' ) {
+            this.setLabelVisibility(false);
+            this.deEmphasize();
 
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
 	            $(".highcharts-series > rect").show();
