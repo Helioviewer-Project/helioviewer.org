@@ -1890,7 +1890,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             "centerY"           : Helioviewer.userSettings.get("state.centerY"),
             "imageLayers"       : encodeURI(this.viewport.serialize()),
             "eventLayers"       : encodeURI(this.viewport.serializeEvents()),
-            "eventLabels"       : Helioviewer.userSettings.get("state.eventLabels"),
             "celestialBodies"   : encodeURI(JSON.stringify(Helioviewer.userSettings.get("state.celestialBodiesChecked")))
         };
 
