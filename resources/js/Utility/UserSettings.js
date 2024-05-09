@@ -340,19 +340,18 @@ var UserSettings = Class.extend(
             Object.keys(this.get("state.events_v2")).forEach((section) => {
                 this.set("state.events_v2." + section + ".layers", [])
             });
-        }else if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
+        } else if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
             Object.keys(this.get("state.events_v2")).forEach((section) => {
                 this.set("state.events_v2." + section + ".layers", this._parseURLStringEvents(urlSettings.eventLayers))
             });
         }
 
-        // Event labels are ON by default
-        if ( urlSettings.eventLabels == true ) {
-            this.set("state.eventLabels", true);
-        }
-        // Override event label default with value from URL
-        else if ( typeof urlSettings.eventLabels != 'undefined' && urlSettings.eventLabels == false) {
-            this.set("state.eventLabels", false);
+        // If any historical shared url turns off event labels, we also respect that 
+        if ( typeof urlSettings.eventLabels != 'undefined' && urlSettings.eventLabels == false) {
+            // We also turning labels off for all layers
+            Object.keys(this.get("state.events_v2")).forEach((section) => {
+                this.set("state.events_v2." + section + ".labels_visible", false)
+            });
         }
 
         if(typeof urlSettings.celestialBodiesChecked != 'undefined' && urlSettings.celestialBodiesChecked != ''){
