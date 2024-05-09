@@ -86,12 +86,11 @@ var EventLayerAccordion = Layer.extend(
 
         let weHaveAtLeastOneEvLabelsOn = false;
 
-        Object.entries(Helioviewer.userSettings.get('state.events_v2')).forEach(tC => {
+        Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(tC => {
             weHaveAtLeastOneEvLabelsOn = weHaveAtLeastOneEvLabelsOn || tC['labels_visible']; 
         });
 
         return weHaveAtLeastOneEvLabelsOn;
-
     },
 
     /**

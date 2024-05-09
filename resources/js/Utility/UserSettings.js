@@ -556,4 +556,8 @@ var UserSettings = Class.extend(
         return treeConf;
     },
 
+    iterateOnHelioViewerEventLayerSettings: function(it) {
+        Object.values(Helioviewer.userSettings.get('state.events_v2')).forEach(it);
+    }
+
 });
