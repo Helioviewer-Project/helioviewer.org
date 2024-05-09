@@ -127,6 +127,7 @@ var TreeSelect = Class.extend(
 
                 label = $(id.replace('-select-','-label-'));
 
+                console.log(nav);
                 if ( depth > maxIndex ) {
                     select.hide();
                     select.removeAttr('selectedIndex');
