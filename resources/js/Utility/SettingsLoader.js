@@ -163,11 +163,19 @@ var SettingsLoader = (
                 },
                 "events_v2": {
                     "tree_HEK": {
+                        "id": "HEK",
                         "visible": true,
+                        "markers_visible":true,
+                        "labels_visible":true,
+                        "layer_available_visible":true,
                         "layers": [],
                     },
                     "tree_CCMC": {
+                        "id": "CCMC",
                         "visible": true,
+                        "markers_visible":true,
+                        "labels_visible":true,
+                        "layer_available_visible":true,
                         "layers": [],
                     }
                 },
