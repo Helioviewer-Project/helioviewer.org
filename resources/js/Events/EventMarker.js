@@ -350,7 +350,7 @@ var EventMarker = Class.extend(
         this._makeLabel();
 
         if ( event.type == 'mouseenter' ) {
-            this.setLabelVisibility(true);
+            this._label.show();
             this.emphasize();
 
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
@@ -360,7 +360,9 @@ var EventMarker = Class.extend(
         }
 
         if ( event.type == 'mouseleave' ) {
-            this.setLabelVisibility(false);
+            if(this._labelVisible == false) {
+                this._label.hide();
+            }
             this.deEmphasize();
 
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
