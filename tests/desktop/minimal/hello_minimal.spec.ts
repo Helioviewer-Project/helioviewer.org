@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
  * sure the page appears how we expect it to appear.
  */
 test('Displays initial AIA 304 Image', async ({ page }) => {
-  await page.goto('/?debug&output=minimal');
+  await page.goto('/?output=minimal');
   await page.getByLabel('Date').click();
   await page.getByLabel('Date').fill('2021/06/01');
   await page.getByLabel('Date').press('Tab');
