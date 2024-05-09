@@ -1,11 +1,11 @@
 /**
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
- * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a> 
+ * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @fileOverview Contains the definition for a Hierarchical or "Tree Select" class which links
  * several select form elements together based off a given tree structure such changes at any level automatically
  * determine valid options for select items at lower levels.
  */
-/*jslint browser: true, evil: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
+/*jslint browser: true, evil: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, forin: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, window */
 "use strict";
@@ -14,9 +14,9 @@ var TreeSelect = Class.extend(
     {
     /**
      * @description
-     * @param {Object} 
-     * @constructs 
-     */ 
+     * @param {Object}
+     * @constructs
+     */
     init: function (selectIds, tree, initialChoices, callback) {
         this.selectIds     = selectIds;
         this.tree          = tree;
@@ -24,19 +24,19 @@ var TreeSelect = Class.extend(
         this.selected      = initialChoices;
 
         this._initSelectMenus();
-        
+
         this._setupEventHandlers();
     },
-    
+
     /**
      * @description Populates SELECT menus and selects initial choices
      */
     _initSelectMenus: function () {
         var self = this;
-        
+
         // Load initial options into select menus
         this._updateSelectMenus(0);
-        
+
         // Set initial choices in select menus
         $.each(this.selectIds, function (depth, id) {
             $(id + " > option").each(function (index, option) {
@@ -105,6 +105,8 @@ var TreeSelect = Class.extend(
         var select, name, label, uiLabels, maxIndex, i, nav, opt, self = this;
 
         maxIndex = this.selectIds.length;
+        console.log(this.selectIds);
+        console.log(this.selected);
 
         $.each(this.selectIds, function (depth, id) {
 
