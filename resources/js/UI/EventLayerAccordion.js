@@ -275,12 +275,6 @@ var EventLayerAccordion = Layer.extend(
 
     _createK12VisibilityBtn: function(index, id, name, markersVisible, labelsVisible, availabilityVisible, startOpened, apiSource) {
 
-        /*
-         * site.eventLayerAvailableVisible, 
-         * state.eventLabels
-         * state.eventLayers
-         * state.eventLayerVisible , movieManager, screenShot
-         */
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, eventsDiv, self=this;
 
 		let treeid = 'tree_'+name;

@@ -1811,15 +1811,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
     /**
-     * Returns the currently selected event layers
-     *
-     * @return {String} Serialized event layer string
-     */
-    getEventsLabels: function () {
-        return Helioviewer.userSettings.get("state.eventLabels");
-    },
-
-    /**
      * Returns a string representation of the layers which are visible and
      * overlap the specified region of interest
      */
