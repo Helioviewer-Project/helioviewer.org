@@ -9,6 +9,8 @@ test.afterEach(screenshotOnFailure);
  */
 test('Displays initial AIA 304 Image', async ({ page }) => {
   await page.goto('/?output=minimal');
+  // Wait for page to load
+  await page.waitForTimeout(5000);
   await page.getByLabel('Date').click();
   await page.getByLabel('Date').fill('2021/06/01');
   await page.getByLabel('Date').press('Tab');
