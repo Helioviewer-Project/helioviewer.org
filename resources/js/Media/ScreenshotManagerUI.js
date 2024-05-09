@@ -194,11 +194,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             events = '';
             eventLabels = false;
         }
-        //************ END TEMPORARY IMPLEMENTATION ******************
-
-        console.log(eventLabelsVisible);
-        console.log(eventLayersVisible);
-
+        //*********** TEMPORARY IMPLEMENTATION *********
 
 
         // Make sure selection region and number of layers are acceptible
@@ -206,10 +202,10 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             return;
         }
 
-		var switchSources = false;
-		if(outputType == 'minimal'){
-			switchSources = true;
-		}
+        var switchSources = false;
+        if(outputType == 'minimal'){
+            switchSources = true;
+        }
 
         params = $.extend({
             action        : "takeScreenshot",
