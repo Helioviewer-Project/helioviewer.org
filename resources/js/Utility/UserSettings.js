@@ -351,9 +351,7 @@ var UserSettings = Class.extend(
             this.set("state.eventLabels", true);
         }
         // Override event label default with value from URL
-        else if ( typeof urlSettings.eventLabels != 'undefined'
-            && urlSettings.eventLabels == false) {
-
+        else if ( typeof urlSettings.eventLabels != 'undefined' && urlSettings.eventLabels == false) {
             this.set("state.eventLabels", false);
         }
 
@@ -513,5 +511,49 @@ var UserSettings = Class.extend(
         default:
             break;
         }
-    }
+    },
+
+    /*TODO for comments*/
+    setHelioViewerEventLayerSettings: function (treeID, key, value) {
+        let treeConf = this.getHelioViewerEventLayerSettings(treeID);
+        treeConf[key] = value;
+        this.set(treeID, treeConf);
+        return treeConf;
+    },
+
+    getHelioViewerEventLayerSettingsValue: function (treeID, key) {
+        let treeConf = this.getHelioViewerEventLayerSettings(treeID);
+        return treeConf[key];
+    },
+
+    getHelioViewerEventLayerSettings: function (treeID) {
+
+        let treeKey = `state.events_v2.tree_${treeID}`;
+        let treeConf = this.get(treeKey);
+
+        let hasMarkersVisible = treeConf.hasOwnProperty("markers_visible");
+        let hasLabelsVisible = treeConf.hasOwnProperty("labels_visible");
+        let hasLayerAvailabilityVisible = treeConf.hasOwnProperty("layer_available_visible");
+
+        if(hasMarkersVisible && hasLabelsVisible && hasLayerAvailabilityVisible) {
+            return treeConf;
+        }
+
+        // no new key markers_visible
+        if(!hasMarkersVisible) {
+            treeConf["markers_visible"] = true;
+        }
+
+        if(!hasLabelsVisible) {
+            treeConf["labels_visible"] = true;
+        }
+
+        if(!hasLayerAvailabilityVisible) {
+            treeConf["layer_available_visible"] = true;
+        }
+
+        this.set(treeKey, treeConf);
+        return treeConf;
+    },
+
 });
