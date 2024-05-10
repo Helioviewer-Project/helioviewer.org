@@ -1,6 +1,7 @@
 /**
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
+ * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
  * @fileoverview Contains the class definition for an EventMarker class.
  * @see EventLayer
  */

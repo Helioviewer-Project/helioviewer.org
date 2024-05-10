@@ -1,6 +1,7 @@
 /**
  * @fileOverview Contains the class definition for a HelioviewerEventLayerManager class.
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
+ * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
  * @see EventLayerManager, EventManager
  * @requires EventLayerManager
  *
@@ -41,14 +42,16 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
      */
     _loadStartingLayers: function (layers) {
 
+        // load HEK configuration from events_v2
         let hekTreeConf = Helioviewer.userSettings.getHelioViewerEventLayerSettings('HEK');
 
-        // Add the event layer
+        // Add the event layer HEK , with the state visibility variables
         this.addEventLayer(
             new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
                 'HEK', hekTreeConf['markers_visible'], hekTreeConf['labels_visible'], hekTreeConf['layer_available_visible'],{"action": "events", "sources": "HEK", "ar_filter": true})
         );
 
+        // load CCMC only if output minimal, configuration from events_v2
         if (outputType != 'minimal') {
             let ccmcTreeConf = Helioviewer.userSettings.getHelioViewerEventLayerSettings('CCMC');
             this.addEventLayer(

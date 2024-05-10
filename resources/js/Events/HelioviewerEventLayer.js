@@ -3,6 +3,7 @@
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
+ * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
  * @see TileLayerAccordion, Layer
  * @requires Layer
  *
@@ -17,17 +18,17 @@ var HelioviewerEventLayer = Class.extend(
     {
     /**
      * @constructs
-     * @description
-     * @param {Object} viewport Viewport to place the events in
-     * <br>
-     * <br><div style='font-size:16px'>Options:</div><br>
-     * <div style='margin-left:15px'>
-     *      <b>type</b>        - The type of the layer (used by layer manager to differentiate event vs.
-     *                           tile layers)<br>
-     *      <b>tileSize</b>    - Tilesize to use<br>
-     *      <b>source</b>      - Tile source ["database" | "filesystem"]<br>
-     *      <b>opacity</b>     - Default opacity<br>
-     * </div>
+     * @description Just a class to trigger addition of event layer to event layer accordion
+     *
+     * @param {integer} index , used in queries to fetch FRM data
+     * @param {string} date
+     * @param {float} viewportScale
+     * @param {string} name , name of the event  layer used in tree and event managers
+     * @param {boolean} markersVisible, are we going to hide markers for this event layer initially, coming from the state 
+     * @param {boolean} labelsVisible, are we going to hide labels of markers for this event layer initially, coming from the state 
+     * @param {boolean} availabilityVisible, are we going to hide unavailable FRMs in checkbox tree branches 
+     * @param {JSON} apiSource, initial query params for api request to fetch the data, highly attached with event source, HEK or CCMC (will be RESSI in the future) 
+     *
      */
     init: function (index, date, viewportScale, name, markersVisible, labelsVisible, availabilityVisible, apiSource) {
 

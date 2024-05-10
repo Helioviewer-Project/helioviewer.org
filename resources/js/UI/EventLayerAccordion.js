@@ -2,6 +2,7 @@
  * @fileOverview Contains the class definition for an EventLayerAccordion class.
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
+ * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
  * @see TileLayerManager, TileLayer
  * @requires ui.dynaccordion.js
  *
@@ -79,8 +80,9 @@ var EventLayerAccordion = Layer.extend(
         }
     },
 
-    /*
-     * TODO
+    /**
+     * @description check if the labels visibility of all event layers are turned off or on
+     * @return {boolean} 
      */
     isAllEventLayersTurnedOff: function() {
 
@@ -94,7 +96,18 @@ var EventLayerAccordion = Layer.extend(
     },
 
     /**
-     * TODO
+     * @description Creates event layer sections like HEK or CCMC
+     *
+     * @param {integer} index , used in queries to fetch FRM data
+     * @param {string} id of the tree
+     * @param {float} viewportScale
+     * @param {string} name , name of the event  layer used in tree and event managers
+     * @param {boolean} markersVisible, are we going to hide markers for this event layer initially, coming from the state 
+     * @param {boolean} labelsVisible, are we going to hide labels of markers for this event layer initially, coming from the state 
+     * @param {boolean} availabilityVisible, are we going to hide unavailable FRMs in checkbox tree branches 
+     * @param {boolean} startOpened, 
+     * @param {JSON} apiSource, initial request params for fetching tree data , managing event layers 
+     *
      */
     _createAccordionEntry: function (index, id, name, markersVisible, labelsVisible, availabilityVisible, startOpened, apiSource) {
 
@@ -102,7 +115,7 @@ var EventLayerAccordion = Layer.extend(
 
 		let treeid = 'tree_'+name;
 
-        // initial visibility
+        // initial visibility of the tree buttons, 
         availableHidden  = ( availabilityVisible ? "" : " hidden");
         markersHidden = (markersVisible ? " fa-eye " : " fa-eye-slash hidden");
         labelsHidden  = ( labelsVisible ? "" : " hidden");
@@ -152,6 +165,7 @@ var EventLayerAccordion = Layer.extend(
             open:   startOpened
         });
 
+        // create event_layer_manager for this event layer
         this._loadEvents(treeid, apiSource, markersVisible, labelsVisible, availabilityVisible);
 
         this.domNode.find("#checkboxBtn-On-"+id).click( function() {
@@ -162,8 +176,7 @@ var EventLayerAccordion = Layer.extend(
             $(document).trigger("toggle-checkboxes-to-state", [treeid, 'off']);
         });
 
-
-
+        // click event for the label button, turns off and ons marker labels
         this.domNode.find("#labelsBtn-"+id).click( function(e) {
             // get label state for this event layer
             let currentLabelVisible = Helioviewer.userSettings.getHelioViewerEventLayerSettingsValue(name,'labels_visible');
@@ -185,19 +198,20 @@ var EventLayerAccordion = Layer.extend(
             e.stopPropagation();
         });
 
+        // click event for the eye button, turns off and ons marker entirely
         this.domNode.find("#visibilityBtn-"+id).click( function(e) {
 
-            // get label state for this event layer
+            // get marker visibility conf of layer markers
             let currentMarkersVisible = Helioviewer.userSettings.getHelioViewerEventLayerSettingsValue(name,'markers_visible');
             let newCurrentMarkersVisible = !currentMarkersVisible;
 
-            // populate new label visibility to those event layer
+            // set marker visbility of the event_manager for this event
             self._eventManagers.filter(m => m.filterID(name)).forEach(m => m.toggleMarkers(newCurrentMarkersVisible))
 
-            // toggle label visibility state for this event layer
+            // toggle markers visibility state for this event layer
             Helioviewer.userSettings.setHelioViewerEventLayerSettings(name, 'markers_visible', newCurrentMarkersVisible);
 
-            // if labels are visible in new state remove hidden class
+            // manage button , make it red or green, depend on the state
             if(newCurrentMarkersVisible) {
                 $(this).removeClass('hidden');
                 $(this).removeClass('fa-eye-slash');
@@ -211,10 +225,15 @@ var EventLayerAccordion = Layer.extend(
             e.stopPropagation();
         });
 
+        // This is the place , managing 'd' keyboard command, 
+        // see KeyboardManager firing toggle-event-labels for the 'd' key, 
+        // this boolean decides , initial behaviour of the 'd'
+        // if all labels of all layers turned off , 'd' initially makes them visible
+        // if all labels of all layers are turned on, 'd' inittialy hides them
         let all_levels_dictated = this.isAllEventLayersTurnedOff();
 
         $(document).bind("toggle-event-labels", (event) => {
-            // 
+             
             all_levels_dictated = !all_levels_dictated;
 
             // We are going to force what it dictates
@@ -235,6 +254,7 @@ var EventLayerAccordion = Layer.extend(
 
         });
 
+        // click event for hiding empty frm sources button
         this.domNode.find("#visibilityAvailableBtn-"+id).click( function(e) {
 
             // get layer availability state for this event layer
@@ -273,6 +293,18 @@ var EventLayerAccordion = Layer.extend(
         this.getEventGlossary(id, $.proxy(this._createEventManager, this, id, apiSource, markersVisible, labelsVisible, availabilityVisible));
     },
 
+    /**
+     * @description Just for output mininal , created EVENTS ON and EVENTS OFF button
+     *
+     * @param {integer} index , used in queries to fetch FRM data
+     * @param {string} id of the tree
+     * @param {boolean} markersVisible, are we going to hide markers for this event layer initially, coming from the state 
+     * @param {boolean} labelsVisible, are we going to hide labels of markers for this event layer initially, coming from the state 
+     * @param {boolean} availabilityVisible, are we going to hide unavailable FRMs in checkbox tree branches 
+     * @param {boolean} startOpened, 
+     * @param {JSON} apiSource, initial request params for fetching tree data , managing event layers 
+     *
+     */
     _createK12VisibilityBtn: function(index, id, name, markersVisible, labelsVisible, availabilityVisible, startOpened, apiSource) {
 
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, eventsDiv, self=this;
@@ -342,13 +374,6 @@ var EventLayerAccordion = Layer.extend(
 
             // toggle label visibility state for this event layer
             Helioviewer.userSettings.setHelioViewerEventLayerSettings(name, 'labels_visible', newCurrentLabelVisible);
-
-            // if labels are visible in new state remove hidden class
-            if(newCurrentLabelVisible) {
-	            self.domNode.find("#labelsBtn-"+id).removeClass('hidden');
-            } else {
-	            self.domNode.find("#labelsBtn-"+id).addClass('hidden');
-            }
 
         });
     },

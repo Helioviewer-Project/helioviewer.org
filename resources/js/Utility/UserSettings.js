@@ -2,6 +2,7 @@
  * @fileOverview Contains the class definition for an UserSettings class.
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
+ * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
@@ -450,7 +451,6 @@ var UserSettings = Class.extend(
      * and convert it into a string for passing through URLs
      */
     parseEventsURLString: function (eventLayerArray) {
-        var eventLayerString = '';
 
         if ( typeof eventLayerArray == "undefined" ) {
             eventLayerArray = [];
@@ -462,11 +462,14 @@ var UserSettings = Class.extend(
             })
         }
 
+        var eventLayerString = '';
+
         $.each(eventLayerArray, function (i, eventLayerObj) {
             eventLayerString += "[" + eventLayerObj.event_type     + ","
                                     + eventLayerObj.frms.join(';') + ","
                                     + eventLayerObj.open           + "],";
         });
+
         return eventLayerString.slice(0, -1);
     },
 
@@ -512,7 +515,13 @@ var UserSettings = Class.extend(
         }
     },
 
-    /*TODO for comments*/
+    /*
+     * @description This function is used to update/add state variables to this event_layer state, 
+     * @param {string} id of the event layer
+     * @param {string} key
+     * @param {any} value
+     * @return {JSON} event layer state conf
+     */
     setHelioViewerEventLayerSettings: function (treeID, key, value) {
         let treeConf = this.getHelioViewerEventLayerSettings(treeID);
         treeConf[key] = value;
@@ -520,11 +529,24 @@ var UserSettings = Class.extend(
         return treeConf;
     },
 
+    /*
+     * @description This function is used to get/read state variables to this event_layer state, 
+     * @param {string} id of the event layer
+     * @param {string} key
+     * @return {any} 
+     */
     getHelioViewerEventLayerSettingsValue: function (treeID, key) {
         let treeConf = this.getHelioViewerEventLayerSettings(treeID);
         return treeConf[key];
     },
 
+    /*
+     * @description This function is used to get/read all state variables to this event_layer state, 
+     * it also keeps existing states aligned with the new states, it adds keys with default values if they are not in old state
+     * @param {string} id of the event layer
+     * @param {string} key
+     * @return {JSON}   
+     */
     getHelioViewerEventLayerSettings: function (treeID) {
 
         let treeKey = `state.events_v2.tree_${treeID}`;
@@ -555,6 +577,11 @@ var UserSettings = Class.extend(
         return treeConf;
     },
 
+    /*
+     * @description Supplies iterator to traverse all event_layer configuration with given function
+     * @param {func} it , iterator function, will be executed for each event layer
+     * @return {void} 
+     */
     iterateOnHelioViewerEventLayerSettings: function(it) {
         Object.values(Helioviewer.userSettings.get('state.events_v2')).forEach(it);
     }

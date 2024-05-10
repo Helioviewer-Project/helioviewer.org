@@ -14,6 +14,7 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 "use strict";
 
 var EventManager = Class.extend({
+
     /**
      * @constructs
      * @description Class to manage event queries and data storage.<br><br>
@@ -27,7 +28,7 @@ var EventManager = Class.extend({
      * @param {array} eventGlossaryyy
      * @param {string} date , used in queries to fetch FRM data
      * @param {string} treeid, id of the checkbox tree for managing events tied to this manager. 
-     * @param {apiSource} initial query params for api request to fetch the data, highly attached with event source, HEK or CCMC (will be RESSI in the future) 
+     * @param {JSON} apiSource, initial query params for api request to fetch the data, highly attached with event source, HEK or CCMC (will be RESSI in the future) 
      * @param {boolean} markersVisible, are we going to hide markers for this event layer initially, coming from the state 
      * @param {boolean} labelsVisible, are we going to hide labels of markers for this event layer initially, coming from the state 
      * @param {boolean} layerAvailableVisible, are we going to hide unavailable FRMs in checkbox tree branches 
