@@ -28,7 +28,7 @@ test('Normal View: Helioviewer shows a warning when the image displayed is at le
 });
 
 test('Minimal View: Helioviewer shows a warning when the image displayed is at least 6 hours away from the observation time.', async ({ page }) => {
-  await page.goto('/?output=minimal&debug');
+  await page.goto('/?output=minimal');
   await page.getByLabel('Date').click();
   await page.getByLabel('Date').fill('2024/01/01');
   await page.getByLabel('Date').press('Enter');
@@ -38,3 +38,9 @@ test('Minimal View: Helioviewer shows a warning when the image displayed is at l
   await expect(page.getByText('The AIA 171 layer is 943 days')).toBeVisible();
   await expect(await page.getByText('The AIA 171 layer is 943 days').count()).toBe(1);
 });
+
+test('Embedded View: Helioviewer shows a warning when the image displayed is at least 6 hours away from the observation time.', async ({ page }) => {
+  await page.goto('?output=embed&date=2024-01-01T00:00:00Z');
+  // Expect the warning to appear with the expected text
+  await expect(page.getByText('The AIA 304 layer is 943 days')).toBeVisible();
+})

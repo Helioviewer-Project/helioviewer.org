@@ -76,7 +76,7 @@ var HelioviewerViewport = Class.extend(
                 // Initialize tile layers
                 // For minimal view, tile layers are initialized by ImagePresets.js
                 if (outputType!='minimal') {
-                    self._tileLayerManager = new HelioviewerTileLayerManager(self.requestDate, self.dataSources, self.tileSize, self.imageScale, self.maxTileLayers, self.tileLayers);
+                    self._tileLayerManager = new HelioviewerTileLayerManager(self.requestDate, dataSources, self.tileSize, self.imageScale, self.maxTileLayers, self.tileLayers);
                     $(document).trigger("update-viewport");
                 }
             };
