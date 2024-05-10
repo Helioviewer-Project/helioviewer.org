@@ -205,7 +205,7 @@ var UserLayersPresets = Class.extend({
 
 	},
 
-	_loadData: function(el){
+	_loadData: async function(el){
         var date = $(el).data('date');
         var layers = $(el).data('layers');
         var events = $(el).data('events');
@@ -248,7 +248,7 @@ var UserLayersPresets = Class.extend({
 
 		    helioviewer.viewport._tileLayerManager = new HelioviewerTileLayerManager(
 		    	helioviewer.viewport.requestDate,
-		    	helioviewer.viewport.dataSources,
+		    	await helioviewer.viewport.dataSources,
 		    	helioviewer.viewport.tileSize,
 		    	helioviewer.viewport.imageScale,
 		    	helioviewer.viewport.maxTileLayers,
