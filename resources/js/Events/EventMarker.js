@@ -20,8 +20,12 @@ var EventMarker = Class.extend(
     /**
      * @constructs
      * @description Creates an EventMarker
-     * @param {Object} eventLayer EventLayer associated with the EventMarker
+     * @param {JSON} eventGlossary 
+     * @param {string} parentFRM
      * @param {JSON} event Event details
+     * @param {integer} zIndex, zIndex as you know , visibility hierarchy of this marker in html
+     * @param {boolean} labelVisible, set if the labels of this marker is hided
+     * @param {boolean} markerVisible, set if the marker is visible
      */
     init: function (eventGlossary, parentFRM, event, zIndex, labelVisible, markerVisible) {
         $.extend(this, event);
@@ -41,6 +45,8 @@ var EventMarker = Class.extend(
         // Create DOM nodes for Event Regions and Event Markers
         this.createRegion(0);
         this.createMarker(zIndex);
+
+        // Create the DOM of this marker, and set the visibility
         this.setVisibility(this._markerVisible);
         this.setLabelVisibility(this._labelVisible);
 
@@ -56,6 +62,7 @@ var EventMarker = Class.extend(
 
     /**
      * @description Creates the marker and adds it to the viewport
+     * @param {integer} zIndex, zIndex as you know , visibility hierarchy of this marker in html
      */
     createMarker: function (zIndex) {
         var markerURL;
@@ -317,6 +324,11 @@ var EventMarker = Class.extend(
         }
     },
 
+    /**
+     * @description create label of marker if it is not created, and sets its visibility, 
+     * @param {boolean} labelVisibility, hide or show
+     * @return {void}
+     */
     setLabelVisibility: function(labelVisibility) {
 
         this._makeLabel();
@@ -332,24 +344,34 @@ var EventMarker = Class.extend(
         }
     },
 
-    setVisibility: function (visible) {
-        if (visible) {
+    /**
+     * @description sets marker visibility, 
+     * @param {boolean} markerVisible, hide or show
+     * @return {void}
+     */
+    setVisibility: function (markerVisible) {
+        if (markerVisible) {
             if(this.eventRegionDomNode) {
                 this.eventRegionDomNode.show();
             }
             this.eventMarkerDomNode.show();
-            this._markerVisible = visible;
+            this._markerVisible = markerVisible;
         }
         else {
             if(this.eventRegionDomNode) {
                 this.eventRegionDomNode.hide();
             }
             this.eventMarkerDomNode.hide();
-            this._markerVisible = visible;
+            this._markerVisible = markerVisible;
         }
     },
 
-
+    /**
+     * @description shows label visibility with mouseenter and leave events, this function does not change visibility state, 
+     * just shows labels for temporary events and situations
+     * @param {Event} event
+     * @return {bool}
+     */
     toggleEventLabel: function (event) {
 
         this._makeLabel();
@@ -403,7 +425,7 @@ var EventMarker = Class.extend(
             });
             this.eventMarkerDomNode.css('z-index', '998');
             //$('.event-popup').hide();
-	    this.eventPopupDomNode.show();
+            this.eventPopupDomNode.show();
         }
 
         this._popupVisible = !this._popupVisible;

@@ -445,8 +445,7 @@ var EventManager = Class.extend({
 
                         self._eventTypes[eventTypeName]._eventFRMs[frmName].domNode.show();
     
-                        // For each event markers of frm , we need to make them visible. 
-                        // because we are hiding them occasionaly
+                        // For each event markers of frm , we are making them visible if they are not hided per user preferences via state
                         if(self.markersVisible) {
                             self._eventMarkers.filter(em => {
                                 return em.belongsToFrm(frmName) && em.belongsToEventType(eventTypeName)
@@ -564,12 +563,20 @@ var EventManager = Class.extend({
         }
     },
 
-    /* TODO comments */
+    /**
+     * @description validates if this event manager is maintaining a particular , event source like CCMC and HEK
+     * @param {string} name . event source name like CCMC, HEK
+     * @returns boolean
+     */
     filterID: function (name) {
         return this._uniqueId === `tree_${name}`;
     },
 
-    /* TODO comments */
+    /**
+     * @description sets the label visibility of all markers of this event manager.
+     * @param {boolean} labelsVisible, visibility of labels 
+     * @returns void
+     */
     toggleLabels(labelsVisible) {
         // it is not a bad thing to preserve state
         this.labelsVisible = labelsVisible;
@@ -577,7 +584,11 @@ var EventManager = Class.extend({
         this._eventMarkers.forEach(m => m.setLabelVisibility(labelsVisible));
     },
 
-    /* TODO comments */
+    /**
+     * @description sets the visibility of all markers of this event manager.
+     * @param {boolean} markersVisible, visibility of markers 
+     * @returns void
+     */
     toggleMarkers(markersVisible) {
         // it is not a bad thing to preserve state
         this.markersVisible = markersVisible;
@@ -589,7 +600,11 @@ var EventManager = Class.extend({
         this._toggleEvents();
     },
 
-    /* TODO comments */
+    /**
+     * @description sets the visibility of frms that do not have any events
+     * @param {boolean} layerAvailableVisible, visibility of empty frm soruces in event tree branch
+     * @returns void
+     */
     toggleNonAvailableLayers(layerAvailableVisible) {
 
         // it is not a bad thing to preserve state
