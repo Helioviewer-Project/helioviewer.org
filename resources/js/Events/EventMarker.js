@@ -23,12 +23,13 @@ var EventMarker = Class.extend(
      * @param {Object} eventLayer EventLayer associated with the EventMarker
      * @param {JSON} event Event details
      */
-    init: function (eventGlossary, parentFRM, event, zIndex) {
+    init: function (eventGlossary, parentFRM, event, zIndex, labelVisible, markerVisible) {
         $.extend(this, event);
         this.event = event;
         this.behindSun = false;
         this.parentFRM  = parentFRM;
-        this._labelVisible = false;
+        this._labelVisible = labelVisible;
+        this._markerVisible = markerVisible;
         this._popupVisible = false;
         this._zIndex = zIndex;
         this._eventGlossary = eventGlossary;
@@ -40,6 +41,8 @@ var EventMarker = Class.extend(
         // Create DOM nodes for Event Regions and Event Markers
         this.createRegion(0);
         this.createMarker(zIndex);
+        this.setVisibility(this._markerVisible);
+        this.setLabelVisibility(this._labelVisible);
 
         $(document).bind("replot-event-markers",   $.proxy(this.refresh, this));
     },
@@ -335,12 +338,14 @@ var EventMarker = Class.extend(
                 this.eventRegionDomNode.show();
             }
             this.eventMarkerDomNode.show();
+            this._markerVisible = visible;
         }
         else {
             if(this.eventRegionDomNode) {
                 this.eventRegionDomNode.hide();
             }
             this.eventMarkerDomNode.hide();
+            this._markerVisible = visible;
         }
     },
 

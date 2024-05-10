@@ -2,6 +2,7 @@
  * @author Jeff Stys <jeff.stys@nasa.gov>
  * @author Keith Hughitt <keith.hughitt@nasa.gov>
  * @author Jonathan Harper
+ * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
  * @fileOverview Handles event queries, data formatting, and storage
  *
  */
@@ -14,7 +15,8 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 
 var EventManager = Class.extend({
     /**
-     * Class to manage event queries and data storage.<br><br>
+     * @constructs
+     * @description Class to manage event queries and data storage.<br><br>
      *
      * Creates a class which queries the HEK API for event data as the
      * application date and time step changes.  This data is stored in
@@ -22,7 +24,14 @@ var EventManager = Class.extend({
      * Queries are optimized to minimize first the number of queries and
      * second the time window/filesize.<br><br>
      *
-     * @constructs
+     * @param {array} eventGlossaryyy
+     * @param {string} date , used in queries to fetch FRM data
+     * @param {string} treeid, id of the checkbox tree for managing events tied to this manager. 
+     * @param {apiSource} initial query params for api request to fetch the data, highly attached with event source, HEK or CCMC (will be RESSI in the future) 
+     * @param {boolean} markersVisible, are we going to hide markers for this event layer initially, coming from the state 
+     * @param {boolean} labelsVisible, are we going to hide labels of markers for this event layer initially, coming from the state 
+     * @param {boolean} layerAvailableVisible, are we going to hide unavailable FRMs in checkbox tree branches 
+     *
      */
     init: function (eventGlossary, date, treeid, apiSource, markersVisible, labelsVisible, layerAvailableVisible) {
         this._apiSource = apiSource;
@@ -182,11 +191,10 @@ var EventManager = Class.extend({
             if ( typeof self._eventTypes[event['pin']] != 'undefined' ) {
 
                 let parentFRM  = self._eventTypes[event['pin']]._eventFRMs[event['name']];
-                let eventMarker = new EventMarker(eventGlossary, parentFRM, event, i+1);
-                
-                eventMarker.setLabelVisibility(self.labelsVisible);
-                eventMarker.setVisibility(self.markersVisible);
 
+                // giving the initial state the markers, if they are going to hide themselves or their labels, or both
+                let eventMarker = new EventMarker(eventGlossary, parentFRM, event, i+1, self.labelsVisible, self.markersVisible);
+                
                 self._eventMarkers.push(eventMarker);
             }
         });
