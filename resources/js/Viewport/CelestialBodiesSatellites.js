@@ -192,7 +192,7 @@ var CelestialBodiesSatellites = Class.extend(
         }
     },
 
-    _onTimeChanged: async function(){
+    _onTimeChanged: function(){
         this.currentTime = helioviewer.timeControls.getTimestamp();
         //assemble the request parameters
         var params = {
