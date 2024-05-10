@@ -140,33 +140,47 @@ var JP2Image = Class.extend(
      * @param {string} name Name of the image layer.
      * @param {number} delta Number of seconds away from the observation time.
      */
-    _notifyStaleImage: function(name, delta) {
-        // Create the notification message
-        let message = "The " + name + " layer is " + humanReadableNumSeconds(delta) + " away from your observation time";
-        // Create the css class that will be assigned to this notification
-        let group = name.replace(" ", "-");
-        // Attempt to get the existing notification
-        let notification = $('.' + group);
-        // If the notification exists already, update the message and make it
-        // "flash" by fading out and back in to let the user know it changed.
-        if (notification.length > 0) {
-            let text = $(notification).find('.jGrowl-message');
-            notification.stop().fadeOut(250, () => {
-                // Update the tet after the old notification has faded out.
-                text.text(message);
-                notification.fadeIn(250);
-            })
-        } else {
-            // Else the notification didn't exist already, create a new notification.
-            helioviewer.messageConsole.warn(
-                message,
-                {
-                    header: 'Note',
-                    group: group,
-                    sticky: true
-                }
-            );
-        }
+    _notifyStaleImage: async function(name, delta) {
+        // Attempt to get the existing notification before continuing
+        // Without this, the code could run multiple times and show many
+        // notifications for the same layer.
+        let notification = this._notification ? await this._notification : null;
+
+        // This promise resolves to the jgrowl message in the DOM that is
+        // associated with this notification.
+        this._notification = new Promise(async (resolve) => {
+            // Create the notification message
+            let message = "The " + name + " layer is " + humanReadableNumSeconds(delta) + " away from your observation time";
+            // Create the css class that will be assigned to this notification
+            let group = name.replace(" ", "-");
+            // If the notification exists already and its on screen, then
+            // re-use it.
+            if (notification && notification.is(":visible")) {
+                let text = $(notification).find('.jGrowl-message');
+                notification.stop().fadeOut(250, () => {
+                    // Update the tet after the old notification has faded out.
+                    text.text(message);
+                    notification.fadeIn(250);
+                    // Return the notification instance
+                })
+                resolve(notification);
+            } else {
+                helioviewer.messageConsole.warn(
+                    message,
+                    {
+                        header: 'Note',
+                        group: group,
+                        sticky: true,
+                        // Return the notification instance
+                        afterOpen: function (msg) {
+                            // Remove any other duplicate notifications
+                            $("." + group).not(msg).remove();
+                            resolve(msg);
+                        }
+                    }
+                );
+            }
+        });
     },
 
     getLayerName: function () {

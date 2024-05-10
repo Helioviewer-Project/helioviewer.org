@@ -73,9 +73,11 @@ var HelioviewerViewport = Class.extend(
             $(document).trigger("datasources-initialized", [dataSources]);
 
             // Initialize tile layers
-            self._tileLayerManager = new HelioviewerTileLayerManager(self.requestDate, self.dataSources, self.tileSize, self.imageScale, self.maxTileLayers, self.tileLayers);
-
-            $(document).trigger("update-viewport");
+            // For minimal view, tile layers are initialized by ImagePresets.js
+            if (outputType!='minimal') {
+                self._tileLayerManager = new HelioviewerTileLayerManager(self.requestDate, self.dataSources, self.tileSize, self.imageScale, self.maxTileLayers, self.tileLayers);
+                $(document).trigger("update-viewport");
+            }
         };
         $.get(Helioviewer.api, {action: "getDataSources"}, callback, Helioviewer.dataType);
     },
