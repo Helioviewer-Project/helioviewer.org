@@ -331,7 +331,7 @@ var EventTree = Class.extend({
     },
 
     /**
-     * @description toggles the visibility of frm nodes is tree , if they are not have any child nides
+     * @description toggles the visibility of frm nodes is tree, if they do not have any child nodes
      * @param {boolean} showEmptyBranches
      * @returns void
      */
