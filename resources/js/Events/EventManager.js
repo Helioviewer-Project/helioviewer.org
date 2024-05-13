@@ -567,7 +567,7 @@ var EventManager = Class.extend({
     /**
      * @description validates if this event manager is maintaining a particular , event source like CCMC and HEK
      * @param {string} name . event source name like CCMC, HEK
-     * @returns boolean
+     * @returns {boolean}
      */
     filterID: function (name) {
         return this._uniqueId === `tree_${name}`;
