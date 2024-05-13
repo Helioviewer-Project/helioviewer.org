@@ -25,7 +25,7 @@ var EventManager = Class.extend({
      * Queries are optimized to minimize first the number of queries and
      * second the time window/filesize.<br><br>
      *
-     * @param {array} eventGlossaryyy
+     * @param {array} eventGlossary
      * @param {string} date , used in queries to fetch FRM data
      * @param {string} treeid, id of the checkbox tree for managing events tied to this manager. 
      * @param {JSON} apiSource, initial query params for api request to fetch the data, highly attached with event source, HEK or CCMC (will be RESSI in the future) 

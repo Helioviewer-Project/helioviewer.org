@@ -31,18 +31,6 @@ var EventLayerManager = EventManager.extend(
         this.defaultEventTypes = defaultEventTypes;
         this.viewportScale     = viewportScale;
 
-
-        $(document).bind("event-layer-finished-loading", $.proxy(this.updateMaxDimensions, this))
-                   .bind("save-event-layers",            $.proxy(this.save, this))
-                   .bind("add-new-event-layer",          $.proxy(this.addNewLayer, this))
-                   .bind("remove-event-layer",           $.proxy(this._onLayerRemove, this));
-    },
-
-    /**
-     * Remove a specified layer
-     */
-    _onLayerRemove: function (event, id) {
-        this.removeLayer(id);
     },
 
     getRequestDateAsISOString: function () {

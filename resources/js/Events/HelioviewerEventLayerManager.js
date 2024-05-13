@@ -25,19 +25,6 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
     },
 
     /**
-     * @description Adds a layer that is not already displayed
-     */
-    addNewLayer: function () {
-        // Add the event layer
-        let hekTreeConf = Helioviewer.userSettings.getHelioViewerEventLayerSettings('HEK');
-
-        this.addEventLayer(
-            new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                'HEK', hekTreeConf['markers_visible'], hekTreeConf['labels_visible'], hekTreeConf['layer_available_visible'],{"action": "events", "sources": "HEK", "ar_filter": true})
-        );
-    },
-
-    /**
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.
      */
     _loadStartingLayers: function (layers) {
