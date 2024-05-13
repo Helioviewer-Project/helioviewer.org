@@ -800,11 +800,17 @@ span.ui-icon-hover, div.ui-icon-hover {
    background: #CCD9D9;
    color: #262424;
    margin: 0 auto 0.5em auto;
+   font-weight: 300;
 }
 
 #message-console .jGrowl-message a {
    text-decoration: none;
    color: #262424;
+}
+
+#message-console .jGrowl-notification.warn {
+   background: #f8e64f;
+   border: 1px solid #f8e64f;
 }
 
 /* Social & Movie buttons */

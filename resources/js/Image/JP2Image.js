@@ -13,7 +13,7 @@ var JP2Image = Class.extend(
     /**
      * @constructs
      */
-    init: function (hierarchy, sourceId, date, difference, onChange) {     
+    init: function (hierarchy, sourceId, date, difference, onChange) {
         this.hierarchy   = hierarchy;
         this.sourceId    = sourceId;
         this.requestDate = date;
@@ -28,12 +28,12 @@ var JP2Image = Class.extend(
      */
     _requestImage: function () {
         var params, dataType, source_id;
-        
+
         var switchSources = false;
 		if(outputType == 'minimal'){
 			switchSources = true;
 		}
-        
+
         params = {
             action:   'getClosestImage',
             sourceId: this.sourceId,
@@ -71,6 +71,9 @@ var JP2Image = Class.extend(
      * at the bottom-left corner of the image, not the top-left corner.
      */
     _onImageLoad: function (result) {
+        // We load the image closest to the observation time, which may or
+        // may not be close to that time.
+        this._notifyIfStaleImage(result);
         // Only load image if it is different form what is currently displayed
         if(result.error){
 	        var jGrowlOpts = {
@@ -90,6 +93,93 @@ var JP2Image = Class.extend(
         this.offsetY = - parseFloat((this.refPixelY - (this.height / 2)).toPrecision(8));
 
         this._onChange();
+    },
+
+    /**
+     * Compares the image metadata's timestamp to the current observation time
+     * and alerts the user if the distance is larger than a predefined
+     * threshold.
+     * @param {getClosestImageResponse} metadata
+     */
+    _notifyIfStaleImage: function (metadata) {
+        // Get the image's timestamp and the current observation time
+        let imageDate = Date.parseUTCDate(metadata.date);
+        let obstTime = helioviewer.timeControls.getDate();
+        // Get the time difference between the two times in seconds
+        let delta = Math.abs(imageDate.getTime() - obstTime.getTime()) / 1000;
+        // Get the preset threshold in seconds
+        // Default to 21600 (6 hours) if the value isn't present in the configuration
+        let threshold = helioviewer.serverSettings["obstime_alert_dt"] ?? 21600;
+        // Compare the time difference to the threshold
+        // If the time difference is over the threshold, create an alert.
+        if (delta >= threshold) {
+            this._notifyStaleImage(metadata.name, delta);
+        } else {
+            // If the newest image isn't stale, but the notification is showing
+            // then it should be closed
+            this._hideStaleNotification(metadata.name);
+        }
+    },
+
+    /**
+     * This will close the "Stale Image" notification for the given image layer.
+     * @param {string} name Name of the image layer.
+     */
+    _hideStaleNotification: async function (name) {
+        // Attempt to get the existing notification
+        let notification = this._notification ? await this._notification : null;
+        if (notification) {
+            notification.find('.jGrowl-close').trigger('click');
+        }
+    },
+
+    /**
+     * Notifies the user that the given image layer is far away from the
+     * chosen observation time.
+     * @param {string} name Name of the image layer.
+     * @param {number} delta Number of seconds away from the observation time.
+     */
+    _notifyStaleImage: async function(name, delta) {
+        // Attempt to get the existing notification before continuing
+        // Without this, the code could run multiple times and show many
+        // notifications for the same layer.
+        let notification = this._notification ? await this._notification : null;
+
+        // This promise resolves to the jgrowl message in the DOM that is
+        // associated with this notification.
+        this._notification = new Promise(async (resolve) => {
+            // Create the notification message
+            let message = "The " + name + " layer is " + humanReadableNumSeconds(delta) + " away from your observation time";
+            // Create the css class that will be assigned to this notification
+            let group = name.replace(" ", "-");
+            // If the notification exists already and its on screen, then
+            // re-use it.
+            if (notification && notification.is(":visible")) {
+                let text = $(notification).find('.jGrowl-message');
+                notification.stop().fadeOut(250, () => {
+                    // Update the tet after the old notification has faded out.
+                    text.text(message);
+                    notification.fadeIn(250);
+                    // Return the notification instance
+                })
+                resolve(notification);
+            } else {
+                helioviewer.messageConsole.warn(
+                    message,
+                    {
+                        header: 'Note',
+                        group: group,
+                        sticky: true,
+                        // Return the notification instance
+                        afterOpen: function (msg) {
+                            // Remove any other duplicate notifications
+                            $("." + group).not(msg).remove();
+                            resolve(msg);
+                        }
+                    }
+                );
+            }
+        });
     },
 
     getLayerName: function () {
