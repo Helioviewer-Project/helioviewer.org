@@ -124,12 +124,10 @@ var JP2Image = Class.extend(
      * This will close the "Stale Image" notification for the given image layer.
      * @param {string} name Name of the image layer.
      */
-    _hideStaleNotification: function (name) {
-        // Create the css class that will be assigned to this notification
-        let group = name.replace(" ", "-");
+    _hideStaleNotification: async function (name) {
         // Attempt to get the existing notification
-        let notification = $('.' + group);
-        if (notification.length > 0) {
+        let notification = this._notification ? await this._notification : null;
+        if (notification) {
             notification.find('.jGrowl-close').trigger('click');
         }
     },
