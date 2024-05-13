@@ -24,8 +24,8 @@ var EventMarker = Class.extend(
      * @param {JSON} eventGlossary 
      * @param {string} parentFRM
      * @param {JSON} event Event details
-     * @param {integer} zIndex, zIndex as you know , visibility hierarchy of this marker in html
-     * @param {boolean} labelVisible, set if the labels of this marker is hided
+     * @param {integer} zIndex, zIndex as you know, visibility hierarchy of this marker in html
+     * @param {boolean} labelVisible, set if the labels of this marker is hidden
      * @param {boolean} markerVisible, set if the marker is visible
      */
     init: function (eventGlossary, parentFRM, event, zIndex, labelVisible, markerVisible) {
