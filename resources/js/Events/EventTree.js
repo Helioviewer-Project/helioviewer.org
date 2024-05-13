@@ -18,9 +18,9 @@ var EventTree = Class.extend({
      * @description Creates an EventTree
      * @param {string} id, ID of the tree
      * @param {JSON} data, all the data to build tree 
-     * @param {dom} container , dom piece to append event tree dom
+     * @param {dom} container, dom piece to append event tree dom
      * @param {EventManager} eventManager, event manager this tree is managed by
-     * @param {integer} zIndex, zIndex as you know , visibility hierarchy of this marker in html
+     * @param {integer} zIndex, zIndex as you know, visibility hierarchy of this marker in html
      * @param {boolean} showEmptyBranches, decides if tree should hide empty frm branches
      */
     init: function (id, data, container, eventManager, showEmptyBranches) {
