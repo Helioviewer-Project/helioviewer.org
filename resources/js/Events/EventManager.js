@@ -446,7 +446,7 @@ var EventManager = Class.extend({
 
                         self._eventTypes[eventTypeName]._eventFRMs[frmName].domNode.show();
     
-                        // For each event markers of frm , we are making them visible if they are not hided per user preferences via state
+                        // For each event markers of frm, we are making them visible if they are not hidden per user preferences via state
                         if(self.markersVisible) {
                             self._eventMarkers.filter(em => {
                                 return em.belongsToFrm(frmName) && em.belongsToEventType(eventTypeName)
