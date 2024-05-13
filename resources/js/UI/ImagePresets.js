@@ -192,7 +192,6 @@ var UserLayersPresets = Class.extend({
 		        selectValue = 0;
 				Helioviewer.userSettings.set('state.dropdownLayerSelectID', 0);
 	        }
-			//console.log(selectValue);
 			if(firstInitMinimalLayerSelection){
 				//$("#image-layer-select").val(selectValue);
 				setTimeout(function(){
@@ -206,7 +205,7 @@ var UserLayersPresets = Class.extend({
 
 	},
 
-	_loadData: function(el){
+    _loadData: async function(el){
         var date = $(el).data('date');
         var layers = $(el).data('layers');
         var events = $(el).data('events');
@@ -227,19 +226,17 @@ var UserLayersPresets = Class.extend({
 	        layers = layers.slice(1, -1);
 			settings['imageLayers'] = layers.split("],[");
 
-			if (typeof helioviewer.viewport._tileLayerManager == "undefined") {
-				return;
+			if (typeof helioviewer.viewport._tileLayerManager != "undefined") {
+				helioviewer.viewport._tileLayerManager.each(function(){
+					$(document).trigger("remove-tile-layer", [this.id]);
+					$("#" + this.id + " *[oldtitle]").qtip("destroy");
+					$('#TileLayerAccordion-Container').dynaccordion('removeSection', {id: this.id});
+
+					//$(document).trigger("save-tile-layers");
+					//$(document).trigger("save-tile-layers-from-accordion");
+					//e.stopPropagation();
+				});
 			}
-
-			helioviewer.viewport._tileLayerManager.each(function(){
-		        $(document).trigger("remove-tile-layer", [this.id]);
-		        $("#" + this.id + " *[oldtitle]").qtip("destroy");
-				$('#TileLayerAccordion-Container').dynaccordion('removeSection', {id: this.id});
-
-				//$(document).trigger("save-tile-layers");
-	            //$(document).trigger("save-tile-layers-from-accordion");
-	            //e.stopPropagation();
-		    });
 		    //$(document).trigger("save-tile-layers-from-accordion");
 
 		    Helioviewer.userSettings._processURLSettings(settings);
@@ -251,7 +248,7 @@ var UserLayersPresets = Class.extend({
 
 		    helioviewer.viewport._tileLayerManager = new HelioviewerTileLayerManager(
 		    	helioviewer.viewport.requestDate,
-		    	helioviewer.viewport.dataSources,
+		    	await helioviewer.viewport.dataSources,
 		    	helioviewer.viewport.tileSize,
 		    	helioviewer.viewport.imageScale,
 		    	helioviewer.viewport.maxTileLayers,
