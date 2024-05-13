@@ -205,7 +205,7 @@ var UserLayersPresets = Class.extend({
 
 	},
 
-	_loadData: async function(el){
+    _loadData: async function(el){
         var date = $(el).data('date');
         var layers = $(el).data('layers');
         var events = $(el).data('events');
