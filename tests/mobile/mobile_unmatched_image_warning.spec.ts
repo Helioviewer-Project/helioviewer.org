@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-test('Mobile View: Helioviewer shows a warning when the image displayed is at least 6 hours away from the observation time.', async ({ page }) => {
+test('Mobile View: Helioviewer shows a warning when the image displayed is at least 6 hours away from the observation time.', async ({ page, browserName }) => {
+  test.fixme(browserName === 'webkit', "This test is not behaving on linux's webkit, and we're unable to reproduce the issue.");
+
   await page.goto('/');
   // Set the observation time to about 6 hours ahead of the AIA 304 image time
   // The default image is timestamped at 2021-06-01 00:01:29
