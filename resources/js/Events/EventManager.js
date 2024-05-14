@@ -386,6 +386,13 @@ var EventManager = Class.extend({
         return eventLayers;
     },
 
+    /**
+     * @description This function syncs our internal event state with the actual markers and event layers in the dom.
+     * It first calculates which frms has be shown ( including half selected frms ) 
+     * Then it iterates on all of the frms of all event_types to eliminate which dom elements needs to be hidden which need to be shown, /
+     * then apply jqyery show and hide operations to apply current state to our DOM,
+     * @return {void}
+     */
     _toggleEvents: function () {
         var newState, checkedEventTypes = [], checkedFRMs = {}, self = this;
 
@@ -441,8 +448,8 @@ var EventManager = Class.extend({
                     // eventTypeName/frmName pair is checked
                     // so .show() this FRM's event layer
                     let underScoredFrmName = frmName.replace(/ /g,'_');
-                    if ( checkedFRMs[eventTypeName][0] == 'all' ||
-                          $.inArray(underScoredFrmName, checkedFRMs[eventTypeName]) != -1 ) {
+
+                    if ( checkedFRMs[eventTypeName][0] == 'all' || $.inArray(underScoredFrmName, checkedFRMs[eventTypeName]) != -1 ) {
 
                         self._eventTypes[eventTypeName]._eventFRMs[frmName].domNode.show();
     
@@ -477,10 +484,9 @@ var EventManager = Class.extend({
 
                             })
                         }
-                    }
-                    // eventTypeName/frmName pair is NOT checked
-                    // so .hide() this FRM's event layer
-                    else {
+                    } else {
+                        // eventTypeName/frmName pair is NOT checked
+                        // so .hide() this FRM's event layer
                         self._eventTypes[eventTypeName]._eventFRMs[frmName].domNode.hide();
                     }
                 }
