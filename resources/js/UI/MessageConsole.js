@@ -1,6 +1,7 @@
 /**
  * @fileOverview Contains the "MessageConsole" class definition.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
+ * @author <a href="mailto:daniel.garciabriseno@nasa.gov">Daniel Garcia Briseno</a>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
@@ -21,7 +22,7 @@ var MessageConsole = Class.extend(
     init: function () {
         this._setupEventHandlers();
         this._defaults = {
-            "life": 15000
+            "life": 15000,
         }
     },
 
@@ -30,7 +31,7 @@ var MessageConsole = Class.extend(
      * @param {String} msg Message to display
      */
     log: function (msg, options) {
-        options = $.extend(this._defaults, options);
+        options = Object.assign({}, this._defaults, options);
         $("#message-console").jGrowl(msg, options);
     },
 
@@ -40,7 +41,7 @@ var MessageConsole = Class.extend(
      * @param {Object} options
      */
     info: function (msg, options) {
-        options = $.extend(this._defaults, options);
+        options = Object.assign({}, this._defaults, options);
         $("#message-console").jGrowl(msg, options);
     },
 
@@ -49,7 +50,9 @@ var MessageConsole = Class.extend(
      * @param {String} msg Message to display
      */
     warn: function (msg, options) {
-        options = $.extend(this._defaults, options);
+        options = Object.assign({}, this._defaults, options);
+        // Set warning class on the message
+        options.group = options.group ? options.group + " warn" : "warn";
         $("#message-console").jGrowl(msg, options);
     },
 
@@ -58,7 +61,7 @@ var MessageConsole = Class.extend(
      * @param {String} msg Message to display
      */
     error: function (msg, options) {
-        options = $.extend(this._defaults, options);
+        options = Object.assign({}, this._defaults, options);
         $("#message-console").jGrowl(msg, options);
     },
 
@@ -86,7 +89,7 @@ var MessageConsole = Class.extend(
             if (showElapsedTime) {
                 var id, header, headerText, i = 1;
 
-                options = $.extend(options, {
+                options = Object.assign({}, options, {
                     beforeOpen: function (elem, message, opts) {
                         header = elem.find(".jGrowl-header");
 
@@ -116,7 +119,7 @@ var MessageConsole = Class.extend(
 
             // Click anywhere in the message to close?
             if (easyClose) {
-                options = $.extend(options, {
+                options = Object.assign({}, options, {
                     afterOpen: function (msg) {
                         msg.click(function (e) {
                             msg.trigger("jGrowl.close");

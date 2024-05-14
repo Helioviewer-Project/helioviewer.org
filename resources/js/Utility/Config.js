@@ -29,7 +29,14 @@ var Config = Class.extend(
         'contact_email'             : "HelioViewerDevelopment@nasa.onmicrosoft.com",
         'regenerate_movie_threshold': 90,
         'enable_helios_backlinks'   : false,
-        'jhelioviewer_host'         : 'GSFC' // Mirrors should set this to their server code.
+        'jhelioviewer_host'         : 'GSFC', // Mirrors should set this to their server code.
+        /**
+         * The maximum time difference in seconds between an image and
+         * the chosen observation time. If the time delta exceeds this
+         * amount, then a warning is created.
+         * default: 6 hours
+         */
+        'obstime_alert_dt'          : 21600
      },
 
     /**
@@ -99,7 +106,8 @@ var Config = Class.extend(
             'apiURL'                  : this.params["back_end"],
             'regenerateMovieThreshold': this.params["regenerate_movie_threshold"],
             'enableHelios'            : this.params["enable_helios_backlinks"],
-            'jhelioviewerHost'        : this.params["jhelioviewer_host"]
+            'jhelioviewerHost'        : this.params["jhelioviewer_host"],
+            'obstime_alert_dt'        : this.params["obstime_alert_dt"]
         };
     }
 });
