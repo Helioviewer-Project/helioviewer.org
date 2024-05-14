@@ -2,6 +2,7 @@
  * @fileOverview Contains the class definition for an EventLayerAccordion class.
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
+ * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
  * @see TileLayerManager, TileLayer
  * @requires ui.dynaccordion.js
  *
@@ -48,7 +49,6 @@ var EventLayerAccordion = Layer.extend(
                    .unbind("update-event-layer-accordion-entry").bind("update-event-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this))
                    .bind("observation-time-changed",           $.proxy(this._onObservationTimeChange, this));
 
-
         // Tooltips
         this.container.delegate("span[title]", 'mouseover', function (event) {
             $(this).qtip({
@@ -63,6 +63,7 @@ var EventLayerAccordion = Layer.extend(
             $.attr(this, 'oldtitle', $.attr(this, 'title'));
             this.removeAttribute('title');
         });
+
     },
 
     /**
@@ -70,36 +71,54 @@ var EventLayerAccordion = Layer.extend(
      *
      * @param {Object} layer The new layer to add
      */
-    addLayer: function (event, index, id, name, date, startOpened, markersVisible, labelsVisible, apiSource) {
-        if(outputType!='minimal'){
-            this._createAccordionEntry(index, id, name, markersVisible, labelsVisible, startOpened, apiSource);
-            this._setupEventHandlers(id);
+    addLayer: function (event, index, id, name, date, startOpened, markersVisible, labelsVisible, availabilityVisible, apiSource) {
+        if(outputType!='minimal') {
+            this._createAccordionEntry(index, id, name, markersVisible, labelsVisible, availabilityVisible, startOpened, apiSource);
             this._updateTimeStamp(id, date);
-        }else{
-            this._createK12VisibilityBtn(index, id, name, markersVisible, labelsVisible, startOpened, apiSource);
-            this._setupK12EventHandlers(id);
+        } else {
+            this._createK12VisibilityBtn(index, id, name, markersVisible, labelsVisible, availabilityVisible, startOpened, apiSource);
         }
     },
 
     /**
+     * @description check if the labels visibility of all event layers are turned off or on
+     * @return {boolean} 
+     */
+    isAllEventLayersTurnedOff: function() {
+
+        let weHaveAtLeastOneEvLabelsOn = false;
+
+        Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(tC => {
+            weHaveAtLeastOneEvLabelsOn = weHaveAtLeastOneEvLabelsOn || tC['labels_visible']; 
+        });
+
+        return weHaveAtLeastOneEvLabelsOn;
+    },
+
+    /**
+     * @description Creates event layer sections like HEK or CCMC
+     *
+     * @param {integer} index , used in queries to fetch FRM data
+     * @param {string} id of the tree
+     * @param {float} viewportScale
+     * @param {string} name , name of the event  layer used in tree and event managers
+     * @param {boolean} markersVisible, are we going to hide markers for this event layer initially, coming from the state 
+     * @param {boolean} labelsVisible, are we going to hide labels of markers for this event layer initially, coming from the state 
+     * @param {boolean} availabilityVisible, are we going to hide unavailable FRMs in checkbox tree branches 
+     * @param {boolean} startOpened, 
+     * @param {JSON} apiSource, initial request params for fetching tree data , managing event layers 
      *
      */
-    _createAccordionEntry: function (index, id, name, markersVisible, labelsVisible, startOpened, apiSource) {
+    _createAccordionEntry: function (index, id, name, markersVisible, labelsVisible, availabilityVisible, startOpened, apiSource) {
 
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, head, body, self=this;
 
 		let treeid = 'tree_'+name;
 
-		var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
-        if ( typeof visState == 'undefined') {
-            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
-            visState = true;
-        }
-
-        // initial visibility
-        markersHidden = (markersVisible ? "" : " hidden");
+        // initial visibility of the tree buttons, 
+        availableHidden  = ( availabilityVisible ? "" : " hidden");
+        markersHidden = (markersVisible ? " fa-eye " : " fa-eye-slash hidden");
         labelsHidden  = ( labelsVisible ? "" : " hidden");
-        availableHidden  = ( visState ? "" : " hidden");
 
 		availableBtn = '<span class="fa fa-bullseye fa-fw layerAvailableBtn visible'
                       + availableHidden + '" '
@@ -107,7 +126,7 @@ var EventLayerAccordion = Layer.extend(
                       + 'title="Toggle visibility of empty elements inside Features and Events list" '
                       + '></span>';
 
-        visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
+        visibilityBtn = '<span class="fa fa-fw layerManagerBtn visible'
                       + markersHidden + '" '
                       + 'id="visibilityBtn-' + id + '" '
                       + 'title="Toggle visibility of event marker pins" '
@@ -139,14 +158,15 @@ var EventLayerAccordion = Layer.extend(
 
         //Add to accordion
         this.domNode.dynaccordion("addSection", {
-            id:     id,
+            id:     id, 
             header: head,
             cell:   body,
             index:  index,
             open:   startOpened
         });
 
-        this._loadEvents(treeid, apiSource);
+        // create event_layer_manager for this event layer
+        this._loadEvents(treeid, apiSource, markersVisible, labelsVisible, availabilityVisible);
 
         this.domNode.find("#checkboxBtn-On-"+id).click( function() {
             $(document).trigger("toggle-checkboxes-to-state", [treeid, 'on']);
@@ -156,54 +176,143 @@ var EventLayerAccordion = Layer.extend(
             $(document).trigger("toggle-checkboxes-to-state", [treeid, 'off']);
         });
 
+        // click event for the label button, turns off and ons marker labels
         this.domNode.find("#labelsBtn-"+id).click( function(e) {
-            $(document).trigger("toggle-event-labels", [$("#labelsBtn-"+id)]);
+            // get label state for this event layer
+            let currentLabelVisible = Helioviewer.userSettings.getHelioViewerEventLayerSettingsValue(name,'labels_visible');
+            let newCurrentLabelVisible = !currentLabelVisible;
+
+            // populate new label visibility to those event layer
+            self._eventManagers.filter(m => m.filterID(name)).forEach(m => m.toggleLabels(newCurrentLabelVisible))
+
+            // toggle label visibility state for this event layer
+            Helioviewer.userSettings.setHelioViewerEventLayerSettings(name, 'labels_visible', newCurrentLabelVisible);
+
+            // if labels are visible in new state remove hidden class
+            if(newCurrentLabelVisible) {
+	            $(this).removeClass('hidden');
+            } else {
+	            $(this).addClass('hidden');
+            }
+
             e.stopPropagation();
         });
 
-        this.domNode.find("#visibilityAvailableBtn-"+id).click( function(e) {
-            var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
-            if(visState == true){
-	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
-	            $(this).addClass('hidden');
-				$('#'+treeid+' .empty-element').hide();
-            }else{
-	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
-	            $(this).removeClass('hidden');
-	            $('#'+treeid+' .empty-element').show();
+        // click event for the eye button, turns off and ons marker entirely
+        this.domNode.find("#visibilityBtn-"+id).click( function(e) {
+
+            // get marker visibility conf of layer markers
+            let currentMarkersVisible = Helioviewer.userSettings.getHelioViewerEventLayerSettingsValue(name,'markers_visible');
+            let newCurrentMarkersVisible = !currentMarkersVisible;
+
+            // set marker visbility of the event_manager for this event
+            self._eventManagers.filter(m => m.filterID(name)).forEach(m => m.toggleMarkers(newCurrentMarkersVisible))
+
+            // toggle markers visibility state for this event layer
+            Helioviewer.userSettings.setHelioViewerEventLayerSettings(name, 'markers_visible', newCurrentMarkersVisible);
+
+            // manage button , make it red or green, depend on the state
+            if(newCurrentMarkersVisible) {
+                $(this).removeClass('hidden');
+                $(this).removeClass('fa-eye-slash');
+                $(this).addClass('fa-eye');
+            } else {
+                $(this).addClass('hidden');
+                $(this).removeClass('fa-eye');
+                $(this).addClass('fa-eye-slash');
             }
+
             e.stopPropagation();
+        });
+
+        // This is the place , managing 'd' keyboard command, 
+        // see KeyboardManager firing toggle-event-labels for the 'd' key, 
+        // this boolean decides , initial behaviour of the 'd'
+        // if all labels of all layers turned off , 'd' initially makes them visible
+        // if all labels of all layers are turned on, 'd' inittialy hides them
+        let all_levels_dictated = this.isAllEventLayersTurnedOff();
+
+        $(document).bind("toggle-event-labels", (event) => {
+             
+            all_levels_dictated = !all_levels_dictated;
+
+            // We are going to force what it dictates
+            let newCurrentLabelVisible = all_levels_dictated;
+
+            // populate new label visibility to those event layer
+            self._eventManagers.filter(m => m.filterID(name)).forEach(m => m.toggleLabels(newCurrentLabelVisible))
+
+            // toggle label visibility state for this event layer
+            Helioviewer.userSettings.setHelioViewerEventLayerSettings(name, 'labels_visible', newCurrentLabelVisible);
+
+            // if labels are visible in new state remove hidden class
+            if(newCurrentLabelVisible) {
+	            self.domNode.find("#labelsBtn-"+id).removeClass('hidden');
+            } else {
+	            self.domNode.find("#labelsBtn-"+id).addClass('hidden');
+            }
+
+        });
+
+        // click event for hiding empty frm sources button
+        this.domNode.find("#visibilityAvailableBtn-"+id).click( function(e) {
+
+            // get layer availability state for this event layer
+            let currentLayerAvailableVisible = Helioviewer.userSettings.getHelioViewerEventLayerSettingsValue(name,'layer_available_visible');
+            let newCurrentLayerAvailableVisible = !currentLayerAvailableVisible;
+
+            // populate new label visibility to those event layer
+            self._eventManagers.filter(m => m.filterID(name)).forEach(m => m.toggleNonAvailableLayers(newCurrentLayerAvailableVisible))
+
+            // toggle label visibility state for this event layer
+            Helioviewer.userSettings.setHelioViewerEventLayerSettings(name, 'layer_available_visible', newCurrentLayerAvailableVisible);
+
+            // if labels are visible in new state remove hidden class
+            if(newCurrentLayerAvailableVisible) {
+                $(this).removeClass('hidden');
+            } else {
+	            $(this).addClass('hidden');
+            }
+
+            e.stopPropagation();
+
         });
 
         this.domNode.find(".timestamp").click( function(e) {
             e.stopPropagation();
         });
 
+        
     },
 
     /**
      * Begins the process of loading events
      * @param {string} id
      */
-    _loadEvents: function (id, apiSource) {
-        this.getEventGlossary(id, $.proxy(this._createEventManager, this, id, apiSource));
+    _loadEvents: function (id, apiSource, markersVisible, labelsVisible, availabilityVisible) {
+        this.getEventGlossary(id, $.proxy(this._createEventManager, this, id, apiSource, markersVisible, labelsVisible, availabilityVisible));
     },
 
-    _createK12VisibilityBtn: function(index, id, name, markersVisible, labelsVisible, startOpened, apiSource) {
+    /**
+     * @description Just for output mininal , created EVENTS ON and EVENTS OFF button
+     *
+     * @param {integer} index , used in queries to fetch FRM data
+     * @param {string} id of the tree
+     * @param {boolean} markersVisible, are we going to hide markers for this event layer initially, coming from the state 
+     * @param {boolean} labelsVisible, are we going to hide labels of markers for this event layer initially, coming from the state 
+     * @param {boolean} availabilityVisible, are we going to hide unavailable FRMs in checkbox tree branches 
+     * @param {boolean} startOpened, 
+     * @param {JSON} apiSource, initial request params for fetching tree data , managing event layers 
+     *
+     */
+    _createK12VisibilityBtn: function(index, id, name, markersVisible, labelsVisible, availabilityVisible, startOpened, apiSource) {
+
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, eventsDiv, self=this;
 
 		let treeid = 'tree_'+name;
 
-		var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
-        if ( typeof visState == 'undefined') {
-            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
-            visState = true;
-        }
-
         // initial visibility
         markersHidden = (markersVisible ? "" : " hidden");
-        labelsHidden  = ( labelsVisible ? "" : " hidden");
-        availableHidden  = ( visState ? "" : " hidden");
 
         visibilityBtn = '<span class="fa fa-eye fa-fw layerManagerBtn visible'
                       + markersHidden + '" '
@@ -212,7 +321,7 @@ var EventLayerAccordion = Layer.extend(
 		      + 'style="margin-top:0.5em;" '
                       + '></span>';
 
-        eventsDiv = '<div id="k12-events-visibility-btn-'+id+'" class="k12-eventsVisBtn" title="Toggle visibility of event marker pins" style="display: flex;">'
+        eventsDiv = '<div id="k12-events-visibility-btn-'+id+'" class="k12-eventsVisBtn" title="Toggle visibility of event marker pins" style="display: flex;cursor: pointer;">'
                     + visibilityBtn
                     + '<p id="k12-events-btn-text" style="margin-left:0.3em;">EVENTS ARE ON<p></div>';
         
@@ -222,20 +331,50 @@ var EventLayerAccordion = Layer.extend(
         this.domNode.append(eventsDiv);
         this.domNode.append(jstree);
 
-        this._loadEvents(treeid, apiSource);
+        this._loadEvents(treeid, apiSource, markersVisible, labelsVisible, availabilityVisible);
 
         this.domNode.find("#k12-events-visibility-btn-"+id).click( function(e) {
-            var visState = Helioviewer.userSettings.get("state.eventLayerAvailableVisible");
-            if(visState == true){
-	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", false);
-	            $(this).addClass('hidden');
-				$('#'+treeid+' .empty-element').hide();
-            }else{
-	            Helioviewer.userSettings.set("state.eventLayerAvailableVisible", true);
-	            $(this).removeClass('hidden');
-	            $('#'+treeid+' .empty-element').show();
+
+            // get label state for this event layer
+            let currentMarkersVisible = Helioviewer.userSettings.getHelioViewerEventLayerSettingsValue(name,'markers_visible');
+            let newCurrentMarkersVisible = !currentMarkersVisible;
+
+            // populate new label visibility to those event layer
+            self._eventManagers.filter(m => m.filterID(name)).forEach(m => m.toggleMarkers(newCurrentMarkersVisible))
+
+            // toggle label visibility state for this event layer
+            Helioviewer.userSettings.setHelioViewerEventLayerSettings(name, 'markers_visible', newCurrentMarkersVisible);
+
+            // if labels are visible in new state remove hidden class
+            if(newCurrentMarkersVisible) {
+                $("#visibilityBtn-" + id).removeClass('hidden');
+                $("#visibilityBtn-" + id).removeClass('fa-eye-slash');
+                $("#visibilityBtn-" + id).addClass('fa-eye');
+                $("#k12-events-btn-text").text("EVENTS ARE ON");
+            } else {
+                $("#visibilityBtn-" + id).addClass('hidden');
+                $("#visibilityBtn-" + id).removeClass('fa-eye');
+                $("#visibilityBtn-" + id).addClass('fa-eye-slash');
+                $("#k12-events-btn-text").text("EVENTS ARE OFF");
             }
+
             e.stopPropagation();
+
+        });
+
+        let all_levels_dictated = true;
+        $(document).bind("toggle-event-labels", (event) => {
+            all_levels_dictated = !all_levels_dictated;
+
+            // We are going to force what it dictates
+            let newCurrentLabelVisible = all_levels_dictated;
+
+            // populate new label visibility to those event layer
+            self._eventManagers.filter(m => m.filterID(name)).forEach(m => m.toggleLabels(newCurrentLabelVisible))
+
+            // toggle label visibility state for this event layer
+            Helioviewer.userSettings.setHelioViewerEventLayerSettings(name, 'labels_visible', newCurrentLabelVisible);
+
         });
     },
 
@@ -252,8 +391,8 @@ var EventLayerAccordion = Layer.extend(
         $.get(Helioviewer.api, params, callback, "json");
     },
 
-    _createEventManager: function(id, apiSource, eventGlossary) {
-        this._eventManagers.push(new EventManager(eventGlossary, this._date, id, apiSource));
+    _createEventManager: function(id, apiSource, markersVisible, labelsVisible, availabilityVisible, eventGlossary) {
+        this._eventManagers.push(new EventManager(eventGlossary, this._date, id, apiSource, markersVisible, labelsVisible, availabilityVisible));
     },
 
     /**
@@ -262,77 +401,6 @@ var EventLayerAccordion = Layer.extend(
     _setupUI: function () {
         return;
     },
-
-    /**
-     * @description Sets up event-handlers for a EventLayerAccordion entry
-     * @param {String} id
-     */
-    _setupEventHandlers: function (id) {
-        var toggleVisibility, opacityHandle, removeLayer, visState, self = this,
-            visibilityBtn = $("#visibilityBtn-" + id)/*,
-            removeBtn     = $("#removeBtn-" + id)*/;
-
-        // Function for toggling layer visibility
-        toggleVisibility = function (e) {
-            var domNode;
-
-            domNode = $(document).find(".event-container");
-            if ( domNode.css('display') == 'none') {
-                domNode.show();
-                Helioviewer.userSettings.set("state.eventLayerVisible", true);
-                $("#visibilityBtn-" + id).removeClass('hidden');
-                $("#visibilityBtn-" + id).removeClass('fa-eye-slash');
-                $("#visibilityBtn-" + id).addClass('fa-eye');
-            }
-            else {
-                domNode.hide();
-                Helioviewer.userSettings.set("state.eventLayerVisible", false);
-                $("#visibilityBtn-" + id).addClass('hidden');
-                $("#visibilityBtn-" + id).removeClass('fa-eye');
-                $("#visibilityBtn-" + id).addClass('fa-eye-slash');
-            }
-
-            e.stopPropagation();
-        };
-
-        visibilityBtn.unbind('click').bind('click', this, toggleVisibility);
-    },
-
-    /**
-     * @description Sets up event-handlers for a EventLayerAccordion entry
-     * @param {String} id
-     */
-    _setupK12EventHandlers: function (id) {
-        var toggleVisibility, opacityHandle, removeLayer, visState, self = this,
-            visibilityBtn = $("#k12-events-visibility-btn-" + id)/*,
-            removeBtn     = $("#removeBtn-" + id)*/;
-
-        // Function for toggling layer visibility
-        toggleVisibility = function (e) {
-            let domNode = $(document).find(".event-container");
-            if ( domNode.css('display') == 'none') {
-                domNode.show();
-                Helioviewer.userSettings.set("state.eventLayerVisible", true);
-                $("#visibilityBtn-" + id).removeClass('hidden');
-                $("#visibilityBtn-" + id).removeClass('fa-eye-slash');
-                $("#visibilityBtn-" + id).addClass('fa-eye');
-		$("#k12-events-btn-text").text("EVENTS ARE ON");
-            }
-            else {
-                domNode.hide();
-                Helioviewer.userSettings.set("state.eventLayerVisible", false);
-                $("#visibilityBtn-" + id).addClass('hidden');
-                $("#visibilityBtn-" + id).removeClass('fa-eye');
-                $("#visibilityBtn-" + id).addClass('fa-eye-slash');
-		$("#k12-events-btn-text").text("EVENTS ARE OFF");
-            }
-
-            e.stopPropagation();
-        };
-
-        visibilityBtn.unbind('click').bind('click', this, toggleVisibility);
-    },
-
 
     /**
      * @description Unbinds event-handlers relating to accordion header tooltips

@@ -1,6 +1,7 @@
 /**
  * @author Jeff Stys <jeff.stys@nasa.gov>
  * @author Jonathan Harper
+ * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
  * @fileOverview TO BE ADDED
  *
  */
@@ -12,13 +13,23 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 
 var EventTree = Class.extend({
 
-    init: function (id, data, container, eventManager) {
+    /**
+     * @constructs
+     * @description Creates an EventTree
+     * @param {string} id, ID of the tree
+     * @param {JSON} data, all the data to build tree 
+     * @param {dom} container, dom piece to append event tree dom
+     * @param {EventManager} eventManager, event manager this tree is managed by
+     * @param {integer} zIndex, zIndex as you know, visibility hierarchy of this marker in html
+     * @param {boolean} showEmptyBranches, decides if tree should hide empty frm branches
+     */
+    init: function (id, data, container, eventManager, showEmptyBranches) {
         this._id = id;
         this._container = container;
         this._EventManager = eventManager;
-        this._visibleEventLayerKey = "state.events_v2." + this._id + ".visible";
         this._activeEventLayersKey = "state.events_v2." + this._id + ".layers";
         this._selectedEventCache = new SelectedEventsCache();
+        this._showEmptyBranches = showEmptyBranches; 
 
         this._build(data);
         $(document).bind("toggle-checkboxes-to-state", $.proxy(this.toggle_checkboxes_state, this));
@@ -66,14 +77,6 @@ var EventTree = Class.extend({
         this._container.jstree(name, args);
     },
 
-    getVisibleEventState: function () {
-        return Helioviewer.userSettings.get(this._visibleEventLayerKey);
-    },
-
-    setVisibleEventState: function (state) {
-        Helioviewer.userSettings.set(this._visibleEventLayerKey, state);
-    },
-
     getSavedEventLayers: function () {
         return Helioviewer.userSettings.get(this._activeEventLayersKey);
     },
@@ -105,11 +108,9 @@ var EventTree = Class.extend({
                 $('#'+event_type['attr'].id).css({'opacity':'0.5'});
                 $('#'+event_type['attr'].id).addClass('empty-element');
 
-                var visState = self.getVisibleEventState();
-	            if(visState != true){
-                    self.setVisibleEventState(false)
-					$('#'+event_type['attr'].id).hide();
-	            }
+                if(!self._showEmptyBranches) {
+                    $('#'+event_type['attr'].id).hide();
+                }
             }
 
             $.each(event_type['children'], function(j, frm) {
@@ -328,4 +329,16 @@ var EventTree = Class.extend({
 
         $(document).trigger("change-feature-events-state");
     },
+
+    /**
+     * @description toggles the visibility of frm nodes is tree, if they do not have any child nodes
+     * @param {boolean} showEmptyBranches
+     * @returns void
+     */
+    toggleEmptyBranches: function(showEmptyBranches) {
+        this._showEmptyBranches = showEmptyBranches;
+        this._container.find(".empty-element").each(function() {
+            showEmptyBranches ? $(this).show() : $(this).hide()
+        });
+    }
 });

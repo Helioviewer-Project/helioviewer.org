@@ -164,7 +164,6 @@ var HelioviewerViewport = Class.extend(
     },
 
     serialize: function () {
-        // return this._tileLayerManager.serialize();
         return Helioviewer.userSettings.parseLayersURLString();
     },
 

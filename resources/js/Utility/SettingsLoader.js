@@ -3,6 +3,7 @@
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
+ * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
@@ -163,11 +164,19 @@ var SettingsLoader = (
                 },
                 "events_v2": {
                     "tree_HEK": {
+                        "id": "HEK",
                         "visible": true,
+                        "markers_visible":true,
+                        "labels_visible":true,
+                        "layer_available_visible":true,
                         "layers": [],
                     },
                     "tree_CCMC": {
+                        "id": "CCMC",
                         "visible": true,
+                        "markers_visible":true,
+                        "labels_visible":true,
+                        "layer_available_visible":true,
                         "layers": [],
                     }
                 },
