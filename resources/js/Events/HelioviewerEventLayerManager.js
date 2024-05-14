@@ -1,6 +1,7 @@
 /**
  * @fileOverview Contains the class definition for a HelioviewerEventLayerManager class.
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
+ * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
  * @see EventLayerManager, EventManager
  * @requires EventLayerManager
  *
@@ -24,31 +25,25 @@ var HelioviewerEventLayerManager = EventLayerManager.extend(
     },
 
     /**
-     * @description Adds a layer that is not already displayed
-     */
-    addNewLayer: function () {
-
-        // Add the event layer
-        this.addEventLayer(
-            new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                'HEK', true, true)
-        );
-    },
-
-    /**
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.
      */
     _loadStartingLayers: function (layers) {
-        // Add the event layer
+
+        // load HEK configuration from events_v2
+        let hekTreeConf = Helioviewer.userSettings.getHelioViewerEventLayerSettings('HEK');
+
+        // Add the event layer HEK , with the state visibility variables
         this.addEventLayer(
             new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                'HEK', true, Helioviewer.userSettings.get("state.eventLabels"), {"action": "events", "sources": "HEK", "ar_filter": true})
+                'HEK', hekTreeConf['markers_visible'], hekTreeConf['labels_visible'], hekTreeConf['layer_available_visible'],{"action": "events", "sources": "HEK", "ar_filter": true})
         );
 
+        // load CCMC only if output minimal, configuration from events_v2
         if (outputType != 'minimal') {
+            let ccmcTreeConf = Helioviewer.userSettings.getHelioViewerEventLayerSettings('CCMC');
             this.addEventLayer(
                 new HelioviewerEventLayer(this._eventLayers.length, this._requestDate, this.viewportScale,
-                    'CCMC', true, true, {"action": "events", "sources": "CCMC"})
+                    'CCMC', ccmcTreeConf['markers_visible'], ccmcTreeConf['labels_visible'], ccmcTreeConf['layer_available_visible'], {"action": "events", "sources": "CCMC"})
             );
         }
     },

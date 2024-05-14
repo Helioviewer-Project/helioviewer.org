@@ -2,6 +2,7 @@
  * @fileOverview Contains the class definition for an UserSettings class.
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
+ * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
@@ -340,21 +341,18 @@ var UserSettings = Class.extend(
             Object.keys(this.get("state.events_v2")).forEach((section) => {
                 this.set("state.events_v2." + section + ".layers", [])
             });
-        }else if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
+        } else if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
             Object.keys(this.get("state.events_v2")).forEach((section) => {
                 this.set("state.events_v2." + section + ".layers", this._parseURLStringEvents(urlSettings.eventLayers))
             });
         }
 
-        // Event labels are ON by default
-        if ( urlSettings.eventLabels == true ) {
-            this.set("state.eventLabels", true);
-        }
-        // Override event label default with value from URL
-        else if ( typeof urlSettings.eventLabels != 'undefined'
-            && urlSettings.eventLabels == false) {
-
-            this.set("state.eventLabels", false);
+        // If any historical shared url turns off event labels, we also respect that 
+        if ( typeof urlSettings.eventLabels != 'undefined' && urlSettings.eventLabels == false) {
+            // We also turning labels off for all layers
+            Object.keys(this.get("state.events_v2")).forEach((section) => {
+                this.set("state.events_v2." + section + ".labels_visible", false)
+            });
         }
 
         if(typeof urlSettings.celestialBodiesChecked != 'undefined' && urlSettings.celestialBodiesChecked != ''){
@@ -453,7 +451,6 @@ var UserSettings = Class.extend(
      * and convert it into a string for passing through URLs
      */
     parseEventsURLString: function (eventLayerArray) {
-        var eventLayerString = '';
 
         if ( typeof eventLayerArray == "undefined" ) {
             eventLayerArray = [];
@@ -465,11 +462,14 @@ var UserSettings = Class.extend(
             })
         }
 
+        var eventLayerString = '';
+
         $.each(eventLayerArray, function (i, eventLayerObj) {
             eventLayerString += "[" + eventLayerObj.event_type     + ","
                                     + eventLayerObj.frms.join(';') + ","
                                     + eventLayerObj.open           + "],";
         });
+
         return eventLayerString.slice(0, -1);
     },
 
@@ -513,5 +513,77 @@ var UserSettings = Class.extend(
         default:
             break;
         }
+    },
+
+    /*
+     * @description This function is used to update/add state variables to this event_layer state, 
+     * @param {string} id of the event layer
+     * @param {string} key
+     * @param {any} value
+     * @return {JSON} event layer state conf
+     */
+    setHelioViewerEventLayerSettings: function (treeID, key, value) {
+        let treeConf = this.getHelioViewerEventLayerSettings(treeID);
+        treeConf[key] = value;
+        this.set(treeID, treeConf);
+        return treeConf;
+    },
+
+    /*
+     * @description This function is used to get/read state variables to this event_layer state, 
+     * @param {string} id of the event layer
+     * @param {string} key
+     * @return {any} 
+     */
+    getHelioViewerEventLayerSettingsValue: function (treeID, key) {
+        let treeConf = this.getHelioViewerEventLayerSettings(treeID);
+        return treeConf[key];
+    },
+
+    /*
+     * @description This function is used to get/read all state variables to this event_layer state, 
+     * it also keeps existing states aligned with the new states, it adds keys with default values if they are not in old state
+     * @param {string} id of the event layer
+     * @param {string} key
+     * @return {JSON}   
+     */
+    getHelioViewerEventLayerSettings: function (treeID) {
+
+        let treeKey = `state.events_v2.tree_${treeID}`;
+        let treeConf = this.get(treeKey);
+
+        let hasMarkersVisible = treeConf.hasOwnProperty("markers_visible");
+        let hasLabelsVisible = treeConf.hasOwnProperty("labels_visible");
+        let hasLayerAvailabilityVisible = treeConf.hasOwnProperty("layer_available_visible");
+
+        if(hasMarkersVisible && hasLabelsVisible && hasLayerAvailabilityVisible) {
+            return treeConf;
+        }
+
+        // no new key markers_visible
+        if(!hasMarkersVisible) {
+            treeConf["markers_visible"] = true;
+        }
+
+        if(!hasLabelsVisible) {
+            treeConf["labels_visible"] = true;
+        }
+
+        if(!hasLayerAvailabilityVisible) {
+            treeConf["layer_available_visible"] = true;
+        }
+
+        this.set(treeKey, treeConf);
+        return treeConf;
+    },
+
+    /*
+     * @description Supplies iterator to traverse all event_layer configuration with given function
+     * @param {func} it , iterator function, will be executed for each event layer
+     * @return {void} 
+     */
+    iterateOnHelioViewerEventLayerSettings: function(it) {
+        Object.values(Helioviewer.userSettings.get('state.events_v2')).forEach(it);
     }
+
 });

@@ -99,7 +99,6 @@ var HelioviewerClient = Class.extend(
             maxImageScale  : this.serverSettings.maxImageScale,
             prefetch       : this.serverSettings.prefetchSize,
             tileLayers     : Helioviewer.userSettings.get('state.tileLayers'),
-            eventLabels    : Helioviewer.userSettings.get('state.eventLabels'),
             imageScale     : Helioviewer.userSettings.get('state.imageScale'),
             centerX        : Helioviewer.userSettings.get('state.centerX'),
             centerY        : Helioviewer.userSettings.get('state.centerY'),

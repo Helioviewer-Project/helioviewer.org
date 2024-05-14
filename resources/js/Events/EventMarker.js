@@ -1,6 +1,7 @@
 /**
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
+ * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
  * @fileoverview Contains the class definition for an EventMarker class.
  * @see EventLayer
  */
@@ -20,15 +21,20 @@ var EventMarker = Class.extend(
     /**
      * @constructs
      * @description Creates an EventMarker
-     * @param {Object} eventLayer EventLayer associated with the EventMarker
+     * @param {JSON} eventGlossary 
+     * @param {string} parentFRM
      * @param {JSON} event Event details
+     * @param {integer} zIndex, zIndex as you know, visibility hierarchy of this marker in html
+     * @param {boolean} labelVisible, set if the labels of this marker is hidden
+     * @param {boolean} markerVisible, set if the marker is visible
      */
-    init: function (eventGlossary, parentFRM, event, zIndex) {
+    init: function (eventGlossary, parentFRM, event, zIndex, labelVisible, markerVisible) {
         $.extend(this, event);
         this.event = event;
         this.behindSun = false;
         this.parentFRM  = parentFRM;
-        this._labelVisible = false;
+        this._labelVisible = labelVisible;
+        this._markerVisible = markerVisible;
         this._popupVisible = false;
         this._zIndex = zIndex;
         this._eventGlossary = eventGlossary;
@@ -41,9 +47,11 @@ var EventMarker = Class.extend(
         this.createRegion(0);
         this.createMarker(zIndex);
 
+        // Create the DOM of this marker, and set the visibility
+        this.setVisibility(this._markerVisible);
+        this.setLabelVisibility(this._labelVisible);
+
         $(document).bind("replot-event-markers",   $.proxy(this.refresh, this));
-        $(document).bind('toggle-event-label-on',  $.proxy(this.toggleEventLabel, this));
-        $(document).bind('toggle-event-label-off', $.proxy(this.toggleEventLabel, this));
     },
 
     /**
@@ -55,6 +63,7 @@ var EventMarker = Class.extend(
 
     /**
      * @description Creates the marker and adds it to the viewport
+     * @param {integer} zIndex, zIndex as you know , visibility hierarchy of this marker in html
      */
     createMarker: function (zIndex) {
         var markerURL;
@@ -171,10 +180,6 @@ var EventMarker = Class.extend(
             if ( typeof this.parentFRM != 'undefined' ) {
                 this.parentFRM.domNode.append(this.eventRegionDomNode);
             }
-
-            //this.eventRegionDomNode.bind("click", $.proxy(this.toggleEventPopUp, this));
-            //this.eventRegionDomNode.mouseenter($.proxy(this.toggleEventLabel, this));
-            //this.eventRegionDomNode.mouseleave($.proxy(this.toggleEventLabel, this));
         }
     },
 
@@ -292,23 +297,11 @@ var EventMarker = Class.extend(
         }
     },
 
-    setVisibility: function (visible) {
-        if (visible) {
-            if(this.eventRegionDomNode) {
-                this.eventRegionDomNode.show();
-            }
-            this.eventMarkerDomNode.show();
-        }
-        else {
-            if(this.eventRegionDomNode) {
-                this.eventRegionDomNode.hide();
-            }
-            this.eventMarkerDomNode.hide();
-        }
-    },
-
-    toggleEventLabel: function (event) {
-
+    /**
+     * @description Creates the event marker label domnode if it is not already set
+     * @returns void     
+     * */
+    _makeLabel: function() {
         if ( !this._label ) {
             this._label = $('<div/>');
             this._label.hide();
@@ -330,33 +323,75 @@ var EventMarker = Class.extend(
 
             this.eventMarkerDomNode.append(this._label);
         }
+    },
 
-        if ( event.type == 'toggle-event-label-on' ) {
+    /**
+     * @description create label of marker if it is not created, and sets its visibility, 
+     * @param {boolean} labelVisibility, hide or show
+     * @return {void}
+     */
+    setLabelVisibility: function(labelVisibility) {
+
+        this._makeLabel();
+
+        if(labelVisibility === true) {
             this._labelVisible = true;
             this._label.show();
-            Helioviewer.userSettings.set("state.eventLabels", true);
         }
-        else if ( event.type == 'toggle-event-label-off' ) {
+
+        if(labelVisibility === false) {
             this._labelVisible = false;
             this._label.hide();
-            Helioviewer.userSettings.set("state.eventLabels", false);
         }
-        else if ( event.type == 'mouseenter' ) {
-            this.eventMarkerDomNode.css('zIndex', '997');
-            this._label.addClass("event-label-hover");
+    },
+
+    /**
+     * @description sets marker visibility, 
+     * @param {boolean} markerVisible, hide or show
+     * @return {void}
+     */
+    setVisibility: function (markerVisible) {
+        if (markerVisible) {
+            if(this.eventRegionDomNode) {
+                this.eventRegionDomNode.show();
+            }
+            this.eventMarkerDomNode.show();
+            this._markerVisible = markerVisible;
+        }
+        else {
+            if(this.eventRegionDomNode) {
+                this.eventRegionDomNode.hide();
+            }
+            this.eventMarkerDomNode.hide();
+            this._markerVisible = markerVisible;
+        }
+    },
+
+    /**
+     * @description shows label visibility with mouseenter and leave events, this function does not change visibility state, 
+     * just shows labels for temporary events and situations
+     * @param {Event} event
+     * @return {bool}
+     */
+    toggleEventLabel: function (event) {
+
+        this._makeLabel();
+
+        if ( event.type == 'mouseenter' ) {
             this._label.show();
+            this.emphasize();
 
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
 	            var eventID = $(event.currentTarget).attr('rel');
 	            $(".highcharts-series > rect:not(.point_"+eventID+")").hide();
             }
         }
-        else if ( event.type == 'mouseleave' ) {
-            if ( !this._labelVisible) {
+
+        if ( event.type == 'mouseleave' ) {
+            if(this._labelVisible == false) {
                 this._label.hide();
             }
-            this.eventMarkerDomNode.css('zIndex', this._zIndex);
-            this._label.removeClass("event-label-hover");
+            this.deEmphasize();
 
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-timeline-events.open") == true && timelineRes == 'm'){
 	            $(".highcharts-series > rect").show();
@@ -391,7 +426,7 @@ var EventMarker = Class.extend(
             });
             this.eventMarkerDomNode.css('z-index', '998');
             //$('.event-popup').hide();
-	    this.eventPopupDomNode.show();
+            this.eventPopupDomNode.show();
         }
 
         this._popupVisible = !this._popupVisible;

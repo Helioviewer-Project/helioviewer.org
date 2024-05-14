@@ -90,10 +90,19 @@ var MovieManagerUI = MediaManagerUI.extend(
 
 		this.building = true;
 
-		if ( Helioviewer.userSettings.get("state.eventLayerVisible") === false ) {
+		//*********** TEMPORARY IMPLEMENTATION *********
+		// TODO Temprorary function to remove
+		let eventLayersVisible = false;
+		Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(tC => {
+			// if any of the markers is visible, we need to show events
+			eventLayersVisible = (eventLayersVisible || tC['markers_visible']);
+		});
+
+		if ( eventLayersVisible === false ) {
 			this._movieEvents = '';
 			this._movieEventsLabels = false;
 		}
+		//*********** TEMPORARY IMPLEMENTATION *********
 
 		var switchSources = false;
 		if(outputType == 'minimal'){
@@ -226,7 +235,17 @@ var MovieManagerUI = MediaManagerUI.extend(
 		this._movieROI	= this._toArcsecCoords(roi, this._movieScale);
 		this._movieLayers = layers;
 		this._movieEvents = events;
-		this._movieEventsLabels = helioviewer.getEventsLabels();
+
+		//*********** TEMPORARY IMPLEMENTATION *********
+		// TODO Temprorary function to remove
+		let eventLabelsVisible = false;
+		Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(tC => {
+			// if any of the labels is visible, we need to show labels
+			eventLabelsVisible = (eventLabelsVisible || tC['labels_visible']);
+		});
+
+		this._movieEventsLabels = eventLabelsVisible;
+		//*********** TEMPORARY IMPLEMENTATION *********
 	},
 
 	/**

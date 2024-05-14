@@ -176,27 +176,43 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         celestialBodiesLabels = helioviewer.getCelestialBodiesLabels();
         celestialBodiesTrajectories = helioviewer.getCelestialBodiesTrajectories();
 
-        if ( Helioviewer.userSettings.get("state.eventLayerVisible") === false ) {
+        //*********** TEMPORARY IMPLEMENTATION *********
+        // TODO Temprorary function to remove
+        let eventLayersVisible = false;
+        Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(tC => {
+            // if any of the markers is visible, we need to show events
+            eventLayersVisible = (eventLayersVisible || tC['markers_visible']);
+        });
+
+        let eventLabelsVisible = false;
+        Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(tC => {
+            // if any of the labels is visible, we need to show labels
+            eventLabelsVisible = (eventLabelsVisible || tC['labels_visible']);
+        });
+
+        if ( eventLayersVisible === false ) {
             events = '';
             eventLabels = false;
         }
+        //*********** TEMPORARY IMPLEMENTATION *********
+
 
         // Make sure selection region and number of layers are acceptible
         if (!this._validateRequest(roi, layers)) {
             return;
         }
 
-		var switchSources = false;
-		if(outputType == 'minimal'){
-			switchSources = true;
-		}
+        var switchSources = false;
+        if(outputType == 'minimal'){
+            switchSources = true;
+        }
 
         params = $.extend({
             action        : "takeScreenshot",
             imageScale    : imageScale,
             layers        : layers,
             events        : events,
-            eventLabels   : Helioviewer.userSettings.get("state.eventLabels"),
+            eventLabels   : eventLabelsVisible,
             scale         : Helioviewer.userSettings.get("state.scale"),
             scaleType     : Helioviewer.userSettings.get("state.scaleType"),
             scaleX        : Helioviewer.userSettings.get("state.scaleX"),
