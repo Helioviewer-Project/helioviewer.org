@@ -258,8 +258,10 @@ var EventManager = Class.extend({
 
                 // Generate event instances nodes for jstree
                 let group_children = group.data.map(d => {
+                    // See Utility/HelperFunctions for fixUnicodeChars
+                    let eventInstanceLabel = d.short_label ?? d.label;
                     return {
-                        'data': d.short_label ?? d.label,
+                        'data': fixUnicodeChars(eventInstanceLabel),
                         'attr': {
                             'id': self._makeEventInstanceTreeNodeID(event_type_arr[1], group.name, d.id),
                             'hvtype': 'event_instance',
