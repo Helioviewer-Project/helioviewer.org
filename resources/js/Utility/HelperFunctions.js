@@ -696,10 +696,6 @@ function formatLyrDateString(tmpLayerDateStr) {
  * @return {string} fixed string
  */
 function fixUnicodeChars(s) {
-    return s.replace(/u03b1/g, "&alpha;")
-        .replace(/u03b2/g, "&beta;")
-        .replace(/u03b3/g, "&gamma;")
-        .replace(/u00b1/g, "&pm;")
-        .replace(/u00b2/g, "&sup;");
+    return s.replace(/u([0-9a-fA-F]{4})/g, "&#x$1;");
 }
 
