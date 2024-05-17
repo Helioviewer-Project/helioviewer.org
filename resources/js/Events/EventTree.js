@@ -91,7 +91,7 @@ var EventTree = Class.extend({
 
         this._container.jstree({
             "json_data" : { "data": jsTreeData },
-            "core" : { "data": jsTreeData },
+            "core" : { "data": jsTreeData, "html_titles": true },
             "themes"    : { "theme":"default", "dots":true, "icons":false },
             "plugins"   : [ "json_data", "themes", "ui", "checkbox" ],
         });

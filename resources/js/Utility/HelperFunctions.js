@@ -689,3 +689,13 @@ function formatLyrDateString(tmpLayerDateStr) {
    return frmtTmpDateStr;
 
 }
+
+/*
+ * @description hacky function to fix unicode chars apply to html entities
+ * @param {string} s, string to be fixed
+ * @return {string} fixed string
+ */
+function fixUnicodeChars(s) {
+    return s.replace(/u([0-9a-fA-F]{4})/g, "&#x$1;");
+}
+
