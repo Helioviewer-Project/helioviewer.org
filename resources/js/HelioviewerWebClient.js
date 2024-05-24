@@ -755,7 +755,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         $('#share-twitter-link').on('click', $.proxy(this.twitter, this));
         $('#share-facebook-link').on('click', $.proxy(this.facebook, this));
-        $('#share-google-link').on('click', $.proxy(this.google, this));
         $('#share-pinterest-link').on('click', $.proxy(this.pinterest, this));
         //Help Links
         //Guide

@@ -1169,15 +1169,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 									</div>
 								</div>
 
-								<div id='google' class='social-btns'>
-									<div style="font-size: 1.5em;">
-										<div id='share-google-link' class='text-btn qtip-left color-google' style="width: 90%;border:none;" title='Share Screenshot with Google+'>
-											<span class='fa fa-google-plus-square fa-fw'></span>
-											<span style='line-height: 1.6em'>Share Screenshot with Google+</span>
-										</div>
-									</div>
-								</div>
-
 								<div id='pinterest' class='social-btns'>
 									<div style="font-size: 1.5em;">
 										<div id='share-pinterest-link' class='text-btn qtip-left' style="width: 90%;border:none;" title='Pin Screenshot'>
