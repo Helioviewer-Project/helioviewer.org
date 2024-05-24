@@ -20,7 +20,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * @param {array} zoomLevels set float numbers for zoomLevels
      */
     init: function (zoomLevels) {
-        var urlDate, imageScale, paddingHeight, accordionsToOpen, self=this;
+        var imageScale, paddingHeight, accordionsToOpen, self=this;
 
         this.header                    = $('#hv-header');
         this.drawerSpeed               = 0;
@@ -102,11 +102,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         // Determine image scale to use
         imageScale = this._chooseInitialImageScale(Helioviewer.userSettings.get('state.imageScale'), zoomLevels);
 
-        // Use URL date if specified
-        urlDate = urlSettings.date ? Date.parseUTCDate(urlSettings.date) : false;
+        // Not fully sure , why we need this line, but I am keeping for sake of defensive coding
+        let initialTime = Helioviewer.urlSettings.date ? Date.parseUTCDate(Helioviewer.urlSettings.date) : Helioviewer.userSettings.get('state.date'); 
 
-        this.timeControls = new TimeControls('#date', '#time',
-            '#timestep-select', '#timeBackBtn', '#timeForwardBtn', urlDate);
+        // Create our timecontrols
+        this.timeControls = new TimeControls('#date', '#time','#timestep-select', '#timeBackBtn', '#timeForwardBtn', initialTime);
 
         // Get available data sources and initialize viewport
         this._initViewport(this.timeControls.getDate(), 0, 0);
