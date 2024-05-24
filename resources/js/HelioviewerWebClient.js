@@ -781,7 +781,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         //Documentation
         $('#help-links-documentation').on('click', function(){
-            window.open('http://wiki.helioviewer.org/wiki/Main_Page','_blank');
+            window.open('https://helioviewer-project.github.io/user_guide/','_blank');
         });
 
         // Statistics page
