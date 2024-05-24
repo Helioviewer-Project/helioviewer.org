@@ -572,8 +572,9 @@ var UserSettings = Class.extend(
         let hasMarkersVisible = treeConf.hasOwnProperty("markers_visible");
         let hasLabelsVisible = treeConf.hasOwnProperty("labels_visible");
         let hasLayerAvailabilityVisible = treeConf.hasOwnProperty("layer_available_visible");
+        let hasID = treeConf.hasOwnProperty("id");
 
-        if(hasMarkersVisible && hasLabelsVisible && hasLayerAvailabilityVisible) {
+        if(hasMarkersVisible && hasLabelsVisible && hasLayerAvailabilityVisible && hasID) {
             return treeConf;
         }
 
@@ -588,6 +589,10 @@ var UserSettings = Class.extend(
 
         if(!hasLayerAvailabilityVisible) {
             treeConf["layer_available_visible"] = true;
+        }
+
+        if(!hasID) {
+            treeConf["id"] = treeID;
         }
 
         this.set(treeKey, treeConf);
