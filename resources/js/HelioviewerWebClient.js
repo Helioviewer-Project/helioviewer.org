@@ -724,39 +724,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         // Copy Link to Clipboard
         $('#share-copy-link').on('click', function(e){
-            $('.helioviewer-url-input-box-menu').on("focus", function() {
-                $(this).select();
+            navigator.clipboard.writeText($("#helioviewer-share-url").val()).then(() => {
+                Helioviewer.messageConsole.log("Link is copied to your clipboard");
             });
-            $( ".helioviewer-url-input-box-menu" ).focus();
-            document.execCommand('copy');
         });
-
-        var isIe = (navigator.userAgent.toLowerCase().indexOf("msie") != -1 || navigator.userAgent.toLowerCase().indexOf("trident") != -1);
-        document.addEventListener('copy', function(e) {
-            if(e.target.className == 'helioviewer-url-input-box'){
-                var textToPutOnClipboard = $(e.target).val();
-            }else{
-                return true;
-                //var textToPutOnClipboard = self.toURL();
-            }
-
-            if (isIe) {
-                window.clipboardData.setData('Text', textToPutOnClipboard);
-            } else {
-                e.clipboardData.setData('text/plain', textToPutOnClipboard);
-            }
-
-            // Options for the jGrowl notification
-            var jGrowlOpts = {
-                sticky: true,
-                header: "Just now"
-            };
-
-            // Create the jGrowl notification.
-            $(document).trigger("message-console-log", ["Link successfully copied to clipboard.", jGrowlOpts, true, true]);
-            e.preventDefault();
-        });
-
 
         $('#share-twitter-link').on('click', $.proxy(this.twitter, this));
         $('#share-facebook-link').on('click', $.proxy(this.facebook, this));
