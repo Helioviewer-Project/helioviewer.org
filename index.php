@@ -1113,12 +1113,10 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 						<div class="section">
 							<div id="helioviewer-url-box" style="font-size: 1em;">
 								<span id="helioviewer-url-box-msg"></span>
+								<span id="helioviewer-url-box-stale-link-msg" style="color:#f8e64f; display:none;">Your link become stale, click <a id="update-share-url-link" style="cursor:pointer">here</a> to update it</span>
+								<span id="helioviewer-url-box-stale-link-success-msg" style="color:green; display:none;">Updated!</span>
 								<form style="margin-top: 5px; text-align: center;">
-									<input aria-label="Viewport URL" type="text" class="helioviewer-url-input-box helioviewer-url-input-box-menu" style="width:98%;" value="https://helioviewer.org" />
-									<label for="helioviewer-url-shorten-1">Shorten link: </label>
-									<input id="helioviewer-url-shorten-1" type="checkbox" class="helioviewer-url-shorten" />
-									<input type="hidden" class="helioviewer-short-url" value="" />
-									<input type="hidden" class="helioviewer-long-url" value="" />
+									<input aria-label="Viewport URL" type="text" id="helioviewer-share-url" style="width:98%;" value="" readonly/>
 								</form>
 							</div>
 
@@ -1153,9 +1151,9 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 								<div id='twitter' class='social-btns'>
 									<div style="font-size: 1.5em;">
-										<div id='share-twitter-link' class='text-btn qtip-left' style="width: 90%;border:none;" title='Tweet Screenshot'>
+										<div id='share-twitter-link' class='text-btn qtip-left' style="width: 90%;border:none;" title='Share Screenshot on X'>
 											<span class='fa fa-twitter-square fa-fw'></span>
-											<span style='line-height: 1.6em'>Tweet Screenshot</span>
+											<span style='line-height: 1.6em'>Share Screenshot on X</span>
 										</div>
 									</div>
 								</div>
@@ -1442,9 +1440,9 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		<!-- URL Dialog -->
 		<div id='url-dialog' style="display:none;">
 			<div id="helioviewer-url-box">
-				<span id="helioviewer-url-box-msg"></span>
+				<span id="helioviewer-share-modal-msg"></span>
 				<form style="margin-top: 5px;">
-					<input aria-label="Movie URL" type="text" class="helioviewer-url-input-box helioviewer-url-input-box-video" style="width:98%;" value="https://helioviewer.org" readonly/>
+					<input aria-label="Movie URL" type="text" id="helioviewer-share-modal-url" style="width:98%;" value="https://helioviewer.org" readonly/>
 				</form>
 			</div>
 		</div>
