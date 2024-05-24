@@ -215,7 +215,7 @@ var MovieManager = MediaManager.extend(
                         var dialog = $("#movie-player-" + movie.id);
                         // If the movie player dialog does not exist, create one
                         if (dialog.length == 0) {
-                            helioviewer._movieManagerUI._createMoviePlayerDialog(movie);
+                            helioviewerWebClient._movieManagerUI._createMoviePlayerDialog(movie);
                         }
                     }
                 }
@@ -253,7 +253,7 @@ var MovieManager = MediaManager.extend(
 	                    if(typeof response.jobStatus != 'undefined' && response.jobStatus == 3){
 		                    var movie = self.get(id);
 		                    self._abort(id, true);
-		                    helioviewer._movieManagerUI._rebuildItem(movie);
+		                    helioviewerWebClient._movieManagerUI._rebuildItem(movie);
 	                    }
                     }else{
 	                    var progress = Math.round(response.progress * 100);

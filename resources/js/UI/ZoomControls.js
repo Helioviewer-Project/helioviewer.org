@@ -32,7 +32,7 @@ class ZoomControls {
     }
 
     get _currentLevel() {
-        return Math.log(helioviewer.getZoomedImageScale() / this._maxImageScale) / Math.log(0.5);
+        return Math.log(helioviewerWebClient.getZoomedImageScale() / this._maxImageScale) / Math.log(0.5);
     }
 
     /**

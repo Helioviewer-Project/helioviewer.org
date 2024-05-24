@@ -114,7 +114,7 @@ var MouseCoordinates = Class.extend(
         // The helioviewer instance needs to be set on the page before it can be used.
         // An event is sent when the instance is ready and that is when _ready will be true.
         if (this._ready) {
-            let layers = helioviewer.viewport.getVisibleLayerInstances({
+            let layers = helioviewerWebClient.viewport.getVisibleLayerInstances({
                 left: x,
                 right: x,
                 top: y,

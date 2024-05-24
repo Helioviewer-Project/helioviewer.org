@@ -168,7 +168,7 @@ var ImageSelectTool = Class.extend(
             this.y1 = selection.y1;
             this.y2 = selection.y2;
 
-            visibleCoords = helioviewer.getViewportRegionOfInterest();
+            visibleCoords = helioviewerWebClient.getViewportRegionOfInterest();
 
             roi = {
                 top     : visibleCoords.top  + selection.y1,

@@ -1956,16 +1956,18 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 	<!-- Launch Helioviewer -->
 	<script type="text/javascript">
+
 		var serverSettings, settingsJSON, urlSettings, debug, scrollLock = false, embedView = false;
 		<?php if($outputType){ ?>
 		embedView = true;
 		<?php } ?>
 		function getUrlParameters() {
-			var sPageURL = decodeURIComponent(decodeURIComponent(window.location.search.substring(1))),
-				sURLVariables = sPageURL.split('&'),
-				sParameterName,
-				i,
-				data = {};
+
+			let sPageURL = decodeURIComponent(decodeURIComponent(window.location.search.substring(1)));
+			let sURLVariables = sPageURL.split('&');
+			let sParameterName;
+			let i;
+			let data = {};
 
 			data['eventLabels'] = true;
 			data['imageLayers'] = '';
@@ -2012,6 +2014,8 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 					if ( typeof sParameterName[1] != 'undefined' && (sParameterName[1] == false  || sParameterName[1] == 'false' ) ) {
 						data['eventLabels'] = false;
 					}
+				}else if (sParameterName[0] === 'debug') {
+					data['debug'] = true;
 				}else if (sParameterName[0] === 'celestialBodies'){
 					// Process Celestial bodies labels seperately if set
 					if(sParameterName[1] != '') {
@@ -2026,16 +2030,27 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			return data;
 		};
 
+		var Helioviewer = {}; // Helioviewer global namespace
+
 		$( document ).ready(function(){
+
 			settingsJSON = {};
+
 			serverSettings = new Config(settingsJSON).toArray();
+
 			zoomLevels = [0.30255511, 0.60511022,1.21022044,2.42044088,4.84088176,9.68176352,19.36352704,38.72705408,77.45410816,154.90821632];
 
 			urlSettings = getUrlParameters();
 
-			// Initialize Helioviewer.org
-			helioviewer = new HelioviewerWebClient(urlSettings, serverSettings, zoomLevels);
-			$(document).trigger("helioviewer-ready", [true]);
+			// Set global configurations
+			Helioviewer.serverSettings = serverSettings;
+			Helioviewer.urlSettings = urlSettings;
+			Helioviewer.api = serverSettings['backEnd'];
+			Helioviewer.dataType = "json";
+			Helioviewer.root = serverSettings['rootURL'];
+			Helioviewer.messageConsole = new MessageConsole();
+			Helioviewer.outputType = "<?php echo $outputType; ?>";
+			Helioviewer.debug = <?php echo $debug ? 'true' : 'false'; ?>;
 
 			// Play movie if id is specified
 			if (urlSettings.movieId) {

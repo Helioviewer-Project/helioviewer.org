@@ -258,7 +258,7 @@ function ValidateRequest(result, expected, layerString) {
     // GONG is a special case, must be loaded from ROB
     if (foundLayer.observatory != "NSO-GONG") {
       expect(foundLayer.server).toBe(
-        helioviewer.serverSettings.jhelioviewerHost,
+        Helioviewer.serverSettings.jhelioviewerHost,
       );
     } else {
       expect(foundLayer.server).toBe("ROB");

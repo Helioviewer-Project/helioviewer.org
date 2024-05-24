@@ -15,17 +15,16 @@ var HelioviewerEmbeddedClient = HelioviewerClient.extend(
      * Creates a new embedded Helioviewer.org instance.
      * @constructs
      *
-     * @param {Object} urlSettings Client-specified settings to load.
-     *  Includes imageLayers, date, and imageScale. May be empty.
-     * @param {Object} serverSettings Server settings loaded from Config.ini
+     * @param {array} zoomLevels, set of float number for zoom levels.
+     * @param {string} link http link for embedded client to work
      */
-    init: function (urlSettings, serverSettings, zoomLevels, link) {
+    init: function (zoomLevels, link) {
         var date, imageScale;
 
-        this._super(urlSettings, serverSettings, zoomLevels);
+        this._super(zoomLevels);
 
         // Display watermark button
-        if (!urlSettings.hideWatermark) {
+        if (!Helioviewer.urlSettings.hideWatermark) {
             this._showWatermark(link);
         }
 
