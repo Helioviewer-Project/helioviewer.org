@@ -2184,7 +2184,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     drawerNewsClick: function(openNow) {
         var self = this, buttonId = "#news-button";
 
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerNews.attr('id'));
+        this.closeTabDrawersExcept('#'+this.drawerNews.attr('id'));
 
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
             self.drawerNews.css('transition', '');
@@ -2219,7 +2219,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     drawerYoutubeClick: function(openNow) {
         var self = this, buttonId = "#youtube-button";
 
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerYoutube.attr('id'));
+        this.closeTabDrawersExcept('#'+this.drawerYoutube.attr('id'));
 
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
             self.drawerYoutube.css('transition', '');
@@ -2253,7 +2253,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     drawerMoviesClick: function(openNow) {
         var self = this, buttonId = "#movies-button";
 
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerMovies.attr('id'));
+        this.closeTabDrawersExcept('#'+this.drawerMovies.attr('id'));
 
         self._movieManagerUI._refresh();
 
@@ -2287,7 +2287,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     drawerScreenshotsClick: function(openNow) {
         var self = this, buttonId = "#screenshots-button";
 
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerScreenshots.attr('id'));
+        this.closeTabDrawersExcept('#'+this.drawerScreenshots.attr('id'));
 
         self._screenshotManagerUI._refresh();
 
@@ -2322,7 +2322,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     drawerDataClick: function(openNow) {
         var self = this, buttonId = "#data-button";
 
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerData.attr('id'));
+        this.closeTabDrawersExcept('#'+this.drawerData.attr('id'));
 
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
             self.drawerData.css('transition', '');
@@ -2399,7 +2399,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var self = this,
             buttonId = '#help-button';
 
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerHelp.attr('id'));
+        this.closeTabDrawersExcept('#'+this.drawerHelp.attr('id'));
 
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
             self.drawerHelp.css('transition', '');
@@ -2504,7 +2504,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         return;
     },
 
-    closeTabDrawersExcept: function (buttonId, drawerId) {
+    closeTabDrawersExcept: function (drawerId) {
         var self = this;
 
         $.each( this.tabbedDrawers, function (i, drawer) {
