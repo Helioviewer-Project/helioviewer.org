@@ -183,15 +183,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                     self.drawerDataClick(true);
                 }
                 break;
-            case "#hv-drawer-share":
-                if ( drawerObj.open ) {
-                    self.drawerShareClick(true);
-                }
-                break;
             case "#hv-drawer-help":
                 if ( drawerObj.open ) {
                     self.drawerHelpClick(true);
                 }
+                break;
+            case "#hv-drawer-share":
+                // just ignore this
                 break;
             default:
                 console.info(['no drawer: ', drawerSelector, obj]);
