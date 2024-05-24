@@ -40,6 +40,19 @@ var UserSettings = Class.extend(
     },
 
     /**
+     * Check if the localstorage is supported by browser
+     *
+     * @returns {bool} true supported, false not
+     */
+    checkLocalStorageSupport: function() {
+        try {
+            return ('localStorage' in window) && window['localStorage'] !== null;
+        } catch (e) {
+            return false;
+        }
+    }, 
+
+    /**
      * Gets a specified setting
      *
      * @param {String} key The setting to retrieve
@@ -201,7 +214,7 @@ var UserSettings = Class.extend(
      */
     _save: function () {
         // localStorage
-        if ($.support.localStorage) {
+        if (this.checkLocalStorageSupport()) {
             localStorage.setItem("settings", $.toJSON(this.settings));
         }
         // cookies
@@ -214,7 +227,7 @@ var UserSettings = Class.extend(
      * Removes all existing settings
      */
     _empty: function () {
-        if ($.support.localStorage) {
+        if (this.checkLocalStorageSupport()) {
             localStorage.removeItem("settings");
         } else {
             $.cookieJar("empty");
@@ -227,7 +240,7 @@ var UserSettings = Class.extend(
      * @returns {Boolean} Returns true if stored Helioviewer.org settings are detected
      */
     _exists: function () {
-        return ($.support.localStorage ? (localStorage.getItem("settings") !== null)
+        return (this.checkLocalStorageSupport() ? (localStorage.getItem("settings") !== null)
                 : (this.cookies.toString().length > 2));
     },
 
@@ -236,7 +249,7 @@ var UserSettings = Class.extend(
      */
     _initStorage: function () {
         // Initialize CookieJar if localStorage isn't supported
-        if (!$.support.localStorage) {
+        if (!this.checkLocalStorageSupport()) {
             this.cookies = $.cookieJar("settings");
         }
 
@@ -292,7 +305,7 @@ var UserSettings = Class.extend(
     _loadDefaults: function () {
         this._empty();
 
-        if ($.support.localStorage) {
+        if (this.checkLocalStorageSupport()) {
             localStorage.setItem("settings", $.toJSON(this._defaults));
         }
         else {
@@ -306,7 +319,7 @@ var UserSettings = Class.extend(
      * Retrieves the saved user settings and saved them locally
      */
     _loadSavedSettings: function () {
-        if ($.support.localStorage) {
+        if (this.checkLocalStorageSupport()) {
             this.settings = $.evalJSON(localStorage.getItem("settings"));
         }
         // Otherwise, check type and return
@@ -315,12 +328,14 @@ var UserSettings = Class.extend(
         }
     },
 
+
     /**
      * Processes and validates any URL parameters that have been set
      *
      * Note that date is handled separately in TimeControls
      */
     _processURLSettings: function (urlSettings) {
+
         if (urlSettings.imageScale) {
             this.set("state.imageScale", parseFloat(urlSettings.imageScale));
         }
@@ -343,7 +358,7 @@ var UserSettings = Class.extend(
             });
         } else if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
             Object.keys(this.get("state.events_v2")).forEach((section) => {
-                this.set("state.events_v2." + section + ".layers", this._parseURLStringEvents(urlSettings.eventLayers))
+                this.set("state.events_v2." + section + ".layers", this._parseURLStringEvents(urlSettings.eventLayers));
             });
         }
 
@@ -358,6 +373,8 @@ var UserSettings = Class.extend(
         if(typeof urlSettings.celestialBodiesChecked != 'undefined' && urlSettings.celestialBodiesChecked != ''){
             this.set("state.celestialBodiesChecked", JSON.parse(urlSettings.celestialBodiesChecked));
         }
+
+
     },
 
     /**
