@@ -704,7 +704,7 @@ var TileLayerAccordion = Layer.extend(
             weight = self._getScaledTimeDifference(actualDate, requestDate);
             domNode.css("color", self._chooseTimeStampColor(weight, 0, 0, 0));
         });
-        helioviewer._timeSelector = new TimeSelector();
+        helioviewerWebClient._timeSelector = new TimeSelector();
     },
 
     /**
@@ -791,7 +791,7 @@ var TileLayerAccordion = Layer.extend(
                    .css("color", this._chooseTimeStampColor(weight, 0, 0, 0));
 
         if(typeof helioviewer !== 'undefined'){
-            helioviewer._timeSelector = new TimeSelector();
+            helioviewerWebClient._timeSelector = new TimeSelector();
         }
     },
 
