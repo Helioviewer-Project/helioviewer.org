@@ -822,7 +822,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         //Contact
         $('#help-links-contact').on('click', function(){
-            window.location.href = 'mailto:'+self.serverSettings.contactEmail;
+            window.location.href = 'mailto:'+Helioviewer.serverSettings.contactEmail;
         });
 
         //Github
@@ -906,21 +906,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $('#sdo-full-viewport').removeClass('selected');
             $('#sdo-select-area').addClass('selected');
 
-            if ( helioviewer.drawerLeftOpened ) {
-                self._cleanupFunctions.push('helioviewer.drawerLeftClick()');
-                helioviewer.drawerLeftClick();
+            if ( self.drawerLeftOpened ) {
+                self._cleanupFunctions.push('this.drawerLeftClick()');
+                self.drawerLeftClick();
             }
-            /*if ( $('#earth-button').hasClass('active') ) {
-                self._cleanupFunctions.push("$('#earth-button').click()");
-                $('#earth-button').click();
-            }
-            if ( $('#scalebar-button').hasClass('active') ) {
-                self._cleanupFunctions.push("$('#scalebar-button').click()");
-                $('#scalebar-button').click();
-            }*/
 
-            self._cleanupFunctions.push('helioviewer.drawerDataClick()');
-            helioviewer.drawerDataClick();
+            self._cleanupFunctions.push('this.drawerDataClick()');
+            self.drawerDataClick();
 
             $(document).trigger("enable-select-tool",
                                 [$.proxy(self._updateSDOroi, self),
@@ -936,7 +928,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var x0=0, y0=0, width=0, height=0, vport, imageScale;
 
         if (typeof roi === "undefined") {
-            roi = helioviewer.getViewportRegionOfInterest();
+            roi = this.getViewportRegionOfInterest();
         }
 
         // Make sure selection region and number of layers are acceptible
@@ -1209,7 +1201,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 vsoLinks.append(
                     self._vsoLink(globalStartDate, globalEndDate, nickname)
                 );
-                helioviewer._timeSelector = new TimeSelector();
+                self._timeSelector = new TimeSelector();
 
                 vsoPreviews.append(
                     self._vsoThumbnail(startDate, endDate, nickname, sourceId)
