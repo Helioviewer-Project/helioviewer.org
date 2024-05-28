@@ -14,7 +14,7 @@ Object.defineProperty(XMLHttpRequest.prototype, "responseXML", {
   set: function () {},
 });
 
-global.helioviewer = {
+global.Helioviewer = {
   serverSettings: {
     jhelioviewerHost: "GSFC",
   },
