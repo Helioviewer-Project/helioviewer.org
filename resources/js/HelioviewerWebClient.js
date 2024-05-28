@@ -2533,7 +2533,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     twitter: function(e) {
 
         let shareURL = encodeURIComponent($("#helioviewer-share-url").val());
-        let twitterShareURL = `https://x.com/share?url=${shareURL}&via=helioviewer&text=from%20Helioviewer.org`;
+        let twitterShareURL = "https://x.com/share?url="+shareURL+"&via=helioviewer&text=from%20Helioviewer.org";
         let target = $(e.target).attr('target');
         e.stopPropagation();
 
@@ -2569,7 +2569,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         let url = encodeURIComponent($('#helioviewer-share-url').val());
         let media = encodeURIComponent('https://api.helioviewer.org?action=downloadScreenshot&id=3240748');
         let desc = encodeURIComponent('Helioviewer.org - Solar and heliospheric image visualization tool');
-        let pinterestURL = `https:///www.pinterest.com/pin/create/button/?url=${url}&media=${media}&description=${desc}`;
+        let pinterestURL = "https:///www.pinterest.com/pin/create/button/?url="+url+"&media="+media+"&description="+desc;
         
         window.open(pinterestURL,"_blank", "toolbar=no, scrollbars=no, resizable=no, top=0, right=0, width=750, height=320");
 
