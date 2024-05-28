@@ -59,13 +59,14 @@ jobs:
         path: 'compose'
         sparse-checkout: |
           compose.yaml
+          .env.example
         sparse-checkout-cone-mode: false
     - name: Print current directory
       run: |
         echo $(pwd)
         echo $(ls)
     - name: Setup environment file
-      run: mv .env.example .env
+      run: mv compose/.env.example .env
     - name: Make writeable configuration files
       run: |
         touch api/install/settings/settings.cfg
