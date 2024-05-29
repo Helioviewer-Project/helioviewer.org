@@ -88,18 +88,18 @@ function MediaPlayer({ id, url, width, height }) {
         id={`movie-player-${id}`}
         width={width - 15}
         height={height - 20}
-        poster={`${helioviewer.serverSettings.rootURL}/${filePath}/preview-full.png`}
+        poster={`${Helioviewer.serverSettings.rootURL}/${filePath}/preview-full.png`}
         controls="controls"
         preload="none"
         autoPlay={autoplay}
       >
         <source
           type="video/mp4"
-          src={`${helioviewer.serverSettings.rootURL}/${filePath}/${filenameHQ}`}
+          src={`${Helioviewer.serverSettings.rootURL}/${filePath}/${filenameHQ}`}
         />
         <source
           type="video/webm"
-          src={`${helioviewer.serverSettings.rootURL}/${filePath}/${filenameWebM}`}
+          src={`${Helioviewer.serverSettings.rootURL}/${filePath}/${filenameWebM}`}
         />
         <object
           width={width}
@@ -113,10 +113,10 @@ function MediaPlayer({ id, url, width, height }) {
           />
           <param
             name="flashvars"
-            value={`controls=true&amp;poster=${helioviewer.serverSettings.rootURL}/${filePath}/preview-full.png&amp;file=${helioviewer.serverSettings.rootURL}/${filePath}/${filename}`}
+            value={`controls=true&amp;poster=${Helioviewer.serverSettings.rootURL}/${filePath}/preview-full.png&amp;file=${Helioviewer.serverSettings.rootURL}/${filePath}/${filename}`}
           />
           <img
-            src={`${helioviewer.serverSettings.rootURL}/${filePath}/preview-full.png`}
+            src={`${Helioviewer.serverSettings.rootURL}/${filePath}/preview-full.png`}
             width={width}
             height={height}
             title="No video playback capabilities"
@@ -199,7 +199,7 @@ function LinkButton({ id }) {
     if (!($.support.h264 || $.support.vp8)) {
       $(".movie-player-dialog").dialog("close");
     }
-    helioviewer.displayMovieURL(id);
+    helioviewerWebClient.displayMovieURL(id);
     return false;
   };
   return (
@@ -359,7 +359,7 @@ function GetJhvRequestForMovie(movie) {
       // Workaround to load GONG data. I couldn't figure out how to get GONG to load from GSFC.
       observatory == "NSO-GONG"
         ? "ROB"
-        : helioviewer.serverSettings.jhelioviewerHost,
+        : Helioviewer.serverSettings.jhelioviewerHost,
     );
   }
   return requestBuilder.Build();

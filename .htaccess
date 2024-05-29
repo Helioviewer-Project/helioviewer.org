@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^load/([a-zA-Z0-9]+)$ /?loadState=$1 [R=301,L,QSA]

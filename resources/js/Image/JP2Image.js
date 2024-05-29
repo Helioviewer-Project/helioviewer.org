@@ -104,12 +104,12 @@ var JP2Image = Class.extend(
     _notifyIfStaleImage: function (metadata) {
         // Get the image's timestamp and the current observation time
         let imageDate = Date.parseUTCDate(metadata.date);
-        let obstTime = helioviewer.timeControls.getDate();
+        let obstTime = helioviewerWebClient.timeControls.getDate();
         // Get the time difference between the two times in seconds
         let delta = Math.abs(imageDate.getTime() - obstTime.getTime()) / 1000;
         // Get the preset threshold in seconds
         // Default to 21600 (6 hours) if the value isn't present in the configuration
-        let threshold = helioviewer.serverSettings["obstime_alert_dt"] ?? 21600;
+        let threshold = Helioviewer.serverSettings["obstime_alert_dt"] ?? 21600;
         // Compare the time difference to the threshold
         // If the time difference is over the threshold, create an alert.
         if (delta >= threshold) {
@@ -164,7 +164,7 @@ var JP2Image = Class.extend(
                 })
                 resolve(notification);
             } else {
-                helioviewer.messageConsole.warn(
+                Helioviewer.messageConsole.warn(
                     message,
                     {
                         header: 'Note',

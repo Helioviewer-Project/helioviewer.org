@@ -813,6 +813,14 @@ span.ui-icon-hover, div.ui-icon-hover {
    border: 1px solid #f8e64f;
 }
 
+#message-console .jGrowl-notification.error {
+   background: #eb7f78;
+   border: 1px solid #eb7f78;
+   font-weight: 500;
+   color: black;
+}
+
+
 /* Social & Movie buttons */
 #social-buttons {
    background-color: #2A2A2A;

@@ -197,7 +197,7 @@ var TimeSelector = Class.extend({
         flatpickr('#'+timeFiled, {}).setDate(currentDate.toUTCTimeString());
 
         if(dateFiled == 'date' && timeFiled == 'time'){
-            helioviewer.timeControls.setDate( new Date($('.dateSelectorUTC').val().replace(/\//gi,'-') +'T'+ $('.timeSelectorUTC').val()+".000Z") );
+            helioviewerWebClient.timeControls.setDate( new Date($('.dateSelectorUTC').val().replace(/\//gi,'-') +'T'+ $('.timeSelectorUTC').val()+".000Z") );
         }else{
             $('#'+timeFiled).val($('.timeSelectorUTC').val()).change();
         }

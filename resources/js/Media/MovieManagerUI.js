@@ -109,8 +109,8 @@ var MovieManagerUI = MediaManagerUI.extend(
 			switchSources = true;
 		}
 
-		celestialBodiesLabels = helioviewer.getCelestialBodiesLabels();
-		celestialBodiesTrajectories = helioviewer.getCelestialBodiesTrajectories();
+		celestialBodiesLabels = helioviewerWebClient.getCelestialBodiesLabels();
+		celestialBodiesTrajectories = helioviewerWebClient.getCelestialBodiesTrajectories();
 
 		// Movie request parameters
 		baseParams = {
@@ -193,13 +193,13 @@ var MovieManagerUI = MediaManagerUI.extend(
 		movieLength = Helioviewer.userSettings.get("options.movies.duration");
 
 		// Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
-		currentTime = helioviewer.getDate();
+		currentTime = helioviewerWebClient.getDate();
 
 		// We want shift start and end time if needed to ensure that entire
 		// duration will be used. For now, we will assume that the most
 		// recent data available is close to now() to make things simple
 
-		endTime = new Date(helioviewer.getDate().getTime() + (movieLength / 2) * 1000);
+		endTime = new Date(helioviewerWebClient.getDate().getTime() + (movieLength / 2) * 1000);
 
 		now = new Date();
 		diff = endTime.getTime() - now.getTime();
@@ -219,11 +219,11 @@ var MovieManagerUI = MediaManagerUI.extend(
 	 */
 	_loadMovieQueueParameters: function (roi) {
 		if (typeof roi === "undefined") {
-			roi = helioviewer.getViewportRegionOfInterest();
+			roi = helioviewerWebClient.getViewportRegionOfInterest();
 		}
 
-		var layers = helioviewer.getVisibleLayers(roi);
-		var events = helioviewer.getEvents();
+		var layers = helioviewerWebClient.getVisibleLayers(roi);
+		var events = helioviewerWebClient.getEvents();
 
 		// Make sure selection region and number of layers are acceptible
 		if (!this._validateRequest(roi, layers)) {
@@ -231,7 +231,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 		}
 
 		// Store chosen ROI and layers
-		this._movieScale  = helioviewer.getZoomedImageScale();
+		this._movieScale  = helioviewerWebClient.getZoomedImageScale();
 		this._movieROI	= this._toArcsecCoords(roi, this._movieScale);
 		this._movieLayers = layers;
 		this._movieEvents = events;
@@ -364,12 +364,12 @@ var MovieManagerUI = MediaManagerUI.extend(
 		this._selectAreaBtn.click(function () {
 			self._cleanupFunctions = [];
 
-			if ( helioviewer.drawerLeftOpened ) {
-				self._cleanupFunctions.push('helioviewer.drawerLeftClick()');
-				helioviewer.drawerLeftClick();
+			if ( helioviewerWebClient.drawerLeftOpened ) {
+				self._cleanupFunctions.push('helioviewerWebClient.drawerLeftClick()');
+				helioviewerWebClient.drawerLeftClick();
 			}
-			self._cleanupFunctions.push('helioviewer.drawerMoviesClick()');
-			helioviewer.drawerMoviesClick();
+			self._cleanupFunctions.push('helioviewerWebClient.drawerMoviesClick()');
+			helioviewerWebClient.drawerMoviesClick();
 
 			$(document).trigger("enable-select-tool",
 								[$.proxy(self._showMovieSettings, self),
@@ -621,7 +621,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 			return false;
 		}
 
-		if(helioviewer.keyboard.ctrlPressed){//ctrl + click to copy movie link
+		if(helioviewerWebClient.keyboard.ctrlPressed){//ctrl + click to copy movie link
 			// copy the link to the clipboard by creating a placeholder textinput
 			var $temp = $('<input>');
 			$('body').append($temp);
@@ -1039,13 +1039,13 @@ var MovieManagerUI = MediaManagerUI.extend(
 
 			return '<style>.mejs-container .mejs-controls {bottom: -20px;}.mejs-container.mejs-container-fullscreen .mejs-controls{bottom: 0px;}</style>\
 					<div>\
-						<video id="movie-player-' + movie.id + '" width="'+(width - 15)+'" height="'+(height - 20)+'" poster="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" controls="controls" preload="none" '+autoplay+'>\
-							<source type="video/mp4" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameHQ+'" />\
-							<source type="video/webm" src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameWebM+'" />\
+						<video id="movie-player-' + movie.id + '" width="'+(width - 15)+'" height="'+(height - 20)+'" poster="'+Helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" controls="controls" preload="none" '+autoplay+'>\
+							<source type="video/mp4" src="'+Helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameHQ+'" />\
+							<source type="video/webm" src="'+Helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameWebM+'" />\
 							<object width="'+width+'" height="'+(height - 20)+'" type="application/x-shockwave-flash" data="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf">\
 								<param name="movie" value="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf" />\
-								<param name="flashvars" value="controls=true&amp;poster='+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png&amp;file='+helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filename+'" />\
-								<img src="'+helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" width="'+width+'" height="'+height+'" title="No video playback capabilities" />\
+								<param name="flashvars" value="controls=true&amp;poster='+Helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png&amp;file='+Helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filename+'" />\
+								<img src="'+Helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" width="'+width+'" height="'+height+'" title="No video playback capabilities" />\
 							</object>\
 						</video>\
 					</div>\

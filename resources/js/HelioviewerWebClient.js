@@ -17,13 +17,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     /**
      * Creates a new Helioviewer.org instance.
      * @constructs
-     *
-     * @param {Object} urlSettings Client-specified settings to load.
-     *  Includes imageLayers, date, and imageScale. May be empty.
-     * @param {Object} serverSettings Server settings loaded from Config.ini
+     * @param {array} zoomLevels set float numbers for zoomLevels
      */
-    init: function (urlSettings, serverSettings, zoomLevels) {
-        var urlDate, imageScale, paddingHeight, accordionsToOpen, self=this;
+    init: function (zoomLevels) {
+        var imageScale, paddingHeight, accordionsToOpen, self=this;
 
         this.header                    = $('#hv-header');
         this.drawerSpeed               = 0;
@@ -72,10 +69,16 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this.drawerHelpOpenedWidth     = '25em';
 
 
-        this.tabbedDrawers = ['#hv-drawer-news', '#hv-drawer-movies',
-                              '#hv-drawer-screenshots', '#hv-drawer-youtube',
-                              '#hv-drawer-data', '#hv-drawer-share',
-                              '#hv-drawer-help'];
+        this.tabbedDrawers = [
+            '#hv-drawer-news', 
+            '#hv-drawer-movies',
+            '#hv-drawer-screenshots', 
+            '#hv-drawer-youtube',
+            '#hv-drawer-data', 
+            '#hv-drawer-share',
+            '#hv-drawer-help'
+        ];
+
         this.tabbedDrawerButtons = {
             '#hv-drawer-news'        : '#news-button',
             '#hv-drawer-youtube'     : '#youtube-button',
@@ -83,12 +86,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             '#hv-drawer-screenshots' : '#screenshots-button',
             '#hv-drawer-data'        : '#data-button',
             '#hv-drawer-share'       : '#share-button',
-            '#hv-drawer-help'        : '#help-button'};
+            '#hv-drawer-help'        : '#help-button'
+        };
 
-        this._super(urlSettings, serverSettings, zoomLevels);
+        this._super(zoomLevels);
 
         // Debugging helpers
-        if (urlSettings.debug) {
+        if (Helioviewer.debug) {
             this._showDebugHelpers();
         }
 
@@ -98,28 +102,27 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         // Determine image scale to use
         imageScale = this._chooseInitialImageScale(Helioviewer.userSettings.get('state.imageScale'), zoomLevels);
 
-        // Use URL date if specified
-        urlDate = urlSettings.date ? Date.parseUTCDate(urlSettings.date) : false;
+        // Not fully sure , why we need this line, but I am keeping for sake of defensive coding
+        let initialTime = Helioviewer.urlSettings.date ? Date.parseUTCDate(Helioviewer.urlSettings.date) : Helioviewer.userSettings.get('state.date'); 
 
-        this.timeControls = new TimeControls('#date', '#time',
-            '#timestep-select', '#timeBackBtn', '#timeForwardBtn', urlDate);
+        // Create our timecontrols
+        this.timeControls = new TimeControls('#date', '#time','#timestep-select', '#timeBackBtn', '#timeForwardBtn', initialTime);
 
         // Get available data sources and initialize viewport
         this._initViewport(this.timeControls.getDate(), 0, 0);
 
-        this.messageConsole = new MessageConsole();
         this.keyboard       = new KeyboardManager();
 
         this.earthScale = new ImageScale();
 
         this.displayBlogFeed(7, true);
 
-        this._userVideos = new UserVideoGallery(this.serverSettings.videoFeed);
+        this._userVideos = new UserVideoGallery(Helioviewer.serverSettings.videoFeed);
 
         this.imageSelectTool = new ImageSelectTool();
 
         this._screenshotManagerUI = new ScreenshotManagerUI();
-        this._movieManagerUI      = new MovieManagerUI(serverSettings.regenerateMovieThreshold, serverSettings.enableHelios);
+        this._movieManagerUI      = new MovieManagerUI(Helioviewer.serverSettings.regenerateMovieThreshold, Helioviewer.serverSettings.enableHelios);
 
         this._glossary = new VisualGlossary(this._setupDialog);
 
@@ -180,15 +183,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                     self.drawerDataClick(true);
                 }
                 break;
-            case "#hv-drawer-share":
-                if ( drawerObj.open ) {
-                    self.drawerShareClick(true);
-                }
-                break;
             case "#hv-drawer-help":
                 if ( drawerObj.open ) {
                     self.drawerHelpClick(true);
                 }
+                break;
+            case "#hv-drawer-share":
+                // just ignore this
                 break;
             default:
                 console.info(['no drawer: ', drawerSelector, obj]);
@@ -480,31 +481,38 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             msg  = "Link directly to the current state of Helioviewer:",
             btns;
 
-        if($('.helioviewer-url-input-box').is(':visible')){
-            $(".helioviewer-url-input-box").attr("value", self.toURL());
-        }
+        // Make url stale
+        $(document).on('update-external-datasource-integration observation-time-changed change-feature-events-state', function(e){
+            if ( $('#helioviewer-share-url').is(':visible') ) {
+                $('#helioviewer-share-url').css('border-color','#f8e64f');
+                $('#helioviewer-url-box-stale-link-msg').show();
+            }
+        });
 
-        // Update Heliovuewer link
-        $(document).on('update-external-datasource-integration', function(e){
-            if ( $('.helioviewer-url-input-box').is(':visible') ) {
-                $(".helioviewer-url-input-box").attr('value', self.toURL());
-                $(".helioviewer-url-shorten").removeAttr("checked");
-            }
-        });
-        $(document).on('observation-time-changed', function(e){
-            if ( $('.helioviewer-url-input-box').is(':visible') ) {
-                $(".helioviewer-url-input-box").attr('value', self.toURL());
-                $(".helioviewer-url-shorten").removeAttr("checked");
-            }
-        });
-        $(document).on('change-feature-events-state', function(e){
-            if ( $('.helioviewer-url-input-box').is(':visible') ) {
-                $(".helioviewer-url-input-box").attr('value', self.toURL());
-                $(".helioviewer-url-shorten").removeAttr("checked");
-            }
+        $('#update-share-url-link').on('click', (e) => {
+
+            $("#helioviewer-share-url").attr('value', "Loading ...");
+
+            this.toURL().then((shareURL) => {
+
+                $('#helioviewer-url-box-stale-link-msg').hide();
+                $('#helioviewer-share-url').css('border-color','rgba(255,255,255,0.6)');
+                $("#helioviewer-share-url").attr('value', shareURL);
+                $('#helioviewer-url-box-stale-link-success-msg').show();
+                $('#helioviewer-url-box-stale-link-success-msg').delay(1000).hide(0);
+
+            }, (failedMessage) => {
+                $('#helioviewer-url-box-stale-link-msg').hide();
+                $("#helioviewer-share-url").attr('value', "We couldn't generate shareURL please try again later");
+                Helioviewer.messageConsole.error("We couldn't generate shareURL please try again later");
+            });
+
+            e.preventDefault();
+            return false;
         });
 
         $(document).on('update-external-datasource-integration', $.proxy(this.updateExternalDataSourceIntegration, this, false));
+
         $(document).on('observation-time-changed', function(e){
             setTimeout(function(){ self.updateExternalDataSourceIntegration(true,e); }, 500);
         });
@@ -678,7 +686,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $('#movies-button').bind('click', $.proxy(this.drawerMoviesClick, this));
         $('#screenshots-button').bind('click', $.proxy(this.drawerScreenshotsClick, this));
         $('#data-button').bind('click', $.proxy(this.drawerDataClick, this));
-        $('#share-button').bind('click', $.proxy(this.drawerShareClick, this));
+
+        // share button click handle
+        $('#share-button').bind('click', $.proxy(this.drawerShareClick, this)); 
+
         $('#help-button').bind('click', $.proxy(this.drawerHelpClick, this));
 
         $('.drawer-contents .header').bind('click', $.proxy(this.accordionHeaderClick, this));
@@ -705,57 +716,22 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             assignTouchHandlers(this);
         });
 
-        $(".helioviewer-url-shorten").on('click', function (e) {
-            self.displayURL(self.toURL());
-        });
-
-
         // Email Link
         $('#share-email-link').on('click', function(e){
             var subject = 'Helioviewer.org - Solar and heliospheric image visualization tool';
-            var link = encodeURIComponent(self.toURL());
+            var link = encodeURIComponent($("#helioviewer-share-url").val());
             window.location.href = "mailto:?subject="+subject+"&body=\r\n\r\n"+link;
         });
 
         // Copy Link to Clipboard
         $('#share-copy-link').on('click', function(e){
-            $('.helioviewer-url-input-box-menu').on("focus", function() {
-                $(this).select();
+            navigator.clipboard.writeText($("#helioviewer-share-url").val()).then(() => {
+                Helioviewer.messageConsole.log("Link is copied to your clipboard");
             });
-            $( ".helioviewer-url-input-box-menu" ).focus();
-            document.execCommand('copy');
         });
-
-        var isIe = (navigator.userAgent.toLowerCase().indexOf("msie") != -1 || navigator.userAgent.toLowerCase().indexOf("trident") != -1);
-        document.addEventListener('copy', function(e) {
-            if(e.target.className == 'helioviewer-url-input-box'){
-                var textToPutOnClipboard = $(e.target).val();
-            }else{
-                return true;
-                //var textToPutOnClipboard = self.toURL();
-            }
-
-            if (isIe) {
-                window.clipboardData.setData('Text', textToPutOnClipboard);
-            } else {
-                e.clipboardData.setData('text/plain', textToPutOnClipboard);
-            }
-
-            // Options for the jGrowl notification
-            var jGrowlOpts = {
-                sticky: true,
-                header: "Just now"
-            };
-
-            // Create the jGrowl notification.
-            $(document).trigger("message-console-log", ["Link successfully copied to clipboard.", jGrowlOpts, true, true]);
-            e.preventDefault();
-        });
-
 
         $('#share-twitter-link').on('click', $.proxy(this.twitter, this));
         $('#share-facebook-link').on('click', $.proxy(this.facebook, this));
-        $('#share-google-link').on('click', $.proxy(this.google, this));
         $('#share-pinterest-link').on('click', $.proxy(this.pinterest, this));
         //Help Links
         //Guide
@@ -775,7 +751,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         //Documentation
         $('#help-links-documentation').on('click', function(){
-            window.open('http://wiki.helioviewer.org/wiki/Main_Page','_blank');
+            window.open('https://helioviewer-project.github.io/user_guide/','_blank');
         });
 
         // Statistics page
@@ -816,7 +792,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         //Contact
         $('#help-links-contact').on('click', function(){
-            window.location.href = 'mailto:'+self.serverSettings.contactEmail;
+            window.location.href = 'mailto:'+Helioviewer.serverSettings.contactEmail;
         });
 
         //Github
@@ -900,21 +876,13 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $('#sdo-full-viewport').removeClass('selected');
             $('#sdo-select-area').addClass('selected');
 
-            if ( helioviewer.drawerLeftOpened ) {
-                self._cleanupFunctions.push('helioviewer.drawerLeftClick()');
-                helioviewer.drawerLeftClick();
+            if ( self.drawerLeftOpened ) {
+                self._cleanupFunctions.push('this.drawerLeftClick()');
+                self.drawerLeftClick();
             }
-            /*if ( $('#earth-button').hasClass('active') ) {
-                self._cleanupFunctions.push("$('#earth-button').click()");
-                $('#earth-button').click();
-            }
-            if ( $('#scalebar-button').hasClass('active') ) {
-                self._cleanupFunctions.push("$('#scalebar-button').click()");
-                $('#scalebar-button').click();
-            }*/
 
-            self._cleanupFunctions.push('helioviewer.drawerDataClick()');
-            helioviewer.drawerDataClick();
+            self._cleanupFunctions.push('this.drawerDataClick()');
+            self.drawerDataClick();
 
             $(document).trigger("enable-select-tool",
                                 [$.proxy(self._updateSDOroi, self),
@@ -930,7 +898,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var x0=0, y0=0, width=0, height=0, vport, imageScale;
 
         if (typeof roi === "undefined") {
-            roi = helioviewer.getViewportRegionOfInterest();
+            roi = this.getViewportRegionOfInterest();
         }
 
         // Make sure selection region and number of layers are acceptible
@@ -1203,7 +1171,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 vsoLinks.append(
                     self._vsoLink(globalStartDate, globalEndDate, nickname)
                 );
-                helioviewer._timeSelector = new TimeSelector();
+                self._timeSelector = new TimeSelector();
 
                 vsoPreviews.append(
                     self._vsoThumbnail(startDate, endDate, nickname, sourceId)
@@ -1579,53 +1547,128 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         });
     },
 
+    /**
+     * @description Builds a URL for the current view
+     *
+     * @TODO: Add support for viewport offset, opacity
+     *
+     * @returns {String} A URL representing the current state of Helioviewer.org.
+     */
+    toURL: function () {
+
+        let apiSuccessResponseHandle = (resp) => {
+
+            let shareURL = new URL(`/load/${resp.data}`, Helioviewer.root);
+
+            if (Helioviewer.debug) {
+                shareURL = new URL(`/load/${resp.data}?debug`, Helioviewer.root);
+            }
+
+            return Promise.resolve(shareURL.toString());
+        }
+
+        let apiFailedResponse = (error) => {
+            return Promise.reject(error.data);
+        }
+
+        return this.saveStateIntoAPI().then(apiSuccessResponseHandle,apiFailedResponse);
+    },
 
     /**
-     * displays a dialog containing a link to the current page
-     * @param {Object} url
+     * @description Exports what you see into a JSON and POSTs it our api to keep in tables with id
+     * @return {Promise}, promise you can handle or whoever wants to handle 
      */
-    displayURL: function (url, msg, displayDialog) {
-        var displayDialog = typeof displayDialog !== 'undefined' ? displayDialog : false;
+    saveStateIntoAPI: function() {
 
-        // Get short URL before displaying
-        var callback = function (response) {
-            $(".helioviewer-long-url").attr("value", url);
-            $(".helioviewer-short-url").attr("value", response.data.url);
-            if($(".helioviewer-url-shorten").is(':checked')){
-                $(".helioviewer-url-input-box").attr("value", response.data.url).select();
-            }else{
-                $(".helioviewer-url-input-box").attr('value', url).select();
-            }
-            // Display URL
-            if(displayDialog){
-                $("#helioviewer-url-box-msg").text(msg);
-                $("#url-dialog").dialog({
-                    dialogClass: 'helioviewer-modal-dialog',
-                    height    : 125,
-                    maxHeight : 125,
-                    width     : $('html').width() * 0.5,
-                    minWidth  : 350,
-                    modal     : true,
-                    resizable : true,
-                    title     : "Helioviewer - Direct Link",
-                    open      : function (e) {
+        return this.viewport.dataSources.then((d) => {
 
-                        $('.ui-widget-overlay').hide().fadeIn();
+            let state = {
+                "date"              : this.viewport._tileLayerManager.getRequestDateAsTimestamp(),
+                "imageScale"        : Helioviewer.userSettings.get("state.imageScale"),
+                "centerX"           : Helioviewer.userSettings.get("state.centerX"),
+                "centerY"           : Helioviewer.userSettings.get("state.centerY"),
+                "imageLayers"       : Helioviewer.userSettings.get("state.tileLayers"),
+                "eventLayers"       : Helioviewer.userSettings.get("state.events_v2"),
+                "celestialBodies"   : Helioviewer.userSettings.get("state.celestialBodiesChecked"),
+            };
 
-                    }
-                });
-            }
-        };
+            return $.ajax({
+                type: "POST",
+                url: Helioviewer.api+'/?action=saveWebClientState',
+                dataType: Helioviewer.dataType,
+                contentType: "application/json",
+                data: JSON.stringify(state)
+            });
 
+        });
+
+
+    },
+
+    /**
+     * @description This function toggles drawer for share link 
+     */
+    drawerShareClick: function() {
+
+        let self = this; 
+
+        this.closeTabDrawersExcept('#'+this.drawerShare.attr('id'));
+
+        $("#share-button").toggleClass('opened');
+
+        let open = $("#share-button").hasClass('opened');
+
+        // If drawer is opening from the automaticlly on page laod 
+        if(open === true) {
+
+            this.toURL().then((shareURL) => {
+
+                $("#helioviewer-share-url").attr('value', shareURL);
+
+                this.drawerShare.css('transition', 'height 500ms');
+                this.drawerShare.css('width', this.drawerShareOpenedWidth);
+                this.drawerShare.css('height', this.drawerShareOpenedHeight);
+
+                setTimeout(function () {
+                    self.drawerShare.show();
+                    $('.drawer-contents', this.drawerShare).fadeIn(500);
+                    self.drawerShare.css('transition', '');
+                }, this.drawerSpeed);
+
+                this.reopenAccordions(this.drawerShare);
+            }, (failedMessage) => {
+                Helioviewer.messageConsole.error("We couldn't generate shareURL please try again later");
+            });
+
+        }
+
+        if(open == false) {
+
+            $("#helioviewer-share-url").attr('value', "");
+            this.drawerShare.css('transition', '');
+            $('.drawer-contents', this.drawerShare).fadeOut(10);
+            this.drawerShare.css('width', 0);
+            this.drawerShare.css('height', 0);
+            this.drawerShare.css('padding', 0);
+            this.drawerShare.css({'display':'none'});
+            return; 
+        }
+    },
+
+    /**
+     * @description Shortens given url by making a backend request to save it to our redis db
+     * @param {Object} url, which url you want to make short
+     * @return {Promise}, promise you can handle 
+     */
+    makeShortURL: function(longURL) {
         // Get short version of URL and open dialog
-        $.ajax({
+        return $.ajax({
             url: Helioviewer.api,
             dataType: Helioviewer.dataType,
             data: {
                 "action": "shortenURL",
-                "queryString": this.serverSettings.rootURL + '/?' + url.substr(this.serverSettings.rootURL.length + 2)
+                "queryString": Helioviewer.root + '/?' + longURL.substr(Helioviewer.root.length + 2)
             },
-            success: callback
         });
     },
 
@@ -1637,14 +1680,28 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      */
     displayMovieURL: function (movieId) {
         var msg = "Use the following link to refer to this movie:",
-            url = this.serverSettings.rootURL + "/?movieId=" + movieId;
+            url = Helioviewer.serverSettings.rootURL + "/?movieId=" + movieId;
 
         // Google analytics event
         if (typeof(_gaq) !== "undefined") {
             _gaq.push(['_trackEvent', 'Shares', 'Movie - URL']);
         }
-        this.displayURL(url, msg, true);
-        $(".helioviewer-url-shorten").removeAttr("checked");
+
+        $("#helioviewer-share-modal-msg").text(msg);
+        $("#helioviewer-share-modal-url").val(url);
+        $("#url-dialog").dialog({
+            dialogClass: 'helioviewer-modal-dialog',
+            height    : 125,
+            maxHeight : 125,
+            width     : $('html').width() * 0.5,
+            minWidth  : 350,
+            modal     : true,
+            resizable : true,
+            title     : "Helioviewer - Direct Link",
+            open      : function (e) {
+                $('.ui-widget-overlay').hide().fadeIn();
+            }
+        });
     },
 
     /**
@@ -1653,7 +1710,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     displayBlogFeed: function (descriptionWordLength, showDescription) {
         var url, dtype, html = "";
 
-        url = this.serverSettings.newsURL;
+        url = Helioviewer.serverSettings.newsURL;
 
         // For remote queries, retrieve XML using JSONP
         if (Helioviewer.dataType === "jsonp") {
@@ -1859,32 +1916,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             top: roi.top * zoom + roiYOffset,
             bottom: roi.top * zoom + roiYOffset + roiHeight
         };
-    },
-
-    /**
-     * Builds a URL for the current view
-     *
-     * @TODO: Add support for viewport offset, event layers, opacity
-     *
-     * @returns {String} A URL representing the current state of Helioviewer.org.
-     */
-    toURL: function (shorten) {
-        if ( typeof this.viewport._tileLayerManager == 'undefined' ) {
-            return this.serverSettings.rootURL;
-        }
-
-        // URL parameters
-        var params = {
-            "date"              : this.viewport._tileLayerManager.getRequestDateAsISOString(),
-            "imageScale"        : this.viewport.getImageScale(),
-            "centerX"           : Helioviewer.userSettings.get("state.centerX"),
-            "centerY"           : Helioviewer.userSettings.get("state.centerY"),
-            "imageLayers"       : encodeURI(this.viewport.serialize()),
-            "eventLayers"       : encodeURI(this.viewport.serializeEvents()),
-            "celestialBodies"   : encodeURI(JSON.stringify(Helioviewer.userSettings.get("state.celestialBodiesChecked")))
-        };
-
-        return this.serverSettings.rootURL + "/?" + decodeURIComponent($.param(params));
     },
 
     /**
@@ -2189,7 +2220,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     drawerNewsClick: function(openNow) {
         var self = this, buttonId = "#news-button";
 
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerNews.attr('id'));
+        this.closeTabDrawersExcept('#'+this.drawerNews.attr('id'));
 
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
             self.drawerNews.css('transition', '');
@@ -2224,7 +2255,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     drawerYoutubeClick: function(openNow) {
         var self = this, buttonId = "#youtube-button";
 
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerYoutube.attr('id'));
+        this.closeTabDrawersExcept('#'+this.drawerYoutube.attr('id'));
 
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
             self.drawerYoutube.css('transition', '');
@@ -2258,7 +2289,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     drawerMoviesClick: function(openNow) {
         var self = this, buttonId = "#movies-button";
 
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerMovies.attr('id'));
+        this.closeTabDrawersExcept('#'+this.drawerMovies.attr('id'));
 
         self._movieManagerUI._refresh();
 
@@ -2292,7 +2323,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     drawerScreenshotsClick: function(openNow) {
         var self = this, buttonId = "#screenshots-button";
 
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerScreenshots.attr('id'));
+        this.closeTabDrawersExcept('#'+this.drawerScreenshots.attr('id'));
 
         self._screenshotManagerUI._refresh();
 
@@ -2327,7 +2358,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     drawerDataClick: function(openNow) {
         var self = this, buttonId = "#data-button";
 
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerData.attr('id'));
+        this.closeTabDrawersExcept('#'+this.drawerData.attr('id'));
 
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
             self.drawerData.css('transition', '');
@@ -2362,49 +2393,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         return;
     },
 
-    drawerShareClick: function(openNow) {
-        var self = this, buttonId = "#share-button";
-
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerShare.attr('id'));
-
-        if ( $(buttonId).hasClass('opened') || openNow === false ) {
-            self.drawerShare.css('transition', '');
-            $('.drawer-contents', this.drawerShare).fadeOut(10);
-            this.drawerShare.css('width', 0);
-            this.drawerShare.css('height', 0);
-            this.drawerShare.css('padding', 0);
-            this.drawerShare.css({'display':'none'});
-            $(buttonId).removeClass('opened');
-            Helioviewer.userSettings.set("state.drawers.#hv-drawer-share.open", false);
-        }
-        else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
-            var url = self.toURL();
-            $(".helioviewer-url-input-box").attr('value', url).select();
-            $(".helioviewer-long-url").attr("value", url);
-            $(".helioviewer-url-shorten").removeAttr("checked");
-            $(".helioviewer-short-url").attr("value", "");
-
-            self.drawerShare.css('transition', 'height 500ms');
-            this.drawerShare.css('width', this.drawerShareOpenedWidth);
-            this.drawerShare.css('height', this.drawerShareOpenedHeight);
-            setTimeout(function () {
-                self.drawerShare.show();
-                $('.drawer-contents', this.drawerShare).fadeIn(500);
-                self.drawerShare.css('transition', '');
-            }, this.drawerSpeed);
-            $(buttonId).addClass('opened');
-            Helioviewer.userSettings.set("state.drawers.#hv-drawer-share.open", true);
-            this.reopenAccordions(this.drawerShare);
-        }
-
-        return;
-    },
 
     drawerHelpClick: function(openNow) {
         var self = this,
             buttonId = '#help-button';
 
-        this.closeTabDrawersExcept(buttonId, '#'+this.drawerHelp.attr('id'));
+        this.closeTabDrawersExcept('#'+this.drawerHelp.attr('id'));
 
         if ( $(buttonId).hasClass('opened') || openNow === false ) {
             self.drawerHelp.css('transition', '');
@@ -2509,7 +2503,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         return;
     },
 
-    closeTabDrawersExcept: function (buttonId, drawerId) {
+    closeTabDrawersExcept: function (drawerId) {
         var self = this;
 
         $.each( this.tabbedDrawers, function (i, drawer) {
@@ -2533,56 +2527,53 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         event.stopPropagation();
     },
 
+    /*
+     * @description Function to handle X share links
+     */
     twitter: function(e) {
-        var self = this;
-        self.displayURL(self.toURL());
-        var href   = 'https://twitter.com/share?'
-                   + 'url=' + encodeURIComponent($('.helioviewer-short-url').val()) + '&'
-                   + 'via=helioviewer&'
-                   + '&text=from Helioviewer.org',
-            target = $(e.target).attr('target');
+
+        let shareURL = encodeURIComponent($("#helioviewer-share-url").val());
+        let twitterShareURL = "https://x.com/share?url="+shareURL+"&via=helioviewer&text=from%20Helioviewer.org";
+        let target = $(e.target).attr('target');
         e.stopPropagation();
 
-        window.open(href, target);
+        window.open(twitterShareURL, target);
         return false;
     },
 
+    /*
+     * @description Function to handle facebook share
+     */
     facebook: function(e) {
-        var href   = 'https://www.facebook.com/sharer/sharer.php?'
+        let media = encodeURIComponent('https://api.helioviewer.org?action=downloadScreenshot&id=3240748');
+        let href   = 'https://www.facebook.com/sharer/sharer.php?'
                    + '&s=100'
-                   + '&p[images][0]='+encodeURIComponent(Helioviewer.api+'?action=downloadScreenshot&id=3240748')
-                   + '&p[title]=Helioviewer.org - Solar and heliospheric image visualization tool'
-                   + '&p[url]='+encodeURIComponent($('.helioviewer-long-url').val()),
-            target = $(e.target).attr('target');
+                   + '&p[images][0]='+media
+                   + '&p[title]='+encodeURIComponent('Helioviewer.org - Solar and heliospheric image visualization tool')
+                   + '&p[url]='+encodeURIComponent($('#helioviewer-share-url').val());
+
+        let target = $(e.target).attr('target');
         e.stopPropagation();
 
-        window.open(href, target);
+        window.open(href, target,"_blank", "toolbar=no, scrollbars=no, resizable=no, top=0, right=0, width=585, height=368");
         return false;
     },
 
-    google: function(e) {
-        var href   = 'https://plus.google.com/share?url='+encodeURIComponent($('.helioviewer-long-url').val()),
-            target = $(e.target).attr('target');
-        e.stopPropagation();
-
-        window.open(href, target);
-        return false;
-    },
-
+    /*
+     * @description Handle pinterest share
+     */
     pinterest: function() {
-        var self = this;
-        self.displayURL(self.toURL());
-        $('#pinterest-button').unbind('click');
 
-        var url = encodeURIComponent(self.toURL());
-        var media = encodeURIComponent(Helioviewer.api+'?action=downloadScreenshot&id=3240748');
-        var desc = 'Helioviewer.org - Solar and heliospheric image visualization tool '+encodeURIComponent($('.helioviewer-short-url').val());
-        window.open("//www.pinterest.com/pin/create/button/"+
-        "?url="+url+
-        "&media="+media+
-        "&description="+desc, "hv_pinterest");
+        $('#pinterest').unbind('click');
 
-        $('#pinterest-button').bind('click', $.proxy(this.pinterest, this));
+        let url = encodeURIComponent($('#helioviewer-share-url').val());
+        let media = encodeURIComponent('https://api.helioviewer.org?action=downloadScreenshot&id=3240748');
+        let desc = encodeURIComponent('Helioviewer.org - Solar and heliospheric image visualization tool');
+        let pinterestURL = "https:///www.pinterest.com/pin/create/button/?url="+url+"&media="+media+"&description="+desc;
+        
+        window.open(pinterestURL,"_blank", "toolbar=no, scrollbars=no, resizable=no, top=0, right=0, width=750, height=320");
+
+        $('#pinterest').bind('click', $.proxy(this.pinterest, this));
         return;
     },
 

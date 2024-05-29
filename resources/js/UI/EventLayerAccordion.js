@@ -195,6 +195,9 @@ var EventLayerAccordion = Layer.extend(
 	            $(this).addClass('hidden');
             }
 
+            // This specifically trigger to update shared url
+            $(document).trigger("change-feature-events-state");
+
             e.stopPropagation();
         });
 
@@ -221,6 +224,9 @@ var EventLayerAccordion = Layer.extend(
                 $(this).removeClass('fa-eye');
                 $(this).addClass('fa-eye-slash');
             }
+
+            // This specifically trigger to update shared url
+            $(document).trigger("change-feature-events-state");
 
             e.stopPropagation();
         });
@@ -252,6 +258,9 @@ var EventLayerAccordion = Layer.extend(
 	            self.domNode.find("#labelsBtn-"+id).addClass('hidden');
             }
 
+
+            // This specifically trigger to update shared url
+            $(document).trigger("change-feature-events-state");
         });
 
         // click event for hiding empty frm sources button
@@ -273,6 +282,10 @@ var EventLayerAccordion = Layer.extend(
             } else {
 	            $(this).addClass('hidden');
             }
+
+
+            // This specifically trigger to update shared url
+            $(document).trigger("change-feature-events-state");
 
             e.stopPropagation();
 
@@ -432,7 +445,6 @@ var EventLayerAccordion = Layer.extend(
            		 +" <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+self._date.toUTCDateString() + " " + self._date.toUTCTimeString()+"\">UTC</span>")
                     .css("color", self._chooseTimeStampColor(0, 0, 0, 0));
 
-            //helioviewer._timeSelector = new TimeSelector();
         });
     },
 
@@ -462,7 +474,6 @@ var EventLayerAccordion = Layer.extend(
         		+" <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+date.toUTCDateString() + " " + date.toUTCTimeString()+"\">UTC</span>")
 					.css("color", this._chooseTimeStampColor(weight, 0, 0, 0));
 
-		//helioviewer._timeSelector = new TimeSelector();
     },
 
     /**

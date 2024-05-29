@@ -58,7 +58,7 @@ var UserVideoGallery = Class.extend(
         
         $('#user-video-gallery-current').on('click', '.user-video-label', function(){
 	        var rel = $(this).data('time');
-	        helioviewer.timeControls.setDate( new Date(rel).toUTCDate() );
+	        helioviewerWebClient.timeControls.setDate( new Date(rel).toUTCDate() );
         });
         
         $('#user-video-gallery-current').on('click', '.user-video-current-show-more', function(){
@@ -375,8 +375,8 @@ var UserVideoGallery = Class.extend(
 	        count++;
         });
         
-        if(typeof helioviewer !== 'undefined'){
-	        helioviewer._timeSelector = new TimeSelector();
+        if(typeof helioviewerWebClient !== 'undefined'){
+	        helioviewerWebClient._timeSelector = new TimeSelector();
         }
         
 		if($('.user-video-thumbnail-container-current').length == 0){

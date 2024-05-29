@@ -58,10 +58,13 @@ var MessageConsole = Class.extend(
 
     /**
      * @description Displays an error message in the message console
+     * it automatically adds error css class and an overwritable header Error
      * @param {String} msg Message to display
      */
     error: function (msg, options) {
         options = Object.assign({}, this._defaults, options);
+        options.group = options.group ? options.group + " error" : "error";
+        options.header = options.header ?? "Error";
         $("#message-console").jGrowl(msg, options);
     },
 

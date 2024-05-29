@@ -312,7 +312,7 @@ var Timeline = Class.extend({
 	                            var columnCenter = this.x + (this.series.closestPointRange / 2);
 
 	                            var date = new Date(columnCenter);
-	                            helioviewer.timeControls.setDate(date, true);
+	                            helioviewerWebClient.timeControls.setDate(date, true);
 
 	                            var chart = $('#data-coverage-timeline').highcharts();
 								self.btnCenter();
@@ -328,7 +328,7 @@ var Timeline = Class.extend({
                         events: {
                             dblclick: function(e){
 	                         	var date = new Date(this.x);
-								helioviewer.timeControls.setDate(date);
+								helioviewerWebClient.timeControls.setDate(date);
                             }
                         }
                     }
@@ -382,8 +382,8 @@ var Timeline = Class.extend({
 
 			            if(from < utcDate){
 			                str += '<div style="width:340px;">\
-			                			<div style="width:170px;float:left;" class="'+imageClass+'">'+helioviewer.getViewportScreenshotURL(from, 'undefined', true)+'</div>\
-			                			<div style="width:170px;float:left;" class="'+imageClass+'">'+helioviewer.getViewportScreenshotURL(to, 'undefined', true)+'</div>\
+			                			<div style="width:170px;float:left;" class="'+imageClass+'">'+helioviewerWebClient.getViewportScreenshotURL(from, 'undefined', true)+'</div>\
+			                			<div style="width:170px;float:left;" class="'+imageClass+'">'+helioviewerWebClient.getViewportScreenshotURL(to, 'undefined', true)+'</div>\
 			                			<div style="clear:both;"></div>\
 			                		</div>';
 			            }
@@ -413,7 +413,7 @@ var Timeline = Class.extend({
 							}
 							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.numberFormat(this.y,0,'.',',')+' image'+ext+'</b><br/>';
 						}else{
-							str += '<center class="'+imageClass+'"><span style="color:'+this.series.color+'">'+this.series.name+'</span><br><b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x)+'</b><br/>'+helioviewer.getViewportScreenshotURL(this.x, this.series.name, true)+'</center>';
+							str += '<center class="'+imageClass+'"><span style="color:'+this.series.color+'">'+this.series.name+'</span><br><b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x)+'</b><br/>'+helioviewerWebClient.getViewportScreenshotURL(this.x, this.series.name, true)+'</center>';
 						}
 		            }
 
@@ -1315,7 +1315,7 @@ var Timeline = Class.extend({
 				+' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+'"'
 				+' data-date-time-end="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.max)+'">UTC</span>' });
 
-		helioviewer._timeSelector = new TimeSelector();
+		helioviewerWebClient._timeSelector = new TimeSelector();
     },
 
     setNavigationButtonsTitles: function(e) {
