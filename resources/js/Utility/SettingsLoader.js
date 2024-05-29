@@ -31,7 +31,7 @@ var SettingsLoader = (
         let userSettings = new UserSettings(defaults, urlSettings, constraints);
 
         // If State is seeded from api, with an shared url
-        // we load with making 
+        // we load with making
         if (urlSettings.loadState) {
             return this._fetchStateFromApiAndApply(urlSettings.loadState, userSettings);
         } else {
@@ -44,7 +44,7 @@ var SettingsLoader = (
     /**
      * Load the existing state from our api , and apply it to user settings
      *
-     * @param {string} stateId, sha256 hash of front end state id, primary key in api's client_states table 
+     * @param {string} stateId, sha256 hash of front end state id, primary key in api's client_states table
      * @param {UserSettings} userSettings, is the loaded userSettings , we will update it if we can read from backend
      * @return {Promise} this will resolve or reject the modified userSettings
      */
@@ -76,7 +76,7 @@ var SettingsLoader = (
         }, (error) => {
             return Promise.reject(error);
         });
-         
+
     },
 
 
@@ -231,7 +231,11 @@ var SettingsLoader = (
                         "layers": [],
                     },
                     "tree_RHESSI": {
+                        "id": "RHESSI",
                         "visible": true,
+                        "markers_visible":true,
+                        "labels_visible":true,
+                        "layer_available_visible":true,
                         "layers": [],
                     },
                 },
