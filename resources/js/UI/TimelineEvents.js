@@ -333,7 +333,7 @@ var TimelineEvents = Class.extend({
 								var columnCenter = this.x + (this.series.closestPointRange / 2);
 
 								var date = new Date(columnCenter);
-								helioviewer.timeControls.setDate(date, true);
+								helioviewerWebClient.timeControls.setDate(date, true);
 								self.btnCenter();
 								return true;
 							}
@@ -359,7 +359,7 @@ var TimelineEvents = Class.extend({
 									var date = new Date(this.x + this.modifier);
 								}
 
-								helioviewer.timeControls.setDate(date);
+								helioviewerWebClient.timeControls.setDate(date);
 							},
 							mouseOver: function(e){
 								this.selected = true;
@@ -530,13 +530,13 @@ var TimelineEvents = Class.extend({
 
 						// Event bindings
 						$("body").on('click', ".ui-icon-arrowstop-1-w", function () {
-							helioviewer.timeControls.setDate( new Date(point.event_starttime+".000Z") );
+							helioviewerWebClient.timeControls.setDate( new Date(point.event_starttime+".000Z") );
 						});
 						$("body").on('click', ".ui-icon-arrowstop-1-n", function () {
-							helioviewer.timeControls.setDate( new Date(point.event_peaktime+".000Z") );
+							helioviewerWebClient.timeControls.setDate( new Date(point.event_peaktime+".000Z") );
 						});
 						$("body").on('click', ".ui-icon-arrowstop-1-e", function () {
-							helioviewer.timeControls.setDate( new Date(point.event_endtime+".000Z") );
+							helioviewerWebClient.timeControls.setDate( new Date(point.event_endtime+".000Z") );
 						});
 
 						$("body").on('click', '.copy-to-data-event',function() {
@@ -548,7 +548,7 @@ var TimelineEvents = Class.extend({
 
 							//Set dates
 							if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-data.open") == false){
-								helioviewer.drawerDataClick(true);
+								helioviewerWebClient.drawerDataClick(true);
 							}
 							$('#vso-start-date, #sdo-start-date').val(startArr[0]);
 							$('#vso-start-time, #sdo-start-time').val(startArr[1]).change();
@@ -569,7 +569,7 @@ var TimelineEvents = Class.extend({
 								{name : 'endTime', value : end},
 							];
 
-							helioviewer._movieManagerUI._buildMovieRequest(formSettings);
+							helioviewerWebClient._movieManagerUI._buildMovieRequest(formSettings);
 						});
 
 						$("body").on('click', '.event-info-event', function(){
@@ -1087,7 +1087,7 @@ var TimelineEvents = Class.extend({
 		zoomTickTime = date;
 
 		//Build instruments string for url
-		eventLayersStr = helioviewer.getEvents();
+		eventLayersStr = helioviewerWebClient.getEvents();
 
 		if(startDate < 0 || endDate < 0 || startDate > endDate){
 			return false;
@@ -1195,7 +1195,7 @@ var TimelineEvents = Class.extend({
 		    //$('#data-coverage-timeline-events').on('dblclick',function(e){
 			//	if(timelineRes == 'm'){
 			//		var date = new Date(timelineMouseValueX);
-			//		helioviewer.timeControls.setDate(date);
+			//		helioviewerWebClient.timeControls.setDate(date);
 			//	}
 			//});
 
@@ -1406,7 +1406,7 @@ var TimelineEvents = Class.extend({
 			chartTypeY = 'logarithmic';
 		}
 
-		var eventLayersStr = helioviewer.getEvents();
+		var eventLayersStr = helioviewerWebClient.getEvents();
 
 		if(eventLayersStr == ''){
 			chart.showLoading('No event types selected.<br/>Use the Feature and Event selector to choose event types.');
@@ -1575,7 +1575,7 @@ var TimelineEvents = Class.extend({
 				+' <span class="dateSelector" data-tip-pisition="right" data-date-time="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.min)+'"'
 				+' data-date-time-end="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S',e.max)+'">UTC</span>' });
 
-		helioviewer._timeSelector = new TimeSelector();
+		helioviewerWebClient._timeSelector = new TimeSelector();
 
 		return e;
 	},
@@ -1817,7 +1817,7 @@ var TimelineEvents = Class.extend({
 	_generateEventKeywordsSection: function (tab, event) {
 		var formatted, tag, tags = [], lookup, attr, domClass, icon, list= {}, self=this;
 
-		var _eventGlossary = helioviewer._eventLayerAccordion._eventManager._eventGlossary;
+		var _eventGlossary = helioviewerWebClient._eventLayerAccordion._eventManager._eventGlossary;
 
 		if ( tab == 'obs' ) {
 			$.each( event, function (key, value) {

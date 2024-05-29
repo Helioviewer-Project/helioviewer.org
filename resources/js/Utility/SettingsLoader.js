@@ -18,16 +18,67 @@ var SettingsLoader = (
      * @returns {Object} A UserSettings object
      */
     loadSettings: function (urlSettings, serverSettings) {
-        var defaults    = this._getDefaultSettings(serverSettings),
-            constraints = {
-                "minImageScale" : serverSettings.minImageScale,
-                "maxImageScale" : serverSettings.maxImageScale,
-                "minMovieLength": 300,
-                "maxMovieLength": 16934400
-            };
 
-        return new UserSettings(defaults, urlSettings, constraints);
+        let defaults    = this._getDefaultSettings(serverSettings);
+
+        let constraints = {
+            "minImageScale" : serverSettings.minImageScale,
+            "maxImageScale" : serverSettings.maxImageScale,
+            "minMovieLength": 300,
+            "maxMovieLength": 16934400
+        };
+
+        let userSettings = new UserSettings(defaults, urlSettings, constraints);
+
+        // If State is seeded from api, with an shared url
+        // we load with making 
+        if (urlSettings.loadState) {
+            return this._fetchStateFromApiAndApply(urlSettings.loadState, userSettings);
+        } else {
+            return Promise.resolve(userSettings);
+        }
+
     },
+
+
+    /**
+     * Load the existing state from our api , and apply it to user settings
+     *
+     * @param {string} stateId, sha256 hash of front end state id, primary key in api's client_states table 
+     * @param {UserSettings} userSettings, is the loaded userSettings , we will update it if we can read from backend
+     * @return {Promise} this will resolve or reject the modified userSettings
+     */
+    _fetchStateFromApiAndApply: function(stateId, userSettings) {
+
+        return $.ajax({
+
+            type: "GET",
+            url: Helioviewer.api,
+            dataType: Helioviewer.dataType,
+            data: {
+                "action": "getWebClientState",
+                "state_id": stateId
+            },
+
+        }).then((resp) => {
+
+            userSettings.set("state.imageScale", parseFloat(resp.data.imageScale));
+            userSettings.set("state.centerX", parseFloat(resp.data.centerX));
+            userSettings.set("state.centerY", parseFloat(resp.data.centerY));
+            userSettings.set("state.tileLayers", resp.data.imageLayers);
+            userSettings.set("state.events_v2", resp.data.eventLayers);
+            userSettings.set("state.celestialBodiesChecked", resp.data.celestialBodies);
+            userSettings.set("state.date", parseInt(resp.data.date));
+
+            return Promise.resolve(userSettings);
+
+
+        }, (error) => {
+            return Promise.reject(error);
+        });
+         
+    },
+
 
     /**
      * Creates a hash containing the default settings to use. Change default settings here.

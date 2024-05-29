@@ -27,7 +27,6 @@ jp2
 build/css
 *.log
 php_errors.log
-.htaccess
 .gnupg
 cache
 settings/settings.cfg
@@ -35,9 +34,7 @@ settings.cfg
 docs/profiling.tar
 .idea
 .bzrignore
-google07565ec8e89f7c80.html
 jpip
-keith.tar.gz
 releases
 robots.txt
 statistics/milestones.txt

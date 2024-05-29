@@ -239,6 +239,10 @@ var TileLayerManager = LayerManager.extend(
         return this._observationDate.toISOString();
     },
 
+    getRequestDateAsTimestamp: function () {
+        return this._observationDate.getTime();
+    },
+
     /**
      * Returns a string representation of the tile layers
      */

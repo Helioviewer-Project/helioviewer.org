@@ -917,13 +917,13 @@ var EventMarker = Class.extend(
 
         // Event bindings
         this.eventPopupDomNode.find(".ui-icon-arrowstop-1-w").bind('click', function () {
-            helioviewer.timeControls.setDate( new Date(self.start+".000Z") );
+            helioviewerWebClient.timeControls.setDate( new Date(self.start+".000Z") );
         });
         this.eventPopupDomNode.find(".ui-icon-arrowstop-1-n").bind('click', function () {
-            helioviewer.timeControls.setDate( new Date(self.event_peaktime+".000Z") );
+            helioviewerWebClient.timeControls.setDate( new Date(self.event_peaktime+".000Z") );
         });
         this.eventPopupDomNode.find(".ui-icon-arrowstop-1-e").bind('click', function () {
-            helioviewer.timeControls.setDate( new Date(self.end+".000Z") );
+            helioviewerWebClient.timeControls.setDate( new Date(self.end+".000Z") );
         });
         this.eventPopupDomNode.find(".event-movie").bind('click', function() {
             alert('Event-based movie generation not yet implemented.')
@@ -937,7 +937,7 @@ var EventMarker = Class.extend(
 
             //Set dates
             if(Helioviewer.userSettings.get("state.drawers.#hv-drawer-data.open") == false){
-				helioviewer.drawerDataClick(true);
+				helioviewerWebClient.drawerDataClick(true);
 			}
             $('#vso-start-date, #sdo-start-date').val(startArr[0]);
             $('#vso-start-time, #sdo-start-time').val(startArr[1]).change();
@@ -958,7 +958,7 @@ var EventMarker = Class.extend(
 	            {name : 'endTime', value : end},
             ];
 
-            helioviewer._movieManagerUI.requestQueueMovie(formSettings);
+            helioviewerWebClient._movieManagerUI.requestQueueMovie(formSettings);
         });
 
         this.eventPopupDomNode.find(".event-search-external").bind('click', function() {
@@ -984,7 +984,7 @@ var EventMarker = Class.extend(
         this.eventPopupDomNode.find("h1, .param-label, .param-value").enableSelection();
 
         this.parentFRM.domNode.append(this.eventPopupDomNode);
-        helioviewer._timeSelector = new TimeSelector();
+        helioviewerWebClient._timeSelector = new TimeSelector();
     },
 
     fixTitles: function(s){

@@ -36,11 +36,11 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
     getScreenshotURL: function () {
         var roi, imageScale, layers, params;
 
-        imageScale = helioviewer.getImageScale();
-        roi        = helioviewer.getViewportRegionOfInterest();
+        imageScale = helioviewerWebClient.getImageScale();
+        roi        = helioviewerWebClient.getViewportRegionOfInterest();
 
         // Remove any layers which do not lie in the reguested region
-        layers = helioviewer.getLayers();
+        layers = helioviewerWebClient.getLayers();
 
         // Make sure selection region and number of layers are acceptible
         if (!this._validateRequest(roi, layers)) {
@@ -51,7 +51,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             action        : "takeScreenshot",
             imageScale    : imageScale,
             layers        : layers,
-            date          : helioviewer.getDate().toISOString(),
+            date          : helioviewerWebClient.getDate().toISOString(),
             display       : true
         }, this._toArcsecCoords(roi, imageScale));
 
@@ -98,12 +98,12 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         this._selectAreaBtn.click(function () {
             self._cleanupFunctions = [];
 
-            if ( helioviewer.drawerLeftOpened ) {
-                self._cleanupFunctions.push('helioviewer.drawerLeftClick()');
-                helioviewer.drawerLeftClick();
+            if ( helioviewerWebClient.drawerLeftOpened ) {
+                self._cleanupFunctions.push('helioviewerWebClient.drawerLeftClick()');
+                helioviewerWebClient.drawerLeftClick();
             }
-            self._cleanupFunctions.push('helioviewer.drawerScreenshotsClick()');
-            helioviewer.drawerScreenshotsClick();
+            self._cleanupFunctions.push('helioviewerWebClient.drawerScreenshotsClick()');
+            helioviewerWebClient.drawerScreenshotsClick();
 
             $(document).trigger("enable-select-tool",
                                 [$.proxy(self._takeScreenshot, self),
@@ -167,14 +167,14 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         celestialBodiesTrajectories, screenshot, self = this;
 
         if (typeof roi === "undefined") {
-            roi = helioviewer.getViewportRegionOfInterest();
+            roi = helioviewerWebClient.getViewportRegionOfInterest();
         }
 
-        imageScale  = helioviewer.getZoomedImageScale();
-        layers      = helioviewer.getVisibleLayers(roi);
-        events      = helioviewer.getEvents();
-        celestialBodiesLabels = helioviewer.getCelestialBodiesLabels();
-        celestialBodiesTrajectories = helioviewer.getCelestialBodiesTrajectories();
+        imageScale  = helioviewerWebClient.getZoomedImageScale();
+        layers      = helioviewerWebClient.getVisibleLayers(roi);
+        events      = helioviewerWebClient.getEvents();
+        celestialBodiesLabels = helioviewerWebClient.getCelestialBodiesLabels();
+        celestialBodiesTrajectories = helioviewerWebClient.getCelestialBodiesTrajectories();
 
         //*********** TEMPORARY IMPLEMENTATION *********
         // TODO Temprorary function to remove
@@ -218,7 +218,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             scaleX        : Helioviewer.userSettings.get("state.scaleX"),
             scaleY        : Helioviewer.userSettings.get("state.scaleY"),
             movieIcons    : Helioviewer.userSettings.get("options.showinviewport"),
-            date          : helioviewer.getDate().toISOString(),
+            date          : helioviewerWebClient.getDate().toISOString(),
             display       : false,
             switchSources : switchSources,
             celestialBodiesLabels : celestialBodiesLabels,

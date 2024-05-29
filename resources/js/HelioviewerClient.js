@@ -10,7 +10,6 @@
  */
 "use strict";
 
-var Helioviewer = {}; // Helioviewer global namespace
 
 var HelioviewerClient = Class.extend(
     /** @lends HelioviewerClient.prototype */
@@ -18,40 +17,27 @@ var HelioviewerClient = Class.extend(
     /**
      * Base Helioviewer client class
      * @constructs
-     *
-     * @param {Object} urlSettings Client-specified settings to load.
-     *  Includes imageLayers, date, and imageScale. May be empty.
-     * @param {Object} serverSettings Server settings loaded from Config.ini
+     * @param {array} zoomLevels set float numbers for zoomLevels
      */
-    init: function (urlSettings, serverSettings, zoomLevels) {
+    init: function (zoomLevels) {
+
         this._checkBrowser(); // Determines browser support
 
-        this.serverSettings = serverSettings;
         this.zoomLevels = zoomLevels;
 
-        Helioviewer.api          = serverSettings['backEnd'];
-        Helioviewer.dataType     = "json";
-        Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
         // Apply settings patches as soon as userSettings is set, before any further initialization is done.
         ApplyPatch493_RemoveBrokenScreenshots();
 
-        Helioviewer.root = serverSettings['rootURL'];
     },
 
     /**
      * @description Checks browser support for various features used in Helioviewer
      */
     _checkBrowser: function () {
-        let localStorageSupport = true;
-        try {
-            localStorageSupport = ('localStorage' in window) && window['localStorage'] !== null;
-        } catch (e) {
-            localStorageSupport = false;
-        }
 
         // Base support
         $.extend($.support, {
-            "localStorage" : localStorageSupport,
+            "localStorage" : Helioviewer.userSettings.checkLocalStorageSupport(),
             "nativeJSON"   : typeof (JSON) !== "undefined",
             "video"        : !!document.createElement('video').canPlayType,
             "h264"         : false,
@@ -94,18 +80,17 @@ var HelioviewerClient = Class.extend(
             id             : '#helioviewer-viewport',
             container      : container,
             requestDate    : date,
-            maxTileLayers  : this.serverSettings.maxTileLayers,
-            minImageScale  : this.serverSettings.minImageScale,
-            maxImageScale  : this.serverSettings.maxImageScale,
-            prefetch       : this.serverSettings.prefetchSize,
+            maxTileLayers  : Helioviewer.serverSettings.maxTileLayers,
+            minImageScale  : Helioviewer.serverSettings.minImageScale,
+            maxImageScale  : Helioviewer.serverSettings.maxImageScale,
+            prefetch       : Helioviewer.serverSettings.prefetchSize,
             tileLayers     : Helioviewer.userSettings.get('state.tileLayers'),
             imageScale     : Helioviewer.userSettings.get('state.imageScale'),
             centerX        : Helioviewer.userSettings.get('state.centerX'),
             centerY        : Helioviewer.userSettings.get('state.centerY'),
             marginTop      : marginTop,
             marginBottom   : marginBottom,
-            warnMouseCoords: Helioviewer.userSettings.get(
-                                'notifications.coordinates'),
+            warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates'),
             zoomLevels     : this.zoomLevels
         });
     },

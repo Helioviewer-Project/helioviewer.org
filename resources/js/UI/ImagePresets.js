@@ -69,9 +69,9 @@ var UserLayersPresets = Class.extend({
 	        $('.item-add-form').hide();
 	        $('.userlist-add-item').show();
 
-	        var date = helioviewer.viewport._tileLayerManager.getRequestDateAsISOString();
-	        var imageLayersStr = helioviewer.viewport.serialize();
-	        var eventsLayersStr = helioviewer.viewport.serializeEvents();
+	        var date = helioviewerWebClient.viewport._tileLayerManager.getRequestDateAsISOString();
+	        var imageLayersStr = helioviewerWebClient.viewport.serialize();
+	        var eventsLayersStr = helioviewerWebClient.viewport.serializeEvents();
 
 	        var item = {
 				'name':$('.item-name').val(),
@@ -217,17 +217,17 @@ var UserLayersPresets = Class.extend({
         }
 
 		if(typeof date != 'undefined' && date != ''){
-			helioviewer.timeControls.setDate(Date.parseUTCDate(date), true);
+			helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(date), true);
         }else{
-	        helioviewer.timeControls._onDateChange();
+	        helioviewerWebClient.timeControls._onDateChange();
         }
 
         if(typeof layers != 'undefined' && layers != ''){
 	        layers = layers.slice(1, -1);
 			settings['imageLayers'] = layers.split("],[");
 
-			if (typeof helioviewer.viewport._tileLayerManager != "undefined") {
-				helioviewer.viewport._tileLayerManager.each(function(){
+			if (typeof helioviewerWebClient.viewport._tileLayerManager != "undefined") {
+				helioviewerWebClient.viewport._tileLayerManager.each(function(){
 					$(document).trigger("remove-tile-layer", [this.id]);
 					$("#" + this.id + " *[oldtitle]").qtip("destroy");
 					$('#TileLayerAccordion-Container').dynaccordion('removeSection', {id: this.id});
@@ -240,18 +240,18 @@ var UserLayersPresets = Class.extend({
 		    //$(document).trigger("save-tile-layers-from-accordion");
 
 		    Helioviewer.userSettings._processURLSettings(settings);
-		    helioviewer.viewport.tileLayers = Helioviewer.userSettings.get('state.tileLayers');
+		    helioviewerWebClient.viewport.tileLayers = Helioviewer.userSettings.get('state.tileLayers');
 		    //$('#TileLayerAccordion-Container').dynaccordion();
-		    //helioviewer.viewport._tileLayerManager._layers = [];
-		    //helioviewer.viewport._tileLayerManager._loadStartingLayers(helioviewer.viewport.tileLayers);
-		    //helioviewer.viewport.loadDataSources();
+		    //helioviewerWebClient.viewport._tileLayerManager._layers = [];
+		    //helioviewerWebClient.viewport._tileLayerManager._loadStartingLayers(helioviewerWebClient.viewport.tileLayers);
+		    //helioviewerWebClient.viewport.loadDataSources();
 
-		    helioviewer.viewport._tileLayerManager = new HelioviewerTileLayerManager(
-		    	helioviewer.viewport.requestDate,
-		    	await helioviewer.viewport.dataSources,
-		    	helioviewer.viewport.tileSize,
-		    	helioviewer.viewport.imageScale,
-		    	helioviewer.viewport.maxTileLayers,
+		    helioviewerWebClient.viewport._tileLayerManager = new HelioviewerTileLayerManager(
+		    	helioviewerWebClient.viewport.requestDate,
+		    	await helioviewerWebClient.viewport.dataSources,
+		    	helioviewerWebClient.viewport.tileSize,
+		    	helioviewerWebClient.viewport.imageScale,
+		    	helioviewerWebClient.viewport.maxTileLayers,
 		    	Helioviewer.userSettings.get('state.tileLayers')
 		    );
 
@@ -260,11 +260,11 @@ var UserLayersPresets = Class.extend({
 			    $(document).trigger("save-tile-layers-from-accordion");
 		    }
 		    //_updateTimeStamp(id, date);
-		    //console.log(helioviewer.timeControls.getDate());
-		    //helioviewer._initViewport(helioviewer.timeControls.getDate(), 0, 0);
+		    //console.log(helioviewerWebClient.timeControls.getDate());
+		    //helioviewerWebClient._initViewport(helioviewerWebClient.timeControls.getDate(), 0, 0);
 
 		    $(document).trigger("update-viewport");
-		    //helioviewer._tileLayerAccordion._initTreeSelect(id, hierarchy);
+		    //helioviewerWebClient._tileLayerAccordion._initTreeSelect(id, hierarchy);
         }
 
 
@@ -278,13 +278,13 @@ var UserLayersPresets = Class.extend({
 			}
 
 			Helioviewer.userSettings._processURLSettings(settings);
-			$(document).trigger("reinit-events-list", [helioviewer.timeControls.getDate()]);
+			$(document).trigger("reinit-events-list", [helioviewerWebClient.timeControls.getDate()]);
         }
 
         if(typeof date != 'undefined' && date != ''){
-			helioviewer.timeControls.setDate(Date.parseUTCDate(date), true);
+			helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(date), true);
         }else{
-	        helioviewer.timeControls._onDateChange();
+	        helioviewerWebClient.timeControls._onDateChange();
         }
 
 		//$(document).trigger("observation-time-changed", [new Date(Helioviewer.userSettings.get("state.date"))]);
@@ -305,7 +305,7 @@ var UserLayersPresets = Class.extend({
 
         //Add observation date
         if($('input.item-date').is(':checked')){
-	        var date = helioviewer.viewport._tileLayerManager.getRequestDateAsISOString();
+	        var date = helioviewerWebClient.viewport._tileLayerManager.getRequestDateAsISOString();
 	        var dateObj = getDateFromUTCString(date);
 	        dateString = dateObj.toDateString()+' '+dateObj.toTimeString();
         }
@@ -456,7 +456,7 @@ var UserLayersPresets = Class.extend({
         var eventLabels = 'false';
 
 
-        var vport = helioviewer.viewport.getViewportInformation();
+        var vport = helioviewerWebClient.viewport.getViewportInformation();
         var roi = {
 	          'left': vport['coordinates']['left'],
 	         'right': vport['coordinates']['right'],

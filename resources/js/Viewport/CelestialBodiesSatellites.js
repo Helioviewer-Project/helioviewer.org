@@ -193,7 +193,7 @@ var CelestialBodiesSatellites = Class.extend(
     },
 
     _onTimeChanged: function(){
-        this.currentTime = helioviewer.timeControls.getTimestamp();
+        this.currentTime = helioviewerWebClient.timeControls.getTimestamp();
         //assemble the request parameters
         var params = {
             "action"    : "getSolarBodies",
@@ -214,7 +214,7 @@ var CelestialBodiesSatellites = Class.extend(
                 newDate.setTime(newTimestamp["time"]+1000);//set the real date from the data + 1 second
                 newDate = Date.parseUTCDate(newDate.toISOString());//re-parse to truncate milliseconds before changing date
                 //after parse, the date will be in the transit within 1 second of the start.
-                helioviewer.timeControls.setDate(newDate);
+                helioviewerWebClient.timeControls.setDate(newDate);
             }
         }else if(direction == 'last'){
             if(newTimestamp["time"] != null){
@@ -222,14 +222,14 @@ var CelestialBodiesSatellites = Class.extend(
                 newDate.setTime(newTimestamp["time"]);//set the real date from the data
                 newDate = Date.parseUTCDate(newDate.toISOString());//re-parse to truncate milliseconds before changing date
                 //after parse, the date will be in the transit within 1 second of the end.
-                helioviewer.timeControls.setDate(newDate);
+                helioviewerWebClient.timeControls.setDate(newDate);
             }
         }
     },
 
     _outputTrajectories: function(ajax,data){
         var self = this;
-        var currentRequestTime = helioviewer.timeControls.getTimestamp();
+        var currentRequestTime = helioviewerWebClient.timeControls.getTimestamp();
         if(ajax){//this was a response from the api
             var trajectories = data['trajectories'];
             this.trajectories = trajectories;
@@ -376,7 +376,7 @@ var CelestialBodiesSatellites = Class.extend(
                                     var newDate = new Date();
                                     newDate.setTime( $( this ).attr('time') );//set the real date from the data
                                     newDate = Date.parseUTCDate(newDate.toISOString());//re-parse to truncate milliseconds before changing date
-                                    helioviewer.timeControls.setDate(newDate);
+                                    helioviewerWebClient.timeControls.setDate(newDate);
                                     $( this ).children().attr({ r: 6 , 'fill' : self.colors.current, 'stroke-width' : 2});
                                     $( this ).unbind('mouseleave');
                                 });
@@ -535,7 +535,7 @@ var CelestialBodiesSatellites = Class.extend(
 
     _replotCoordinates: function(){
         var self = this;
-        var currentRequestTime = helioviewer.timeControls.getTimestamp();
+        var currentRequestTime = helioviewerWebClient.timeControls.getTimestamp();
 
         //create underline svg
         var svgUnderlineContainer = $("#point-date-underline-container");
@@ -672,7 +672,7 @@ var CelestialBodiesSatellites = Class.extend(
                                 var newDate = new Date();
                                 newDate.setTime( $( this ).attr('time') ); //set the real date from the data
                                 newDate = Date.parseUTCDate(newDate.toISOString()); //re-parse to truncate milliseconds before changing date
-                                helioviewer.timeControls.setDate(newDate);
+                                helioviewerWebClient.timeControls.setDate(newDate);
                                 $( this ).children().attr({ r: 6 , 'fill' : self.colors.current, 'stroke-width' : 2});
                                 $( this ).unbind('mouseleave');
                             });
@@ -1171,7 +1171,7 @@ var CelestialBodiesSatellites = Class.extend(
             "action"    : "getTrajectoryTime",
             "observer"  : currentDomNode.attr("request-observer"),
             "body"      : currentDomNode.attr("request-body"),
-            "time"      : helioviewer.timeControls.getTimestamp(),
+            "time"      : helioviewerWebClient.timeControls.getTimestamp(),
             "direction" : direction
         }
         $.get(Helioviewer.api, params, $.proxy(self._changeTimeTrajectory,this,direction), "json");

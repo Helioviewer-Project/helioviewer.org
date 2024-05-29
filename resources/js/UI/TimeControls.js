@@ -24,11 +24,9 @@ var TimeControls = Class.extend(
      * @param {String} backBtn         The id of the time "Back" button
      * @param {String} forwardBtn      The id of the time "Forward" button
      */
-    init : function (dateInput, timeInput, incrementSelect, backBtn, forwardBtn, urlDate) {
-        if (typeof urlDate === "undefined") {
-            urlDate = false;
-        }
-        this._setInitialDate(urlDate);
+    init : function (dateInput, timeInput, incrementSelect, backBtn, forwardBtn, dateTimestamp) {
+
+        this._date = new Date(dateTimestamp);
         this._timeIncrement = Helioviewer.userSettings.get("state.timeStep");
         this._timer;
 
@@ -169,22 +167,6 @@ var TimeControls = Class.extend(
      */
     disableAutoRefresh: function () {
         clearInterval(this._timer);
-    },
-
-    /**
-     * Chooses the date to use when Helioviewer.org is first loaded
-     */
-    _setInitialDate: function (urlDate) {
-        if (urlDate) {
-            this._date = urlDate;
-        } else if (Helioviewer.userSettings.get("options.date") === "latest") {
-            this._date = new Date(+new Date());
-        } else {
-            this._date = new Date(Helioviewer.userSettings.get("state.date"));
-        }
-
-        // Update stored date
-        Helioviewer.userSettings.set("state.date", this._date.getTime());
     },
 
    /**
