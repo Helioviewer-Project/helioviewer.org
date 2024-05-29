@@ -1113,7 +1113,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 						<div class="section">
 							<div id="helioviewer-url-box" style="font-size: 1em;">
 								<span id="helioviewer-url-box-msg"></span>
-								<span id="helioviewer-url-box-stale-link-msg" style="color:#f8e64f; display:none;">Your link become stale, click <a id="update-share-url-link" style="cursor:pointer">here</a> to update it</span>
+								<span id="helioviewer-url-box-stale-link-msg" style="color:#f8e64f; display:none;">Your link has become stale, click <a id="update-share-url-link" style="cursor:pointer">here</a> to update it.</span>
 								<span id="helioviewer-url-box-stale-link-success-msg" style="color:green; display:none;">Updated!</span>
 								<form style="margin-top: 5px; text-align: center;">
 									<input aria-label="Viewport URL" type="text" id="helioviewer-share-url" style="width:98%;" value="" readonly/>
