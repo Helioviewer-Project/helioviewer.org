@@ -29,36 +29,6 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
     },
 
     /**
-     * Returns a URL to generate a screenshot of the current viewport
-     *
-     * Used to generate thumbnails for the current page
-     */
-    getScreenshotURL: function () {
-        var roi, imageScale, layers, params;
-
-        imageScale = helioviewerWebClient.getImageScale();
-        roi        = helioviewerWebClient.getViewportRegionOfInterest();
-
-        // Remove any layers which do not lie in the reguested region
-        layers = helioviewerWebClient.getLayers();
-
-        // Make sure selection region and number of layers are acceptible
-        if (!this._validateRequest(roi, layers)) {
-            return;
-        }
-
-        params = $.extend({
-            action        : "takeScreenshot",
-            imageScale    : imageScale,
-            layers        : layers,
-            date          : helioviewerWebClient.getDate().toISOString(),
-            display       : true
-        }, this._toArcsecCoords(roi, imageScale));
-
-        return Helioviewer.api + "?" + $.param(params);
-    },
-
-    /**
      * Displays a jGrowl notification to the user informing them that their
      * download has completed
      */
@@ -78,8 +48,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
                " screenshot is ready! Click here to download. </a>";
 
         // Create the jGrowl notification.
-        $(document).trigger("message-console-log",
-                            [body, jGrowlOpts, true, true]);
+        Helioviewer.messageConsole.success(body, jGrowlOpts);
     },
 
     /**
@@ -172,30 +141,8 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
 
         imageScale  = helioviewerWebClient.getZoomedImageScale();
         layers      = helioviewerWebClient.getVisibleLayers(roi);
-        events      = helioviewerWebClient.getEvents();
         celestialBodiesLabels = helioviewerWebClient.getCelestialBodiesLabels();
         celestialBodiesTrajectories = helioviewerWebClient.getCelestialBodiesTrajectories();
-
-        //*********** TEMPORARY IMPLEMENTATION *********
-        // TODO Temprorary function to remove
-        let eventLayersVisible = false;
-        Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(tC => {
-            // if any of the markers is visible, we need to show events
-            eventLayersVisible = (eventLayersVisible || tC['markers_visible']);
-        });
-
-        let eventLabelsVisible = false;
-        Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(tC => {
-            // if any of the labels is visible, we need to show labels
-            eventLabelsVisible = (eventLabelsVisible || tC['labels_visible']);
-        });
-
-        if ( eventLayersVisible === false ) {
-            events = '';
-            eventLabels = false;
-        }
-        //*********** TEMPORARY IMPLEMENTATION *********
-
 
         // Make sure selection region and number of layers are acceptible
         if (!this._validateRequest(roi, layers)) {
@@ -208,11 +155,9 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         }
 
         params = $.extend({
-            action        : "takeScreenshot",
             imageScale    : imageScale,
             layers        : layers,
-            events        : events,
-            eventLabels   : eventLabelsVisible,
+            eventsState   : Helioviewer.userSettings.get("state.events_v2"),
             scale         : Helioviewer.userSettings.get("state.scale"),
             scaleType     : Helioviewer.userSettings.get("state.scaleType"),
             scaleX        : Helioviewer.userSettings.get("state.scaleX"),
@@ -225,14 +170,9 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             celestialBodiesTrajectories : celestialBodiesTrajectories
         }, this._toArcsecCoords(roi, imageScale));
 
-        // AJAX Responder
-        $.get(Helioviewer.api, params, function (response) {
-            if ((response === null) || response.error) {
-                $(document).trigger("message-console-info",
-                    "Unable to create screenshot. Please try again later.");
-                return;
-            }
 
+        // AJAX Responder
+        let successCallback = function (response) {
             screenshot = self._manager.add(
                 response.id, params.imageScale, params.layers,
                 new Date().toISOString(), params.date,
@@ -241,7 +181,15 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             self._addItem(screenshot);
             self._displayDownloadNotification(screenshot);
             self._refresh();
-        }, Helioviewer.dataType);
+        };
+
+        let failCallback = function (errResp) {
+            Helioviewer.messageConsole.error("Unable to create screenshot. Please try again later.");
+            console.error(errResp);
+        }
+
+        return postJSON("postScreenshot", params).then(successCallback, failCallback);
+
     },
 
     _cleanup: function () {
