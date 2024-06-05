@@ -699,3 +699,25 @@ function fixUnicodeChars(s) {
     return s.replace(/u([0-9a-fA-F]{4})/g, "&#x$1;");
 }
 
+/*
+ * @description make JSON POST requests to backend api
+ * @param {string} apiAction, string to be fixed
+ * @param {JSON} array or any other object type to be post to backend
+ * @return {Promise} returns promise to allow further processing by callers
+ */
+function postJSON(action, params) {
+
+    return $.ajax({
+        type: "POST",
+        url: Helioviewer.api+'/?action='+action,
+        dataType: Helioviewer.dataType,
+        contentType: "application/json",
+        data: JSON.stringify(params)
+    });
+
+}
+
+
+
+
+
