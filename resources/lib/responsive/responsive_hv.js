@@ -1,3 +1,4 @@
+
 function isMobile() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
@@ -178,8 +179,6 @@ $(function() {
 			
 		}
 		
-
-		
 		// if it's not already open, close currently open drawer and open correct one
 		if(thisdrawersect != currdsopen) {
 			$('.hv-drawer-right').css({'display':'none'});
@@ -251,7 +250,10 @@ $(function() {
 				case 'hv-drawer-data':
 					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Request Science Data Download');
 					break;
-				case 'hv-drawer-share':
+				case 'hv-drawer-share': 
+                    helioviewerWebClient.toURL().then((shareURL) => {
+                        $("#helioviewer-share-url").attr('value', shareURL);
+                    });
 					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Share Viewport On Social Media');
 					break;
 				case 'hv-drawer-about':
