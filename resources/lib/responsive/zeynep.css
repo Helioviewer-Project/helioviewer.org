@@ -158,14 +158,14 @@ main {
 }
 
 .zeynep ul > li.has-submenu > a {
-  background-image: url("../images/submenu-arrow.svg");
+  background-image: url("../../images/submenu-arrow.svg");
   background-position: right 20px center;
   background-repeat: no-repeat;
   background-size: 8px 14px;
 }
 
 .zeynep ul > li.has-submenu > a:hover {
-  background-image: url("../images/submenu-arrow-active.svg");
+  background-image: url("../../images/submenu-arrow-active.svg");
 }
 
 /* zeynepjs submenu styles */
@@ -175,7 +175,7 @@ main {
 }
 
 .zeynep .submenu-header {
-  background-image: url("../images/menu-back.svg");
+  background-image: url("../../images/menu-back.svg");
   background-position: left 20px center;
   background-repeat: no-repeat;
   background-size: 8px 14px;
@@ -195,7 +195,7 @@ main {
 }
 
 .zeynep .submenu-header > a:before {
-  background-image: url("../images/submenu-arrow.svg");
+  background-image: url("../../images/submenu-arrow.svg");
   background-position: right 20px center;
   background-repeat: no-repeat;
   background-size: 8px 14px;
