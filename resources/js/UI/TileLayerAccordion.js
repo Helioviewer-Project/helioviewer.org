@@ -790,7 +790,7 @@ var TileLayerAccordion = Layer.extend(
             + " <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+date.toUTCDateString()+" "+date.toUTCTimeString()+"\">UTC</span>")
                    .css("color", this._chooseTimeStampColor(weight, 0, 0, 0));
 
-        if(typeof helioviewer !== 'undefined'){
+        if(typeof helioviewerWebClient !== 'undefined'){
             helioviewerWebClient._timeSelector = new TimeSelector();
         }
     },
@@ -819,4 +819,3 @@ var TileLayerAccordion = Layer.extend(
         return "rgb(" + r + "," + g + "," + b + ")";
     }
 });
-
