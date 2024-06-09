@@ -264,6 +264,8 @@ select.layer-select {
 }
 
 .image-info-dialog-btn:hover,
-.image-download-btn:hover {
+.image-download-btn:hover,
+.next-image-btn:hover,
+.previous-image-btn:hover {
     color: yellow;
 }

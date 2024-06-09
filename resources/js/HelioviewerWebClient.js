@@ -20,6 +20,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * @param {array} zoomLevels set float numbers for zoomLevels
      */
     init: function (zoomLevels) {
+
         var imageScale, paddingHeight, accordionsToOpen, self=this;
 
         this.header                    = $('#hv-header');
@@ -260,13 +261,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var self = this;
 
         $(document).bind("datasources-initialized", function (e, dataSources) {
-            self._tileLayerAccordion = new TileLayerAccordion(
-                   '#tileLayerAccordion', dataSources, date);
+            self._tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, date);
         });
 
         $(document).bind("event-types-initialized", function (e, eventTypes, date) {
-            self._eventLayerAccordion = new EventLayerAccordion(
-                    '#eventLayerAccordion', eventTypes, date);
+            self._eventLayerAccordion = new EventLayerAccordion('#eventLayerAccordion', eventTypes, date);
         });
 
         this._super("#helioviewer-viewport-container-outer", date, marginTop, marginBottom);
