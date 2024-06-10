@@ -251,9 +251,9 @@ $(function() {
 					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Request Science Data Download');
 					break;
 				case 'hv-drawer-share': 
-                    helioviewerWebClient.toURL().then((shareURL) => {
-                        $("#helioviewer-share-url").attr('value', shareURL);
-                    });
+					helioviewerWebClient.toURL().then((shareURL) => {
+						$("#helioviewer-share-url").attr('value', shareURL);
+					});
 					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Share Viewport On Social Media');
 					break;
 				case 'hv-drawer-about':
