@@ -683,15 +683,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 		// Make sure dialog fits nicely inside the browser window
 		dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
 
-		// Movie player HTML
-		if(outputType!='minimal'){
-			//regular helioviewer video player
-			html = await self.getVideoPlayerHTML(movie, dimensions.width, dimensions.height);
-		}else{
-			//k12 helioviewer video player
-			// TODO: This is important to fix too...
-			html = self.getK12VideoPlayerHTML(movie, dimensions.width, dimensions.height);
-		}
+        html = await self.getVideoPlayerHTML(movie, dimensions.width, dimensions.height, Helioviewer.outputType);
 
 		// Movie player dialog
 		let htmlId = "movie-player-" + movie.id;
@@ -965,10 +957,10 @@ var MovieManagerUI = MediaManagerUI.extend(
 	 * Decides how to display video and returns HTML corresponding to that
 	 * method
 	 */
-	getVideoPlayerHTML: async function (movie, width, height) {
+	getVideoPlayerHTML: async function (movie, width, height, outputType) {
 		// Initialize YouTube upload button
 		let onYoutubeBtnClick = () => {this.showYouTubeUploadDialog(movie); return false;}
-		return <VideoPlayer movie={movie} width={width} height={height} onClickYoutubeBtn={onYoutubeBtnClick} />;
+		return <VideoPlayer movie={movie} width={width} height={height} onClickYoutubeBtn={onYoutubeBtnClick} outputType={outputType}/>;
 	},
 
 	/**
