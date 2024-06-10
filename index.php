@@ -1868,6 +1868,8 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	?>
 		<script src="/resources/js/Utility/Config.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Utility/HelperFunctions.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/LayerImgDates.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/ClosestImages.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Tiling/Layer/Layer.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Tiling/Layer/TileLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Tiling/Layer/TileLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
