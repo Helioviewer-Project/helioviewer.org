@@ -51,8 +51,12 @@ function VideoPlayer({ movie, width, height, onClickYoutubeBtn, outputType }) {
       />
       <div style={{ width: "100%", paddingTop: "25px" }}>
         <div style={{ float: "left" }} className="video-links">
-          { outputType != "minimal" ?  <YoutubeButton id={movie.id} onClick={onClickYoutubeBtn} /> : <></> }
-          { outputType != "minimal" ?  <LinkButton id={movie.id} /> : <></> }
+          {outputType != "minimal" ? (
+            <YoutubeButton id={movie.id} onClick={onClickYoutubeBtn} />
+          ) : (
+            <></>
+          )}
+          {outputType != "minimal" ? <LinkButton id={movie.id} /> : <></>}
           <DownloadButton id={movie.id} />
         </div>
         <div className="video-share-buttons" style={{ float: "right" }}>
