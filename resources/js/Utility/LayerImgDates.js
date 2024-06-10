@@ -4,6 +4,7 @@
  * @see TileLayerAccordiopn, ClosestImages 
  */
 
+"use strict"
 class LayerImgDates {
 
     nextImageDate = null;
