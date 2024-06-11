@@ -67,6 +67,8 @@ var HelioviewerTileLayer = TileLayer.extend(
         this._updateDimensions();
 
         if (this.visible) {
+            // Run update-viewport to recompute the visible tiles for the new image.
+            $(document).trigger("update-viewport");
             this.tileLoader.reloadTiles(false);
 
             // Update viewport sandbox if necessary

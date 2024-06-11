@@ -174,7 +174,8 @@ var ViewportMovementHelper = Class.extend(
 
     /**
      * @description Returns the coordinates of the upper-left and bottom-right corners of the viewport
-     *              with respect to the center
+     *              with respect to the moving container, which represents sun center (0, 0).
+     * @note This takes the zoom amount into account in the returned width/height.
      * @returns {Object} The coordinates for the top-left and bottom-right corners of the viewport
      */
     getViewportCoords: function () {
@@ -288,10 +289,9 @@ var ViewportMovementHelper = Class.extend(
      * @param {Int} y Y-value
      */
     _moveBy: function (x, y) {
-        // Compare against sandbox dimensions
-        var pos = {
-            x: Math.min(Math.max(this.startMovingPosition.x - x, 0), this.sandbox.width()),
-            y: Math.min(Math.max(this.startMovingPosition.y - y, 0), this.sandbox.height())
+        let pos = {
+            x: this.startMovingPosition.x - x,
+            y: this.startMovingPosition.y - y
         };
 
         this.sandboxHelper.moveContainerTo(pos.x, pos.y);
