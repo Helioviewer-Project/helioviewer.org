@@ -472,6 +472,9 @@ var EventMarker = Class.extend(
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
             headingText = this.concept+': ' + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
         }
+        else if (this.hasOwnProperty('title')) {
+            headingText = this.title;
+        }
         else {
             headingText = this.category + ' ' + this.fixTitles(this.name) + ' ' + this.fixTitles(this.version);
         }

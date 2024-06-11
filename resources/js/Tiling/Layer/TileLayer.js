@@ -53,10 +53,55 @@ var TileLayer = Layer.extend(
         var dateDiff 	   = new Date(+new Date() - 60*60*1000);
         this.baseDiffTime  = (typeof baseDiffTime == 'undefined' ? $('#date').val()+' '+$('#time').val() : baseDiffTime);
         this.name          = name;
+        this.tileVisibilityRange = {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0};
     },
 
-    updateTileVisibilityRange: function (range) {
-        this.tileLoader.updateTileVisibilityRange(range, this.loaded);
+    updateTileVisibilityRange: function (vpCoords) {
+        // Get the apparent tile size according to zoom scale.
+        // tile size may be x, but if zoomed in or out, it will appear to be x * zoom.
+        let scale = (Helioviewer.userSettings.get('mobileZoomScale') || 1);
+        let ts = this.tileSize * scale;
+        // Get the coordinate of this image relative to the origin
+        // image.offset is this coordinate of the origin relative to the image center.
+        // By changing the sign, it becomes the coordinate of the image center
+        // relative to the origin.
+        // The origin is the center of the sun / moving container.
+        let offset = this.getCurrentOffset();
+        // Computes the coordinates of the nearest tile multiples in each direction.
+        // These coordinates are measured relative to the center of the image (offsetX, offsetY).
+        // vpCoords are measured relative to sun center, the origin of the moving container.
+        // To change the origin to be relative to the image, we have to do the operation vpCoord - (offsetX, offsetY).
+        let vpWidth = (vpCoords.right - vpCoords.left);
+        let vpHeight = (vpCoords.bottom - vpCoords.top);
+        let shiftedVp = {
+            top: vpCoords.top + offset.y,
+            left: vpCoords.left + offset.x,
+            right: vpCoords.left + offset.x + vpWidth,
+            bottom: vpCoords.top + offset.y + vpHeight
+        };
+        let vp = {
+            top:    shiftedVp.top    - ts - (shiftedVp.top    % ts),
+            left:   shiftedVp.left   - ts - (shiftedVp.left   % ts),
+            bottom: shiftedVp.bottom + ts - (shiftedVp.bottom % ts),
+            right:  shiftedVp.right  + ts - (shiftedVp.right  % ts)
+        };
+
+        // Indices to display (one subtracted from ends to account for "0th" tiles).
+        let tileVisibilityRange = {
+            xStart : Math.round(vp.left / ts),
+            yStart : Math.round(vp.top  / ts),
+            xEnd   : Math.round((vp.right  / ts) - 1),
+            yEnd   : Math.round((vp.bottom / ts) - 1)
+        };
+
+        // Only load new tiles if anything has changed
+        if ((this.tileVisibilityRange.xStart != tileVisibilityRange.xStart)
+         || (this.tileVisibilityRange.xEnd   != tileVisibilityRange.xEnd)
+         || (this.tileVisibilityRange.yStart != tileVisibilityRange.yStart)
+         || (this.tileVisibilityRange.yEnd   != tileVisibilityRange.yEnd)) {
+            this.tileLoader.updateTileVisibilityRange(tileVisibilityRange, this.loaded);
+            this.tileVisibilityRange = tileVisibilityRange;
+        }
     },
 
     /**
@@ -164,22 +209,23 @@ var TileLayer = Layer.extend(
     /**
      * Computes layer parameters relative to the current viewport image scale
      *
-     * Center offset:
-     *   The values for offsetX and offsetY reflect the x and y coordinates with the origin
-     *   at the bottom-left corner of the image, not the top-left corner.
+     * The values for offsetX and offsetY reflect the x and y coordinates
+     * of the reference pixel with an origin at the center of the image.
      */
     _updateDimensions: function () {
         let offset = this._getOffset(this.viewportScale);
 
         // Update layer dimensions
+        let left = (-this.width  / 2) - offset.x;
+        let top = (-this.height / 2) - offset.y;
         this.dimensions = {
-            "left"   : (-this.width  / 2) - offset.x,
-            "top"    : (-this.height / 2) - offset.y,
-            "bottom" : (this.height / 2) + offset.y,
-            "right"  : (this.width  / 2) + offset.x
+            "left"   : left,
+            "top"    : top,
+            "bottom" : top + this.height,
+            "right"  : left + this.width
         };
 
-        // Center of the tile layer
+        // Center of the tile layer i.e. center of the overall image.
         this.domNode.css({
             "left": - offset.x,
             "top" : - offset.y
@@ -287,7 +333,7 @@ var TileLayer = Layer.extend(
      * IE7: Want z-indices < 1 to ensure event icon visibility
      */
     _loadStaticProperties: function () {
-        this.domNode.css("z-index", -11 - parseInt(this.order, 10));//this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
+        this.domNode.css("z-index", -10 - parseInt(this.order, 10));//this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
 
         // opacity
         if (this.opacity !== 100) {
