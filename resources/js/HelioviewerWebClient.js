@@ -1620,6 +1620,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         // If drawer is opening from the automaticlly on page laod 
         if(open === true) {
 
+            $('#helioviewer-url-box-stale-link-msg').hide();
+            $('#helioviewer-share-url').css('border-color','rgba(255,255,255,0.6)');
+
             this.toURL().then((shareURL) => {
 
                 $("#helioviewer-share-url").attr('value', shareURL);
