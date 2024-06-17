@@ -45,7 +45,7 @@ class ClosestImages {
                     self.imageDates[sourceId][dateStr] = imgLayerDates;
                     resolve(imgLayerDates);
                 }, (error) => {
-                    Helioviewer.messageConsole.warn("Could not load tile layer controls");
+                    Helioviewer.messageConsole.error("Could not load tile layer controls");
                     console.error(error);
                     reject(error);
                 });
