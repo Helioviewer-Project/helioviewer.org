@@ -89,6 +89,12 @@ var JP2Image = Class.extend(
         $.extend(this, result);
 
         // Reference pixel offset at the original JP2 image scale (with respect to top-left origin)
+        // This formula below computes the coordinate of the reference pixel relative to the center of the image.
+        // This means if we consider X to be the x position of the center of the image.
+        // Then offsetX is the coordinate of the reference pixel in pixels.
+        // Similarly offsetY is the coordinate in pixels. The negative sign is needed to account for the direction change.
+        // in FITS, the value of Y increases upwards. In web coordinates, the value of Y increases downwards.
+        // So the - sign is needed to set the direction to be upwards.
         this.offsetX =   parseFloat((this.refPixelX - (this.width  / 2)).toPrecision(8));
         this.offsetY = - parseFloat((this.refPixelY - (this.height / 2)).toPrecision(8));
 

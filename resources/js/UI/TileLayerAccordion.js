@@ -221,7 +221,7 @@ var TileLayerAccordion = Layer.extend(
 
                 $(document).trigger("tile-layer-data-source-changed",
                     [id, hierarchySelected, leaf.sourceId, leaf.nickname,
-                     leaf.layeringOrder]);
+                     tileLayerData.index]);
             }
         );
     },
