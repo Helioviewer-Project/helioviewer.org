@@ -481,7 +481,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             btns;
 
         // Make url stale
-        $(document).on('update-external-datasource-integration observation-time-changed change-feature-events-state', function(e){
+        $(document).on('update-external-datasource-integration observation-time-changed change-feature-events-state celestial-objects-state-tree-state-change', function(e){
             if ( $('#helioviewer-share-url').is(':visible') ) {
                 $('#helioviewer-share-url').css('border-color','#f8e64f');
                 $('#helioviewer-url-box-stale-link-msg').show();
