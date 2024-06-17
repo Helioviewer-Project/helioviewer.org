@@ -155,7 +155,7 @@ var TileLayerAccordion = Layer.extend(
              +           'title="' + name + '" data-sourceid="'+sourceId+'">'
              +         name
              +     '</div>'
-             +     '<div >'
+             +     '<div>'
              +         prevImage
              +         nextImage
              +     '</div>'
