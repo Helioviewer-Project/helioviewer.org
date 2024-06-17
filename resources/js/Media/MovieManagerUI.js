@@ -887,7 +887,6 @@ var MovieManagerUI = MediaManagerUI.extend(
 	},
 
 	/**
-	 * TODO add movie if you can handle here later
 	 * Adds a movie to the history using it's id
 	 */
 	addMovieUsingId: function (id) {
