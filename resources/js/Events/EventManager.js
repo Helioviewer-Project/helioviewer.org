@@ -51,7 +51,9 @@ var EventManager = Class.extend({
         this.layerAvailableVisible = layerAvailableVisible;
         this.labelsVisible = labelsVisible;
         this.markersVisible = markersVisible;
-        this.updateRequestTime();
+        if (Helioviewer.outputType != 'embed') {
+            this.updateRequestTime();
+        }
         setTimeout($.proxy(this._queryEventFRMs, this), 100);
 
         // Set up javascript event handlers

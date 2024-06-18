@@ -61,45 +61,61 @@ var TileLayerAccordion = Layer.extend(
             $.attr(this, 'oldtitle', $.attr(this, 'title'));
             this.removeAttribute('title');
         });
+
+        this.closestImages = new ClosestImages();
     },
+
 
     /**
      * Adds a new entry to the tile layer accordion
      *
      * @param {Object} layer The new layer to add
      */
-    addLayer: function (event, index, id, name, sourceId, hierarchy, date, startOpened,
-        opacity, visible, onOpacityChange, difference, diffCount, diffTime, baseDiffTime,
-        onDifference, onDiffCount, onDiffTime, onDiffDate) {
+    addLayer: function (event, index, id, name, sourceId, hierarchy, date, startOpened, opacity, visible, onOpacityChange, difference, diffCount, diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate) {
 
-        if (typeof(index) === "undefined") {
-            index = 1000;
-        }
+        let self = this;
 
-        // store tile layer params in bundle object
-        var tileLayerData = new TileLayerData(id, sourceId, difference, diffCount,
-            diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate,
-            hierarchy, index, name, visible, startOpened, opacity, onOpacityChange);
+        this.closestImages.fetchClosestImageDates(sourceId, this._observationDate).then((imgDates) => {
 
-        this._createAccordionEntry(tileLayerData);
-        this._initTreeSelect(tileLayerData);
-        this._initOpacitySlider(tileLayerData);
-        this._initDifference(tileLayerData);
-        this._setupEventHandlers(id);
-        //this._updateTimeStamp(id, date);
+            // Not sure why this code here, keeping it
+            if (typeof(index) === "undefined") {
+                index = 1000;
+            }
+
+            // store tile layer params in bundle object
+            let tileLayerData = new TileLayerData(id, sourceId, difference, diffCount,diffTime, baseDiffTime, onDifference, onDiffCount, onDiffTime, onDiffDate, hierarchy, index, name, visible, startOpened, opacity, onOpacityChange);
+
+            tileLayerData.imgDates = imgDates;
+
+            self._createAccordionEntry(tileLayerData);
+            self._initTreeSelect(tileLayerData);
+            self._initOpacitySlider(tileLayerData);
+            self._initDifference(tileLayerData);
+            self._setupEventHandlers(id);
+
+        }, (error) => {
+            console.error(error);
+            if (Helioviewer.debug) {
+                Helioviewer.messageConsole.error("Debug: Could not get closest images from API For SourceID:"+sourceId);
+            }
+        });
+
     },
 
     /**
      *
      */
     _createAccordionEntry: function (tileLayerData) {
+
         var visibilityBtn, removeBtn, hidden, head, body,
         index       = tileLayerData.index,
         id          = tileLayerData.id,
         name        = tileLayerData.name,
         sourceId    = tileLayerData.sourceId,
         visible     = tileLayerData.visible,
-        startOpened = tileLayerData.startOpened;
+        startOpened = tileLayerData.startOpened,
+        imgDates    = tileLayerData.imgDates;
+
 
         // initial visibility
         hidden = (visible ? "fa fa-eye fa-fw layerManagerBtn visible" : "fa fa-eye-slash fa-fw layerManagerBtn visible hidden");
@@ -115,10 +131,34 @@ var TileLayerAccordion = Layer.extend(
                   + 'title="Remove Image Layer" '
                   + '></span>';
 
+        let nextColor = imgDates.hasNextImage() ? 'green' : 'red';
+        let nextQtip = imgDates.hasNextImage() ? 'Next Image' : 'No Next Image';
+        let nextCursor = imgDates.hasNextImage() ? 'pointer' : 'default';
+
+        let nextImage = '<div class="next-image-btn source-accordion-button fa fa-forward fa-fw" data-source-id="'+sourceId+'" '
+            +       'title="'+nextQtip+'"'
+            +       'style="margin-left:0px; color:'+nextColor+'; cursor:'+nextCursor+';">'
+            + '</div>';
+
+        let prevColor = imgDates.hasPrevImage() ? 'green' : 'red';
+        let prevQtip = imgDates.hasPrevImage() ? 'Previous Image' : 'No Previous Image';
+        let prevCursor = imgDates.hasPrevImage() ? 'pointer' : 'default';
+
+        let prevImage = '<div class="prev-image-btn source-accordion-button fa fa-backward fa-fw" data-source-id="'+sourceId+'" '
+            +       'title="'+prevQtip+'"'
+            +       'style="margin-left:0px; color:'+prevColor+'; cursor:'+prevCursor+';">'
+            + '</div>';
+
         head = '<div class="layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all">'
+             +     '<div class="left">'
              +     '<div class="tile-accordion-header-left" '
              +           'title="' + name + '" data-sourceid="'+sourceId+'">'
              +         name
+             +     '</div>'
+             +     '<div>'
+             +         prevImage
+             +         nextImage
+             +     '</div>'
              +     '</div>'
              +     '<div class="right">'
              +         '<span class="timestamp"></span>'
@@ -138,6 +178,7 @@ var TileLayerAccordion = Layer.extend(
             index:  index,
             open:   startOpened
         });
+
     },
 
     /**
@@ -426,8 +467,7 @@ var TileLayerAccordion = Layer.extend(
 
                 display = '';
                 label = hierarchy[i]['label']+': ';
-            }
-            else {
+            } else {
                 display = 'display: none;';
                 label = '';
             }
@@ -489,6 +529,7 @@ var TileLayerAccordion = Layer.extend(
      * @param {Object} layer The layer being added
      */
     _setupEventHandlers: function (id) {
+
         var toggleVisibility, opacityHandle, removeLayer, self = this,
             visibilityBtn = $("#visibilityBtn-" + id),
             removeBtn     = $("#removeBtn-" + id),
@@ -525,6 +566,25 @@ var TileLayerAccordion = Layer.extend(
         timestamps.bind('click', function(e) {
             e.stopPropagation();
         });
+
+        $(".next-image-btn").on("click", function() {
+            self.closestImages.fetchClosestImageDates($(this).data('sourceId'), self._observationDate).then((imgDates) => {
+                if(imgDates.hasNextImage()) {
+                    helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(imgDates.nextImageDate));
+                }
+            }, (err) => {
+                console.log(err);
+            })
+        });
+
+        $(".prev-image-btn").on("click", function() {
+            self.closestImages.fetchClosestImageDates($(this).data('sourceId'), self._observationDate).then((imgDates) => {
+                if(imgDates.hasPrevImage()) {
+                    helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(imgDates.prevImageDate));
+                }
+            })
+        });
+
     },
 
     /**
@@ -704,7 +764,37 @@ var TileLayerAccordion = Layer.extend(
             weight = self._getScaledTimeDifference(actualDate, requestDate);
             domNode.css("color", self._chooseTimeStampColor(weight, 0, 0, 0));
         });
+
         helioviewerWebClient._timeSelector = new TimeSelector();
+
+
+        $(".next-image-btn").each((i,btn) => {
+
+            self.closestImages.fetchClosestImageDates($(btn).data('sourceId'), self._observationDate).then((imgDates) => {
+                let nextColor = imgDates.hasNextImage() ? 'green' : 'red';
+                let nextQtip = imgDates.hasNextImage() ? 'Next Image' : 'No Next Image';
+                let nextCursor = imgDates.hasNextImage() ? 'pointer' : 'default';
+
+                $(btn).css('color', nextColor);
+                $(btn).attr('title', nextQtip);
+                $(btn).css('cursor', nextCursor);
+
+            });
+        });
+
+        $(".prev-image-btn").each((i, btn) => {
+
+            self.closestImages.fetchClosestImageDates($(btn).data('sourceId'), self._observationDate).then((imgDates) => {
+                let prevColor = imgDates.hasPrevImage() ? 'green' : 'red';
+                let prevQtip = imgDates.hasPrevImage() ? 'Prev Image' : 'No Prev Image';
+                let prevCursor = imgDates.hasPrevImage() ? 'pointer' : 'default';
+
+                $(btn).css('color', prevColor);
+                $(btn).attr('title', prevQtip);
+                $(btn).css('cursor', prevCursor);
+            });
+        });
+
     },
 
     /**
@@ -716,6 +806,8 @@ var TileLayerAccordion = Layer.extend(
             label, select;
 
         this._updateTimeStamp(id, date);
+
+        let oldSourceId = entry.find(".tile-accordion-header-left").attr('data-sourceid');
 
         entry.find(".tile-accordion-header-left").html(imageName);
         entry.find(".tile-accordion-header-left").attr('title', imageName);
@@ -775,6 +867,39 @@ var TileLayerAccordion = Layer.extend(
             $('#'+id+' .difference-type2-block').hide();
         }
 
+        if (oldSourceId != undefined && sourceId != undefined && oldSourceId != sourceId) {
+
+            this.closestImages.fetchClosestImageDates(sourceId, self._observationDate).then(function(imgDates) {
+
+                $('[data-source-id="'+oldSourceId+'"]').each((i) => {
+
+                    let prevColor = imgDates.hasPrevImage() ? 'green' : 'red';
+                    let prevQtip = imgDates.hasPrevImage() ? 'Prev Image' : 'No Prev Image';
+                    let prevCursor = imgDates.hasPrevImage() ? 'pointer' : 'default';
+
+                    $(this).css('color', prevColor);
+                    $(this).attr('title', prevQtip);
+                    $(this).css('cursor', prevCursor);
+
+                    let nextColor = imgDates.hasNextImage() ? 'green' : 'red';
+                    let nextQtip = imgDates.hasNextImage() ? 'Next Image' : 'No Next Image';
+                    let nextCursor = imgDates.hasNextImage() ? 'pointer' : 'default';
+
+                    $(this).css('color', nextColor);
+                    $(this).attr('title', nextQtip);
+                    $(this).css('cursor', nextCursor);
+                    
+                    $(this).data('sourceId', sourceId);
+
+                });
+
+            });
+
+        }
+
+
+
+
         $(document).trigger('update-external-datasource-integration');
     },
 
@@ -790,7 +915,7 @@ var TileLayerAccordion = Layer.extend(
             + " <span class=\"user-selectable dateSelector\" data-tip-pisition=\"right\" data-date-time=\""+date.toUTCDateString()+" "+date.toUTCTimeString()+"\">UTC</span>")
                    .css("color", this._chooseTimeStampColor(weight, 0, 0, 0));
 
-        if(typeof helioviewer !== 'undefined'){
+        if(typeof helioviewerWebClient !== 'undefined'){
             helioviewerWebClient._timeSelector = new TimeSelector();
         }
     },
@@ -819,4 +944,3 @@ var TileLayerAccordion = Layer.extend(
         return "rgb(" + r + "," + g + "," + b + ")";
     }
 });
-

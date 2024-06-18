@@ -1158,11 +1158,6 @@ var CelestialBodiesSatellites = Class.extend(
         }
 
         trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this,observer));
-        //trajectoryTree.trigger("change_state.jstree");
-        /*
-        this.trajectoryTree.bind("change_state.jstree", function(e,data) {
-            $('#'+data.rslt[0].attributes[1].nodeValue).toggle();
-        });*/
     },
 
     _requestNextOrLastTrajectoryTime: function(currentDomNode, direction){
@@ -1215,6 +1210,12 @@ var CelestialBodiesSatellites = Class.extend(
             }
         );
         Helioviewer.userSettings.set("state.celestialBodiesChecked."+observer,checked);
+
+        // if this is triggered by human beings
+        // not automatically with other events
+        if(e.isTrigger == 2) {
+            $(document).trigger('celestial-objects-state-tree-state-change');
+        }
     },
 
     _treeToggleAllToState: function(e,observer,state){
@@ -1227,6 +1228,7 @@ var CelestialBodiesSatellites = Class.extend(
         }
         trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this,observer));
         trajectoryTree.trigger("change_state.jstree");
+        trajectoryTree.trigger("celestial-objects-state-tree-state-change");
     },
 
     _treeToggleLabels: function(e,observer,visible){
@@ -1244,6 +1246,7 @@ var CelestialBodiesSatellites = Class.extend(
         }
         trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this,observer));
         trajectoryTree.trigger("change_state.jstree");
+        trajectoryTree.trigger("celestial-objects-state-tree-state-change");
     },
 
     _treeToggleTrajectories: function(e,observer,visible){
@@ -1261,6 +1264,7 @@ var CelestialBodiesSatellites = Class.extend(
         }
         trajectoryTree.on("change_state.jstree",$.proxy(this._treeChangedState,this,observer));
         trajectoryTree.trigger("change_state.jstree");
+        trajectoryTree.trigger("celestial-objects-state-tree-state-change");
     },
 
     _buildJSTreeData: function(observer,glossary,glossaryMods){

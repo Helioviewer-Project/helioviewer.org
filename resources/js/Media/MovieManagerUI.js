@@ -32,14 +32,12 @@ var MovieManagerUI = MediaManagerUI.extend(
 		this._super("movie", enable_helios);
 		this._settingsDialog   = $("#movie-settings-container");
 		this._advancedSettings = $("#movie-settings-advanced");
-		this._settingsHelp	 = $("#movie-settings-help");
-		this._settingsForm	 = $("#movie-settings-form-container");
+		this._settingsHelp   = $("#movie-settings-help");
+		this._settingsForm   = $("#movie-settings-form-container");
 		this._settingsConsole  = $("#movie-settings-validation-console");
 		this._movieScale = null;
 		this._movieROI = null;
 		this._movieLayers = null;
-		this._movieEvents = null;
-		this._movieEventsLabels = null;
 		this._regenerateMovieThreshold = regenerateMovieThreshold;
 		this._initEvents();
 		this._initSettings();
@@ -90,20 +88,6 @@ var MovieManagerUI = MediaManagerUI.extend(
 
 		this.building = true;
 
-		//*********** TEMPORARY IMPLEMENTATION *********
-		// TODO Temprorary function to remove
-		let eventLayersVisible = false;
-		Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(tC => {
-			// if any of the markers is visible, we need to show events
-			eventLayersVisible = (eventLayersVisible || tC['markers_visible']);
-		});
-
-		if ( eventLayersVisible === false ) {
-			this._movieEvents = '';
-			this._movieEventsLabels = false;
-		}
-		//*********** TEMPORARY IMPLEMENTATION *********
-
 		var switchSources = false;
 		if(outputType == 'minimal'){
 			switchSources = true;
@@ -114,16 +98,14 @@ var MovieManagerUI = MediaManagerUI.extend(
 
 		// Movie request parameters
 		baseParams = {
-			action	   : "queueMovie",
 			imageScale   : this._movieScale,
-			layers	   : this._movieLayers,
-			events	   : this._movieEvents,
-			eventsLabels : this._movieEventsLabels,
-			scale		: Helioviewer.userSettings.get("state.scale"),
-			scaleType	: Helioviewer.userSettings.get("state.scaleType"),
-			scaleX	   : Helioviewer.userSettings.get("state.scaleX"),
-			scaleY	   : Helioviewer.userSettings.get("state.scaleY"),
-			format	   : this._manager.format,
+			layers	 : this._movieLayers,
+			eventsState : Helioviewer.userSettings.get("state.events_v2"),
+			scale	   : Helioviewer.userSettings.get("state.scale"),
+			scaleType   : Helioviewer.userSettings.get("state.scaleType"),
+			scaleX	 : Helioviewer.userSettings.get("state.scaleX"),
+			scaleY	 : Helioviewer.userSettings.get("state.scaleY"),
+			format	 : this._manager.format,
 			size		 : 0,
 			movieIcons   : 0,
 			followViewport   : 0,
@@ -223,7 +205,6 @@ var MovieManagerUI = MediaManagerUI.extend(
 		}
 
 		var layers = helioviewerWebClient.getVisibleLayers(roi);
-		var events = helioviewerWebClient.getEvents();
 
 		// Make sure selection region and number of layers are acceptible
 		if (!this._validateRequest(roi, layers)) {
@@ -232,20 +213,8 @@ var MovieManagerUI = MediaManagerUI.extend(
 
 		// Store chosen ROI and layers
 		this._movieScale  = helioviewerWebClient.getZoomedImageScale();
-		this._movieROI	= this._toArcsecCoords(roi, this._movieScale);
+		this._movieROI  = this._toArcsecCoords(roi, this._movieScale);
 		this._movieLayers = layers;
-		this._movieEvents = events;
-
-		//*********** TEMPORARY IMPLEMENTATION *********
-		// TODO Temprorary function to remove
-		let eventLabelsVisible = false;
-		Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(tC => {
-			// if any of the labels is visible, we need to show labels
-			eventLabelsVisible = (eventLabelsVisible || tC['labels_visible']);
-		});
-
-		this._movieEventsLabels = eventLabelsVisible;
-		//*********** TEMPORARY IMPLEMENTATION *********
 	},
 
 	/**
@@ -285,45 +254,6 @@ var MovieManagerUI = MediaManagerUI.extend(
 	_queueMovie: function (params) {
 		var callback, self = this;
 
-		// AJAX Responder
-		callback = function (response) {
-			var msg, movie, waitTime;
-
-			if ((response === null) || response.error) {
-				// Queue full
-				if (response.errno === 40) {
-					msg = response.error;
-				} else {
-					// Other error
-					msg = "We are unable to create a movie for the time you " +
-						"requested. Please select a different time range " +
-						"and try again. ("+response.error+")";
-				}
-				$(document).trigger("message-console-info", msg);
-				return;
-			} else if (response.warning) {
-				$(document).trigger("message-console-info", response.warning);
-				return;
-			}
-
-			movie = self._manager.queue(
-				response.id, response.eta, response.token,
-				params.imageScale, params.layers, params.events,
-				params.eventsLabels, params.scale, params.scaleType,
-				params.scaleX, params.scaleY, new Date().toISOString(),
-				params.startTime, params.endTime, params.x1, params.x2,
-				params.y1, params.y2, params.size
-			);
-
-			self._addItem(movie);
-
-			waitTime = humanReadableNumSeconds(response.eta);
-			msg = "Your video is processing and will be available in " +
-				  "approximately " + waitTime + ". You may view it at any " +
-				  "time after it is ready by clicking the 'Movie' button";
-			$(document).trigger("message-console-info", msg);
-			self._refresh();
-		};
 
 		// Notification Permission
 		if("Notification" in window){//if browser supports notifications
@@ -343,8 +273,33 @@ var MovieManagerUI = MediaManagerUI.extend(
 			}
 		}
 
-		// Make request
-		$.get(Helioviewer.api, params, callback, Helioviewer.dataType);
+		// AJAX Responder
+		let successCallback = function (response) {
+
+			var msg, movie, waitTime;
+
+			movie = self._manager.queue(
+				response.id, response.eta, response.token,
+				params.imageScale, params.layers, params.eventsState,
+				params.scale, params.scaleType,
+				params.scaleX, params.scaleY, new Date().toISOString(),
+				params.startTime, params.endTime, params.x1, params.x2,
+				params.y1, params.y2, params.size
+			);
+
+			self._addItem(movie);
+
+			waitTime = humanReadableNumSeconds(response.eta);
+			Helioviewer.messageConsole.info("Your video is processing and will be available in approximately " + waitTime + ". You may view it at any time after it is ready by clicking the 'Movie' button");
+			self._refresh();
+		};
+
+		let failCallback = function (errResp) {
+			Helioviewer.messageConsole.error("Unable to create movie, please try again later");
+			console.error(errResp.responseJSON);
+		}
+
+		return postJSON("postMovie", params).then(successCallback, failCallback);
 	},
 
 
@@ -498,7 +453,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 
 		// Advanced movie settings
 		frameRateInput = $("#frame-rate");
-		lengthInput	= $("#movie-length");
+		lengthInput = $("#movie-length");
 		durationSelect = $("#movie-duration");
 
 		// Speed method enable/disable
@@ -612,7 +567,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 			return false;
 		}
 
-		id	= $(event.currentTarget).data('id');
+		id  = $(event.currentTarget).data('id');
 		movie = this._manager.get(id);
 
 		dateRequested = Date.parseUTCDate(movie.dateRequested);
@@ -668,6 +623,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 		dateRequested = Date.parseUTCDate(movie.dateRequested);
 
 		if (movie.status === 2 && (new Date) - dateRequested <= 180 * 24 * 60 * 60 * 1000) {
+		
 			thumbnail = movie.thumbnail;
 
 			html += "<div style='text-align: center;'>" +
@@ -727,15 +683,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 		// Make sure dialog fits nicely inside the browser window
 		dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
 
-		// Movie player HTML
-		if(outputType!='minimal'){
-			//regular helioviewer video player
-			html = await self.getVideoPlayerHTML(movie, dimensions.width, dimensions.height);
-		}else{
-			//k12 helioviewer video player
-			// TODO: This is important to fix too...
-			html = self.getK12VideoPlayerHTML(movie, dimensions.width, dimensions.height);
-		}
+        html = await self.getVideoPlayerHTML(movie, dimensions.width, dimensions.height, Helioviewer.outputType);
 
 		// Movie player dialog
 		let htmlId = "movie-player-" + movie.id;
@@ -754,15 +702,15 @@ var MovieManagerUI = MediaManagerUI.extend(
 		// beforehand results in the browser attempting to download it.
 		dialog.dialog({
 			dialogClass: "movie-player-dialog-" + movie.id,
-			title	 : "Movie Player: " + title,
-			width	 : ((dimensions.width < 575)?600:dimensions.width+25),
-			height	: dimensions.height + 90,
+			title	: "Movie Player: " + title,
+			width	: ((dimensions.width < 575)?600:dimensions.width+25),
+			height  : dimensions.height + 90,
 			resizable : $.support.h264 || $.support.vp8,
-			close	 : function () {
+			close	: function () {
 							reactApp.unmount();
 							$(this).remove();
 						},
-			zIndex	: 9999,
+			zIndex  : 9999,
 			show	  : 'fade'
 		});
 	},
@@ -897,7 +845,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 	 * Validates title, description and keyword fields for YouTube upload.
 	 *
 	 * @see http://code.google.com/apis/youtube/2.0/reference.html
-	 *	  #Media_RSS_elements_reference
+	 *	#Media_RSS_elements_reference
 	 */
 	_validateVideoUploadForm: function () {
 		var keywords		 = $("#youtube-tags").val(),
@@ -952,7 +900,6 @@ var MovieManagerUI = MediaManagerUI.extend(
 					response.imageScale,
 					response.layers,
 					response.events,
-					response.eventsLabels,
 					response.scale,
 					response.scaleType,
 					response.scaleX,
@@ -983,7 +930,12 @@ var MovieManagerUI = MediaManagerUI.extend(
 			"format" : self._manager.format,
 			"verbose": true
 		};
-		$.get(Helioviewer.api, params, callback, Helioviewer.dataType);
+		$.get(Helioviewer.api, params)
+		.done(callback)
+		.fail((resp) => {
+			console.error(resp.responseJSON);
+			Helioviewer.messageConsole.error("Could not load movie, please try again later");
+		});
 	},
 
 	/**
@@ -1004,10 +956,10 @@ var MovieManagerUI = MediaManagerUI.extend(
 	 * Decides how to display video and returns HTML corresponding to that
 	 * method
 	 */
-	getVideoPlayerHTML: async function (movie, width, height) {
+	getVideoPlayerHTML: async function (movie, width, height, outputType) {
 		// Initialize YouTube upload button
 		let onYoutubeBtnClick = () => {this.showYouTubeUploadDialog(movie); return false;}
-		return <VideoPlayer movie={movie} width={width} height={height} onClickYoutubeBtn={onYoutubeBtnClick} />;
+		return <VideoPlayer movie={movie} width={width} height={height} onClickYoutubeBtn={onYoutubeBtnClick} outputType={outputType}/>;
 	},
 
 	/**
@@ -1101,25 +1053,8 @@ var MovieManagerUI = MediaManagerUI.extend(
 		};
 
 		// AJAX Responder
-		callback = function (response) {
+		let success = function (response) {
 			var msg, waitTime;
-
-			if ((response === null) || response.error) {
-				// Queue full
-				if (response.errno === 40) {
-					msg = response.error;
-				} else {
-					// Other error
-					msg = "We are unable to create a movie for the time you " +
-						"requested. Please select a different time range " +
-						"and try again. ("+response.error+")";
-				}
-				$(document).trigger("message-console-info", msg);
-				return;
-			} else if (response.warning) {
-				$(document).trigger("message-console-info", response.warning);
-				return;
-			}
 
 			self._manager.update( movie.id, {'status':0, 'dateRequested':new Date().toISOString(), 'token': response.token});
 			self._manager._monitorQueuedMovie(movie.id, new Date().toISOString(), response.token, 5);
@@ -1132,8 +1067,37 @@ var MovieManagerUI = MediaManagerUI.extend(
 			self._refresh();
 		};
 
+		let failure = function(response) {
+			let msg = null;
+			if (response.responseJSON) {
+				if (response.responseJSON.error) {
+					if (response.responseJSON.errno === 40) {
+						msg = response.responseJSON.error;
+					} else {
+						// other error
+						msg = "we are unable to create a movie for the time you " +
+							"requested. please select a different time range " +
+							"and try again. ("+response.responseJSON.error+")";
+					}
+				}
+
+				if (response.responseJSON.status_code) {
+					msg = response.responseJSON.data;
+				}
+
+			}
+
+			if (msg) {
+				Helioviewer.messageConsole.error(msg);
+			} else {
+				Helioviewer.messageConsole.error("Could not rebuild your movie, Please try again later.");
+			}
+
+			console.error(msg);
+
+		};
 		// Make request
-		$.get(Helioviewer.api, params, callback, Helioviewer.dataType);
+		$.get(Helioviewer.api, params, success, Helioviewer.dataType).fail(failure);
 	},
 
 	/**

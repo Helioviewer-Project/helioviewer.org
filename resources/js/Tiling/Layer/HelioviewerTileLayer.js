@@ -32,7 +32,7 @@ var HelioviewerTileLayer = TileLayer.extend(
     init: function (index, date, tileSize, viewportScale, tileVisibilityRange,
         hierarchy, sourceId, name, visible, opacity, difference, diffCount, diffTime, baseDiffTime, layeringOrder, order) {
 
-		// Create a random id which can be used to link tile layer with its corresponding tile layer accordion entry
+        // Create a random id which can be used to link tile layer with its corresponding tile layer accordion entry
         var id = "tile-layer-" + new Date().getTime();
 
         this._super(index, date, tileSize, viewportScale, tileVisibilityRange,
@@ -43,13 +43,15 @@ var HelioviewerTileLayer = TileLayer.extend(
 
         this._setupEventHandlers();
 
-        $(document).trigger("create-tile-layer-accordion-entry",
-            [index, this.id, name, sourceId, hierarchy, date, true, opacity, visible,
-             $.proxy(this.setOpacity, this),
-             this.difference, this.diffCount, this.diffTime, this.baseDiffTime,
-             $.proxy(this.setDifference, this), $.proxy(this.setDiffCount, this), $.proxy(this.setDiffTime, this), $.proxy(this.setDiffDate, this)
-            ]
-        );
+        if (Helioviewer.outputType != "minimal" && Helioviewer.outputType != "embed") {
+            $(document).trigger("create-tile-layer-accordion-entry",
+                [index, this.id, name, sourceId, hierarchy, date, true, opacity, visible,
+                 $.proxy(this.setOpacity, this),
+                 this.difference, this.diffCount, this.diffTime, this.baseDiffTime,
+                 $.proxy(this.setDifference, this), $.proxy(this.setDiffCount, this), $.proxy(this.setDiffTime, this), $.proxy(this.setDiffDate, this)
+                ]
+            );
+        }
 
         this.tileLoader = new TileLoader(this.domNode, tileSize, tileVisibilityRange);
 
