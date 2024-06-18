@@ -60,7 +60,7 @@ var MovieManager = MediaManager.extend(
      * @return {Movie} A Movie object
      */
     add: function (
-            id, duration, imageScale, layers, events, eventsLabels, scale,
+            id, duration, imageScale, layers, events, scale,
             scaleType, scaleX, scaleY, dateRequested, startDate, endDate,
             frameRate, numFrames, x1, x2, y1, y2, width, height, thumbnail, url
     ) {
@@ -70,7 +70,6 @@ var MovieManager = MediaManager.extend(
             "imageScale"    : imageScale,
             "layers"        : layers,
             "events"        : events,
-            "eventsLabels"  : eventsLabels,
             "scale"         : scale,
             "scaleType"     : scaleType,
             "scaleX"        : scaleX,
@@ -116,8 +115,8 @@ var MovieManager = MediaManager.extend(
      *
      * @return {Movie} A Movie object
      */
-    queue: function (id, eta, token, imageScale, layers, events, eventsLabels,
-                scale, scaleType, scaleX, scaleY, dateRequested, startDate,
+    queue: function (id, eta, token, imageScale, layers, 
+                events, scale, scaleType, scaleX, scaleY, dateRequested, startDate,
                 endDate, x1, x2, y1, y2, size) {
 
         var movie = {
@@ -125,7 +124,6 @@ var MovieManager = MediaManager.extend(
             "imageScale"    : imageScale,
             "layers"        : layers,
             "events"        : events,
-            "eventsLabels"  : eventsLabels,
             "scale"         : scale,
             "scaleType"     : scaleType,
             "scaleX"        : scaleX,
@@ -196,8 +194,7 @@ var MovieManager = MediaManager.extend(
                   "Click here to watch or download it.</span>";
 
         // Create the jGrowl notification.
-        $(document).trigger("message-console-log",
-                            [message, jGrowlOpts, true, true]);
+        Helioviewer.messageConsole.success(message, jGrowlOpts);
 
         // Create "Web Notificaions API" notification
         if("Notification" in window){//browser supports notifications
@@ -235,6 +232,7 @@ var MovieManager = MediaManager.extend(
             var params, callback;
 
             callback = function (response) {
+
                 // If the user has removed the movie from history, stop monitoring
                 if (!self.has(id)) {
                     return;
@@ -295,7 +293,10 @@ var MovieManager = MediaManager.extend(
                 "token"  : token,
                 "format" : self.format
             };
-            $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
+
+            $.get(Helioviewer.api, params, callback, Helioviewer.dataType).fail((resp) => {
+                self._abort(id);
+            });
         };
         setTimeout(queryMovieStatus, Math.max(eta, 5) * 1000);
     },

@@ -1868,6 +1868,8 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	?>
 		<script src="/resources/js/Utility/Config.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Utility/HelperFunctions.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/LayerImgDates.js?v=<?=$debugTime?>" type="text/javascript"></script>
+		<script src="/resources/js/Utility/ClosestImages.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Tiling/Layer/Layer.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Tiling/Layer/TileLoader.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Tiling/Layer/TileLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
@@ -1949,7 +1951,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 }
 ?>
 
-	<script src="/resources/lib/hvbrowserspecific/hv_browserspecific.js" type="text/javascript"></script>
 	<script src="/resources/js/CustomHandling/CustomHandling.js?chrndnm=<?php echo (rand(9999,9999999)); ?>" type="text/javascript"></script>
 
 	<!-- Launch Helioviewer -->

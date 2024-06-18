@@ -163,32 +163,49 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
     _loadStartingLayers: function (layers) {
         var layer, basicParams, j=0, self = this;
 
+        let missingLayers = 0;
+
         $.each(layers, function (index, params) {
             basicParams = self.dataSources;
+            
             let prev = params.uiLabels[0]['name'];
             if (params.uiLabels[0].name == "GONG" && params.uiLabels[1].name == "H-alpha") {
                 params.uiLabels.splice(1, 0, {label: "", name: "GONG"});
             }
+
+            let layerNotAvailable = false;
             $.each(params.uiLabels, function (uiOrder, obj) {
-                basicParams = basicParams[obj['name']];
+                let nextParams = basicParams[obj['name']];
+                // this layer is not available in our sources
+                if (nextParams == undefined) {
+                    layerNotAvailable = true;
+                    return false; // return false to  break the loop 
+                }
+                basicParams = nextParams;
             });
+
+            if (layerNotAvailable) {
+                missingLayers = missingLayers + 1;
+                return true; // return true , to skip this label and continue next
+            }
+
             $.extend(params, basicParams);
 
-			if(typeof params.uiLabels == 'undefined'){
-				if(params.observatory == 'SOHO' || params.observatory == 'STEREO_A' || params.observatory == 'STEREO_B'){
-					params.uiLabels = [
-			           {"label":"Observatory","name":params.observatory},
-			           {"label":"Instrument","name":params.instrument},
-			           {"label":"Detector","name":params.detector},
-			           {"label":"Measurement","name":params.measurement}
-			        ];
-				}else{
-					params.uiLabels = [
-			           {"label":"Observatory","name":params.observatory},
-			           {"label":"Instrument","name":params.instrument},
-			           {"label":"Measurement","name":params.measurement}
-			        ];
-				}
+            if(typeof params.uiLabels == 'undefined'){
+                if(params.observatory == 'SOHO' || params.observatory == 'STEREO_A' || params.observatory == 'STEREO_B'){
+                    params.uiLabels = [
+                       {"label":"Observatory","name":params.observatory},
+                       {"label":"Instrument","name":params.instrument},
+                       {"label":"Detector","name":params.detector},
+                       {"label":"Measurement","name":params.measurement}
+                    ];
+                }else{
+                    params.uiLabels = [
+                       {"label":"Observatory","name":params.observatory},
+                       {"label":"Instrument","name":params.instrument},
+                       {"label":"Measurement","name":params.measurement}
+                    ];
+                }
             }
 
             layer = new HelioviewerTileLayer(index, self._observationDate,
@@ -198,8 +215,19 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
                 params.layeringOrder, j);
 
             self.addLayer(layer);
+
             j++;
         });
+
+        if (missingLayers > 0) {
+            if (missingLayers < layers.length) {
+                Helioviewer.messageConsole.warn("Some of our image data is missing for this view, Helioviewer displaying what is available at the moment.");
+            }
+
+            if (missingLayers >= layers.length) {
+                Helioviewer.messageConsole.error("This view is not avaiable at the moment please try again later.");
+            }
+        }
     },
 
     /**

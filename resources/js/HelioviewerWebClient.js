@@ -20,6 +20,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * @param {array} zoomLevels set float numbers for zoomLevels
      */
     init: function (zoomLevels) {
+
         var imageScale, paddingHeight, accordionsToOpen, self=this;
 
         this.header                    = $('#hv-header');
@@ -260,13 +261,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var self = this;
 
         $(document).bind("datasources-initialized", function (e, dataSources) {
-            self._tileLayerAccordion = new TileLayerAccordion(
-                   '#tileLayerAccordion', dataSources, date);
+            self._tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, date);
         });
 
         $(document).bind("event-types-initialized", function (e, eventTypes, date) {
-            self._eventLayerAccordion = new EventLayerAccordion(
-                    '#eventLayerAccordion', eventTypes, date);
+            self._eventLayerAccordion = new EventLayerAccordion('#eventLayerAccordion', eventTypes, date);
         });
 
         this._super("#helioviewer-viewport-container-outer", date, marginTop, marginBottom);
@@ -482,7 +481,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             btns;
 
         // Make url stale
-        $(document).on('update-external-datasource-integration observation-time-changed change-feature-events-state', function(e){
+        $(document).on('update-external-datasource-integration observation-time-changed change-feature-events-state celestial-objects-state-tree-state-change', function(e){
             if ( $('#helioviewer-share-url').is(':visible') ) {
                 $('#helioviewer-share-url').css('border-color','#f8e64f');
                 $('#helioviewer-url-box-stale-link-msg').show();
@@ -1620,6 +1619,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         // If drawer is opening from the automaticlly on page laod 
         if(open === true) {
+
+            $('#helioviewer-url-box-stale-link-msg').hide();
+            $('#helioviewer-share-url').css('border-color','rgba(255,255,255,0.6)');
 
             this.toURL().then((shareURL) => {
 

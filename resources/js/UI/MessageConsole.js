@@ -69,6 +69,18 @@ var MessageConsole = Class.extend(
     },
 
     /**
+     * @description Displays an success message in the message console
+     * it automatically adds error css class and an overwritable header Success
+     * @param {String} msg Message to display
+     */
+    success: function (msg, options) {
+        options = Object.assign({}, this._defaults, options);
+        options.group = options.group ? options.group + " success" : "success";
+        options.header = options.header ?? "Success";
+        $("#message-console").jGrowl(msg, options);
+    },
+
+    /**
      * Sets up event-handlers
      */
     _setupEventHandlers: function () {
