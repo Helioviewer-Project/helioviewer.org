@@ -1804,7 +1804,9 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 				<!--  Zoom Controls -->
 				<div id="zoomControls">
 					<div id="center-button" class="viewport-action fa fa-crosshairs" title="Center the Sun in the Viewport"></div>
-					<div id="zoom-in-button" title="Zoom in.">+</div>
+					<div id="zoom-in-button" title="Zoom in.">
+						<img src="/resources/images/ftedit-add.svg" style="width:80%; height:80%" alt="HV project transparent image"/> 
+					</div>
 					<div id="zoomSliderContainer">
 						<div id="zoomControlSlider"></div>
 					</div>
