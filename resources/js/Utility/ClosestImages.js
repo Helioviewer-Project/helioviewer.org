@@ -17,42 +17,39 @@ class ClosestImages {
      */
     fetchClosestImageDates(sourceId, observationDate) {
 
-        let dateStr = observationDate.toISOString();
+        let cacheKey = observationDate.toISOString() + '_' + sourceId;
 
-        if (!this.imageDates.hasOwnProperty(sourceId)) {
-            this.imageDates[sourceId] = {};
-        }
+        if (this.imageDates.hasOwnProperty(cacheKey)) {
 
-        let self = this;
-        let requestPromise = new Promise((resolve, reject) => {
+            return this.imageDates[cacheKey];
 
-            if (self.imageDates[sourceId].hasOwnProperty(dateStr)) {
-                resolve(self.imageDates[sourceId][dateStr]);
-            } else {
-                // Get all nearest image dates
-                $.ajax({
+        } else {
+
+            this.imageDates[cacheKey] = new Promise((resolve, reject) => {
+                return $.ajax({
                     type: "GET",
                     url: Helioviewer.api,
                     dataType: Helioviewer.dataType,
                     data: {
                         "action": "getClosestImageDatesForSources",
                         "sources" : sourceId,
-                        "date": dateStr,
+                        "date": observationDate.toISOString(),
                     },
 
                 }).then((resp) => {
                     let imgLayerDates = new LayerImgDates(resp[sourceId]);
-                    self.imageDates[sourceId][dateStr] = imgLayerDates;
-                    resolve(imgLayerDates);
+                    return resolve(imgLayerDates);
                 }, (error) => {
                     Helioviewer.messageConsole.error("Could not load tile layer controls");
                     console.error(error);
-                    reject(error);
+                    return reject(error);
                 });
-            }
-        });
+            });
 
-        return requestPromise;
+            return this.imageDates[cacheKey];
+
+        }
+
     }
     
     
