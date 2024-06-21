@@ -871,7 +871,7 @@ var TileLayerAccordion = Layer.extend(
 
             this.closestImages.fetchClosestImageDates(sourceId, self._observationDate).then(function(imgDates) {
 
-                $('[data-source-id="'+oldSourceId+'"]').each((i) => {
+                entry.find('.prev-image-btn').each(function() {
 
                     let prevColor = imgDates.hasPrevImage() ? 'green' : 'red';
                     let prevQtip = imgDates.hasPrevImage() ? 'Prev Image' : 'No Prev Image';
@@ -881,6 +881,12 @@ var TileLayerAccordion = Layer.extend(
                     $(this).attr('title', prevQtip);
                     $(this).css('cursor', prevCursor);
 
+                    $(this).data('sourceId', sourceId);
+
+                });
+
+                entry.find('.next-image-btn').each(function() {
+
                     let nextColor = imgDates.hasNextImage() ? 'green' : 'red';
                     let nextQtip = imgDates.hasNextImage() ? 'Next Image' : 'No Next Image';
                     let nextCursor = imgDates.hasNextImage() ? 'pointer' : 'default';
@@ -888,9 +894,8 @@ var TileLayerAccordion = Layer.extend(
                     $(this).css('color', nextColor);
                     $(this).attr('title', nextQtip);
                     $(this).css('cursor', nextCursor);
-                    
-                    $(this).data('sourceId', sourceId);
 
+                    $(this).data('sourceId', sourceId);
                 });
 
             });
