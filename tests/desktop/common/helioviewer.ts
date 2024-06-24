@@ -91,11 +91,3 @@ class Helioviewer {
 }
 
 export { Helioviewer }
-
-// test('test', async ({ page }) => {
-//     await page.getByRole('link', { name: ' Add Layer' }).click();
-//     await page.locator('#TileLayerAccordion-Container div').filter({ hasText: 'AIA 3042021/06/01 00:01:29 UTCOpacity: Observatory: SDOSOHOInstrument:' }).locator('span').nth(3).click();
-//     await page.getByRole('link', { name: ' Add Layer' }).click();
-//     await page.locator('#removeBtn-tile-layer-gkf0vz45jtj').click();
-//     await page.getByRole('link', { name: ' Add Layer' }).click();
-//   });
