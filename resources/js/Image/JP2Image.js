@@ -30,9 +30,9 @@ var JP2Image = Class.extend(
         var params, dataType, source_id;
 
         var switchSources = false;
-		if(outputType == 'minimal'){
-			switchSources = true;
-		}
+        if(outputType == 'minimal'){
+            switchSources = true;
+        }
 
         params = {
             action:   'getClosestImage',
@@ -76,12 +76,11 @@ var JP2Image = Class.extend(
         this._notifyIfStaleImage(result);
         // Only load image if it is different form what is currently displayed
         if(result.error){
-	        var jGrowlOpts = {
-	            sticky: true,
-	            header: "Just now"
-	        };
-	        //$(document).trigger("message-console-log", [result.error, jGrowlOpts, true, true]);
-	        return;
+            var jGrowlOpts = {
+                sticky: true,
+                header: "Just now"
+            };
+            return;
         }
         //if (this.id === result.id && this.difference == 0) {
         //    return;
@@ -119,7 +118,7 @@ var JP2Image = Class.extend(
         // Compare the time difference to the threshold
         // If the time difference is over the threshold, create an alert.
         if (delta >= threshold) {
-            this._notifyStaleImage(metadata.name, delta);
+            this._notifyStaleImage(metadata.name, delta, metadata.date);
         } else {
             // If the newest image isn't stale, but the notification is showing
             // then it should be closed
@@ -145,7 +144,7 @@ var JP2Image = Class.extend(
      * @param {string} name Name of the image layer.
      * @param {number} delta Number of seconds away from the observation time.
      */
-    _notifyStaleImage: async function(name, delta) {
+    _notifyStaleImage: async function(name, delta, closestImageDate) {
         // Attempt to get the existing notification before continuing
         // Without this, the code could run multiple times and show many
         // notifications for the same layer.
@@ -155,7 +154,7 @@ var JP2Image = Class.extend(
         // associated with this notification.
         this._notification = new Promise(async (resolve) => {
             // Create the notification message
-            let message = "The " + name + " layer is " + humanReadableNumSeconds(delta) + " away from your observation time";
+            let message = "<span style='cursor:pointer;'>The " + name + " layer is " + humanReadableNumSeconds(delta) + " away from your observation time. <br/> Click this message to go to newest image. </span>";
             // Create the css class that will be assigned to this notification
             let group = name.replace(" ", "-");
             // If the notification exists already and its on screen, then
@@ -181,6 +180,9 @@ var JP2Image = Class.extend(
                             // Remove any other duplicate notifications
                             $("." + group).not(msg).remove();
                             resolve(msg);
+                        }, 
+                        click: (e, m, o) => {
+                            return helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(closestImageDate)) && true;
                         }
                     }
                 );
