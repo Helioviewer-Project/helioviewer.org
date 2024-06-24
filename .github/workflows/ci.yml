@@ -91,7 +91,6 @@ jobs:
     - name: Install Playwright Browsers
       run: |
         cd helioviewer.org
-        npm ci
         npx playwright install --with-deps
     - name: Run Playwright tests
       run: |
