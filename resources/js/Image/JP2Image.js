@@ -163,7 +163,7 @@ var JP2Image = Class.extend(
                 let text = $(notification).find('.jGrowl-message');
                 notification.stop().fadeOut(250, () => {
                     // Update the tet after the old notification has faded out.
-                    text.text(message);
+                    text.html(message);
                     notification.fadeIn(250);
                     // Return the notification instance
                 })
@@ -180,7 +180,7 @@ var JP2Image = Class.extend(
                             // Remove any other duplicate notifications
                             $("." + group).not(msg).remove();
                             resolve(msg);
-                        }, 
+                        },
                         click: (e, m, o) => {
                             return helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(closestImageDate)) && true;
                         }
