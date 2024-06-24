@@ -106,7 +106,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             next = queue[i] || defaultLayer;
             var date = new Date(+new Date());
             var dateDiffObj = new Date($('#date').val() +' '+$('#time').val());
-			var dateDiff = new Date(dateDiffObj - 60*60*1000);
+            var dateDiff = new Date(dateDiffObj - 60*60*1000);
             params = parseLayerString(next + ',1,100,0,60,1,'+dateDiff.toDateString()+' '+dateDiff.toTimeString());
 
             if (this.checkDataSource(params.uiLabels)) {
@@ -117,9 +117,23 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
 
         ds = this.dataSources;
 
+        let layerNotAvailable = false;
+
         $.each( params.uiLabels, function (uiOrder, obj) {
-            ds = ds[obj['name']];
+            let nextParams = ds[obj['name']];
+
+            if (nextParams == undefined) {
+                layerNotAvailable = true;
+                return false; // return false to  break the loop 
+            }
+
+            ds = nextParams;
         });
+
+        if (layerNotAvailable) {
+            Helioviewer.messageConsole.error("This image view is not avaiable at the moment please try again later.");
+            return;
+        }
 
         $.extend(params, ds);
 
