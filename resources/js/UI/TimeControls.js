@@ -257,11 +257,22 @@ var TimeControls = Class.extend(
             }
         };
 
+        console.log("Flatpickr initialized")
         this._dateInput._flatpickr = this._dateInput.flatpickr({
             allowInput: true,
             dateFormat: 'Y/m/d',
             disableMobile: true,
-            onChange: $.proxy(this._onTextFieldChange, this)
+            onChange: $.proxy(this._onTextFieldChange, this),
+            onMonthChange: (a, b, flatpickr) => {
+                let date = this.getDate();
+                date.setMonth(flatpickr.currentMonth);
+                this.setDate(date);
+            },
+            onYearChange: (a, b, flatpickr) => {
+                let date = this.getDate();
+                date.setYear(flatpickr.currentYear);
+                this.setDate(date);
+            }
         });
 
         this._dateInput.keydown(createCloseFunction(this._dateInput));
