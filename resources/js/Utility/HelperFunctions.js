@@ -717,7 +717,17 @@ function postJSON(action, params) {
 
 }
 
-
+/**
+ * Generates a random string of default length.
+ * 
+ * @returns {string} A random string consisting of alphanumeric characters.
+ *
+ * @example
+ * let randStr = makeRandomString();
+ */
+function makeRandomString() {
+    return (Math.random() + 1).toString(36).substring(2);
+}
 
 
 
