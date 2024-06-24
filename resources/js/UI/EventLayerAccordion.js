@@ -29,7 +29,7 @@ var EventLayerAccordion = Layer.extend(
         this._eventTypes      = eventTypes;
         this._date            = date;
         this._maximumTimeDiff = 12 * 60 * 60 * 1000; // 12 hours in miliseconds
-		this._eventManagers = [];
+        this._eventManagers = [];
 
         this.options = {};
 
@@ -120,7 +120,7 @@ var EventLayerAccordion = Layer.extend(
         markersHidden = (markersVisible ? " fa-eye " : " fa-eye-slash hidden");
         labelsHidden  = ( labelsVisible ? "" : " hidden");
 
-		availableBtn = '<span class="fa fa-bullseye fa-fw layerAvailableBtn visible'
+        availableBtn = '<span class="fa fa-bullseye fa-fw layerAvailableBtn visible'
                       + availableHidden + '" '
                       + 'id="visibilityAvailableBtn-' + id + '" '
                       + 'title="Toggle visibility of empty elements inside Features and Events list" '
@@ -322,7 +322,7 @@ var EventLayerAccordion = Layer.extend(
 
         var visibilityBtn, labelsBtn, availableBtn/*, removeBtn*/, markersHidden, labelsHidden, availableHidden, eventsDiv, self=this;
 
-		let treeid = 'tree_'+name;
+        let treeid = 'tree_'+name;
 
         // initial visibility
         markersHidden = (markersVisible ? "" : " hidden");
@@ -331,7 +331,7 @@ var EventLayerAccordion = Layer.extend(
                       + markersHidden + '" '
                       + 'id="visibilityBtn-' + id + '" '
                       + 'title="Toggle visibility of event marker pins" '
-		      + 'style="margin-top:0.5em;" '
+                      + 'style="margin-top:0.5em;" '
                       + '></span>';
 
         eventsDiv = '<div id="k12-events-visibility-btn-'+id+'" class="k12-eventsVisBtn" title="Toggle visibility of event marker pins" style="display: flex;cursor: pointer;">'

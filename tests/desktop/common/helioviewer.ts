@@ -47,7 +47,7 @@ class Helioviewer {
     }
 
     async UseNewestImage() {
-        await this.page.getByText('NEWEST').click();
+        await this.page.getByText('NEWEST', {exact : true}).click();
     }
 
     async CloseAllNotifications() {
