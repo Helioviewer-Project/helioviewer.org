@@ -257,7 +257,6 @@ var TimeControls = Class.extend(
             }
         };
 
-        console.log("Flatpickr initialized")
         this._dateInput._flatpickr = this._dateInput.flatpickr({
             allowInput: true,
             dateFormat: 'Y/m/d',
