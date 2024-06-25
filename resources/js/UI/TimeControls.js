@@ -257,20 +257,32 @@ var TimeControls = Class.extend(
             }
         };
 
+        // Compensate for a problem with flatpickr where if the user updates
+        // the date manually, then all events fire (onYearChange, onMonthChange, onChange).
+        // By using a very short timeout, we can fire our internal update event
+        // only once, instead of 3 times. Note that updating the viewport is
+        // a heavy operation since it triggers image loading, event loading, etc.
+        let delayed_flatpickr_update = (flatpickr) => {
+            clearTimeout(flatpickr.__delayed_trigger);
+            flatpickr.__delayed_trigger = setTimeout(() => {this._onTextFieldChange();}, 50);
+        }
         this._dateInput._flatpickr = this._dateInput.flatpickr({
             allowInput: true,
             dateFormat: 'Y/m/d',
             disableMobile: true,
-            onChange: $.proxy(this._onTextFieldChange, this),
+            // onChange: $.proxy(this._onTextFieldChange, this),
+            onChange: (a, b, flatpickr) => {
+                delayed_flatpickr_update(flatpickr);
+            },
             onMonthChange: (a, b, flatpickr) => {
-                let date = this.getDate();
-                date.setMonth(flatpickr.currentMonth);
-                this.setDate(date);
+                a[0].setMonth(flatpickr.currentMonth);
+                flatpickr.setDate(a[0]);
+                delayed_flatpickr_update(flatpickr);
             },
             onYearChange: (a, b, flatpickr) => {
-                let date = this.getDate();
-                date.setYear(flatpickr.currentYear);
-                this.setDate(date);
+                a[0].setYear(flatpickr.currentYear);
+                flatpickr.setDate(a[0]);
+                delayed_flatpickr_update(flatpickr);
             }
         });
 
