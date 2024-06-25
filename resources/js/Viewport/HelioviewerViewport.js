@@ -368,9 +368,7 @@ var HelioviewerViewport = Class.extend(
         let offset = biggestLayer.getCurrentOffset();
         let scale = Helioviewer.userSettings.get("mobileZoomScale");
         this.movementHelper.centerViewportWithOffset(offset.x * scale, offset.y * scale);
-        this.updateViewport();
-        Helioviewer.userSettings.set("state.centerX", offset.x);
-        Helioviewer.userSettings.set("state.centerY", offset.y);
+        this.updateViewport(true);
     },
 
     /**
