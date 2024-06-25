@@ -51,8 +51,13 @@ class Helioviewer {
     }
 
     async CloseAllNotifications() {
-        await this.WaitForLoadingComplete();
-        await this.page.getByText('[ close all ]').click();
+        let close_buttons = await this.page.locator('.jGrowl-close');
+        let count = await close_buttons.count()
+        for (let n = 0; n < count; n++) {
+            await close_buttons.nth(n).click();
+        }
+        // Wait for notifications to disappear
+        await expect(close_buttons.nth(count-1)).toBeHidden();
     }
 
     /**
@@ -86,6 +91,18 @@ class Helioviewer {
      */
     async WaitForLoadingComplete() {
         await this.page.waitForFunction(() => document.getElementById('loading')?.style.display == "none", null, {timeout: 60000});
+    }
+
+    /**
+     *
+     * @param n Number of times to zoom in
+     */
+    async ZoomIn(n: number = 1) {
+        for (let i = 0; i < n; i++) {
+            await this.page.locator('#zoom-in-button').click();
+            // Wait for zoom animation to complete.
+            await this.page.waitForTimeout(500);
+        }
     }
 
 }
