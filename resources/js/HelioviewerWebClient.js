@@ -905,11 +905,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             return false;
         }
 
-        vport = this.viewport.getViewportInformation();
-
         // Arc seconds per pixel
-        imageScale = vport['imageScale'];
-
+        imageScale = this.viewport.getZoomedImageScale();
 
         x0 = imageScale * (roi.left + roi.right) / 2;
         y0 = imageScale * (roi.bottom + roi.top) / 2;
@@ -1361,6 +1358,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
                 y1 = Math.round(parseFloat($('#sdo-center-y').val()*-1) - parseFloat($('#sdo-height').val()) / 2);
                 y2 = Math.round(parseFloat($('#sdo-center-y').val()*-1) + parseFloat($('#sdo-height').val()) / 2);
+                console.log(x1, x2, y1, y2);
 
                 thumbImageScale = parseFloat($('#sdo-width').val()) / 256;
 
