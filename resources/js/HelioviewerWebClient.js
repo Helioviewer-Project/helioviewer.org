@@ -71,11 +71,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
 
         this.tabbedDrawers = [
-            '#hv-drawer-news', 
+            '#hv-drawer-news',
             '#hv-drawer-movies',
-            '#hv-drawer-screenshots', 
+            '#hv-drawer-screenshots',
             '#hv-drawer-youtube',
-            '#hv-drawer-data', 
+            '#hv-drawer-data',
             '#hv-drawer-share',
             '#hv-drawer-help'
         ];
@@ -104,7 +104,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         imageScale = this._chooseInitialImageScale(Helioviewer.userSettings.get('state.imageScale'), zoomLevels);
 
         // Not fully sure , why we need this line, but I am keeping for sake of defensive coding
-        let initialTime = Helioviewer.urlSettings.date ? Date.parseUTCDate(Helioviewer.urlSettings.date) : Helioviewer.userSettings.get('state.date'); 
+        let initialTime = Helioviewer.urlSettings.date ? Date.parseUTCDate(Helioviewer.urlSettings.date) : Helioviewer.userSettings.get('state.date');
 
         // Create our timecontrols
         this.timeControls = new TimeControls('#date', '#time','#timestep-select', '#timeBackBtn', '#timeForwardBtn', initialTime);
@@ -687,7 +687,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         $('#data-button').bind('click', $.proxy(this.drawerDataClick, this));
 
         // share button click handle
-        $('#share-button').bind('click', $.proxy(this.drawerShareClick, this)); 
+        $('#share-button').bind('click', $.proxy(this.drawerShareClick, this));
 
         $('#help-button').bind('click', $.proxy(this.drawerHelpClick, this));
 
@@ -1575,7 +1575,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     /**
      * @description Exports what you see into a JSON and POSTs it our api to keep in tables with id
-     * @return {Promise}, promise you can handle or whoever wants to handle 
+     * @return {Promise}, promise you can handle or whoever wants to handle
      */
     saveStateIntoAPI: function() {
 
@@ -1605,11 +1605,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
 
     /**
-     * @description This function toggles drawer for share link 
+     * @description This function toggles drawer for share link
      */
     drawerShareClick: function() {
 
-        let self = this; 
+        let self = this;
 
         this.closeTabDrawersExcept('#'+this.drawerShare.attr('id'));
 
@@ -1617,7 +1617,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         let open = $("#share-button").hasClass('opened');
 
-        // If drawer is opening from the automaticlly on page laod 
+        // If drawer is opening from the automaticlly on page laod
         if(open === true) {
 
             $('#helioviewer-url-box-stale-link-msg').hide();
@@ -1653,14 +1653,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerShare.css('height', 0);
             this.drawerShare.css('padding', 0);
             this.drawerShare.css({'display':'none'});
-            return; 
+            return;
         }
     },
 
     /**
      * @description Shortens given url by making a backend request to save it to our redis db
      * @param {Object} url, which url you want to make short
-     * @return {Promise}, promise you can handle 
+     * @return {Promise}, promise you can handle
      */
     makeShortURL: function(longURL) {
         // Get short version of URL and open dialog
@@ -1934,7 +1934,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         date = sDateUTC.toDateString() + 'T' + sDateUTC.toTimeString() + 'Z';
 
         vport = this.viewport.getViewportInformation();
-        imageScale = vport['imageScale'];
+        imageScale = this.viewport.getZoomedImageScale();
         imageAccordions = $('#accordion-images .dynaccordion-section');
 
         roi = {
@@ -2572,7 +2572,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         let media = encodeURIComponent('https://api.helioviewer.org?action=downloadScreenshot&id=3240748');
         let desc = encodeURIComponent('Helioviewer.org - Solar and heliospheric image visualization tool');
         let pinterestURL = "https:///www.pinterest.com/pin/create/button/?url="+url+"&media="+media+"&description="+desc;
-        
+
         window.open(pinterestURL,"_blank", "toolbar=no, scrollbars=no, resizable=no, top=0, right=0, width=750, height=320");
 
         $('#pinterest').bind('click', $.proxy(this.pinterest, this));
