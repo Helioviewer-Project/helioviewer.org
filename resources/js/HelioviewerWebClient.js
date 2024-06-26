@@ -1955,14 +1955,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         thumbImageScale = width / 128;
 
         if(typeof name != 'undefined' && name != 'undefined'){
-            var layers = name.split(" ");
-            var layerData = '';
-            $.each(layers, function(i, n){
-                if(n != ''){
-                    layerData += n+',';
-                }
-            });
-            imageLayer = '['+layerData+'1,100],';
+            imageLayer = '['+name+',1,100],';
         }else{
             $.each( imageAccordions, function(i, accordion) {
                 if ( !$(accordion).find('.visible').hasClass('hidden')) {

@@ -1242,10 +1242,10 @@ var Timeline = Class.extend({
                     data: series['data'],
                     color: _colors[parseInt(series.sourceId)]
                 }, false, false);
-                if (typeof chart.sourceIds == 'undefined') {
+                if (!chart.hasOwnProperty('sourceIds')) {
                     chart.sourceIds = {};
                 }
-                chart.sourceIds['name'] = sourceId;
+                chart.sourceIds[series['name']] = series.sourceId;
 
                 categories.push(series['label']);
                 count++;
