@@ -4,15 +4,15 @@
  * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
  * @see TileLayerAccordion, Layer
  * @requires Layer
- * 
+ *
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, Layer, $, JP2Image, Image, console, getUTCTimestamp */
 "use strict";
-var TileLoader = Class.extend( 
+var TileLoader = Class.extend(
     /** @lends TileLayer.prototype */
-    {    
+    {
     /**
      * @constructs
      * @description Creates a new TileLoader
@@ -27,7 +27,7 @@ var TileLoader = Class.extend(
     },
 
     /**
-     * 
+     *
      */
     updateTileVisibilityRange: function (range, tilesLoaded) {
         this.tileVisibilityRange = range;
@@ -36,11 +36,11 @@ var TileLoader = Class.extend(
             return this._checkTiles();
         }
     },
-    
+
     setTileVisibilityRange: function (range) {
         this.tileVisibilityRange = range;
     },
-    
+
     updateDimensions: function (width, height) {
         this.width  = width;
         this.height = height;
@@ -58,7 +58,7 @@ var TileLoader = Class.extend(
         // Number of tiles for the entire image
         numTilesX = Math.max(2, Math.ceil(width  / ts));
         numTilesY = Math.max(2, Math.ceil(height  / ts));
-        
+
         // Tile placement architecture expects an even number of tiles along each dimension
         if ((numTilesX % 2) !== 0) {
             numTilesX += 1;
@@ -88,7 +88,7 @@ var TileLoader = Class.extend(
     },
 
     /**
-     * 
+     *
      */
     _checkTiles: function () {
         var i, j;
@@ -111,18 +111,18 @@ var TileLoader = Class.extend(
             }
         }
     },
-    
+
     /**
      * @description Creates an array of tile dom-nodes
      * @return {Array} An array containing pointers to all of the tiles currently loaded
      */
     getTileArray: function () {
         var tiles = [];
-        
+
         this.domNode.children().each(function () {
             tiles.push(this);
         });
-        
+
         return tiles;
     },
 
@@ -144,13 +144,11 @@ var TileLoader = Class.extend(
      * @param {Boolean} removeOldTilesFirst Whether old tiles should be removed before or after new ones are loaded.
      */
     reloadTiles: function (removeOldTilesFirst) {
-        var i, j, numTiles = 0, numTilesLoaded = 0, tile, onLoadComplete, self = this;
-
         this.removeOldTilesFirst = removeOldTilesFirst;
         this.numTilesLoaded      = 0;
         this.loadedTiles         = {};
         this.computeValidTiles();
-        
+
         this.oldTiles = this.getTileArray();
 
         // When zooming, remove old tiles right away to avoid visual glitches
@@ -158,7 +156,7 @@ var TileLoader = Class.extend(
             this.removeTileDomNodes(this.oldTiles);
         }
         this.numTiles = 0;
-        
+
         // Load tiles that lie within the current viewport
         this._iterateVisibilityRange(this.tileVisibilityRange, (i, j) => {
             if (this.validTiles[i] && this.validTiles[i][j]) {
@@ -193,7 +191,7 @@ var TileLoader = Class.extend(
             });
         }
     },
-    
+
     onTileLoadComplete: function () {
         this.numTilesLoaded += 1;
 
@@ -204,7 +202,7 @@ var TileLoader = Class.extend(
             }
         }
     },
-    
+
     /**
      * @description remove tile dom-nodes
      */
@@ -215,18 +213,18 @@ var TileLoader = Class.extend(
             }
         });
     },
-    
+
     /**
      * @description Creates a 2d array representing the range of valid (potentially data-containing) tiles
      */
     computeValidTiles: function () {
         var i, j, indices;
-        
+
         indices = this.getValidTileRange();
-     
+
         // Reset array
         this.validTiles = {};
-        
+
         // Update validTiles array
         for (i = indices.xStart; i <= indices.xEnd; i += 1) {
             for (j = indices.yStart; j <= indices.yEnd; j += 1) {
@@ -235,6 +233,6 @@ var TileLoader = Class.extend(
                 }
                 this.validTiles[i][j] = true;
             }
-        }        
+        }
     }
 });
