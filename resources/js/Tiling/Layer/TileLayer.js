@@ -50,10 +50,11 @@ var TileLayer = Layer.extend(
         this.difference    = (typeof difference == 'undefined' ? 0 : parseInt(difference));
         this.diffCount     = (typeof diffCount == 'undefined' ? 60 : parseInt(diffCount));
         this.diffTime      = (typeof diffTime == 'undefined' ? 1 : parseInt(diffTime));
-        var dateDiff 	   = new Date(+new Date() - 60*60*1000);
         this.baseDiffTime  = (typeof baseDiffTime == 'undefined' ? $('#date').val()+' '+$('#time').val() : baseDiffTime);
         this.name          = name;
         this.tileVisibilityRange = {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0};
+        // Mapping of x, y coordinates to HTML img tags
+        this._tiles = {}
     },
 
     updateTileVisibilityRange: function (vpCoords) {
@@ -71,8 +72,8 @@ var TileLayer = Layer.extend(
         // These coordinates are measured relative to the center of the image (offsetX, offsetY).
         // vpCoords are measured relative to sun center, the origin of the moving container.
         // To change the origin to be relative to the image, we have to do the operation vpCoord - (offsetX, offsetY).
-        let vpWidth = (vpCoords.right - vpCoords.left);
-        let vpHeight = (vpCoords.bottom - vpCoords.top);
+        let vpWidth = (vpCoords.right - vpCoords.left) * scale;
+        let vpHeight = (vpCoords.bottom - vpCoords.top) * scale;
         let shiftedVp = {
             top: vpCoords.top + offset.y,
             left: vpCoords.left + offset.x,
@@ -389,18 +390,57 @@ var TileLayer = Layer.extend(
         }
 
         // Load tile
+        let layer = this;
         img.on('error', function (e) {
+            layer._replaceTile(x, y, this);
             img.unbind("error");
             $(this).attr("src", emptyTile);
         }).on('load', function () {
+            layer._replaceTile(x, y, this);
             $(this).width(512).height(512); // Wait until image is done loading specify dimensions in order to prevent
                                             // Firefox from displaying place-holders
         }).attr("src", this.getTileURL(x, y));
+        $(img).width(0).height(0);
 
         //      Makes sure all of the images have finished downloading before swapping them in
         img.appendTo(this.domNode);
         if (onTileLoadComplete) {
             img.on('load', onTileLoadComplete);
+        }
+    },
+
+    /**
+     * Replaces the image tile at position x, y with the new image tile
+     * @param {number} x
+     * @param {number} y
+     * @param {HTMLImageElement} img
+     */
+    _replaceTile(x, y, img) {
+        this._removeTile(x, y);
+        this._assignTileIndex(x, y, img);
+    },
+
+    /**
+     * Stores a reference to the given image element at coordinate x, y
+     * @param {number} x
+     * @param {number} y
+     * @param {HTMLImageElement} img
+     */
+    _assignTileIndex(x, y, img) {
+        if (!this._tiles.hasOwnProperty(x)) {
+            this._tiles[x] = {};
+        }
+        this._tiles[x][y] = img;
+    },
+
+    /**
+     * Removes the tile/img tag at coordinate x, y
+     * @param {number} x
+     * @param {number} y
+     */
+    _removeTile(x, y) {
+        if (this._tiles.hasOwnProperty(x) && this._tiles[x].hasOwnProperty(y)) {
+            this._tiles[x][y].remove();
         }
     },
 
@@ -424,7 +464,6 @@ var TileLayer = Layer.extend(
         img.oncontextmenu = rf;
         img.onselectstart = rf;
         img.galleryimg    = 'no';
-
         return img;
     },
 
