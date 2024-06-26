@@ -72,7 +72,6 @@ var JP2Image = Class.extend(
      * at the bottom-left corner of the image, not the top-left corner.
      */
     _onImageLoad: function (result) {
-        console.log("Calling _onImageLoad callback for result ", result);
         // We load the image closest to the observation time, which may or
         // may not be close to that time.
         this._notifyIfStaleImage(result);
