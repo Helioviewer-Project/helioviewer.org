@@ -6,8 +6,7 @@ import { Helioviewer } from '../common/helioviewer';
  */
 test('Zoom scale is persisted across reload', async ({ page }, info) => {
   let hv = new Helioviewer(page);
-  await page.goto('/');
-  await hv.WaitForLoadingComplete();
+  await hv.Load();
   await hv.CloseAllNotifications();
   // Zoom in 5 times
   await hv.ZoomIn(5);
