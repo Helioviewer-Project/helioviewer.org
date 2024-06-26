@@ -71,14 +71,16 @@ var TileLayer = Layer.extend(
         // These coordinates are measured relative to the center of the image (offsetX, offsetY).
         // vpCoords are measured relative to sun center, the origin of the moving container.
         // To change the origin to be relative to the image, we have to do the operation vpCoord - (offsetX, offsetY).
-        let vpWidth = (vpCoords.right - vpCoords.left);
-        let vpHeight = (vpCoords.bottom - vpCoords.top);
+        let vpWidth = (vpCoords.right - vpCoords.left) * scale;
+        let vpHeight = (vpCoords.bottom - vpCoords.top) * scale;
         let shiftedVp = {
             top: vpCoords.top + offset.y,
             left: vpCoords.left + offset.x,
             right: vpCoords.left + offset.x + vpWidth,
             bottom: vpCoords.top + offset.y + vpHeight
         };
+        console.log(vpCoords);
+        console.log(shiftedVp);
         let vp = {
             top:    shiftedVp.top    - ts - (shiftedVp.top    % ts),
             left:   shiftedVp.left   - ts - (shiftedVp.left   % ts),
@@ -93,6 +95,7 @@ var TileLayer = Layer.extend(
             xEnd   : Math.round((vp.right  / ts) - 1),
             yEnd   : Math.round((vp.bottom / ts) - 1)
         };
+        console.log(tileVisibilityRange);
 
         // Only load new tiles if anything has changed
         if ((this.tileVisibilityRange.xStart != tileVisibilityRange.xStart)
