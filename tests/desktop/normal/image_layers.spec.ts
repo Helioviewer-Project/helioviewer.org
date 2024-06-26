@@ -6,13 +6,14 @@ import { Helioviewer } from '../common/helioviewer';
  */
 test('Can add and remove image layers', async ({ page }) => {
   let hv = new Helioviewer(page);
-  await page.goto('/');
+  await hv.Load();
   await hv.CloseAllNotifications();
   await hv.ClickDataSourcesTab();
   await hv.UseNewestImage();
   await hv.AddImageLayer();
   await hv.RemoveImageLayer(0);
   await hv.AddImageLayer();
+  await hv.WaitForLoadingComplete();
   // Expect LASCO C2 Layer to be present
   await hv.ExpectLayer(0, "LASCO C2", "SOHO", "LASCO", "white-light");
 

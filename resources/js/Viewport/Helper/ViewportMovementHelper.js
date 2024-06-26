@@ -25,7 +25,7 @@ var ViewportMovementHelper = Class.extend(
      * @param centerX Horizontal offset from center in pixels
      * @param centerY Vertical offset from center in pixels
      */
-    init: function (domNode, mouseCoords, offsetX, offsetY) {
+    init: function (domNode, mouseCoords) {
         this.domNode         = $(domNode);
         this.sandbox         = $("#sandbox");
         this.movingContainer = $("#moving-container");

@@ -31,7 +31,12 @@ const MAX_THRESHOLD = 1.5;
             lock: false,
             lastVal: 0
         };
-        Helioviewer.userSettings.set('mobileZoomScale', 1);
+        let _mobileZoom = Helioviewer.userSettings.get('mobileZoomScale');
+        if (typeof _mobileZoom == 'undefined') {
+            Helioviewer.userSettings.set('mobileZoomScale', 1);
+            _mobileZoom = 1;
+        }
+        $(document).bind('helioviewer-ready', () => this.setScale(_mobileZoom, false));
 
         // Make sure the sun is centered when the user requests centering the viewport
         $(document).bind("center-viewport", this._resetOrigin.bind(this));
@@ -195,7 +200,7 @@ const MAX_THRESHOLD = 1.5;
         this._updateScaleBoxSize('js-earth-scale', 'earthScale');
     }
 
-    setScale(scale) {
+    setScale(scale, updateViewportCoordinates = true) {
         // Limit scale to 2.5 and 0.25
         if (0.25 <= scale && scale <= 2.5) {
             if (scale >= MAX_THRESHOLD) {
@@ -208,7 +213,7 @@ const MAX_THRESHOLD = 1.5;
                 this._updateScaleForElementWithId(this._mc.id, scale);
                 this._updateUIScale(scale);
                 this._updateReferenceScale(scale)
-                $(document).trigger('update-viewport');
+                $(document).trigger('update-viewport', [updateViewportCoordinates]);
             }
         }
     }
