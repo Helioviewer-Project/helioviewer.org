@@ -27,21 +27,22 @@ var JP2Image = Class.extend(
      * Loads the closest image in time to that requested
      */
     _requestImage: function () {
-        var params, dataType, source_id;
-
-        var switchSources = false;
+        if (this._last_request) {
+            this._last_request.abort();
+        }
+        let switchSources = false;
         if(outputType == 'minimal'){
             switchSources = true;
         }
 
-        params = {
+        let params = {
             action:   'getClosestImage',
             sourceId: this.sourceId,
             date:     this.requestDate.toISOString(),
             difference:this.difference,
             switchSources:switchSources
         };
-        $.get(Helioviewer.api, params, $.proxy(this._onImageLoad, this), Helioviewer.dataType);
+        this._last_request = $.get(Helioviewer.api, params, $.proxy(this._onImageLoad, this), Helioviewer.dataType);
     },
 
     /**
@@ -71,6 +72,7 @@ var JP2Image = Class.extend(
      * at the bottom-left corner of the image, not the top-left corner.
      */
     _onImageLoad: function (result) {
+        console.log("Calling _onImageLoad callback for result ", result);
         // We load the image closest to the observation time, which may or
         // may not be close to that time.
         this._notifyIfStaleImage(result);
