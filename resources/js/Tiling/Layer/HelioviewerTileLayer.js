@@ -43,25 +43,22 @@ var HelioviewerTileLayer = TileLayer.extend(
 
         this._setupEventHandlers();
 
+        let layerAccordionLoaded = null;
+
         if (Helioviewer.outputType != "minimal" && Helioviewer.outputType != "embed") {
-            $(document).trigger("create-tile-layer-accordion-entry",
-                [index, this.id, name, sourceId, hierarchy, date, true, opacity, visible,
-                 $.proxy(this.setOpacity, this),
-                 this.difference, this.diffCount, this.diffTime, this.baseDiffTime,
-                 $.proxy(this.setDifference, this), $.proxy(this.setDiffCount, this), $.proxy(this.setDiffTime, this), $.proxy(this.setDiffDate, this)
-                ]
-            );
+            layerAccordionLoaded = helioviewerWebClient._tileLayerAccordion.addLayer(null, index, this.id, name, sourceId, hierarchy, date, true, opacity, visible, this.setOpacity, this.difference, this.diffCount, this.diffTime, this.baseDiffTime, this.setDifference, this.setDiffCount, this.setDiffTime, this.setDiffDate);
         }
 
         this.tileLoader = new TileLoader(this.domNode, tileSize, tileVisibilityRange);
 
-        this.image = new JP2Image(hierarchy, sourceId, date, difference, $.proxy(this.onLoadImage, this));
+        this.image = new JP2Image(hierarchy, sourceId, date, difference, () => {this.onLoadImage(layerAccordionLoaded)});
     },
 
     /**
      * onLoadImage
      */
-    onLoadImage: function () {
+    onLoadImage: function (layerAccordionLoaded) {
+
         this.loaded = true;
         this.layeringOrder = this.image.layeringOrder;
 
@@ -77,12 +74,16 @@ var HelioviewerTileLayer = TileLayer.extend(
             $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
         }
 
-        $(document).trigger("update-tile-layer-accordion-entry",
-                            [this.id, this.name, this.image.getSourceId(),
-                             this.opacity,
-                             new Date(getUTCTimestamp(this.image.date)),
-                             this.image.id, this.image.hierarchy, this.image.name,
-                             this.difference, this.diffCount, this.diffTime, this.baseDiffTime]);
+        if ( layerAccordionLoaded != null ) {
+            layerAccordionLoaded.then(() => {
+                $(document).trigger("update-tile-layer-accordion-entry",
+                                    [this.id, this.name, this.image.getSourceId(),
+                                     this.opacity,
+                                     new Date(getUTCTimestamp(this.image.date)),
+                                     this.image.id, this.image.hierarchy, this.image.name,
+                                     this.difference, this.diffCount, this.diffTime, this.baseDiffTime]);
+            });
+        }
     },
 
     /**
@@ -113,12 +114,12 @@ var HelioviewerTileLayer = TileLayer.extend(
     getTileURL: function (x, y, scale) {
         var baseDiffTimeStr = this.baseDiffTime;
         if(typeof baseDiffTimeStr == 'number' || baseDiffTimeStr == null){
-			baseDiffTimeStr = $('#date').val()+' '+$('#time').val();
-		}
+            baseDiffTimeStr = $('#date').val()+' '+$('#time').val();
+        }
 
         baseDiffTimeStr = formatLyrDateString(baseDiffTimeStr);
 
-		// If scale is given via input, then let it override the global viewport scale
+        // If scale is given via input, then let it override the global viewport scale
         let imageScale = (scale == undefined) ? this.viewportScale : scale;
         // Limit the scale to 6 decimal places so that the excess precision digits don't break caching
         imageScale = imageScale.toFixed(6);
@@ -152,9 +153,9 @@ var HelioviewerTileLayer = TileLayer.extend(
             return_array[obj['label']] = obj['name'];
         });
 
-		if(typeof this.baseDiffTime == 'number' || this.baseDiffTime == null){
-			this.baseDiffTime = $('#date').val()+' '+$('#time').val();
-		}
+        if(typeof this.baseDiffTime == 'number' || this.baseDiffTime == null){
+            this.baseDiffTime = $('#date').val()+' '+$('#time').val();
+        }
 
         return_array['visible']  = this.visible;
         return_array['opacity']  = this.opacity;

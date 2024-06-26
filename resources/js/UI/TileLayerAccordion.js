@@ -75,7 +75,7 @@ var TileLayerAccordion = Layer.extend(
 
         let self = this;
 
-        this.closestImages.fetchClosestImageDates(sourceId, this._observationDate).then((imgDates) => {
+        return this.closestImages.fetchClosestImageDates(sourceId, this._observationDate).then((imgDates) => {
 
             // Not sure why this code here, keeping it
             if (typeof(index) === "undefined") {
