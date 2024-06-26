@@ -440,7 +440,6 @@ var TileLayer = Layer.extend(
      */
     _removeTile(x, y) {
         if (this._tiles.hasOwnProperty(x) && this._tiles[x].hasOwnProperty(y)) {
-            console.log("Removing tile");
             this._tiles[x][y].remove();
         }
     },
