@@ -22,6 +22,11 @@ class Helioviewer {
         this.page = page;
     }
 
+    async Load() {
+        await this.page.goto('/');
+        await this.WaitForLoadingComplete();
+    }
+
     async ExpectLayerEx(index: number, name: string, selections: LayerSelect[]) {
         await expect(this.page.getByText(name, { exact: true })).toBeVisible();
         for (let i = 0; i < selections.length; i++) {
@@ -50,6 +55,13 @@ class Helioviewer {
         await this.page.getByText('NEWEST', {exact : true}).click();
     }
 
+    async WaitForImageLoad() {
+        let locators = await this.page.locator('//img');
+        let images = await locators.all();
+        let promises = images.map(locator => locator.evaluate(img => (img as HTMLImageElement).complete || new Promise(f => img.onload = f)));
+        await Promise.all(promises);
+    }
+
     async CloseAllNotifications() {
         let close_buttons = await this.page.locator('.jGrowl-close');
         let count = await close_buttons.count()
@@ -57,16 +69,18 @@ class Helioviewer {
             await close_buttons.nth(n).click();
         }
         // Wait for notifications to disappear
-        await expect(close_buttons.nth(count-1)).toBeHidden();
+        await this.page.waitForTimeout(1000);
     }
 
     /**
      * Clicks the add layer button in the image sidebar
      */
     async AddImageLayer() {
+        let initial_count = await this.page.locator('.removeBtn').count();
         await this.page.getByRole('link', { name: 'Add Layer' }).click();
         await this.WaitForLoadingComplete();
-        await expect(this.page.locator('.removeBtn')).toHaveCount(2);
+        await expect(this.page.locator('.removeBtn')).toHaveCount(initial_count + 1);
+        await this.WaitForLoadingComplete();
     }
 
     /**
@@ -77,6 +91,7 @@ class Helioviewer {
         let count = await this.page.locator('.removeBtn').count();
         await this.page.locator('.removeBtn').nth(index).click();
         await expect(this.page.locator('.removeBtn')).toHaveCount(count - 1);
+        await this.WaitForLoadingComplete();
     }
 
     /**
@@ -91,6 +106,7 @@ class Helioviewer {
      */
     async WaitForLoadingComplete() {
         await this.page.waitForFunction(() => document.getElementById('loading')?.style.display == "none", null, {timeout: 60000});
+        await this.WaitForImageLoad();
     }
 
     /**
