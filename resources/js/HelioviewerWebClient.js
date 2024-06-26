@@ -1358,7 +1358,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
                 y1 = Math.round(parseFloat($('#sdo-center-y').val()*-1) - parseFloat($('#sdo-height').val()) / 2);
                 y2 = Math.round(parseFloat($('#sdo-center-y').val()*-1) + parseFloat($('#sdo-height').val()) / 2);
-                console.log(x1, x2, y1, y2);
 
                 thumbImageScale = parseFloat($('#sdo-width').val()) / 256;
 
