@@ -86,7 +86,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         });
 
         // Setup click handler for history items
-        $("#screenshot-history .history-entry").on('click', $.proxy(this._onScreenshotClick, this));
+        $("#screenshot-history").on('click','.history-entry', $.proxy(this._onScreenshotClick, this));
     },
 
     /**
