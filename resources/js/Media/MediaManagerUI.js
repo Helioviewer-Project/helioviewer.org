@@ -102,11 +102,11 @@ var MediaManagerUI = Class.extend(
         html = $("<div id='" + htmlId + "' class='history-entry'>" +
                "<div class='label' data-id='" + item.id + "'><p style='float: left'><a class='text-btn' href='" + url +
                "'>" + name + "</a>"+ helios_link +"</p></div>" +
-               "<div class='status'></div>" +
-               "</div>");
+               "<div class='status'></div></div>");
 
         // Store id with dom-node for easy access
         html.data("id", item.id);
+        html.data("name", name);
 
         this._historyBody.prepend(html);
 
@@ -114,8 +114,7 @@ var MediaManagerUI = Class.extend(
         this._buildPreviewTooltip(item);
 
         // Remove any entries beyond limit
-        if (this._historyBody.find(".history-entry").length >
-            this._manager._historyLimit) {
+        if (this._historyBody.find(".history-entry").length > this._manager._historyLimit) {
             last = this._historyBody.find(".history-entry").last().data('id');
             this._removeItem(last);
         }
@@ -139,15 +138,15 @@ var MediaManagerUI = Class.extend(
                 text: self._buildPreviewTooltipHTML(item)
             },
             position: {
-                adjust: {
-                    x: -10,
-                    y: -1
-                },
                 my: "right top",
-                at: "left center"
+                at: "bottom left",
             },
             show: {
+                solo: true,
                 delay: 140
+            },
+            hide: {
+                event: 'click unfocus'
             }
         });
     },
