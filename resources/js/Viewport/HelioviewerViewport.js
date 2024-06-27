@@ -45,11 +45,7 @@ var HelioviewerViewport = Class.extend(
         // Viewport must be resized before movement helper and sandbox are initialized.
         this.resize();
 
-        // Compute center offset in pixels
-        var centerX = this.centerX / this.imageScale,
-            centerY = this.centerY / this.imageScale;
-
-        this.movementHelper = new ViewportMovementHelper(this.domNode, this.mouseCoords, centerX, centerY);
+        this.movementHelper = new ViewportMovementHelper(this.domNode, this.mouseCoords);
 
         this.pinchDetector = new PinchDetector();
         this.helioZoom = new HelioviewerZoomer(this.pinchDetector, this.zoomLevels);
@@ -299,12 +295,12 @@ var HelioviewerViewport = Class.extend(
         sbWidth  = sandbox.width();
         sbHeight = sandbox.height();
 
-        centerX = Helioviewer.userSettings.get("state.centerX") / this.getImageScale();
-        centerY = Helioviewer.userSettings.get("state.centerY") / this.getImageScale();
+        centerX = Helioviewer.userSettings.get("state.centerX") / this.getZoomedImageScale();
+        centerY = Helioviewer.userSettings.get("state.centerY") / this.getZoomedImageScale();
 
         $("#moving-container").css({
-            "left": sbWidth  - Math.max(0, Math.min(sbWidth,  Math.round(sbWidth  / 2 + centerX))),
-            "top" : sbHeight - Math.max(0, Math.min(sbHeight, Math.round(sbHeight / 2 + centerY)))
+            "left": sbWidth  - Math.round(sbWidth  / 2 + centerX),
+            "top" : sbHeight - Math.round(sbHeight / 2 + centerY)
         });
 
         $(document).trigger("update-viewport");
@@ -372,9 +368,7 @@ var HelioviewerViewport = Class.extend(
         let offset = biggestLayer.getCurrentOffset();
         let scale = Helioviewer.userSettings.get("mobileZoomScale");
         this.movementHelper.centerViewportWithOffset(offset.x * scale, offset.y * scale);
-        this.updateViewport();
-        Helioviewer.userSettings.set("state.centerX", offset.x);
-        Helioviewer.userSettings.set("state.centerY", offset.y);
+        this.updateViewport(true);
     },
 
     /**

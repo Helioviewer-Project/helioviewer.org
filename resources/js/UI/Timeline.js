@@ -413,7 +413,7 @@ var Timeline = Class.extend({
 							}
 							str += '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.numberFormat(this.y,0,'.',',')+' image'+ext+'</b><br/>';
 						}else{
-							str += '<center class="'+imageClass+'"><span style="color:'+this.series.color+'">'+this.series.name+'</span><br><b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x)+'</b><br/>'+helioviewerWebClient.getViewportScreenshotURL(this.x, this.series.name, true)+'</center>';
+							str += '<center class="'+imageClass+'"><span style="color:'+this.series.color+'">'+this.series.name+'</span><br><b>'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S UTC', this.x)+'</b><br/>'+helioviewerWebClient.getViewportScreenshotURL(this.x, e.chart.sourceIds[this.series.name], true)+'</center>';
 						}
 		            }
 
@@ -1242,6 +1242,10 @@ var Timeline = Class.extend({
                     data: series['data'],
                     color: _colors[parseInt(series.sourceId)]
                 }, false, false);
+                if (!chart.hasOwnProperty('sourceIds')) {
+                    chart.sourceIds = {};
+                }
+                chart.sourceIds[series['name']] = series.sourceId;
 
                 categories.push(series['label']);
                 count++;
