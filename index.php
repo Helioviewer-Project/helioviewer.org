@@ -1914,7 +1914,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		<script src="/resources/js/Media/MediaManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Media/MovieManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Media/ScreenshotManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Media/ScreenshotManagerUI.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/TileLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/EventLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/MessageConsole.js?v=<?=$debugTime?>" type="text/javascript"></script>

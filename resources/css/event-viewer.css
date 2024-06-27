@@ -1,4 +1,6 @@
-.__react_modal_image__header {
-    top: 40px !important;
-    padding-bottom: 0 !important;
+@media all and (max-width: 600px) {
+    .__react_modal_image__header {
+        top: 40px !important;
+        padding-bottom: 0 !important;
+    }
 }
