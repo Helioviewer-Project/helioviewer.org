@@ -46,7 +46,7 @@ var HelioviewerTileLayer = TileLayer.extend(
         let layerAccordionLoaded = null;
 
         if (Helioviewer.outputType != "minimal" && Helioviewer.outputType != "embed") {
-            layerAccordionLoaded = helioviewerWebClient._tileLayerAccordion.addLayer(null, index, this.id, name, sourceId, hierarchy, date, true, opacity, visible, this.setOpacity, this.difference, this.diffCount, this.diffTime, this.baseDiffTime, this.setDifference, this.setDiffCount, this.setDiffTime, this.setDiffDate);
+            layerAccordionLoaded = helioviewerWebClient._tileLayerAccordion.addLayer(null, index, this.id, name, sourceId, hierarchy, date, true, opacity, visible, this.setOpacity.bind(this), this.difference, this.diffCount, this.diffTime, this.baseDiffTime, this.setDifference.bind(this), this.setDiffCount.bind(this), this.setDiffTime.bind(this), this.setDiffDate.bind(this));
         }
 
         this.tileLoader = new TileLoader(this.domNode, tileSize, tileVisibilityRange);
