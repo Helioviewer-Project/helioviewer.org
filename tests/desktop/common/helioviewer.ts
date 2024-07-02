@@ -2,8 +2,8 @@
  * @file Contains functions for interacting with the Helioviewer UI
  */
 
-import { Page, expect } from '@playwright/test';
-import exp from 'constants';
+import { Locator, Page, expect } from '@playwright/test';
+import { ImageLayer } from './layer';
 
 /**
  * Matches an image layer selection
@@ -17,14 +17,36 @@ interface LayerSelect {
 
 class Helioviewer {
     page: Page;
+    sidebar: Locator;
 
     constructor(page) {
         this.page = page;
+        this.sidebar = this.page.locator('#hv-drawer-left');
     }
 
     async Load() {
         await this.page.goto('/');
         await this.WaitForLoadingComplete();
+    }
+
+    /**
+     * Returns a handle to an Image Layer interface which can be used to
+     * semantically access image layer features of helioviewer.
+     * @param index Image layer index
+     */
+    async getLayer(index: number): Promise<ImageLayer> {
+        // To create an ImageLayer, we need the layer's unique id which
+        // is generated randomly when the page is loaded. To find the id
+        // we get the appropriate element by its class name and extract
+        // the randomly generated ID.
+
+        // Gets the specified tile layer accordion reference in the sidebar
+        let layer = await this.page.locator('.dynaccordion-section').nth(index);
+        // Get the section's id "tile-layer-<random_id>"
+        let section_id = await layer.evaluate((e) => e.id);
+        // Extract the random id from the section id
+        let random_id = section_id.split('-')[2];
+        return new ImageLayer(this.page, random_id);
     }
 
     async ExpectLayerEx(index: number, name: string, selections: LayerSelect[]) {
@@ -102,6 +124,48 @@ class Helioviewer {
     }
 
     /**
+     * Returns true of the sidebar is open, else returns false.
+     */
+    async IsSidebarOpen(): Promise<boolean> {
+        let width = (await this.sidebar.evaluate((html) => html.style.width)).trim();
+        // If the sidebar has never been opened, the width will be ''
+        // If it was opened and closed, the width will be 0px.
+        if (width === '' || width === '0px') {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @returns True if the sidebar is closed, else False
+     */
+    async IsSidebarClosed(): Promise<boolean> {
+        return !(await this.IsSidebarOpen());
+    }
+
+    /**
+     * Opens the sidebar if it is closed.
+     * If the sidebar is open, this function has no effect.
+     */
+    async OpenSidebar() {
+        if (await this.IsSidebarClosed()) {
+            this.ClickDataSourcesTab();
+            await expect(this.sidebar).toHaveAttribute("style", /^.*width: 27em.*$/);
+        }
+    }
+
+    /**
+     * Closes the sidebar if it is opened.
+     * If the sidebar is closed, this function has no effect.
+     */
+    async CloseSidebar() {
+        if (await this.IsSidebarOpen()) {
+            this.ClickDataSourcesTab();
+            await expect(this.sidebar).toHaveAttribute("style", /^.*width: 0px.*$/);
+        }
+    }
+
+    /**
      * Waits for the loading spinner to disappear
      */
     async WaitForLoadingComplete() {
@@ -121,6 +185,11 @@ class Helioviewer {
         }
     }
 
+    async ChangeOpacity(layerIndex: number) {
+        let slider = await this.page.locator('.opacity-slider-track').nth(layerIndex);
+        await slider.click();
+        console.log(await slider.evaluate((e) => e));
+    }
 }
 
 export { Helioviewer }
