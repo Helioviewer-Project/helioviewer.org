@@ -1,5 +1,6 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { HvMobile } from '../page_objects/mobile_hv';
+import exp from 'constants';
 
 /**
  * This test simply adds and removes images layers
@@ -36,4 +37,8 @@ test('Change opacity (2 layers)', async ({ page }) => {
   // Closing drawer just so we can see the results in a trace.
   await mobile.CloseDrawer();
   await page.waitForTimeout(100);
+  let first_opacity = await first_layer.getOpacity();
+  let second_opacity = await second_layer.getOpacity();
+  await expect(first_opacity).not.toBe(second_opacity);
+  await expect(first_opacity - second_opacity).toBeCloseTo(0.5, 1);
 });

@@ -51,7 +51,17 @@ class ImageLayer {
         // Release the mouse button
         await this.page.mouse.up();
         // Expect that the image opacity is near the slider opacity.
-        await expect(await this.page.locator(`.tile-layer-container[rel=tile-layer-${this.id}] .tile`).nth(0).evaluate((e) => parseFloat(e.style.opacity))).toBeCloseTo(opacity, 1);
+        await expect(await this.getOpacity()).toBeCloseTo(opacity, 1);
+    }
+
+    /**
+     * Returns the apparent opacity that is observed on the image tiles.
+     */
+    async getOpacity(): Promise<number> {
+        // Get the opacity on the first tile that matches this layer.
+        return await this.page.locator(`.tile-layer-container[rel=tile-layer-${this.id}] .tile`)
+            .nth(0)
+            .evaluate((e) => parseFloat(e.style.opacity));
     }
 }
 
