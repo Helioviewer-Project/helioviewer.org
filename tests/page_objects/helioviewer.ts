@@ -75,6 +75,7 @@ class Helioviewer {
 
     async UseNewestImage() {
         await this.page.getByText('NEWEST', {exact : true}).click();
+        await this.page.waitForTimeout(500);
     }
 
     async WaitForImageLoad() {
@@ -184,6 +185,15 @@ class Helioviewer {
             await this.page.waitForTimeout(500);
         }
     }
+
+    async ZoomOut(n: number = 1) {
+        for (let i = 0; i < n; i++) {
+            await this.page.locator('#zoom-out-button').click();
+            // Wait for zoom animation to complete.
+            await this.page.waitForTimeout(500);
+        }
+    }
+
 
     async ChangeOpacity(layerIndex: number) {
         let slider = await this.page.locator('.opacity-slider-track').nth(layerIndex);

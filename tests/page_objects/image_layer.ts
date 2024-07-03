@@ -11,13 +11,16 @@ class ImageLayer {
     readonly id: string;
     /** Locator for the image layer's opacity slider */
     private opacity_slider: Locator;
-    private opacity_slider_handle: Locator;
+    private opacity_slider_handle: Locator
+    /** Tile layer div which contains all the controls unique to this layer */
+    private layer: Locator;
 
     constructor(page: Page, id: string) {
         this.page = page;
         this.id = id;
         this.opacity_slider = this.page.locator('#opacity-slider-track-tile-layer-' + id);
         this.opacity_slider_handle = this.opacity_slider.locator('.ui-slider-handle');
+        this.layer = this.page.locator('#tile-layer-' + id);
     }
 
     /**
@@ -59,9 +62,37 @@ class ImageLayer {
      */
     async getOpacity(): Promise<number> {
         // Get the opacity on the first tile that matches this layer.
-        return await this.page.locator(`.tile-layer-container[rel=tile-layer-${this.id}] .tile`)
-            .nth(0)
+        return await this.getTile(0)
             .evaluate((e) => parseFloat(e.style.opacity));
+    }
+
+    /**
+     * Sets a value in the image layer controls.
+     * i.e. set('Observatory:', 'SOHO') to set the observatory field to SOHO
+     */
+    async set(label: string, value: string) {
+        let selection = await this.layer.getByLabel(label, {exact: true});
+        await selection.selectOption(value);
+        await this.page.waitForTimeout(500);
+    }
+
+    /**
+     * Sets the value of the running difference field.
+     * @param value
+     */
+    async setRunningDifferenceValue(value: number) {
+        let input = await this.layer.getByLabel("Running difference", {exact: true});
+        await input.fill(value.toString());
+        await input.blur();
+        await this.page.waitForTimeout(500);
+    }
+
+    /**
+     * Returns the given image tile (img tag)
+     */
+    getTile(index: number): Locator {
+        return this.page.locator(`.tile-layer-container[rel=tile-layer-${this.id}] .tile`)
+            .nth(index);
     }
 }
 

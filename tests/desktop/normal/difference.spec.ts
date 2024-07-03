@@ -1,39 +1,35 @@
 import { test, expect } from '@playwright/test';
-import { HvMobile } from '../page_objects/mobile_hv';
+import { Helioviewer } from '../../page_objects/helioviewer';
 
 test('Test running difference', async ({ page }) => {
-  let mobile = new HvMobile(page);
+  let mobile = new Helioviewer(page);
   await mobile.Load();
   await mobile.ZoomOut(3);
-  await mobile.OpenImageLayerDrawer();
+  await mobile.OpenSidebar();
   let layer = await mobile.getImageLayer(0);
   // Verify that the image layer is not using a difference image to start with.
   let tile = layer.getTile(0);
   await expect(tile).toHaveAttribute("src", /^.*difference=0.*$/)
   await layer.set('Observatory:', 'SOHO');
-  await mobile.CloseDrawer();
   await mobile.UseNewestImage();
-  await mobile.OpenImageLayerDrawer();
   await layer.set('Difference', 'Running difference');
   await layer.setRunningDifferenceValue(30);
-  await mobile.CloseDrawer();
   // Verify the image tag is now using a difference image
   await expect(tile).toHaveAttribute("src", /^.*difference=1.*$/)
 });
 
 test('Test base difference', async ({ page }) => {
-  let mobile = new HvMobile(page);
+  let mobile = new Helioviewer(page);
   await mobile.Load();
   await mobile.ZoomOut(3);
-  await mobile.OpenImageLayerDrawer();
+  await mobile.OpenSidebar();
   let layer = await mobile.getImageLayer(0);
   // Verify that the image layer is not using a difference image to start with.
   let tile = layer.getTile(0);
   await expect(tile).toHaveAttribute("src", /^.*difference=0.*$/)
   await layer.set('Observatory:', 'SOHO');
-  await mobile.CloseDrawer();
   await mobile.UseNewestImage();
-  await mobile.OpenImageLayerDrawer();
+  await mobile.WaitForImageLoad();
   await layer.set('Difference', 'Base difference');
   // Verify the image tag is now using a difference image
   await expect(tile).toHaveAttribute("src", /^.*difference=2.*$/)

@@ -93,6 +93,17 @@ class HvMobile {
     AddImageLayer() {
         return this.hv.AddImageLayer();
     }
+
+    async UseNewestImage() {
+        await this.page.locator('#timeNowBtn_mob_td #timeNowBtn').click();
+    }
+
+    async ZoomOut(steps: number) {
+        for (let i = 0; i < steps; i++) {
+            await this.page.keyboard.press("-");
+            await this.page.waitForTimeout(250);
+        }
+    }
 }
 
 export { HvMobile }
