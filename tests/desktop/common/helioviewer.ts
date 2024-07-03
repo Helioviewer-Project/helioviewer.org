@@ -34,7 +34,7 @@ class Helioviewer {
      * semantically access image layer features of helioviewer.
      * @param index Image layer index
      */
-    async getLayer(index: number): Promise<ImageLayer> {
+    async getImageLayer(index: number): Promise<ImageLayer> {
         // To create an ImageLayer, we need the layer's unique id which
         // is generated randomly when the page is loaded. To find the id
         // we get the appropriate element by its class name and extract
