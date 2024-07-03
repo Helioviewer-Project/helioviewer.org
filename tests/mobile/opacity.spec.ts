@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { HvMobile } from '../page_objects/mobile_hv';
-import exp from 'constants';
 
 /**
  * This test simply adds and removes images layers
