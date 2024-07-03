@@ -3,8 +3,8 @@
  */
 
 import { Locator, Page, expect } from '@playwright/test';
-import { Helioviewer } from '../desktop/common/helioviewer';
-import { ImageLayer } from '../desktop/common/layer';
+import { Helioviewer } from './helioviewer';
+import { ImageLayer } from './image_layer';
 
 class HvMobile {
     /** Helioviewer reference for shared interactions that apply to mobile and desktop */

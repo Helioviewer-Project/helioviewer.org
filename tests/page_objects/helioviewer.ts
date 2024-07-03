@@ -3,7 +3,7 @@
  */
 
 import { Locator, Page, expect } from '@playwright/test';
-import { ImageLayer } from './layer';
+import { ImageLayer } from './image_layer';
 
 /**
  * Matches an image layer selection

@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { HvMobile } from './mobile_hv';
+import { HvMobile } from '../page_objects/mobile_hv';
 
 /**
  * This test simply adds and removes images layers

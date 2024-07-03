@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { Helioviewer } from '../common/helioviewer';
+import { Helioviewer } from '../../page_objects/helioviewer';
 
 /**
  * This test simply adds and removes images layers

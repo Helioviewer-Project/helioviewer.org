@@ -1,7 +1,8 @@
 import { Page, Locator, expect } from '@playwright/test';
 
 /**
- * Interface for interacting with an image layer on Heliovewer.org
+ * Interface for interacting with elements related to a specific
+ * image layer on Heliovewer.org
  */
 class ImageLayer {
     /** Playwright page instance */
