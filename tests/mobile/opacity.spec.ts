@@ -2,7 +2,9 @@ import { test, expect } from '@playwright/test';
 import { HvMobile } from '../page_objects/mobile_hv';
 
 /**
- * This test simply adds and removes images layers
+ * This test drags the opacity slider to several places
+ * and verifies that the opacity of the underlying image
+ * matches the value set on the slider.
  */
 test('Change opacity (1 layer)', async ({ page }) => {
   let mobile = new HvMobile(page);
@@ -23,6 +25,9 @@ test('Change opacity (1 layer)', async ({ page }) => {
   await page.waitForTimeout(100);
 });
 
+/**
+ * This test verifies the opacity on multiple layers can be set independently.
+ */
 test('Change opacity (2 layers)', async ({ page }) => {
   let mobile = new HvMobile(page);
   await mobile.Load();
