@@ -31,6 +31,8 @@ class ImageLayer {
     async setOpacity(opacity: number) {
         // Get the desired target position for the specified opacity.
         let box = await this.opacity_slider.boundingBox();
+        // since boundingBox() can potentially return null, assert that it is not null.
+        expect(box).not.toBeNull();
         // Target y is the middle of the slider
         let target_y = (box!.y + (box!.y + box!.height)) / 2;
         // Target x points to the desired opacity. i.e. opacity = 0 will click the left of the slider
@@ -40,6 +42,8 @@ class ImageLayer {
 
         // Get the position of the slider handle.
         let slider_handle_box = await this.opacity_slider_handle.boundingBox();
+        // since boundingBox() can potentially return null, assert that it is not null.
+        expect(slider_handle_box).not.toBeNull();
         let slider_center = {
             x: slider_handle_box!.x + slider_handle_box!.width / 2,
             y: slider_handle_box!.y + slider_handle_box!.height / 1.5
