@@ -32,11 +32,11 @@ class ImageLayer {
         // Get the desired target position for the specified opacity.
         let box = await this.opacity_slider.boundingBox() as DOMRect;
         // Target y is the middle of the slider
-        let target_y = (box.top + box.bottom) / 2;
+        let target_y = (box.y + (box.y + box.height)) / 2;
         // Target x points to the desired opacity. i.e. opacity = 0 will click the left of the slider
         // and opacity=1 will click the right side of the slider.
         // Add a tiny offset since clicking the left side doesn't register.
-        let target_x = box.left + (opacity * box.width) + 0.5;
+        let target_x = box.x + (opacity * box.width) + 0.5;
 
         // Get the position of the slider handle.
         let slider_handle_box = await this.opacity_slider_handle.boundingBox() as DOMRect;
