@@ -37,4 +37,5 @@ test('Change opacity (2 layers)', async ({ page }) => {
   let first_opacity = await first_layer.getOpacity();
   let second_opacity = await second_layer.getOpacity();
   await expect(first_opacity).not.toBe(second_opacity);
+  await expect(first_opacity - second_opacity).toBeCloseTo(0.5, 1);
 });

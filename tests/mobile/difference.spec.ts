@@ -7,13 +7,15 @@ test('Test running difference', async ({ page }) => {
   await mobile.ZoomOut(3);
   await mobile.OpenImageLayerDrawer();
   let layer = await mobile.getImageLayer(0);
-  // Verify that the image layer is not using a difference image to start with.
-  let tile = layer.getTile(0);
-  await expect(tile).toHaveAttribute("src", /^.*difference=0.*$/)
   await layer.set('Observatory:', 'SOHO');
   await mobile.CloseDrawer();
   await mobile.UseNewestImage();
+  await mobile.WaitForLoad();
+  // Verify that the image layer is not using a difference image to start with.
+  let tile = layer.getTile(0);
+  await expect(tile).toHaveAttribute("src", /^.*difference=0.*$/)
   await mobile.OpenImageLayerDrawer();
+
   await layer.set('Difference', 'Running difference');
   await layer.setRunningDifferenceValue(30);
   await mobile.CloseDrawer();
@@ -27,12 +29,13 @@ test('Test base difference', async ({ page }) => {
   await mobile.ZoomOut(3);
   await mobile.OpenImageLayerDrawer();
   let layer = await mobile.getImageLayer(0);
-  // Verify that the image layer is not using a difference image to start with.
-  let tile = layer.getTile(0);
-  await expect(tile).toHaveAttribute("src", /^.*difference=0.*$/)
   await layer.set('Observatory:', 'SOHO');
   await mobile.CloseDrawer();
   await mobile.UseNewestImage();
+  await mobile.WaitForLoad();
+  // Verify that the image layer is not using a difference image to start with.
+  let tile = layer.getTile(0);
+  await expect(tile).toHaveAttribute("src", /^.*difference=0.*$/)
   await mobile.OpenImageLayerDrawer();
   await layer.set('Difference', 'Base difference');
   // Verify the image tag is now using a difference image

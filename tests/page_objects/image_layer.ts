@@ -13,14 +13,14 @@ class ImageLayer {
     private opacity_slider: Locator;
     private opacity_slider_handle: Locator
     /** Tile layer div which contains all the controls unique to this layer */
-    private layer: Locator;
+    private layer_controls: Locator;
 
     constructor(page: Page, id: string) {
         this.page = page;
         this.id = id;
         this.opacity_slider = this.page.locator('#opacity-slider-track-tile-layer-' + id);
         this.opacity_slider_handle = this.opacity_slider.locator('.ui-slider-handle');
-        this.layer = this.page.locator('#tile-layer-' + id);
+        this.layer_controls = this.page.locator('#tile-layer-' + id);
     }
 
     /**
@@ -30,7 +30,7 @@ class ImageLayer {
      */
     async setOpacity(opacity: number) {
         // Get the desired target position for the specified opacity.
-        let box = await this.opacity_slider.evaluate((e) => e.getBoundingClientRect());
+        let box = await this.opacity_slider.boundingBox() as DOMRect;
         // Target y is the middle of the slider
         let target_y = (box.top + box.bottom) / 2;
         // Target x points to the desired opacity. i.e. opacity = 0 will click the left of the slider
@@ -71,7 +71,7 @@ class ImageLayer {
      * i.e. set('Observatory:', 'SOHO') to set the observatory field to SOHO
      */
     async set(label: string, value: string) {
-        let selection = await this.layer.getByLabel(label, {exact: true});
+        let selection = await this.layer_controls.getByLabel(label, {exact: true});
         await selection.selectOption(value);
         await this.page.waitForTimeout(500);
     }
@@ -81,7 +81,7 @@ class ImageLayer {
      * @param value
      */
     async setRunningDifferenceValue(value: number) {
-        let input = await this.layer.getByLabel("Running difference", {exact: true});
+        let input = await this.layer_controls.getByLabel("Running difference", {exact: true});
         await input.fill(value.toString());
         await input.blur();
         await this.page.waitForTimeout(500);

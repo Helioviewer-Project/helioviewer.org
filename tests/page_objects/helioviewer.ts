@@ -193,13 +193,6 @@ class Helioviewer {
             await this.page.waitForTimeout(500);
         }
     }
-
-
-    async ChangeOpacity(layerIndex: number) {
-        let slider = await this.page.locator('.opacity-slider-track').nth(layerIndex);
-        await slider.click();
-        console.log(await slider.evaluate((e) => e));
-    }
 }
 
 export { Helioviewer }
