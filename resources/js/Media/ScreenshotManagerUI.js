@@ -9,6 +9,12 @@ newcap: true, immed: true, maxlen: 80, sub: true */
 /*global $, window, Helioviewer, helioviewer, MediaManagerUI, ScreenshotManager
 */
 "use strict";
+
+import { createRoot } from 'react-dom/client';
+import React from 'react';
+import { MediaManagerUI } from './MediaManagerUI';
+import ImageViewer from './ImageViewer';
+
 var ScreenshotManagerUI = MediaManagerUI.extend(
     /** @lends ScreenshotManagerUI */
     {
@@ -80,7 +86,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         });
 
         // Setup click handler for history items
-        $("#screenshot-history .history-entry").on('click', $.proxy(this._onScreenshotClick, this));
+        $("#screenshot-history").on('click','.history-entry', $.proxy(this._onScreenshotClick, this));
     },
 
     /**
@@ -117,11 +123,23 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
      * finished processing, download the screenshot. Otherwise do nothing.
      */
     _onScreenshotClick: function (event) {
-        var id = $(event.currentTarget).data('id'),
-            url = Helioviewer.api + "?action=downloadScreenshot&id=" + id;
-        window.open(url, '_parent');
+        let id = $(event.currentTarget).data('id');
+        let name = $(event.currentTarget).data('name');
+        let url = Helioviewer.api + "?action=downloadScreenshot&id=" + id;
+
+        let dom = $("<div></div>").appendTo('body');
+
+        const root = createRoot(dom[0]);
+
+        let removeScreenshotView = () => {
+            root.unmount(); 
+            dom.remove()
+        }
+
+        root.render(<ImageViewer alt={name} imageURL={url} onCloseCallback={removeScreenshotView}/>);
 
         return false;
+
     },
 
     /**
@@ -199,3 +217,5 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
     }
 
 });
+
+export { ScreenshotManagerUI }

@@ -41,6 +41,11 @@ module.exports = {
                           override: true,
                         },
                         {
+                            globalName: "ScreenshotManagerUI",
+                            moduleLocalName: "ScreenshotManagerUI",
+                            override: true
+                        },
+                        {
                           globalName: "MediaManagerUI",
                           moduleLocalName: "MediaManagerUI",
                           override: true
