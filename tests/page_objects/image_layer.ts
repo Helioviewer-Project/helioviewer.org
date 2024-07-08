@@ -30,19 +30,19 @@ class ImageLayer {
      */
     async setOpacity(opacity: number) {
         // Get the desired target position for the specified opacity.
-        let box = await this.opacity_slider.boundingBox() as DOMRect;
+        let box = await this.opacity_slider.boundingBox();
         // Target y is the middle of the slider
-        let target_y = (box.y + (box.y + box.height)) / 2;
+        let target_y = (box!.y + (box!.y + box!.height)) / 2;
         // Target x points to the desired opacity. i.e. opacity = 0 will click the left of the slider
         // and opacity=1 will click the right side of the slider.
         // Add a tiny offset since clicking the left side doesn't register.
-        let target_x = box.x + (opacity * box.width) + 0.5;
+        let target_x = box!.x + (opacity * box!.width) + 0.5;
 
         // Get the position of the slider handle.
-        let slider_handle_box = await this.opacity_slider_handle.boundingBox() as DOMRect;
+        let slider_handle_box = await this.opacity_slider_handle.boundingBox();
         let slider_center = {
-            x: slider_handle_box.x + slider_handle_box.width / 2,
-            y: slider_handle_box.y + slider_handle_box.height / 1.5
+            x: slider_handle_box!.x + slider_handle_box!.width / 2,
+            y: slider_handle_box!.y + slider_handle_box!.height / 1.5
         };
 
         // Move mouse to slider handle
