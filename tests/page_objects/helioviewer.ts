@@ -24,8 +24,8 @@ class Helioviewer {
         this.sidebar = this.page.locator('#hv-drawer-left');
     }
 
-    async Load() {
-        await this.page.goto('/');
+    async Load(path = '/') {
+        await this.page.goto(path);
         await this.WaitForLoadingComplete();
     }
 
@@ -86,13 +86,10 @@ class Helioviewer {
     }
 
     async CloseAllNotifications() {
-        let close_buttons = await this.page.locator('.jGrowl-close');
-        let count = await close_buttons.count()
-        for (let n = 0; n < count; n++) {
-            await close_buttons.nth(n).click();
+        while ((await this.page.locator('.jGrowl-close').count()) > 0) {
+            await this.page.locator('.jGrowl-close').first().click();
+            await this.page.waitForTimeout(1000);
         }
-        // Wait for notifications to disappear
-        await this.page.waitForTimeout(1000);
     }
 
     /**
