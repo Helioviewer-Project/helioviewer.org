@@ -4,6 +4,7 @@
 
 import { Locator, Page, expect } from '@playwright/test';
 import { ImageLayer } from './image_layer';
+import { Screenshot } from './screenshot';
 
 /**
  * Matches an image layer selection
@@ -21,6 +22,7 @@ class Helioviewer {
 
     constructor(page) {
         this.page = page;
+        this.screenshot = new Screenshot(this.page);
         this.sidebar = this.page.locator('#hv-drawer-left');
     }
 

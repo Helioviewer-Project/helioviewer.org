@@ -2,173 +2,108 @@ import { test, expect } from '@playwright/test';
 import { Helioviewer } from '../../page_objects/helioviewer'
 import * as fs from 'fs';
 
-const clickScreenshotButton = async (page) => {
-  await page.locator('#screenshots-button').click();
-  await page.mouse.move(200, 200);
-  await page.mouse.up();
-};
-
-const createFullSnapshot = async (page) => {
-  await page.locator('#screenshot-manager-full-viewport').click();
-  await page.mouse.move(200, 200);
-  await page.mouse.up();
-}
-
-const viewFirstScreenshot = async(page) => {
-  await page.locator('#screenshot-history .history-entry:first-child a.text-btn').click();
-  await page.mouse.move(200, 200);
-  await page.mouse.up();
-}
-
-const viewSecondScreenshot = async(page) => {
-  await page.locator('#screenshot-history .history-entry:nth-child(2) a.text-btn').click();
-  await page.mouse.move(200, 200);
-  await page.mouse.up();
-}
-
-const closeFirstScreenshot = async(page) => {
-  await page.locator('.__react_modal_image__icon_menu > a:nth-of-type(2)').click();
-  await page.mouse.move(200, 200);
-  await page.mouse.up();
-}
-
-const downloadScreenshotFromNotification = async(page) => {
-  const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('link', { name: 'Your AIA 304 screenshot is' }).click();
-  const download = await downloadPromise;
-  const readStream = await download.createReadStream();
-
-  const chunks = [];
-  for await (let chunk of readStream) {
-    chunks.push(chunk);
-  }
- 
-  return Buffer.concat(chunks).toString('base64');
-}
-
-const downloadScrenshotFromViewScreenshotFeature = async(page) => {
-  await page.locator('.__react_modal_image__icon_menu > a:nth-of-type(1)').click();
-
-  const downloadPromise = page.waitForEvent('download');
-  const download = await downloadPromise;
-  const readStream = await download.createReadStream();
-
-  const chunks = [];
-  for await (let chunk of readStream) {
-    chunks.push(chunk);
-  }
- 
-  return Buffer.concat(chunks).toString('base64');
-}
-
-const assertScreenshotCountFromDrawer = async(page, count) => {
-  const list = page.locator('#screenshot-history > .history-entry');
-  await expect(list).toHaveCount(count);
-}
-
 // loading of wrong url , is creating problems
-test('Screenshot button should toggle screenshot pagen', async ({ page, context }, info) => {
+test('Screenshot button should toggle screenshot drawer', async ({ page, context }, info) => {
 
   let hv = new Helioviewer(page);
 
   await hv.Load();
-  await hv.WaitForLoadingComplete();
   await hv.CloseAllNotifications();
 
-  await clickScreenshotButton(page);
+  await hv.screenshot.toggleScreenshotDrawer();
 
   expect(await page.screenshot()).toMatchSnapshot('screenshot-drawer-enabled.png');
 
-  await clickScreenshotButton(page);
+  await hv.screenshot.toggleScreenshotDrawer();
 
   expect(await page.screenshot()).toMatchSnapshot('screenshot-drawer-disabled.png');
 
 });
 
+// create multiple screenshots and compare them 
 test('Create a new screenshot and view it and close it', async ({ page, context }, info) => {
 
   let hv = new Helioviewer(page);
 
+  // load helioviewer
   await hv.Load();
-  await hv.WaitForLoadingComplete();
-  await hv.CloseAllNotifications();
-  await clickScreenshotButton(page);
-
-  await createFullSnapshot(page);
   await hv.CloseAllNotifications();
 
-  await assertScreenshotCountFromDrawer(page, 1)
+  // open screenshot drawer
+  await hv.screenshot.toggleScreenshotDrawer();
 
-  const screenshotNotification = await downloadScreenshotFromNotification(page);
+  // create a full-screen screenshot
+  await hv.screenshot.createFullScreenshot();
+  await hv.CloseAllNotifications();
 
-  const screenshot_notification_report_file = info.outputPath('screenshot_notification.png');
-  await fs.promises.writeFile(screenshot_notification_report_file, Buffer.from(screenshotNotification, 'base64'));
+  // assert there should be one screenshot in drawer
+  await hv.screenshot.assertScreenshotCountFromDrawer(1);
+
+  // download and save screenshot from notification ( by clicking your screenshot ready in jgrowl messsage)  
+  const screenshotFileFromNotification = await hv.screenshot.downloadScreenshotFromNotification();
+  const screenshot_notification_report_file = info.outputPath('screenshot_from_notification.png');
+  await fs.promises.writeFile(screenshot_notification_report_file, Buffer.from(screenshotFileFromNotification, 'base64'));
   await info.attach('screenshot-notification', { path: screenshot_notification_report_file });
 
+  // close the notification
   await hv.CloseAllNotifications();
 
   expect(await page.screenshot()).toMatchSnapshot('first-screenshot-created.png');
-  await viewFirstScreenshot(page);
 
+  // now click the created screenshot link and see the screenshot in full screen
+  await hv.screenshot.viewScreenshotFromScreenshotHistory(1);
+  await hv.WaitForImageLoad();
   expect(await page.screenshot()).toMatchSnapshot('view-first-screenshot.png');
-  
-  await closeFirstScreenshot(page);
-  //
+
+  // Close the screenshot from X 
+  // compare the test snapshot with the one we have created for
+  await hv.screenshot.closeScreenshotView();
   expect(await page.screenshot()).toMatchSnapshot('first-screenshot-created.png');
  
-  await viewFirstScreenshot(page);
+  // See screenshot again
+  await hv.screenshot.viewScreenshotFromScreenshotHistory(1);
+  await hv.WaitForImageLoad();
 
-  const screenshotViewScreenshot = await downloadScrenshotFromViewScreenshotFeature(page);
-
+  // now download screenshot from screenshot view via download button 
+  const screenshotFileFromScreenshotView = await hv.screenshot.downloadScreenshotFromViewScreenshotFeature();
   const screenshot_view_screenshot_report_file = info.outputPath('screenshot_view_screenshot.png');
-  await fs.promises.writeFile(screenshot_view_screenshot_report_file, Buffer.from(screenshotViewScreenshot, 'base64'));
+  await fs.promises.writeFile(screenshot_view_screenshot_report_file, Buffer.from(screenshotFileFromScreenshotView, 'base64'));
   await info.attach('screenshot-view-screenshot', { path: screenshot_view_screenshot_report_file });
 
-  await expect(screenshotNotification).toBe(screenshotViewScreenshot);
+  // compare screenshots downloaded from different sources
+  await expect(screenshotFileFromNotification).toBe(screenshotFileFromScreenshotView);
 
-  await closeFirstScreenshot(page);
+  // Close screenshot from X in the view
+  await hv.screenshot.closeScreenshotView();
 
-  await clickScreenshotButton(page);
+  // Close screenshot drawer
+  await hv.screenshot.toggleScreenshotDrawer();
 
+  // This test snapshot should match the initial state
   expect(await page.screenshot()).toMatchSnapshot('screenshot-drawer-disabled.png');
 
-  // To see again the drawer 
-  await clickScreenshotButton(page);
+  // Reopen screenshot drawer
+  await hv.screenshot.toggleScreenshotDrawer();
 
+  // Test snapshot with initial first screenshot created view
   expect(await page.screenshot()).toMatchSnapshot('first-screenshot-created.png', {
   	maxDiffPixels: 100,
   });
 
   // Now add another snapshot
-  await createFullSnapshot(page);
+  await hv.screenshot.createFullScreenshot();
   await hv.CloseAllNotifications();
 
-  await assertScreenshotCountFromDrawer(page, 2)
-  expect(await page.screenshot()).toMatchSnapshot('second-screenshot-created.png');
+  // assert there should be two screenshots in drawer
+  await hv.screenshot.assertScreenshotCountFromDrawer(2);
 
-  await viewSecondScreenshot(page);
+  expect(await page.screenshot()).toMatchSnapshot('second-screenshot-created.png', {
+  	maxDiffPixels: 100,
+  });
+
+  // assert there should be two screenshots in drawer
+  await hv.screenshot.viewScreenshotFromScreenshotHistory(1);
+  await hv.WaitForImageLoad();
 
   expect(await page.screenshot()).toMatchSnapshot('view-first-screenshot.png');
-
-
-//	NEW 
-
-  // await expect(page.getByText('×Just nowYour AIA 304')).toBeVisible();
-  // await expect(page.getByText('AIA 3041 seconds ago')).toBeVisible();
-  // await expect(page.getByRole('link', { name: 'AIA 304', exact: true })).toBeVisible();
-  // const downloadPromise = page.waitForEvent('download');
-  // await page.getByRole('link', { name: 'Your AIA 304 screenshot is' }).click();
-  // const download = await downloadPromise;
-  // const download1Promise = page.waitForEvent('download');
-  // await page.getByRole('link', { name: 'AIA 304', exact: true }).click();
-  // const download1 = await download1Promise;
-  // await page.goto('http://app.necdet.nasa.gov/');
-  // await page.getByRole('link', { name: 'AIA' }).click();
-  // await expect(page.locator('#react-modal-image-img')).toBeVisible();
-  // const download2Promise = page.waitForEvent('download');
-  // await page.getByRole('link').nth(3).click();
-  // const download2 = await download2Promise;
-  // await page.locator('.__react_modal_image__icon_menu > a:nth-child(2)').click();
-  // await expect(page.locator('div').filter({ hasText: '► Generate a Screenshot Full' }).nth(2)).toBeVisible();
-
 });

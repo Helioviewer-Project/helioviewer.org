@@ -8,7 +8,6 @@ test('Non-Existing Shared URLs Should Be Reported To User', async ({ page, conte
   let hv = new Helioviewer(page);
 
   const response = await hv.Load('/load/DONOTEXIST');
-  await hv.WaitForLoadingComplete();
   await hv.CloseAllNotifications();
   await expect(page).toHaveScreenshot();
 
@@ -21,7 +20,6 @@ test('Shared URLs redirection should be done correctly', async ({ page }, info) 
   let hv = new Helioviewer(page);
 
   await hv.Load();
-  await hv.WaitForLoadingComplete();
   await hv.CloseAllNotifications();
 
   await page.locator('#share-button').click();
@@ -47,7 +45,6 @@ test('Shared URLs should produce pages, exactly like they shared', async ({ page
   let hv = new Helioviewer(page);
 
   await hv.Load();
-  await hv.WaitForLoadingComplete();
   await hv.CloseAllNotifications();
 
   await page.locator('#share-button').click();
@@ -56,10 +53,10 @@ test('Shared URLs should produce pages, exactly like they shared', async ({ page
 
   await expect(page.locator('#helioviewer-url-box-stale-link-msg')).not.toBeVisible();
 
-  // // Zoom in 5 times
+  // Zoom in 4: times
   await hv.ZoomIn(4);
 
-  // // move mouse off of zoom button
+  // move mouse off of zoom button
   await page.mouse.move(100, 0);
   await hv.WaitForImageLoad();
 
@@ -88,7 +85,6 @@ test('Shared URLs should produce pages, exactly like they shared', async ({ page
 
   await hv.Load(shortURL);
   await hv.CloseAllNotifications();
-  await hv.WaitForLoadingComplete();
 
   const afterScreenshot = (await page.screenshot()).toString('base64');
 
