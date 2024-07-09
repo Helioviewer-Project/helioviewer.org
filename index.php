@@ -2032,6 +2032,10 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		var Helioviewer = {}; // Helioviewer global namespace
 
 		$( document ).ready(function(){
+ 			
+			// Disable jquery animations, 
+			// We don't need any animations
+			jQuery.fx.off = true
 
 			settingsJSON = {};
 
