@@ -2055,24 +2055,27 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			Helioviewer.outputType = "<?php echo $outputType; ?>";
 			Helioviewer.debug = <?php echo $debug ? 'true' : 'false'; ?>;
 
-			// Either load state from backend or use regular flow to load it
-			SettingsLoader.loadSettings(urlSettings, serverSettings).then((userSettings) => {
+
+			const loadHelioviewer = (userSettings) => {
 
 				Helioviewer.userSettings = userSettings;
 
 				// Initialize Helioviewer.org
 				helioviewerWebClient = new HelioviewerWebClient(zoomLevels);
 
-				$(document).trigger("helioviewer-ready", [true]);
-
 				// Play movie if id is specified
 				if (urlSettings.movieId) {
 					helioviewerWebClient.loadMovie(urlSettings.movieId);
 				}
 
-			}, (error) => {
-				Helioviewer.messageConsole.error("Could not load Helioviewer");
-				console.error(error);
+				$(document).trigger("helioviewer-ready", [true]);
+
+			};
+
+			// Either load state from backend or use regular flow to load it
+			SettingsLoader.loadSettings(urlSettings, serverSettings).then(loadHelioviewer, (userSettings) => {
+				Helioviewer.messageConsole.warn("Could not load Helioviewer via shared URL");
+				loadHelioviewer(userSettings);
 			});
 		});
 	</script>
