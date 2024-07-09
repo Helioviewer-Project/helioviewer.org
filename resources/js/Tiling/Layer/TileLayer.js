@@ -62,18 +62,21 @@ var TileLayer = Layer.extend(
         // tile size may be x, but if zoomed in or out, it will appear to be x * zoom.
         let scale = (Helioviewer.userSettings.get('mobileZoomScale') || 1);
         let ts = this.tileSize * scale;
+        console.log(scale, this.tileSize, ts);
         // Get the coordinate of this image relative to the origin
         // image.offset is this coordinate of the origin relative to the image center.
         // By changing the sign, it becomes the coordinate of the image center
         // relative to the origin.
         // The origin is the center of the sun / moving container.
         let offset = this.getCurrentOffset();
+        console.log(offset);
         // Computes the coordinates of the nearest tile multiples in each direction.
         // These coordinates are measured relative to the center of the image (offsetX, offsetY).
         // vpCoords are measured relative to sun center, the origin of the moving container.
         // To change the origin to be relative to the image, we have to do the operation vpCoord - (offsetX, offsetY).
-        let vpWidth = (vpCoords.right - vpCoords.left) * scale;
-        let vpHeight = (vpCoords.bottom - vpCoords.top) * scale;
+        let vpWidth = (vpCoords.right - vpCoords.left);
+        let vpHeight = (vpCoords.bottom - vpCoords.top);
+        console.log(vpWidth, vpHeight);
         let shiftedVp = {
             top: vpCoords.top + offset.y,
             left: vpCoords.left + offset.x,
