@@ -1,6 +1,7 @@
 import { Page } from "@playwright/test";
 import { Helioviewer } from "./helioviewer";
 import { HelioviewerEmbed } from "./helioviewer_embed";
+import { HelioviewerMinimal } from "./helioviewer_minimal";
 
 /**
  * Represents the common functions that should be available in all Helioviewer
@@ -70,10 +71,13 @@ let HelioviewerViews: HelioviewerView[] = [
 function InterfaceFor(view: HelioviewerView, page: Page): HelioviewerInterface {
     switch (view) {
         case EmbedView:
-            return new HelioviewerEmbed(page)
-        // TODO: Implement minimal view interface when needed.
-        default:
+            return new HelioviewerEmbed(page);
+        case MinimalView:
+            return new HelioviewerMinimal(page);
+        case NormalView:
             return new Helioviewer(page);
+        default:
+            throw "Invalid View";
     }
 }
 

@@ -5,7 +5,7 @@ import { HelioviewerInterface } from './helioviewer_interface';
 /**
  * Interface for Helioviewer's Embedded view
  */
-class HelioviewerEmbed implements HelioviewerInterface {
+class HelioviewerMinimal implements HelioviewerInterface {
     /** Playwright page */
     private page: Page;
 
@@ -21,21 +21,20 @@ class HelioviewerEmbed implements HelioviewerInterface {
         // Try to add "output=embed" to the given url string.
         // If there's already a query string, then add output=embed to the end
         if (url.indexOf("?") != -1) {
-            url = `${url}&output=embed`;
+            url = `${url}&output=minimal`;
         }
         // If there's not a query string, assume we can add one.
         else {
-            url = `${url}?output=embed`;
+            url = `${url}?output=minimal`;
         }
 
         await this.page.goto(url);
-        // Wait for 4 image tiles to appear after the page loads
         await expect(this.page.locator('.tile')).toHaveCount(4);
         await this.WaitForLoadingComplete();
     }
 
     async WaitForLoadingComplete(): Promise<void> {
-        await this.hv.WaitForImageLoad();
+        await this.hv.WaitForLoadingComplete();
     }
 
     async CloseAllNotifications(): Promise<void> {
@@ -51,4 +50,4 @@ class HelioviewerEmbed implements HelioviewerInterface {
     }
 }
 
-export { HelioviewerEmbed }
+export { HelioviewerMinimal }
