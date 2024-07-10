@@ -20,7 +20,6 @@ HelioviewerViews.forEach((view) => {
     test(`[${view}] Verify image tiles are loaded when the viewport pans to tile boundaries after zooming in and out`, async ({ page }) => {
         let hv = InterfaceFor(view, page);
         await hv.Load("/");
-        // await hv.Load(view.url);
         await hv.CloseAllNotifications();
         // Zoom in to increase the number of tiles.
         await hv.ZoomIn(4);
