@@ -14,7 +14,7 @@ import { Screenshot } from './screenshot';
 interface LayerSelect {
     label: string,
     value: string
-}
+};
 
 class Helioviewer {
     page: Page;
@@ -26,7 +26,7 @@ class Helioviewer {
         this.sidebar = this.page.locator('#hv-drawer-left');
     }
 
-    async Load(path = '/') {
+    async Load(path: string = '/') {
         await this.page.goto(path);
         await this.WaitForLoadingComplete();
     }
