@@ -100,6 +100,15 @@ class Screenshot {
     }
 
 
+    /**
+     * Waits for your screenshot ready notification message (jgrowl message)
+     * @return void
+     */
+    async waitForScreenshotCompleteNotifitication() {
+      await expect(this.page.getByText('Your AIA 304 screenshot is ready! Click here to download.')).toBeVisible();
+    }
+
+
 }
 
 export { Screenshot }

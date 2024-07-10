@@ -34,7 +34,7 @@ test('Create a new screenshot and view it and close it', async ({ page, context 
 
   // create a full-screen screenshot
   await hv.screenshot.createFullScreenshot();
-  await hv.CloseAllNotifications();
+  await hv.screenshot.waitForScreenshotCompleteNotifitication(); 
 
   // assert there should be one screenshot in drawer
   await hv.screenshot.assertScreenshotCountFromDrawer(1);
@@ -92,6 +92,7 @@ test('Create a new screenshot and view it and close it', async ({ page, context 
 
   // Now add another snapshot
   await hv.screenshot.createFullScreenshot();
+  await hv.screenshot.waitForScreenshotCompleteNotifitication(); 
   await hv.CloseAllNotifications();
 
   // assert there should be two screenshots in drawer
