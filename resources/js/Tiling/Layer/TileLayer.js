@@ -72,8 +72,8 @@ var TileLayer = Layer.extend(
         // These coordinates are measured relative to the center of the image (offsetX, offsetY).
         // vpCoords are measured relative to sun center, the origin of the moving container.
         // To change the origin to be relative to the image, we have to do the operation vpCoord - (offsetX, offsetY).
-        let vpWidth = (vpCoords.right - vpCoords.left) * scale;
-        let vpHeight = (vpCoords.bottom - vpCoords.top) * scale;
+        let vpWidth = (vpCoords.right - vpCoords.left);
+        let vpHeight = (vpCoords.bottom - vpCoords.top);
         let shiftedVp = {
             top: vpCoords.top + offset.y,
             left: vpCoords.left + offset.x,
