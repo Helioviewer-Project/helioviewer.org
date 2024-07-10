@@ -17,7 +17,7 @@ HelioviewerViews.forEach((view) => {
      * This test verifies that the black space does NOT remain, and that the tile does get loaded
      * when it is dragged into the viewport.
      */
-    test.only(`[${view}] Verify image tiles are loaded when the viewport pans to tile boundaries after zooming in and out`, async ({ page }) => {
+    test(`[${view}] Verify image tiles are loaded when the viewport pans to tile boundaries after zooming in and out`, async ({ page }) => {
         let hv = InterfaceFor(view, page);
         await hv.Load("/");
         // await hv.Load(view.url);
