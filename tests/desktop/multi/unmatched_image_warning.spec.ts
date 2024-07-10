@@ -18,7 +18,7 @@
  */
 import { test, expect } from '@playwright/test';
 
-test('Normal View: Helioviewer shows a warning when the image displayed is at least 6 hours away from the observation time.', async ({ page }) => {
+test('[Normal] Helioviewer shows a warning when the image displayed is at least 6 hours away from the observation time.', async ({ page }) => {
   await page.goto('/');
   // Close the initial notifications that come up
   // The first time visit tutorial & the image warning will show
@@ -50,7 +50,7 @@ test('Normal View: Helioviewer shows a warning when the image displayed is at le
   await expect(page.getByText('The AIA 304 layer is 6 hours')).not.toBeVisible();
 });
 
-test('Minimal View: Helioviewer shows a warning when the image displayed is at least 6 hours away from the observation time.', async ({ page }) => {
+test('[Minimal] Helioviewer shows a warning when the image displayed is at least 6 hours away from the observation time.', async ({ page }) => {
   await page.goto('/?output=minimal');
   // Set the date to 6 hours away from the test image
   await page.getByLabel('Date').click();
@@ -76,7 +76,7 @@ test('Minimal View: Helioviewer shows a warning when the image displayed is at l
   await expect(page.getByText('The AIA 171 layer is 6 hours')).not.toBeVisible();
 });
 
-test('Embedded View: Helioviewer shows a warning when the image displayed is at least 6 hours away from the observation time.', async ({ page }) => {
+test('[Embed] Helioviewer shows a warning when the image displayed is at least 6 hours away from the observation time.', async ({ page }) => {
   await page.goto('?output=embed&date=2024-01-01T00:00:00Z');
   // Expect the warning to appear with the expected text
   await expect(page.getByText('The AIA 304 layer is 943 days')).toBeVisible();
