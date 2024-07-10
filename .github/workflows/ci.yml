@@ -99,7 +99,7 @@ jobs:
     - name: Run Playwright tests
       run: |
         cd helioviewer.org
-        npx playwright test --project=firefox tests/desktop/normal/screenshot.spec.ts
+        npx playwright test tests/desktop/normal/urlsharing.spec.ts
     - uses: actions/upload-artifact@v4
       if: always()
       with:
