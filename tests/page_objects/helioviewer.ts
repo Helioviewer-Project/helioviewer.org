@@ -13,7 +13,7 @@ import { ImageLayer } from './image_layer';
 interface LayerSelect {
     label: string,
     value: string
-}
+};
 
 class Helioviewer {
     page: Page;
@@ -24,8 +24,8 @@ class Helioviewer {
         this.sidebar = this.page.locator('#hv-drawer-left');
     }
 
-    async Load() {
-        await this.page.goto('/');
+    async Load(path: string = '/') {
+        await this.page.goto(path);
         await this.WaitForLoadingComplete();
     }
 
