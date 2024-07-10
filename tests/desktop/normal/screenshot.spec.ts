@@ -21,7 +21,9 @@ test('Screenshot button should toggle screenshot drawer', async ({ page, context
 });
 
 // create multiple screenshots and compare them 
-test('Create a new screenshot and view it and close it', async ({ page, context }, info) => {
+test('Create a new screenshot and view it and close it', async ({ page, context, browserName }, info) => {
+
+  test.fixme(browserName === 'webkit', "We couldn't be able to trigger download event for webkit, skipping this test now");
 
   let hv = new Helioviewer(page);
 

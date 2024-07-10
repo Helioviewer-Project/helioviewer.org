@@ -58,9 +58,14 @@ class Screenshot {
      * @return string base64 version of the downloaded screenshot
      */
     async downloadScreenshotFromNotification() {
-      const downloadPromise = this.page.waitForEvent('download');
-      await this.page.getByRole('link', { name: 'Your AIA 304 screenshot is' }).click();
-      const download = await downloadPromise;
+
+      const downloadButton = this.page.getByRole('link', { name: 'Your AIA 304 screenshot is ready! Click here to download.' });      
+
+      const [download] = await Promise.all([
+        this.page.waitForEvent('download'),
+        downloadButton.click(),
+      ]);
+
       const readStream = await download.createReadStream();
 
       const chunks = [];

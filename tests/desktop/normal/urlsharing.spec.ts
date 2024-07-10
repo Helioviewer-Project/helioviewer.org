@@ -41,7 +41,8 @@ test('Shared URLs redirection should be done correctly', async ({ page }, info) 
 /**
  * This test plays through creating a short url and makes a test for short url should exactly resolved what is shared
  */
-test('Shared URLs should produce pages, exactly like they shared', async ({ page }, info) => {
+test('Shared URLs should produce pages, exactly like they shared', async ({ page, browserName }, info) => {
+  test.fixme(browserName === 'webkit', "We couldn't be able to trigger download event for webkit, skipping this test now");
   let hv = new Helioviewer(page);
 
   await hv.Load();
