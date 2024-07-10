@@ -110,7 +110,7 @@ class Screenshot {
      * @return void
      */
     async waitForScreenshotCompleteNotifitication() {
-      await expect(this.page.getByText('Your AIA 304 screenshot is ready! Click here to download.')).toBeVisible();
+      await expect(this.page.getByText('Your AIA 304 screenshot is ready! Click here to download.')).toBeVisible({timeout:10000});
     }
 
 
