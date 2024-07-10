@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { HelioviewerViews, InterfaceFor, NormalView } from '../../page_objects/helioviewer_interface';
+import { HelioviewerInterfaceFactory, HelioviewerViews } from '../../page_objects/helioviewer_interface';
 
 HelioviewerViews.forEach((view) => {
     /**
@@ -18,7 +18,7 @@ HelioviewerViews.forEach((view) => {
      * when it is dragged into the viewport.
      */
     test(`[${view}] Verify image tiles are loaded when the viewport pans to tile boundaries after zooming in and out`, async ({ page }) => {
-        let hv = InterfaceFor(view, page);
+        let hv = HelioviewerInterfaceFactory.Create(view, page);
         await hv.Load("/");
         await hv.CloseAllNotifications();
         // Zoom in to increase the number of tiles.

@@ -59,33 +59,36 @@ let HelioviewerViews: HelioviewerView[] = [
     EmbedView
 ]
 
-/**
- * Returns an implementation for interacting with the desired helioviewer
- * interface. This is useful for writing one test case that applies to all views.
- *
- * @note If you are targeting a specific view, use that view's constructor directly.
- *       Only use this for a view-agnostic test that can be run for all views.
- *       The scope of available functions is limited using the generic interface.
- * @param view
- */
-function InterfaceFor(view: HelioviewerView, page: Page): HelioviewerInterface {
-    switch (view) {
-        case EmbedView:
-            return new HelioviewerEmbed(page);
-        case MinimalView:
-            return new HelioviewerMinimal(page);
-        case NormalView:
-            return new Helioviewer(page);
-        default:
-            throw "Invalid View";
+class HelioviewerInterfaceFactory {
+    /**
+     * Returns an implementation for interacting with the desired helioviewer
+     * interface. This is useful for writing one test case that applies to all views.
+     *
+     * @note If you are targeting a specific view, use that view's constructor directly.
+     *       Only use this for a view-agnostic test that can be run for all views.
+     *       The scope of available functions is limited using the generic interface.
+     * @param view
+     */
+    static Create(view: HelioviewerView, page: Page): HelioviewerInterface {
+        switch (view) {
+            case EmbedView:
+                return new HelioviewerEmbed(page);
+            case MinimalView:
+                return new HelioviewerMinimal(page);
+            case NormalView:
+                return new Helioviewer(page);
+            default:
+                throw "Invalid View";
+        }
     }
 }
+
 
 export {
     NormalView,
     MinimalView,
     EmbedView,
     HelioviewerViews,
-    InterfaceFor,
+    HelioviewerInterfaceFactory,
     HelioviewerInterface
 }
