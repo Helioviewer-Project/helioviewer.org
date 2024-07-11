@@ -295,8 +295,14 @@ var MovieManagerUI = MediaManagerUI.extend(
 		};
 
 		let failCallback = function (errResp) {
-			Helioviewer.messageConsole.error("Unable to create movie, please try again later");
+
+			if (errResp.responseJSON.errno == 12) {
+				Helioviewer.messageConsole.error(errResp.responseJSON.error);
+			} else {
+				Helioviewer.messageConsole.error("Unable to create movie, please try again later");
+			}
 			console.error(errResp.responseJSON);
+
 		}
 
 		return postJSON("postMovie", params).then(successCallback, failCallback);
