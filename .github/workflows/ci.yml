@@ -85,6 +85,10 @@ jobs:
       run: |
         docker compose logs
         cat compose.yaml
+    - name: Fix cache directory permissions
+      if: always()
+      run: |
+        docker compose exec web chown 33:33 cache
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
