@@ -4,6 +4,7 @@
 
 import { Locator, Page, expect } from '@playwright/test';
 import { ImageLayer } from './image_layer';
+import { Screenshot } from './screenshot';
 
 /**
  * Matches an image layer selection
@@ -21,6 +22,7 @@ class Helioviewer {
 
     constructor(page) {
         this.page = page;
+        this.screenshot = new Screenshot(this.page);
         this.sidebar = this.page.locator('#hv-drawer-left');
     }
 
@@ -86,13 +88,10 @@ class Helioviewer {
     }
 
     async CloseAllNotifications() {
-        let close_buttons = await this.page.locator('.jGrowl-close');
-        let count = await close_buttons.count()
-        for (let n = 0; n < count; n++) {
-            await close_buttons.nth(n).click();
+        while ((await this.page.locator('.jGrowl-close').count()) > 0) {
+            await this.page.locator('.jGrowl-close').first().click();
+            await this.page.waitForTimeout(1000);
         }
-        // Wait for notifications to disappear
-        await this.page.waitForTimeout(1000);
     }
 
     /**
