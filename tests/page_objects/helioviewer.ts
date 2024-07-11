@@ -5,6 +5,7 @@
 import { Locator, Page, expect } from '@playwright/test';
 import { ImageLayer } from './image_layer';
 import { Screenshot } from './screenshot';
+import { Movie } from './movie';
 
 /**
  * Matches an image layer selection
@@ -23,6 +24,7 @@ class Helioviewer {
     constructor(page) {
         this.page = page;
         this.screenshot = new Screenshot(this.page);
+        this.movie = new Movie(this.page);
         this.sidebar = this.page.locator('#hv-drawer-left');
     }
 
@@ -192,6 +194,17 @@ class Helioviewer {
             await this.page.waitForTimeout(500);
         }
     }
+   
+    /**
+     * Assert some certain notification is visible to the application user
+     * @param type string, this can be one of the "warn", "error", "info", "success"
+     * @param message string this is the notification message you want to assert
+     * @return void
+     */
+    async assertNotification(type: string, message:string) {
+        await expect(this.page.locator('div.jGrowl-notification.'+type+' > div.jGrowl-message').getByText(message)).toBeVisible();
+    }
+
 }
 
 export { Helioviewer }
