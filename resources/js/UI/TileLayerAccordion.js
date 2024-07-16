@@ -856,10 +856,10 @@ var TileLayerAccordion = Layer.extend(
             if(typeof baseDiffTime == 'number' || baseDiffTime == null){
                 var baseDiffTime = $('#date').val()+' '+$('#time').val();
             }
-            var diffDate = baseDiffTime.toString().split(" ");
+            var diffDate = baseDiffTime.toString().split("T");
             if ($('#'+id+' .diffdate').length > 0) {
                 $('#'+id+' .diffdate')[0]._flatpickr.setDate(diffDate[0]);
-                $('#'+id+' .difftime')[0]._flatpickr.setDate(diffDate[1]);
+                $('#'+id+' .difftime')[0]._flatpickr.setDate(diffDate[1].substring(0, 9));
             }
             // $('#'+id+' .difftime').TimePickerAlone('setValue', diffDate[1]);
         }else{
