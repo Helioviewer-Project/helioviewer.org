@@ -290,13 +290,11 @@ var TileLayerAccordion = Layer.extend(
             $('#'+id+' .difference-type1-block').hide();
             $('#'+id+' .difference-type2-block').show();
             if(typeof baseDiffTime == 'number' || baseDiffTime == null){
-                var baseDiffTime = $('#date').val()+' '+$('#time').val();
+                var baseDiffTime = helioviewerWebClient.getDate().toISOString();
             }
-            var diffDate = baseDiffTime.toString().split(" ");
-
-            $('#'+id+' .diffdate').val("2022/11/30");//.change();
-            $('#'+id+' .difftime').val(diffDate[1]);//.change();
-            //$('#'+id+' .difftime').TimePickerAlone('setValue', diffDate[1]);
+            var diffDate = baseDiffTime.toString().split("T");
+            $('#'+id+' .diffdate')[0]._flatpickr.setDate(diffDate[0]);
+            $('#'+id+' .difftime')[0]._flatpickr.setDate(diffDate[1].substring(0, 9));
         }else{
             $('#'+id+' .layer-select-difference').val('0');
             $('#'+id+' .difference-type1-block').hide();

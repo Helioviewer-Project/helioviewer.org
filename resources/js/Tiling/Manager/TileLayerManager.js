@@ -81,7 +81,7 @@ var TileLayerManager = LayerManager.extend(
                 layerHierarchy[i]['difference'] = parseInt($('#'+idBase+' .layer-select-difference').val());
                 layerHierarchy[i]['diffCount'] = parseInt($('#'+idBase+' .layer-select-difference-period-count').val());
                 layerHierarchy[i]['diffTime'] = parseInt($('#'+idBase+' .layer-select-difference-period').val());
-                layerHierarchy[i]['baseDiffTime'] = $('#'+idBase+' .diffdate').val()+' '+$('#'+idBase+' .difftime').val();
+                layerHierarchy[i]['baseDiffTime'] = formatLyrDateString($('#'+idBase+' .diffdate').val()+' '+$('#'+idBase+' .difftime').val());
 
                 if ( $(accordion).find('.visible').hasClass('hidden') ) {
                     layerHierarchy[i]['visible'] = false;
