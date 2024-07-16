@@ -98,6 +98,14 @@ class ImageLayer {
         await this.layer_controls.getByLabel('Time', { exact: true }).press('Enter');
     }
 
+    async getBaseDifferenceDate(): Promise<string> {
+        return await this.layer_controls.getByLabel('Base difference').inputValue();
+    }
+
+    async getBaseDifferenceTime(): Promise<string> {
+        return await this.layer_controls.getByLabel('Time', { exact: true }).inputValue();
+    }
+
     /**
      * Returns the given image tile (img tag)
      */
