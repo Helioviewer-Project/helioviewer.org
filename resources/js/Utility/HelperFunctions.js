@@ -354,8 +354,20 @@ var extractLayerName = function (layer) {
     return layer.split(",").slice(0, -2);
 };
 
+
+/** 
+ * This function takes in a value and converts it to an integer using the parseInt method with a base of 10. 
+ * If the value cannot be converted to an integer, the original value is returned. 
+ * The parameter type is any and the return value is either an integer or the original value.
+ */
+var convertToIntegerOrOriginal = function(value) {
+    const intValue = parseInt(value, 10);
+    return isNaN(intValue) ? value : intValue;
+}
+
+
 /**
- * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white-light) into its
+ * Breaks up a given layer identifier ( e.g. SOHO,LASCO,C2,white-light) into its
  * component parts and returns a JavaScript representation.
  *
  * @param {String} The layer identifier as an comma-concatenated string
@@ -401,10 +413,10 @@ var parseLayerString = function (str) {
     return {
         uiLabels    : uiLabels,
         visible     : visible,
-        opacity     : opacity,
-        difference  : difference, 
-        diffCount   : diffCount, 
-        diffTime    : diffTime, 
+        opacity     : convertToIntegerOrOriginal(opacity),
+        difference  : convertToIntegerOrOriginal(difference),
+        diffCount   : convertToIntegerOrOriginal(diffCount),
+        diffTime    : convertToIntegerOrOriginal(diffTime),
         baseDiffTime: baseDiffTime
     };
 };
