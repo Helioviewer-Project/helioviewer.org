@@ -6,6 +6,7 @@ import { Locator, Page, expect } from '@playwright/test';
 import { ImageLayer } from './image_layer';
 import { Screenshot } from './screenshot';
 import { Movie } from './movie';
+import { URLShare } from './urlshare';
 
 /**
  * Matches an image layer selection
@@ -25,6 +26,7 @@ class Helioviewer {
         this.page = page;
         this.screenshot = new Screenshot(this.page);
         this.movie = new Movie(this.page);
+        this.urlshare = new URLShare(this.page);
         this.sidebar = this.page.locator('#hv-drawer-left');
     }
 
@@ -204,6 +206,18 @@ class Helioviewer {
     async assertNotification(type: string, message:string) {
         await expect(this.page.locator('div.jGrowl-notification.'+type+' > div.jGrowl-message').getByText(message)).toBeVisible();
     }
+
+    /*
+    * Opens the presets menu and selects the given preset and waits for layers to load.
+    * @param preset string - The name of the preset to be selected.
+    * @returns void
+    */
+    async SelectImagePreset(preset: string) {
+        await this.page.locator('.layersPresetsList .dropdown-main').click();
+        await this.page.getByRole('link', { name: preset }).click();
+        await this.WaitForLoadingComplete();
+    }
+
 
 }
 
