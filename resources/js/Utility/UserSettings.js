@@ -260,6 +260,8 @@ var UserSettings = Class.extend(
         else {
             this._loadSavedSettings();
         }
+        // Fix base diff time if it's using an invalid format.
+        this._patchBaseDiffTime();
 
         // If version is out of date, load defaults
         if (this.get('version') < this._defaults.version) {
@@ -326,8 +328,6 @@ var UserSettings = Class.extend(
         else {
             this.settings = this.cookies.get("settings");
         }
-        // Fix base diff time if it's using an invalid format.
-        this._patchBaseDiffTime();
     },
 
     /**

@@ -293,8 +293,8 @@ var TileLayerAccordion = Layer.extend(
                 var baseDiffTime = helioviewerWebClient.getDate().toISOString();
             }
             var diffDate = baseDiffTime.toString().split("T");
-            $('#'+id+' .diffdate')[0]._flatpickr.setDate(diffDate[0]);
-            $('#'+id+' .difftime')[0]._flatpickr.setDate(diffDate[1].substring(0, 9));
+            $('#'+id+' .diffdate').val(diffDate[0]);
+            $('#'+id+' .difftime').val(diffDate[1].substring(0, 9));
         }else{
             $('#'+id+' .layer-select-difference').val('0');
             $('#'+id+' .difference-type1-block').hide();
