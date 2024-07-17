@@ -7,7 +7,7 @@ import * as fs from 'fs';
  * will make a screenshot out of it, and view the screenshot and check the filename we download 
  * and it should have the correct filename
  */
-test.only('Download from screenshot fullscreen view, should correctly set filename', async ({ page, browserName }) => {
+test('Download from screenshot fullscreen view, should correctly set filename', async ({ page, browserName }) => {
 
   test.fixme(browserName === 'webkit', "We couldn't be able to trigger download event for webkit, skipping this test now");
 
