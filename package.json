@@ -16,13 +16,13 @@
     "prettier": "^3.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-modal-image": "^2.6.0",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
     "xmldom": "^0.6.0",
     "xmlhttprequest": "^1.8.0"
   },
   "dependencies": {
-    "jhvrequest": "^0.0.9"
+    "jhvrequest": "^0.0.9",
+    "react-modal-image": "github:mudhoney/react-modal-image#master"
   }
 }
