@@ -91,6 +91,21 @@ class ImageLayer {
         await this.page.waitForTimeout(500);
     }
 
+    async setBaseDifferenceDate(date: string, time: string) {
+        await this.layer_controls.getByLabel('Base difference').fill(date);
+        await this.layer_controls.getByLabel('Base difference').press('Enter');
+        await this.layer_controls.getByLabel('Time', { exact: true }).fill(time);
+        await this.layer_controls.getByLabel('Time', { exact: true }).press('Enter');
+    }
+
+    async getBaseDifferenceDate(): Promise<string> {
+        return await this.layer_controls.getByLabel('Base difference').inputValue();
+    }
+
+    async getBaseDifferenceTime(): Promise<string> {
+        return await this.layer_controls.getByLabel('Time', { exact: true }).inputValue();
+    }
+
     /**
      * Returns the given image tile (img tag)
      */
