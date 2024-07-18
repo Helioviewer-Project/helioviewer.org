@@ -13,10 +13,6 @@ jobs:
   jest-unit-tests:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        shard: ['1/2', '2/2']
-
     steps:
     - uses: actions/checkout@v3
     # Setup java for access to `ant`
@@ -38,6 +34,10 @@ jobs:
     - name: Prettier check (certain files)
       run: npx prettier -c resources/js/test resources/js/Media/VideoPlayer.jsx
   playwright-e2e-tests:
+    strategy:
+      matrix:
+        shard: ['1/2', '2/2']
+
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
