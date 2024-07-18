@@ -18,7 +18,7 @@ const Platforms = {
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  timeout: 600000,
+  timeout: 300000,
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,

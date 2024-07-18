@@ -50,7 +50,7 @@ var UserSettings = Class.extend(
         } catch (e) {
             return false;
         }
-    }, 
+    },
 
     /**
      * Gets a specified setting
@@ -260,6 +260,8 @@ var UserSettings = Class.extend(
         else {
             this._loadSavedSettings();
         }
+        // Fix base diff time if it's using an invalid format.
+        this._patchBaseDiffTime();
 
         // If version is out of date, load defaults
         if (this.get('version') < this._defaults.version) {
@@ -328,6 +330,22 @@ var UserSettings = Class.extend(
         }
     },
 
+    /**
+     * baseDiffTime should be in the format Y-m-dTH:i:s.###Z.
+     * Setting the basedifftime date in the UI previously changed this
+     * to the format Y/m/d H:i:s.
+     * We're trying to normalize the dates to use a consistent format,
+     * so if the old format is here, change it to the new format.
+     */
+    _patchBaseDiffTime: function () {
+        let layers = this.settings.state.tileLayers;
+        for (let i = 0; i < layers.length; i++) {
+            let layer = layers[i];
+            layer.baseDiffTime = formatLyrDateString(layer.baseDiffTime);
+        }
+        this._save();
+    },
+
 
     /**
      * Processes and validates any URL parameters that have been set
@@ -362,7 +380,7 @@ var UserSettings = Class.extend(
             });
         }
 
-        // If any historical shared url turns off event labels, we also respect that 
+        // If any historical shared url turns off event labels, we also respect that
         if ( typeof urlSettings.eventLabels != 'undefined' && urlSettings.eventLabels == false) {
             // We also turning labels off for all layers
             Object.keys(this.get("state.events_v2")).forEach((section) => {
@@ -436,11 +454,7 @@ var UserSettings = Class.extend(
 
             if(typeof layerObj.baseDiffTime != 'undefined'){
 	            var layerDateStr = layerObj.baseDiffTime;
-	            if(typeof layerDateStr == 'number' || layerDateStr == null){
-					var baseDiffTime = $('#date').val()+' '+$('#time').val();
-				}
-
-	            layerString += layerDateStr.replace(' ', 'T').replace(/\//g, '-') + '.000Z';
+	            layerString += formatLyrDateString(layerDateStr);
             }else{
 	            layerString += "";
             }
@@ -533,7 +547,7 @@ var UserSettings = Class.extend(
     },
 
     /*
-     * @description This function is used to update/add state variables to this event_layer state, 
+     * @description This function is used to update/add state variables to this event_layer state,
      * @param {string} id of the event layer
      * @param {string} key
      * @param {any} value
@@ -547,10 +561,10 @@ var UserSettings = Class.extend(
     },
 
     /*
-     * @description This function is used to get/read state variables to this event_layer state, 
+     * @description This function is used to get/read state variables to this event_layer state,
      * @param {string} id of the event layer
      * @param {string} key
-     * @return {any} 
+     * @return {any}
      */
     getHelioViewerEventLayerSettingsValue: function (treeID, key) {
         let treeConf = this.getHelioViewerEventLayerSettings(treeID);
@@ -558,11 +572,11 @@ var UserSettings = Class.extend(
     },
 
     /*
-     * @description This function is used to get/read all state variables to this event_layer state, 
+     * @description This function is used to get/read all state variables to this event_layer state,
      * it also keeps existing states aligned with the new states, it adds keys with default values if they are not in old state
      * @param {string} id of the event layer
      * @param {string} key
-     * @return {JSON}   
+     * @return {JSON}
      */
     getHelioViewerEventLayerSettings: function (treeID) {
 
@@ -602,7 +616,7 @@ var UserSettings = Class.extend(
     /*
      * @description Supplies iterator to traverse all event_layer configuration with given function
      * @param {func} it , iterator function, will be executed for each event layer
-     * @return {void} 
+     * @return {void}
      */
     iterateOnHelioViewerEventLayerSettings: function(it) {
         Object.values(Helioviewer.userSettings.get('state.events_v2')).forEach(it);
