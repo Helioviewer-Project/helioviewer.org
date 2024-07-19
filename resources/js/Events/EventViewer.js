@@ -18,15 +18,16 @@ export default function EventViewer({views, source, onChange}) {
     let groups = GetTabGroups(views);
 
     return <div>
-        <div className='event-info-dialog-menu'>
+        <div className='event-info-dialog-menu horizontal-scrolled-menu'>
             {/* Map each view to into its own unique Tab. When clicked, tab will be updated with the selected index */}
             {groups.map((viewGroup, idx) => <TabGroup key={idx} views={viewGroup} selected={tab} setSelected={setTab} />)}
             {/* Then create the final tab on the right containing the "All" text */}
-            <Tab key={'all'} name={'all'} extraClasses={'right'} selected={tab == 'all'} onClick={(_) => setTab('all')} />
+            <div className="tabgroup">
+                <Tab key={'all'} name={'all'} selected={tab == 'all'} onClick={(_) => setTab('all')} />
+            </div>
         </div>
         {/* When a tab is selected, access the view by index. When "all" is selected, use the JsonViewer */}
-        {tab != 'all' ? <JsonViewer value={tab.content} /> :
-                        <JsonViewer value={source} />}
+        {tab != 'all' ? <JsonViewer value={tab.content} /> : <JsonViewer value={source} />}
     </div>;
 }
 

@@ -62,7 +62,7 @@ test('Shared URLs should produce pages, exactly like they shared', async ({ page
   await hv.WaitForImageLoad();
 
 
-  // Now it has to be visible 
+  // Now it has to be visible
   await expect(page.locator('#helioviewer-url-box-stale-link-msg')).toBeVisible();
 
   await page.locator('#update-share-url-link').click();
@@ -95,4 +95,3 @@ test('Shared URLs should produce pages, exactly like they shared', async ({ page
 
   await expect(afterScreenshot).toBe(myScreenshot);
 });
-

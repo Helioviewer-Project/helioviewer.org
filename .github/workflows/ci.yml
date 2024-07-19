@@ -13,10 +13,6 @@ jobs:
   jest-unit-tests:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: ['18.x']
-
     steps:
     - uses: actions/checkout@v3
     # Setup java for access to `ant`
@@ -38,6 +34,11 @@ jobs:
     - name: Prettier check (certain files)
       run: npx prettier -c resources/js/test resources/js/Media/VideoPlayer.jsx
   playwright-e2e-tests:
+    strategy:
+      matrix:
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
+
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -99,10 +100,10 @@ jobs:
     - name: Run Playwright tests
       run: |
         cd helioviewer.org
-        npx playwright test 
+        npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}}
     - uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: playwright-report
+        name: playwright-report-${{matrix.shardIndex}}
         path: helioviewer.org/playwright-report/
-        retention-days: 30
+        retention-days: 7

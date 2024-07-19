@@ -6,6 +6,7 @@ import { Locator, Page, expect } from '@playwright/test';
 import { ImageLayer } from './image_layer';
 import { Screenshot } from './screenshot';
 import { Movie } from './movie';
+import { URLShare } from './urlshare';
 
 /**
  * Matches an image layer selection
@@ -20,11 +21,15 @@ interface LayerSelect {
 class Helioviewer {
     page: Page;
     sidebar: Locator;
+    screenshot: Screenshot;
+    movie: Movie;
+    urlshare: URLShare;
 
     constructor(page) {
         this.page = page;
         this.screenshot = new Screenshot(this.page);
         this.movie = new Movie(this.page);
+        this.urlshare = new URLShare(this.page);
         this.sidebar = this.page.locator('#hv-drawer-left');
     }
 
@@ -194,7 +199,7 @@ class Helioviewer {
             await this.page.waitForTimeout(500);
         }
     }
-   
+
     /**
      * Assert some certain notification is visible to the application user
      * @param type string, this can be one of the "warn", "error", "info", "success"
@@ -204,6 +209,36 @@ class Helioviewer {
     async assertNotification(type: string, message:string) {
         await expect(this.page.locator('div.jGrowl-notification.'+type+' > div.jGrowl-message').getByText(message)).toBeVisible();
     }
+
+    /*
+    * Opens the presets menu and selects the given preset and waits for layers to load.
+    * @param preset string - The name of the preset to be selected.
+    * @returns void
+    */
+    async SelectImagePreset(preset: string) {
+        await this.page.locator('.layersPresetsList .dropdown-main').click();
+        await this.page.getByRole('link', { name: preset }).click();
+        await this.WaitForLoadingComplete();
+    }
+
+
+    /**
+    * Sets the observation datetime and waits helioviewer to load, 
+    * @param string date - The date to be entered in the format 'MM/DD/YYYY'.
+    * @param string time - The time to be entered in the format 'HH:MM'.
+    * @returns void - A promise that resolves when the date and time have been successfully entered.
+    */
+    async SetObservationTime(date, time) {
+        await this.OpenSidebar();
+        await this.page.getByLabel('Observation date', { exact: true }).click();
+        await this.page.getByLabel('Observation date', { exact: true }).fill(date);
+        await this.page.getByLabel('Observation date', { exact: true }).press('Enter');
+        await this.page.getByLabel('Observation time').click();
+        await this.page.getByLabel('Observation time').fill(time);
+        await this.page.getByLabel('Observation time').press('Enter');
+        await this.WaitForImageLoad();
+    }
+
 
 }
 

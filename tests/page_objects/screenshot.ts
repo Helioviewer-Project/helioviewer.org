@@ -80,6 +80,16 @@ class Screenshot {
      * Downloads screenshot from screenshot view ( when you press screenshot history links ) 
      * @return string base64 version of the downloaded screenshot
      */
+    async fetchScreenshotFromViewScreenshotFeature() {
+      const downloadPromise = this.page.waitForEvent('download');
+      await this.page.locator('.__react_modal_image__icon_menu > a:nth-of-type(1)').click();
+      return await downloadPromise;
+    }
+
+    /**
+     * Downloads screenshot from screenshot view ( when you press screenshot history links ) 
+     * @return string base64 version of the downloaded screenshot
+     */
     async downloadScreenshotFromViewScreenshotFeature() {
       const downloadPromise = this.page.waitForEvent('download');
       await this.page.locator('.__react_modal_image__icon_menu > a:nth-of-type(1)').click();

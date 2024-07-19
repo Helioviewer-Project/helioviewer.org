@@ -307,8 +307,7 @@ var TileLayer = Layer.extend(
 	    if(typeof baseDiffTime == 'number' || baseDiffTime == null){
 			baseDiffTime = $('#date').val()+' '+$('#time').val();
 		}
-        this.baseDiffTime = baseDiffTime;
-        //this.tileLoader.reloadTiles(true);
+        this.baseDiffTime = formatLyrDateString(baseDiffTime);
     },
 
     /**

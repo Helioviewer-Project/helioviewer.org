@@ -81,7 +81,16 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 }
 
 .event-info-dialog-menu .tabgroup {
-    display: inline;
+    display: inline-block;
+}
+.horizontal-scrolled-menu {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    position:relative;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: auto;
+    scrollbar-width: thin;          /* "auto" or "thin" */
+    scrollbar-color: #333 #777;   /* scroll thumb and track */ 
 }
 
 a.show-tags-btn {
