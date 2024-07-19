@@ -799,7 +799,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 								<!-- Advanced movie settings -->
 								<div id='movie-settings-advanced'>
-                                        
+
 									<!-- Movie duration -->
 									<fieldset style='padding: 0px; margin: 5px 0px 8px' class="movie-duration-box">
 										<label for='movie-duration' style='margin-right: 5px; font-style: italic;'>Duration</label>
