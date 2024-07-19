@@ -233,7 +233,7 @@ class Helioviewer {
         await this.page.getByLabel('Observation time').click();
         await this.page.getByLabel('Observation time').fill(time);
         await this.page.getByLabel('Observation time').press('Enter');
-        await hv.WaitForImageLoad();
+        await this.WaitForImageLoad();
     }
 
 
