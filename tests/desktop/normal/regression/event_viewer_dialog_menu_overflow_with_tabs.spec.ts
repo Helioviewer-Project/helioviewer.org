@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { Helioviewer } from '../../../page_objects/helioviewer';
 import * as fs from 'fs';
 
-test.only('Event viewer dialog menu should not overflow with tabs', async ({ page }) => {
+test('Event viewer dialog menu should not overflow with tabs', async ({ page }) => {
 
   let hv = new Helioviewer(page);
 
