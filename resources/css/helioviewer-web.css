@@ -584,7 +584,7 @@ html, body {
    display: inline-block;
    text-align: left;
 }
-.timeSelectorDialog input[type=text], .accordion input[type=text] {
+.timeSelectorDialog input[type=text], .accordion input[type=text],  .accordion input[type=number]{
    background-color: rgba(255,255,255,0.2);
    border: 1px solid rgba(255,255,255,0.6);
    -webkit-border-radius: 0.2em;

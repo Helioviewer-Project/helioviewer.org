@@ -832,11 +832,11 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 										<div style='padding:10px;'>
 											<input aria-labelledby="speed-method-fps" type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
 											<label id="speed-method-fps" for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
-											<input aria-labelledby="speed-method-fps" id='frame-rate' maxlength='2' size='3' type="text" name="framerate" min="1" max="30" value="15" pattern='^(0?[1-9]|[1-2][0-9]|30)$' />(1-30)<br />
+											<input aria-labelledby="speed-method-fps" id='frame-rate' min="1" max="30" step="1" type="number" name="framerate"/>(1-30)<br />
 
 											<input aria-labelledby="speed-method-length" type="radio" name="speed-method" id="speed-method-l" value="length" />
 											<label id="speed-method-length" for="speed-method-l" style='width: 62px;'>Length (s)</label>
-											<input aria-labelledby="speed-method-length" id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
+											<input aria-labelledby="speed-method-length" id='movie-length' min="5" max="100" value="20" step="1" type="number" name="movie-length" disabled="disabled"/>(5-100)<br />
 										</div>
 									</fieldset>
 
