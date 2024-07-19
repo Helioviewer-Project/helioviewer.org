@@ -21,6 +21,9 @@ interface LayerSelect {
 class Helioviewer {
     page: Page;
     sidebar: Locator;
+    screenshot: Screenshot;
+    movie: Movie;
+    urlshare: URLShare;
 
     constructor(page) {
         this.page = page;
@@ -196,7 +199,7 @@ class Helioviewer {
             await this.page.waitForTimeout(500);
         }
     }
-   
+
     /**
      * Assert some certain notification is visible to the application user
      * @param type string, this can be one of the "warn", "error", "info", "success"

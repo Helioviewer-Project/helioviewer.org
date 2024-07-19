@@ -614,30 +614,30 @@ var SystemLayersPresets = [
 		'name':'NOAA flares and active regions',
 		'observationDate':'',
 		'events':'[AR,NOAA_SWPC_Observer,1],[FL,SWPC,1]',
-		'layers':'[SDO,AIA,171,1,100,0,60,1,2017/11/16 09:02:20]'
+		'layers':'[SDO,AIA,171,1,100,0,60,1,2017-11-16T09:02:20.000Z]'
 	},
 	{
 		'name':'Eruption Monitor',
 		'observationDate':'',
 		'events':'[CE,all,1],[ER,all,1],[FI,all,1],[FA,all,1],[FE,all,1]',
-		'layers':'[SDO,AIA,304,1,100,0,60,1,2017/11/16 09:02:20],[SOHO,LASCO,C2,white-light,1,100,0,60,1,2017/05/18 15:35:00],[SOHO,LASCO,C3,white-light,1,100,0,60,1,2017/05/18 15:35:00]'
+		'layers':'[SDO,AIA,304,1,100,0,60,1,2017-11-16T09:02:20.000Z],[SOHO,LASCO,C2,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z],[SOHO,LASCO,C3,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z]'
 	},
 	{
 		'name':'Magnetic flux Monitor',
 		'observationDate':'',
 		'events':'[EF,all,1],[SS,all,1]',
-		'layers':'[SDO,HMI,magnetogram,1,100,0,60,1,2017/11/16 09:02:20]'
+		'layers':'[SDO,HMI,magnetogram,1,100,0,60,1,2017-11-16T09:02:20.000Z]'
 	},
 	{
 		'name':'Coronal hole Monitor',
 		'observationDate':'',
 		'events':'[CH,all,1]',
-		'layers':'[SDO,AIA,211,1,100,0,60,1,2017/11/16 09:02:20]'
+		'layers':'[SDO,AIA,211,1,100,0,60,1,2017-11-16T09:02:20.000Z]'
 	},
 	{
 		'name':'Sunspots',
 		'observationDate':'',
 		'events':'[SS,all,1]',
-		'layers':'[SDO,HMI,continuum,1,100,0,60,1,2017/11/16 09:02:20]'
+		'layers':'[SDO,HMI,continuum,1,100,0,60,1,2017-11-16T09:02:20.000Z]'
 	},
 ];
