@@ -220,7 +220,7 @@ class Helioviewer {
 
 
     /**
-    * Sets the observation date and time in helioviewer.
+    * Sets the observation datetime and waits helioviewer to load, 
     * @param string date - The date to be entered in the format 'MM/DD/YYYY'.
     * @param string time - The time to be entered in the format 'HH:MM'.
     * @returns void - A promise that resolves when the date and time have been successfully entered.
@@ -233,6 +233,7 @@ class Helioviewer {
         await this.page.getByLabel('Observation time').click();
         await this.page.getByLabel('Observation time').fill(time);
         await this.page.getByLabel('Observation time').press('Enter');
+        await hv.WaitForImageLoad();
     }
 
 
