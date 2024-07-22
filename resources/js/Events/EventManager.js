@@ -481,6 +481,10 @@ var EventManager = Class.extend({
                                 // TODO _makeEventInstanceTreeNodeID can be moved to EventMarker
                                 let jsTreeCheckboxID = self._makeEventInstanceTreeNodeID(eventTypeName, underScoredFrmName, em.id);
 
+                                // Clean of backslashes when we read back the ID
+                                // We only add backslashes to make them HTML id
+                                jsTreeCheckboxID = jsTreeCheckboxID.replace(/\\/g,'');
+
                                 // if our id for this marker not in selected list
                                 let notClickedChildOfFRM = !eventsToBeShownForFRM.includes(jsTreeCheckboxID);
                                 let childToHide = em.belongsToEventType(eventTypeName) && em.belongsToFrm(frmName) && notClickedChildOfFRM;
@@ -508,8 +512,11 @@ var EventManager = Class.extend({
      * @returns void
      */
     emphasizeMarkers: function (jsTreeNodeID) {
+
+
         self = this;
         return (event) => {
+            jsTreeNodeID = jsTreeNodeID.replace(/\\/g,'');
             let parts = jsTreeNodeID.split('--');
 
             let markersToEmphasize = [];
@@ -517,7 +524,7 @@ var EventManager = Class.extend({
             // this is an event instance
             if(parts.length == 3) { 
                 markersToEmphasize = this._eventMarkers.filter(em => {
-                    return jsTreeNodeID == self._makeEventInstanceTreeNodeID(em.pin, em.name, em.id);
+                    return jsTreeNodeID == self._makeEventInstanceTreeNodeID(em.pin, em.name, em.id).replace(/\\/g,'');
                 });
             }
 
@@ -548,13 +555,14 @@ var EventManager = Class.extend({
      */
     deEmphasizeMarkers: function (jsTreeNodeID) {
         return (event) => {
+            jsTreeNodeID = jsTreeNodeID.replace(/\\/g,'');
             let parts = jsTreeNodeID.split('--');
             let markersToDeEmphasize = [];
 
             // this is an event instance
             if(parts.length == 3) { 
                 markersToDeEmphasize = this._eventMarkers.filter(em => {
-                    return jsTreeNodeID == self._makeEventInstanceTreeNodeID(em.pin, em.name, em.id);
+                    return jsTreeNodeID == self._makeEventInstanceTreeNodeID(em.pin, em.name, em.id).replace(/\\/g,'');
                 });
             }
 
