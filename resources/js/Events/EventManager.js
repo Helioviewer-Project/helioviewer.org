@@ -429,12 +429,16 @@ var EventManager = Class.extend({
                     checkedFRMs[checkedTypeObj['event_type']].push(parsedFrm);
                 }
 
-                // If we haven't already seen frm , in our fake frm and childrens data, define it 
-                // or add it
-                if(!notFullySelectedFRMSAndChildrens.hasOwnProperty(parsedFrm)) {
-                    notFullySelectedFRMSAndChildrens[parsedFrm] = [eventInstanceNewName];
+                // If there is no event_type to host frms and their children, we create it
+                if(!notFullySelectedFRMSAndChildrens.hasOwnProperty(checkedTypeObj['event_type'])) {
+                    notFullySelectedFRMSAndChildrens[checkedTypeObj['event_type']] = {};
+                }
+
+                // If we haven't already seen frm , in our fake frm and childrens data, define it or add it
+                if(!notFullySelectedFRMSAndChildrens[checkedTypeObj['event_type']].hasOwnProperty(parsedFrm)) {
+                    notFullySelectedFRMSAndChildrens[checkedTypeObj['event_type']][parsedFrm] = [eventInstanceNewName];
                 } else {
-                    notFullySelectedFRMSAndChildrens[parsedFrm].push(eventInstanceNewName);
+                    notFullySelectedFRMSAndChildrens[checkedTypeObj['event_type']][parsedFrm].push(eventInstanceNewName);
                 }
 
             });
@@ -467,9 +471,9 @@ var EventManager = Class.extend({
                         // if this frm is not fully selected
                         // we are going to hide its children which are not in our checked event_instances
                         // event_instances are the deepest level in the jstree, they are the individual markers 
-                        if(notFullySelectedFRMSAndChildrens.hasOwnProperty(underScoredFrmName)) {
+                        if(notFullySelectedFRMSAndChildrens.hasOwnProperty(eventTypeName) && notFullySelectedFRMSAndChildrens[eventTypeName].hasOwnProperty(underScoredFrmName)) {
 
-                            let eventsToBeShownForFRM = notFullySelectedFRMSAndChildrens[underScoredFrmName];
+                            let eventsToBeShownForFRM = notFullySelectedFRMSAndChildrens[eventTypeName][underScoredFrmName];
 
                             let concerningEventMarkers = self._eventMarkers.forEach(em => {
 
