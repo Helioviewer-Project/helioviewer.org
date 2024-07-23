@@ -3,10 +3,10 @@ import { Helioviewer } from '../../../page_objects/helioviewer';
 import * as fs from 'fs';
 
 /**
- * This test is a regression test for proving issue 588 is fixed for the given helioviewer
+ * This test is a regression test for proving issue 589 is fixed for the given helioviewer
  * @see https://github.com/Helioviewer-Project/helioviewer.org/issues/589
  */
-test'Issue 589, names with same frm name , creating problems for highlighting features', async ({ page, browser }) => {
+test('Issue 589, names with same frm name , creating problems for highlighting features', async ({ page, browser }) => {
 
     // Mock API events request to include problem data which creates bug
     await page.route('**/*action=events&sources=HEK*', async route => {
