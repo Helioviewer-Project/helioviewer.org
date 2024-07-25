@@ -139,7 +139,7 @@ var EventTree = Class.extend({
 
         saved.forEach(eventLayer => {
             if (eventLayer.frms[0] == 'all') {
-                node = "#"+eventLayer.event_type;
+                node = "#"+$.escapeSelector(eventLayer.event_type);
                 if ( $(node).length != 0 ) {
                     self.jstreeFunc("check_node", node);
                 }
@@ -147,7 +147,7 @@ var EventTree = Class.extend({
             else {
 
                 $.each(eventLayer.frms, function(j,frm) {
-                    node = "#"+eventLayer.event_type+"--"+frm;
+                    node = "#"+$.escapeSelector(eventLayer.event_type+"--"+frm);
                     if ( $(node).length != 0 ) {
                         // If the node is there ,we don't need to remember it is checked 
                         // just remove it from the cached checked frms
@@ -165,9 +165,9 @@ var EventTree = Class.extend({
                 // We are here checking them in jstree and also we are opening their parent frm, to be able to show them selected
                 eventLayer.event_instances.forEach(eI => {
 
-                    let eventInstanceNodeID = "#"+eI;
+                    let eventInstanceNodeID = "#"+$.escapeSelector(eI);
                     let splitted = eI.split("--");
-                    let parentFrmNode = "#"+splitted[0]+"--"+splitted[1];
+                    let parentFrmNode = "#"+$.escapeSelector(splitted[0]+"--"+splitted[1]);
 
                     if( $(eventInstanceNodeID).length != 0) {
 

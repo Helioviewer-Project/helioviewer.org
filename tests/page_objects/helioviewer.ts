@@ -7,6 +7,7 @@ import { ImageLayer } from './image_layer';
 import { Screenshot } from './screenshot';
 import { Movie } from './movie';
 import { URLShare } from './urlshare';
+import { EventTree } from './event_tree';
 
 /**
  * Matches an image layer selection
@@ -31,6 +32,10 @@ class Helioviewer {
         this.movie = new Movie(this.page);
         this.urlshare = new URLShare(this.page);
         this.sidebar = this.page.locator('#hv-drawer-left');
+    }
+
+    parseTree(source: string): EventTree {
+        return new EventTree(source, this.page); 
     }
 
     async Load(path: string = '/') {
@@ -239,6 +244,13 @@ class Helioviewer {
         await this.WaitForImageLoad();
     }
 
+    /**
+     * Hover mouse on helioviewer logo
+    *  @returns void - A promise that indicates , mouse is already hovered on our logo
+     */
+    async HoverOnLogo() {
+        await this.page.locator('#logo').hover();
+    }
 
 }
 

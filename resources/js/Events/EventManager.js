@@ -429,12 +429,16 @@ var EventManager = Class.extend({
                     checkedFRMs[checkedTypeObj['event_type']].push(parsedFrm);
                 }
 
-                // If we haven't already seen frm , in our fake frm and childrens data, define it 
-                // or add it
-                if(!notFullySelectedFRMSAndChildrens.hasOwnProperty(parsedFrm)) {
-                    notFullySelectedFRMSAndChildrens[parsedFrm] = [eventInstanceNewName];
+                // If there is no event_type to host frms and their children, we create it
+                if(!notFullySelectedFRMSAndChildrens.hasOwnProperty(checkedTypeObj['event_type'])) {
+                    notFullySelectedFRMSAndChildrens[checkedTypeObj['event_type']] = {};
+                }
+
+                // If we haven't already seen frm , in our fake frm and childrens data, define it or add it
+                if(!notFullySelectedFRMSAndChildrens[checkedTypeObj['event_type']].hasOwnProperty(parsedFrm)) {
+                    notFullySelectedFRMSAndChildrens[checkedTypeObj['event_type']][parsedFrm] = [eventInstanceNewName];
                 } else {
-                    notFullySelectedFRMSAndChildrens[parsedFrm].push(eventInstanceNewName);
+                    notFullySelectedFRMSAndChildrens[checkedTypeObj['event_type']][parsedFrm].push(eventInstanceNewName);
                 }
 
             });
@@ -467,15 +471,19 @@ var EventManager = Class.extend({
                         // if this frm is not fully selected
                         // we are going to hide its children which are not in our checked event_instances
                         // event_instances are the deepest level in the jstree, they are the individual markers 
-                        if(notFullySelectedFRMSAndChildrens.hasOwnProperty(underScoredFrmName)) {
+                        if(notFullySelectedFRMSAndChildrens.hasOwnProperty(eventTypeName) && notFullySelectedFRMSAndChildrens[eventTypeName].hasOwnProperty(underScoredFrmName)) {
 
-                            let eventsToBeShownForFRM = notFullySelectedFRMSAndChildrens[underScoredFrmName];
+                            let eventsToBeShownForFRM = notFullySelectedFRMSAndChildrens[eventTypeName][underScoredFrmName];
 
                             let concerningEventMarkers = self._eventMarkers.forEach(em => {
 
                                 // generate jsTreeCheckBoxID from this marker
                                 // TODO _makeEventInstanceTreeNodeID can be moved to EventMarker
                                 let jsTreeCheckboxID = self._makeEventInstanceTreeNodeID(eventTypeName, underScoredFrmName, em.id);
+
+                                // Clean of backslashes when we read back the ID
+                                // We only add backslashes to make them HTML id
+                                jsTreeCheckboxID = jsTreeCheckboxID.replace(/\\/g,'');
 
                                 // if our id for this marker not in selected list
                                 let notClickedChildOfFRM = !eventsToBeShownForFRM.includes(jsTreeCheckboxID);
@@ -504,8 +512,11 @@ var EventManager = Class.extend({
      * @returns void
      */
     emphasizeMarkers: function (jsTreeNodeID) {
+
+
         self = this;
         return (event) => {
+            jsTreeNodeID = jsTreeNodeID.replace(/\\/g,'');
             let parts = jsTreeNodeID.split('--');
 
             let markersToEmphasize = [];
@@ -513,14 +524,14 @@ var EventManager = Class.extend({
             // this is an event instance
             if(parts.length == 3) { 
                 markersToEmphasize = this._eventMarkers.filter(em => {
-                    return jsTreeNodeID == self._makeEventInstanceTreeNodeID(em.pin, em.name, em.id);
+                    return jsTreeNodeID == self._makeEventInstanceTreeNodeID(em.pin, em.name, em.id).replace(/\\/g,'');
                 });
             }
 
             // this is an frm
             if(parts.length == 2) { 
                 markersToEmphasize = this._eventMarkers.filter(em => {
-                    return em.belongsToFrm(parts[1]);
+                    return em.belongsToFrm(parts[1]) && em.belongsToEventType(parts[0]);
                 });
             }
 
@@ -544,20 +555,21 @@ var EventManager = Class.extend({
      */
     deEmphasizeMarkers: function (jsTreeNodeID) {
         return (event) => {
+            jsTreeNodeID = jsTreeNodeID.replace(/\\/g,'');
             let parts = jsTreeNodeID.split('--');
             let markersToDeEmphasize = [];
 
             // this is an event instance
             if(parts.length == 3) { 
                 markersToDeEmphasize = this._eventMarkers.filter(em => {
-                    return jsTreeNodeID == self._makeEventInstanceTreeNodeID(em.pin, em.name, em.id);
+                    return jsTreeNodeID == self._makeEventInstanceTreeNodeID(em.pin, em.name, em.id).replace(/\\/g,'');
                 });
             }
 
             // this is an frm
             if(parts.length == 2) { 
                 markersToDeEmphasize = this._eventMarkers.filter(em => {
-                    return em.belongsToFrm(parts[1])
+                    return em.belongsToFrm(parts[1]) && em.belongsToEventType(parts[0]);
                 });
             }
 
