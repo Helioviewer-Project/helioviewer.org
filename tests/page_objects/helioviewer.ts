@@ -42,6 +42,10 @@ class Helioviewer {
         return new EventTree(source, this.page); 
     }
 
+    parseTree(source: string): EventTree {
+        return new EventTree(source, this.page); 
+    }
+
     async Load(path: string = '/') {
         await this.page.goto(path);
         await this.WaitForLoadingComplete();
