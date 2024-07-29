@@ -18,7 +18,7 @@ test('validate drawer should open and close the required tab', async ({ page }) 
     await hv.vso_drawer.toggleVisibility();
 
     // Check drawer is open
-    hv.vso_drawer.assertDrawerOpen();
+    await hv.vso_drawer.assertDrawerOpen();
 
     // Action 3 : Close drawer
     await hv.vso_drawer.toggleVisibility();
