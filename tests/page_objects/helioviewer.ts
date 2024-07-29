@@ -38,10 +38,11 @@ class Helioviewer {
 
     }
 
-    parseTree(source: string): EventTree {
-        return new EventTree(source, this.page); 
-    }
-
+    /**
+     * Returns a handle to interact with event tree in UI
+     * @param source string, ex: HEK, CCMC, RHESSI
+     * @return EventTree
+     */
     parseTree(source: string): EventTree {
         return new EventTree(source, this.page); 
     }
