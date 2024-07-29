@@ -8,6 +8,7 @@ import { Screenshot } from './screenshot';
 import { Movie } from './movie';
 import { URLShare } from './urlshare';
 import { EventTree } from './event_tree';
+import { VSODrawer } from './vso_drawer';
 
 /**
  * Matches an image layer selection
@@ -25,13 +26,16 @@ class Helioviewer {
     screenshot: Screenshot;
     movie: Movie;
     urlshare: URLShare;
+    vso_drawer: VSODrawer;
 
     constructor(page) {
         this.page = page;
         this.screenshot = new Screenshot(this.page);
         this.movie = new Movie(this.page);
         this.urlshare = new URLShare(this.page);
+        this.vso_drawer = new VSODrawer(this.page);
         this.sidebar = this.page.locator('#hv-drawer-left');
+
     }
 
     parseTree(source: string): EventTree {
