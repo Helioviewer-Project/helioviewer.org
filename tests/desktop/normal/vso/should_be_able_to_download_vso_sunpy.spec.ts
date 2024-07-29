@@ -17,9 +17,6 @@ test('Validate sunpy ssw download button brings notification with dowload link',
     // Action 2 : Open vso drawer
     await hv.vso_drawer.toggleVisibility();
 
-    // Wait for load
-    await hv.WaitForLoadingComplete()
-
     // Action 3 : Trigger vso sunpy script creation 
     await hv.vso_drawer.triggerSunPyScriptDownload();
 
@@ -46,9 +43,6 @@ test('Validate sunpy ssw download link downloads sunpy script', async ({ page, b
 
     // Action 2 : Open left sources panel
     await hv.vso_drawer.toggleVisibility();
-
-    // Wait for load
-    await hv.WaitForLoadingComplete()
 
     // Action 3 : Trigger vso sunpy script creation 
     await hv.vso_drawer.triggerSunPyScriptDownload();

@@ -40,7 +40,7 @@ class VSODrawer {
      * @return void
      */
     async triggerSunPyScriptDownload(): void {
-        // await expect(this.page.locator('#vso-sunpy')).not.toHaveClass('inactive', {timeout: 2000});
+        await expect(this.page.locator('#vso-sunpy')).not.toHaveClass(/inactive/);
         await this.page.locator('#vso-sunpy').click();
     }
 
