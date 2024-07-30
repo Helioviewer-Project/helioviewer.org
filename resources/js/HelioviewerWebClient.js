@@ -1225,8 +1225,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                  +     'from the VSO is ready.<br /><br />'
                  +     '<b>Click here to download.</b>'
                  + '</a>';
-            $(document).trigger("message-console-log", [body,
-                { sticky: true, header: 'Just now' }, true, true]);
+
+            Helioviewer.messageConsole.success(body, {
+                sticky: true, 
+                header: 'Just now' 
+            });
         });
 
 
@@ -1245,13 +1248,18 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                  + '&y1=' + y1
                  + '&x2=' + x2
                  + '&y2=' + y2;
+
             body = '<a href="' + url + '">'
                  +     'Your IDL/SolarSoft script for requesting science data '
                  +     'from the VSO is ready.<br /><br />'
                  +     '<b>Click here to download.</b>'
                  + '</a>';
-            $(document).trigger("message-console-log", [body,
-                { sticky: true, header: 'Just now' }, true, true]);
+
+            Helioviewer.messageConsole.success(body, {
+                sticky: true, 
+                header: 'Just now' 
+            });
+
         });
 
         //Because VSO doesn't accept seconds we need to validate date inputs and if values

@@ -819,6 +819,9 @@ span.ui-icon-hover, div.ui-icon-hover {
    font-weight: 500;
    color: black;
 }
+#message-console .jGrowl-notification.success a {
+   font-weight: 300;
+}
 
 #message-console .jGrowl-notification.error {
    background: #eb7f78;
