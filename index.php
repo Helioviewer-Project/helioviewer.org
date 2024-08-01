@@ -993,7 +993,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 								<div class="row">
 									<div id="vso-buttons"  class="buttons">
-										<div id="vso-sunpy" class="text-button fa fa-download inactive qtip-left" title="Download a Python SunPy script that will request from the Virtual Solar Observatory the data set specified above."> SunPy Script</div>
+										<div id="vso-sunpy" style="display: none;" class="text-button fa fa-download inactive qtip-left" title="Download a Python SunPy script that will request from the Virtual Solar Observatory the data set specified above."> SunPy Script</div>
 										<div id="vso-ssw" class="text-button fa fa-download inactive qtip-left" title="Download an IDL SolarSoft script that will request from the Virtual Solar Observatory the data set specified above."> SSW Script</div>
 										<a id="vso-www" class="text-button fa fa-external-link-square inactive qtip-left" title="Launch a Virtual Solar Observatory web page that will request the data set specified above." target="_blank"> VSO Website</a>
 									</div>
@@ -1530,7 +1530,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 				<div id="zoomControls">
 					<div id="center-button" class="viewport-action fa fa-crosshairs" title="Center the Sun in the Viewport"></div>
 					<div id="zoom-in-button" title="Zoom in.">
-						<img src="/resources/images/ftedit-add.svg" style="width:80%; height:80%" alt="HV project transparent image"/> 
+						<img src="/resources/images/ftedit-add.svg" style="width:80%; height:80%" alt="HV project transparent image"/>
 					</div>
 					<div id="zoomSliderContainer">
 						<div id="zoomControlSlider"></div>
@@ -1804,7 +1804,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 				<div id="zoomControls">
 					<div id="center-button" class="viewport-action fa fa-crosshairs" title="Center the Sun in the Viewport"></div>
 					<div id="zoom-in-button" title="Zoom in.">
-						<img src="/resources/images/ftedit-add.svg" style="width:80%; height:80%" alt="HV project transparent image"/> 
+						<img src="/resources/images/ftedit-add.svg" style="width:80%; height:80%" alt="HV project transparent image"/>
 					</div>
 					<div id="zoomSliderContainer">
 						<div id="zoomControlSlider"></div>
@@ -2032,8 +2032,8 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		var Helioviewer = {}; // Helioviewer global namespace
 
 		$( document ).ready(function(){
- 			
-			// Disable jquery animations, 
+
+			// Disable jquery animations,
 			// We don't need any animations
 			jQuery.fx.off = true
 
