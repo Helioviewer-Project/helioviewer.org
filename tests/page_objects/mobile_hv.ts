@@ -121,17 +121,68 @@ class HvMobile {
 
     /**
      * Opens the announcements dialog.
-     * If the sidebar is closed, this will open the sidebar
-     * to reach the announcements button.
      */
     async OpenAnnouncements() {
         await this.OpenSidebar();
-        await this.page.getByText("Helioviewer Project Announcements.").tap();
+        await this.TapIfVisible(this.page.getByText("Helioviewer Project Announcements."));
     }
 
-    async OpenYoutubeVideos() {
+    private async TapIfVisible(locator: Locator) {
+        if (await locator.isVisible()) {
+            await locator.tap();
+        }
+    }
+
+    async CloseAnnouncements() {
+        await this.TapIfVisible(this.page.locator('#hv-drawer-news .hvmobmenuclose'));
+    }
+
+    /**
+     * Opens the youtube dialog.
+     */
+    async OpenYoutubeVideosDialog() {
         await this.OpenSidebar();
-        await this.page.getByText('View Helioviewer MoviesShared').click();
+        await this.TapIfVisible(this.page.getByText('View Helioviewer MoviesShared'));
+    }
+
+    async CloseYoutubeVideosDialog() {
+        await this.TapIfVisible(this.page.locator('#hv-drawer-youtube .hvmobmenuclose'));
+    }
+
+    /**
+     * Open the movie creation dialog
+     */
+    async OpenMovieDialog() {
+        await this.OpenSidebar();
+        await this.TapIfVisible(this.page.getByText('Create a movie.'));
+    }
+
+    async CloseMovieDialog() {
+        await this.TapIfVisible(this.page.locator('#hv-drawer-movies .hvmobmenuclose'));
+    }
+
+    /**
+     * Open the screenshot creation dialog
+     */
+    async OpenScreenshotsDialog() {
+        await this.OpenSidebar();
+        await this.TapIfVisible(this.page.getByText('Create a screenshot.'));
+    }
+
+    async CloseScreenshotsDialog() {
+        await this.TapIfVisible(this.page.locator('#hv-drawer-screenshots .hvmobmenuclose'));
+    }
+
+    /**
+     * Open the share viewport dialog
+     */
+    async OpenShareViewportDialog() {
+        await this.OpenSidebar();
+        await this.TapIfVisible(this.page.getByText('Share the current viewport on social media.'));
+    }
+
+    async CloseShareViewportDialog() {
+        await this.TapIfVisible(this.page.locator('#hv-drawer-share .hvmobmenuclose'));
     }
 
     async UseNewestImage() {
