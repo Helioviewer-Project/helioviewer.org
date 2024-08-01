@@ -24,4 +24,9 @@ test('[Mobile] Open Shared Youtube Videos', async ({ page }) => {
 test('[Mobile] Open Movies dialog', async ({ page }) => {
   let mobile = new HvMobile(page);
   await mobile.Load();
+  await expect(page.getByText('Create A Movie', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('Movie History')).not.toBeVisible();
+  await mobile.OpenMovieDialog();
+  await expect(page.getByText('Create A Movie', { exact: true })).toBeVisible();
+  await expect(page.getByText('Movie History')).toBeVisible();
 });
