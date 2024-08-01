@@ -94,6 +94,46 @@ class HvMobile {
         return this.hv.AddImageLayer();
     }
 
+    /**
+     * Opens or Closes the sidebar menu
+     */
+    async ToggleSidebar() {
+        await this.page.locator('#hvmobilemenu_btn').tap();
+    }
+
+    async IsSidebarOpen(): Promise<boolean> {
+        // the mobile sidebar has class "zeynep", when its open it has "opened"
+        // as well. So this will return true only if the sidebar is open.
+        return await this.page.evaluate(() => document.querySelector('.zeynep.opened') != null);
+    }
+
+    async OpenSidebar() {
+        if (!await this.IsSidebarOpen()) {
+            await this.ToggleSidebar();
+        }
+    }
+
+    async CloseSidebar() {
+        if (await this.IsSidebarOpen()) {
+            await this.ToggleSidebar();
+        }
+    }
+
+    /**
+     * Opens the announcements dialog.
+     * If the sidebar is closed, this will open the sidebar
+     * to reach the announcements button.
+     */
+    async OpenAnnouncements() {
+        await this.OpenSidebar();
+        await this.page.getByText("Helioviewer Project Announcements.").tap();
+    }
+
+    async OpenYoutubeVideos() {
+        await this.OpenSidebar();
+        await this.page.getByText('View Helioviewer MoviesShared').click();
+    }
+
     async UseNewestImage() {
         await this.page.locator('#timeNowBtn_mob_td #timeNowBtn').click();
     }
