@@ -94,6 +94,97 @@ class HvMobile {
         return this.hv.AddImageLayer();
     }
 
+    /**
+     * Opens or Closes the sidebar menu
+     */
+    async ToggleSidebar() {
+        await this.page.locator('#hvmobilemenu_btn').tap();
+    }
+
+    async IsSidebarOpen(): Promise<boolean> {
+        // the mobile sidebar has class "zeynep", when its open it has "opened"
+        // as well. So this will return true only if the sidebar is open.
+        return await this.page.evaluate(() => document.querySelector('.zeynep.opened') != null);
+    }
+
+    async OpenSidebar() {
+        if (!await this.IsSidebarOpen()) {
+            await this.ToggleSidebar();
+        }
+    }
+
+    async CloseSidebar() {
+        if (await this.IsSidebarOpen()) {
+            await this.ToggleSidebar();
+        }
+    }
+
+    /**
+     * Opens the announcements dialog.
+     */
+    async OpenAnnouncements() {
+        await this.OpenSidebar();
+        await this.TapIfVisible(this.page.getByText("Helioviewer Project Announcements."));
+    }
+
+    private async TapIfVisible(locator: Locator) {
+        if (await locator.isVisible()) {
+            await locator.tap();
+        }
+    }
+
+    async CloseAnnouncements() {
+        await this.TapIfVisible(this.page.locator('#hv-drawer-news .hvmobmenuclose'));
+    }
+
+    /**
+     * Opens the youtube dialog.
+     */
+    async OpenYoutubeVideosDialog() {
+        await this.OpenSidebar();
+        await this.TapIfVisible(this.page.getByText('View Helioviewer MoviesShared'));
+    }
+
+    async CloseYoutubeVideosDialog() {
+        await this.TapIfVisible(this.page.locator('#hv-drawer-youtube .hvmobmenuclose'));
+    }
+
+    /**
+     * Open the movie creation dialog
+     */
+    async OpenMovieDialog() {
+        await this.OpenSidebar();
+        await this.TapIfVisible(this.page.getByText('Create a movie.'));
+    }
+
+    async CloseMovieDialog() {
+        await this.TapIfVisible(this.page.locator('#hv-drawer-movies .hvmobmenuclose'));
+    }
+
+    /**
+     * Open the screenshot creation dialog
+     */
+    async OpenScreenshotsDialog() {
+        await this.OpenSidebar();
+        await this.TapIfVisible(this.page.getByText('Create a screenshot.'));
+    }
+
+    async CloseScreenshotsDialog() {
+        await this.TapIfVisible(this.page.locator('#hv-drawer-screenshots .hvmobmenuclose'));
+    }
+
+    /**
+     * Open the share viewport dialog
+     */
+    async OpenShareViewportDialog() {
+        await this.OpenSidebar();
+        await this.TapIfVisible(this.page.getByText('Share the current viewport on social media.'));
+    }
+
+    async CloseShareViewportDialog() {
+        await this.TapIfVisible(this.page.locator('#hv-drawer-share .hvmobmenuclose'));
+    }
+
     async UseNewestImage() {
         await this.page.locator('#timeNowBtn_mob_td #timeNowBtn').click();
     }
