@@ -30,3 +30,35 @@ test('[Mobile] Open Movies dialog', async ({ page }) => {
   await expect(page.getByText('Create A Movie', { exact: true })).toBeVisible();
   await expect(page.getByText('Movie History')).toBeVisible();
 });
+
+test('[Mobile] Open Screenshots dialog', async ({ page }) => {
+  let mobile = new HvMobile(page);
+  await mobile.Load();
+  await expect(page.getByText('Create A Screenshot', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('Screenshot History')).not.toBeVisible();
+  await mobile.OpenScreenshotsDialog();
+  await expect(page.getByText('Create A Screenshot', { exact: true })).toBeVisible();
+  await expect(page.getByText('Screenshot History')).toBeVisible();
+});
+
+
+test('[Mobile] Open Share Viewport dialog', async ({ page }) => {
+  let mobile = new HvMobile(page);
+  await mobile.Load();
+
+  await expect(page.getByText('Share Viewport On Social Media', { exact: true})).not.toBeVisible();
+  await expect(page.getByText('Copy Link')).not.toBeVisible();
+  await expect(page.getByText('Email Link')).not.toBeVisible();
+  await expect(page.getByText('Share Screenshot on X')).not.toBeVisible();
+  await expect(page.getByText('Share Screenshot with Facebook')).not.toBeVisible();
+  await expect(page.getByText('Pin Screenshot')).not.toBeVisible();
+
+  await mobile.OpenShareViewportDialog();
+
+  await expect(page.getByText('Share Viewport On Social Media', { exact: true})).toBeVisible();
+  await expect(page.getByText('Copy Link')).toBeVisible();
+  await expect(page.getByText('Email Link')).toBeVisible();
+  await expect(page.getByText('Share Screenshot on X')).toBeVisible();
+  await expect(page.getByText('Share Screenshot with Facebook')).toBeVisible();
+  await expect(page.getByText('Pin Screenshot')).toBeVisible();
+});
