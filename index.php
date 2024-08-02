@@ -722,6 +722,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 								<div id="user-video-gallery-main-current">
 									<span id="user-video-gallery-spinner-current"></span>
 								</div>
+								<p class="js-no-movies" style="display: none;">No shared movies found.</p>
 							</div>
 						</div>
 					</div>
