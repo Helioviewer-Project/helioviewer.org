@@ -16,8 +16,10 @@ test('[Mobile] "No shared movies found" should not be duplicated', async ({ page
   let mobile = new HvMobile(page);
   await mobile.Load();
   await mobile.OpenYoutubeVideosDialog();
-  await expect(page.getByText("No shared movies found.")).toHaveCount(1);
+  await mobile.AssertNoSharedYoutubeVideos();
   await mobile.CloseYoutubeVideosDialog();
+
   await mobile.OpenYoutubeVideosDialog();
-  await expect(page.getByText("No shared movies found.")).toHaveCount(1);
+  await mobile.AssertNoSharedYoutubeVideos();
+  await mobile.CloseYoutubeVideosDialog();
 });

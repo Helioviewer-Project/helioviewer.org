@@ -195,6 +195,12 @@ class HvMobile {
             await this.page.waitForTimeout(250);
         }
     }
+
+    async AssertNoSharedYoutubeVideos() {
+        await this.OpenYoutubeVideosDialog();
+        await expect(this.page.getByText("No shared movies found.")).toHaveCount(1);
+        await this.CloseYoutubeVideosDialog();
+    }
 }
 
 export { HvMobile }
