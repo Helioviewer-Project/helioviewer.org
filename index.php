@@ -706,7 +706,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 
 		<div id="hv-drawer-youtube" class="hv-drawer-right user-select-none">
-			<div class="drawer-contents" style="padding-bottom:50px;">
+			<div class="drawer-contents">
 
 				<div id="accordion-youtube-current" class="accordion">
 					<div class="header">

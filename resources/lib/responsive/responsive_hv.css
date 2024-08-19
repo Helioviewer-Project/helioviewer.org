@@ -922,9 +922,11 @@
 		display: block !important;
 	}
 
-	.drawer-contents .header {
-		height: 35px;
+	.drawer-contents > div:first-of-type {
 		padding-top: 35px;
+	}
+
+	.drawer-contents .header {
 		text-align: center;
 		font-size: 16px;
 	}
@@ -949,9 +951,6 @@
 		margin-left: 15px;
 	}
 
-	#accordion-youtube .header {
-		padding-top: 70px;
-	}
 
 	#accordion-youtube .header h1 {
 		display: inline-block !important;
@@ -969,13 +968,7 @@
 		height: 100%;
 	}
 
-	#hv-drawer-youtube .content {
-	   position: absolute;
-	}
 
-	.user-video-thumbnail-container:last-child {
-		margin-bottom:250px;
-	}
 
 	.drawer-contents .ui-accordion-header .fa.fa-fw {
 		display: none;
