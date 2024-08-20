@@ -132,10 +132,6 @@
 		box-shadow: 9pt 9pt 4pt 9pt rgb(255 255 255 / 75%);
 	}
 
-	.hvmobds_tr {
-
-	}
-
 	.hvmobds_td {
 		padding-top: 4px;
 		text-align:center;
@@ -338,14 +334,6 @@
 	#helioviewer-viewport-container-inner {
 		height: 100%; /* 800px */
 		/* touch-action: pinch-zoom; */
-	}
-
-	#moving-container {
-		/* touch-action: manipulation; */
-	}
-
-	#message-console {
-		 /* display: none !important; */
 	}
 
 	.qtip {
@@ -620,10 +608,6 @@
 		display: block; /*none;*/
 	}
 
-	.drawer-contents #add-new-tile-layer-btn {
-
-	}
-
 	#accordion-events .header {
 		display: none;
 	}
@@ -689,10 +673,6 @@
 	margin: auto;
 	width: 100% !important;
 	background-image: none !important;
-}
-
-.mejs__container {
-   /*max-height: 400px;*/
 }
 
 .movie-player-dialog {
@@ -1066,7 +1046,6 @@
 		margin-top: 20px;
 	}
 
-
 	.jstree > ul > li {
 		margin-left: 0px;
 		margin-bottom: 10px;
@@ -1170,7 +1149,6 @@
 		height: 21px;
 		width: 63px;
 		padding: 0px;
-		line-height:;
 		text-align: center;
 		padding-right:10px;
 		font-size: 13px;
@@ -1223,7 +1201,7 @@
 	}
 
 	.hvbottombar_expand_a:hover {
-		webkit-filter: brightness(150%);
+		-webkit-filter: brightness(150%);
 		filter: brightness(150%);
 	}
 
@@ -1378,15 +1356,6 @@
 
 	#user-video-gallery-spinner {
 		display:none;
-	}
-
-	#accordion-youtube .content {
-		/*display: block !important;*/
-	}
-
-
-	.celestial-pointer cirlcle {
-		r: 4.5 !important;
 	}
 
 	#youtube-video-info {
