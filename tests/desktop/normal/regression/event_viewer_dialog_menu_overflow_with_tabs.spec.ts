@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { Helioviewer } from '../../../page_objects/helioviewer';
 
-test.only('Event viewer dialog menu should not overflow with tabs', async ({ page }) => {
+test('Event viewer dialog menu should not overflow with tabs', async ({ page }) => {
   await page.route('*/**/?startTime=2021-05-31T00:01:29.000Z&action=events&sources=CCMC*', async route => {
     await route.fulfill({ json: CCMC_JSON });
   });
