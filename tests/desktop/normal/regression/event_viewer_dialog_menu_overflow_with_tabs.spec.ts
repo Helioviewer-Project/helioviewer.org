@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { Helioviewer } from '../../../page_objects/helioviewer';
 
 test('Event viewer dialog menu should not overflow with tabs', async ({ page }) => {
-  await page.route('*/**/?startTime=2021-05-31T00:01:29.000Z&action=events&sources=CCMC*', async route => {
+  await page.route('*/**/*action=events&sources=CCMC', async route => {
     await route.fulfill({ json: CCMC_JSON });
   });
 
@@ -48,8 +48,8 @@ test('Event viewer dialog menu should not overflow with tabs', async ({ page }) 
 
 });
 
-const CCMC_JSON = {
-	"0": {
+const CCMC_JSON = [
+  {
 		"name": "DONKI",
 		"pin": "C3",
 		"groups": [
@@ -140,7 +140,7 @@ const CCMC_JSON = {
 						},
 						"views": [
 							{
-								"name": "CME",
+								"name": "TEST DATA",
 								"content": {
 									"Activity ID": "2021-05-30T16:36:00-CME-001",
 									"Catalog": "M2M_CATALOG",
@@ -214,4 +214,4 @@ const CCMC_JSON = {
 			}
 		]
 	}
-}
+]
