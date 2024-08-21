@@ -152,5 +152,6 @@ test('[Mobile] Test Help Links', async ({page}) => {
   await expect(page.getByText('Helioviewer - Glossary')).toBeVisible();
   await expect(page.getByText('Coronal Mass Ejection (CME)')).toBeVisible();
   await expect(page.getByText('Solar Terrestrial Relations Observatory')).toBeVisible();
+  await expect(page).toHaveScreenshot();
   await mobile.CloseDialog();
 });
