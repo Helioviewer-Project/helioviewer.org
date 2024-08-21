@@ -36,8 +36,8 @@ jobs:
   playwright-e2e-tests:
     strategy:
       matrix:
-        shardIndex: [1, 2, 3, 4]
-        shardTotal: [4]
+        shardIndex: [1, 2, 3, 4, 5]
+        shardTotal: [5]
 
     timeout-minutes: 60
     runs-on: ubuntu-latest
