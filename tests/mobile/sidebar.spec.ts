@@ -130,3 +130,27 @@ test('[Mobile] Open Help Menu', async ({ page }) => {
     ]
   )
 });
+
+test('[Mobile] Test Help Links', async ({page}) => {
+  let mobile = new HvMobile(page);
+  await mobile.Load();
+
+  // Link 1: About Helioviewer
+  await mobile.OpenHelpMenu();
+  await page.locator('.hvmobmenuitems').getByText('About Helioviewer').click();
+  await expect(page.getByText('Helioviewer - About')).toBeVisible();
+  await expect(page.getByText('Helioviewer - About')).toBeInViewport();
+  await expect(page.getByText('Last Updated')).toBeVisible();
+  await expect(page.getByText('Last Updated')).toBeInViewport();
+  await mobile.CloseDialog();
+  // TODO: Do we need to test every single link we reference here?
+  //       Is the answer always yes?
+
+  // Link 2: Visual Glossary
+  await mobile.OpenSidebar();
+  await page.locator('.hvmobmenuitems').getByText('Visual Glossary').click();
+  await expect(page.getByText('Helioviewer - Glossary')).toBeVisible();
+  await expect(page.getByText('Coronal Mass Ejection (CME)')).toBeVisible();
+  await expect(page.getByText('Solar Terrestrial Relations Observatory')).toBeVisible();
+  await mobile.CloseDialog();
+});

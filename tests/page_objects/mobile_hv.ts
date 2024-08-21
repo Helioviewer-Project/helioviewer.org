@@ -197,6 +197,10 @@ class HvMobile {
         await this.TapIfVisible(this.page.getByText('Main Menu'));
     }
 
+    async CloseDialog() {
+        await this.TapIfVisible(this.page.locator('.ui-dialog-titlebar-close'));
+    }
+
     async UseNewestImage() {
         await this.page.locator('#timeNowBtn_mob_td #timeNowBtn').click();
     }
