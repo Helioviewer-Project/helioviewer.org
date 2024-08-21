@@ -185,6 +185,18 @@ class HvMobile {
         await this.TapIfVisible(this.page.locator('#hv-drawer-share .hvmobmenuclose'));
     }
 
+    /**
+     * Open the help menu
+     */
+    async OpenHelpMenu() {
+        await this.OpenSidebar();
+        await this.TapIfVisible(this.page.getByText('Get Help with Helioviewer.'));
+    }
+
+    async CloseHelpMenu() {
+        await this.TapIfVisible(this.page.getByText('Main Menu'));
+    }
+
     async UseNewestImage() {
         await this.page.locator('#timeNowBtn_mob_td #timeNowBtn').click();
     }
