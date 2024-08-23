@@ -910,8 +910,8 @@
 		display: block !important;
 	}
 
-	.drawer-contents > div:first-of-type {
-		padding-top: 35px;
+	.drawer-contents > div.accordion:first-of-type {
+		margin-top: 0.125em;
 	}
 
 	.drawer-contents .header {
