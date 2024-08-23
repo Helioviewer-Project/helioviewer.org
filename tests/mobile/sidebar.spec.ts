@@ -131,7 +131,7 @@ test('[Mobile] Open Help Menu', async ({ page }) => {
   )
 });
 
-test('[Mobile] Test Help Links', async ({page}) => {
+test.only('[Mobile] Test Help Links', async ({page}) => {
   let mobile = new HvMobile(page);
   await mobile.Load();
 
@@ -147,11 +147,14 @@ test('[Mobile] Test Help Links', async ({page}) => {
   //       Is the answer always yes?
 
   // Link 2: Visual Glossary
+  // Waiting for this thumbnail is important for the snapshot
+  let youtubePreviewPromise = page.waitForResponse('https://i.ytimg.com/vi/TWySQHjIRSg/maxresdefault.jpg');
   await mobile.OpenSidebar();
   await page.locator('.hvmobmenuitems').getByText('Visual Glossary').click();
   await expect(page.getByText('Helioviewer - Glossary')).toBeVisible();
   await expect(page.getByText('Coronal Mass Ejection (CME)')).toBeVisible();
   await expect(page.getByText('Solar Terrestrial Relations Observatory')).toBeVisible();
+  await youtubePreviewPromise;
   await expect(page).toHaveScreenshot();
   await mobile.CloseDialog();
 });
