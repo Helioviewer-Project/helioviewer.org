@@ -131,7 +131,7 @@ test('[Mobile] Open Help Menu', async ({ page }) => {
   )
 });
 
-test.only('[Mobile] Test Help Links', async ({page}) => {
+test('[Mobile] Test Help Links', async ({page}) => {
   let mobile = new HvMobile(page);
   await mobile.Load();
 
