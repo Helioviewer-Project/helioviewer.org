@@ -198,7 +198,10 @@ class HvMobile {
     }
 
     async CloseDialog() {
-        await this.TapIfVisible(this.page.locator('.ui-dialog-titlebar-close'));
+        let closers = await this.page.locator('.ui-dialog-titlebar-close').all();
+        await Promise.all(closers.map(async (btn) => {
+            await this.TapIfVisible(this.page.locator('.ui-dialog-titlebar-close'));
+        }));
     }
 
     async UseNewestImage() {
