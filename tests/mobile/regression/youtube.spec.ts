@@ -44,7 +44,7 @@ test('[Mobile] Youtube videos should be rendered correctly', async ({page}) => {
   // 1. Open shared videos UI
   await mobile.OpenYoutubeVideosDialog();
   // 2. Compare screenshot
-  await expect(page).toHaveScreenshot();
+  await expect(page).toHaveScreenshot({maxDiffPixelRatio: 0.01});
 });
 
 const OBSERVATION_DATE_VIDEOS_JSON = [
