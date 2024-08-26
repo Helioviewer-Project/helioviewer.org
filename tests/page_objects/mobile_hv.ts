@@ -200,7 +200,7 @@ class HvMobile {
     async CloseDialog() {
         let closers = await this.page.locator('.ui-dialog-titlebar-close').all();
         await Promise.all(closers.map(async (btn) => {
-            await this.TapIfVisible(this.page.locator('.ui-dialog-titlebar-close'));
+            await this.TapIfVisible(btn);
         }));
     }
 
