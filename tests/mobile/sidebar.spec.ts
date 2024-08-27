@@ -143,8 +143,6 @@ test('[Mobile] Test Help Links', async ({page}) => {
   await expect(page.getByText('Last Updated')).toBeVisible();
   await expect(page.getByText('Last Updated')).toBeInViewport();
   await mobile.CloseDialog();
-  // TODO: Do we need to test every single link we reference here?
-  //       Is the answer always yes?
 
   // Link 2: Visual Glossary
   // Waiting for this thumbnail is important for the snapshot
