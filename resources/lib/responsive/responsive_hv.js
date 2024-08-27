@@ -267,10 +267,6 @@ $(function() {
 					$('#'+thisdrawersect2+' .hvmobmenutitle_div').html('Visual Glossary');
 					break;
 			}
-		document.getElementById(thisdrawersect2).scrollIntoView();
-
-
-
 	});
 
 
@@ -305,12 +301,6 @@ $(function() {
 	// NEWEST button replication on mobile
 	$('#timeNowBtn').clone().appendTo("#timeNowBtn_mob_td");
 
-	/*$('#timeNowBtn_mob').click(function(){
-		//$('#timeNowBtn').click();
-		$('#timeNowBtn').trigger('click');
-	});*/
-
-
 	// move zoom controls to the body
 	$($("#zoom").detach()).appendTo("body");
 	$("#center-button, #zoom-out-button, #zoom-in-button").css({'display':'none'});
@@ -325,27 +315,6 @@ $(function() {
 
 	// delete the old element
 	$('#observation-controls #date').remove();
-
-	// take the time element out of focus after changed
-	/*
-	$('#date').on('change',function(){
-		$("#date").blur();
-		//$('#hvmobdate_td').trigger('click');
-	});
-	*/
-
-	/*
-	$("#date").focus(function(){
-		$("#date").removeAttr("readonly");
-	});
-
-	$("#date").blur(function(){
-		$("#date").attr('readonly', 'readonly');
-	});
-	*/
-
-
-
 
 	// clone the #time element and make it readonly so the keyboard doesn't show
 	$("#time").clone().appendTo("#hvmobtime_td");
