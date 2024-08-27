@@ -11,16 +11,19 @@ async function ExpectVisibility(shouldBeVisible: boolean, locators: Array<Locato
     const locator = locators[idx];
     if (shouldBeVisible) {
       await expect(locator).toBeVisible();
+      await expect(locator).toBeInViewport();
     } else {
-      await expect(locator).not.toBeVisible();
+      // If the element is visible, but its not on-screen (InViewport) then
+      // it's essentially not visible.
+      await expect(locator).not.toBeInViewport();
     }
   }
 }
 
 /**
  * The process for these tests is to assert that the dialog is closed,
- * open the dialog, assert it is open, close the dialog, and assert
- * the dialog is closed again.
+ * open the dialog, assert it is open by verifying certain elements are visible,
+ * close the dialog, and assert the dialog is closed again.
  * @param open_dialog Function to open the dialog
  * @param close_dialog Function to close the dialog
  * @param locators Elements that should be visible only when the dialog is open.
@@ -109,4 +112,47 @@ test('[Mobile] Open Share Viewport dialog', async ({ page }) => {
       page.getByText('Pin Screenshot')
     ]
   )
+});
+
+test('[Mobile] Open Help Menu', async ({ page }) => {
+  let mobile = new HvMobile(page);
+  await mobile.Load();
+  await RunDialogTest(
+    async () => mobile.OpenHelpMenu(),
+    async () => mobile.CloseHelpMenu(),
+    [
+      page.locator('#hvhelp').getByText('About Helioviewer', {exact: true}),
+      page.locator('#hvhelp').getByText('Visual Glossary'),
+      page.locator('#hvhelp').getByText('Public API Documentation'),
+      page.locator('#hvhelp').getByText('Blog'),
+      page.locator('#hvhelp').getByText('Contact'),
+      page.locator('#hvhelp').getByText('Report Problem')
+    ]
+  )
+});
+
+test('[Mobile] Test Help Links', async ({page}) => {
+  let mobile = new HvMobile(page);
+  await mobile.Load();
+
+  // Link 1: About Helioviewer
+  await mobile.OpenHelpMenu();
+  await page.locator('.hvmobmenuitems').getByText('About Helioviewer').click();
+  await expect(page.getByText('Helioviewer - About')).toBeVisible();
+  await expect(page.getByText('Helioviewer - About')).toBeInViewport();
+  await expect(page.getByText('Last Updated')).toBeVisible();
+  await expect(page.getByText('Last Updated')).toBeInViewport();
+  await mobile.CloseDialog();
+
+  // Link 2: Visual Glossary
+  // Waiting for this thumbnail is important for the snapshot
+  let youtubePreviewPromise = page.waitForResponse('https://i.ytimg.com/vi/TWySQHjIRSg/maxresdefault.jpg');
+  await mobile.OpenSidebar();
+  await page.locator('.hvmobmenuitems').getByText('Visual Glossary').click();
+  await expect(page.getByText('Helioviewer - Glossary')).toBeVisible();
+  await expect(page.getByText('Coronal Mass Ejection (CME)')).toBeVisible();
+  await expect(page.getByText('Solar Terrestrial Relations Observatory')).toBeVisible();
+  await youtubePreviewPromise;
+  await expect(page).toHaveScreenshot();
+  await mobile.CloseDialog();
 });

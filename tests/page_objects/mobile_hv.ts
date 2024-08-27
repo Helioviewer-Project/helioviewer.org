@@ -185,6 +185,25 @@ class HvMobile {
         await this.TapIfVisible(this.page.locator('#hv-drawer-share .hvmobmenuclose'));
     }
 
+    /**
+     * Open the help menu
+     */
+    async OpenHelpMenu() {
+        await this.OpenSidebar();
+        await this.TapIfVisible(this.page.getByText('Get Help with Helioviewer.'));
+    }
+
+    async CloseHelpMenu() {
+        await this.TapIfVisible(this.page.getByText('Main Menu'));
+    }
+
+    async CloseDialog() {
+        let closers = await this.page.locator('.ui-dialog-titlebar-close').all();
+        await Promise.all(closers.map(async (btn) => {
+            await this.TapIfVisible(btn);
+        }));
+    }
+
     async UseNewestImage() {
         await this.page.locator('#timeNowBtn_mob_td #timeNowBtn').click();
     }
