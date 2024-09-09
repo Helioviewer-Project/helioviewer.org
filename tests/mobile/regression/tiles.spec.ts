@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { HvMobile } from '../page_objects/mobile_hv';
+import { HvMobile } from '../../page_objects/mobile_hv';
 
 /**
  * A recurring issue in Helioviewer deals with computing which tiles should
