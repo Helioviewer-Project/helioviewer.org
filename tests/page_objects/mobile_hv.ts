@@ -239,6 +239,7 @@ class HvMobile {
         await this.page.mouse.down();
         await this.page.mouse.move(INITIAL_POSITION.x + x, INITIAL_POSITION.y + y);
         await this.page.mouse.up();
+    }
 }
 
 export { HvMobile }
