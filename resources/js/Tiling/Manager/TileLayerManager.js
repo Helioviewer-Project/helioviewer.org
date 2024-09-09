@@ -142,10 +142,9 @@ var TileLayerManager = LayerManager.extend(
         }
 
         this.viewportScale = scale;
-        var self = this;
 
         $.each(this._layers, function () {
-            this.updateImageScale(scale, self.tileVisibilityRange);
+            this.updateImageScale(scale);
         });
     },
 
