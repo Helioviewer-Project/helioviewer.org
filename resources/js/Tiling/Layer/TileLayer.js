@@ -108,7 +108,8 @@ var TileLayer = Layer.extend(
     /**
      *
      */
-    updateImageScale: function (scale, tileVisibilityRange) {
+    updateImageScale: function (scale) {
+        let tileVisibilityRange = this.tileVisibilityRange;
         this.viewportScale = scale;
 
         // The general visibility range doesn't account for any x/y offsets.

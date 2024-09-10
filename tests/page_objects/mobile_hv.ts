@@ -208,6 +208,13 @@ class HvMobile {
         await this.page.locator('#timeNowBtn_mob_td #timeNowBtn').click();
     }
 
+    async ZoomIn(steps: number) {
+        for (let i = 0; i < steps; i++) {
+            await this.page.keyboard.press("+");
+            await this.page.waitForTimeout(250);
+        }
+    }
+
     async ZoomOut(steps: number) {
         for (let i = 0; i < steps; i++) {
             await this.page.keyboard.press("-");
@@ -219,6 +226,19 @@ class HvMobile {
         await this.OpenYoutubeVideosDialog();
         await expect(this.page.getByText("No shared movies found.")).toHaveCount(1);
         await this.CloseYoutubeVideosDialog();
+    }
+
+    /**
+     * Move the viewport by the given amount
+     * @param x Horizontal amount
+     * @param y Vertical amount
+     */
+    async moveViewport(x: number, y: number) {
+        const INITIAL_POSITION = { x: 150, y: 400 };
+        await this.page.mouse.move(INITIAL_POSITION.x, INITIAL_POSITION.y);
+        await this.page.mouse.down();
+        await this.page.mouse.move(INITIAL_POSITION.x + x, INITIAL_POSITION.y + y);
+        await this.page.mouse.up();
     }
 }
 
