@@ -44,7 +44,7 @@ class Helioviewer {
      * @return EventTree
      */
     parseTree(source: string): EventTree {
-        return new EventTree(source, this.page); 
+        return new EventTree(source, this.page);
     }
 
     async Load(path: string = '/') {
@@ -101,7 +101,26 @@ class Helioviewer {
         await this.page.waitForTimeout(500);
     }
 
+    /**
+     * This function waits for the number of tiles on the page to not change.
+     */
+    private async WaitForTileCountToSettle() {
+        let locators = await this.page.locator('//img');
+        let count = (await locators.all()).length;
+        let settled = false;
+        while (!settled) {
+            // Wait some time.
+            await this.page.waitForTimeout(500);
+            // Check the number of img tags
+            let next_count = (await locators.all()).length;
+            // If it matches the previous count, then we're good.
+            settled = (next_count == count);
+            count = next_count;
+        }
+    }
+
     async WaitForImageLoad() {
+        await this.WaitForTileCountToSettle();
         let locators = await this.page.locator('//img');
         let images = await locators.all();
         let promises = images.map(locator => locator.evaluate(img => (img as HTMLImageElement).complete || new Promise(f => img.onload = f)));
@@ -237,7 +256,7 @@ class Helioviewer {
 
 
     /**
-    * Sets the observation datetime and waits helioviewer to load, 
+    * Sets the observation datetime and waits helioviewer to load,
     * @param string date - The date to be entered in the format 'MM/DD/YYYY'.
     * @param string time - The time to be entered in the format 'HH:MM'.
     * @returns void - A promise that resolves when the date and time have been successfully entered.
