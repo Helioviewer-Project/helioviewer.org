@@ -105,7 +105,7 @@ class Helioviewer {
      * This function waits for the number of tiles on the page to not change.
      */
     private async WaitForTileCountToSettle() {
-        let locators = await this.page.locator('//img');
+        let locators = await this.page.locator('img.tile');
         let count = (await locators.all()).length;
         let settled = false;
         while (!settled) {
@@ -131,21 +131,30 @@ class Helioviewer {
         // Create promises that resolve when the img is done loading, when
         // the img's "complete" attribute is set to true.
         let promises = images.map(locator => {
-            return locator.evaluate(img => {
-                return new Promise<void>((resolve) => {
-                    if ((img as HTMLImageElement).complete) {
-                        resolve();
-                    } else {
-                        // Periodically check for the image to be done loading.
-                        let interval = setInterval(() => {
-                            if ((img as HTMLImageElement).complete) {
-                                clearInterval(interval);
-                                resolve();
-                            }
-                        }, 500);
-                    }
-                });
-            }, null, { timeout: 10000 });
+            return locator.count().then(n => {
+                // There seems to be an issue where the locator does not exist.
+                // It should exist, it was there when we executed "locators.all"
+                // but now playwright is going to fail "waiting for locator".
+                // So if the locator just isn't in the DOM anymore for some
+                // reason, then just return instead of trying to wait.
+                if (n == 0) return;
+
+                return locator.evaluate(img => {
+                    return new Promise<void>((resolve) => {
+                        if ((img as HTMLImageElement).complete) {
+                            resolve();
+                        } else {
+                            // Periodically check for the image to be done loading.
+                            let interval = setInterval(() => {
+                                if ((img as HTMLImageElement).complete) {
+                                    clearInterval(interval);
+                                    resolve();
+                                }
+                            }, 500);
+                        }
+                    });
+                }, null, { timeout: 10000 });
+            })
         });
         await Promise.all(promises);
     }
