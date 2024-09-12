@@ -206,6 +206,14 @@ class HvMobile {
 
     async UseNewestImage() {
         await this.page.locator('#timeNowBtn_mob_td #timeNowBtn').click();
+        // TODO: A lot of things happen here. How do we consistently verify
+        // that all the things happen?
+        // - Date MIGHT change if the newest date is different than
+        // - Notifications MIGHT disappear IF there was previously a warning, and now there's not.
+        // - Images might change
+        // - Event pins might change
+        // Waiting for time is inherently flaky, but what's a better way?
+        await this.page.waitForTimeout(1000);
     }
 
     async ZoomIn(steps: number) {
