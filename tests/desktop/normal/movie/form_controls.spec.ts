@@ -20,7 +20,7 @@ test('Movie button should toggle movie drawer', async ({ page, context }, info) 
 
 });
 
-// This tests applies steps for movie drawers , check cancel and form functionalities 
+// This tests applies steps for movie drawers , check cancel and form functionalities
 test('Play with movie drawer and controls', async ({ page, context, browserName }, info) => {
 
   let hv = new Helioviewer(page);
@@ -53,7 +53,7 @@ test('Play with movie drawer and controls', async ({ page, context, browserName 
 
   // Action 4 : CANCEL PARTIAL SELECTION
   await page.locator('#cancel-selecting-image').getByText('Cancel').click();
-  
+
   // Now we should be seeing movie history lists again
   expect(await page.screenshot()).toMatchSnapshot('movie-list-drawer.png');
 });

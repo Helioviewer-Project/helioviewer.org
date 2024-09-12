@@ -1,6 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { Helioviewer } from '../../../page_objects/helioviewer';
-import * as fs from 'fs';
 
 /**
  * This test will make Helioviewer load the default AIA 304 image that is
@@ -28,5 +27,4 @@ test('Selecting image presets should not spoil integer state variables', async (
 
   // Action 5: Check if the shared url is prepared
   await hv.urlshare.sharedURLIsVisibleAndDone();
-
 });
