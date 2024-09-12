@@ -68,14 +68,6 @@ jobs:
         echo $(ls)
     - name: Setup environment file
       run: mv compose/.env.example .env
-    - name: Make writeable configuration files
-      run: |
-        touch api/install/settings/settings.cfg
-        chmod o+rw api/install/settings/settings.cfg
-        touch api/settings/Config.ini
-        chmod o+rw api/settings/Config.ini
-        touch api/settings/Config.php
-        chmod o+rw api/settings/Config.php
     - name: Start local Helioviewer environment
       id: docker
       run: |
