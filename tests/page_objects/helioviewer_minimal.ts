@@ -8,13 +8,15 @@ import { HelioviewerInterface } from './helioviewer_interface';
 class HelioviewerMinimal implements HelioviewerInterface {
     /** Playwright page */
     private page: Page;
+    private info: Info | null;
 
     /** Reference to Helioviewer main view for shared code */
     private hv: Helioviewer;
 
-    constructor(page: Page) {
+    constructor(page: Page, info: Info = null) {
         this.page = page;
-        this.hv = new Helioviewer(page);
+        this.info = info;
+        this.hv = new Helioviewer(page, info);
     }
 
     async Load(url: string = "/"): Promise<void> {

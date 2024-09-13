@@ -11,6 +11,9 @@ const time_jump_ranges = [
 
 time_jump_ranges.forEach(({ jump_label, seconds }) => {
 
+    /**
+     * This test is testing jumping backwads functionality with given label for range select-box 
+     */
     test('Jump backwards with '+jump_label+' should go to matching datetime in past, with matching screenshots', async ({ page, context, browser }, info) => {
 
       const hv = new Helioviewer(page, info);
@@ -23,249 +26,142 @@ time_jump_ranges.forEach(({ jump_label, seconds }) => {
       // 2. LAYER 0 , SWITH TO SOHO
       const layer = await hv.getImageLayer(0);
       await layer.set('Observatory:', 'SOHO');
-
       await hv.WaitForLoadingComplete();
+      await hv.CloseAllNotifications();
 
       // 3. USE NEWEST SOHO
       await hv.UseNewestImage();
       await hv.WaitForLoadingComplete();
       await hv.CloseAllNotifications();
 
-      // Register date before jump
+      // 4. MARK TIME BEFORE JUMP BACKWARDS
       const dateBeforeJump = await hv.GetLoadedDate();
       expect(dateBeforeJump).not.toBeNull();
 
-      // 4 JUMP BACKWARDS WITH GIVEN SECONDS 
+      // 5. JUMP BACKWARDS WITH GIVEN SECONDS 
       await hv.JumpBackwardsDateWithSelection(seconds);
-
       await hv.WaitForLoadingComplete();
       await hv.CloseAllNotifications();
 
-      // Register date after jump
+      // 6. MARK TIME AFTER JUMP BACKWARDS
       const dateAfterJump = await hv.GetLoadedDate();
       expect(dateAfterJump).not.toBeNull();
 
-      // Assert; date after jump should be earlier then date before jump
-      await expect(dateAfterJump.getTime()).toBe(dateBeforeJump.getTime() - (seconds * 1000))
+      // 7. ASSERT JUMPED TIME, SHOULD BE EXACTLY GIVEN SECONDSp
+      await expect(seconds * 1000).toBe(dateBeforeJump.getTime() - dateAfterJump.getTime())
 
-      // Save screenshot to compare later
-      const afterJumpScreenshot = await hv.getBase64Screenshot({
-          // mask : [page.locator('#timestep-select')],
-          // stylePath : path.join(__dirname, 'screenshot_only_sun.css')
+      // 8. SAVE CURRENT SCREENSHOT TO COMPARE LATER
+      const afterJumpScreenshot = await hv.saveScreenshot("after_jump_screenshot", {
           style: '#helioviewer-viewport-container-outer {z-index:200000}'
       });
 
-      // Save screenshot to hv report
-      await hv.attachBase64FileToTrace('after_jump_screenshot.png', afterJumpScreenshot)
-
-      // Load directly the date after we made the  jump 
-      // // Make a clean request to that date;
+      // 9. START FRESH AND RELOAD HV
       await page.evaluate(() => localStorage.clear());
-
       await hv.Load();
       await hv.CloseAllNotifications();
       await hv.OpenSidebar();
 
+      // 10. LAYER 0 , SWITH TO SOHO
       const new_page_layer = await hv.getImageLayer(0);
       await new_page_layer.set('Observatory:', 'SOHO');
       await hv.WaitForLoadingComplete();
 
-      // 3. USE NEWEST SOHO
+      // 11. USE NEWEST SOHO
       await hv.UseNewestImage();
       await hv.WaitForLoadingComplete();
       await hv.CloseAllNotifications();
 
-      // 
+      // 12. LOAD THE JUMPED DATETIME, SO WE CAN COMPARE SCREENSHOT
       await hv.SetObservationDateTimeFromDate(dateAfterJump);
       await hv.WaitForLoadingComplete();
       await hv.CloseAllNotifications();
 
-      const directDateScreenshot = await hv.getBase64Screenshot({
-          // mask : [newPage.locator('#timestep-select')],
+      // 13. GET CURRENT SCREENSHOT TO COMPARE PREVIOUS SCREENSHOT
+      const directDateScreenshot = await hv.saveScreenshot("direct_date_screenshot", {
           style: '#helioviewer-viewport-container-outer {z-index:200000}'
       });
 
-      await hv.attachBase64FileToTrace('direct_date_screenshot.png', directDateScreenshot)
+      // 14, 2 SCREENSHOTS ARE FROM SAME DATE, AND SHOULD MATCH
       await expect(directDateScreenshot).toBe(afterJumpScreenshot)
-
     });
 
+    /**
+     * This test is testing jumping forward functionality with given label for range select-box 
+     */
     test('Jump forwards with '+jump_label+' should go to matching datetime in future, with matching screenshots', async ({ page, context, browser }, info) => {
 
-      const hv = new Helioviewer(page, info);
+        const hv = new Helioviewer(page, info);
 
-      // 1. LOAD HV 
-      await hv.Load();
-      await hv.CloseAllNotifications();
-      await hv.OpenSidebar();
+        // 1. LOAD HV 
+        await hv.Load();
+        await hv.CloseAllNotifications();
+        await hv.OpenSidebar();
 
-      await hv.pr("initial"+jump_label+".png");
-      // 2. LAYER 0 , SWITH TO SOHO
-      const layer = await hv.getImageLayer(0);
-      await layer.set('Observatory:', 'SOHO');
+        // 2. LAYER 0 , SWITH TO SOHO
+        const layer = await hv.getImageLayer(0);
+        await layer.set('Observatory:', 'SOHO');
+        await hv.WaitForLoadingComplete();
+        await hv.CloseAllNotifications();
 
-      await hv.WaitForLoadingComplete();
-      await hv.CloseAllNotifications();
+        // 3. REGISTER INITIAL DATE
+        const initialDate = await hv.GetLoadedDate();
+        expect(initialDate).not.toBeNull();
 
-      const initialDate = await hv.GetLoadedDate();
-      expect(initialDate).not.toBeNull();
+        // 3. TO TEST GO FORWARD WE ARE GOING BACK GIVEN SECONDS + SOME RANDOM TIME
+        const randomMilliseconds = Math.floor(Math.random() * 90) * (24*60*60*1000);
+        const wayBackInTime = new Date();
+        wayBackInTime.setTime(initialDate.getTime() - (seconds*1000) - randomMilliseconds);
 
-      await hv.pr("after_soho_change"+jump_label+".png");
+        // 4. NOW GO BACK TO THIS DATE 
+        await hv.SetObservationDateTimeFromDate(wayBackInTime);
+        await hv.WaitForLoadingComplete();
+        await hv.CloseAllNotifications();
 
-      // 3. GO TO SOME PAST DAY FIRST SO WE CAN JUMP FORWARD
-      const randomMilliseconds = Math.floor(Math.random() * 90) * (24*60*60*1000);
-      const newDate = new Date();
-      newDate.setTime(initialDate.getTime() - (seconds*1000) - randomMilliseconds);
+        // 5. NOW JUMP FORWARD WITH GIVEN SECONDS 
+        await hv.JumpForwardDateWithSelection(seconds);
+        await hv.WaitForLoadingComplete();
+        await hv.CloseAllNotifications();
 
-      await hv.SetObservationDateTimeFromDate(newDate);
-      await hv.WaitForLoadingComplete();
-      await hv.CloseAllNotifications();
+        // 6. NOW REGISTER THIS DATE
+        const dateAfterJumpForward = await hv.GetLoadedDate();
+        expect(dateAfterJumpForward).not.toBeNull();
 
-      await hv.pr("after_go_back_for_"+(randomMilliseconds/(24*60*60*1000))+"_"+jump_label+".png");
+        // 7, ASSERT WE STILL NEED TO GO RANDOM TIME TO GO WHERE WE STARTED
+        await expect(randomMilliseconds).toBe(initialDate.getTime() - dateAfterJumpForward.getTime())
 
-      // 4 JUMP FORWARD WITH GIVEN SECONDS 
-      await hv.JumpForwardDateWithSelection(seconds);
-      await hv.WaitForLoadingComplete();
-      await hv.CloseAllNotifications();
+        // 8. TAKE A PICTURE , WE WILL COMPARE LATER  
+        const navigatedDateScreenshot = await hv.saveScreenshot("navigated_date_screenshot", {
+            mask : [page.locator('#timestep-select')],
+        });
 
-      await hv.pr("after_jump_forward_"+jump_label+".png");
-      //
-      const dateAfterJumpForward = await hv.GetLoadedDate();
-      expect(dateAfterJumpForward).not.toBeNull();
+        // 9. RELOAD HV WITH FRESH DATA
+        await page.evaluate(() => localStorage.clear());
+        await hv.Load();
+        await hv.CloseAllNotifications();
+        await hv.OpenSidebar();
 
-      // Needs to be exactly difference milliseconds 
-      await expect(randomMilliseconds).toBe(initialDate.getTime() - dateAfterJumpForward.getTime())
+        // 10.. LAYER 0 , SWITH TO SOHO
+        const layer_2 = await hv.getImageLayer(0);
+        await layer_2.set('Observatory:', 'SOHO');
+        await hv.WaitForLoadingComplete();
+        await hv.CloseAllNotifications();
 
-      const navigatedDateScreenshot = await hv.getBase64Screenshot({
-          mask : [page.locator('#timestep-select')],
-          // style: '#helioviewer-viewport-container-outer {z-index:200000}'
-      });
+        // 11. CALCULATE THE DATE WE GO TO COMPARE SCREENSHOTS
+        const navigatedDate = new Date();
+        navigatedDate.setTime(initialDate.getTime() - randomMilliseconds);
 
-      await hv.attachBase64FileToTrace('navigated_date_screenshot.png', navigatedDateScreenshot)
+        // 12. GO TO THAT DATE
+        await hv.SetObservationDateTimeFromDate(navigatedDate);
+        await hv.WaitForLoadingComplete();
+        await hv.CloseAllNotifications();
 
-      const navigatedDate = new Date();
-      navigatedDate.setTime(initialDate.getTime() - randomMilliseconds);
+        // 13. TAKE A SCREENSOTi AND COMPARE
+        const directDateScreenshot = await hv.saveScreenshot("direct_date_screenshot", {
+            mask : [page.locator('#timestep-select')],
+        });
 
-      // Load directly the date after we made the  jump 
-      // // Make a clean request to that date;
-      await page.evaluate(() => localStorage.clear());
-
-      await hv.Load();
-      await hv.CloseAllNotifications();
-      await hv.OpenSidebar();
-
-      // 2. LAYER 0 , SWITH TO SOHO
-      const layer_2 = await hv.getImageLayer(0);
-      await layer_2.set('Observatory:', 'SOHO');
-
-      await hv.WaitForLoadingComplete();
-      await hv.CloseAllNotifications();
-
-      await hv.SetObservationDateTimeFromDate(navigatedDate);
-      await hv.WaitForLoadingComplete();
-      await hv.CloseAllNotifications();
-
-
-      const directDateScreenshot = await hv.getBase64Screenshot({
-          mask : [page.locator('#timestep-select')],
-          // style: '#helioviewer-viewport-container-outer {z-index:200000}'
-      });
-
-      await hv.attachBase64FileToTrace('direct_date_screenshot.png', directDateScreenshot)
-      await expect(directDateScreenshot).toBe(navigatedDateScreenshot)
+        await expect(directDateScreenshot).toBe(navigatedDateScreenshot)
 
     });
 
-
 });
-
-// // create multiple screenshots and compare them 
-// test('Create a new screenshot and view it and close it', async ({ page, context, browserName }, info) => {
-//
-//   test.fixme(browserName === 'webkit', "We couldn't be able to trigger download event for webkit, skipping this test now");
-//
-//   let hv = new Helioviewer(page);
-//
-//   // load helioviewer
-//   await hv.Load();
-//   await hv.CloseAllNotifications();
-//
-//   // open screenshot drawer
-//   await hv.screenshot.toggleScreenshotDrawer();
-//
-//   // create a full-screen screenshot
-//   await hv.screenshot.createFullScreenshot();
-//   await hv.screenshot.waitForScreenshotCompleteNotifitication(); 
-//
-//   // assert there should be one screenshot in drawer
-//   await hv.screenshot.assertScreenshotCountFromDrawer(1);
-//
-//   // download and save screenshot from notification ( by clicking your screenshot ready in jgrowl messsage)  
-//   const screenshotFileFromNotification = await hv.screenshot.downloadScreenshotFromNotification();
-//   const screenshot_notification_report_file = info.outputPath('screenshot_from_notification.png');
-//   await fs.promises.writeFile(screenshot_notification_report_file, Buffer.from(screenshotFileFromNotification, 'base64'));
-//   await info.attach('screenshot-notification', { path: screenshot_notification_report_file });
-//
-//   // close the notification
-//   await hv.CloseAllNotifications();
-//
-//   expect(await page.screenshot()).toMatchSnapshot('first-screenshot-created.png');
-//
-//   // now click the created screenshot link and see the screenshot in full screen
-//   await hv.screenshot.viewScreenshotFromScreenshotHistory(1);
-//   await hv.WaitForImageLoad();
-//   expect(await page.screenshot()).toMatchSnapshot('view-first-screenshot.png');
-//
-//   // Close the screenshot from X 
-//   // compare the test snapshot with the one we have created for
-//   await hv.screenshot.closeScreenshotView();
-//   expect(await page.screenshot()).toMatchSnapshot('first-screenshot-created.png');
-//  
-//   // See screenshot again
-//   await hv.screenshot.viewScreenshotFromScreenshotHistory(1);
-//   await hv.WaitForImageLoad();
-//
-//   // now download screenshot from screenshot view via download button 
-//   const screenshotFileFromScreenshotView = await hv.screenshot.downloadScreenshotFromViewScreenshotFeature();
-//   const screenshot_view_screenshot_report_file = info.outputPath('screenshot_view_screenshot.png');
-//   await fs.promises.writeFile(screenshot_view_screenshot_report_file, Buffer.from(screenshotFileFromScreenshotView, 'base64'));
-//   await info.attach('screenshot-view-screenshot', { path: screenshot_view_screenshot_report_file });
-//
-//   // compare screenshots downloaded from different sources
-//   await expect(screenshotFileFromNotification).toBe(screenshotFileFromScreenshotView);
-//
-//   // Close screenshot from X in the view
-//   await hv.screenshot.closeScreenshotView();
-//
-//   // Close screenshot drawer
-//   await hv.screenshot.toggleScreenshotDrawer();
-//
-//   // This test snapshot should match the initial state
-//   expect(await page.screenshot()).toMatchSnapshot('screenshot-drawer-disabled.png');
-//
-//   // Reopen screenshot drawer
-//   await hv.screenshot.toggleScreenshotDrawer();
-//
-//   // Test snapshot with initial first screenshot created view
-//   expect(await page.screenshot()).toMatchSnapshot('first-screenshot-created.png', {
-//   	maxDiffPixels: 100,
-//   });
-//
-//   // Now add another snapshot
-//   await hv.screenshot.createFullScreenshot();
-//   await hv.screenshot.waitForScreenshotCompleteNotifitication(); 
-//   await hv.CloseAllNotifications();
-//
-//   // assert there should be two screenshots in drawer
-//   await hv.screenshot.assertScreenshotCountFromDrawer(2);
-//
-//   expect(await page.screenshot()).toMatchSnapshot('second-screenshot-created.png', {
-//   	maxDiffPixels: 100,
-//   });
-//
-//   // assert there should be two screenshots in drawer
-//   await hv.screenshot.viewScreenshotFromScreenshotHistory(1);
-//   await hv.WaitForImageLoad();
-//
-//   expect(await page.screenshot()).toMatchSnapshot('view-first-screenshot.png');
-// });

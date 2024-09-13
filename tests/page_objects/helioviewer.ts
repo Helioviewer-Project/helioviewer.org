@@ -315,10 +315,6 @@ class Helioviewer {
         await this.OpenSidebar();
         await this.page.getByLabel('Observation date', { exact: true }).click();
         await this.page.getByLabel('Observation date', { exact: true }).fill(date);
-
-        // await this.page.getByLabel('Observation date', { exact: true }).press('Enter');
-        // await this.page.getByLabel('Observation date', { exact: true }).press('Enter');
-
         await this.page.getByLabel('Observation time').click();
         await this.page.getByLabel('Observation time').fill(time);
         await this.page.getByLabel('Observation time').press('Enter');
@@ -351,7 +347,7 @@ class Helioviewer {
     }
 
     /**
-    * Jump backwards with jump button, 
+    * Jump backwards with jump button, with given seconds layer 
     * @param integer seconds, interval in seconds 
     * @returns void
     */
@@ -362,7 +358,7 @@ class Helioviewer {
     }
 
     /**
-    * Jump forward with jump button, 
+    * Jump forward with jump button, with given seconds layer 
     * @param integer seconds, interval in seconds 
     * @returns void
     */
@@ -373,52 +369,48 @@ class Helioviewer {
     }
 
     /**
-    * Get base64 screenshot data of given page, 
+    * Attach base64 screnshot with a given filename to trace report 
+    * also returns the screenshot string
+    * @param filename string | name of file in trace report
     * @param options JSON | pass options to playwright screenshot function  
-    * @returns string | base64 represation of binary screenshot
+    * @returns Promise<string> | base64 string screenshot
     */
-    async getBase64Screenshot(options: JSON = {}): string {
-        // stay on logo to not generate 
-        // await this.HoverOnLogo();
-        const binaryImage = await this.page.locator('#helioviewer-viewport-container-outer').screenshot(options);
-        return binaryImage.toString('base64');
+    async saveScreenshot(filename: string = "", options: JSON = {}): Promise<string> {
+
+        // get base64 screenshot
+        const binaryImage = await this.page.screenshot(options);
+        const base64Image = binaryImage.toString('base64');
+
+        // if not filename given, generate one
+        if (filename == "") {
+            filename = (Math.random() + 1).toString(36).substring(7);
+        } 
+
+        // if there is no png extension add it
+        if (!filename.endsWith(".png")) {
+            filename = filename + ".png";
+        }
+
+        // save file to info report
+        const filepath = this.info.outputPath(filename);
+        await fs.promises.writeFile(filepath, Buffer.from(base64Image, 'base64'));
+        await this.info.attach(filename, { path: filepath });
+
+        // return the base64 screenshot
+        return base64Image;
     }
 
     /**
-    * Attach base64 content with a filepath to trace report 
-    * @param info Info | playwright info object where we can attach files  
-    * @param content string | base64 representation of file
-    * @param name string | name of file in trace report
-    * @returns void
-    */
-    async attachBase64FileToTrace(filename: string, contents: string): void {
-      const filepath = this.info.outputPath(filename);
-      await fs.promises.writeFile(filepath, Buffer.from(contents, 'base64'));
-      await this.info.attach(filename, { path: filepath });
-    }
-
-
-    /**
+    * Attach base64 screnshot with a given filename to trace report 
+    * and  exit afterwards with false assertion
+    * @param filename string | name of file in trace report
     * @param options JSON | pass options to playwright screenshot function  
-    * @returns void
-    */
-    async pre(filename: string = "", options: JSON = {}): void {
-      await this.pr(filename, options);
-      expect("true").toBe("!false");
+    * @returns void  */
+    async saveScreenshotAndExit(filename: string = "", options: JSON = {}): void {
+        await this.saveScreenshot(filename, options);
+        await expect("failed").toBe("intentionally");
     }
 
-    /**
-    * @param options JSON | pass options to playwright screenshot function  
-    * @returns void
-    */
-    async pr(filename: string = "", options: JSON = {}): void {
-      const debugScreenshot = await this.getBase64Screenshot({});
-      
-      if (filename == "") {
-        filename = (Math.random() + 1).toString(36).substring(7) + ".png";
-      } 
-      await this.attachBase64FileToTrace(filename, debugScreenshot)
-    }
 }
 
 export { Helioviewer }
