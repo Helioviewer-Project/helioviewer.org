@@ -17,7 +17,7 @@ test('Event viewer dialog menu should not overflow with tabs', async ({ page }) 
   await hv.OpenSidebar();
 
   // Action 3: SET OBSERVATION TIME
-  await hv.SetObservationTime('2021/05/31', '00:01:29');
+  await hv.SetObservationDateTime('2021/05/31', '00:01:29');
 
   // Action 4: View CCMC CME events
   await expect(page.locator('#tree_CCMC').getByRole('link', { name: 'CME'})).toBeVisible();

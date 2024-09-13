@@ -2,13 +2,14 @@
  * @file Contains functions for interacting with the Helioviewer UI
  */
 
-import { Locator, Page, expect } from '@playwright/test';
+import { Locator, Page, Info, expect } from '@playwright/test';
 import { ImageLayer } from './image_layer';
 import { Screenshot } from './screenshot';
 import { Movie } from './movie';
 import { URLShare } from './urlshare';
 import { EventTree } from './event_tree';
 import { VSODrawer } from './vso_drawer';
+import * as fs from 'fs';
 
 /**
  * Matches an image layer selection
@@ -21,6 +22,7 @@ interface LayerSelect {
 };
 
 class Helioviewer {
+    info: Info | null;
     page: Page;
     sidebar: Locator;
     screenshot: Screenshot;
@@ -28,14 +30,14 @@ class Helioviewer {
     urlshare: URLShare;
     vso_drawer: VSODrawer;
 
-    constructor(page) {
+    constructor(page: Page, info: Info = null) {
         this.page = page;
+        this.info = info;
         this.screenshot = new Screenshot(this.page);
         this.movie = new Movie(this.page);
         this.urlshare = new URLShare(this.page);
         this.vso_drawer = new VSODrawer(this.page);
         this.sidebar = this.page.locator('#hv-drawer-left');
-
     }
 
     /**
@@ -105,12 +107,12 @@ class Helioviewer {
      * This function waits for the number of tiles on the page to not change.
      */
     private async WaitForTileCountToSettle() {
-        let locators = await this.page.locator('//img');
+        let locators = await this.page.locator('img.tile');
         let count = (await locators.all()).length;
         let settled = false;
         while (!settled) {
             // Wait some time.
-            await this.page.waitForTimeout(500);
+            await this.page.waitForTimeout(1000);
             // Check the number of img tags
             let next_count = (await locators.all()).length;
             // If it matches the previous count, then we're good.
@@ -121,7 +123,7 @@ class Helioviewer {
 
     async WaitForImageLoad() {
         await this.WaitForTileCountToSettle();
-        let locators = await this.page.locator('//img');
+        let locators = await this.page.locator('img.tile');
         let images = await locators.all();
         let promises = images.map(locator => locator.evaluate(img => (img as HTMLImageElement).complete || new Promise(f => img.onload = f)));
         await Promise.all(promises);
@@ -254,6 +256,22 @@ class Helioviewer {
         await this.WaitForLoadingComplete();
     }
 
+    /**
+    * Sets observation datetime of Helioviewer from given Date object, 
+    * @param Date date - The date object , to be used to load observation datetime.
+    * @returns void 
+    */
+    async SetObservationDateTimeFromDate(date: Date): void {
+
+        const dateParts = date.toISOString().split('T')[0].split('-')
+        const dateString = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]}`
+
+        const timeParts = date.toISOString().split('T')[1].split(':')
+        const timeSeconds = timeParts[2].split('.')[0];
+        const timeString = `${timeParts[0]}:${timeParts[1]}:${timeSeconds}`
+
+        await this.SetObservationDateTime(dateString, timeString);
+    }
 
     /**
     * Sets the observation datetime and waits helioviewer to load,
@@ -261,15 +279,17 @@ class Helioviewer {
     * @param string time - The time to be entered in the format 'HH:MM'.
     * @returns void - A promise that resolves when the date and time have been successfully entered.
     */
-    async SetObservationTime(date, time) {
+    async SetObservationDateTime(date, time) {
         await this.OpenSidebar();
         await this.page.getByLabel('Observation date', { exact: true }).click();
         await this.page.getByLabel('Observation date', { exact: true }).fill(date);
-        await this.page.getByLabel('Observation date', { exact: true }).press('Enter');
+
+        // await this.page.getByLabel('Observation date', { exact: true }).press('Enter');
+        // await this.page.getByLabel('Observation date', { exact: true }).press('Enter');
+
         await this.page.getByLabel('Observation time').click();
         await this.page.getByLabel('Observation time').fill(time);
         await this.page.getByLabel('Observation time').press('Enter');
-        await this.WaitForImageLoad();
     }
 
     /**
@@ -280,6 +300,93 @@ class Helioviewer {
         await this.page.locator('#logo').hover();
     }
 
+    /**
+    * Get the loaded date in helioviewer 
+    * @returns Date|null - Loaded date of helioviewer, it can be null if any error.
+    */
+    async GetLoadedDate(): Date|null {
+
+        const currentDate = await this.page.getByLabel('Observation date', {exact:true}).inputValue();
+        const currentTime = await this.page.getByLabel('Observation time', {exact:true}).inputValue();
+
+        const date = new Date(currentDate +' '+ currentTime);
+
+        if (isNaN(date.getTime())) {
+            return null;
+        }
+
+        return date
+    }
+
+    /**
+    * Jump backwards with jump button, 
+    * @param integer seconds, interval in seconds 
+    * @returns void
+    */
+    async JumpBackwardsDateWithSelection(seconds: integer): void {
+        await this.OpenSidebar();
+        await this.page.getByLabel('Jump:').selectOption(seconds.toString());
+        await this.page.locator('#timeBackBtn').click();
+    }
+
+    /**
+    * Jump forward with jump button, 
+    * @param integer seconds, interval in seconds 
+    * @returns void
+    */
+    async JumpForwardDateWithSelection(seconds: integer): void {
+        await this.OpenSidebar();
+        await this.page.getByLabel('Jump:').selectOption(seconds.toString());
+        await this.page.locator('#timeForwardBtn').click();
+    }
+
+    /**
+    * Get base64 screenshot data of given page, 
+    * @param options JSON | pass options to playwright screenshot function  
+    * @returns string | base64 represation of binary screenshot
+    */
+    async getBase64Screenshot(options: JSON = {}): string {
+        // stay on logo to not generate 
+        // await this.HoverOnLogo();
+        const binaryImage = await this.page.locator('#helioviewer-viewport-container-outer').screenshot(options);
+        return binaryImage.toString('base64');
+    }
+
+    /**
+    * Attach base64 content with a filepath to trace report 
+    * @param info Info | playwright info object where we can attach files  
+    * @param content string | base64 representation of file
+    * @param name string | name of file in trace report
+    * @returns void
+    */
+    async attachBase64FileToTrace(filename: string, contents: string): void {
+      const filepath = this.info.outputPath(filename);
+      await fs.promises.writeFile(filepath, Buffer.from(contents, 'base64'));
+      await this.info.attach(filename, { path: filepath });
+    }
+
+
+    /**
+    * @param options JSON | pass options to playwright screenshot function  
+    * @returns void
+    */
+    async pre(filename: string = "", options: JSON = {}): void {
+      await this.pr(filename, options);
+      expect("true").toBe("!false");
+    }
+
+    /**
+    * @param options JSON | pass options to playwright screenshot function  
+    * @returns void
+    */
+    async pr(filename: string = "", options: JSON = {}): void {
+      const debugScreenshot = await this.getBase64Screenshot({});
+      
+      if (filename == "") {
+        filename = (Math.random() + 1).toString(36).substring(7) + ".png";
+      } 
+      await this.attachBase64FileToTrace(filename, debugScreenshot)
+    }
 }
 
 export { Helioviewer }
