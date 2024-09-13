@@ -15,7 +15,7 @@ import { test, expect } from '@playwright/test';
  *            There's not a simple solution to this, but consider this if you
  *            see this test being flaky.
  */
-test.only('Displays initial AIA 304 Image', async ({ page }) => {
+test('Displays initial AIA 304 Image', { tag: 'flaky' }, async ({ page }) => {
   await page.goto('/');
   // Open the Helioviewer Sidebar
   // Wait for the UI to finish loading before proceeding
