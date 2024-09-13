@@ -105,12 +105,12 @@ class Helioviewer {
      * This function waits for the number of tiles on the page to not change.
      */
     private async WaitForTileCountToSettle() {
-        let locators = await this.page.locator('img.tile');
+        let locators = this.page.locator('img.tile');
         let count = (await locators.all()).length;
         let settled = false;
         while (!settled) {
             // Wait some time.
-            await this.page.waitForTimeout(500);
+            await this.page.waitForTimeout(1000);
             // Check the number of img tags
             let next_count = (await locators.all()).length;
             // If it matches the previous count, then we're good.
