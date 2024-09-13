@@ -105,12 +105,12 @@ class Helioviewer {
      * This function waits for the number of tiles on the page to not change.
      */
     private async WaitForTileCountToSettle() {
-        let locators = await this.page.locator('//img');
+        let locators = this.page.locator('img.tile');
         let count = (await locators.all()).length;
         let settled = false;
         while (!settled) {
             // Wait some time.
-            await this.page.waitForTimeout(500);
+            await this.page.waitForTimeout(1000);
             // Check the number of img tags
             let next_count = (await locators.all()).length;
             // If it matches the previous count, then we're good.
@@ -120,10 +120,42 @@ class Helioviewer {
     }
 
     async WaitForImageLoad() {
+        // wait some time for the number of image tiles to update.
         await this.WaitForTileCountToSettle();
-        let locators = await this.page.locator('//img');
+        // wait for playwright to believe the network is done loading
+        await this.page.waitForLoadState('networkidle');
+        // check all img tags to ensure they're done loading.
+        let locators = await this.page.locator('img.tile');
+        // Get all the img tags
         let images = await locators.all();
-        let promises = images.map(locator => locator.evaluate(img => (img as HTMLImageElement).complete || new Promise(f => img.onload = f)));
+        // Create promises that resolve when the img is done loading, when
+        // the img's "complete" attribute is set to true.
+        let promises = images.map(locator => {
+            return locator.count().then(n => {
+                // There seems to be an issue where the locator does not exist.
+                // It should exist, it was there when we executed "locators.all"
+                // but now playwright is going to fail "waiting for locator".
+                // So if the locator just isn't in the DOM anymore for some
+                // reason, then just return instead of trying to wait.
+                if (n == 0) return;
+
+                return locator.evaluate(img => {
+                    return new Promise<void>((resolve) => {
+                        if ((img as HTMLImageElement).complete) {
+                            resolve();
+                        } else {
+                            // Periodically check for the image to be done loading.
+                            let interval = setInterval(() => {
+                                if ((img as HTMLImageElement).complete) {
+                                    clearInterval(interval);
+                                    resolve();
+                                }
+                            }, 500);
+                        }
+                    });
+                }, null, { timeout: 10000 });
+            })
+        });
         await Promise.all(promises);
     }
 
