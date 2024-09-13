@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test';
+import { expect, Page, Info } from '@playwright/test';
 import { Helioviewer } from './helioviewer';
 import { HelioviewerInterface } from './helioviewer_interface';
 
