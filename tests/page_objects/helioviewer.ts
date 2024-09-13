@@ -107,11 +107,7 @@ class Helioviewer {
      * This function waits for the number of tiles on the page to not change.
      */
     private async WaitForTileCountToSettle() {
-<<<<<<< HEAD
-        let locators = await this.page.locator('img.tile');
-=======
         let locators = this.page.locator('img.tile');
->>>>>>> main
         let count = (await locators.all()).length;
         let settled = false;
         while (!settled) {
@@ -128,15 +124,11 @@ class Helioviewer {
     async WaitForImageLoad() {
         // wait some time for the number of image tiles to update.
         await this.WaitForTileCountToSettle();
-<<<<<<< HEAD
-        let locators = await this.page.locator('img.tile');
-=======
         // wait for playwright to believe the network is done loading
         await this.page.waitForLoadState('networkidle');
         // check all img tags to ensure they're done loading.
         let locators = await this.page.locator('img.tile');
         // Get all the img tags
->>>>>>> main
         let images = await locators.all();
         // Create promises that resolve when the img is done loading, when
         // the img's "complete" attribute is set to true.
