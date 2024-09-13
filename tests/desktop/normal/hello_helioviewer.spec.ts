@@ -4,8 +4,18 @@ import { test, expect } from '@playwright/test';
  * This test will make Helioviewer load the default AIA 304 image that is
  * embedded in the development container and perform a visual comparison to make
  * sure the page appears how we expect it to appear.
+ *
+ * @note This test is sometimes flaky due to race conditions in Helioviewer.
+ *       Consider this:
+ *          1. We update observation date, helioviewer starts updating
+ *          2. We update observation time before the page is done updating
+ *          - Helioviewer is driven by callbacks, and (at this time 2024-09-13)
+ *            there are no checks to make sure this happens sequentially,
+ *            which may temporarily put helioviewer in the incorrect state.
+ *            There's not a simple solution to this, but consider this if you
+ *            see this test being flaky.
  */
-test('Displays initial AIA 304 Image', async ({ page }) => {
+test.only('Displays initial AIA 304 Image', async ({ page }) => {
   await page.goto('/');
   // Open the Helioviewer Sidebar
   // Wait for the UI to finish loading before proceeding
