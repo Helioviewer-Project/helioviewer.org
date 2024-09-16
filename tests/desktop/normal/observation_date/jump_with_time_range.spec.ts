@@ -13,7 +13,7 @@ time_jump_ranges.forEach(({ jump_label, seconds }) => {
     /**
      * This test is testing jumping backwads functionality with given label for range select-box 
      */
-    test.only('Jump backwards with '+jump_label+' should go to matching datetime in past, with matching screenshots', { tags : '@production' }, async ({ page, context, browser }, info) => {
+    test('Jump backwards with '+jump_label+' should go to matching datetime in past, with matching screenshots', { tag : '@production' }, async ({ page, context, browser }, info) => {
 
       const hv = new Helioviewer(page, info);
 
@@ -86,7 +86,7 @@ time_jump_ranges.forEach(({ jump_label, seconds }) => {
     /**
      * This test is testing jumping forward functionality with given label for range select-box 
      */
-    test('Jump forwards with '+jump_label+' should go to matching datetime in future, with matching screenshots', { tags : '@production'}, async ({ page, context, browser }, info) => {
+    test('Jump forwards with '+jump_label+' should go to matching datetime in future, with matching screenshots', { tag : '@production' }, async ({ page, context, browser }, info) => {
 
         const hv = new Helioviewer(page, info);
 
