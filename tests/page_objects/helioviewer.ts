@@ -2,13 +2,14 @@
  * @file Contains functions for interacting with the Helioviewer UI
  */
 
-import { Locator, Page, expect } from '@playwright/test';
+import { Locator, Page, TestInfo, expect } from '@playwright/test';
 import { ImageLayer } from './image_layer';
 import { Screenshot } from './screenshot';
 import { Movie } from './movie';
 import { URLShare } from './urlshare';
 import { EventTree } from './event_tree';
 import { VSODrawer } from './vso_drawer';
+import * as fs from 'fs';
 
 /**
  * Matches an image layer selection
@@ -21,6 +22,7 @@ interface LayerSelect {
 };
 
 class Helioviewer {
+    info: TestInfo | null;
     page: Page;
     sidebar: Locator;
     screenshot: Screenshot;
@@ -28,14 +30,14 @@ class Helioviewer {
     urlshare: URLShare;
     vso_drawer: VSODrawer;
 
-    constructor(page) {
+    constructor(page: Page, info: TestInfo | null = null) {
         this.page = page;
+        this.info = info;
         this.screenshot = new Screenshot(this.page);
         this.movie = new Movie(this.page);
         this.urlshare = new URLShare(this.page);
         this.vso_drawer = new VSODrawer(this.page);
         this.sidebar = this.page.locator('#hv-drawer-left');
-
     }
 
     /**
@@ -286,6 +288,22 @@ class Helioviewer {
         await this.WaitForLoadingComplete();
     }
 
+    /**
+    * Sets observation datetime of Helioviewer from given Date object, 
+    * @param Date date - The date object , to be used to load observation datetime.
+    * @returns void 
+    */
+    async SetObservationDateTimeFromDate(date: Date): Promise<void> {
+
+        const dateParts = date.toISOString().split('T')[0].split('-')
+        const dateString = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]}`
+
+        const timeParts = date.toISOString().split('T')[1].split(':')
+        const timeSeconds = timeParts[2].split('.')[0];
+        const timeString = `${timeParts[0]}:${timeParts[1]}:${timeSeconds}`
+
+        await this.SetObservationDateTime(dateString, timeString);
+    }
 
     /**
     * Sets the observation datetime and waits helioviewer to load,
@@ -293,15 +311,13 @@ class Helioviewer {
     * @param string time - The time to be entered in the format 'HH:MM'.
     * @returns void - A promise that resolves when the date and time have been successfully entered.
     */
-    async SetObservationTime(date, time) {
+    async SetObservationDateTime(date, time) {
         await this.OpenSidebar();
         await this.page.getByLabel('Observation date', { exact: true }).click();
         await this.page.getByLabel('Observation date', { exact: true }).fill(date);
-        await this.page.getByLabel('Observation date', { exact: true }).press('Enter');
         await this.page.getByLabel('Observation time').click();
         await this.page.getByLabel('Observation time').fill(time);
         await this.page.getByLabel('Observation time').press('Enter');
-        await this.WaitForImageLoad();
     }
 
     /**
@@ -310,6 +326,87 @@ class Helioviewer {
      */
     async HoverOnLogo() {
         await this.page.locator('#logo').hover();
+    }
+
+    /**
+    * Get the loaded date in helioviewer 
+    * @returns Date|null - Loaded date of helioviewer, it can be null if any error.
+    */
+    async GetLoadedDate(): Promise<Date> {
+
+        const currentDate = await this.page.getByLabel('Observation date', {exact:true}).inputValue();
+        const currentTime = await this.page.getByLabel('Observation time', {exact:true}).inputValue();
+
+        const date = new Date(currentDate +' '+ currentTime + 'Z');
+
+        expect(date.getTime()).not.toBeNaN();
+
+        return date
+    }
+
+    /**
+    * Jump backwards with jump button, with given seconds layer 
+    * @param integer seconds, interval in seconds 
+    * @returns void
+    */
+    async JumpBackwardsDateWithSelection(seconds: number): Promise<void> {
+        await this.OpenSidebar();
+        await this.page.getByLabel('Jump:').selectOption(seconds.toString());
+        await this.page.locator('#timeBackBtn').click();
+    }
+
+    /**
+    * Jump forward with jump button, with given seconds layer 
+    * @param integer seconds, interval in seconds 
+    * @returns void
+    */
+    async JumpForwardDateWithSelection(seconds: number): Promise<void> {
+        await this.OpenSidebar();
+        await this.page.getByLabel('Jump:').selectOption(seconds.toString());
+        await this.page.locator('#timeForwardBtn').click();
+    }
+
+    /**
+    * Attach base64 screnshot with a given filename to trace report 
+    * also returns the screenshot string
+    * @param filename string | name of file in trace report
+    * @param options Object | pass options to playwright screenshot function  
+    * @returns Promise<string> | base64 string screenshot
+    */
+    async saveScreenshot(filename: string = "", options: Object = {}): Promise<string> {
+
+        // get base64 screenshot
+        const binaryImage = await this.page.screenshot(options);
+        const base64Image = binaryImage.toString('base64');
+
+        // if not filename given, generate one
+        if (filename == "") {
+            filename = (Math.random() + 1).toString(36).substring(7);
+        } 
+
+        // if there is no png extension add it
+        if (!filename.endsWith(".png")) {
+            filename = filename + ".png";
+        }
+
+        // save file to info report
+        const filepath = this.info.outputPath(filename);
+        await fs.promises.writeFile(filepath, Buffer.from(base64Image, 'base64'));
+        await this.info.attach(filename, { path: filepath });
+
+        // return the base64 screenshot
+        return base64Image;
+    }
+
+    /**
+    * Attach base64 screnshot with a given filename to trace report 
+    * and  exit afterwards with false assertion
+    * @param filename string | name of file in trace report
+    * @param options Object | pass options to playwright screenshot function  
+    * @returns void  */
+    async saveScreenshotAndExit(filename: string = "", options: Object = {}): Promise<void> {
+        await this.saveScreenshot(filename, options);
+        await expect("failed").toBe("intentionally");
     }
 
 }
