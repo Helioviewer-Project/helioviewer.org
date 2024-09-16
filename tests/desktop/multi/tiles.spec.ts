@@ -26,22 +26,22 @@ HelioviewerViews.forEach((view) => {
         // Zoom out, to test the zoom out
         await hv.ZoomOut(1);
         // Tiles in column x=1 should be visible from y range y=-2 to y=1
-        expect(page.locator("//img[contains(@src, 'x=1&y=-2')]")).toHaveCount(1);
-        expect(page.locator("//img[contains(@src, 'x=1&y=-1')]")).toHaveCount(1);
-        expect(page.locator("//img[contains(@src, 'x=1&y=0')]")).toHaveCount(1);
-        expect(page.locator("//img[contains(@src, 'x=1&y=1')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=1&y=-2')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=1&y=-1')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=1&y=0')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=1&y=1')]")).toHaveCount(1);
         // Same for tiles in column x=2
-        expect(page.locator("//img[contains(@src, 'x=2&y=-2')]")).toHaveCount(1);
-        expect(page.locator("//img[contains(@src, 'x=2&y=-1')]")).toHaveCount(1);
-        expect(page.locator("//img[contains(@src, 'x=2&y=0')]")).toHaveCount(1);
-        expect(page.locator("//img[contains(@src, 'x=2&y=1')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=2&y=-2')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=2&y=-1')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=2&y=0')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=2&y=1')]")).toHaveCount(1);
         // Tiles in row y=1 should be visible from x range x=-3 to x=2
-        expect(page.locator("//img[contains(@src, 'x=-3&y=1')]")).toHaveCount(1);
-        expect(page.locator("//img[contains(@src, 'x=-2&y=1')]")).toHaveCount(1);
-        expect(page.locator("//img[contains(@src, 'x=-1&y=1')]")).toHaveCount(1);
-        expect(page.locator("//img[contains(@src, 'x=0&y=1')]")).toHaveCount(1);
-        expect(page.locator("//img[contains(@src, 'x=1&y=1')]")).toHaveCount(1);
-        expect(page.locator("//img[contains(@src, 'x=2&y=1')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=-3&y=1')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=-2&y=1')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=-1&y=1')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=0&y=1')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=1&y=1')]")).toHaveCount(1);
+        await expect(page.locator("//img[contains(@src, 'x=2&y=1')]")).toHaveCount(1);
     });
 
 });
