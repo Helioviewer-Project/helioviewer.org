@@ -1,4 +1,4 @@
-import { expect, Page, Info } from '@playwright/test';
+import { expect, Page, TestInfo } from '@playwright/test';
 import { Helioviewer } from './helioviewer';
 import { HelioviewerInterface } from './helioviewer_interface';
 
@@ -8,12 +8,12 @@ import { HelioviewerInterface } from './helioviewer_interface';
 class HelioviewerEmbed implements HelioviewerInterface {
     /** Playwright page */
     page: Page;
-    info: Info | null;
+    info: TestInfo | null;
 
     /** Reference to Helioviewer main view for shared code */
     private hv: Helioviewer;
 
-    constructor(page: Page, info: Info = null) {
+    constructor(page: Page, info: TestInfo | null = null) {
         this.page = page;
         this.info = info;
         this.hv = new Helioviewer(page, info);

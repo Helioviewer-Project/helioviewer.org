@@ -2,7 +2,7 @@
  * @file Contains functions for interacting with the Helioviewer UI
  */
 
-import { Locator, Page, Info, expect } from '@playwright/test';
+import { Locator, Page, TestInfo, expect } from '@playwright/test';
 import { ImageLayer } from './image_layer';
 import { Screenshot } from './screenshot';
 import { Movie } from './movie';
@@ -22,7 +22,7 @@ interface LayerSelect {
 };
 
 class Helioviewer {
-    info: Info | null;
+    info: TestInfo | null;
     page: Page;
     sidebar: Locator;
     screenshot: Screenshot;
@@ -30,7 +30,7 @@ class Helioviewer {
     urlshare: URLShare;
     vso_drawer: VSODrawer;
 
-    constructor(page: Page, info: Info = null) {
+    constructor(page: Page, info: TestInfo | null = null) {
         this.page = page;
         this.info = info;
         this.screenshot = new Screenshot(this.page);
@@ -339,9 +339,7 @@ class Helioviewer {
 
         const date = new Date(currentDate +' '+ currentTime);
 
-        if (isNaN(date.getTime())) {
-            return null;
-        }
+        expect(date.getTime()).not.toBeNaN();
 
         return date
     }
@@ -372,10 +370,10 @@ class Helioviewer {
     * Attach base64 screnshot with a given filename to trace report 
     * also returns the screenshot string
     * @param filename string | name of file in trace report
-    * @param options JSON | pass options to playwright screenshot function  
+    * @param options Object | pass options to playwright screenshot function  
     * @returns Promise<string> | base64 string screenshot
     */
-    async saveScreenshot(filename: string = "", options: JSON = {}): Promise<string> {
+    async saveScreenshot(filename: string = "", options: Object = {}): Promise<string> {
 
         // get base64 screenshot
         const binaryImage = await this.page.screenshot(options);
@@ -404,9 +402,9 @@ class Helioviewer {
     * Attach base64 screnshot with a given filename to trace report 
     * and  exit afterwards with false assertion
     * @param filename string | name of file in trace report
-    * @param options JSON | pass options to playwright screenshot function  
+    * @param options Object | pass options to playwright screenshot function  
     * @returns void  */
-    async saveScreenshotAndExit(filename: string = "", options: JSON = {}): void {
+    async saveScreenshotAndExit(filename: string = "", options: Object = {}): void {
         await this.saveScreenshot(filename, options);
         await expect("failed").toBe("intentionally");
     }

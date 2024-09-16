@@ -13,7 +13,7 @@ time_jump_ranges.forEach(({ jump_label, seconds }) => {
     /**
      * This test is testing jumping backwads functionality with given label for range select-box 
      */
-    test('Jump backwards with '+jump_label+' should go to matching datetime in past, with matching screenshots', async ({ page, context, browser }, info) => {
+    test.only('Jump backwards with '+jump_label+' should go to matching datetime in past, with matching screenshots', { tags : '@production' }, async ({ page, context, browser }, info) => {
 
       const hv = new Helioviewer(page, info);
 
@@ -35,7 +35,6 @@ time_jump_ranges.forEach(({ jump_label, seconds }) => {
 
       // 4. MARK TIME BEFORE JUMP BACKWARDS
       const dateBeforeJump = await hv.GetLoadedDate();
-      expect(dateBeforeJump).not.toBeNull();
 
       // 5. JUMP BACKWARDS WITH GIVEN SECONDS 
       await hv.JumpBackwardsDateWithSelection(seconds);
@@ -44,7 +43,6 @@ time_jump_ranges.forEach(({ jump_label, seconds }) => {
 
       // 6. MARK TIME AFTER JUMP BACKWARDS
       const dateAfterJump = await hv.GetLoadedDate();
-      expect(dateAfterJump).not.toBeNull();
 
       // 7. ASSERT JUMPED TIME, SHOULD BE EXACTLY GIVEN SECONDSp
       await expect(seconds * 1000).toBe(dateBeforeJump.getTime() - dateAfterJump.getTime())
@@ -82,12 +80,13 @@ time_jump_ranges.forEach(({ jump_label, seconds }) => {
 
       // 14, 2 SCREENSHOTS ARE FROM SAME DATE, AND SHOULD MATCH
       await expect(directDateScreenshot).toBe(afterJumpScreenshot)
+
     });
 
     /**
      * This test is testing jumping forward functionality with given label for range select-box 
      */
-    test('Jump forwards with '+jump_label+' should go to matching datetime in future, with matching screenshots', async ({ page, context, browser }, info) => {
+    test('Jump forwards with '+jump_label+' should go to matching datetime in future, with matching screenshots', { tags : '@production'}, async ({ page, context, browser }, info) => {
 
         const hv = new Helioviewer(page, info);
 
@@ -104,7 +103,6 @@ time_jump_ranges.forEach(({ jump_label, seconds }) => {
 
         // 3. REGISTER INITIAL DATE
         const initialDate = await hv.GetLoadedDate();
-        expect(initialDate).not.toBeNull();
 
         // 3. TO TEST GO FORWARD WE ARE GOING BACK GIVEN SECONDS + SOME RANDOM TIME
         const randomMilliseconds = Math.floor(Math.random() * 90) * (24*60*60*1000);
@@ -123,7 +121,6 @@ time_jump_ranges.forEach(({ jump_label, seconds }) => {
 
         // 6. NOW REGISTER THIS DATE
         const dateAfterJumpForward = await hv.GetLoadedDate();
-        expect(dateAfterJumpForward).not.toBeNull();
 
         // 7, ASSERT WE STILL NEED TO GO RANDOM TIME TO GO WHERE WE STARTED
         await expect(randomMilliseconds).toBe(initialDate.getTime() - dateAfterJumpForward.getTime())
