@@ -332,7 +332,7 @@ class Helioviewer {
     * Get the loaded date in helioviewer 
     * @returns Date|null - Loaded date of helioviewer, it can be null if any error.
     */
-    async GetLoadedDate(): Date|null {
+    async GetLoadedDate(): Promise<Date|null> {
 
         const currentDate = await this.page.getByLabel('Observation date', {exact:true}).inputValue();
         const currentTime = await this.page.getByLabel('Observation time', {exact:true}).inputValue();
