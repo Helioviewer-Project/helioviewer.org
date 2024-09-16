@@ -293,7 +293,7 @@ class Helioviewer {
     * @param Date date - The date object , to be used to load observation datetime.
     * @returns void 
     */
-    async SetObservationDateTimeFromDate(date: Date): void {
+    async SetObservationDateTimeFromDate(date: Date): Promise<void> {
 
         const dateParts = date.toISOString().split('T')[0].split('-')
         const dateString = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]}`
@@ -337,7 +337,7 @@ class Helioviewer {
         const currentDate = await this.page.getByLabel('Observation date', {exact:true}).inputValue();
         const currentTime = await this.page.getByLabel('Observation time', {exact:true}).inputValue();
 
-        const date = new Date(currentDate +' '+ currentTime);
+        const date = new Date(currentDate +' '+ currentTime + 'Z');
 
         expect(date.getTime()).not.toBeNaN();
 
@@ -349,7 +349,7 @@ class Helioviewer {
     * @param integer seconds, interval in seconds 
     * @returns void
     */
-    async JumpBackwardsDateWithSelection(seconds: integer): void {
+    async JumpBackwardsDateWithSelection(seconds: integer): Promise<void> {
         await this.OpenSidebar();
         await this.page.getByLabel('Jump:').selectOption(seconds.toString());
         await this.page.locator('#timeBackBtn').click();
@@ -360,7 +360,7 @@ class Helioviewer {
     * @param integer seconds, interval in seconds 
     * @returns void
     */
-    async JumpForwardDateWithSelection(seconds: integer): void {
+    async JumpForwardDateWithSelection(seconds: integer): Promise<void> {
         await this.OpenSidebar();
         await this.page.getByLabel('Jump:').selectOption(seconds.toString());
         await this.page.locator('#timeForwardBtn').click();
@@ -404,7 +404,7 @@ class Helioviewer {
     * @param filename string | name of file in trace report
     * @param options Object | pass options to playwright screenshot function  
     * @returns void  */
-    async saveScreenshotAndExit(filename: string = "", options: Object = {}): void {
+    async saveScreenshotAndExit(filename: string = "", options: Object = {}): Promise<void> {
         await this.saveScreenshot(filename, options);
         await expect("failed").toBe("intentionally");
     }
