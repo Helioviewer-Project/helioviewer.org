@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { Helioviewer } from '../../../page_objects/helioviewer';
-import path from 'path';
 
 const time_jump_ranges = [
   { jump_label: '1Min', seconds : 60 }, 
