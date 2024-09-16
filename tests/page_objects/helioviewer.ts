@@ -349,7 +349,7 @@ class Helioviewer {
     * @param integer seconds, interval in seconds 
     * @returns void
     */
-    async JumpBackwardsDateWithSelection(seconds: integer): Promise<void> {
+    async JumpBackwardsDateWithSelection(seconds: number): Promise<void> {
         await this.OpenSidebar();
         await this.page.getByLabel('Jump:').selectOption(seconds.toString());
         await this.page.locator('#timeBackBtn').click();
@@ -360,7 +360,7 @@ class Helioviewer {
     * @param integer seconds, interval in seconds 
     * @returns void
     */
-    async JumpForwardDateWithSelection(seconds: integer): Promise<void> {
+    async JumpForwardDateWithSelection(seconds: number): Promise<void> {
         await this.OpenSidebar();
         await this.page.getByLabel('Jump:').selectOption(seconds.toString());
         await this.page.locator('#timeForwardBtn').click();
