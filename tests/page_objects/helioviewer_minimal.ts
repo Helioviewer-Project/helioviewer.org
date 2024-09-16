@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test';
+import { expect, Page, TestInfo  } from '@playwright/test';
 import { Helioviewer } from './helioviewer';
 import { HelioviewerInterface } from './helioviewer_interface';
 
@@ -8,13 +8,15 @@ import { HelioviewerInterface } from './helioviewer_interface';
 class HelioviewerMinimal implements HelioviewerInterface {
     /** Playwright page */
     private page: Page;
+    private info: TestInfo | null;
 
     /** Reference to Helioviewer main view for shared code */
     private hv: Helioviewer;
 
-    constructor(page: Page) {
+    constructor(page: Page, info: TestInfo | null = null) {
         this.page = page;
-        this.hv = new Helioviewer(page);
+        this.info = info;
+        this.hv = new Helioviewer(page, info);
     }
 
     async Load(url: string = "/"): Promise<void> {
