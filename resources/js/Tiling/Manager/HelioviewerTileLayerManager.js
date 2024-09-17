@@ -107,7 +107,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             var date = new Date(+new Date());
             var dateDiffObj = new Date($('#date').val() +' '+$('#time').val());
             var dateDiff = new Date(dateDiffObj - 60*60*1000);
-            params = parseLayerString(next + ',1,100,0,60,1,'+dateDiff.toDateString()+' '+dateDiff.toTimeString());
+            params = parseLayerString(next + ',1,100,0,60,1,'+dateDiff.toDateString()+'T'+dateDiff.toTimeString());
 
             if (this.checkDataSource(params.uiLabels)) {
                 queueChoiceIsValid = true;
@@ -140,22 +140,22 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         opacity = this._computeLayerStartingOpacity(
                     params.layeringOrder, false);
 
-		if(typeof params.uiLabels == 'undefined'){
-			if(params.observatory == 'SOHO' || params.observatory == 'STEREO_A' || params.observatory == 'STEREO_B'){
-					params.uiLabels = [
-			           {"label":"Observatory","name":params.observatory},
-			           {"label":"Instrument","name":params.instrument},
-			           {"label":"Detector","name":params.detector},
-			           {"label":"Measurement","name":params.measurement}
-			        ];
-				}else{
-					params.uiLabels = [
-			           {"label":"Observatory","name":params.observatory},
-			           {"label":"Instrument","name":params.instrument},
-			           {"label":"Measurement","name":params.measurement}
-			        ];
-				}
-		    }
+        if(typeof params.uiLabels == 'undefined'){
+            if(params.observatory == 'SOHO' || params.observatory == 'STEREO_A' || params.observatory == 'STEREO_B'){
+                    params.uiLabels = [
+                       {"label":"Observatory","name":params.observatory},
+                       {"label":"Instrument","name":params.instrument},
+                       {"label":"Detector","name":params.detector},
+                       {"label":"Measurement","name":params.measurement}
+                    ];
+                }else{
+                    params.uiLabels = [
+                       {"label":"Observatory","name":params.observatory},
+                       {"label":"Instrument","name":params.instrument},
+                       {"label":"Measurement","name":params.measurement}
+                    ];
+                }
+            }
 
         // Add the layer
         this.addLayer(
