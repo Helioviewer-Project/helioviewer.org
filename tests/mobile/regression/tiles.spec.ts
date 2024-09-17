@@ -32,8 +32,8 @@ test(`[Mobile] Verify image tiles are loaded when the viewport pans to tile boun
     await hv.ZoomIn(1);
     await hv.WaitForLoad();
     // 3. At this level, 4 tiles should be visible
-    expect(page.locator("//img[contains(@src, 'x=0&y=0')]")).toHaveCount(1);
-    expect(page.locator("//img[contains(@src, 'x=-1&y=0')]")).toHaveCount(1);
-    expect(page.locator("//img[contains(@src, 'x=0&y=-1')]")).toHaveCount(1);
-    expect(page.locator("//img[contains(@src, 'x=-1&y=-1')]")).toHaveCount(1);
+    await expect(page.locator("//img[contains(@src, 'x=0&y=0')]")).toHaveCount(1);
+    await expect(page.locator("//img[contains(@src, 'x=-1&y=0')]")).toHaveCount(1);
+    await expect(page.locator("//img[contains(@src, 'x=0&y=-1')]")).toHaveCount(1);
+    await expect(page.locator("//img[contains(@src, 'x=-1&y=-1')]")).toHaveCount(1);
 });
