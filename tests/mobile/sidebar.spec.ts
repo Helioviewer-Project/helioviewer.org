@@ -131,13 +131,14 @@ test('[Mobile] Open Help Menu', async ({ page }) => {
   )
 });
 
-test('[Mobile] Test Help Links', async ({page}) => {
+test('[Mobile] Test Help Links', async ({page, context}) => {
   let mobile = new HvMobile(page);
   await mobile.Load();
 
   // Link 1: About Helioviewer
   await mobile.OpenHelpMenu();
-  await page.locator('.hvmobmenuitems').getByText('About Helioviewer').click();
+  let help_menu = page.locator('#hvhelp');
+  await help_menu.getByText('About Helioviewer').tap();
   await expect(page.getByText('Helioviewer - About')).toBeVisible();
   await expect(page.getByText('Helioviewer - About')).toBeInViewport();
   await expect(page.getByText('Last Updated')).toBeVisible();
@@ -148,11 +149,41 @@ test('[Mobile] Test Help Links', async ({page}) => {
   // Waiting for this thumbnail is important for the snapshot
   let youtubePreviewPromise = page.waitForResponse('https://i.ytimg.com/vi/TWySQHjIRSg/maxresdefault.jpg');
   await mobile.OpenSidebar();
-  await page.locator('.hvmobmenuitems').getByText('Visual Glossary').click();
+  await help_menu.getByText('Visual Glossary').tap();
   await expect(page.getByText('Helioviewer - Glossary')).toBeVisible();
   await expect(page.getByText('Coronal Mass Ejection (CME)')).toBeVisible();
   await expect(page.getByText('Solar Terrestrial Relations Observatory')).toBeVisible();
   await youtubePreviewPromise;
   await expect(page).toHaveScreenshot();
   await mobile.CloseDialog();
+
+  // Link 3: Public API Docs, test that it opens the API docs in a new tab
+  const apiDocsTabPromise = context.waitForEvent('page');
+  await mobile.OpenSidebar();
+  await help_menu.getByText('Public API Documentation').tap();
+  const docsPage = await apiDocsTabPromise;
+  await docsPage.waitForLoadState('domcontentloaded');
+  expect(await docsPage.title()).toContain('Helioviewer API V2 documentation');
+  await docsPage.close();
+
+  // Link 4: Helioviewer Blog, test that it opens the API docs in a new tab
+  const blogTabPromise = context.waitForEvent('page');
+  await help_menu.getByText('Blog').tap();
+  const blogPage = await blogTabPromise;
+  await blogPage.waitForLoadState('domcontentloaded');
+  expect(await blogPage.title()).toBe('Helioviewer Project – Visualization of solar and heliospheric data');
+  await blogPage.close();
+
+  // Link 5: Contact button
+  const contactButton = await help_menu.getByText('Contact');
+  await expect(contactButton).toHaveAttribute('href', /^mailto:.*$/);
+
+  // Link 6: Report Problem button, links to github
+  const githubTabPromise = context.waitForEvent('page');
+  await help_menu.getByText('Report Problem').tap();
+  const githubTab = await githubTabPromise;
+  await githubTab.waitForLoadState('domcontentloaded');
+  expect(githubTab.url()).toContain('github.com');
+  expect(githubTab.url()).toContain('Helioviewer-Project');
+  expect(githubTab.url()).toContain('helioviewer.org');
 });

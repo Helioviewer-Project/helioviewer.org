@@ -2,7 +2,7 @@
  * @file Contains functions for interacting with the Helioviewer UI
  */
 
-import { Locator, Page, TestInfo, expect } from '@playwright/test';
+import { Locator, Page, PageScreenshotOptions, TestInfo, expect } from '@playwright/test';
 import { ImageLayer } from './image_layer';
 import { Screenshot } from './screenshot';
 import { Movie } from './movie';
@@ -249,7 +249,7 @@ class Helioviewer {
 
     /**
      *
-     * @param n Number of times to zoom in
+     * @param {number} n Number of times to zoom in
      */
     async ZoomIn(n: number = 1) {
         for (let i = 0; i < n; i++) {
@@ -269,19 +269,19 @@ class Helioviewer {
 
     /**
      * Assert some certain notification is visible to the application user
-     * @param type string, this can be one of the "warn", "error", "info", "success"
-     * @param message string this is the notification message you want to assert
+     * @param {string} type this can be one of the "warn", "error", "info", "success"
+     * @param {string} message this is the notification message you want to assert
      * @return void
      */
     async assertNotification(type: string, message:string) {
         await expect(this.page.locator('div.jGrowl-notification.'+type+' > div.jGrowl-message').getByText(message)).toBeVisible();
     }
 
-    /*
-    * Opens the presets menu and selects the given preset and waits for layers to load.
-    * @param preset string - The name of the preset to be selected.
-    * @returns void
-    */
+    /**
+     * Opens the presets menu and selects the given preset and waits for layers to load.
+     * @param {string} preset The name of the preset to be selected.
+     * @returns {void}
+     */
     async SelectImagePreset(preset: string) {
         await this.page.locator('.layersPresetsList .dropdown-main').click();
         await this.page.getByRole('link', { name: preset }).click();
@@ -289,9 +289,9 @@ class Helioviewer {
     }
 
     /**
-    * Sets observation datetime of Helioviewer from given Date object, 
-    * @param Date date - The date object , to be used to load observation datetime.
-    * @returns void 
+    * Sets observation datetime of Helioviewer from given Date object,
+    * @param {Date} Date The date object , to be used to load observation datetime.
+    * @returns {void}
     */
     async SetObservationDateTimeFromDate(date: Date): Promise<void> {
 
@@ -307,11 +307,11 @@ class Helioviewer {
 
     /**
     * Sets the observation datetime and waits helioviewer to load,
-    * @param string date - The date to be entered in the format 'MM/DD/YYYY'.
-    * @param string time - The time to be entered in the format 'HH:MM'.
-    * @returns void - A promise that resolves when the date and time have been successfully entered.
+    * @param {string} date The date to be entered in the format 'MM/DD/YYYY'.
+    * @param {string} time The time to be entered in the format 'HH:MM'.
+    * @returns {void} A promise that resolves when the date and time have been successfully entered.
     */
-    async SetObservationDateTime(date, time) {
+    async SetObservationDateTime(date: Date, time: string) {
         await this.OpenSidebar();
         await this.page.getByLabel('Observation date', { exact: true }).click();
         await this.page.getByLabel('Observation date', { exact: true }).fill(date);
@@ -322,14 +322,14 @@ class Helioviewer {
 
     /**
      * Hover mouse on helioviewer logo
-    *  @returns void - A promise that indicates , mouse is already hovered on our logo
+     *  @returns {void} A promise that indicates , mouse is already hovered on our logo
      */
     async HoverOnLogo() {
         await this.page.locator('#logo').hover();
     }
 
     /**
-    * Get the loaded date in helioviewer 
+    * Get the loaded date in helioviewer
     * @returns Date|null - Loaded date of helioviewer, it can be null if any error.
     */
     async GetLoadedDate(): Promise<Date> {
@@ -345,9 +345,9 @@ class Helioviewer {
     }
 
     /**
-    * Jump backwards with jump button, with given seconds layer 
-    * @param integer seconds, interval in seconds 
-    * @returns void
+    * Jump backwards with jump button, with given seconds layer
+    * @param {number} seconds interval in seconds
+    * @returns {void}
     */
     async JumpBackwardsDateWithSelection(seconds: number): Promise<void> {
         await this.OpenSidebar();
@@ -356,9 +356,9 @@ class Helioviewer {
     }
 
     /**
-    * Jump forward with jump button, with given seconds layer 
-    * @param integer seconds, interval in seconds 
-    * @returns void
+    * Jump forward with jump button, with given seconds layer
+    * @param {number} seconds interval in seconds
+    * @returns {void}
     */
     async JumpForwardDateWithSelection(seconds: number): Promise<void> {
         await this.OpenSidebar();
@@ -367,13 +367,13 @@ class Helioviewer {
     }
 
     /**
-    * Attach base64 screnshot with a given filename to trace report 
+    * Attach base64 screnshot with a given filename to trace report
     * also returns the screenshot string
-    * @param filename string | name of file in trace report
-    * @param options Object | pass options to playwright screenshot function  
-    * @returns Promise<string> | base64 string screenshot
+    * @param {string} filename name of file in trace report
+    * @param {PageScreenshotOptions} options pass options to playwright screenshot function
+    * @returns {Promise<string>} base64 string screenshot
     */
-    async saveScreenshot(filename: string = "", options: Object = {}): Promise<string> {
+    async saveScreenshot(filename: string = "", options: PageScreenshotOptions = {}): Promise<string> {
 
         // get base64 screenshot
         const binaryImage = await this.page.screenshot(options);
@@ -382,7 +382,7 @@ class Helioviewer {
         // if not filename given, generate one
         if (filename == "") {
             filename = (Math.random() + 1).toString(36).substring(7);
-        } 
+        }
 
         // if there is no png extension add it
         if (!filename.endsWith(".png")) {
@@ -399,12 +399,13 @@ class Helioviewer {
     }
 
     /**
-    * Attach base64 screnshot with a given filename to trace report 
+    * Attach base64 screnshot with a given filename to trace report
     * and  exit afterwards with false assertion
-    * @param filename string | name of file in trace report
-    * @param options Object | pass options to playwright screenshot function  
-    * @returns void  */
-    async saveScreenshotAndExit(filename: string = "", options: Object = {}): Promise<void> {
+    * @param {string} filename name of file in trace report
+    * @param {PageScreenshotOptions} options pass options to playwright screenshot function
+    * @returns {void}
+    */
+    async saveScreenshotAndExit(filename: string = "", options: PageScreenshotOptions = {}): Promise<void> {
         await this.saveScreenshot(filename, options);
         await expect("failed").toBe("intentionally");
     }
