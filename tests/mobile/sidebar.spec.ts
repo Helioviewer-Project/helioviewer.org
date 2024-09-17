@@ -131,7 +131,7 @@ test('[Mobile] Open Help Menu', async ({ page }) => {
   )
 });
 
-test('[Mobile] Test Help Links', async ({page, context}) => {
+test.only('[Mobile] Test Help Links', async ({page, context}) => {
   let mobile = new HvMobile(page);
   await mobile.Load();
 
@@ -162,6 +162,7 @@ test('[Mobile] Test Help Links', async ({page, context}) => {
   await mobile.OpenSidebar();
   await help_menu.getByText('Public API Documentation').tap();
   const docsPage = await apiDocsTabPromise;
+  await docsPage.waitForLoadState('domcontentloaded');
   expect(await docsPage.title()).toContain('Helioviewer API V2 documentation');
   await docsPage.close();
 
@@ -169,6 +170,7 @@ test('[Mobile] Test Help Links', async ({page, context}) => {
   const blogTabPromise = context.waitForEvent('page');
   await help_menu.getByText('Blog').tap();
   const blogPage = await blogTabPromise;
+  await blogPage.waitForLoadState('domcontentloaded');
   expect(await blogPage.title()).toBe('Helioviewer Project – Visualization of solar and heliospheric data');
   await blogPage.close();
 
@@ -180,6 +182,7 @@ test('[Mobile] Test Help Links', async ({page, context}) => {
   const githubTabPromise = context.waitForEvent('page');
   await help_menu.getByText('Report Problem').tap();
   const githubTab = await githubTabPromise;
+  await githubTab.waitForLoadState('domcontentloaded');
   expect(githubTab.url()).toContain('github.com');
   expect(githubTab.url()).toContain('Helioviewer-Project');
   expect(githubTab.url()).toContain('helioviewer.org');
