@@ -22,7 +22,7 @@ import { HvMobile } from '../../page_objects/mobile_hv';
  * This test verifies that the black space does NOT remain, and that the tile does get loaded
  * when it is dragged into the viewport.
  */
-test.only(`[Mobile] Verify image tiles are loaded when the viewport pans to tile boundaries after zooming in and out`, async ({ page }) => {
+test(`[Mobile] Verify image tiles are loaded when the viewport pans to tile boundaries after zooming in and out`, async ({ page }) => {
     let hv = new HvMobile(page);
     await hv.Load();
     await hv.WaitForLoad();
