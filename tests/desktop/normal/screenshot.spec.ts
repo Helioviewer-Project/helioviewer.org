@@ -20,12 +20,12 @@ test('Screenshot button should toggle screenshot drawer', async ({ page, context
 
 });
 
-// create multiple screenshots and compare them 
-test('Create a new screenshot and view it and close it', async ({ page, context, browserName }, info) => {
+// create multiple screenshots and compare them
+test.only('Create a new screenshot and view it and close it', async ({ page, context, browserName }, info) => {
 
   test.fixme(browserName === 'webkit', "We couldn't be able to trigger download event for webkit, skipping this test now");
 
-  let hv = new Helioviewer(page);
+  let hv = new Helioviewer(page, info);
 
   // load helioviewer
   await hv.Load();
@@ -36,12 +36,12 @@ test('Create a new screenshot and view it and close it', async ({ page, context,
 
   // create a full-screen screenshot
   await hv.screenshot.createFullScreenshot();
-  await hv.screenshot.waitForScreenshotCompleteNotifitication(); 
+  await hv.screenshot.waitForScreenshotCompleteNotifitication();
 
   // assert there should be one screenshot in drawer
   await hv.screenshot.assertScreenshotCountFromDrawer(1);
 
-  // download and save screenshot from notification ( by clicking your screenshot ready in jgrowl messsage)  
+  // download and save screenshot from notification ( by clicking your screenshot ready in jgrowl messsage)
   const screenshotFileFromNotification = await hv.screenshot.downloadScreenshotFromNotification();
   const screenshot_notification_report_file = info.outputPath('screenshot_from_notification.png');
   await fs.promises.writeFile(screenshot_notification_report_file, Buffer.from(screenshotFileFromNotification, 'base64'));
@@ -53,20 +53,19 @@ test('Create a new screenshot and view it and close it', async ({ page, context,
   expect(await page.screenshot()).toMatchSnapshot('first-screenshot-created.png');
 
   // now click the created screenshot link and see the screenshot in full screen
-  await hv.screenshot.viewScreenshotFromScreenshotHistory(1);
-  await hv.WaitForImageLoad();
+  await hv.screenshot.viewScreenshotFromScreenshotHistory(1, true);
   expect(await page.screenshot()).toMatchSnapshot('view-first-screenshot.png');
 
-  // Close the screenshot from X 
+  // Close the screenshot from X
   // compare the test snapshot with the one we have created for
   await hv.screenshot.closeScreenshotView();
   expect(await page.screenshot()).toMatchSnapshot('first-screenshot-created.png');
- 
+
   // See screenshot again
   await hv.screenshot.viewScreenshotFromScreenshotHistory(1);
   await hv.WaitForImageLoad();
 
-  // now download screenshot from screenshot view via download button 
+  // now download screenshot from screenshot view via download button
   const screenshotFileFromScreenshotView = await hv.screenshot.downloadScreenshotFromViewScreenshotFeature();
   const screenshot_view_screenshot_report_file = info.outputPath('screenshot_view_screenshot.png');
   await fs.promises.writeFile(screenshot_view_screenshot_report_file, Buffer.from(screenshotFileFromScreenshotView, 'base64'));
@@ -94,7 +93,7 @@ test('Create a new screenshot and view it and close it', async ({ page, context,
 
   // Now add another snapshot
   await hv.screenshot.createFullScreenshot();
-  await hv.screenshot.waitForScreenshotCompleteNotifitication(); 
+  await hv.screenshot.waitForScreenshotCompleteNotifitication();
   await hv.CloseAllNotifications();
 
   // assert there should be two screenshots in drawer
@@ -105,8 +104,7 @@ test('Create a new screenshot and view it and close it', async ({ page, context,
   });
 
   // assert there should be two screenshots in drawer
-  await hv.screenshot.viewScreenshotFromScreenshotHistory(1);
-  await hv.WaitForImageLoad();
+  await hv.screenshot.viewScreenshotFromScreenshotHistory(1, true);
 
   expect(await page.screenshot()).toMatchSnapshot('view-first-screenshot.png');
 });
