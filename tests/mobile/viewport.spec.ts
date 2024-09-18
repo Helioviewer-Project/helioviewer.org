@@ -11,7 +11,7 @@ import { HvMobile } from '../page_objects/mobile_hv';
  *   5. Center viewport again
  *   6. Expect the screenshot to match again
  */
-test.only('[Mobile] Center viewport with AIA 304', async ({ page }, info) => {
+test('[Mobile] Center viewport with AIA 304', async ({ page }, info) => {
   let mobile = new HvMobile(page, info);
   await mobile.Load();
   // The date in the notification will change over time, so close it so it's
@@ -45,7 +45,7 @@ test.only('[Mobile] Center viewport with AIA 304', async ({ page }, info) => {
  *   7. Center viewport again
  *   8. Expect the screenshot to match again
  */
-test.only('[Mobile] Center viewport with AIA 304 and LASCO C2/C3', async ({ page }, info) => {
+test('[Mobile] Center viewport with AIA 304 and LASCO C2/C3', async ({ page }, info) => {
   let mobile = new HvMobile(page, info);
   await mobile.Load();
   // 1a. Adds LASCO C2
