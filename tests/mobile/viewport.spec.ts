@@ -1,4 +1,4 @@
-import { test, expect, PageAssertionsToHaveScreenshotOptions } from '@playwright/test';
+import { test, expect, PageAssertionsToHaveScreenshotOptions, PageScreenshotOptions } from '@playwright/test';
 import { HvMobile } from '../page_objects/mobile_hv';
 
 /**
@@ -66,14 +66,17 @@ test('[Mobile] Center viewport with AIA 304 and LASCO C2/C3', async ({ page }, i
   // 4. Expect the screenshot to match. Referencing by name so we can re-use it later.
   const centered_image = "sdo_soho_centered.png";
   // Rendering seems a bit flaky but not significantly flaky.
-  const opts: PageAssertionsToHaveScreenshotOptions = { mask: [page.locator('#time'), page.locator('#date')], maxDiffPixels: 20 };
-  await expect(page).toHaveScreenshot(centered_image, opts);
+  const opts: PageScreenshotOptions = {
+    style: '#helioviewer-viewport-container-outer {z-index:200000}',
+    scale: "css"
+  };
+  await expect(await page.screenshot(opts)).toMatchSnapshot(centered_image);
   // 5. Drag the sun off center
   await mobile.moveViewport(250, 250);
   // 6. expect the screenshot not to match
-  // await expect(page).not.toHaveScreenshot(centered_image, opts);
+  await expect(await page.screenshot(opts)).not.toMatchSnapshot(centered_image);
   // 7. Center the viewport again
   await mobile.CenterViewport();
   // 8. Expect the screenshot to match again.
-  await expect(page).toHaveScreenshot(centered_image, opts);
+  await expect(await page.screenshot(opts)).toMatchSnapshot(centered_image);
 });
