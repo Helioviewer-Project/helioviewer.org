@@ -239,14 +239,14 @@ class HvMobile {
     async ZoomIn(steps: number) {
         for (let i = 0; i < steps; i++) {
             await this.page.keyboard.press("+");
-            await this._WaitForStyleToSettle(this.page.locator('#sandbox'));
+            await this._WaitForStyleToSettle(this.page.locator('#moving-container'));
         }
     }
 
     async ZoomOut(steps: number) {
         for (let i = 0; i < steps; i++) {
             await this.page.keyboard.press("-");
-            await this._WaitForStyleToSettle(this.page.locator('#sandbox'));
+            await this._WaitForStyleToSettle(this.page.locator('#moving-container'));
         }
     }
 
