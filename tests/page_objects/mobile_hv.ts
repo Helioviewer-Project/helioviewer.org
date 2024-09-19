@@ -223,17 +223,30 @@ class HvMobile {
         await this.page.waitForTimeout(1000);
     }
 
+    private async _WaitForStyleToSettle(locator: Locator) {
+        // Wait for zoom to finish (indicated by style no longer changing)
+        let style = "";
+        let next_style = "";
+        do {
+            style = next_style;
+            // Wait a small amount of time
+            await this.page.waitForTimeout(100);
+            // Check the style
+            next_style = await locator.getAttribute('style') as string;
+        } while (next_style !== style)
+    }
+
     async ZoomIn(steps: number) {
         for (let i = 0; i < steps; i++) {
             await this.page.keyboard.press("+");
-            await this.page.waitForTimeout(250);
+            await this._WaitForStyleToSettle(this.page.locator('#sandbox'));
         }
     }
 
     async ZoomOut(steps: number) {
         for (let i = 0; i < steps; i++) {
             await this.page.keyboard.press("-");
-            await this.page.waitForTimeout(250);
+            await this._WaitForStyleToSettle(this.page.locator('#sandbox'));
         }
     }
 
