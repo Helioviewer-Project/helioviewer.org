@@ -77,6 +77,7 @@ class ImageLayer {
     async set(label: string, value: string) {
         let selection = await this.layer_controls.getByLabel(label, {exact: true});
         await selection.selectOption(value);
+        await this.page.waitForTimeout(500);
     }
 
     /**
