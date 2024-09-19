@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { Helioviewer } from '../../page_objects/helioviewer';
+import { Helioviewer } from '../../../page_objects/helioviewer';
 
 /**
  * This test simply adds and removes images layers
@@ -121,3 +121,4 @@ test('Verify that you can share state after upgrading from old baseDiffDate form
   let time = await layer.getBaseDifferenceTime();
   expect(time).toBe('00:30:00');
 });
+
