@@ -39,7 +39,7 @@ jobs:
         shardIndex: [1, 2, 3, 4, 5]
         shardTotal: [5]
       # If one of the shards fails, continue running the remaining tests
-      fast-fail: false
+      fail-fast: false
 
     timeout-minutes: 60
     runs-on: ubuntu-latest
