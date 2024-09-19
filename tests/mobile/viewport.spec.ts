@@ -37,7 +37,11 @@ test('[Mobile] Center viewport with AIA 304', async ({ page }, info) => {
  * This tests centering the viewport on mobile devices with more layers
  * Test Steps:
  *   1. Add additional layers
- *   2. Zoom out to be able to see all layers
+ *   2. Zoom out to be able to see all layers - Flaky step.
+ *        - There is generally not a problem with zooming in and out,
+ *          but zooming out here does not seem to have consistent results
+ *          on either chrome or safari. This could be an indicator of a bug,
+ *          since zooming in and out is apparently inconsistent.
  *   3. Center viewport
  *   4. Expect a specific screenshot to match
  *   5. Drag the sun off center
@@ -45,7 +49,7 @@ test('[Mobile] Center viewport with AIA 304', async ({ page }, info) => {
  *   7. Center viewport again
  *   8. Expect the screenshot to match again
  */
-test('[Mobile] Center viewport with AIA 304 and LASCO C2/C3', async ({ page }, info) => {
+test('[Mobile] Center viewport with AIA 304 and LASCO C2/C3', { tag: '@flaky' }, async ({ page }, info) => {
   let mobile = new HvMobile(page, info);
   await mobile.Load();
   // 1a. Adds LASCO C2
