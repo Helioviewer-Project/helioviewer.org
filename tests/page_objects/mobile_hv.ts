@@ -2,7 +2,7 @@
  * @file Contains functions for interacting with the Helioviewer Mobile UI
  */
 
-import { Locator, Page, expect } from '@playwright/test';
+import { Locator, Page, PageScreenshotOptions, TestInfo, expect } from '@playwright/test';
 import { Helioviewer } from './helioviewer';
 import { ImageLayer } from './image_layer';
 
@@ -20,9 +20,9 @@ class HvMobile {
     /** #hvmobdrawerclose - Ref to button which closes the control drawer */
     private _drawer_close_btn: Locator;
 
-    constructor(page: Page) {
+    constructor(page: Page, info: TestInfo | null = null) {
         this.page = page;
-        this.hv = new Helioviewer(page);
+        this.hv = new Helioviewer(page, info);
         this._image_drawer = this.page.locator('#accordion-images');
         this._image_drawer_btn = this.page.locator('[drawersec="accordion-images"]');
         this._drawer = this.page.locator('#hv-drawer-left');
@@ -49,6 +49,10 @@ class HvMobile {
         await this._WaitForInitialImageLayer();
 
         await this.WaitForLoad();
+    }
+
+    CloseAllNotifications(): Promise<void> {
+        return this.hv.CloseAllNotifications();
     }
 
     getImageLayer(index: number): Promise<ImageLayer> {
@@ -90,8 +94,11 @@ class HvMobile {
         }
     }
 
-    AddImageLayer() {
-        return this.hv.AddImageLayer();
+    /**
+     * This adds an image layer.
+     */
+    async AddImageLayer() {
+        await this.hv.AddImageLayer();
     }
 
     /**
@@ -216,17 +223,30 @@ class HvMobile {
         await this.page.waitForTimeout(1000);
     }
 
+    private async _WaitForStyleToSettle(locator: Locator) {
+        // Wait for zoom to finish (indicated by style no longer changing)
+        let style = "";
+        let next_style = "";
+        do {
+            style = next_style;
+            // Wait a small amount of time
+            await this.page.waitForTimeout(100);
+            // Check the style
+            next_style = await locator.getAttribute('style') as string;
+        } while (next_style !== style)
+    }
+
     async ZoomIn(steps: number) {
         for (let i = 0; i < steps; i++) {
             await this.page.keyboard.press("+");
-            await this.page.waitForTimeout(250);
+            await this._WaitForStyleToSettle(this.page.locator('#moving-container'));
         }
     }
 
     async ZoomOut(steps: number) {
         for (let i = 0; i < steps; i++) {
             await this.page.keyboard.press("-");
-            await this.page.waitForTimeout(250);
+            await this._WaitForStyleToSettle(this.page.locator('#moving-container'));
         }
     }
 
@@ -247,6 +267,24 @@ class HvMobile {
         await this.page.mouse.down();
         await this.page.mouse.move(INITIAL_POSITION.x + x, INITIAL_POSITION.y + y);
         await this.page.mouse.up();
+    }
+
+    /**
+     * Center the viewport
+     */
+    async CenterViewport() {
+        await this.page.locator('#hvmobscale_div #center-button').tap();
+    }
+
+    /**
+     * Attach base64 screnshot with a given filename to trace report
+     * also returns the screenshot string
+     * @param {string} filename name of file in trace report
+     * @param {PageScreenshotOptions} options pass options to playwright screenshot function
+     * @returns {Promise<string>} base64 string screenshot
+     */
+    saveScreenshot(filename: string = "", options: PageScreenshotOptions = {}): Promise<string> {
+        return this.hv.saveScreenshot(filename, options);
     }
 }
 
