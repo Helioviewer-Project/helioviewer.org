@@ -27,10 +27,10 @@ test('Go back button should first bring observation date to available image date
     await layer.assertHasPreviousImage();
 
     // 4. Assert : Go Forward should be red ( and not clickable ) 
-    await layer.assertHasNotNextImage();
+    await layer.assertHasNoNextImage();
 
     // 5. Action : Go to previous image
-    await layer.goPreviousImage();
+    await layer.gotoPreviousImage();
     await hv.WaitForLoadingComplete();
     await hv.CloseAllNotifications();
 
@@ -42,8 +42,8 @@ test('Go back button should first bring observation date to available image date
     await layer.assertImageDateAvailable();
 
     // 8. Assert : Go back go forward should be all red ( not clickable ) 
-    await layer.assertHasNotPreviousImage();
-    await layer.assertHasNotNextImage();
+    await layer.assertHasNoPreviousImage();
+    await layer.assertHasNoNextImage();
 
     // 9. Register: Sunscreenshot from 2021/06/01 00:01:29 , 
     const previousImageScreenshot = await hv.saveScreenshot("previous_image_screenshot", {
@@ -96,10 +96,10 @@ test('Go back for multiple buttons should bring first and seconds image with mat
     await layer.assertHasPreviousImage();
 
     //  Assert : Go Forward should be red ( and not clickable ) 
-    await layer.assertHasNotNextImage();
+    await layer.assertHasNoNextImage();
 
     //  Action : Press Go back , 
-    await layer.goPreviousImage();
+    await layer.gotoPreviousImage();
     await hv.WaitForLoadingComplete();
     await hv.CloseAllNotifications();
 
@@ -112,7 +112,7 @@ test('Go back for multiple buttons should bring first and seconds image with mat
 
     //  Assert : Go back go forward should not change colors
     await layer.assertHasPreviousImage();
-    await layer.assertHasNotNextImage();
+    await layer.assertHasNoNextImage();
 
     //  Register: Sunscreenshot from  2023/12/01 00:48:07
     const previousImageScreenshot = await hv.saveScreenshot("previous_image_screenshot", {
@@ -120,7 +120,7 @@ test('Go back for multiple buttons should bring first and seconds image with mat
     });
 
     //  Action  : Press Another Go back
-    await layer.goPreviousImage();
+    await layer.gotoPreviousImage();
     await hv.WaitForLoadingComplete();
     await hv.CloseAllNotifications();
 
@@ -221,11 +221,11 @@ test('Going next image multiple times should bring screenshot validated next ava
 
     //  Assert : Go back should be red ( and not clickable ) 
     //  Assert : Go Forward should green ( and clickable ) 
-    await layer.assertHasNotPreviousImage();
+    await layer.assertHasNoPreviousImage();
     await layer.assertHasNextImage();
 
     //  Action : Press Go forward , 
-    await layer.goNextImage();
+    await layer.gotoNextImage();
     await hv.WaitForLoadingComplete();
     await hv.CloseAllNotifications();
 
@@ -237,7 +237,7 @@ test('Going next image multiple times should bring screenshot validated next ava
     await layer.assertImageDateAvailable();
 
     //  Assert : Go back go forward should not change colors
-    await layer.assertHasNotPreviousImage();
+    await layer.assertHasNoPreviousImage();
     await layer.assertHasNextImage();
 
     //  Register: Sunscreenshot from  2023/12/01 00:00:07
@@ -246,7 +246,7 @@ test('Going next image multiple times should bring screenshot validated next ava
     });
 
     //  Action : Press another Go forward , 
-    await layer.goNextImage();
+    await layer.gotoNextImage();
     await hv.WaitForLoadingComplete();
     await hv.CloseAllNotifications();
 

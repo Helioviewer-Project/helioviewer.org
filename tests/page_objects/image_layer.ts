@@ -151,7 +151,7 @@ class ImageLayer {
      * Asserts if layer has not any next image available.
      * @return void
      */
-    async assertHasNotNextImage(): Promise<void> {
+    async assertHasNoNextImage(): Promise<void> {
         await expect(this.layer_controls.locator(".next-image-btn")).toHaveCSS("cursor","default");
         await expect(this.layer_controls.locator(".next-image-btn")).toHaveCSS("color","rgb(255, 0, 0)");
     }
@@ -169,7 +169,7 @@ class ImageLayer {
      * Asserts if layer has not any prev image available.
      * @return void
      */
-    async assertHasNotPreviousImage(): Promise<void> {
+    async assertHasNoPreviousImage(): Promise<void> {
         await expect(this.layer_controls.locator(".prev-image-btn")).toHaveCSS("cursor","default");
         await expect(this.layer_controls.locator(".prev-image-btn")).toHaveCSS("color","rgb(255, 0, 0)");
     }
@@ -178,7 +178,7 @@ class ImageLayer {
      * Go previous available image for this layer.
      * @return void
      */
-    async goPreviousImage(): Promise<void> {
+    async gotoPreviousImage(): Promise<void> {
         await this.assertHasPreviousImage();
         await this.layer_controls.locator(".prev-image-btn").click();
     }
@@ -187,7 +187,7 @@ class ImageLayer {
      * Go next available image for this layer.
      * @return void
      */
-    async goNextImage(): Promise<void> {
+    async gotoNextImage(): Promise<void> {
         await this.assertHasNextImage();
         await this.layer_controls.locator(".next-image-btn").click();
     }
