@@ -113,6 +113,84 @@ class ImageLayer {
         return this.page.locator(`.tile-layer-container[rel=tile-layer-${this.id}] .tile`)
             .nth(index);
     }
+
+    /**
+     * Asserts if the given date matches the available image date for this layer.
+     * @param {Date} date , given date tobe matched to the image date for this layer
+     * @return void
+     */
+    async assertImageDate(date: Date): Promise<void> {
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed in JS
+        const day = String(date.getUTCDate()).padStart(2, '0');
+        const hours = String(date.getUTCHours()).padStart(2, '0');
+        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+
+        await expect(this.layer_controls.locator(".timestamp")).toHaveText(`${year}/${month}/${day} ${hours}:${minutes}:${seconds} UTC`);
+    }
+
+    /**
+     * Asserts if available image date is green.
+     * @return void
+     */
+    async assertImageDateAvailable(): Promise<void> {
+        await expect(this.layer_controls.locator(".timestamp")).toHaveCSS('color','rgb(0, 255, 0)');
+    }
+
+    /**
+     * Asserts if layer has next image available.
+     * @return void
+     */
+    async assertHasNextImage(): Promise<void> {
+        await expect(this.layer_controls.locator(".next-image-btn")).toHaveCSS("cursor","pointer");
+        await expect(this.layer_controls.locator(".next-image-btn")).toHaveCSS("color","rgb(0, 128, 0)");
+    }
+
+    /**
+     * Asserts if layer has not any next image available.
+     * @return void
+     */
+    async assertHasNoNextImage(): Promise<void> {
+        await expect(this.layer_controls.locator(".next-image-btn")).toHaveCSS("cursor","default");
+        await expect(this.layer_controls.locator(".next-image-btn")).toHaveCSS("color","rgb(255, 0, 0)");
+    }
+
+    /**
+     * Asserts if layer has prev image available.
+     * @return void
+     */
+    async assertHasPreviousImage(): Promise<void> {
+        await expect(this.layer_controls.locator(".prev-image-btn")).toHaveCSS("cursor","pointer");
+        await expect(this.layer_controls.locator(".prev-image-btn")).toHaveCSS("color","rgb(0, 128, 0)");
+    }
+
+    /**
+     * Asserts if layer has not any prev image available.
+     * @return void
+     */
+    async assertHasNoPreviousImage(): Promise<void> {
+        await expect(this.layer_controls.locator(".prev-image-btn")).toHaveCSS("cursor","default");
+        await expect(this.layer_controls.locator(".prev-image-btn")).toHaveCSS("color","rgb(255, 0, 0)");
+    }
+
+    /**
+     * Go previous available image for this layer.
+     * @return void
+     */
+    async gotoPreviousImage(): Promise<void> {
+        await this.assertHasPreviousImage();
+        await this.layer_controls.locator(".prev-image-btn").click();
+    }
+
+    /**
+     * Go next available image for this layer.
+     * @return void
+     */
+    async gotoNextImage(): Promise<void> {
+        await this.assertHasNextImage();
+        await this.layer_controls.locator(".next-image-btn").click();
+    }
 }
 
 export { ImageLayer }
