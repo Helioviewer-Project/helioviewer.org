@@ -26,7 +26,7 @@ test('[Mobile] Center viewport with AIA 304', async ({ page }, info) => {
   // 3. Drag the sun off center
   await mobile.moveViewport(250, 250);
   // 4. expect the screenshot not to match
-  // await expect(page).not.toHaveScreenshot(centered_aia_304_image, opts);
+  await expect(page).not.toHaveScreenshot(centered_aia_304_image, opts);
   // 5. Center the viewport again
   await mobile.CenterViewport();
   // 6. Expect the screenshot to match again.
