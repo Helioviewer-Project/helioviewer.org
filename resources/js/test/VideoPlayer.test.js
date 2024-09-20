@@ -1,5 +1,5 @@
 import { GetJhvRequestForMovie } from "../Media/VideoPlayer";
-import { DOMParser } from "xmldom";
+import { DOMParser } from "@xmldom/xmldom";
 import { XMLHttpRequest } from "xmlhttprequest";
 
 global.XMLHttpRequest = XMLHttpRequest;
