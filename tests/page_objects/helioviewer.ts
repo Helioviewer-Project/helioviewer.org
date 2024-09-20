@@ -290,7 +290,7 @@ class Helioviewer {
 
     /**
     * Sets observation datetime of Helioviewer from given Date object,
-    * @param {Date} Date The date object , to be used to load observation datetime.
+    * @param {Date} Date The date object to be used to load observation datetime.
     * @returns {void}
     */
     async SetObservationDateTimeFromDate(date: Date): Promise<void> {
@@ -330,7 +330,7 @@ class Helioviewer {
 
     /**
     * Get the loaded date in helioviewer
-    * @returns Date|null - Loaded date of helioviewer, it can be null if any error.
+    * @returns {Date} Loaded date of helioviewer, it can be null if any error.
     */
     async GetLoadedDate(): Promise<Date> {
 
