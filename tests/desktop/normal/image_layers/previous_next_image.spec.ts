@@ -6,7 +6,7 @@ import { Helioviewer } from '../../../page_objects/helioviewer';
  * and should correctly load previous available image,  
  * and all ui should be updated correctly and screenshots should match for those dates
  */
-test('Go back button should first bring observation date to available image date, then next click should bring that image, with all matching screenshots and correct colors for controls', async ({page}, info) => {
+test('Go back button should first bring observation date to available image date, then next click should bring that image, with matching screenshots and correct colors for controls', async ({page}, info) => {
 
     let hv = new Helioviewer(page, info);
 
