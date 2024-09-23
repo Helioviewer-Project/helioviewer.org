@@ -2,17 +2,17 @@ import { expect, test } from '@playwright/test';
 import { Helioviewer } from '../../../page_objects/helioviewer';
 
 /**
- * Going previous available image should bring earliest available image,  
- * and should correctly load previous available image,  
+ * Going previous available image should bring earliest available image,
+ * and should correctly load previous available image,
  * and all ui should be updated correctly and screenshots should match for those dates
  */
 test('Go back button should first bring observation date to available image date, then next click should bring that image, with matching screenshots and correct colors for controls', async ({page}, info) => {
 
     let hv = new Helioviewer(page, info);
 
-    const previousImageDate = new Date("2021/06/01 00:01:29");
+    const previousImageDate = new Date("2021/06/01 00:01:29Z");
 
-    // 1. LOAD HV 
+    // 1. LOAD HV
     await hv.Load();
     await hv.CloseAllNotifications();
     await hv.OpenSidebar();
@@ -20,13 +20,13 @@ test('Go back button should first bring observation date to available image date
     // Layer to check controls
     const layer = await hv.getImageLayer(0);
 
-    // 2. Assert : Image date should be  2021/06/01 00:01:29 , 
+    // 2. Assert : Image date should be  2021/06/01 00:01:29 ,
     await layer.assertImageDate(previousImageDate);
 
-    // 3. Assert : Go back should be green ( and clickable ) 
+    // 3. Assert : Go back should be green ( and clickable )
     await layer.assertHasPreviousImage();
 
-    // 4. Assert : Go Forward should be red ( and not clickable ) 
+    // 4. Assert : Go Forward should be red ( and not clickable )
     await layer.assertHasNoNextImage();
 
     // 5. Action : Go to previous image
@@ -34,23 +34,23 @@ test('Go back button should first bring observation date to available image date
     await hv.WaitForLoadingComplete();
     await hv.CloseAllNotifications();
 
-    // 6. Assert : Observation date should change to 2021/06/01 00:01:29 , 
+    // 6. Assert : Observation date should change to 2021/06/01 00:01:29 ,
     const loadedDate = await hv.GetLoadedDate();
     await expect(loadedDate.getTime()).toBe(previousImageDate.getTime())
 
     // 7. Assert : Layer date should change to green
     await layer.assertImageDateAvailable();
 
-    // 8. Assert : Go back go forward should be all red ( not clickable ) 
+    // 8. Assert : Go back go forward should be all red ( not clickable )
     await layer.assertHasNoPreviousImage();
     await layer.assertHasNoNextImage();
 
-    // 9. Register: Sunscreenshot from 2021/06/01 00:01:29 , 
+    // 9. Register: Sunscreenshot from 2021/06/01 00:01:29 ,
     const previousImageScreenshot = await hv.saveScreenshot("previous_image_screenshot", {
         style: '#helioviewer-viewport-container-outer {z-index:200000}'
     });
 
-    // 10. Action : Go to date directly  2021/06/01 00:01:29 , 
+    // 10. Action : Go to date directly  2021/06/01 00:01:29 ,
     await page.evaluate(() => localStorage.clear());
     await hv.Load();
     await hv.CloseAllNotifications();
@@ -69,7 +69,7 @@ test('Go back button should first bring observation date to available image date
 });
 
 /**
- * Going previous image two times, should bring first and the second available image also with matching screnshots  ,  
+ * Going previous image two times, should bring first and the second available image also with matching screnshots  ,
  * All previous and next image buttons should have the correct colors as well
  */
 test('Go back for multiple buttons should bring first and seconds image with matching screenshots with matching UI updates.', async ({page}, info) => {
@@ -88,17 +88,17 @@ test('Go back for multiple buttons should bring first and seconds image with mat
     await hv.WaitForLoadingComplete();
     await hv.CloseAllNotifications();
 
-    //  Assert : Image date should be  2023/12/01 00:48:07 , 
-    const previousImageDate = new Date("2023/12/01 00:48:07");
+    //  Assert : Image date should be  2023/12/01 00:48:07 ,
+    const previousImageDate = new Date("2023/12/01 00:48:07Z");
     await layer.assertImageDate(previousImageDate);
 
-    //  Assert : Go back should be green ( and clickable ) 
+    //  Assert : Go back should be green ( and clickable )
     await layer.assertHasPreviousImage();
 
-    //  Assert : Go Forward should be red ( and not clickable ) 
+    //  Assert : Go Forward should be red ( and not clickable )
     await layer.assertHasNoNextImage();
 
-    //  Action : Press Go back , 
+    //  Action : Press Go back ,
     await layer.gotoPreviousImage();
     await hv.WaitForLoadingComplete();
     await hv.CloseAllNotifications();
@@ -125,7 +125,7 @@ test('Go back for multiple buttons should bring first and seconds image with mat
     await hv.CloseAllNotifications();
 
     //  Assert : Image date should change to 2023/12/01 00:36:07
-    const morePreviousImageDate = new Date("2023/12/01 00:36:07");
+    const morePreviousImageDate = new Date("2023/12/01 00:36:07Z");
     await layer.assertImageDate(morePreviousImageDate);
 
     //  Assert : Observation date should change to 2023/12/01 00:36:07
@@ -136,7 +136,7 @@ test('Go back for multiple buttons should bring first and seconds image with mat
     await layer.assertHasPreviousImage();
     await layer.assertHasNextImage();
 
-    //  Register : Sunscreenshot from 2023/12/01 00:36:07 
+    //  Register : Sunscreenshot from 2023/12/01 00:36:07
     const morePreviousImageScreenshot = await hv.saveScreenshot("more_previous_image_screenshot", {
         style: '#helioviewer-viewport-container-outer {z-index:200000}'
     });
@@ -189,7 +189,7 @@ test('Go back for multiple buttons should bring first and seconds image with mat
 });
 
 /**
- * This test first goes back in time to make current date unavailable for the given layer ( SOHO ) 
+ * This test first goes back in time to make current date unavailable for the given layer ( SOHO )
  * then with slowly going to the next images, it should validate next images are correct
  * and also should validate UI pieces are aligned with the next available image dates
  */
@@ -209,22 +209,22 @@ test('Going next image multiple times should bring screenshot validated next ava
     await hv.WaitForLoadingComplete();
     await hv.CloseAllNotifications();
 
-    //  Action : Try to load 2023/11/01 00:48:07 , 
-    const initialDate = new Date("2023/11/01 00:48:07");
+    //  Action : Try to load 2023/11/01 00:48:07 ,
+    const initialDate = new Date("2023/11/01 00:48:07Z");
     await hv.SetObservationDateTimeFromDate(initialDate);
     await hv.WaitForLoadingComplete();
     await hv.CloseAllNotifications();
 
     //  Assert : Image date should change to 2023/12/01 00:36:07
-    const earliestAvailableImageDate = new Date("2023/12/01 00:00:07");
+    const earliestAvailableImageDate = new Date("2023/12/01 00:00:07Z");
     await layer.assertImageDate(earliestAvailableImageDate);
 
-    //  Assert : Go back should be red ( and not clickable ) 
-    //  Assert : Go Forward should green ( and clickable ) 
+    //  Assert : Go back should be red ( and not clickable )
+    //  Assert : Go Forward should green ( and clickable )
     await layer.assertHasNoPreviousImage();
     await layer.assertHasNextImage();
 
-    //  Action : Press Go forward , 
+    //  Action : Press Go forward ,
     await layer.gotoNextImage();
     await hv.WaitForLoadingComplete();
     await hv.CloseAllNotifications();
@@ -245,13 +245,13 @@ test('Going next image multiple times should bring screenshot validated next ava
         style: '#helioviewer-viewport-container-outer {z-index:200000}'
     });
 
-    //  Action : Press another Go forward , 
+    //  Action : Press another Go forward ,
     await layer.gotoNextImage();
     await hv.WaitForLoadingComplete();
     await hv.CloseAllNotifications();
 
     //  Assert : Image and observation date should change to 2023/12/01 00:12:07
-    const expectedNextImageDate = new Date("2023/12/01 00:12:07");
+    const expectedNextImageDate = new Date("2023/12/01 00:12:07Z");
     const nextLoadedImageDate = await hv.GetLoadedDate();
     await expect(nextLoadedImageDate.getTime()).toBe(expectedNextImageDate.getTime())
 
@@ -259,7 +259,7 @@ test('Going next image multiple times should bring screenshot validated next ava
     await layer.assertHasPreviousImage();
     await layer.assertHasNextImage();
 
-    //  Register : Sunscreenshot from 2023/12/01 00:12:07 
+    //  Register : Sunscreenshot from 2023/12/01 00:12:07
     const nextAvailableImage = await hv.saveScreenshot("next_available_image", {
         style: '#helioviewer-viewport-container-outer {z-index:200000}'
     });
