@@ -85,10 +85,14 @@ class ImageLayer {
      * @param value
      */
     async setRunningDifferenceValue(value: number) {
-        let input = await this.layer_controls.getByLabel("Running difference", {exact: true});
+        // This action will trigger some API requests, so we'll wait for
+        // at least one of those to finish before returning from this function.
+        let request = this.page.waitForResponse(/difference=1/);
+        let input = this.layer_controls.getByLabel("Running difference", {exact: true});
         await input.fill(value.toString());
         await input.blur();
-        await this.page.waitForTimeout(500);
+        // Wait for difference image requests to be made.
+        await request;
     }
 
     async setBaseDifferenceDate(date: string, time: string) {
