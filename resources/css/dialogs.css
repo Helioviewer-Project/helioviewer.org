@@ -40,13 +40,11 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
     float: right;
 	font-family: Arial,sans-serif;
 	font-size: 12px;
-	margin-right: -12px;
-	margin-top: -6px;
     cursor: pointer;
 }
 
 .image-header-fits, .image-header-helioviewer {
-    padding:12px;
+    padding: 12px;
     font-size: 12px;
 }
 
