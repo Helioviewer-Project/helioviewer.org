@@ -70,6 +70,8 @@ test('[Mobile] Center viewport with AIA 304 and LASCO C2/C3', async ({ page }, i
     style: '#helioviewer-viewport-container-outer {z-index:200000}',
     scale: "css"
   };
+  // On Safari on Mac, the rendering is not consistent... Some white streaks in
+  // the image are sometimes thick, and sometimes thin.
   await expect(await page.screenshot(opts)).toMatchSnapshot(centered_image);
   // 5. Drag the sun off center
   await mobile.moveViewport(250, 250);

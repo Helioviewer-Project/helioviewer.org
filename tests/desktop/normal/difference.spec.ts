@@ -15,6 +15,7 @@ test('Test running difference', async ({ page }) => {
   await expect(tile).toHaveAttribute("src", /^.*difference=0.*$/)
   await layer.set('Difference', 'Running difference');
   await layer.setRunningDifferenceValue(30);
+  await hv.WaitForImageLoad();
   // Verify the image tag is now using a difference image
   await expect(tile).toHaveAttribute("src", /^.*difference=1.*$/)
 });

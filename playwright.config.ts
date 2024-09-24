@@ -10,8 +10,8 @@ import { defineConfig, devices } from '@playwright/test';
  * Test files must be prefixed with 'mobile_', 'desktop_' or 'all_'
  */
 const Platforms = {
-  mobile: /(mobile|all)/,
-  desktop: /(desktop|all)/,
+  mobile: /(mobile)/,
+  desktop: /(desktop)/,
 }
 
 /**

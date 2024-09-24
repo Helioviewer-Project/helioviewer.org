@@ -51,6 +51,15 @@ class Screenshot {
       if (wait) {
         // @ts-ignore
         await request;
+        // On firefox, waiting for the img to be returned from the API is not enough.
+        // Here we're waiting for the img tag itself to report that it's complete,
+        // which should indicate that the image is fully rendered.
+        // According to MDN, complete is set when the image is only queued for
+        // rendering, so this check still may not be perfect...
+        await this.page.locator('#react-modal-image-img').evaluate(e => {
+          let img = e as HTMLImageElement;
+          return img.complete || new Promise(resolve => img.onload = resolve);
+        });
       }
     }
 
