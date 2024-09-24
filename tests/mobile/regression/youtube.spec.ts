@@ -43,6 +43,8 @@ test('[Mobile] Youtube videos should be rendered correctly', async ({page}) => {
   await mobile.Load();
   // 1. Open shared videos UI
   await mobile.OpenYoutubeVideosDialog();
+  // Wait for youtube thumbnails to load.
+  await page.waitForLoadState("networkidle");
   // 2. Compare screenshot
   await expect(page).toHaveScreenshot({maxDiffPixelRatio: 0.01});
 });
