@@ -711,8 +711,7 @@ var TileLayerAccordion = Layer.extend(
         // Unsorted list
         unsorted = "<div class='unsorted' role='list'>";
         $.each(list, function (key, value) {
-            tag = "<span role='listitem'><span class='image-header-tag'>" + key + ": </span>" +
-                  "<span class='image-header-value'>" + value + "</span></span>";
+            tag = "<span role='listitem'><span class='image-header-tag'>" + key + ": </span><span class='image-header-value'>" + value + "</span></span>";
             tags.push(tag);
             unsorted += tag + "<br>";
         });
