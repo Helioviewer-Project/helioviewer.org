@@ -43,7 +43,7 @@ test('Image headers dialog box should show layer image headers, also it should s
     ]);
 
     // 7 SORT HEADERS
-    await imageHeaderDialog.sortHeaders();
+    await imageHeaderDialog.toggleSortHeaders();
 
     // 8 ASSERT SORTED HEADERS
     await imageHeaderDialog.assertImageHeaders([
@@ -57,7 +57,7 @@ test('Image headers dialog box should show layer image headers, also it should s
     ]);
 
     // 9 RESET SORTED HEADERS
-    await imageHeaderDialog.sortHeaders();
+    await imageHeaderDialog.toggleSortHeaders();
 
     // 9 SWITCH TAB TO HELIOVIEWER
     await imageHeaderDialog.switchTab("Helioviewer");
@@ -76,7 +76,7 @@ test('Image headers dialog box should show layer image headers, also it should s
     ]);
 
     // 12 SORT AGAIN FOR HELIOVIEWER HEADERS
-    await imageHeaderDialog.sortHeaders();
+    await imageHeaderDialog.toggleSortHeaders();
 
     // 13 ASSERT SORTED HELIOVIEWER HEADERS
     await imageHeaderDialog.assertImageHeaders([

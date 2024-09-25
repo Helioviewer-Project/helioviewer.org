@@ -61,13 +61,13 @@ class ImageHeaderDialog {
      * Trigger sorting of the shown headers.
      * @return void
      */
-    async sortHeaders(): Promise<void>{
+    async toggleSortHeaders(): Promise<void>{
         await this.box.locator('.image-info-sort-btn').click()
     }
 
     /**
      * Trigger switch to tab.
-     * @param {strong} tab, tabname to swich to
+     * @param {string} tab, tabname to swich to
      * @return void
      */
     async switchTab(tabname: string): Promise<void>{
