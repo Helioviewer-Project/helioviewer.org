@@ -74,6 +74,13 @@ class HvMobile {
   }
 
   /**
+   * Alias for WaitForLoad to align with MobileInterface
+   */
+  async WaitForLoadingComplete() {
+    return this.WaitForLoad();
+  }
+
+  /**
    * @returns true if the control drawer is open, else false.
    * On mobile, all the "accordions" are individual drawers, but they're
    * still contained within the overall sidebar container.

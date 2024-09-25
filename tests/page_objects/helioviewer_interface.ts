@@ -2,12 +2,13 @@ import { Page } from "@playwright/test";
 import { Helioviewer } from "./helioviewer";
 import { HelioviewerEmbed } from "./helioviewer_embed";
 import { HelioviewerMinimal } from "./helioviewer_minimal";
+import { HvMobile } from "./mobile_hv";
 
 /**
- * Represents the common functions that should be available in all Helioviewer
- * interfaces (mobile, embed, minimal, desktop)
+ * Represents the common functions that should be available in the Embed view
+ * and above (Embed, Minimal, Mobile, and Desktop)
  */
-interface HelioviewerInterface {
+interface EmbedInterface {
   /**
    * Loads the given page url.
    * This function should also wait until the HV application has finished loading.
@@ -40,43 +41,90 @@ interface HelioviewerInterface {
   ZoomOut(steps: number): Promise<void>;
 }
 
-/** View types available for helioviewer */
-type HelioviewerView = "Normal" | "Minimal" | "Embed";
-
-// Add some constants for the strings so we don't need to deal with string
-// literals.
-const NormalView = "Normal";
-const MinimalView = "Minimal";
-const EmbedView = "Embed";
+/**
+ * Minimal view functionality.
+ * Supports all functions in EmbedView.
+ */
+interface MinimalInterface extends EmbedInterface {};
 
 /**
- * List of all available Helioviewer views.
- * Iterate over this to create tests that apply to all views.
+ * Mobile specific functionality
+ * Supports all functions in Minimal and Embed
  */
-let HelioviewerViews: HelioviewerView[] = [NormalView, MinimalView, EmbedView];
+interface MobileInterface extends MinimalInterface {
+    /**
+     * Opens the drawer with
+     */
+    OpenImageLayerDrawer(): Promise<void>;
+};
 
-class HelioviewerInterfaceFactory {
-  /**
-   * Returns an implementation for interacting with the desired helioviewer
-   * interface. This is useful for writing one test case that applies to all views.
-   *
-   * @note If you are targeting a specific view, use that view's constructor directly.
-   *       Only use this for a view-agnostic test that can be run for all views.
-   *       The scope of available functions is limited using the generic interface.
-   * @param view
-   */
-  static Create(view: HelioviewerView, page: Page): HelioviewerInterface {
-    switch (view) {
-      case EmbedView:
-        return new HelioviewerEmbed(page);
-      case MinimalView:
-        return new HelioviewerMinimal(page);
-      case NormalView:
-        return new Helioviewer(page);
-      default:
-        throw "Invalid View";
+/**
+ * Desktop specific functionality.
+ * Supports all functions in Mobile, Minimal, and Embed
+ */
+interface DesktopInterface extends MobileInterface {};
+
+
+/** View types available for helioviewer */
+type HelioviewerView = {
+    name: string,
+    tag: string
+}
+const NormalView: HelioviewerView = {
+    name: "Normal",
+    tag: "@Desktop"
+};
+
+const MinimalView: HelioviewerView = {
+    name: "Minimal",
+    tag: "@Minimal"
+};
+
+const EmbedView: HelioviewerView = {
+    name: "Embed",
+    tag: "@Embed"
+};
+
+const MobileView: HelioviewerView = {
+    name: "Mobile",
+    tag: "@Mobile"
+};
+
+class HelioviewerFactory {
+    /**
+     * Returns an implementation for interacting with the desired helioviewer
+     * interface. This is useful for writing one test case that applies to all views.
+     *
+     * @note If you are targeting a specific view, use that view's constructor directly.
+     *       Only use this for a view-agnostic test that can be run for all views.
+     *       The scope of available functions is limited using the generic interface.
+     * @param view
+     */
+    static Create(view: HelioviewerView, page: Page): EmbedInterface | MinimalInterface | MobileInterface | DesktopInterface {
+        switch (view) {
+            case EmbedView:
+                return new HelioviewerEmbed(page);
+            case MinimalView:
+                return new HelioviewerMinimal(page);
+            case NormalView:
+                return new Helioviewer(page);
+            case MobileView:
+                return new HvMobile(page);
+            default:
+                throw "Invalid View";
+        }
     }
   }
 }
 
-export { NormalView, MinimalView, EmbedView, HelioviewerViews, HelioviewerInterfaceFactory, HelioviewerInterface };
+export {
+    NormalView,
+    MinimalView,
+    EmbedView,
+    MobileView,
+    EmbedInterface,
+    MinimalInterface,
+    MobileInterface,
+    DesktopInterface,
+    HelioviewerFactory,
+}
