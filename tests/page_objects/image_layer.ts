@@ -1,5 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 
+import { ImageHeaderDialog } from './image_headers_dialog';
+
 /**
  * Interface for interacting with elements related to a specific
  * image layer on Heliovewer.org
@@ -194,6 +196,23 @@ class ImageLayer {
     async gotoNextImage(): Promise<void> {
         await this.assertHasNextImage();
         await this.layer_controls.locator(".next-image-btn").click();
+    }
+
+    /**
+     * Press layers show image header button.
+     * @return void
+     */
+    async showImageHeader(): Promise<void> {
+        await this.layer_controls.locator(".image-info-dialog-btn").click();
+    }
+
+    /**
+     * Parse image header dialog box for assertions.
+     * @return {ImageHeaderDialog} , parsed image header dialog box
+     */
+    async getImageHeaderDialog(): Promise<ImageHeaderDialog> {
+        const box = await this.page.locator("//div[contains(@aria-describedby, 'image-info-dialog-tile-layer')]");
+        return new ImageHeaderDialog(box);
     }
 }
 

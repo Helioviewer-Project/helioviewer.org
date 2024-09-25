@@ -637,7 +637,7 @@ var TileLayerAccordion = Layer.extend(
         html = "<div class='image-info-dialog-menu'>" +
                "<a class='show-fits-tags-btn selected'>[FITS]</a>" +
                "<a class='show-helioviewer-tags-btn'>Helioviewer</a>" +
-               "<span class='image-info-sort-btn'>Abc</span>" +
+               "<span class='image-info-sort-btn'>Sort Labels</span>" +
                "</div>";
 
         // Separate out Helioviewer-specific tags if not already done
@@ -709,10 +709,9 @@ var TileLayerAccordion = Layer.extend(
         var unsorted, sortFunction, sorted, tag, tags = [];
 
         // Unsorted list
-        unsorted = "<div class='unsorted'>";
+        unsorted = "<div class='unsorted' role='list'>";
         $.each(list, function (key, value) {
-            tag = "<span class='image-header-tag'>" + key + ": </span>" +
-                  "<span class='image-header-value'>" + value + "</span>";
+            tag = "<span role='listitem'><span class='image-header-tag'>" + key + ": </span><span class='image-header-value'>" + value + "</span></span>";
             tags.push(tag);
             unsorted += tag + "<br>";
         });
@@ -720,17 +719,17 @@ var TileLayerAccordion = Layer.extend(
 
         // Sort function
         sortFunction = function (a, b) {
-            // <span> portion is 31 characters long
-            if (a.slice(31) < b.slice(31)) {
+            // <span> portion is 49 characters long
+            if (a.slice(49) < b.slice(49)) {
                 return -1;
-            } else if (a.slice(31) > b.slice(31)) {
+            } else if (a.slice(49) > b.slice(49)) {
                 return 1;
             }
             return 0;
         };
 
         // Sorted list
-        sorted = "<div class='sorted' style='display: none;'>";
+        sorted = "<div class='sorted' role='list' style='display: none;'>";
         $.each(tags.sort(sortFunction), function () {
             sorted += this + "<br>";
         });
