@@ -210,7 +210,7 @@ class ImageLayer {
      * Parse image header dialog box for assertions.
      * @return {ImageHeaderDialog} , parsed image header dialog box
      */
-    async getImageHeaderDialog(): ImageHeaderDialog {
+    async getImageHeaderDialog(): Promise<ImageHeaderDialog> {
         const box = await this.page.locator("//div[contains(@aria-describedby, 'image-info-dialog-tile-layer')]");
         return new ImageHeaderDialog(box);
     }
