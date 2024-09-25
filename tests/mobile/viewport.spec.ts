@@ -82,3 +82,75 @@ test('[Mobile] Center viewport with AIA 304 and LASCO C2/C3', async ({ page }, i
   // 8. Expect the screenshot to match again.
   await expect(await page.screenshot(opts)).toMatchSnapshot(centered_image);
 });
+
+/**
+ * Tests the controls for the viewport scale feature.
+ * 1. The page initializes with the earth scale being visible.
+ * 2. Change to bar scale
+ * 3. Disable image scale
+ * 4. Show earth scale
+ * 5. Disable earth scale.
+ */
+test('[Mobile] Switch between earth scale, bar scale, and no scale', async ({page}) => {
+  let mobile = new HvMobile(page);
+  await mobile.Load();
+
+  // 1. The page initializes with the earth scale being visible.
+  await mobile.scale_indicator.assertEarthIsVisible();
+  // 2. Change to bar scale
+  await mobile.scale_indicator.TapBarScale();
+  await mobile.scale_indicator.assertBarIsVisible();
+  // 3. Disable image scale by choosing the bar scale again
+  await mobile.scale_indicator.TapBarScale();
+  await mobile.scale_indicator.assertHidden();
+  // 4. Show earth scale
+  await mobile.scale_indicator.TapEarthScale();
+  await mobile.scale_indicator.assertEarthIsVisible();
+  // 5. Disable earth scale.
+  await mobile.scale_indicator.TapEarthScale();
+  await mobile.scale_indicator.assertHidden();
+});
+
+/**
+ * The scale indicator is meant to show the scale of the earth with respect to the sun.
+ * As a user zooms in and out to scale the size of the sun, the scale indicator
+ * must also change size to match the scale of the earth.
+ *
+ * 1. Check initial earth scale
+ * 2. Zoom in, check 2nd, 3rd, 4th, level earth scale
+ * 3. Zoom out, re-check initial earth scale
+ * 4. Repeat steps 1-3 with bar scale
+ */
+test('[Mobile] Verify earth/bar indicator scales with zoom', async ({page}) => {
+  let mobile = new HvMobile(page);
+  await mobile.Load();
+
+  // 1. Check initial earth scale
+  await mobile.scale_indicator.assertEarthIsVisible();
+  // 2. Zoom in, check 2nd, 3rd, 4th, level earth scale
+  await mobile.scale_indicator.assertSizeMatches(4, 4);
+  await mobile.ZoomIn(1);
+  await mobile.scale_indicator.assertSizeMatches(7, 7);
+  await mobile.ZoomIn(1);
+  await mobile.scale_indicator.assertSizeMatches(15, 15);
+  await mobile.ZoomIn(1);
+  await mobile.scale_indicator.assertSizeMatches(29, 29);
+  // 3. Zoom out, re-check initial earth scale
+  await mobile.ZoomOut(3);
+  await mobile.scale_indicator.assertSizeMatches(4, 4);
+
+  // 4. Repeat steps with bar scale
+  await mobile.scale_indicator.TapBarScale();
+  // 4.1 Check initial bar scale
+  await mobile.scale_indicator.assertBarScaleLabelMatches("175,000");
+  // 4.2. Zoom in, check 2nd, 3rd, 4th, level scale
+  await mobile.ZoomIn(1);
+  await mobile.scale_indicator.assertBarScaleLabelMatches("88,000");
+  await mobile.ZoomIn(1);
+  await mobile.scale_indicator.assertBarScaleLabelMatches("44,000");
+  await mobile.ZoomIn(1);
+  await mobile.scale_indicator.assertBarScaleLabelMatches("22,000");
+  // 4.3 Zoom out, re-check initial scale
+  await mobile.ZoomOut(3);
+  await mobile.scale_indicator.assertBarScaleLabelMatches("175,000");
+});
