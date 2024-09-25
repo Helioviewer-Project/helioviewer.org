@@ -9,6 +9,7 @@ import { Movie } from './movie';
 import { URLShare } from './urlshare';
 import { EventTree } from './event_tree';
 import { VSODrawer } from './vso_drawer';
+import { ScaleIndicator } from './scale_indicator';
 import * as fs from 'fs';
 
 /**
@@ -29,6 +30,7 @@ class Helioviewer {
     movie: Movie;
     urlshare: URLShare;
     vso_drawer: VSODrawer;
+    scale_indicator: ScaleIndicator;
 
     constructor(page: Page, info: TestInfo | null = null) {
         this.page = page;
@@ -37,6 +39,7 @@ class Helioviewer {
         this.movie = new Movie(this.page);
         this.urlshare = new URLShare(this.page);
         this.vso_drawer = new VSODrawer(this.page);
+        this.scale_indicator = new ScaleIndicator(this.page);
         this.sidebar = this.page.locator('#hv-drawer-left');
     }
 

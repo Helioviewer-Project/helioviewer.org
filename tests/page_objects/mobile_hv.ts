@@ -5,6 +5,7 @@
 import { Locator, Page, PageScreenshotOptions, TestInfo, expect } from '@playwright/test';
 import { Helioviewer } from './helioviewer';
 import { ImageLayer } from './image_layer';
+import { ScaleIndicator } from './scale_indicator';
 
 class HvMobile {
     /** Helioviewer reference for shared interactions that apply to mobile and desktop */
@@ -57,6 +58,10 @@ class HvMobile {
 
     getImageLayer(index: number): Promise<ImageLayer> {
         return this.hv.getImageLayer(index);
+    }
+
+    get scale_indicator(): ScaleIndicator {
+        return this.hv.scale_indicator;
     }
 
     /**
