@@ -483,6 +483,7 @@ var TileLayerAccordion = Layer.extend(
         });
 
         jp2 = '<div id="image-' + id + '-download-btn" '
+            +       'role="button" '
             +       'class="image-download-btn fa fa-file-image-o fa-fw" '
             +       'title="Download full JPEG 2000 image (grayscale)."'
             +       'style="position: absolute; top: 1.8em; right: 15px; margin-left:0px;">'
