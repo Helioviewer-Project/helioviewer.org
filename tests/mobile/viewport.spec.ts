@@ -45,7 +45,7 @@ test('[Mobile] Center viewport with AIA 304', async ({ page }, info) => {
  *   7. Center viewport again
  *   8. Expect the screenshot to match again
  */
-test.only('[Mobile] Center viewport with AIA 304 and LASCO C2/C3', async ({ page }, info) => {
+test('[Mobile] Center viewport with AIA 304 and LASCO C2/C3', async ({ page }, info) => {
   let mobile = new HvMobile(page, info);
   await mobile.Load();
   // 1a. Adds LASCO C2
