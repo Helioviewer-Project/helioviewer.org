@@ -402,6 +402,22 @@ class Helioviewer {
     }
 
     /**
+    * Attach base64 screnshot of just the loaded sun viewport with a given filename to trace report
+    * also returns the screenshot string
+    * @param {string} filename name of file in trace report
+    * @param {PageScreenshotOptions} options pass options to playwright screenshot function
+    * @returns {Promise<string>} base64 string screenshot
+    */
+    async sunScreenshot(filename: string = "", options: PageScreenshotOptions = {}): Promise<string> {
+
+        if (!options.style) {
+            options.style = '#helioviewer-viewport-container-outer {z-index:200000}';
+        }
+
+        return this.saveScreenshot(filename, options);
+    }
+
+    /**
     * Attach base64 screnshot with a given filename to trace report
     * and  exit afterwards with false assertion
     * @param {string} filename name of file in trace report
