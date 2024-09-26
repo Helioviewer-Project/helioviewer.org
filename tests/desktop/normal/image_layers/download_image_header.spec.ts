@@ -7,6 +7,10 @@ import { Helioviewer } from '../../../page_objects/helioviewer';
  */
 test('Image Layer | Download image button for layer should download jpeg2000 image with correct name', async ({page}, info) => {
 
+    // Trying to avoid inclusion issue
+    // SEE: https://github.com/ipfs/js-ipfs/issues/4138
+    const { fileTypeFromStream } = await import("file-type");
+
     let hv = new Helioviewer(page, info);
 
     // 1. LOAD HV 
@@ -31,11 +35,9 @@ test('Image Layer | Download image button for layer should download jpeg2000 ima
     // 5. ASSERT DOWNLOAD FILENAME 
     expect(jp2Image.suggestedFilename()).toMatch(/\d{4}_\d{2}_\d{2}__\d{2}_\d{2}_\d{2}_442__SOHO_LASCO_C2_white-light.jp2/);
 
-    const { fileTypeFromStream } = await (eval('import("file-type")') as Promise<typeof import('file-type')>);
-
     const mimeInfo = await fileTypeFromStream(await jp2Image.createReadStream())
 
-    // 6. ASSERT MIMETYPE OF FILE 
+    // 6. ASSERT MIMETYPE OF FILE AS JPEG2000 
     expect(mimeInfo.mime).toBe("image/jp2");
 
 });
