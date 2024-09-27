@@ -12,43 +12,43 @@ class VSODrawer {
     }
 
     /**
-     * Clicks the button for toggling vso drawer 
+     * Clicks the button for toggling vso drawer
      * @return void
      */
-    async toggleVisibility(): void {
+    async toggleVisibility(): Promise<void> {
         await this.page.locator('#data-button').click();
     }
 
     /**
-     * Asserts drawer is open 
+     * Asserts drawer is open
      * @return void
      */
-    async assertDrawerOpen(): void {
+    async assertDrawerOpen(): Promise<void> {
         await expect(this.page.locator('#hv-drawer-data')).toBeVisible();
     }
 
     /**
-     * Asserts drawer is closed 
+     * Asserts drawer is closed
      * @return void
      */
-    async assertDrawerClose(): void {
+    async assertDrawerClose(): Promise<void> {
         await expect(this.page.locator('#hv-drawer-data')).not.toBeVisible();
     }
 
     /**
-     * Trigger SSW Sunpy download button  
+     * Trigger SSW Sunpy download button
      * @return void
      */
-    async triggerSunPyScriptDownload(): void {
+    async triggerSunPyScriptDownload(): Promise<void> {
         await expect(this.page.locator('#vso-sunpy')).not.toHaveClass(/inactive/);
         await this.page.locator('#vso-sunpy').click();
     }
 
     /**
-     * Downloads sunpy script from jgrowl notification 
+     * Downloads sunpy script from jgrowl notification
      * @return string base64 version of the downloaded screenshot
      */
-    async downloadSunpyScriptFromNotification(): string {
+    async downloadSunpyScriptFromNotification(): Promise<string> {
 
         const downloadButton = this.page.getByRole('link', { name: 'Your Python/SunPy script for requesting science data from the VSO is ready' });
 

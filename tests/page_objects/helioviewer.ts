@@ -314,7 +314,7 @@ class Helioviewer {
     * @param {string} time The time to be entered in the format 'HH:MM'.
     * @returns {void} A promise that resolves when the date and time have been successfully entered.
     */
-    async SetObservationDateTime(date: Date, time: string) {
+    async SetObservationDateTime(date: string, time: string) {
         await this.OpenSidebar();
         await this.page.getByLabel('Observation date', { exact: true }).click();
         await this.page.getByLabel('Observation date', { exact: true }).fill(date);
