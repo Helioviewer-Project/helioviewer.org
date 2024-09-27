@@ -224,7 +224,6 @@ class ImageLayer {
     const box = await this.page.locator("//div[contains(@aria-describedby, 'image-info-dialog-tile-layer')]");
     return new ImageHeaderDialog(box);
   }
-
 }
 
 export { ImageLayer };
