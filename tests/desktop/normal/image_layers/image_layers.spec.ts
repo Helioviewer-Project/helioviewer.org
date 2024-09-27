@@ -71,6 +71,7 @@ test('Verify that you can share state after upgrading from old baseDiffDate form
   await hv.Load();
   // 2. Update localStorage
   await page.evaluate(() => {
+    // @ts-ignore: Helioviewer exists on the Window when evaluated on the page.
     window.Helioviewer.userSettings.set("state.tileLayers", [
         {
           "baseDiffTime": "2023/12/01 00:30:00",

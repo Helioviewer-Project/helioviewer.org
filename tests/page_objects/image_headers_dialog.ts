@@ -45,16 +45,15 @@ class ImageHeaderDialog {
     }
 
     /**
-     * Assert image headers is visible with their title and value 
+     * Assert image headers is visible with their title and value
      * @param {Array<[string, string]>} imageHeaders, tuple of headertag and headervalue
      * @return void
      */
     async assertImageHeaders(imageHeaders: Array<[string,string]>): Promise<void> {
-
-        for (let index in imageHeaders) {
+        await Promise.all(imageHeaders.map(async (_, index) => {
             const headerTag = await this.box.locator('visible=true').getByRole('listitem').nth(index);
             await expect(headerTag).toHaveText(imageHeaders[index].join(': '));
-        }
+        }));
     }
 
     /**
