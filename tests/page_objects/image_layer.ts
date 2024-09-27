@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator, expect, Download } from '@playwright/test';
 
 import { ImageHeaderDialog } from './image_headers_dialog';
 
@@ -208,9 +208,9 @@ class ImageLayer {
 
     /**
      * Triggers download jp2 image process and returns download promise.
-     * @return {Promise<Object>} dowload promise to be fullfileed with await
+     * @return {Promise<Download>} dowload promise to be fullfileed with await
      */
-    async downloadJp2(): Promise<Object> {
+    async downloadJp2(): Promise<Download> {
         const downloadPromise = this.page.waitForEvent('download');
         await this.layer_controls.getByTitle("Download full JPEG 2000 image (grayscale).").click();
         return downloadPromise;
