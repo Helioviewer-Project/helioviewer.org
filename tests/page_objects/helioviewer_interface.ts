@@ -8,36 +8,36 @@ import { HelioviewerMinimal } from "./helioviewer_minimal";
  * interfaces (mobile, embed, minimal, desktop)
  */
 interface HelioviewerInterface {
-    /**
-     * Loads the given page url.
-     * This function should also wait until the HV application has finished loading.
-     */
-    Load(url?: string): Promise<void>;
+  /**
+   * Loads the given page url.
+   * This function should also wait until the HV application has finished loading.
+   */
+  Load(url?: string): Promise<void>;
 
-    /**
-     * Waits for everything on the page to finish loading.
-     * That is, waits for all images and events to load.
-     *
-     * @note Embed doesn't have a loading spinner, so loading may be flaky.
-     */
-    WaitForLoadingComplete(): Promise<void>;
+  /**
+   * Waits for everything on the page to finish loading.
+   * That is, waits for all images and events to load.
+   *
+   * @note Embed doesn't have a loading spinner, so loading may be flaky.
+   */
+  WaitForLoadingComplete(): Promise<void>;
 
-    /**
-     * Closes all Helioviewer notifications.
-     */
-    CloseAllNotifications(): Promise<void>;
+  /**
+   * Closes all Helioviewer notifications.
+   */
+  CloseAllNotifications(): Promise<void>;
 
-    /**
-     * Zoom in by using the zoom in button
-     * @param steps Number of steps to zoom in. Each step is approximately 2x zoom.
-     */
-    ZoomIn(steps: number): Promise<void>;
+  /**
+   * Zoom in by using the zoom in button
+   * @param steps Number of steps to zoom in. Each step is approximately 2x zoom.
+   */
+  ZoomIn(steps: number): Promise<void>;
 
-    /**
-     * Zoom out using the zoom out button.
-     * @param steps Number of steps to zoom out. Each step is approximately 1/2 zoom.
-     */
-    ZoomOut(steps: number): Promise<void>;
+  /**
+   * Zoom out using the zoom out button.
+   * @param steps Number of steps to zoom out. Each step is approximately 1/2 zoom.
+   */
+  ZoomOut(steps: number): Promise<void>;
 }
 
 /** View types available for helioviewer */
@@ -53,42 +53,37 @@ const EmbedView = "Embed";
  * List of all available Helioviewer views.
  * Iterate over this to create tests that apply to all views.
  */
-let HelioviewerViews: HelioviewerView[] = [
-    NormalView,
-    MinimalView,
-    EmbedView
-]
+let HelioviewerViews: HelioviewerView[] = [NormalView, MinimalView, EmbedView];
 
 class HelioviewerInterfaceFactory {
-    /**
-     * Returns an implementation for interacting with the desired helioviewer
-     * interface. This is useful for writing one test case that applies to all views.
-     *
-     * @note If you are targeting a specific view, use that view's constructor directly.
-     *       Only use this for a view-agnostic test that can be run for all views.
-     *       The scope of available functions is limited using the generic interface.
-     * @param view
-     */
-    static Create(view: HelioviewerView, page: Page): HelioviewerInterface {
-        switch (view) {
-            case EmbedView:
-                return new HelioviewerEmbed(page);
-            case MinimalView:
-                return new HelioviewerMinimal(page);
-            case NormalView:
-                return new Helioviewer(page);
-            default:
-                throw "Invalid View";
-        }
+  /**
+   * Returns an implementation for interacting with the desired helioviewer
+   * interface. This is useful for writing one test case that applies to all views.
+   *
+   * @note If you are targeting a specific view, use that view's constructor directly.
+   *       Only use this for a view-agnostic test that can be run for all views.
+   *       The scope of available functions is limited using the generic interface.
+   * @param view
+   */
+  static Create(view: HelioviewerView, page: Page): HelioviewerInterface {
+    switch (view) {
+      case EmbedView:
+        return new HelioviewerEmbed(page);
+      case MinimalView:
+        return new HelioviewerMinimal(page);
+      case NormalView:
+        return new Helioviewer(page);
+      default:
+        throw "Invalid View";
     }
+  }
 }
-
 
 export {
-    NormalView,
-    MinimalView,
-    EmbedView,
-    HelioviewerViews,
-    HelioviewerInterfaceFactory,
-    HelioviewerInterface
-}
+  NormalView,
+  MinimalView,
+  EmbedView,
+  HelioviewerViews,
+  HelioviewerInterfaceFactory,
+  HelioviewerInterface,
+};
