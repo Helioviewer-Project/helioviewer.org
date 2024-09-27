@@ -1,5 +1,5 @@
-import { test, expect, PageAssertionsToHaveScreenshotOptions, PageScreenshotOptions } from '@playwright/test';
-import { HvMobile } from '../page_objects/mobile_hv';
+import { test, expect, PageAssertionsToHaveScreenshotOptions, PageScreenshotOptions } from "@playwright/test";
+import { HvMobile } from "../page_objects/mobile_hv";
 
 /**
  * This tests centering the viewport on mobile devices.
@@ -11,7 +11,7 @@ import { HvMobile } from '../page_objects/mobile_hv';
  *   5. Center viewport again
  *   6. Expect the screenshot to match again
  */
-test('[Mobile] Center viewport with AIA 304', async ({ page }, info) => {
+test("[Mobile] Center viewport with AIA 304", async ({ page }, info) => {
   let mobile = new HvMobile(page, info);
   await mobile.Load();
   // The date in the notification will change over time, so close it so it's
@@ -21,7 +21,7 @@ test('[Mobile] Center viewport with AIA 304', async ({ page }, info) => {
   await mobile.CenterViewport();
   // 2. Expect the screenshot to match. Referencing by name so we can re-use it later.
   const centered_aia_304_image = "centered_aia_304.png";
-  const opts: PageAssertionsToHaveScreenshotOptions = { mask: [page.locator('#time'), page.locator('#date')] };
+  const opts: PageAssertionsToHaveScreenshotOptions = { mask: [page.locator("#time"), page.locator("#date")] };
   await expect(page).toHaveScreenshot(centered_aia_304_image, opts);
   // 3. Drag the sun off center
   await mobile.moveViewport(250, 250);
@@ -45,7 +45,7 @@ test('[Mobile] Center viewport with AIA 304', async ({ page }, info) => {
  *   7. Center viewport again
  *   8. Expect the screenshot to match again
  */
-test('[Mobile] Center viewport with AIA 304 and LASCO C2/C3', async ({ page }, info) => {
+test("[Mobile] Center viewport with AIA 304 and LASCO C2/C3", async ({ page }, info) => {
   let mobile = new HvMobile(page, info);
   await mobile.Load();
   // 1a. Adds LASCO C2
@@ -67,7 +67,7 @@ test('[Mobile] Center viewport with AIA 304 and LASCO C2/C3', async ({ page }, i
   const centered_image = "sdo_soho_centered.png";
   // Rendering seems a bit flaky but not significantly flaky.
   const opts: PageScreenshotOptions = {
-    style: '#helioviewer-viewport-container-outer {z-index:200000}',
+    style: "#helioviewer-viewport-container-outer {z-index:200000}",
     scale: "css"
   };
   // On Safari on Mac, the rendering is not consistent... Some white streaks in
@@ -91,7 +91,7 @@ test('[Mobile] Center viewport with AIA 304 and LASCO C2/C3', async ({ page }, i
  * 4. Show earth scale
  * 5. Disable earth scale.
  */
-test('[Mobile] Switch between earth scale, bar scale, and no scale', async ({page}) => {
+test("[Mobile] Switch between earth scale, bar scale, and no scale", async ({ page }) => {
   let mobile = new HvMobile(page);
   await mobile.Load();
 
@@ -121,7 +121,7 @@ test('[Mobile] Switch between earth scale, bar scale, and no scale', async ({pag
  * 3. Zoom out, re-check initial earth scale
  * 4. Repeat steps 1-3 with bar scale
  */
-test('[Mobile] Verify earth/bar indicator scales with zoom', async ({page}) => {
+test("[Mobile] Verify earth/bar indicator scales with zoom", async ({ page }) => {
   let mobile = new HvMobile(page);
   await mobile.Load();
 

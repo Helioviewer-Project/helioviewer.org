@@ -22,6 +22,17 @@ jobs:
     - name: Run typescript
       run: npx tsc -p tests/tsconfig.json --noEmit
 
+  code-style:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install node dependencies
+      run: npm ci
+
+    - name: Prettier check (tests and certain files)
+      run: npm run prettier-check
+
   jest-unit-tests:
     runs-on: ubuntu-latest
 
@@ -42,9 +53,6 @@ jobs:
 
     - name: Run js unit tests
       run: npm run test
-
-    - name: Prettier check (certain files)
-      run: npx prettier -c resources/js/test resources/js/Media/VideoPlayer.jsx
   playwright-e2e-tests:
     strategy:
       matrix:

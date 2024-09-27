@@ -38,24 +38,15 @@ function VideoPlayer({ movie, width, height, onClickYoutubeBtn, outputType }) {
       alwaysShowControls: false,
       iconSprite: "/resources/lib/mediaelement/build/mejs-controls.svg",
       enableKeyboard: true,
-      keyActions: [{ keys: [32], action: playPauseFn }],
+      keyActions: [{ keys: [32], action: playPauseFn }]
     });
   }, []);
   return (
     <div>
-      <MediaPlayer
-        id={movie.id}
-        url={movie.url}
-        width={width}
-        height={height}
-      />
+      <MediaPlayer id={movie.id} url={movie.url} width={width} height={height} />
       <div style={{ width: "100%", paddingTop: "25px" }}>
         <div style={{ float: "left" }} className="video-links">
-          {outputType != "minimal" ? (
-            <YoutubeButton id={movie.id} onClick={onClickYoutubeBtn} />
-          ) : (
-            <></>
-          )}
+          {outputType != "minimal" ? <YoutubeButton id={movie.id} onClick={onClickYoutubeBtn} /> : <></>}
           {outputType != "minimal" ? <LinkButton id={movie.id} /> : <></>}
           <DownloadButton id={movie.id} />
         </div>
@@ -97,24 +88,15 @@ function MediaPlayer({ id, url, width, height }) {
         preload="none"
         autoPlay={autoplay}
       >
-        <source
-          type="video/mp4"
-          src={`${Helioviewer.serverSettings.rootURL}/${filePath}/${filenameHQ}`}
-        />
-        <source
-          type="video/webm"
-          src={`${Helioviewer.serverSettings.rootURL}/${filePath}/${filenameWebM}`}
-        />
+        <source type="video/mp4" src={`${Helioviewer.serverSettings.rootURL}/${filePath}/${filenameHQ}`} />
+        <source type="video/webm" src={`${Helioviewer.serverSettings.rootURL}/${filePath}/${filenameWebM}`} />
         <object
           width={width}
           height={height - 20}
           type="application/x-shockwave-flash"
           data="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf"
         >
-          <param
-            name="movie"
-            value="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf"
-          />
+          <param name="movie" value="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf" />
           <param
             name="flashvars"
             value={`controls=true&amp;poster=${Helioviewer.serverSettings.rootURL}/${filePath}/preview-full.png&amp;file=${Helioviewer.serverSettings.rootURL}/${filePath}/${filename}`}
@@ -147,11 +129,7 @@ function DownloadButton({ id }) {
   };
   return (
     <div style={{ float: "left" }}>
-      <a
-        target="_parent"
-        href={downloadURL}
-        title="Download high-quality video"
-      >
+      <a target="_parent" href={downloadURL} title="Download high-quality video">
         <img
           style={{ width: "93px", height: "32px" }}
           className="video-download-icon"
@@ -174,11 +152,7 @@ function DownloadButton({ id }) {
 function YoutubeButton({ id, onClick }) {
   return (
     <div style={{ float: "left" }}>
-      <button
-        className="btn-link"
-        id={`youtube-upload-${id}`}
-        onClick={onClick}
-      >
+      <button className="btn-link" id={`youtube-upload-${id}`} onClick={onClick}>
         <img
           className="youtube-icon"
           title="Upload video to YouTube"
@@ -361,9 +335,7 @@ function GetJhvRequestForMovie(movie) {
       observatory,
       dataset,
       // Workaround to load GONG data. I couldn't figure out how to get GONG to load from GSFC.
-      observatory == "NSO-GONG"
-        ? "ROB"
-        : Helioviewer.serverSettings.jhelioviewerHost,
+      observatory == "NSO-GONG" ? "ROB" : Helioviewer.serverSettings.jhelioviewerHost
     );
   }
   return requestBuilder.Build();

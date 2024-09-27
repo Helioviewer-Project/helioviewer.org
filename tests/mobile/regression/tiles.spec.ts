@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { HvMobile } from '../../page_objects/mobile_hv';
+import { test, expect } from "@playwright/test";
+import { HvMobile } from "../../page_objects/mobile_hv";
 
 /**
  * A recurring issue in Helioviewer deals with computing which tiles should
@@ -22,18 +22,20 @@ import { HvMobile } from '../../page_objects/mobile_hv';
  * This test verifies that the black space does NOT remain, and that the tile does get loaded
  * when it is dragged into the viewport.
  */
-test(`[Mobile] Verify image tiles are loaded when the viewport pans to tile boundaries after zooming in and out`, async ({ page }) => {
-    let hv = new HvMobile(page);
-    await hv.Load();
-    await hv.WaitForLoad();
-    // 1. Drag the sun up
-    await hv.moveViewport(0, -150);
-    // 2. Zoom in one step to trigger the resolution update
-    await hv.ZoomIn(1);
-    await hv.WaitForLoad();
-    // 3. At this level, 4 tiles should be visible
-    await expect(page.locator("//img[contains(@src, 'x=0&y=0')]")).toHaveCount(1);
-    await expect(page.locator("//img[contains(@src, 'x=-1&y=0')]")).toHaveCount(1);
-    await expect(page.locator("//img[contains(@src, 'x=0&y=-1')]")).toHaveCount(1);
-    await expect(page.locator("//img[contains(@src, 'x=-1&y=-1')]")).toHaveCount(1);
+test(`[Mobile] Verify image tiles are loaded when the viewport pans to tile boundaries after zooming in and out`, async ({
+  page
+}) => {
+  let hv = new HvMobile(page);
+  await hv.Load();
+  await hv.WaitForLoad();
+  // 1. Drag the sun up
+  await hv.moveViewport(0, -150);
+  // 2. Zoom in one step to trigger the resolution update
+  await hv.ZoomIn(1);
+  await hv.WaitForLoad();
+  // 3. At this level, 4 tiles should be visible
+  await expect(page.locator("//img[contains(@src, 'x=0&y=0')]")).toHaveCount(1);
+  await expect(page.locator("//img[contains(@src, 'x=-1&y=0')]")).toHaveCount(1);
+  await expect(page.locator("//img[contains(@src, 'x=0&y=-1')]")).toHaveCount(1);
+  await expect(page.locator("//img[contains(@src, 'x=-1&y=-1')]")).toHaveCount(1);
 });
