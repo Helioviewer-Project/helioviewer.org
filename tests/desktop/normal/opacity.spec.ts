@@ -1,12 +1,12 @@
-import { test, expect } from "@playwright/test";
-import { Helioviewer } from "../../page_objects/helioviewer";
+import { test, expect } from '@playwright/test';
+import { Helioviewer } from '../../page_objects/helioviewer';
 
 /**
  * This test drags the opacity slider to several places
  * and verifies that the opacity of the underlying image
  * matches the value set on the slider.
  */
-test("Change opacity (1 layer)", async ({ page }) => {
+test('Change opacity (1 layer)', async ({ page }) => {
   let hv = new Helioviewer(page);
   await hv.Load();
   await hv.OpenSidebar();
@@ -24,7 +24,7 @@ test("Change opacity (1 layer)", async ({ page }) => {
 /**
  * This test verifies the opacity on multiple layers can be set independently.
  */
-test("Change opacity (2 layers)", async ({ page }) => {
+test('Change opacity (2 layers)', async ({ page }) => {
   let hv = new Helioviewer(page);
   await hv.Load();
   await hv.OpenSidebar();
