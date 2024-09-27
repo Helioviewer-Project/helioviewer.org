@@ -11,13 +11,13 @@ Object.defineProperty(XMLHttpRequest.prototype, "responseXML", {
   get: function () {
     return new DOMParser().parseFromString(this.responseText);
   },
-  set: function () {},
+  set: function () {}
 });
 
 global.Helioviewer = {
   serverSettings: {
-    jhelioviewerHost: "GSFC",
-  },
+    jhelioviewerHost: "GSFC"
+  }
 };
 
 /**
@@ -43,17 +43,17 @@ test("GetJhvRequestForMovie can extract layers from layer strings", async () => 
       expectedResult: [
         {
           observatory: "SOHO",
-          dataset: "LASCO C2",
+          dataset: "LASCO C2"
         },
         {
           observatory: "SOHO",
-          dataset: "LASCO C3",
+          dataset: "LASCO C3"
         },
         {
           observatory: "SDO",
-          dataset: "AIA 304",
-        },
-      ],
+          dataset: "AIA 304"
+        }
+      ]
     },
     {
       send: false,
@@ -61,22 +61,21 @@ test("GetJhvRequestForMovie can extract layers from layer strings", async () => 
       expectedResult: [
         {
           observatory: "GOES-R",
-          dataset: "SUVI 304",
-        },
-      ],
+          dataset: "SUVI 304"
+        }
+      ]
     },
     {
       send: false,
       startDate: "2023-01-01 00:00:00",
       endDate: "2023-01-02 00:00:00",
-      layerString:
-        "[GONG,GONG,H-alpha,6562,1,100,0,60,1,2023-10-24T15:10:17.000Z]",
+      layerString: "[GONG,GONG,H-alpha,6562,1,100,0,60,1,2023-10-24T15:10:17.000Z]",
       expectedResult: [
         {
           observatory: "NSO-GONG",
-          dataset: "GONG H-alpha 6562",
-        },
-      ],
+          dataset: "GONG H-alpha 6562"
+        }
+      ]
     },
     {
       send: false,
@@ -84,9 +83,9 @@ test("GetJhvRequestForMovie can extract layers from layer strings", async () => 
       expectedResult: [
         {
           observatory: "IRIS",
-          dataset: "SJI 1330",
-        },
-      ],
+          dataset: "SJI 1330"
+        }
+      ]
     },
     {
       send: false,
@@ -94,31 +93,29 @@ test("GetJhvRequestForMovie can extract layers from layer strings", async () => 
       expectedResult: [
         {
           observatory: "SOLO",
-          dataset: "EUI FSI 174",
-        },
-      ],
+          dataset: "EUI FSI 174"
+        }
+      ]
     },
     {
       send: false,
-      layerString:
-        "[STEREO_A,SECCHI,EUVI,171,2,100,0,60,1,2023-10-24T15:10:17.000Z]",
+      layerString: "[STEREO_A,SECCHI,EUVI,171,2,100,0,60,1,2023-10-24T15:10:17.000Z]",
       expectedResult: [
         {
           observatory: "STEREO-A",
-          dataset: "SECCHI EUVI 171",
-        },
-      ],
+          dataset: "SECCHI EUVI 171"
+        }
+      ]
     },
     {
       send: false,
-      layerString:
-        "[STEREO_A,SECCHI,COR1,white-light,2,100,0,60,1,2023-10-24T15:10:17.000Z]",
+      layerString: "[STEREO_A,SECCHI,COR1,white-light,2,100,0,60,1,2023-10-24T15:10:17.000Z]",
       expectedResult: [
         {
           observatory: "STEREO-A",
-          dataset: "SECCHI COR1 White Light",
-        },
-      ],
+          dataset: "SECCHI COR1 White Light"
+        }
+      ]
     },
     {
       send: false,
@@ -128,9 +125,9 @@ test("GetJhvRequestForMovie can extract layers from layer strings", async () => 
       expectedResult: [
         {
           observatory: "TRACE",
-          dataset: "171",
-        },
-      ],
+          dataset: "171"
+        }
+      ]
     },
     {
       send: false,
@@ -140,22 +137,21 @@ test("GetJhvRequestForMovie can extract layers from layer strings", async () => 
       expectedResult: [
         {
           observatory: "Yohkoh",
-          dataset: "SXT Thin Al",
-        },
-      ],
+          dataset: "SXT Thin Al"
+        }
+      ]
     },
     {
       send: false,
       startDate: "1992-11-13 12:26:06",
       endDate: "1992-11-13 17:05:32",
-      layerString:
-        "[Yohkoh,SXT,white-light,1,100,0,60,1,2023-10-24T15:10:17.000Z]",
+      layerString: "[Yohkoh,SXT,white-light,1,100,0,60,1,2023-10-24T15:10:17.000Z]",
       expectedResult: [
         {
           observatory: "Yohkoh",
-          dataset: "SXT White Light",
-        },
-      ],
+          dataset: "SXT White Light"
+        }
+      ]
     },
     {
       send: false,
@@ -165,22 +161,21 @@ test("GetJhvRequestForMovie can extract layers from layer strings", async () => 
       expectedResult: [
         {
           observatory: "Yohkoh",
-          dataset: "SXT AlMgMn",
-        },
-      ],
+          dataset: "SXT AlMgMn"
+        }
+      ]
     },
     {
       send: false,
       startDate: "2022-11-25T18:52:58.000Z",
       endDate: "2022-11-26T06:52:58.000Z",
-      layerString:
-        "[MLSO,COSMO,KCor,735,1,100,0,60,1,2023-10-24T15:10:17.000Z]",
+      layerString: "[MLSO,COSMO,KCor,735,1,100,0,60,1,2023-10-24T15:10:17.000Z]",
       expectedResult: [
         {
           observatory: "MLSO",
-          dataset: "COSMO KCor 735",
-        },
-      ],
+          dataset: "COSMO KCor 735"
+        }
+      ]
     },
     {
       send: false,
@@ -188,10 +183,10 @@ test("GetJhvRequestForMovie can extract layers from layer strings", async () => 
       expectedResult: [
         {
           observatory: "PROBA2",
-          dataset: "SWAP 174",
-        },
-      ],
-    },
+          dataset: "SWAP 174"
+        }
+      ]
+    }
   ];
 
   await Promise.all(KATs.map((kat) => RunKat(kat)));
@@ -202,9 +197,7 @@ test("GetJhvRequestForMovie can extract layers from layer strings", async () => 
  * @param {KnownAnswerTest} kat
  */
 async function RunKat(kat) {
-  let request = GetJhvRequestForMovie(
-    MakeTestMovie(kat.layerString, kat.startDate, kat.endDate),
-  );
+  let request = GetJhvRequestForMovie(MakeTestMovie(kat.layerString, kat.startDate, kat.endDate));
   // Send the result to JHelioviewer for manual testing.
   // See if it actually opens in JHV
   if (kat.send) {
@@ -226,7 +219,7 @@ function MakeTestMovie(layerString, startDate, endDate) {
     startDate: startDate ?? "2023-01-01 00:00:00",
     endDate: endDate ?? "2023-02-01 00:00:00",
     numFrames: 60,
-    layers: layerString,
+    layers: layerString
   };
 }
 
@@ -241,25 +234,20 @@ function ValidateRequest(result, expected, layerString) {
   let layers = result["org.helioviewer.jhv.request.image"];
   for (const expectedLayer of expected) {
     let foundLayer = layers.find((layer) => {
-      return (
-        layer.observatory == expectedLayer.observatory &&
-        layer.dataset == expectedLayer.dataset
-      );
+      return layer.observatory == expectedLayer.observatory && layer.dataset == expectedLayer.dataset;
     });
     // Print a human readable error message to help debug why the test failed.
     // This helps pinpoint which KAT is failing.
     if (typeof foundLayer === "undefined") {
       console.error(
-        `Didn't find expected layer ${expectedLayer.observatory} ${expectedLayer.dataset} in layerString: ${layerString}`,
+        `Didn't find expected layer ${expectedLayer.observatory} ${expectedLayer.dataset} in layerString: ${layerString}`
       );
       console.log(layers);
     }
     expect(foundLayer).toBeDefined();
     // GONG is a special case, must be loaded from ROB
     if (foundLayer.observatory != "NSO-GONG") {
-      expect(foundLayer.server).toBe(
-        Helioviewer.serverSettings.jhelioviewerHost,
-      );
+      expect(foundLayer.server).toBe(Helioviewer.serverSettings.jhelioviewerHost);
     } else {
       expect(foundLayer.server).toBe("ROB");
     }
