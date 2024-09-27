@@ -1,10 +1,10 @@
-import { expect, test } from '@playwright/test';
-import { Helioviewer } from '../../../page_objects/helioviewer';
+import {expect, test} from "@playwright/test";
+import {Helioviewer} from "../../../page_objects/helioviewer";
 
 /**
  * This test simply adds and removes images layers
  */
-test('Can add and remove image layers', async ({ page }) => {
+test("Can add and remove image layers", async ({page}) => {
   let hv = new Helioviewer(page);
   await hv.Load();
   await hv.CloseAllNotifications();
@@ -32,7 +32,7 @@ test('Can add and remove image layers', async ({ page }) => {
  *   4. Set the diffDate time
  *   5. Share Viewport
  */
-test('Verify that you can share state after setting baseDiffTime', async ({page}) => {
+test("Verify that you can share state after setting baseDiffTime", async ({page}) => {
   // 0. Load page
   let hv = new Helioviewer(page);
   await hv.Load();
@@ -47,7 +47,7 @@ test('Verify that you can share state after setting baseDiffTime', async ({page}
   // 3/4. Set diffDate date/time
   let layer = await hv.getImageLayer(0);
   await layer.set("Difference", "Base difference");
-  await layer.setBaseDifferenceDate('2023/12/01', '00:30:00');
+  await layer.setBaseDifferenceDate("2023/12/01", "00:30:00");
   // 5. Share viewport
   await hv.urlshare.triggerShareURL();
   await hv.urlshare.sharedURLIsVisibleAndDone();
@@ -65,7 +65,7 @@ test('Verify that you can share state after setting baseDiffTime', async ({page}
  *   4. Attempt to share the viewport
  *   5. Check that the baseDiffField values are correct
  */
-test('Verify that you can share state after upgrading from old baseDiffDate format', async ({page}) => {
+test("Verify that you can share state after upgrading from old baseDiffDate format", async ({page}) => {
   // 1. Load page
   let hv = new Helioviewer(page);
   await hv.Load();
@@ -73,43 +73,43 @@ test('Verify that you can share state after upgrading from old baseDiffDate form
   await page.evaluate(() => {
     // @ts-ignore: Helioviewer exists on the Window when evaluated on the page.
     window.Helioviewer.userSettings.set("state.tileLayers", [
-        {
-          "baseDiffTime": "2023/12/01 00:30:00",
-          "Detector": "C2",
-          "diffCount": 60,
-          "difference": 2,
-          "diffTime": 1,
-          "end": "2023-12-01 00:48:07",
-          "Instrument": "LASCO",
-          "layeringOrder": 2,
-          "Measurement": "white-light",
-          "nickname": "LASCO C2",
-          "Observatory": "SOHO",
-          "opacity": 100,
-          "sourceId": 4,
-          "start": "2023-12-01 00:00:07",
-          "uiLabels": [
-            {
-              "label": "Observatory",
-              "name": "SOHO"
-            },
-            {
-              "label": "Instrument",
-              "name": "LASCO"
-            },
-            {
-              "label": "Detector",
-              "name": "C2"
-            },
-            {
-              "label": "Measurement",
-              "name": "white-light"
-            }
-          ],
-          "visible": "1"
-        }
-      ]);
-  })
+      {
+        baseDiffTime: "2023/12/01 00:30:00",
+        Detector: "C2",
+        diffCount: 60,
+        difference: 2,
+        diffTime: 1,
+        end: "2023-12-01 00:48:07",
+        Instrument: "LASCO",
+        layeringOrder: 2,
+        Measurement: "white-light",
+        nickname: "LASCO C2",
+        Observatory: "SOHO",
+        opacity: 100,
+        sourceId: 4,
+        start: "2023-12-01 00:00:07",
+        uiLabels: [
+          {
+            label: "Observatory",
+            name: "SOHO"
+          },
+          {
+            label: "Instrument",
+            name: "LASCO"
+          },
+          {
+            label: "Detector",
+            name: "C2"
+          },
+          {
+            label: "Measurement",
+            name: "white-light"
+          }
+        ],
+        visible: "1"
+      }
+    ]);
+  });
   // 3. Reload the page
   await hv.Load();
   // 4. Try Share viewport
@@ -118,8 +118,7 @@ test('Verify that you can share state after upgrading from old baseDiffDate form
   // 5. Check that values are correct
   let layer = await hv.getImageLayer(0);
   let date = await layer.getBaseDifferenceDate();
-  expect(date).toBe('2023/12/01');
+  expect(date).toBe("2023/12/01");
   let time = await layer.getBaseDifferenceTime();
-  expect(time).toBe('00:30:00');
+  expect(time).toBe("00:30:00");
 });
-
