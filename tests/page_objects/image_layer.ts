@@ -75,7 +75,7 @@ class ImageLayer {
    * Sets a value in the image layer controls.
    * i.e. set('Observatory:', 'SOHO') to set the observatory field to SOHO
    * @param {string} label, which field to set the value for
-   * @param {string} value, to set the control 
+   * @param {string} value, to set the control
    * @return {Promise<void>} , no return just doing things
    */
   async set(label: string, value: string): Promise<void> {
@@ -86,7 +86,7 @@ class ImageLayer {
 
   /**
    * Gets any form field value in layer selection control
-   * @param {string} label, which field we are looking for the get the value 
+   * @param {string} label, which field we are looking for the get the value
    * @return {Promise<string>} , value of the form field
    */
   async get(label: string): Promise<string> {
@@ -96,7 +96,7 @@ class ImageLayer {
 
   /**
    * Asserts a value for the given image layer controls
-   * @param {string} label, which field to assert 
+   * @param {string} label, which field to assert
    * @param {string} value, making asserting with this value
    * @return {Promise<void>} , no return just doing things
    */
@@ -104,7 +104,6 @@ class ImageLayer {
     const layerControlValue = await this.get(label);
     expect(layerControlValue).toBe(value);
   }
-
 
   /**
    * Sets the value of the running difference field.
