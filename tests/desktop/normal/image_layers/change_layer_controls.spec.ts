@@ -54,7 +54,7 @@ test("Image Layer Controls | measurement changes should produce consistent match
   // 2. TAKE SUNSCREENSOT
   const sdo304 = await hv.sunScreenshot("initial_sdo_304");
 
-  // 3. CHANGE LAYER 0 , SWITCH TO SOHO
+  // 3. CHANGE LAYER 0 TO AIA 171
   const layer = await hv.getImageLayer(0);
   await layer.set("Measurement:", "171");
   await hv.WaitForLoadingComplete();
