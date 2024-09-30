@@ -296,7 +296,6 @@ class Helioviewer {
   async SelectImagePreset(preset: string) {
     await this.page.locator(".layersPresetsList .dropdown-main").click();
     await this.page.getByRole("link", { name: preset }).click();
-    await this.WaitForLoadingComplete();
   }
 
   /**
