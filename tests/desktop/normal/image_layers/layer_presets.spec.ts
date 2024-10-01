@@ -7,6 +7,11 @@ import { Helioviewer } from "../../../page_objects/helioviewer";
  * Screenshot should match with the one taken from preset selection
  */
 test("Image Layer Controls | presets should bring different layer configurations ", async ({ page }, info) => {
+  test.fixme(
+    browserName === "webkit",
+    "We couldn't be able to trigger download event for webkit, skipping this test now"
+  );
+
   let hv = new Helioviewer(page, info);
 
   // 1. LOAD HV
