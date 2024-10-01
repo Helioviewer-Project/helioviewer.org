@@ -6,7 +6,11 @@ import { Helioviewer } from "../../../page_objects/helioviewer";
  * Then it will load all layers again with the same values without selecting preset
  * Screenshot should match with the one taken from preset selection
  */
-test("Image Layer Controls | presets should bring different layer configurations ", async ({ page, context, browserName }, info) => {
+test("Image Layer Controls | presets should bring different layer configurations ", async ({
+  page,
+  context,
+  browserName
+}, info) => {
   test.fixme(
     browserName === "webkit",
     "We are skipping webkit for this test, since it couldn't take same screenshot of the same view"
