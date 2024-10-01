@@ -19,6 +19,7 @@ test("Selecting image presets should not spoil integer state variables", async (
 
   // Action 3: Load preset Eruption Monitor
   await hv.SelectImagePreset("Eruption Monitor");
+  await hv.WaitForLoadingComplete();
   await hv.CloseAllNotifications();
 
   // Action 4: Try to share screen
