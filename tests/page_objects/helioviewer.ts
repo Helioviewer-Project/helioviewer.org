@@ -11,6 +11,7 @@ import { EventTree } from "./event_tree";
 import { VSODrawer } from "./vso_drawer";
 import { ScaleIndicator } from "./scale_indicator";
 import * as fs from "fs";
+import { DesktopInterface } from "./helioviewer_interface";
 
 /**
  * Matches an image layer selection
@@ -22,7 +23,7 @@ interface LayerSelect {
   value: string;
 }
 
-class Helioviewer {
+class Helioviewer implements DesktopInterface {
   info: TestInfo | null;
   page: Page;
   sidebar: Locator;

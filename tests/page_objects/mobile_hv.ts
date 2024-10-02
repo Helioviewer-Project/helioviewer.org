@@ -6,8 +6,9 @@ import { Locator, Page, PageScreenshotOptions, TestInfo, expect } from "@playwri
 import { Helioviewer } from "./helioviewer";
 import { ImageLayer } from "./image_layer";
 import { ScaleIndicator } from "./scale_indicator";
+import { MobileInterface } from "./helioviewer_interface";
 
-class HvMobile {
+class HvMobile implements MobileInterface {
   /** Helioviewer reference for shared interactions that apply to mobile and desktop */
   private hv: Helioviewer;
   /** Playwright page object for interacting with the page */

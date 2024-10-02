@@ -1,11 +1,11 @@
 import { expect, Page, TestInfo } from "@playwright/test";
 import { Helioviewer } from "./helioviewer";
-import { HelioviewerInterface } from "./helioviewer_interface";
+import { MinimalInterface } from "./helioviewer_interface";
 
 /**
  * Interface for Helioviewer's Embedded view
  */
-class HelioviewerMinimal implements HelioviewerInterface {
+class HelioviewerMinimal implements MinimalInterface {
   /** Playwright page */
   private page: Page;
   private info: TestInfo | null;
