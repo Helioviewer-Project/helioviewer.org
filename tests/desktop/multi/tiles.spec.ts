@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { EmbedView, HelioviewerFactory, MinimalView, NormalView } from "../../page_objects/helioviewer_interface";
+import { EmbedView, HelioviewerFactory, MinimalView, DesktopView } from "../../page_objects/helioviewer_interface";
 
-[EmbedView, MinimalView, NormalView].forEach((view) => {
+[EmbedView, MinimalView, DesktopView].forEach((view) => {
   /**
    * A recurring issue in Helioviewer deals with computing which tiles should
    * be displayed in the viewport based on the screen size, zoom amount, and

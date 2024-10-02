@@ -65,7 +65,7 @@ type HelioviewerView = {
     name: string,
     tag: string
 }
-const NormalView: HelioviewerView = {
+const DesktopView: HelioviewerView = {
     name: "Desktop",
     tag: "@Desktop"
 };
@@ -101,7 +101,7 @@ class HelioviewerFactory {
                 return new HelioviewerEmbed(page);
             case MinimalView:
                 return new HelioviewerMinimal(page);
-            case NormalView:
+            case DesktopView:
                 return new Helioviewer(page);
             case MobileView:
                 return new HvMobile(page);
@@ -112,7 +112,7 @@ class HelioviewerFactory {
   }
 
 export {
-    NormalView,
+    DesktopView,
     MinimalView,
     EmbedView,
     MobileView,
