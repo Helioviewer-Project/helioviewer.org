@@ -51,12 +51,7 @@ interface MinimalInterface extends EmbedInterface {};
  * Mobile specific functionality
  * Supports all functions in Minimal and Embed
  */
-interface MobileInterface extends MinimalInterface {
-    /**
-     * Opens the drawer with
-     */
-    OpenImageLayerDrawer(): Promise<void>;
-};
+interface MobileInterface extends MinimalInterface {};
 
 /**
  * Desktop specific functionality.
@@ -71,7 +66,7 @@ type HelioviewerView = {
     tag: string
 }
 const NormalView: HelioviewerView = {
-    name: "Normal",
+    name: "Desktop",
     tag: "@Desktop"
 };
 
@@ -115,7 +110,6 @@ class HelioviewerFactory {
         }
     }
   }
-}
 
 export {
     NormalView,
