@@ -17,11 +17,11 @@ import { EmbedView, HelioviewerFactory, MinimalView, DesktopView } from "../../p
    * This test verifies that the black space does NOT remain, and that the tile does get loaded
    * when it is dragged into the viewport.
    */
-  test.only(
+  test(
     `[${view.name}] Verify image tiles are loaded when the viewport pans to tile boundaries after zooming in and out`,
     { tag: view.tag },
-    async ({ page }) => {
-      let hv = HelioviewerFactory.Create(view, page);
+    async ({ page }, info) => {
+      let hv = HelioviewerFactory.Create(view, page, info);
       await hv.Load("/");
       await hv.CloseAllNotifications();
       // Zoom in to increase the number of tiles.
