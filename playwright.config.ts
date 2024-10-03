@@ -10,8 +10,10 @@ import { defineConfig, devices } from '@playwright/test';
  * Test files must be prefixed with 'mobile_', 'desktop_' or 'all_'
  */
 const Platforms = {
-  mobile: /(mobile)/,
+  mobile: /(mobile|desktop)/,
   desktop: /(desktop)/,
+  mobileTag: /@Mobile/,
+  desktopTag: /@Desktop/
 }
 
 /**
@@ -55,24 +57,28 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
       grep: Platforms.desktop,
+      grepInvert: Platforms.mobileTag
     },
 
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
       grep: Platforms.desktop,
+      grepInvert: Platforms.mobileTag
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
       grep: Platforms.desktop,
+      grepInvert: Platforms.mobileTag
     },
 
     {
       name: 'edge',
       use: { ...devices['Desktop Edge'] },
       grep: Platforms.desktop,
+      grepInvert: Platforms.mobileTag
     },
 
     /* Test against mobile viewports. */
@@ -80,11 +86,13 @@ export default defineConfig({
       name: 'Mobile Chrome',
       use: { ...devices['Pixel 5'] },
       grep: Platforms.mobile,
+      grepInvert: Platforms.desktopTag
     },
     {
       name: 'Mobile Safari',
       use: { ...devices['iPhone 12'] },
       grep: Platforms.mobile,
+      grepInvert: Platforms.desktopTag
     },
   ],
 
