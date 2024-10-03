@@ -45,6 +45,21 @@ class Helioviewer implements DesktopInterface {
   }
 
   /**
+   * Alias for CloseSidebar to support mobile tests.
+   */
+  CloseDrawer(): Promise<void> {
+    return this.CloseSidebar();
+  }
+
+  /**
+   * Alias for OpenSidebar, this is to be able to run mobile tests against
+   * Desktop.
+   */
+  OpenImageLayerDrawer(): Promise<void> {
+    return this.OpenSidebar();
+  }
+
+  /**
    * Returns a handle to interact with event tree in UI
    * @param source string, ex: HEK, CCMC, RHESSI
    * @return EventTree
@@ -344,7 +359,7 @@ class Helioviewer implements DesktopInterface {
    */
   async GetLoadedDate(): Promise<Date> {
     const currentDate = await this.page.getByLabel("Observation date", { exact: true }).inputValue();
-    const currentTime = await this.page.getByLabel("Observation time", { exact: true }).inputValue();
+    const currentTime = await this.page.getByRole('textbox', { name: 'Observation time' }).inputValue();
 
     const date = new Date(currentDate + " " + currentTime + "Z");
 

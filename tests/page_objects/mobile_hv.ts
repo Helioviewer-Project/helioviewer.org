@@ -13,6 +13,8 @@ class HvMobile implements MobileInterface {
   private hv: Helioviewer;
   /** Playwright page object for interacting with the page */
   private page: Page;
+  /** Bottom control bar locator */
+  private _controls: Locator;
   /** #accordion-images - Reference to the image layer UI drawer */
   private _image_drawer: Locator;
   /** [drawersec=accordion-images] - Ref to the button which opens the image drawer */
@@ -25,6 +27,7 @@ class HvMobile implements MobileInterface {
   constructor(page: Page, info: TestInfo | null = null) {
     this.page = page;
     this.hv = new Helioviewer(page, info);
+    this._controls = this.page.locator('.hvbottombar');
     this._image_drawer = this.page.locator("#accordion-images");
     this._image_drawer_btn = this.page.locator('[drawersec="accordion-images"]');
     this._drawer = this.page.locator("#hv-drawer-left");
@@ -289,6 +292,41 @@ class HvMobile implements MobileInterface {
    */
   async CenterViewport() {
     await this.page.locator("#hvmobscale_div #center-button").tap();
+  }
+
+  GetLoadedDate(): Promise<Date> {
+    return this.hv.GetLoadedDate();
+  }
+
+  async SetObservationDateTime(date: string, time: string) {
+    await this._controls.getByLabel("Observation date", { exact: true }).click();
+    await this._controls.getByLabel("Observation date", { exact: true }).fill(date);
+    await this._controls.getByLabel("Observation time").click();
+    // On mobile, the flatpickr controls must be used for times.
+    const times = time.split(':');
+    await this.page.locator('.flatpickr-calendar').getByLabel('Hour').fill(times[0]);
+    await this.page.locator('.flatpickr-calendar').getByLabel('Minute').fill(times[1]);
+    await this.page.locator('.flatpickr-calendar').getByLabel('Second').fill(times[2]);
+  }
+
+  async SetObservationDateTimeFromDate(date: Date): Promise<void> {
+    const dateParts = date.toISOString().split("T")[0].split("-");
+    const dateString = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]}`;
+
+    const timeParts = date.toISOString().split("T")[1].split(":");
+    const timeSeconds = timeParts[2].split(".")[0];
+    const timeString = `${timeParts[0]}:${timeParts[1]}:${timeSeconds}`;
+    await this.SetObservationDateTime(dateString, timeString);
+  }
+
+  async JumpForwardDateWithSelection(seconds: number): Promise<void> {
+    await this._controls.getByLabel("Jump:").selectOption(seconds.toString());
+    await this._controls.getByAltText('Timeframe right arrow').click();
+  }
+
+  async JumpBackwardsDateWithSelection(seconds: number): Promise<void> {
+    await this._controls.getByLabel("Jump:").selectOption(seconds.toString());
+    await this._controls.getByAltText('Timeframe left arrow').click();
   }
 
   /**
