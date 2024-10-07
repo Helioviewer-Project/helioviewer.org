@@ -27,7 +27,7 @@ class HvMobile implements MobileInterface {
   constructor(page: Page, info: TestInfo | null = null) {
     this.page = page;
     this.hv = new Helioviewer(page, info);
-    this._controls = this.page.locator('.hvbottombar');
+    this._controls = this.page.locator(".hvbottombar");
     this._image_drawer = this.page.locator("#accordion-images");
     this._image_drawer_btn = this.page.locator('[drawersec="accordion-images"]');
     this._drawer = this.page.locator("#hv-drawer-left");
@@ -50,7 +50,7 @@ class HvMobile implements MobileInterface {
   /** Navigates to the mobile helioviewer page */
   async Load() {
     await this.page.goto("/");
-    await this.page.evaluate(() => console.log(localStorage.getItem('settings')));
+    await this.page.evaluate(() => console.log(localStorage.getItem("settings")));
     // Wait for the first image layer to be loaded
     await this._WaitForInitialImageLayer();
 
@@ -296,11 +296,11 @@ class HvMobile implements MobileInterface {
   }
 
   async GetLoadedDate(): Promise<Date> {
-      const currentDate = await this.page.getByLabel("Observation date", { exact: true }).inputValue();
-      const currentTime = await this.page.getByRole('textbox', { name: 'Observation time' }).inputValue();
-      const date = new Date(currentDate + " " + currentTime + "Z");
-      expect(date.getTime()).not.toBeNaN();
-      return date;
+    const currentDate = await this.page.getByLabel("Observation date", { exact: true }).inputValue();
+    const currentTime = await this.page.getByRole("textbox", { name: "Observation time" }).inputValue();
+    const date = new Date(currentDate + " " + currentTime + "Z");
+    expect(date.getTime()).not.toBeNaN();
+    return date;
   }
 
   async SetObservationDateTime(date: string, time: string) {
@@ -308,13 +308,13 @@ class HvMobile implements MobileInterface {
     await this._controls.getByLabel("Observation date", { exact: true }).fill(date);
     await this._controls.getByLabel("Observation time").click();
     // On mobile, the flatpickr controls must be used for times.
-    const times = time.split(':');
-    await this.page.locator('.flatpickr-calendar').getByLabel('Hour').fill(times[0]);
-    await this.page.locator('.flatpickr-calendar').getByLabel('Minute').click();
-    await this.page.locator('.flatpickr-calendar').getByLabel('Minute').fill(times[1]);
-    await this.page.locator('.flatpickr-calendar').getByLabel('Second').click();
-    await this.page.locator('.flatpickr-calendar').getByLabel('Second').fill(times[2]);
-    await this.page.locator('.flatpickr-calendar').getByLabel('Second').blur();
+    const times = time.split(":");
+    await this.page.locator(".flatpickr-calendar").getByLabel("Hour").fill(times[0]);
+    await this.page.locator(".flatpickr-calendar").getByLabel("Minute").click();
+    await this.page.locator(".flatpickr-calendar").getByLabel("Minute").fill(times[1]);
+    await this.page.locator(".flatpickr-calendar").getByLabel("Second").click();
+    await this.page.locator(".flatpickr-calendar").getByLabel("Second").fill(times[2]);
+    await this.page.locator(".flatpickr-calendar").getByLabel("Second").blur();
   }
 
   async SetObservationDateTimeFromDate(date: Date): Promise<void> {
@@ -329,12 +329,12 @@ class HvMobile implements MobileInterface {
 
   async JumpForwardDateWithSelection(seconds: number): Promise<void> {
     await this._controls.getByLabel("Jump:").selectOption(seconds.toString());
-    await this._controls.getByAltText('Timeframe right arrow').click();
+    await this._controls.getByAltText("Timeframe right arrow").click();
   }
 
   async JumpBackwardsDateWithSelection(seconds: number): Promise<void> {
     await this._controls.getByLabel("Jump:").selectOption(seconds.toString());
-    await this._controls.getByAltText('Timeframe left arrow').click();
+    await this._controls.getByAltText("Timeframe left arrow").click();
   }
 
   /**

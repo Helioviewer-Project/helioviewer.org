@@ -66,26 +66,26 @@ interface MobileInterface extends MinimalInterface {
   /**
    * Get a reference to an image layer's controls
    */
-  getImageLayer(index: number): Promise<ImageLayer>
+  getImageLayer(index: number): Promise<ImageLayer>;
 
   /**
    * Get the current observation date
    * @returns {Date} Current Observation Date
    */
-  GetLoadedDate(): Promise<Date>
+  GetLoadedDate(): Promise<Date>;
 
   /**
    * Sets observation datetime of Helioviewer from given Date object,
    * @param {Date} Date The date object to be used to load observation datetime.
    */
-  SetObservationDateTimeFromDate(date: Date): Promise<void>
+  SetObservationDateTimeFromDate(date: Date): Promise<void>;
 
   /**
    * Jump forward with jump button, with given seconds layer
    * @param {number} seconds interval in seconds
    * @returns {void}
    */
-  JumpForwardDateWithSelection(seconds: number): Promise<void>
+  JumpForwardDateWithSelection(seconds: number): Promise<void>;
 
   /**
    * Attach base64 screnshot with a given filename to trace report
@@ -107,7 +107,6 @@ interface MobileInterface extends MinimalInterface {
    * @returns {void}
    */
   JumpBackwardsDateWithSelection(seconds: number): Promise<void>;
-
 }
 
 /**

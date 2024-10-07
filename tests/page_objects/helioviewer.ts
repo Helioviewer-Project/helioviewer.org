@@ -384,7 +384,7 @@ class Helioviewer implements DesktopInterface {
   async GetLoadedDate(): Promise<Date> {
     return await this._WithSidebar(async () => {
       const currentDate = await this.page.getByLabel("Observation date", { exact: true }).inputValue();
-      const currentTime = await this.page.getByRole('textbox', { name: 'Observation time' }).inputValue();
+      const currentTime = await this.page.getByRole("textbox", { name: "Observation time" }).inputValue();
       const date = new Date(currentDate + " " + currentTime + "Z");
       expect(date.getTime()).not.toBeNaN();
       return date;
