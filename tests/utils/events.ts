@@ -1,7 +1,7 @@
 import { Page } from "@playwright/test";
 
 /** @typedef {string} Source, type for source keys in tree, it can only be our event resource keys */
-type Source = "CCMC" | "HEK" | "RHESSI";
+type Source = string;
 
 /** @typedef {string} EventType, Type for event types , like "Active Region" */
 type EventType = string;
@@ -35,7 +35,7 @@ type EventTree = Record<Source, EventTypes>;
  */
 async function mockEvents(page: Page, eventTree: EventTree): Promise<void> {
   // Iterate in event tree source trees
-  for (const source: Source in eventTree) {
+  for (const source in eventTree) {
     // Mock API events request to include problem data which creates bug
     await page.route(`**/*action=events&sources=${source}*`, async (route) => {
       // Fetch original response.
@@ -44,13 +44,12 @@ async function mockEvents(page: Page, eventTree: EventTree): Promise<void> {
       // const newJson = await response.json()
       const newJson = [];
 
-      for (const eventtype: EventType in eventTree[source]) {
+      for (const eventtype in eventTree[source]) {
         // Event PIN is needed in HV, for "Active Region" our pin is "AR"
         const eventTypePin = eventtype
           .split(" ")
           .map((v) => v.charAt(0).toUpperCase())
           .join("");
-
 
         // Generate event source tree
         newJson.push({
@@ -61,10 +60,12 @@ async function mockEvents(page: Page, eventTree: EventTree): Promise<void> {
               name: frm,
               data: Object.keys(eventTree[source][eventtype][frm]).map((eventlabel) => {
                 // frm reference used with no spaces
-                const frmReference = frm.replaceAll(" ","");
+                const frmReference = frm.split(" ").join("");
 
                 // randomize some number to differentiate events under same frm with same event_instances
-                const randomMilliseconds: string = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
+                const randomMilliseconds: string = Math.floor(Math.random() * 1000)
+                  .toString()
+                  .padStart(3, "0");
 
                 // generate event instances
                 // Default event instance

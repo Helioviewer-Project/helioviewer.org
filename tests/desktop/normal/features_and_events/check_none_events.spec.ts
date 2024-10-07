@@ -6,7 +6,7 @@ import { mockEvents } from "../../../utils/events";
  * This test mocks CCMC events, then checks some frm and eventtype, then unchecks all
  * test validates all checkboxes are unchecked and their markers are not visible
  */
-test.only("UncheckAll should uncheck all event markers that are previously selected also their markers should be hidden", async ({
+test("UncheckAll should uncheck all event markers that are previously selected also their markers should be hidden", async ({
   page,
   browser
 }, info) => {
@@ -96,5 +96,4 @@ test.only("UncheckAll should uncheck all event markers that are previously selec
   await ccmcTree.assertMarkerNotVisible("C+ 77.15%");
   await ccmcTree.assertMarkerNotVisible("M: 77.15%");
   await ccmcTree.assertMarkerNotVisible("M: 34.05%");
-
 });

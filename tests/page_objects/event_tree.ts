@@ -8,6 +8,7 @@ class EventTree {
   page: Page;
   root: Locator;
   markersRoot: Locator;
+  eventLayerRoot: Locator;
 
   constructor(source, page) {
     this.page = page;
@@ -325,7 +326,9 @@ class EventTree {
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
     const eventInstanceLink = this.page.getByRole("link", { name: event_instance, includeHidden: true });
-    const eventInstanceNode = await eventFRMNode.getByRole("listitem", { includeHidden: true }).filter({ has: eventInstanceLink });
+    const eventInstanceNode = await eventFRMNode
+      .getByRole("listitem", { includeHidden: true })
+      .filter({ has: eventInstanceLink });
 
     await expect(eventInstanceNode).toHaveClass(/jstree-checked/);
   }
