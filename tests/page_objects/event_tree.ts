@@ -13,6 +13,7 @@ class EventTree {
     this.page = page;
     this.root = page.locator("#tree_" + source);
     this.markersRoot = page.locator("#tree_" + source + "-event-container");
+    this.eventLayerRoot = page.locator("#event-layer-" + source);
   }
 
   /**
@@ -260,6 +261,121 @@ class EventTree {
     const markerLabel = await this.markersRoot.getByText(event_instance);
     await expect(markerLabel).toBeVisible();
     await expect(markerLabel).not.toHaveClass("event-label event-label-hover");
+  }
+
+  /**
+   * This function triggers "check all" functionality for this event source layer
+   * "Check all" function turns on all events for this source,
+   * it checks all possible event_type and frm and events_instances'es checkboxes.
+   * @return {Promise<void>} you can await this promise to wait for this function to complete
+   **/
+  async checkAll(): Promise<void> {
+    await this.eventLayerRoot.getByTitle("Toggle All Event Checkboxes On").click();
+  }
+
+  /**
+   * This function triggers "check none" functionality for this event source layer
+   * "Check none" function turns off all events for this source,
+   * it unchecks all possible event_type and frm and events_instances'es checkboxes.
+   * @return {Promise<void>} you can await this promise to wait for this function to complete
+   **/
+  async checkNone(): Promise<void> {
+    await this.eventLayerRoot.getByTitle("Toggle All Event Checkboxes Off").click();
+  }
+
+  /**
+   * This function checks if the given event_type node is checked in event tree.
+   * @param {string} event_type, The event type name pointing to the node in tree (e.g. "Active Region", "Corona Hole").
+   * @return {Promise<void>} A promise for you to wait for assertion to complete.
+   */
+  async assertEventTypeNodeChecked(event_type: string): Promise<void> {
+    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
+    await expect(eventTypeNode).toHaveClass(/jstree-checked/);
+  }
+
+  /**
+   * This function checks if the given frm node is checked in event tree.
+   * @param {string} event_type, The event type name pointing to the node in tree (e.g. "Active Region", "Corona Hole").
+   * @param {string} frm, The frm name pointing to the node in tree (e.g. "NOAA SWPC Observer", "SPoCA").
+   * @return {Promise<void>} A promise for you to wait for assertion to complete.
+   */
+  async assertFrmNodeChecked(event_type: string, frm: string): Promise<void> {
+    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
+
+    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
+
+    await expect(eventFRMNode).toHaveClass(/jstree-checked/);
+  }
+
+  /**
+   * This function checks if the given event instance node is checked in event tree.
+   * @param {string} event_type, The event type name pointing to the node in tree (e.g. "Active Region", "Corona Hole").
+   * @param {string} frm, The frm name pointing to the node in tree (e.g. "NOAA SWPC Observer", "SPoCA").
+   * @param {string} event_instance, The event instance name pointing to the node in tree (e.g. "SPoCA 37775", "NOAA 13814").
+   * @return {Promise<void>} A promise for you to wait for assertion to complete.
+   */
+  async assertEventInstanceNodeChecked(event_type: string, frm: string, event_instance: string): Promise<void> {
+    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
+
+    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
+
+    const eventInstanceLink = this.page.getByRole("link", { name: event_instance, includeHidden: true });
+    const eventInstanceNode = await eventFRMNode.getByRole("listitem", { includeHidden: true }).filter({ has: eventInstanceLink });
+
+    await expect(eventInstanceNode).toHaveClass(/jstree-checked/);
+  }
+
+  /**
+   * This function checks if the given event_type node is unchecked in event tree.
+   * @param {string} event_type, The event type name pointing to the node in tree (e.g. "Active Region", "Corona Hole").
+   * @return {Promise<void>} A promise for you to wait for assertion to complete.
+   */
+  async assertEventTypeNodeUnchecked(event_type: string): Promise<void> {
+    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
+    await expect(eventTypeNode).toHaveClass(/jstree-unchecked/);
+  }
+
+  /**
+   * This function checks if the given frm node is unchecked in event tree.
+   * @param {string} event_type, The event type name pointing to the node in tree (e.g. "Active Region", "Corona Hole").
+   * @param {string} frm, The frm name pointing to the node in tree (e.g. "NOAA SWPC Observer", "SPoCA").
+   * @return {Promise<void>} A promise for you to wait for assertion to complete.
+   */
+  async assertFrmNodeUnchecked(event_type: string, frm: string): Promise<void> {
+    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
+
+    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
+
+    await expect(eventFRMNode).toHaveClass(/jstree-unchecked/);
+  }
+
+  /**
+   * This function checks if the given event instance node is unchecked in event tree.
+   * @param {string} event_type, The event type name pointing to the node in tree (e.g. "Active Region", "Corona Hole").
+   * @param {string} frm, The frm name pointing to the node in tree (e.g. "NOAA SWPC Observer", "SPoCA").
+   * @param {string} event_instance, The event instance name pointing to the node in tree (e.g. "SPoCA 37775", "NOAA 13814").
+   * @return {Promise<void>} A promise for you to wait for assertion to complete.
+   */
+  async assertEventInstanceNodeUnchecked(event_type: string, frm: string, event_instance: string): Promise<void> {
+    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
+
+    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
+
+    const eventInstanceLink = this.page.getByRole("link", { name: event_instance, includeHidden: true });
+    const eventInstanceNode = await eventFRMNode
+      .getByRole("listitem", { includeHidden: true })
+      .filter({ has: eventInstanceLink });
+    await expect(eventInstanceNode).toHaveClass(/jstree-unchecked/);
   }
 }
 
