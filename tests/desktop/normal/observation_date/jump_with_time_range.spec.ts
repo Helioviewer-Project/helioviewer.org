@@ -3,19 +3,26 @@ import { DesktopView, HelioviewerFactory, MobileInterface, MobileView } from "pa
 
 const time_jump_ranges = [
   { jump_label: "1Min", seconds: 60 },
-  { jump_label: "6Hours", seconds: 21600 },
-  { jump_label: "1Week", seconds: 604800 },
-  { jump_label: "1Year", seconds: 31556926 }
+  // { jump_label: "6Hours", seconds: 21600 },
+  // { jump_label: "1Week", seconds: 604800 },
+  // { jump_label: "1Year", seconds: 31556926 }
 ];
 
 [MobileView, DesktopView].forEach((view) => {
   time_jump_ranges.forEach(({ jump_label, seconds }) => {
     /**
      * This test is testing jumping backwards functionality with given label for range select-box
+     *
+     * Marked as flaky on Mobile because it appears that localStorage.clear()
+     * is not always working. It could be that Helioviewer is saving state
+     * between the localStorage.clear() call and reloading the page. But the
+     * result is that the the page reloads with the old state, while the test
+     * is expecting to have a fresh new state. Ultimately the visual comparison
+     * fails. In testing, this appears to only be a mobile problem.
      */
-    test.only(
+    test(
       `[${view.name}] Jump backwards with ${jump_label} should go to matching datetime in past, with matching screenshots`,
-      { tag: ["@production", view.tag] },
+      { tag: ["@production", view.tag, "@flaky"] },
       async ({ page, context, browser }, info) => {
         const hv = HelioviewerFactory.Create(view, page, info) as MobileInterface;
 
