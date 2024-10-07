@@ -117,9 +117,33 @@ class Helioviewer implements DesktopInterface {
     ]);
   }
 
+  /**
+   * Makes sure the given function is executed with the sidebar open.
+   * This retains the current state of the sidebar before/after executing
+   * function.
+   *
+   * If the sidebar is open, it will be open when fn is done.
+   * If the sidebar is closed, it will be opened before calling fn, and closed
+   * after calling fn.
+   * @param fn
+   */
+  private async _WithSidebar(fn: () => any): Promise<any> {
+    const sidebarWasClosed = await this.IsSidebarClosed();
+    if (sidebarWasClosed) {
+      await this.OpenSidebar();
+    }
+    const result = await fn();
+    if (sidebarWasClosed) {
+      await this.CloseSidebar();
+    }
+    return result;
+  }
+
   async UseNewestImage() {
-    await this.page.getByText("NEWEST", { exact: true }).click();
-    await this.page.waitForTimeout(500);
+    await this._WithSidebar(async () => {
+      await this.page.getByText("NEWEST", { exact: true }).click();
+      await this.page.waitForTimeout(500);
+    });
   }
 
   /**
@@ -246,7 +270,7 @@ class Helioviewer implements DesktopInterface {
    */
   async OpenSidebar() {
     if (await this.IsSidebarClosed()) {
-      this.ClickDataSourcesTab();
+      await this.ClickDataSourcesTab();
       await expect(this.sidebar).toHaveAttribute("style", /^.*width: 27em.*$/);
     }
   }
@@ -358,14 +382,13 @@ class Helioviewer implements DesktopInterface {
    * @returns {Date} Loaded date of helioviewer, it can be null if any error.
    */
   async GetLoadedDate(): Promise<Date> {
-    const currentDate = await this.page.getByLabel("Observation date", { exact: true }).inputValue();
-    const currentTime = await this.page.getByRole('textbox', { name: 'Observation time' }).inputValue();
-
-    const date = new Date(currentDate + " " + currentTime + "Z");
-
-    expect(date.getTime()).not.toBeNaN();
-
-    return date;
+    return await this._WithSidebar(async () => {
+      const currentDate = await this.page.getByLabel("Observation date", { exact: true }).inputValue();
+      const currentTime = await this.page.getByRole('textbox', { name: 'Observation time' }).inputValue();
+      const date = new Date(currentDate + " " + currentTime + "Z");
+      expect(date.getTime()).not.toBeNaN();
+      return date;
+    });
   }
 
   /**

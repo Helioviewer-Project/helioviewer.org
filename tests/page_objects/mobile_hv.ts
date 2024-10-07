@@ -42,14 +42,15 @@ class HvMobile implements MobileInterface {
    * that the first image layer has been loaded.
    */
   private async _WaitForInitialImageLayer() {
-    let layerAccordion = await this.page.locator("#tileLayerAccordion");
-    let imageLayers = await layerAccordion.locator(".dynaccordion-section");
-    await expect(imageLayers).toHaveCount(1);
+    let layerAccordion = this.page.locator("#tileLayerAccordion");
+    let imageLayers = layerAccordion.locator(".dynaccordion-section");
+    await expect(imageLayers).toHaveCount(1, { timeout: 30000 });
   }
 
   /** Navigates to the mobile helioviewer page */
   async Load() {
     await this.page.goto("/");
+    await this.page.evaluate(() => console.log(localStorage.getItem('settings')));
     // Wait for the first image layer to be loaded
     await this._WaitForInitialImageLayer();
 
@@ -73,15 +74,15 @@ class HvMobile implements MobileInterface {
    * @note Mobile doesn't have a loading spinner, so we can't easily wait for
    *       all events to finish loading.
    */
-  async WaitForLoad() {
+  async WaitForLoad(): Promise<void> {
     await this.hv.WaitForImageLoad();
   }
 
   /**
    * Alias for WaitForLoad to align with MobileInterface
    */
-  async WaitForLoadingComplete() {
-    return this.WaitForLoad();
+  async WaitForLoadingComplete(): Promise<void> {
+    return await this.WaitForLoad();
   }
 
   /**
@@ -294,8 +295,12 @@ class HvMobile implements MobileInterface {
     await this.page.locator("#hvmobscale_div #center-button").tap();
   }
 
-  GetLoadedDate(): Promise<Date> {
-    return this.hv.GetLoadedDate();
+  async GetLoadedDate(): Promise<Date> {
+      const currentDate = await this.page.getByLabel("Observation date", { exact: true }).inputValue();
+      const currentTime = await this.page.getByRole('textbox', { name: 'Observation time' }).inputValue();
+      const date = new Date(currentDate + " " + currentTime + "Z");
+      expect(date.getTime()).not.toBeNaN();
+      return date;
   }
 
   async SetObservationDateTime(date: string, time: string) {
@@ -305,8 +310,11 @@ class HvMobile implements MobileInterface {
     // On mobile, the flatpickr controls must be used for times.
     const times = time.split(':');
     await this.page.locator('.flatpickr-calendar').getByLabel('Hour').fill(times[0]);
+    await this.page.locator('.flatpickr-calendar').getByLabel('Minute').click();
     await this.page.locator('.flatpickr-calendar').getByLabel('Minute').fill(times[1]);
+    await this.page.locator('.flatpickr-calendar').getByLabel('Second').click();
     await this.page.locator('.flatpickr-calendar').getByLabel('Second').fill(times[2]);
+    await this.page.locator('.flatpickr-calendar').getByLabel('Second').blur();
   }
 
   async SetObservationDateTimeFromDate(date: Date): Promise<void> {
