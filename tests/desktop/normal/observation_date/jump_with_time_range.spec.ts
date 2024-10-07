@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { DesktopView, HelioviewerFactory, MobileInterface, MobileView } from "page_objects/helioviewer_interface";
 
 const time_jump_ranges = [
-  { jump_label: "1Min", seconds: 60 }
+  { jump_label: "1Min", seconds: 60 },
   { jump_label: "6Hours", seconds: 21600 },
   { jump_label: "1Week", seconds: 604800 },
   { jump_label: "1Year", seconds: 31556926 }
