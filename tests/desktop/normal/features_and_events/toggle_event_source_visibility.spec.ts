@@ -163,9 +163,9 @@ test("Toggle event source visibility should be preserved with state.", async ({ 
   await hv.CloseAllNotifications();
 
   // Parse event tree pieces
-  const hekTree = hv.parseTree("HEK");
-  const ccmcTree = hv.parseTree("CCMC");
+  const hekReload = hv.parseTree("HEK");
+  const ccmcReload = hv.parseTree("CCMC");
 
-  await ccmc.assertEventTypeNodeNotVisible("EMPTY EVENT TYPE CCMC");
-  await hek.assertEventTypeNodeVisible("EMPTY EVENT TYPE HEK");
+  await ccmcReload.assertEventTypeNodeNotVisible("EMPTY EVENT TYPE CCMC");
+  await hekReload.assertEventTypeNodeVisible("EMPTY EVENT TYPE HEK");
 });
