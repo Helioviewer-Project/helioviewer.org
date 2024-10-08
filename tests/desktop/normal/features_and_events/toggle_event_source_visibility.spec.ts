@@ -3,9 +3,9 @@ import { Helioviewer } from "../../../page_objects/helioviewer";
 import { mockEvents } from "../../../utils/events";
 
 /**
- * This test mocks some random events including some empty event-types 
+ * This test mocks some random events including some empty event-types
  * then validates they are visible eventhough they are not checked
- * then toggle empty resource visibility, 
+ * then toggle empty resource visibility,
  * then validates they those empty event-type nodes are not visible anymore
  */
 test("Toggle event source visibility should hide/show empty event-type nodes, on off style", async ({
@@ -31,7 +31,7 @@ test("Toggle event source visibility should hide/show empty event-type nodes, on
           "SPoCA 49144": {}
         }
       },
-      "EMPTY EVENT TYPE HEK": {},
+      "EMPTY EVENT TYPE HEK": {}
     },
     CCMC: {
       DONKI: {
@@ -49,7 +49,7 @@ test("Toggle event source visibility should hide/show empty event-type nodes, on
           "M: 77.15% M+: 9.08% X: 0%": {}
         }
       },
-      "EMPTY EVENT TYPE CCMC": {},
+      "EMPTY EVENT TYPE CCMC": {}
     }
   };
 
@@ -71,33 +71,29 @@ test("Toggle event source visibility should hide/show empty event-type nodes, on
   const ccmc = hv.parseTree("CCMC");
 
   // Action 3: toggle empty event source visibility for HEK layer
-  await hek.toggleVisibilityEmptyEventSources()
-  
+  await hek.toggleVisibilityEmptyEventSources();
+
   // Assert empty event types should be visible for ccmc but not for hek
   await ccmc.assertEventTypeNodeVisible("EMPTY EVENT TYPE CCMC");
   await hek.assertEventTypeNodeNotVisible("EMPTY EVENT TYPE HEK");
 
-  // Action 4: now toggle again to make empty event types appear for HEK 
+  // Action 4: now toggle again to make empty event types appear for HEK
   await hek.toggleVisibilityEmptyEventSources();
   // Action 5:  toggle to hide empty event types for CCMC this time
   await ccmc.toggleVisibilityEmptyEventSources();
-  
+
   // Assert empty event types should be visible for ccmc but not for not hek
   await ccmc.assertEventTypeNodeNotVisible("EMPTY EVENT TYPE CCMC");
   await hek.assertEventTypeNodeVisible("EMPTY EVENT TYPE HEK");
-
 });
 
 /**
- * This test mocks some random events including some empty event-types 
+ * This test mocks some random events including some empty event-types
  * then validates they are visible eventhough they are not checked
- * then toggle empty resource visibility, 
+ * then toggle empty resource visibility,
  * then validates they those empty event-type nodes are not visible anymore
  */
-test("Toggle event source visibility should be preserved with state.", async ({
-  page,
-  browser
-}, info) => {
+test("Toggle event source visibility should be preserved with state.", async ({ page, browser }, info) => {
   // mocked event data
   const events = {
     HEK: {
@@ -117,7 +113,7 @@ test("Toggle event source visibility should be preserved with state.", async ({
           "SPoCA 49144": {}
         }
       },
-      "EMPTY EVENT TYPE HEK": {},
+      "EMPTY EVENT TYPE HEK": {}
     },
     CCMC: {
       DONKI: {
@@ -135,7 +131,7 @@ test("Toggle event source visibility should be preserved with state.", async ({
           "M: 77.15% M+: 9.08% X: 0%": {}
         }
       },
-      "EMPTY EVENT TYPE CCMC": {},
+      "EMPTY EVENT TYPE CCMC": {}
     }
   };
 
@@ -158,7 +154,7 @@ test("Toggle event source visibility should be preserved with state.", async ({
 
   // Action 3:  toggle to hide empty event-types for CCMC this time
   await ccmc.toggleVisibilityEmptyEventSources();
-  
+
   // Assert empty event types should be visible for ccmc but not for not hek
   await ccmc.assertEventTypeNodeNotVisible("EMPTY EVENT TYPE CCMC");
   await hek.assertEventTypeNodeVisible("EMPTY EVENT TYPE HEK");
@@ -172,5 +168,4 @@ test("Toggle event source visibility should be preserved with state.", async ({
 
   await ccmc.assertEventTypeNodeNotVisible("EMPTY EVENT TYPE CCMC");
   await hek.assertEventTypeNodeVisible("EMPTY EVENT TYPE HEK");
-
 });
