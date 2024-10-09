@@ -94,7 +94,7 @@ interface MobileInterface extends MinimalInterface {
    * @param {PageScreenshotOptions} options pass options to playwright screenshot function
    * @returns {Promise<string>} base64 string screenshot
    */
-  saveScreenshot(filename: string, options: PageScreenshotOptions): Promise<string>;
+  saveScreenshot(filename?: string, options?: PageScreenshotOptions): Promise<string>;
 
   /**
    * Select option to use the newest image for the currently selected image layer
