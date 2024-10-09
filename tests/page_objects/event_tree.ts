@@ -9,12 +9,14 @@ class EventTree {
   root: Locator;
   markersRoot: Locator;
   eventLayerRoot: Locator;
+  source: string;
 
   constructor(source, page) {
     this.page = page;
     this.root = page.locator("#tree_" + source);
     this.markersRoot = page.locator("#tree_" + source + "-event-container");
     this.eventLayerRoot = page.locator("#event-layer-" + source);
+    this.source = source;
   }
 
   /**
@@ -265,6 +267,14 @@ class EventTree {
   }
 
   /**
+   * This function toggles "hiding of empty event sources" functionality for this event source layer
+   * @return {Promise<void>} you can await this promise to wait for toggleing to complete
+   **/
+  async toggleVisibilityEmptyEventSources(): Promise<void> {
+    return this.eventLayerRoot.locator("#visibilityAvailableBtn-event-layer-" + this.source).click();
+  }
+
+  /**
    * This function triggers "check all" functionality for this event source layer
    * "Check all" function turns on all events for this source,
    * it checks all possible event_type and frm and events_instances'es checkboxes.
@@ -379,6 +389,28 @@ class EventTree {
       .getByRole("listitem", { includeHidden: true })
       .filter({ has: eventInstanceLink });
     await expect(eventInstanceNode).toHaveClass(/jstree-unchecked/);
+  }
+
+  /**
+   * This function checks if the given event_type node is visible in event tree.
+   * @param {string} event_type, The event type name pointing to the node in tree (e.g. "Active Region", "Corona Hole").
+   * @return {Promise<void>} A promise for you to wait for assertion to complete.
+   */
+  async assertEventTypeNodeVisible(event_type: string): Promise<void> {
+    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
+    return expect(eventTypeNode).toBeVisible();
+  }
+
+  /**
+   * This function checks if the given event_type node is not visible in event tree.
+   * @param {string} event_type, The event type name pointing to the node in tree (e.g. "Active Region", "Corona Hole").
+   * @return {Promise<void>} A promise for you to wait for assertion to complete.
+   */
+  async assertEventTypeNodeNotVisible(event_type: string): Promise<void> {
+    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
+    return expect(eventTypeNode).not.toBeVisible();
   }
 }
 
