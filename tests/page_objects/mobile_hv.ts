@@ -309,12 +309,13 @@ class HvMobile implements MobileInterface {
     await this._controls.getByLabel("Observation time").click();
     // On mobile, the flatpickr controls must be used for times.
     const times = time.split(":");
+    await this.page.locator(".flatpickr-calendar").getByLabel("Hour").click();
     await this.page.locator(".flatpickr-calendar").getByLabel("Hour").fill(times[0]);
     await this.page.locator(".flatpickr-calendar").getByLabel("Minute").click();
     await this.page.locator(".flatpickr-calendar").getByLabel("Minute").fill(times[1]);
     await this.page.locator(".flatpickr-calendar").getByLabel("Second").click();
     await this.page.locator(".flatpickr-calendar").getByLabel("Second").fill(times[2]);
-    await this.page.locator(".flatpickr-calendar").getByLabel("Second").blur();
+    await this.page.locator(".flatpickr-calendar").getByLabel("Second").press('Enter');
   }
 
   async SetObservationDateTimeFromDate(date: Date): Promise<void> {
