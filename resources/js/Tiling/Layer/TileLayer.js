@@ -53,6 +53,7 @@ var TileLayer = Layer.extend(
         this.baseDiffTime  = (typeof baseDiffTime == 'undefined' ? $('#date').val()+' '+$('#time').val() : baseDiffTime);
         this.name          = name;
         this.tileVisibilityRange = {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0};
+        this.tileset = 0;
         // Mapping of x, y coordinates to HTML img tags
         this._tiles = {}
     },
@@ -360,18 +361,27 @@ var TileLayer = Layer.extend(
         this.sharpen = !this.sharpen;
     },
 
+    _updateTileset: function (tileset) {
+        if (tileset > this.tileset) {
+            this.tileset = tileset;
+        }
+    },
+
     /**
      * @description Generates URL to retrieve a single Tile and displays the transparent tile if request fails
      * @param {Int} x Tile X-coordinate
      * @param {Int} y Tile Y-coordinate
+     * @param {Int} tileset Number representing the current set of tiles
      * @param {Function} onTileLoadComplete -- callback function to this.tileLoader.onTileLoadComplete
      * @returns {String} URL to retrieve the requested tile
      *
      * IE: CSS opacities do not behave properly with absolutely positioned elements. Opacity is therefor
      * set at tile-level.
      */
-    getTile: function (event, x, y, onTileLoadComplete) {
+    getTile: function (event, x, y, tileset, onTileLoadComplete) {
         var top, left, ts, img, rf, emptyTile;
+        // Track the latest tileset
+        this._updateTileset(tileset);
 
         left = x * this.tileSize;
         top  = y * this.tileSize;
@@ -389,14 +399,25 @@ var TileLayer = Layer.extend(
             img.css("opacity", this.opacity / 100);
         }
 
+        const renderTile = () => {
+            if (tileset >= this.tileset) {
+                this._replaceTile(x, y, img);
+                if (onTileLoadComplete) {
+                    onTileLoadComplete();
+                }
+            } else {
+                // remove stale tile.
+                $(img).remove();
+            }
+        }
+
         // Load tile
-        let layer = this;
         img.on('error', function (e) {
-            layer._replaceTile(x, y, this);
+            renderTile();
             img.unbind("error");
             $(this).attr("src", emptyTile);
         }).on('load', function () {
-            layer._replaceTile(x, y, this);
+            renderTile();
             $(this).width(512).height(512); // Wait until image is done loading specify dimensions in order to prevent
                                             // Firefox from displaying place-holders
         }).attr("src", this.getTileURL(x, y));
@@ -404,9 +425,6 @@ var TileLayer = Layer.extend(
 
         //      Makes sure all of the images have finished downloading before swapping them in
         img.appendTo(this.domNode);
-        if (onTileLoadComplete) {
-            img.on('load', onTileLoadComplete);
-        }
     },
 
     /**
