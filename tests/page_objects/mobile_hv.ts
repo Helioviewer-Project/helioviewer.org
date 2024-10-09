@@ -315,7 +315,7 @@ class HvMobile implements MobileInterface {
     await this.page.locator(".flatpickr-calendar").getByLabel("Minute").fill(times[1]);
     await this.page.locator(".flatpickr-calendar").getByLabel("Second").click();
     await this.page.locator(".flatpickr-calendar").getByLabel("Second").fill(times[2]);
-    await this.page.locator(".flatpickr-calendar").getByLabel("Second").press('Enter');
+    await this.page.locator(".flatpickr-calendar").getByLabel("Second").press("Enter");
   }
 
   async SetObservationDateTimeFromDate(date: Date): Promise<void> {
