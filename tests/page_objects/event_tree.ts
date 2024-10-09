@@ -268,10 +268,26 @@ class EventTree {
 
   /**
    * This function toggles "hiding of empty event sources" functionality for this event source layer
-   * @return {Promise<void>} you can await this promise to wait for toggleing to complete
+   * @return {Promise<void>} you can await this promise to wait for toggling to complete
    **/
   async toggleVisibilityEmptyEventSources(): Promise<void> {
     return this.eventLayerRoot.locator("#visibilityAvailableBtn-event-layer-" + this.source).click();
+  }
+
+  /**
+   * This function toggles "hiding/showing of events" for this event source layer
+   * @return {Promise<void>} you can await this promise to wait for toggling to complete
+   **/
+  async toggleVisibilityEvents(): Promise<void> {
+    return this.eventLayerRoot.locator("#visibilityBtn-event-layer-" + this.source).click();
+  }
+
+  /**
+   * This function toggles "hiding/showing of events" for this event source layer
+   * @return {Promise<void>} you can await this promise to wait for toggling to complete
+   **/
+  async toggleVisibilityEventLabels(): Promise<void> {
+    return this.eventLayerRoot.locator("#labelsBtn-event-layer-" + this.source).click();
   }
 
   /**
