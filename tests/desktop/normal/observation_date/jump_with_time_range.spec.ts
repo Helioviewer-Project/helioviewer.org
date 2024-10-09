@@ -169,7 +169,7 @@ const time_jump_ranges = [
         await hv.WaitForLoadingComplete();
         await hv.CloseAllNotifications();
 
-        // 13. TAKE A SCREENSOTi AND COMPARE
+        // 13. TAKE A SCREENSHOT AND COMPARE
         const directDateScreenshot = await hv.saveScreenshot("direct_date_screenshot", {
           mask: [page.locator("#timestep-select")]
         });
