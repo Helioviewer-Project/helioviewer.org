@@ -155,7 +155,6 @@ var TileLoader = Class.extend(
      */
     reloadTiles: function (removeOldTilesFirst) {
         this.tileSetId += 1;
-        console.log("Loading tileset ", this.tileSetId);
         this.removeOldTilesFirst = removeOldTilesFirst;
         this.numTilesLoaded      = 0;
         this.loadedTiles         = {};
