@@ -227,29 +227,29 @@ class EventTree {
   }
 
   /**
-   * This function asserts if the marker for given event_instance is visible
+   * This function asserts if the event for given event_instance is visible
    * @param event_instance parameter specifies the name of the event instance (ex: "NOAA 12674 β").
    * @return void promise about the assertion is done
    **/
-  async assertMarkerVisible(event_instance: string) {
+  async assertEventVisible(event_instance: string) {
     expect(await this.markersRoot.getByText(event_instance)).toBeVisible();
   }
 
   /**
-   * This function asserts if the marker for given event_instance is NOT visible
+   * This function asserts if the event for given event_instance is NOT visible
    * @param event_instance parameter specifies the name of the event instance (ex: "NOAA 12674 β").
    * @return void promise about the assertion is done
    **/
-  async assertMarkerNotVisible(event_instance: string) {
+  async assertEventNotVisible(event_instance: string) {
     expect(await this.markersRoot.getByText(event_instance)).not.toBeVisible();
   }
 
   /**
-   * This function asserts if the marker for given event_instance is visible and it is highlighted
+   * This function asserts if the event for given event_instance is visible and it is highlighted
    * @param event_instance parameter specifies the name of the event instance (ex: "NOAA 12674 β").
    * @return void promise about the assertion is done
    **/
-  async assertMarkerHighlighted(event_instance: string) {
+  async assertEventHighlighted(event_instance: string) {
     const markerLabel = await this.markersRoot.getByText(event_instance);
     await expect(markerLabel).toBeVisible();
     await expect(markerLabel).toHaveClass("event-label event-label-hover");
@@ -260,7 +260,7 @@ class EventTree {
    * @param event_instance parameter specifies the name of the event instance (ex: "NOAA 12674 β").
    * @return void promise about the assertion is done
    **/
-  async assertMarkerNotHighlighted(event_instance: string) {
+  async assertEventNotHighlighted(event_instance: string) {
     const markerLabel = await this.markersRoot.getByText(event_instance);
     await expect(markerLabel).toBeVisible();
     await expect(markerLabel).not.toHaveClass("event-label event-label-hover");

@@ -77,7 +77,7 @@ test("CheckAll should check all event markers also their markers for given sourc
 
       for (const eventinstance in events["HEK"][eventtype][frm]) {
         // assert eventinstance markers checkbox is checked and assert their markers are visible also
-        await hekTree.assertMarkerVisible(eventinstance);
+        await hekTree.assertEventVisible(eventinstance);
         await hekTree.assertEventInstanceNodeChecked(eventtype, frm, eventinstance);
       }
     }
@@ -96,7 +96,7 @@ test("CheckAll should check all event markers also their markers for given sourc
 
       for (const eventinstance in events["CCMC"][eventtype][frm]) {
         // assert eventinstance markers checkbox is NOT checked and assert their markers are NOT visible also
-        await ccmcTree.assertMarkerNotVisible(eventinstance);
+        await ccmcTree.assertEventNotVisible(eventinstance);
         await ccmcTree.assertEventInstanceNodeUnchecked(eventtype, frm, eventinstance);
       }
     }

@@ -60,34 +60,34 @@ test("Toggle visibility of events should hide/show events on then sun", async ({
   await ccmc.toggleCheckEventInstance("Solar Flare Predictions", "MAG4 Sharp FE", "M: 77.15%");
 
   // Assert all checked markers need to be visible or not
-  await ccmc.assertMarkerVisible("Type:C 11");
-  await ccmc.assertMarkerVisible("Type:C 12");
-  await ccmc.assertMarkerVisible("C+ 34.05%");
-  await ccmc.assertMarkerVisible("C+ 77.15%");
-  await ccmc.assertMarkerVisible("M: 77.15%");
-  await ccmc.assertMarkerNotVisible("M: 34.05%");
+  await ccmc.assertEventVisible("Type:C 11");
+  await ccmc.assertEventVisible("Type:C 12");
+  await ccmc.assertEventVisible("C+ 34.05%");
+  await ccmc.assertEventVisible("C+ 77.15%");
+  await ccmc.assertEventVisible("M: 77.15%");
+  await ccmc.assertEventNotVisible("M: 34.05%");
 
   // Action 6:  toggle to hide all events for CCMC
   await ccmc.toggleVisibilityEvents();
 
   // Assert now nothing should be shown
-  await ccmc.assertMarkerNotVisible("Type:C 11");
-  await ccmc.assertMarkerNotVisible("Type:C 12");
-  await ccmc.assertMarkerNotVisible("C+ 34.05%");
-  await ccmc.assertMarkerNotVisible("C+ 77.15%");
-  await ccmc.assertMarkerNotVisible("M: 77.15%");
-  await ccmc.assertMarkerNotVisible("M: 34.05%");
+  await ccmc.assertEventNotVisible("Type:C 11");
+  await ccmc.assertEventNotVisible("Type:C 12");
+  await ccmc.assertEventNotVisible("C+ 34.05%");
+  await ccmc.assertEventNotVisible("C+ 77.15%");
+  await ccmc.assertEventNotVisible("M: 77.15%");
+  await ccmc.assertEventNotVisible("M: 34.05%");
 
   // Action 7:  toggle to show events
   await ccmc.toggleVisibilityEvents();
 
   // Assert empty event types should be visible for ccmc but not for not hek
-  await ccmc.assertMarkerVisible("Type:C 11");
-  await ccmc.assertMarkerVisible("Type:C 12");
-  await ccmc.assertMarkerVisible("C+ 34.05%");
-  await ccmc.assertMarkerVisible("C+ 77.15%");
-  await ccmc.assertMarkerVisible("M: 77.15%");
-  await ccmc.assertMarkerNotVisible("M: 34.05%");
+  await ccmc.assertEventVisible("Type:C 11");
+  await ccmc.assertEventVisible("Type:C 12");
+  await ccmc.assertEventVisible("C+ 34.05%");
+  await ccmc.assertEventVisible("C+ 77.15%");
+  await ccmc.assertEventVisible("M: 77.15%");
+  await ccmc.assertEventNotVisible("M: 34.05%");
 });
 
 /**
@@ -160,19 +160,19 @@ test("Toggle visibility of events should be preserved with state", async ({ page
   await hek.toggleCheckEventType("Coronal Hole");
 
   // Assert all checked markers need to be visible or not
-  await ccmc.assertMarkerVisible("Type:C 11");
-  await ccmc.assertMarkerNotVisible("C+ 34.05% M+");
-  await hek.assertMarkerVisible("SPoCA 49106");
-  await hek.assertMarkerNotVisible("NOAA 13815");
+  await ccmc.assertEventVisible("Type:C 11");
+  await ccmc.assertEventNotVisible("C+ 34.05% M+");
+  await hek.assertEventVisible("SPoCA 49106");
+  await hek.assertEventNotVisible("NOAA 13815");
 
   // Action 6:  toggle to hide all events for CCMC
   await ccmc.toggleVisibilityEvents();
 
   // Assert now no ccmc event is visible, hek should stay same
-  await ccmc.assertMarkerNotVisible("Type:C 11");
-  await ccmc.assertMarkerNotVisible("C+ 34.05% M+");
-  await hek.assertMarkerVisible("SPoCA 49106");
-  await hek.assertMarkerNotVisible("NOAA 13815");
+  await ccmc.assertEventNotVisible("Type:C 11");
+  await ccmc.assertEventNotVisible("C+ 34.05% M+");
+  await hek.assertEventVisible("SPoCA 49106");
+  await hek.assertEventNotVisible("NOAA 13815");
 
   // Action 7 : Reload Page
   await hv.Load();
@@ -183,8 +183,8 @@ test("Toggle visibility of events should be preserved with state", async ({ page
   const ccmcReload = hv.parseTree("CCMC");
 
   // Nothing should change
-  await ccmcReload.assertMarkerNotVisible("Type:C 11");
-  await ccmcReload.assertMarkerNotVisible("C+ 34.05% M+");
-  await hekReload.assertMarkerVisible("SPoCA 49106");
-  await hekReload.assertMarkerNotVisible("NOAA 13815");
+  await ccmcReload.assertEventNotVisible("Type:C 11");
+  await ccmcReload.assertEventNotVisible("C+ 34.05% M+");
+  await hekReload.assertEventVisible("SPoCA 49106");
+  await hekReload.assertEventNotVisible("NOAA 13815");
 });
