@@ -283,7 +283,7 @@ class EventTree {
   }
 
   /**
-   * This function toggles "hiding/showing of events" for this event source layer
+   * This function toggles "hiding/showing of event labels not the pins" for this event source layer
    * @return {Promise<void>} you can await this promise to wait for toggling to complete
    **/
   async toggleVisibilityEventLabels(): Promise<void> {
