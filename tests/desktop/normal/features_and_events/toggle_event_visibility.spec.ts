@@ -7,13 +7,10 @@ import { mockEvents } from "../../../utils/events";
  * then all matching event markers should be visible
  * then toggle visibility of layer CCMC, ,
  * asserts all previously selected events of CCMC this layer should be hidden
- * then toggles again for CCMC, to show all of the events 
- * then validates all previously selected events should be visible 
+ * then toggles again for CCMC, to show all of the events
+ * then validates all previously selected events should be visible
  */
-test("Toggle visibility of events should hide/show events on then sun", async ({
-  page,
-  browser
-}, info) => {
+test("Toggle visibility of events should hide/show events on then sun", async ({ page, browser }, info) => {
   // mocked event data
   const events = {
     CCMC: {
@@ -32,7 +29,7 @@ test("Toggle visibility of events should hide/show events on then sun", async ({
           "M: 34.05% M+:": {},
           "M: 77.15% M+:": {}
         }
-      },
+      }
     }
   };
 
@@ -91,7 +88,6 @@ test("Toggle visibility of events should hide/show events on then sun", async ({
   await ccmc.assertMarkerVisible("C+ 77.15%");
   await ccmc.assertMarkerVisible("M: 77.15%");
   await ccmc.assertMarkerNotVisible("M: 34.05%");
-
 });
 
 /**
@@ -121,7 +117,7 @@ test("Toggle visibility of events should be preserved with state", async ({ page
           "SPoCA 49106": {},
           "SPoCA 49144": {}
         }
-      },
+      }
     },
     CCMC: {
       DONKI: {
@@ -138,7 +134,7 @@ test("Toggle visibility of events should be preserved with state", async ({ page
           "M: 34.05% M+": {},
           "M: 77.15% M+": {}
         }
-      },
+      }
     }
   };
 
@@ -186,10 +182,9 @@ test("Toggle visibility of events should be preserved with state", async ({ page
   const hekReload = hv.parseTree("HEK");
   const ccmcReload = hv.parseTree("CCMC");
 
-  // Nothing should change 
+  // Nothing should change
   await ccmcReload.assertMarkerNotVisible("Type:C 11");
   await ccmcReload.assertMarkerNotVisible("C+ 34.05% M+");
   await hekReload.assertMarkerVisible("SPoCA 49106");
   await hekReload.assertMarkerNotVisible("NOAA 13815");
-
 });
