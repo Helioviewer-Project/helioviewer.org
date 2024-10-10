@@ -79,7 +79,8 @@ var EventMarker = Class.extend(
         id = id.replace(/\(|\)|\.|\:/g, "");
         this.eventMarkerDomNode.attr({
             'rel' : id,
-            'id' : 'marker_'+id
+            'id' : 'marker_'+id,
+            'role' : 'marker'
         });
         if ( this.hasBoundingBox() ) {
             let refScale = Helioviewer.userSettings.get('state.refScale');
