@@ -51,6 +51,9 @@ async function mockEvents(page: Page, eventTree: EventTree): Promise<void> {
           .map((v) => v.charAt(0).toUpperCase())
           .join("");
 
+        // This randomEventTye is required for displaying proper event_markers
+        const randomEventType = (['AR','CC','CD','CE','CH','CJ','CR','CW','EF','ER','FA','FE','FI','FL','LP','OS','PG','SG','SP','SS','TO','UNK']).sort(() => 0.5 - Math.random())[0];
+
         // Generate event source tree
         newJson.push({
           name: eventtype,
@@ -79,7 +82,7 @@ async function mockEvents(page: Page, eventTree: EventTree): Promise<void> {
                   hv_labels_formatted: {
                     "Event Type": eventtype
                   },
-                  type: eventTypePin,
+                  type: randomEventType,
                   id: `ivo://helio-informatics.org/${eventTypePin}_${frmReference}_20180904_192913_2017-09-06T120400.${randomMilliseconds}-007`,
                   active: "true",
                   area_atdiskcenter: null,
