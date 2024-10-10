@@ -187,8 +187,9 @@ test("Toggle visibility of events should be preserved with state", async ({ page
   const ccmcReload = hv.parseTree("CCMC");
 
   // Nothing should change 
-  await ccmc.assertMarkerNotVisible("Type:C 11");
-  await ccmc.assertMarkerNotVisible("C+ 34.05% M+");
-  await hek.assertMarkerVisible("SPoCA 49106");
-  await hek.assertMarkerNotVisible("NOAA 13815");
+  await ccmcReload.assertMarkerNotVisible("Type:C 11");
+  await ccmcReload.assertMarkerNotVisible("C+ 34.05% M+");
+  await hekReload.assertMarkerVisible("SPoCA 49106");
+  await hekReload.assertMarkerNotVisible("NOAA 13815");
+
 });
