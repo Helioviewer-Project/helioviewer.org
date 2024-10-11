@@ -232,7 +232,7 @@ class EventTree {
    * @return void promise about the assertion is done
    **/
   async assertEventVisible(event_instance: string) {
-    expect(await this.markersRoot.getByText(event_instance)).toBeVisible();
+    expect(this.page.getByTestId(`event-marker-${event_instance}`)).toBeVisible();
   }
 
   /**
@@ -241,7 +241,7 @@ class EventTree {
    * @return void promise about the assertion is done
    **/
   async assertEventNotVisible(event_instance: string) {
-    expect(await this.markersRoot.getByText(event_instance)).not.toBeVisible();
+    expect(this.page.getByTestId(`event-marker-${event_instance}`)).not.toBeVisible();
   }
 
   /**
@@ -250,7 +250,7 @@ class EventTree {
    * @return void promise about the assertion is done
    **/
   async assertEventHighlighted(event_instance: string) {
-    const markerLabel = await this.markersRoot.getByText(event_instance);
+    const markerLabel = await this.page.getByTestId(`event-label-${event_instance}`);
     await expect(markerLabel).toBeVisible();
     await expect(markerLabel).toHaveClass("event-label event-label-hover");
   }
@@ -261,7 +261,7 @@ class EventTree {
    * @return void promise about the assertion is done
    **/
   async assertEventNotHighlighted(event_instance: string) {
-    const markerLabel = await this.markersRoot.getByText(event_instance);
+    const markerLabel = await this.page.getByTestId(`event-label-${event_instance}`);
     await expect(markerLabel).toBeVisible();
     await expect(markerLabel).not.toHaveClass("event-label event-label-hover");
   }

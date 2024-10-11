@@ -52,7 +52,30 @@ async function mockEvents(page: Page, eventTree: EventTree): Promise<void> {
           .join("");
 
         // This randomEventTye is required for displaying proper event_markers
-        const randomEventType = (['AR','CC','CD','CE','CH','CJ','CR','CW','EF','ER','FA','FE','FI','FL','LP','OS','PG','SG','SP','SS','TO','UNK']).sort(() => 0.5 - Math.random())[0];
+        const randomEventType = [
+          "AR",
+          "CC",
+          "CD",
+          "CE",
+          "CH",
+          "CJ",
+          "CR",
+          "CW",
+          "EF",
+          "ER",
+          "FA",
+          "FE",
+          "FI",
+          "FL",
+          "LP",
+          "OS",
+          "PG",
+          "SG",
+          "SP",
+          "SS",
+          "TO",
+          "UNK"
+        ].sort(() => 0.5 - Math.random())[0];
 
         // Generate event source tree
         newJson.push({
