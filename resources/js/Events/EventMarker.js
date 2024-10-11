@@ -77,11 +77,15 @@ var EventMarker = Class.extend(
         var id = this.id;
         id = id.replace(/ivo:\/\/helio-informatics.org\//g, "")
         id = id.replace(/\(|\)|\.|\:/g, "");
+
+        const eventMarkerTestId = "event-marker-"+ (this.event.short_label ?? this.event.label)
+
         this.eventMarkerDomNode.attr({
             'rel' : id,
             'id' : 'marker_'+id,
-            'role' : 'marker'
+            'data-testid': eventMarkerTestId.trim()
         });
+
         if ( this.hasBoundingBox() ) {
             let refScale = Helioviewer.userSettings.get('state.refScale');
 	        var polygonCenterX = (this.hv_poly_width_max_zoom_pixels * ( refScale / Helioviewer.userSettings.settings.state.imageScale )) / 2;
@@ -303,11 +307,15 @@ var EventMarker = Class.extend(
      * @returns void     
      * */
     _makeLabel: function() {
+
+        const eventLabelTestId = "event-label-"+(this.event.short_label ?? this.event.label)
+
         if ( !this._label ) {
             this._label = $('<div/>');
             this._label.hide();
             this._label.attr({
-                'class' : "event-label"
+                'class' : "event-label",
+                'data-testid': eventLabelTestId.trim() 
                 // Styles found in events.css
             });
             this._label.html(this.labelText);
