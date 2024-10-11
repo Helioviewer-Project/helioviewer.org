@@ -78,12 +78,12 @@ var EventMarker = Class.extend(
         id = id.replace(/ivo:\/\/helio-informatics.org\//g, "")
         id = id.replace(/\(|\)|\.|\:/g, "");
 
-        const eventMarkerTestId = "event-marker-" + (this.event.short_label ?? this.event.label).trim();
+        const eventMarkerTestId = "event-marker-" + this.event.short_label ?? this.event.label;
 
         this.eventMarkerDomNode.attr({
             'rel' : id,
             'id' : 'marker_'+id,
-            'data-testid': eventMarkerTestId
+            'data-testid': eventMarkerTestId.replaceAll("\n","")
         });
 
         if ( this.hasBoundingBox() ) {
@@ -308,14 +308,14 @@ var EventMarker = Class.extend(
      * */
     _makeLabel: function() {
 
-        const eventLabelTestId = "event-label-" + (this.event.short_label.trim() ?? this.event.label).trim();
+        const eventLabelTestId = "event-label-" + this.event.short_label ?? this.event.label;
 
         if ( !this._label ) {
             this._label = $('<div/>');
             this._label.hide();
             this._label.attr({
                 'class' : "event-label",
-                'data-testid': eventLabelTestId 
+                'data-testid': eventLabelTestId.replaceAll("\n","") 
                 // Styles found in events.css
             });
             this._label.html(this.labelText);
