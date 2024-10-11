@@ -78,7 +78,7 @@ var EventMarker = Class.extend(
         id = id.replace(/ivo:\/\/helio-informatics.org\//g, "")
         id = id.replace(/\(|\)|\.|\:/g, "");
 
-        const eventMarkerTestId = "event-marker-" + this.event.short_label ?? this.event.label;
+        const eventMarkerTestId = "event-marker-" + (this.event.short_label ?? this.event.label);
 
         this.eventMarkerDomNode.attr({
             'rel' : id,
@@ -308,7 +308,7 @@ var EventMarker = Class.extend(
      * */
     _makeLabel: function() {
 
-        const eventLabelTestId = "event-label-" + this.event.short_label ?? this.event.label;
+        const eventLabelTestId = "event-label-" + (this.event.short_label ?? this.event.label);
 
         if ( !this._label ) {
             this._label = $('<div/>');
