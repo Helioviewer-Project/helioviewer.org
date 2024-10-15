@@ -589,34 +589,34 @@ test("Issue 588, special characters in event tree causing to tree to fail", asyn
   await eventTree.toggleCheckEventType("Topological Object");
 
   // All event markers belong to "Topological Object' should be visible
-  await eventTree.assertMarkerVisible("Topological Object 332.66,52.80");
-  await eventTree.assertMarkerVisible("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerVisible("Topological Object 204.85,40.70");
-  await eventTree.assertMarkerNotVisible("Topological Object Not Exists");
+  await eventTree.assertEventVisible("Topological Object 332.66,52.80");
+  await eventTree.assertEventVisible("Topological Object 34.87,51.77");
+  await eventTree.assertEventVisible("Topological Object 204.85,40.70");
+  await eventTree.assertEventNotVisible("Topological Object Not Exists");
 
   // Action 4: Uncheck event_type "Topological Object" from the event tree
   await eventTree.toggleCheckEventType("Topological Object");
 
   // All event markers belong to "Topological Object" should NOT be visible
-  await eventTree.assertMarkerNotVisible("Topological Object 332.66,52.80");
-  await eventTree.assertMarkerNotVisible("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerNotVisible("Topological Object 204.85,40.70");
+  await eventTree.assertEventNotVisible("Topological Object 332.66,52.80");
+  await eventTree.assertEventNotVisible("Topological Object 34.87,51.77");
+  await eventTree.assertEventNotVisible("Topological Object 204.85,40.70");
 
   // Action 5: Check frm "SSW PFSS v2 + null point" from the event tree
   await eventTree.toggleCheckFRM("Topological Object", "SSW PFSS v2 + null point");
 
   // All event markers belong to "SSW PFSS v2 + null point" should be visible
-  await eventTree.assertMarkerVisible("Topological Object 332.66,52.80");
-  await eventTree.assertMarkerVisible("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerVisible("Topological Object 204.85,40.70");
+  await eventTree.assertEventVisible("Topological Object 332.66,52.80");
+  await eventTree.assertEventVisible("Topological Object 34.87,51.77");
+  await eventTree.assertEventVisible("Topological Object 204.85,40.70");
 
   // Action 6: Uncheck frm "SSW PFSS v2 + null point" from the event tree
   await eventTree.toggleCheckFRM("Topological Object", "SSW PFSS v2 + null point");
 
   // All event markers belong to "SSW PFSS v2 + null point" should NOT be visible
-  await eventTree.assertMarkerNotVisible("Topological Object 332.66,52.80");
-  await eventTree.assertMarkerNotVisible("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerNotVisible("Topological Object 204.85,40.70");
+  await eventTree.assertEventNotVisible("Topological Object 332.66,52.80");
+  await eventTree.assertEventNotVisible("Topological Object 34.87,51.77");
+  await eventTree.assertEventNotVisible("Topological Object 204.85,40.70");
 
   // Action 6: Open up the frm branch of "SSW PFSS v2 + null point" to see all event instance nodes under this branch
   await eventTree.toggleBranchFRM("Topological Object", "SSW PFSS v2 + null point");
@@ -649,9 +649,9 @@ test("Issue 588, special characters in event tree causing to tree to fail", asyn
   );
 
   // Only requested marker should be visible not all of them
-  await eventTree.assertMarkerVisible("Topological Object 332.66,52.80");
-  await eventTree.assertMarkerNotVisible("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerNotVisible("Topological Object 204.85,40.70");
+  await eventTree.assertEventVisible("Topological Object 332.66,52.80");
+  await eventTree.assertEventNotVisible("Topological Object 34.87,51.77");
+  await eventTree.assertEventNotVisible("Topological Object 204.85,40.70");
 
   // Action 9: UnCheck event instance node "Topological Object 332.66,52.80" to hide event marker attached to it
   await eventTree.toggleCheckEventInstance(
@@ -673,44 +673,44 @@ test("Issue 588, special characters in event tree causing to tree to fail", asyn
   );
 
   // Now 2 of them should be visible while the other one is hidden
-  await eventTree.assertMarkerNotVisible("Topological Object 332.66,52.80");
-  await eventTree.assertMarkerVisible("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerVisible("Topological Object 204.85,40.70");
+  await eventTree.assertEventNotVisible("Topological Object 332.66,52.80");
+  await eventTree.assertEventVisible("Topological Object 34.87,51.77");
+  await eventTree.assertEventVisible("Topological Object 204.85,40.70");
 
   // Action 12: Hover on our logo , to test hovering affects of event markers
   await hv.HoverOnLogo();
 
   // Assert markers should be visible but NOT highlighted
-  await eventTree.assertMarkerNotHighlighted("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerNotHighlighted("Topological Object 204.85,40.70");
+  await eventTree.assertEventNotHighlighted("Topological Object 34.87,51.77");
+  await eventTree.assertEventNotHighlighted("Topological Object 204.85,40.70");
 
   // Action 13: Hover on our event type node  "Topological Object" inside the event tree
   await eventTree.hoverOnEventType("Topological Object");
 
   // Assert markers should be visible and highlighted
-  await eventTree.assertMarkerHighlighted("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerHighlighted("Topological Object 204.85,40.70");
+  await eventTree.assertEventHighlighted("Topological Object 34.87,51.77");
+  await eventTree.assertEventHighlighted("Topological Object 204.85,40.70");
 
   // Action 14: Hover on our logo , to test hovering affects of event markers
   await hv.HoverOnLogo();
 
   // Assert markers should be visible but NOT highlighted
-  await eventTree.assertMarkerNotHighlighted("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerNotHighlighted("Topological Object 204.85,40.70");
+  await eventTree.assertEventNotHighlighted("Topological Object 34.87,51.77");
+  await eventTree.assertEventNotHighlighted("Topological Object 204.85,40.70");
 
   // Action 15: Hover on our frm node  "SSW PFSS v2 + null point" inside the event tree
   await eventTree.hoverOnFRM("Topological Object", "SSW PFSS v2 + null point");
 
   // Assert markers should be visible and highlighted
-  await eventTree.assertMarkerHighlighted("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerHighlighted("Topological Object 204.85,40.70");
+  await eventTree.assertEventHighlighted("Topological Object 34.87,51.77");
+  await eventTree.assertEventHighlighted("Topological Object 204.85,40.70");
 
   // Action 16: Hover on our logo , to test hovering affects of event markers
   await hv.HoverOnLogo();
 
   // Assert markers should be visible but NOT highlighted
-  await eventTree.assertMarkerNotHighlighted("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerNotHighlighted("Topological Object 204.85,40.70");
+  await eventTree.assertEventNotHighlighted("Topological Object 34.87,51.77");
+  await eventTree.assertEventNotHighlighted("Topological Object 204.85,40.70");
 
   // Action 17: Hover on our event instance node  "Topological Object 34.87,51.77" inside the event tree
   await eventTree.hoverOnEventInstance(
@@ -720,8 +720,8 @@ test("Issue 588, special characters in event tree causing to tree to fail", asyn
   );
 
   // Now only hovered event_instances should be highlighted but not the other ones
-  await eventTree.assertMarkerHighlighted("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerNotHighlighted("Topological Object 204.85,40.70");
+  await eventTree.assertEventHighlighted("Topological Object 34.87,51.77");
+  await eventTree.assertEventNotHighlighted("Topological Object 204.85,40.70");
 
   // Action 18: Hover on our event instance node  "Topological Object 204.85,40.70" inside the event tree
   await eventTree.hoverOnEventInstance(
@@ -731,6 +731,6 @@ test("Issue 588, special characters in event tree causing to tree to fail", asyn
   );
 
   // Now only hovered event_instances should be highlighted but not the other ones
-  await eventTree.assertMarkerNotHighlighted("Topological Object 34.87,51.77");
-  await eventTree.assertMarkerHighlighted("Topological Object 204.85,40.70");
+  await eventTree.assertEventNotHighlighted("Topological Object 34.87,51.77");
+  await eventTree.assertEventHighlighted("Topological Object 204.85,40.70");
 });

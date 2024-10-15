@@ -69,12 +69,12 @@ test("UncheckAll should uncheck all event markers that are previously selected a
   await ccmcTree.assertEventInstanceNodeUnchecked("Solar Flare Predictions", "MAG4 Sharp FE", "M: 34.05%");
 
   // Assert all checked markers need to be visible or not
-  await ccmcTree.assertMarkerVisible("Type:C 11");
-  await ccmcTree.assertMarkerVisible("Type:C 12");
-  await ccmcTree.assertMarkerVisible("C+ 34.05%");
-  await ccmcTree.assertMarkerVisible("C+ 77.15%");
-  await ccmcTree.assertMarkerVisible("M: 77.15%");
-  await ccmcTree.assertMarkerNotVisible("M: 34.05%");
+  await ccmcTree.assertEventVisible("Type:C 11");
+  await ccmcTree.assertEventVisible("Type:C 12");
+  await ccmcTree.assertEventVisible("C+ 34.05%");
+  await ccmcTree.assertEventVisible("C+ 77.15%");
+  await ccmcTree.assertEventVisible("M: 77.15%");
+  await ccmcTree.assertEventNotVisible("M: 34.05%");
 
   // Action 6 : Trigger check none
   await ccmcTree.checkNone();
@@ -90,10 +90,10 @@ test("UncheckAll should uncheck all event markers that are previously selected a
   await ccmcTree.assertEventInstanceNodeUnchecked("Solar Flare Predictions", "MAG4 Sharp FE", "M: 34.05%");
 
   // Assert all markers should be hidden
-  await ccmcTree.assertMarkerNotVisible("Type:C 11");
-  await ccmcTree.assertMarkerNotVisible("Type:C 12");
-  await ccmcTree.assertMarkerNotVisible("C+ 34.05%");
-  await ccmcTree.assertMarkerNotVisible("C+ 77.15%");
-  await ccmcTree.assertMarkerNotVisible("M: 77.15%");
-  await ccmcTree.assertMarkerNotVisible("M: 34.05%");
+  await ccmcTree.assertEventNotVisible("Type:C 11");
+  await ccmcTree.assertEventNotVisible("Type:C 12");
+  await ccmcTree.assertEventNotVisible("C+ 34.05%");
+  await ccmcTree.assertEventNotVisible("C+ 77.15%");
+  await ccmcTree.assertEventNotVisible("M: 77.15%");
+  await ccmcTree.assertEventNotVisible("M: 34.05%");
 });

@@ -4,13 +4,13 @@ import { mockEvents } from "../../../utils/events";
 
 /**
  * This test mocks some random events for CCMC
- * then all matching event markers should be visible
- * then toggle visibility of layer CCMC, ,
- * asserts all previously selected events of CCMC this layer should be hidden
- * then toggles again for CCMC, to show all of the events
- * then validates all previously selected events should be visible
+ * then all matching event markers and their labels should be visible
+ * then toggle visibility of event labels for layer CCMC, ,
+ * asserts all previously selected events of CCMC this layer; they shoyld have their pins visible but not their labels
+ * then toggles again for CCMC, to show all of the events labels
+ * then validates all previously selected events labels should now be visible
  */
-test("Toggle visibility of events should hide/show events on then sun", async ({ page, browser }, info) => {
+test("Toggle visibility of events labels should hide/show events on then sun", async ({ page, browser }, info) => {
   // mocked event data
   const events = {
     CCMC: {
@@ -59,46 +59,67 @@ test("Toggle visibility of events should hide/show events on then sun", async ({
   await ccmc.toggleBranchFRM("Solar Flare Predictions", "MAG4 Sharp FE");
   await ccmc.toggleCheckEventInstance("Solar Flare Predictions", "MAG4 Sharp FE", "M: 77.15%");
 
-  // Assert all checked markers need to be visible or not
+  // Action 6: Assert all checked markers need to be visible also with their labels
   await ccmc.assertEventVisible("Type:C 11");
+  await ccmc.assertEventLabelVisible("Type:C 11");
   await ccmc.assertEventVisible("Type:C 12");
+  await ccmc.assertEventLabelVisible("Type:C 12");
   await ccmc.assertEventVisible("C+ 34.05%");
+  await ccmc.assertEventLabelVisible("C+ 34.05%");
   await ccmc.assertEventVisible("C+ 77.15%");
+  await ccmc.assertEventLabelVisible("C+ 77.15%");
   await ccmc.assertEventVisible("M: 77.15%");
+  await ccmc.assertEventLabelVisible("M: 77.15%");
+  // this one shouldn't be visible at all , since it is not selected
   await ccmc.assertEventNotVisible("M: 34.05%");
+  await ccmc.assertEventLabelNotVisible("M: 34.05%");
 
-  // Action 6:  toggle to hide all events for CCMC
-  await ccmc.toggleVisibilityEvents();
+  // Action 7:  toggle to hide all event labels for CCMC
+  await ccmc.toggleVisibilityEventLabels();
 
-  // Assert now nothing should be shown
-  await ccmc.assertEventNotVisible("Type:C 11");
-  await ccmc.assertEventNotVisible("Type:C 12");
-  await ccmc.assertEventNotVisible("C+ 34.05%");
-  await ccmc.assertEventNotVisible("C+ 77.15%");
-  await ccmc.assertEventNotVisible("M: 77.15%");
-  await ccmc.assertEventNotVisible("M: 34.05%");
-
-  // Action 7:  toggle to show events
-  await ccmc.toggleVisibilityEvents();
-
-  // Assert empty event types should be visible for ccmc but not for not hek
+  // Action 8: Assert all checked markers now need to be visible also but NOT their labels
   await ccmc.assertEventVisible("Type:C 11");
+  await ccmc.assertEventLabelNotVisible("Type:C 11");
   await ccmc.assertEventVisible("Type:C 12");
+  await ccmc.assertEventLabelNotVisible("Type:C 12");
   await ccmc.assertEventVisible("C+ 34.05%");
+  await ccmc.assertEventLabelNotVisible("C+ 34.05%");
   await ccmc.assertEventVisible("C+ 77.15%");
+  await ccmc.assertEventLabelNotVisible("C+ 77.15%");
   await ccmc.assertEventVisible("M: 77.15%");
+  await ccmc.assertEventLabelNotVisible("M: 77.15%");
+  // this one shouldn't be visible at all , since it is not selected
   await ccmc.assertEventNotVisible("M: 34.05%");
+  await ccmc.assertEventLabelNotVisible("M: 34.05%");
+
+  // Action 9:  toggle to show event labels again
+  await ccmc.toggleVisibilityEventLabels();
+
+  // Action 10: Assert again all checked markers need to be visible also with their labels
+  await ccmc.assertEventVisible("Type:C 11");
+  await ccmc.assertEventLabelVisible("Type:C 11");
+  await ccmc.assertEventVisible("Type:C 12");
+  await ccmc.assertEventLabelVisible("Type:C 12");
+  await ccmc.assertEventVisible("C+ 34.05%");
+  await ccmc.assertEventLabelVisible("C+ 34.05%");
+  await ccmc.assertEventVisible("C+ 77.15%");
+  await ccmc.assertEventLabelVisible("C+ 77.15%");
+  await ccmc.assertEventVisible("M: 77.15%");
+  await ccmc.assertEventLabelVisible("M: 77.15%");
+  // this one shouldn't be visible at all , since it is not selected
+  await ccmc.assertEventNotVisible("M: 34.05%");
+  await ccmc.assertEventLabelNotVisible("M: 34.05%");
 });
 
 /**
  * This test mocks some random events
- * then all matching event markers should be visible
- * then toggle visibility of one event layer ( HEK, CCMC ),
- * asserts all events of this layer should be hidden
+ * then all matching event markers and their labels should be visible
+ * then toggle visibility of event labels for  one event layer ( HEK, CCMC ),
+ * asserts all event labels of this layer should be hidden
  * then reload the page
- * visibility of event layers should be in same configuration
+ * visibility of event labels  should be in same configuration
  */
-test("Toggle visibility of events should be preserved with state", async ({ page, browser }, info) => {
+test("Toggle visibility of events labels should be preserved with state", async ({ page, browser }, info) => {
   // mocked event data
   const events = {
     HEK: {
@@ -159,22 +180,30 @@ test("Toggle visibility of events should be preserved with state", async ({ page
   await ccmc.toggleCheckEventType("DONKI");
   await hek.toggleCheckEventType("Coronal Hole");
 
-  // Assert all checked markers need to be visible or not
+  // Assert all checked markers need to be visible AND all not checked markers need to be invisibile
   await ccmc.assertEventVisible("Type:C 11");
+  await ccmc.assertEventLabelVisible("Type:C 11");
   await ccmc.assertEventNotVisible("C+ 34.05% M+");
+  await ccmc.assertEventLabelNotVisible("C+ 34.05% M+");
   await hek.assertEventVisible("SPoCA 49106");
+  await hek.assertEventLabelVisible("SPoCA 49106");
   await hek.assertEventNotVisible("NOAA 13815");
+  await hek.assertEventLabelNotVisible("NOAA 13815");
 
-  // Action 6:  toggle to hide all events for CCMC
-  await ccmc.toggleVisibilityEvents();
+  // Action 4:  toggle to hide all event labels for CCMC
+  await ccmc.toggleVisibilityEventLabels();
 
-  // Assert now no ccmc event is visible, hek should stay same
-  await ccmc.assertEventNotVisible("Type:C 11");
+  // Assert now no ccmc event label is visible, hek should stay same
+  await ccmc.assertEventVisible("Type:C 11");
+  await ccmc.assertEventLabelNotVisible("Type:C 11");
   await ccmc.assertEventNotVisible("C+ 34.05% M+");
+  await ccmc.assertEventLabelNotVisible("C+ 34.05% M+");
   await hek.assertEventVisible("SPoCA 49106");
+  await hek.assertEventLabelVisible("SPoCA 49106");
   await hek.assertEventNotVisible("NOAA 13815");
+  await hek.assertEventLabelNotVisible("NOAA 13815");
 
-  // Action 7 : Reload Page
+  // Action 5 : Reload Page
   await hv.Load();
   await hv.CloseAllNotifications();
 
@@ -182,9 +211,13 @@ test("Toggle visibility of events should be preserved with state", async ({ page
   const hekReload = hv.parseTree("HEK");
   const ccmcReload = hv.parseTree("CCMC");
 
-  // Nothing should change
-  await ccmcReload.assertEventNotVisible("Type:C 11");
+  // Action 6: Assert now event label visibility configuration should be same before the reload
+  await ccmcReload.assertEventVisible("Type:C 11");
+  await ccmcReload.assertEventLabelNotVisible("Type:C 11");
   await ccmcReload.assertEventNotVisible("C+ 34.05% M+");
+  await ccmcReload.assertEventLabelNotVisible("C+ 34.05% M+");
   await hekReload.assertEventVisible("SPoCA 49106");
+  await hekReload.assertEventLabelVisible("SPoCA 49106");
   await hekReload.assertEventNotVisible("NOAA 13815");
+  await hekReload.assertEventLabelNotVisible("NOAA 13815");
 });

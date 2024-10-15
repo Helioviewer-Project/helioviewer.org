@@ -1609,16 +1609,16 @@ test("Issue 589, names with same frm name , creating problems for highlighting f
   // Action 4: Check event instance node "Topological Object 332.66,52.80" to see event marker attached to it
   await eventTree.toggleCheckEventInstance("Coronal Hole", "SPoCA", "SPoCA 26505");
 
-  await eventTree.assertMarkerVisible("SPoCA 26505");
+  await eventTree.assertEventVisible("SPoCA 26505");
 
   // Action 5: Check FRM node of "SPoCA" under "Active Region"
   await eventTree.toggleCheckFRM("Active Region", "SPoCA");
 
-  await eventTree.assertMarkerVisible("SPoCA 26505");
-  await eventTree.assertMarkerVisible("SPoCA 21090");
-  await eventTree.assertMarkerVisible("SPoCA 21080");
-  await eventTree.assertMarkerVisible("SPoCA 21094");
-  await eventTree.assertMarkerNotVisible("SPoCA 26458");
+  await eventTree.assertEventVisible("SPoCA 26505");
+  await eventTree.assertEventVisible("SPoCA 21090");
+  await eventTree.assertEventVisible("SPoCA 21080");
+  await eventTree.assertEventVisible("SPoCA 21094");
+  await eventTree.assertEventNotVisible("SPoCA 26458");
 
   // Action 6: Open FRM node of "SPoCA" under "Active Region"
   await eventTree.toggleBranchFRM("Active Region", "SPoCA");
@@ -1627,26 +1627,26 @@ test("Issue 589, names with same frm name , creating problems for highlighting f
   await hv.HoverOnLogo();
 
   // Assert no markers should be highlighted
-  await eventTree.assertMarkerNotHighlighted("SPoCA 26505");
-  await eventTree.assertMarkerNotHighlighted("SPoCA 21090");
-  await eventTree.assertMarkerNotHighlighted("SPoCA 21080");
-  await eventTree.assertMarkerNotHighlighted("SPoCA 21094");
+  await eventTree.assertEventNotHighlighted("SPoCA 26505");
+  await eventTree.assertEventNotHighlighted("SPoCA 21090");
+  await eventTree.assertEventNotHighlighted("SPoCA 21080");
+  await eventTree.assertEventNotHighlighted("SPoCA 21094");
 
   // Action 8: Hover on our frm node  "SPoCA" under "Active Region"
   await eventTree.hoverOnFRM("Active Region", "SPoCA");
 
   // Assert only markers belogns to ActiveRegion/Spoca should be highlighted
-  await eventTree.assertMarkerNotHighlighted("SPoCA 26505");
-  await eventTree.assertMarkerHighlighted("SPoCA 21090");
-  await eventTree.assertMarkerHighlighted("SPoCA 21080");
-  await eventTree.assertMarkerHighlighted("SPoCA 21094");
+  await eventTree.assertEventNotHighlighted("SPoCA 26505");
+  await eventTree.assertEventHighlighted("SPoCA 21090");
+  await eventTree.assertEventHighlighted("SPoCA 21080");
+  await eventTree.assertEventHighlighted("SPoCA 21094");
 
   // Action 9: Hover on our frm node  "SPoCA" under "Coronal Hole"
   await eventTree.hoverOnFRM("Coronal Hole", "SPoCA");
 
   // Assert only markers belogns to Coronal Hole/Spoca should be highlighted
-  await eventTree.assertMarkerHighlighted("SPoCA 26505");
-  await eventTree.assertMarkerNotHighlighted("SPoCA 21090");
-  await eventTree.assertMarkerNotHighlighted("SPoCA 21080");
-  await eventTree.assertMarkerNotHighlighted("SPoCA 21094");
+  await eventTree.assertEventHighlighted("SPoCA 26505");
+  await eventTree.assertEventNotHighlighted("SPoCA 21090");
+  await eventTree.assertEventNotHighlighted("SPoCA 21080");
+  await eventTree.assertEventNotHighlighted("SPoCA 21094");
 });
