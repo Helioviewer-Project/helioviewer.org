@@ -211,7 +211,7 @@ test.only("Toggle visibility of events labels should be preserved with state", a
   const hekReload = hv.parseTree("HEK");
   const ccmcReload = hv.parseTree("CCMC");
 
-  // Action 6: Assert now event label visibility configuration should be same before the reload 
+  // Action 6: Assert now event label visibility configuration should be same before the reload
   await ccmcReload.assertEventVisible("Type:C 11");
   await ccmcReload.assertEventLabelNotVisible("Type:C 11");
   await ccmcReload.assertEventNotVisible("C+ 34.05% M+");
