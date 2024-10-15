@@ -22,12 +22,12 @@ test("Toggle visibility of events should hide/show events on then sun", async ({
       },
       "Solar Flare Predictions": {
         AMOS: {
-          "C+ 34.05% M+:": {},
-          "C+ 77.15% M+:": {}
+          "C+ 34.05%": {},
+          "C+ 77.15%": {}
         },
         "MAG4 Sharp FE": {
-          "M: 34.05% M+:": {},
-          "M: 77.15% M+:": {}
+          "M: 34.05%": {},
+          "M: 77.15%": {}
         }
       }
     }
