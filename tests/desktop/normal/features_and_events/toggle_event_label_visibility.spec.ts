@@ -119,7 +119,7 @@ test("Toggle visibility of events labels should hide/show events on then sun", a
  * then reload the page
  * visibility of event labels  should be in same configuration
  */
-test.only("Toggle visibility of events labels should be preserved with state", async ({ page, browser }, info) => {
+test("Toggle visibility of events labels should be preserved with state", async ({ page, browser }, info) => {
   // mocked event data
   const events = {
     HEK: {
