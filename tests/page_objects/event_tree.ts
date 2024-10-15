@@ -244,6 +244,25 @@ class EventTree {
     expect(this.page.getByTestId(`event-marker-${event_instance}`)).not.toBeVisible();
   }
 
+  
+  /**
+   * This function asserts if the event for given event_instance is visible
+   * @param event_instance parameter specifies the name of the event instance (ex: "NOAA 12674 β").
+   * @return void promise about the assertion is done
+   **/
+  async assertEventLabelVisible(event_instance: string) {
+    expect(this.page.getByTestId(`event-label-${event_instance}`)).toBeVisible();
+  }
+
+  /**
+   * This function asserts if the event for given event_instance is NOT visible
+   * @param event_instance parameter specifies the name of the event instance (ex: "NOAA 12674 β").
+   * @return void promise about the assertion is done
+   **/
+  async assertEventLabelNotVisible(event_instance: string) {
+    expect(this.page.getByTestId(`event-label-${event_instance}`)).not.toBeVisible();
+  }
+
   /**
    * This function asserts if the event for given event_instance is visible and it is highlighted
    * @param event_instance parameter specifies the name of the event instance (ex: "NOAA 12674 β").
