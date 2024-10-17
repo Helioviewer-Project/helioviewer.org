@@ -6,12 +6,15 @@ import { Locator, Page, PageScreenshotOptions, TestInfo, expect } from "@playwri
 import { Helioviewer } from "./helioviewer";
 import { ImageLayer } from "./image_layer";
 import { ScaleIndicator } from "./scale_indicator";
+import { MobileInterface } from "./helioviewer_interface";
 
-class HvMobile {
+class HvMobile implements MobileInterface {
   /** Helioviewer reference for shared interactions that apply to mobile and desktop */
   private hv: Helioviewer;
   /** Playwright page object for interacting with the page */
   private page: Page;
+  /** Bottom control bar locator */
+  private _controls: Locator;
   /** #accordion-images - Reference to the image layer UI drawer */
   private _image_drawer: Locator;
   /** [drawersec=accordion-images] - Ref to the button which opens the image drawer */
@@ -24,6 +27,7 @@ class HvMobile {
   constructor(page: Page, info: TestInfo | null = null) {
     this.page = page;
     this.hv = new Helioviewer(page, info);
+    this._controls = this.page.locator(".hvbottombar");
     this._image_drawer = this.page.locator("#accordion-images");
     this._image_drawer_btn = this.page.locator('[drawersec="accordion-images"]');
     this._drawer = this.page.locator("#hv-drawer-left");
@@ -38,14 +42,15 @@ class HvMobile {
    * that the first image layer has been loaded.
    */
   private async _WaitForInitialImageLayer() {
-    let layerAccordion = await this.page.locator("#tileLayerAccordion");
-    let imageLayers = await layerAccordion.locator(".dynaccordion-section");
-    await expect(imageLayers).toHaveCount(1);
+    let layerAccordion = this.page.locator("#tileLayerAccordion");
+    let imageLayers = layerAccordion.locator(".dynaccordion-section");
+    await expect(imageLayers).toHaveCount(1, { timeout: 30000 });
   }
 
   /** Navigates to the mobile helioviewer page */
   async Load() {
     await this.page.goto("/");
+    await this.page.evaluate(() => console.log(localStorage.getItem("settings")));
     // Wait for the first image layer to be loaded
     await this._WaitForInitialImageLayer();
 
@@ -69,8 +74,15 @@ class HvMobile {
    * @note Mobile doesn't have a loading spinner, so we can't easily wait for
    *       all events to finish loading.
    */
-  async WaitForLoad() {
+  async WaitForLoad(): Promise<void> {
     await this.hv.WaitForImageLoad();
+  }
+
+  /**
+   * Alias for WaitForLoad to align with MobileInterface
+   */
+  async WaitForLoadingComplete(): Promise<void> {
+    return await this.WaitForLoad();
   }
 
   /**
@@ -281,6 +293,49 @@ class HvMobile {
    */
   async CenterViewport() {
     await this.page.locator("#hvmobscale_div #center-button").tap();
+  }
+
+  async GetLoadedDate(): Promise<Date> {
+    const currentDate = await this.page.getByLabel("Observation date", { exact: true }).inputValue();
+    const currentTime = await this.page.getByRole("textbox", { name: "Observation time" }).inputValue();
+    const date = new Date(currentDate + " " + currentTime + "Z");
+    expect(date.getTime()).not.toBeNaN();
+    return date;
+  }
+
+  async SetObservationDateTime(date: string, time: string) {
+    await this._controls.getByLabel("Observation date", { exact: true }).click();
+    await this._controls.getByLabel("Observation date", { exact: true }).fill(date);
+    await this._controls.getByLabel("Observation time").click();
+    // On mobile, the flatpickr controls must be used for times.
+    const times = time.split(":");
+    await this.page.locator(".flatpickr-calendar").getByLabel("Hour").click();
+    await this.page.locator(".flatpickr-calendar").getByLabel("Hour").fill(times[0]);
+    await this.page.locator(".flatpickr-calendar").getByLabel("Minute").click();
+    await this.page.locator(".flatpickr-calendar").getByLabel("Minute").fill(times[1]);
+    await this.page.locator(".flatpickr-calendar").getByLabel("Second").click();
+    await this.page.locator(".flatpickr-calendar").getByLabel("Second").fill(times[2]);
+    await this.page.locator(".flatpickr-calendar").getByLabel("Second").press("Enter");
+  }
+
+  async SetObservationDateTimeFromDate(date: Date): Promise<void> {
+    const dateParts = date.toISOString().split("T")[0].split("-");
+    const dateString = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]}`;
+
+    const timeParts = date.toISOString().split("T")[1].split(":");
+    const timeSeconds = timeParts[2].split(".")[0];
+    const timeString = `${timeParts[0]}:${timeParts[1]}:${timeSeconds}`;
+    await this.SetObservationDateTime(dateString, timeString);
+  }
+
+  async JumpForwardDateWithSelection(seconds: number): Promise<void> {
+    await this._controls.getByLabel("Jump:").selectOption(seconds.toString());
+    await this._controls.getByAltText("Timeframe right arrow").click();
+  }
+
+  async JumpBackwardsDateWithSelection(seconds: number): Promise<void> {
+    await this._controls.getByLabel("Jump:").selectOption(seconds.toString());
+    await this._controls.getByAltText("Timeframe left arrow").click();
   }
 
   /**
