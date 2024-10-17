@@ -400,6 +400,17 @@ class EventTree {
   }
 
   /**
+   * This function checks if the given event_type node is halfchecked (not all of its childrens are selected) in event tree.
+   * @param {string} event_type, The event type name pointing to the node in tree (e.g. "Active Region", "Corona Hole").
+   * @return {Promise<void>} A promise for you to wait for assertion to complete.
+   */
+  async assertEventTypeNodeHalfChecked(event_type: string): Promise<void> {
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
+    const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
+    await expect(eventTypeNode).toHaveClass(/jstree-undetermined/);
+  }
+
+  /**
    * This function checks if the given frm node is unchecked in event tree.
    * @param {string} event_type, The event type name pointing to the node in tree (e.g. "Active Region", "Corona Hole").
    * @param {string} frm, The frm name pointing to the node in tree (e.g. "NOAA SWPC Observer", "SPoCA").
