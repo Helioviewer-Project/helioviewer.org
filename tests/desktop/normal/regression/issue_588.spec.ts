@@ -6,7 +6,7 @@ import * as fs from "fs";
  * This test is a regression test for proving issue 588 is fixed for the given helioviewer
  * @see https://github.com/Helioviewer-Project/helioviewer.org/issues/588
  */
-test("Issue 588, special characters in event tree causing to tree to fail", async ({ page, browser }) => {
+test("Issue 588, special characters in event tree causing to tree to fail", async ({ page, browser }, info) => {
   // Mock API events request to include problem data which creates bug
   await page.route("**/*action=events&sources=HEK*", async (route) => {
     // Fetch original response.
@@ -541,7 +541,7 @@ test("Issue 588, special characters in event tree causing to tree to fail", asyn
   });
 
   // load helioviewer
-  let hv = new Helioviewer(page);
+  let hv = new Helioviewer(page, info);
 
   // Action 1 : BROWSE TO HELIOVIEWER
   await hv.Load();
@@ -554,33 +554,34 @@ test("Issue 588, special characters in event tree causing to tree to fail", asyn
 
   // Mocked event_type , frms and attached event instances should all be correctly in the event tree
   expect(await eventTree.hasEventType("Topological Object")).toBe(true);
-  expect(await eventTree.hasFRM("Topological Object", "SSW PFSS v2 + null point")).toBe(true);
-  expect(await eventTree.frmEventCount("Topological Object", "SSW PFSS v2 + null point")).toBe(3);
+
+  expect(await eventTree.hasFRM("Topological Object", "SSW PFSS v2 + null point finder v20180808")).toBe(true);
+  expect(await eventTree.frmEventCount("Topological Object", "SSW PFSS v2 + null point finder v20180808")).toBe(3);
   expect(
     await eventTree.frmHasEventInstance(
       "Topological Object",
-      "SSW PFSS v2 + null point",
+      "SSW PFSS v2 + null point finder v20180808",
       "Topological Object 332.66,52.80"
     )
   ).toBe(true);
   expect(
     await eventTree.frmHasEventInstance(
       "Topological Object",
-      "SSW PFSS v2 + null point",
+      "SSW PFSS v2 + null point finder v20180808",
       "Topological Object 34.87,51.77"
     )
   ).toBe(true);
   expect(
     await eventTree.frmHasEventInstance(
       "Topological Object",
-      "SSW PFSS v2 + null point",
+      "SSW PFSS v2 + null point finder v20180808",
       "Topological Object 204.85,40.70"
     )
   ).toBe(true);
   expect(
     await eventTree.frmHasEventInstance(
       "Topological Object",
-      "SSW PFSS v2 + null point",
+      "SSW PFSS v2 + null point finder v20180808",
       "Topological Object Not Exists"
     )
   ).toBe(false);
@@ -602,49 +603,49 @@ test("Issue 588, special characters in event tree causing to tree to fail", asyn
   await eventTree.assertEventNotVisible("Topological Object 34.87,51.77");
   await eventTree.assertEventNotVisible("Topological Object 204.85,40.70");
 
-  // Action 5: Check frm "SSW PFSS v2 + null point" from the event tree
-  await eventTree.toggleCheckFRM("Topological Object", "SSW PFSS v2 + null point");
+  // Action 5: Check frm "SSW PFSS v2 + null point finder v20180808" from the event tree
+  await eventTree.toggleCheckFRM("Topological Object", "SSW PFSS v2 + null point finder v20180808");
 
-  // All event markers belong to "SSW PFSS v2 + null point" should be visible
+  // All event markers belong to "SSW PFSS v2 + null point finder v20180808" should be visible
   await eventTree.assertEventVisible("Topological Object 332.66,52.80");
   await eventTree.assertEventVisible("Topological Object 34.87,51.77");
   await eventTree.assertEventVisible("Topological Object 204.85,40.70");
 
-  // Action 6: Uncheck frm "SSW PFSS v2 + null point" from the event tree
-  await eventTree.toggleCheckFRM("Topological Object", "SSW PFSS v2 + null point");
+  // Action 6: Uncheck frm "SSW PFSS v2 + null point finder v20180808" from the event tree
+  await eventTree.toggleCheckFRM("Topological Object", "SSW PFSS v2 + null point finder v20180808");
 
-  // All event markers belong to "SSW PFSS v2 + null point" should NOT be visible
+  // All event markers belong to "SSW PFSS v2 + null point finder v20180808" should NOT be visible
   await eventTree.assertEventNotVisible("Topological Object 332.66,52.80");
   await eventTree.assertEventNotVisible("Topological Object 34.87,51.77");
   await eventTree.assertEventNotVisible("Topological Object 204.85,40.70");
 
-  // Action 6: Open up the frm branch of "SSW PFSS v2 + null point" to see all event instance nodes under this branch
-  await eventTree.toggleBranchFRM("Topological Object", "SSW PFSS v2 + null point");
+  // Action 6: Open up the frm branch of "SSW PFSS v2 + null point finder v20180808" to see all event instance nodes under this branch
+  await eventTree.toggleBranchFRM("Topological Object", "SSW PFSS v2 + null point finder v20180808");
 
   // Tree node for event instance should be visible
   await eventTree.assertEventInstanceTreeNodeVisible(
     "Topological Object",
-    "SSW PFSS v2 + null point",
+    "SSW PFSS v2 + null point finder v20180808",
     "Topological Object 332.66,52.80"
   );
 
-  // Action 7: Close the frm branch of "SSW PFSS v2 + null point" to hide all event instance nodes under this branch
-  await eventTree.toggleBranchFRM("Topological Object", "SSW PFSS v2 + null point");
+  // Action 7: Close the frm branch of "SSW PFSS v2 + null point finder v20180808" to hide all event instance nodes under this branch
+  await eventTree.toggleBranchFRM("Topological Object", "SSW PFSS v2 + null point finder v20180808");
 
   // Tree node for event instance should NOT be visible
   await eventTree.assertEventInstanceTreeNodeNotVisible(
     "Topological Object",
-    "SSW PFSS v2 + null point",
+    "SSW PFSS v2 + null point finder v20180808",
     "Topological Object 332.66,52.80"
   );
 
-  // Action 8: Open up the frm branch of "SSW PFSS v2 + null point" to see all event instance nodes under this branch
-  await eventTree.toggleBranchFRM("Topological Object", "SSW PFSS v2 + null point");
+  // Action 8: Open up the frm branch of "SSW PFSS v2 + null point finder v20180808" to see all event instance nodes under this branch
+  await eventTree.toggleBranchFRM("Topological Object", "SSW PFSS v2 + null point finder v20180808");
 
   // Action 9: Check event instance node "Topological Object 332.66,52.80" to see event marker attached to it
   await eventTree.toggleCheckEventInstance(
     "Topological Object",
-    "SSW PFSS v2 + null point",
+    "SSW PFSS v2 + null point finder v20180808",
     "Topological Object 332.66,52.80"
   );
 
@@ -656,19 +657,19 @@ test("Issue 588, special characters in event tree causing to tree to fail", asyn
   // Action 9: UnCheck event instance node "Topological Object 332.66,52.80" to hide event marker attached to it
   await eventTree.toggleCheckEventInstance(
     "Topological Object",
-    "SSW PFSS v2 + null point",
+    "SSW PFSS v2 + null point finder v20180808",
     "Topological Object 332.66,52.80"
   );
   // Action 10: Check event instance node "Topological Object 34.87,51.77" to show event marker attached to it
   await eventTree.toggleCheckEventInstance(
     "Topological Object",
-    "SSW PFSS v2 + null point",
+    "SSW PFSS v2 + null point finder v20180808",
     "Topological Object 34.87,51.77"
   );
   // Action 11: Check event instance node "Topological Object 204.85,40.70" to show event marker attached to it
   await eventTree.toggleCheckEventInstance(
     "Topological Object",
-    "SSW PFSS v2 + null point",
+    "SSW PFSS v2 + null point finder v20180808",
     "Topological Object 204.85,40.70"
   );
 
@@ -698,8 +699,8 @@ test("Issue 588, special characters in event tree causing to tree to fail", asyn
   await eventTree.assertEventNotHighlighted("Topological Object 34.87,51.77");
   await eventTree.assertEventNotHighlighted("Topological Object 204.85,40.70");
 
-  // Action 15: Hover on our frm node  "SSW PFSS v2 + null point" inside the event tree
-  await eventTree.hoverOnFRM("Topological Object", "SSW PFSS v2 + null point");
+  // Action 15: Hover on our frm node  "SSW PFSS v2 + null point finder v20180808" inside the event tree
+  await eventTree.hoverOnFRM("Topological Object", "SSW PFSS v2 + null point finder v20180808");
 
   // Assert markers should be visible and highlighted
   await eventTree.assertEventHighlighted("Topological Object 34.87,51.77");
@@ -715,7 +716,7 @@ test("Issue 588, special characters in event tree causing to tree to fail", asyn
   // Action 17: Hover on our event instance node  "Topological Object 34.87,51.77" inside the event tree
   await eventTree.hoverOnEventInstance(
     "Topological Object",
-    "SSW PFSS v2 + null point",
+    "SSW PFSS v2 + null point finder v20180808",
     "Topological Object 34.87,51.77"
   );
 
@@ -726,7 +727,7 @@ test("Issue 588, special characters in event tree causing to tree to fail", asyn
   // Action 18: Hover on our event instance node  "Topological Object 204.85,40.70" inside the event tree
   await eventTree.hoverOnEventInstance(
     "Topological Object",
-    "SSW PFSS v2 + null point",
+    "SSW PFSS v2 + null point finder v20180808",
     "Topological Object 204.85,40.70"
   );
 

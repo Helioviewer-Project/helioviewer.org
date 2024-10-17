@@ -25,7 +25,7 @@ class EventTree {
    * @return A promise that resolves to a boolean value indicating whether the event type exists in the event tree (true) or not (false).
    */
   async hasEventType(event_type: string): Promise<boolean> {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeCount = await this.root.getByRole("listitem").filter({ has: eventTypeLink }).count();
     return eventTypeCount == 1;
   }
@@ -37,10 +37,10 @@ class EventTree {
    * @return promise to resolve true or false
    **/
   async hasFRM(event_type: string, frm: string): Promise<boolean> {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNodeCount = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink }).count();
 
     return eventFRMNodeCount == 1;
@@ -54,10 +54,10 @@ class EventTree {
    * @return promise to resolve the number of event instances under frm
    **/
   async frmEventCount(event_type: string, frm: string): Promise<number> {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
     return await eventFRMNode.getByRole("listitem", { includeHidden: true }).count();
@@ -71,10 +71,10 @@ class EventTree {
    * @return promise to resolve true or false
    **/
   async frmHasEventInstance(event_type: string, frm: string, event_instance: string): Promise<boolean> {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
     const eventInstanceLink = this.page.getByRole("link", { name: event_instance, includeHidden: true });
@@ -93,7 +93,11 @@ class EventTree {
    * @return void promise about the task is done
    **/
   async toggleCheckEventType(event_type: string) {
-    await this.root.getByRole("link", { name: event_type }).getByRole("insertion").first().click();
+    await this.root
+      .getByRole("link", { name: EventTree.makeNumericRegex(event_type) })
+      .getByRole("insertion")
+      .first()
+      .click();
   }
 
   /**
@@ -104,10 +108,14 @@ class EventTree {
    * @return void promise about the task is done
    **/
   async toggleCheckFRM(event_type: string, frm: string) {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    await eventTypeNode.getByRole("link", { name: frm }).getByRole("insertion").first().click();
+    await eventTypeNode
+      .getByRole("link", { name: EventTree.makeNumericRegex(frm) })
+      .getByRole("insertion")
+      .first()
+      .click();
   }
 
   /**
@@ -119,10 +127,10 @@ class EventTree {
    * @return void promise about the task is done
    **/
   async toggleCheckEventInstance(event_type: string, frm: string, event_instance: string) {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
     await eventFRMNode.getByRole("link", { name: event_instance }).getByRole("insertion").first().click();
@@ -136,10 +144,10 @@ class EventTree {
    * @return void promise about the task is done
    **/
   async toggleBranchFRM(event_type: string, frm: string) {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
     await eventFRMNode.getByRole("insertion").first().click();
@@ -153,13 +161,13 @@ class EventTree {
    * @return void promise about the assertion is done
    **/
   async assertEventInstanceTreeNodeVisible(event_type: string, frm: string, event_instance: string) {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
-    expect(eventFRMNode.getByRole("link", { name: event_instance })).toBeVisible();
+    await expect(eventFRMNode.getByRole("link", { name: event_instance })).toBeVisible();
   }
 
   /**
@@ -170,13 +178,13 @@ class EventTree {
    * @return void promise about the assertion is done
    **/
   async assertEventInstanceTreeNodeNotVisible(event_type: string, frm: string, event_instance: string) {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
-    expect(eventFRMNode.getByRole("link", { name: event_instance })).not.toBeVisible();
+    await expect(eventFRMNode.getByRole("link", { name: event_instance })).not.toBeVisible();
   }
 
   /**
@@ -186,9 +194,12 @@ class EventTree {
    * @return void promise about the task is done
    **/
   async hoverOnEventType(event_type: string) {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
-    await eventTypeNode.getByRole("link", { name: event_type }).locator("nth=0").hover();
+    await eventTypeNode
+      .getByRole("link", { name: EventTree.makeNumericRegex(event_type) })
+      .locator("nth=0")
+      .hover();
   }
 
   /**
@@ -199,10 +210,10 @@ class EventTree {
    * @return void promise about the task is done
    **/
   async hoverOnFRM(event_type: string, frm: string) {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
     await eventFRMNode.getByRole("link", { name: frm }).locator("nth=0").hover();
@@ -217,10 +228,10 @@ class EventTree {
    * @return void promise about the assertion is done
    **/
   async hoverOnEventInstance(event_type: string, frm: string, event_instance: string) {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
     await eventFRMNode.getByRole("link", { name: event_instance }).hover();
@@ -232,7 +243,7 @@ class EventTree {
    * @return void promise about the assertion is done
    **/
   async assertEventVisible(event_instance: string) {
-    expect(this.page.getByTestId(`event-marker-${event_instance}`)).toBeVisible();
+    await expect(this.page.getByTestId(`event-marker-${event_instance}`)).toBeVisible();
   }
 
   /**
@@ -241,7 +252,7 @@ class EventTree {
    * @return void promise about the assertion is done
    **/
   async assertEventNotVisible(event_instance: string) {
-    expect(this.page.getByTestId(`event-marker-${event_instance}`)).not.toBeVisible();
+    await expect(this.page.getByTestId(`event-marker-${event_instance}`)).not.toBeVisible();
   }
 
   /**
@@ -250,7 +261,7 @@ class EventTree {
    * @return void promise about the assertion is done
    **/
   async assertEventLabelVisible(event_instance: string) {
-    expect(this.page.getByTestId(`event-label-${event_instance}`)).toBeVisible();
+    await expect(this.page.getByTestId(`event-label-${event_instance}`)).toBeVisible();
   }
 
   /**
@@ -259,7 +270,7 @@ class EventTree {
    * @return void promise about the assertion is done
    **/
   async assertEventLabelNotVisible(event_instance: string) {
-    expect(this.page.getByTestId(`event-label-${event_instance}`)).not.toBeVisible();
+    await expect(this.page.getByTestId(`event-label-${event_instance}`)).not.toBeVisible();
   }
 
   /**
@@ -334,7 +345,7 @@ class EventTree {
    * @return {Promise<void>} A promise for you to wait for assertion to complete.
    */
   async assertEventTypeNodeChecked(event_type: string): Promise<void> {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
     await expect(eventTypeNode).toHaveClass(/jstree-checked/);
   }
@@ -346,10 +357,10 @@ class EventTree {
    * @return {Promise<void>} A promise for you to wait for assertion to complete.
    */
   async assertFrmNodeChecked(event_type: string, frm: string): Promise<void> {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
     await expect(eventFRMNode).toHaveClass(/jstree-checked/);
@@ -363,13 +374,13 @@ class EventTree {
    * @return {Promise<void>} A promise for you to wait for assertion to complete.
    */
   async assertEventInstanceNodeChecked(event_type: string, frm: string, event_instance: string): Promise<void> {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
-    const eventInstanceLink = this.page.getByRole("link", { name: event_instance, includeHidden: true });
+    const eventInstanceLink = this.page.getByRole("link", { name: event_instance, includeHidden: true, exact: true });
     const eventInstanceNode = await eventFRMNode
       .getByRole("listitem", { includeHidden: true })
       .filter({ has: eventInstanceLink });
@@ -383,7 +394,7 @@ class EventTree {
    * @return {Promise<void>} A promise for you to wait for assertion to complete.
    */
   async assertEventTypeNodeUnchecked(event_type: string): Promise<void> {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
     await expect(eventTypeNode).toHaveClass(/jstree-unchecked/);
   }
@@ -395,10 +406,10 @@ class EventTree {
    * @return {Promise<void>} A promise for you to wait for assertion to complete.
    */
   async assertFrmNodeUnchecked(event_type: string, frm: string): Promise<void> {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
     await expect(eventFRMNode).toHaveClass(/jstree-unchecked/);
@@ -412,13 +423,13 @@ class EventTree {
    * @return {Promise<void>} A promise for you to wait for assertion to complete.
    */
   async assertEventInstanceNodeUnchecked(event_type: string, frm: string, event_instance: string): Promise<void> {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 
-    const eventFRMLink = this.page.getByRole("link", { name: frm });
+    const eventFRMLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(frm) });
     const eventFRMNode = await eventTypeNode.getByRole("listitem").filter({ has: eventFRMLink });
 
-    const eventInstanceLink = this.page.getByRole("link", { name: event_instance, includeHidden: true });
+    const eventInstanceLink = this.page.getByRole("link", { name: event_instance, includeHidden: true, exact: true });
     const eventInstanceNode = await eventFRMNode
       .getByRole("listitem", { includeHidden: true })
       .filter({ has: eventInstanceLink });
@@ -431,7 +442,7 @@ class EventTree {
    * @return {Promise<void>} A promise for you to wait for assertion to complete.
    */
   async assertEventTypeNodeVisible(event_type: string): Promise<void> {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
     return expect(eventTypeNode).toBeVisible();
   }
@@ -442,9 +453,25 @@ class EventTree {
    * @return {Promise<void>} A promise for you to wait for assertion to complete.
    */
   async assertEventTypeNodeNotVisible(event_type: string): Promise<void> {
-    const eventTypeLink = this.page.getByRole("link", { name: event_type });
+    const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
     return expect(eventTypeNode).not.toBeVisible();
+  }
+
+  /**
+   * Creates a dynamic regular expression to match a pattern like "text (number)".
+   * If no text is provided, it matches any text before the number.
+   *
+   * @static
+   * @param {string} [treeVariable=""] - The specific frm or eventtype name to vturn into \frm (5)\.
+   * @returns {RegExp} The dynamically created regular expression to match the given string + numbers.
+   */
+  static makeNumericRegex(treeVariable: string = ""): RegExp {
+    // Escape special characters in the treeVariable if necessary
+    const escapedTreeVariable = treeVariable ? treeVariable.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") : ".*";
+
+    // Return a dynamically created regex
+    return new RegExp(`^(${escapedTreeVariable})( \\(\\d+\\))?$`);
   }
 }
 
