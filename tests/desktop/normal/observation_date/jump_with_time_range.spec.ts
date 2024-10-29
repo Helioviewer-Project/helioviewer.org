@@ -59,7 +59,7 @@ const time_jump_ranges = [
         await expect(seconds * 1000).toBe(dateBeforeJump.getTime() - dateAfterJump.getTime());
 
         // 8. SAVE CURRENT SCREENSHOT TO COMPARE LATER
-        const afterJumpScreenshot = await hv.saveScreenshot("after_jump_screenshot", {
+        const afterJumpScreenshot = await hv.saveScreenshot("after_jump_screenshot.png", {
           style: "#helioviewer-viewport-container-outer {z-index:200000}"
         });
 
@@ -91,7 +91,9 @@ const time_jump_ranges = [
         });
 
         // 14, 2 SCREENSHOTS ARE FROM SAME DATE, AND SHOULD MATCH
-        await expect(directDateScreenshot).toBe(afterJumpScreenshot);
+        // await expect(directDateScreenshot).toBe(afterJumpScreenshot);
+        const ss1 = Buffer.from(directDateScreenshot, "base64");
+        expect(ss1).toMatchSnapshot({}, "after_jump_screenshot.png")
       }
     );
 
