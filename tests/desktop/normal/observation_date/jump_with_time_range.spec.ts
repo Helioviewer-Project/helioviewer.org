@@ -93,7 +93,7 @@ const time_jump_ranges = [
         // 14, 2 SCREENSHOTS ARE FROM SAME DATE, AND SHOULD MATCH
         // await expect(directDateScreenshot).toBe(afterJumpScreenshot);
         const ss1 = Buffer.from(directDateScreenshot, "base64");
-        expect(ss1).toMatchSnapshot({}, "after_jump_screenshot.png")
+        expect(ss1).toMatchSnapshot("after_jump_screenshot.png");
       }
     );
 
