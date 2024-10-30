@@ -59,7 +59,7 @@ const time_jump_ranges = [
         await expect(seconds * 1000).toBe(dateBeforeJump.getTime() - dateAfterJump.getTime());
 
         // 8. SAVE CURRENT SCREENSHOT TO COMPARE LATER
-        await hv.saveScreenshot("after-jump-screenshot.png", {
+        await hv.saveScreenshot(`after-jump-screenshot-${jump_label}.png`, {
           style: "#helioviewer-viewport-container-outer {z-index:200000}"
         });
 
@@ -93,7 +93,7 @@ const time_jump_ranges = [
         // 14, 2 SCREENSHOTS ARE FROM SAME DATE, AND SHOULD MATCH
         // await expect(directDateScreenshot).toBe(afterJumpScreenshot);
         const ss1 = Buffer.from(directDateScreenshot, "base64");
-        expect(ss1).toMatchSnapshot("after-jump-screenshot.png");
+        expect(ss1).toMatchSnapshot(`after-jump-screenshot-${jump_label}.png`);
       }
     );
 
@@ -144,7 +144,7 @@ const time_jump_ranges = [
         await expect(randomMilliseconds).toBe(initialDate.getTime() - dateAfterJumpForward.getTime());
 
         // 8. TAKE A PICTURE , WE WILL COMPARE LATER
-        await hv.saveScreenshot("navigated-date-screenshot.png", {
+        await hv.saveScreenshot(`navigated-date-screenshot-${jump_label}.png`, {
           mask: [page.locator("#timestep-select")]
         });
 
@@ -177,7 +177,7 @@ const time_jump_ranges = [
         });
 
         const ss = Buffer.from(directDateScreenshot, "base64");
-        expect(ss).toMatchSnapshot("navigated-date-screenshot.png");
+        expect(ss).toMatchSnapshot(`navigated-date-screenshot-${jump_label}.png`);
       }
     );
   });
