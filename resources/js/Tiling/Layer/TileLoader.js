@@ -23,6 +23,16 @@ var TileLoader = Class.extend(
         this.loadedTiles   = {};
         this.width         = 0;
         this.height        = 0;
+        /**
+         * This tileset ID is a unique ID which is incremented each time
+         * all current tiles are reloaded. This happens when the user changes
+         * the current data source, or when the user zooms in and out. It is
+         * used to deal with a race condition where tiles from an older tileset
+         * may finish loading after the newer tiles are loaded. We use this
+         * tileset ID to choose which tile should be displayed in the event
+         * of this race condition.
+         */
+        this.tileSetId     = 1;
         this.tileVisibilityRange  = tileVisibilityRange;
     },
 
@@ -106,7 +116,7 @@ var TileLoader = Class.extend(
                 }
                 if (!this.loadedTiles[i][j] && this.validTiles[i][j]) {
                     this.loadedTiles[i][j] = true;
-                    $(this.domNode).trigger('get-tile', [i, j]);
+                    $(this.domNode).trigger('get-tile', [i, j, this.tileSetId]);
                 }
             }
         }
@@ -144,6 +154,7 @@ var TileLoader = Class.extend(
      * @param {Boolean} removeOldTilesFirst Whether old tiles should be removed before or after new ones are loaded.
      */
     reloadTiles: function (removeOldTilesFirst) {
+        this.tileSetId += 1;
         this.removeOldTilesFirst = removeOldTilesFirst;
         this.numTilesLoaded      = 0;
         this.loadedTiles         = {};
@@ -161,7 +172,7 @@ var TileLoader = Class.extend(
         this._iterateVisibilityRange(this.tileVisibilityRange, (i, j) => {
             if (this.validTiles[i] && this.validTiles[i][j]) {
                 this.numTiles += 1;
-                $(this.domNode).trigger('get-tile', [i, j, $.proxy(this.onTileLoadComplete, this)]);
+                $(this.domNode).trigger('get-tile', [i, j, this.tileSetId, $.proxy(this.onTileLoadComplete, this)]);
 
                 if (!this.loadedTiles[i]) {
                     this.loadedTiles[i] = {};
@@ -193,6 +204,7 @@ var TileLoader = Class.extend(
     },
 
     onTileLoadComplete: function () {
+        // Only count tiles matching the latest tileset
         this.numTilesLoaded += 1;
 
         // After all tiles have loaded, stop indicator (and remove old-tiles if haven't already)
