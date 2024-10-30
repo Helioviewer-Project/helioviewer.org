@@ -437,6 +437,7 @@ class Helioviewer implements DesktopInterface {
 
     // save file to info report
     const filepath = this.info.snapshotPath(filename);
+    fs.mkdirSync(this.info.snapshotDir, { recursive: true });
     fs.writeFileSync(filepath, Buffer.from(base64Image, "base64"));
     await this.info.attach(filename, { path: filepath });
 
