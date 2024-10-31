@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
 import { Helioviewer } from "../../../page_objects/helioviewer";
-import { mockEvents, mockEventsFromJson } from "../../../utils/events";
-import { readFile } from 'fs/promises';
+import { mockEvents } from "../../../utils/events";
+import { readFile } from "fs/promises";
 
 /**
  * This test mocks some random events for CCMC
  * then selects some specific event instances,
- * then asserts all event markers for matching event instances, should be visible 
+ * then asserts all event markers for matching event instances, should be visible
  * also asserts all of the other nodes, should be unchecked
  */
 test("Event instances should control visibility of event markers", async ({ page, browser }, info) => {
@@ -55,9 +55,9 @@ test("Event instances should control visibility of event markers", async ({ page
   await ccmc.toggleBranchFRM("bet2", "bet2frm2");
 
   // Action 4: Select some of the event instances
-  await ccmc.toggleCheckEventInstance("aet1","aet1frm1","aet1frm1ei2");
-  await ccmc.toggleCheckEventInstance("bet2","bet2frm1","bet2frm1ei3");
-  await ccmc.toggleCheckEventInstance("bet2","bet2frm2","bet2frm2ei1");
+  await ccmc.toggleCheckEventInstance("aet1", "aet1frm1", "aet1frm1ei2");
+  await ccmc.toggleCheckEventInstance("bet2", "bet2frm1", "bet2frm1ei3");
+  await ccmc.toggleCheckEventInstance("bet2", "bet2frm2", "bet2frm2ei1");
 
   // Action 5: Assert all event markers belong to matching event instances should be visible,
   await ccmc.assertEventVisible("aet1frm1ei2");
@@ -71,15 +71,12 @@ test("Event instances should control visibility of event markers", async ({ page
   await ccmc.assertEventNotVisible("bet2frm2ei2");
 
   // Action 7: Select again same event instances to not to select them
-  await ccmc.toggleCheckEventInstance("aet1","aet1frm1","aet1frm1ei2");
-  await ccmc.toggleCheckEventInstance("bet2","bet2frm1","bet2frm1ei3");
-  await ccmc.toggleCheckEventInstance("bet2","bet2frm2","bet2frm2ei1");
+  await ccmc.toggleCheckEventInstance("aet1", "aet1frm1", "aet1frm1ei2");
+  await ccmc.toggleCheckEventInstance("bet2", "bet2frm1", "bet2frm1ei3");
+  await ccmc.toggleCheckEventInstance("bet2", "bet2frm2", "bet2frm2ei1");
 
   // Action 8: Now matching markers should NOT be visible
   await ccmc.assertEventNotVisible("aet1frm1ei2");
   await ccmc.assertEventNotVisible("bet2frm1ei3");
   await ccmc.assertEventNotVisible("bet2frm2ei1");
-
 });
-
-

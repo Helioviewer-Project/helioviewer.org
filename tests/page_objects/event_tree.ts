@@ -431,7 +431,7 @@ class EventTree {
    * @param {string} frm, The frm name pointing to the node in tree (e.g. "NOAA SWPC Observer", "SPoCA").
    * @return {Promise<void>} A promise for you to wait for assertion to complete.
    */
-  async assertFrmNodeHalfChecked(event_type: string, frm:string): Promise<void> {
+  async assertFrmNodeHalfChecked(event_type: string, frm: string): Promise<void> {
     const eventTypeLink = this.page.getByRole("link", { name: EventTree.makeNumericRegex(event_type) });
     const eventTypeNode = await this.root.getByRole("listitem").filter({ has: eventTypeLink });
 

@@ -47,3 +47,4 @@ node_modules
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+tests/desktop/normal/center_image.spec.ts-snapshots/
