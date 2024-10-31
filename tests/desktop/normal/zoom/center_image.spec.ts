@@ -1,13 +1,13 @@
 import { test, expect } from "@playwright/test";
-import { Helioviewer } from "../../page_objects/helioviewer";
+import { Helioviewer } from "../../../page_objects/helioviewer";
 
 /**
  * This test;
  * - load helioviewer
  * - take screenshot
-   - drag sun to random place
-   - press c to center sun
-   - centered sun should match initial sun
+ * - drag sun to random place
+ * - press c to center sun
+ * - centered sun should match initial sun
  */
 test("Pressing C should center sun", async ({ page }, info) => {
   let hv = new Helioviewer(page, info);

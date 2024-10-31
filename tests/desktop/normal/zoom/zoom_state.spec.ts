@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { Helioviewer } from "../../page_objects/helioviewer";
+import { Helioviewer } from "../../../page_objects/helioviewer";
 
 /**
  * This test simply adds and removes images layers
@@ -21,3 +21,4 @@ test("Zoom scale is persisted across reload", async ({ page }, info) => {
   await hv.WaitForImageLoad();
   await expect(page).toHaveScreenshot(["zoom_screenshot.png"], { maxDiffPixels: 35, scale: "device" });
 });
+
