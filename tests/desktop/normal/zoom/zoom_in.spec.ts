@@ -6,11 +6,10 @@ import { Helioviewer } from "../../../page_objects/helioviewer";
  * - load helioviewer
  * - zoom one in
  * - take screenshot
- * - load helioviewer with clean state, with ?imageScale=2.42044088 indicating zoom 1 in scale value 
+ * - load helioviewer with clean state, with ?imageScale=2.42044088 indicating zoom 1 in scale value
  * - screenshot should match previous screenshot
  */
 test("Pressing zoom in button should zoom sun in", async ({ page }, info) => {
-
   let hv = new Helioviewer(page, info);
 
   // 1. LOAD HV
@@ -30,9 +29,9 @@ test("Pressing zoom in button should zoom sun in", async ({ page }, info) => {
   // 4. TAKE A SCREENSHOT
   await hv.sunScreenshot("zoom_one_in_with_button_screenshot.png");
 
-  // 5. LOAD HELIOVIEWER WITH CLEAN STATE, WITH ?IMAGESCALE=2.42044088 INDICATING ZOOM 1 IN SCALE VALUE 
+  // 5. LOAD HELIOVIEWER WITH CLEAN STATE, WITH ?IMAGESCALE=2.42044088 INDICATING ZOOM 1 IN SCALE VALUE
   await page.evaluate(() => localStorage.clear());
-  await hv.Load('/?imageScale=2.42044088');
+  await hv.Load("/?imageScale=2.42044088");
   await hv.CloseAllNotifications();
   await hv.OpenSidebar();
 
@@ -45,7 +44,7 @@ test("Pressing zoom in button should zoom sun in", async ({ page }, info) => {
   const zoomOneInWithURL = await hv.sunScreenshot("zoom_one_in_with_url_screenshot");
 
   // 8. BOTH SCREENSHOT SHOULD MATCH
-    expect(Buffer.from(zoomOneInWithURL, "base64")).toMatchSnapshot("zoom_one_in_with_button_screenshot.png");
+  expect(Buffer.from(zoomOneInWithURL, "base64")).toMatchSnapshot("zoom_one_in_with_button_screenshot.png");
 });
 
 /**
@@ -53,11 +52,10 @@ test("Pressing zoom in button should zoom sun in", async ({ page }, info) => {
  * - load helioviewer
  * - zoom one in with keyboard - char
  * - take screenshot
- * - load helioviewer with clean state, with ?imageScale=9.68176352 indicating zoom 1 in scale value 
+ * - load helioviewer with clean state, with ?imageScale=9.68176352 indicating zoom 1 in scale value
  * - screenshot should match previous screenshot
  */
 test("Pressing zoom in with keyboard - should zoom sun in", async ({ page }, info) => {
-
   let hv = new Helioviewer(page, info);
 
   // 1. LOAD HV
@@ -79,9 +77,9 @@ test("Pressing zoom in with keyboard - should zoom sun in", async ({ page }, inf
   // 4. TAKE A SCREENSHOT
   await hv.sunScreenshot("zoom_one_in_with_keyboard_screenshot.png");
 
-  // 5. LOAD HELIOVIEWER WITH CLEAN STATE, WITH ?IMAGESCALE=9.68176352 INDICATING ZOOM 1 OUT SCALE VALUE 
+  // 5. LOAD HELIOVIEWER WITH CLEAN STATE, WITH ?IMAGESCALE=9.68176352 INDICATING ZOOM 1 OUT SCALE VALUE
   await page.evaluate(() => localStorage.clear());
-  await hv.Load('/?imageScale=2.42044088');
+  await hv.Load("/?imageScale=2.42044088");
   await hv.CloseAllNotifications();
   await hv.OpenSidebar();
 
@@ -94,6 +92,5 @@ test("Pressing zoom in with keyboard - should zoom sun in", async ({ page }, inf
   const zoomOneInWithURL = await hv.sunScreenshot("zoom_one_in_with_url_screenshot");
 
   // 8. BOTH SCREENSHOT SHOULD MATCH
-    expect(Buffer.from(zoomOneInWithURL, "base64")).toMatchSnapshot("zoom_one_in_with_keyboard_screenshot.png");
+  expect(Buffer.from(zoomOneInWithURL, "base64")).toMatchSnapshot("zoom_one_in_with_keyboard_screenshot.png");
 });
-

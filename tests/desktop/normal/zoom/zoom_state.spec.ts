@@ -21,4 +21,3 @@ test("Zoom scale is persisted across reload", async ({ page }, info) => {
   await hv.WaitForImageLoad();
   await expect(page).toHaveScreenshot(["zoom_screenshot.png"], { maxDiffPixels: 35, scale: "device" });
 });
-
