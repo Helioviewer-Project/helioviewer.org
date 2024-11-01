@@ -471,6 +471,28 @@ class Helioviewer implements DesktopInterface {
 
     return this.saveScreenshot(filename, options);
   }
+
+  /**
+   * Move the viewport by the given amount
+   * @param {number} x Horizontal amount
+   * @param {number} y Vertical amount
+   * @returns {Promise<void>}
+   */
+  async moveViewport(x: number, y: number): Promise<void> {
+    const INITIAL_POSITION = { x: 650, y: 400 };
+    await this.page.mouse.move(INITIAL_POSITION.x, INITIAL_POSITION.y);
+    await this.page.mouse.down();
+    await this.page.mouse.move(INITIAL_POSITION.x + x, INITIAL_POSITION.y + y);
+    await this.page.mouse.up();
+  }
+
+  /**
+   * Center the viewport for the sun
+   * @returns {Promise<void>}
+   */
+  async centerViewport(): Promise<void> {
+    await this.page.locator("#center-button").click();
+  }
 }
 
 export { Helioviewer };
