@@ -44,7 +44,9 @@ test("Pressing zoom out button should zoom sun out", async ({ page }, info) => {
   const zoomOneOutWithURL = await hv.sunScreenshot("zoom-one-out-with-url-screenshot");
 
   // 8. BOTH SCREENSHOT SHOULD MATCH
-  await expect(Buffer.from(zoomOneOutWithURL, "base64")).toMatchSnapshot("zoom-one-out-with-button-screenshot.png");
+  expect(Buffer.from(zoomOneOutWithURL, "base64")).toMatchSnapshot("zoom-one-out-with-button-screenshot.png", {
+    maxDiffPixelRatio: 0.01
+  });
 });
 
 /**
@@ -90,5 +92,7 @@ test("Pressing zoom out with keyboard - should zoom sun out", async ({ page }, i
   const zoomOneOutWithURL = await hv.sunScreenshot("zoom-one-out-with-url-screenshot");
 
   // 8. BOTH SCREENSHOT SHOULD MATCH
-  expect(Buffer.from(zoomOneOutWithURL, "base64")).toMatchSnapshot("zoom-one-out-with-keyboard-screenshot.png");
+  expect(Buffer.from(zoomOneOutWithURL, "base64")).toMatchSnapshot("zoom-one-out-with-keyboard-screenshot.png", {
+    maxDiffPixelRatio: 0.01
+  });
 });

@@ -45,7 +45,7 @@ test("Pressing zoom in button should zoom sun in", async ({ page }, info) => {
 
   // 8. BOTH SCREENSHOT SHOULD MATCH
   expect(Buffer.from(zoomOneInWithURL, "base64")).toMatchSnapshot("zoom-one-in-with-button-screenshot.png", {
-      maxDiffPixelRatio: 0.01
+    maxDiffPixelRatio: 0.01
   });
 });
 
@@ -95,6 +95,6 @@ test("Pressing zoom in with keyboard + should zoom sun in", async ({ page }, inf
 
   // 8. BOTH SCREENSHOT SHOULD MATCH
   expect(Buffer.from(zoomOneInWithURL, "base64")).toMatchSnapshot("zoom-one-in-with-keyboard-screenshot.png", {
-      maxDiffPixelRatio: 0.01
+    maxDiffPixelRatio: 0.01
   });
 });
