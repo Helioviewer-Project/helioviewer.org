@@ -94,7 +94,7 @@ test("News button should display/hide project news and announcements", async ({ 
   // 4. CLICK NEWS BUTTON TO HIDE NEWS
   await hv.toggleNewsAndAnnouncements();
 
-  // 5. ASSERT TEXT FROM FAKE NEWS SHOULD BE VISIBLE
+  // 5. ASSERT TEXT FROM FAKE NEWS SHOULD NOT BE VISIBLE
   await expect(page.getByText("Foo announcement 1")).not.toBeVisible();
   await expect(page.getByText("2001-01-01 01:01:01.000Z UTC")).not.toBeVisible();
   await expect(page.getByText("Foo announcement summary 1")).not.toBeVisible();
