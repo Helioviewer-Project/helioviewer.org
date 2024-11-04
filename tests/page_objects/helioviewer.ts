@@ -493,6 +493,14 @@ class Helioviewer implements DesktopInterface {
   async centerViewport(): Promise<void> {
     await this.page.locator("#center-button").click();
   }
+
+  /**
+   * Click news button in top controls to see news button or hide it
+   * @returns {Promise<void>}
+   */
+  async toggleNewsAndAnnouncements(): Promise<void> {
+    await this.page.locator("#news-button").click();
+  }
 }
 
 export { Helioviewer };
