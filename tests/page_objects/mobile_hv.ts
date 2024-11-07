@@ -7,6 +7,7 @@ import { Helioviewer } from "./helioviewer";
 import { ImageLayer } from "./image_layer";
 import { ScaleIndicator } from "./scale_indicator";
 import { MobileInterface } from "./helioviewer_interface";
+import { MobileURLShare } from "./urlshare";
 
 class HvMobile implements MobileInterface {
   /** Helioviewer reference for shared interactions that apply to mobile and desktop */
@@ -23,15 +24,21 @@ class HvMobile implements MobileInterface {
   private _drawer: Locator;
   /** #hvmobdrawerclose - Ref to button which closes the control drawer */
   private _drawer_close_btn: Locator;
+  public urlshare: MobileURLShare;
 
   constructor(page: Page, info: TestInfo | null = null) {
     this.page = page;
     this.hv = new Helioviewer(page, info);
+    this.urlshare = new MobileURLShare(page);
     this._controls = this.page.locator(".hvbottombar");
     this._image_drawer = this.page.locator("#accordion-images");
     this._image_drawer_btn = this.page.locator('[drawersec="accordion-images"]');
     this._drawer = this.page.locator("#hv-drawer-left");
     this._drawer_close_btn = this.page.locator("#hvmobdrawerclose");
+  }
+
+  async ExpectLayer(index: number, name: string, observatory: string, instrument: string, measurement: string): Promise<void> {
+    await this.hv.ExpectLayer(index, name, observatory, instrument, measurement);
   }
 
   /**
@@ -117,6 +124,11 @@ class HvMobile implements MobileInterface {
   async AddImageLayer() {
     await this.hv.AddImageLayer();
   }
+
+  async RemoveImageLayer(index: number): Promise<void> {
+    await this.hv.RemoveImageLayer(index);
+  }
+
 
   /**
    * Opens or Closes the sidebar menu
