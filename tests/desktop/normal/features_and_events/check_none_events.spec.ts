@@ -1,14 +1,14 @@
-import { test, expect } from "@playwright/test";
-import { Helioviewer } from "../../../page_objects/helioviewer";
+import { test } from "@playwright/test";
 import { mockEvents } from "../../../utils/events";
+import { MobileView, DesktopView, HelioviewerFactory, MobileInterface } from "page_objects/helioviewer_interface";
 
+[MobileView, DesktopView].forEach((view) => {
 /**
  * This test mocks CCMC events, then checks some frm and eventtype, then unchecks all
  * test validates all checkboxes are unchecked and their markers are not visible
  */
-test("UncheckAll should uncheck all event markers that are previously selected also their markers should be hidden", async ({
-  page,
-  browser
+test(`[${view.name} UncheckAll should uncheck all event markers that are previously selected also their markers should be hidden`, {tag: [view.tag]}, async ({
+  page
 }, info) => {
   // mocked event data
   const events = {
@@ -36,14 +36,14 @@ test("UncheckAll should uncheck all event markers that are previously selected a
   await mockEvents(page, events);
 
   // load helioviewer
-  let hv = new Helioviewer(page, info);
+  let hv = HelioviewerFactory.Create(view, page, info) as MobileInterface;
 
   // Action 1 : BROWSE TO HELIOVIEWER
   await hv.Load();
   await hv.CloseAllNotifications();
 
   // Action 2 : Open left sources panel
-  await hv.OpenSidebar();
+  await hv.OpenEventsDrawer();
 
   // Assert parse CCMC tree
   const ccmcTree = hv.parseTree("CCMC");
@@ -96,4 +96,5 @@ test("UncheckAll should uncheck all event markers that are previously selected a
   await ccmcTree.assertEventNotVisible("C+ 77.15%");
   await ccmcTree.assertEventNotVisible("M: 77.15%");
   await ccmcTree.assertEventNotVisible("M: 34.05%");
+});
 });

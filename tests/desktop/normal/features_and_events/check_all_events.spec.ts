@@ -7,7 +7,7 @@ import { MobileView, DesktopView, HelioviewerFactory, MobileInterface } from "pa
    * This test mocks the HEK and CCMC events, then checks all HEK layer,
    * test validates all HEK markers and checkboxes are enabled, but not for all of the CCMCs events
    */
-  test.only(`[${view.name}] CheckAll should check all event markers also their markers for given sources`, {tag: [view.tag]}, async ({
+  test(`[${view.name}] CheckAll should check all event markers also their markers for given sources`, {tag: [view.tag]}, async ({
     page
   }, info) => {
     // mocked event data

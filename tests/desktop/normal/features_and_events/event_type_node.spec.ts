@@ -1,20 +1,21 @@
 import { test } from "@playwright/test";
-import { Helioviewer } from "../../../page_objects/helioviewer";
 import { mockEvents } from "../../../utils/events";
+import { MobileView, DesktopView, HelioviewerFactory, MobileInterface } from "page_objects/helioviewer_interface";
 
+[MobileView, DesktopView].forEach((view) => {
 /**
  * This test mocks some random events for CCMC
  * then selects some specific event_type,
  * then asserts all of the childnodes of event_tree , should be checked,
  * also asserts all of the other nodes, should be unchecked
  */
-test("Checked event type should check all of its child frms and event_instances", async ({ page }, info) => {
+test(`[${view.name}] Checked event type should check all of its child frms and event_instances`, {tag: view.tag}, async ({ page, browser }, info) => {
   // mocked event data
   const events = {
     CCMC: {
       et1: {
         et1frm1: {
-          et1frm1ei1: {},
+        et1frm1ei1: {},
           et1frm1ei2: {}
         }
       },
@@ -36,14 +37,14 @@ test("Checked event type should check all of its child frms and event_instances"
   await mockEvents(page, events);
 
   // load helioviewer
-  let hv = new Helioviewer(page, info);
+  let hv = HelioviewerFactory.Create(view, page, info) as MobileInterface;
 
   // Action 1 : BROWSE TO HELIOVIEWER
   await hv.Load();
   await hv.CloseAllNotifications();
 
   // Action 2 : Open left sources panel
-  await hv.OpenSidebar();
+  await hv.OpenEventsDrawer();
 
   // Parse event tree pieces
   const ccmc = hv.parseTree("CCMC");
@@ -102,7 +103,7 @@ test("Checked event type should check all of its child frms and event_instances"
  * then selects some specific event_type,
  * then reloads the page and validates event_types should still be checked,
  */
-test("Selected event_types should still be selected after page reload", async ({ page, browser }, info) => {
+test(`[${view.name}] Selected event_types should still be selected after page reload`, {tag: view.tag}, async ({ page, browser }, info) => {
   // mocked event data
   const events = {
     CCMC: {
@@ -142,14 +143,14 @@ test("Selected event_types should still be selected after page reload", async ({
   await mockEvents(page, events);
 
   // load helioviewer
-  let hv = new Helioviewer(page, info);
+  let hv = HelioviewerFactory.Create(view, page, info) as MobileInterface;
 
   // Action 1 : BROWSE TO HELIOVIEWER
   await hv.Load();
   await hv.CloseAllNotifications();
 
   // Action 2 : Open left sources panel
-  await hv.OpenSidebar();
+  await hv.OpenEventsDrawer();
 
   // Parse event tree pieces
   const ccmc = hv.parseTree("CCMC");
@@ -161,10 +162,15 @@ test("Selected event_types should still be selected after page reload", async ({
   // Action 4 : Refresh page
   await hv.Load();
   await hv.CloseAllNotifications();
+  // On mobile we need to re-open the drawer to check for checked events.
+  if (view == MobileView) {
+    hv.OpenEventsDrawer();
+  }
 
   // Action 5: Assert all event_type nodes should still be same after refresh
   await ccmc.assertEventTypeNodeChecked("et0");
   await ccmc.assertEventTypeNodeUnchecked("et1");
   await ccmc.assertEventTypeNodeChecked("et2");
   await ccmc.assertEventTypeNodeUnchecked("et3");
+});
 });

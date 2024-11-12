@@ -1,15 +1,15 @@
-import { test, expect } from "@playwright/test";
-import { Helioviewer } from "../../../page_objects/helioviewer";
+import { test } from "@playwright/test";
 import { mockEvents } from "../../../utils/events";
-import { readFile } from "fs/promises";
+import { MobileView, DesktopView, HelioviewerFactory, MobileInterface } from "page_objects/helioviewer_interface";
 
+[MobileView, DesktopView].forEach((view) => {
 /**
  * This test mocks some random events for CCMC
  * then selects some specific event instances,
  * then asserts all event markers for matching event instances, should be visible
  * also asserts all of the other nodes, should be unchecked
  */
-test("Event instances should control visibility of event markers", async ({ page, browser }, info) => {
+test(`[${view.name}] Event instances should control visibility of event markers`, {tag: view.tag}, async ({ page, browser }, info) => {
   // mocked event data
   const events = {
     CCMC: {
@@ -37,14 +37,14 @@ test("Event instances should control visibility of event markers", async ({ page
   await mockEvents(page, events);
 
   // load helioviewer
-  let hv = new Helioviewer(page, info);
+  let hv = HelioviewerFactory.Create(view, page, info) as MobileInterface;
 
   // Action 1 : BROWSE TO HELIOVIEWER
   await hv.Load();
   await hv.CloseAllNotifications();
 
   // Action 2 : Open left sources panel
-  await hv.OpenSidebar();
+  await hv.OpenEventsDrawer();
 
   // Parse event tree pieces
   const ccmc = hv.parseTree("CCMC");
@@ -79,4 +79,5 @@ test("Event instances should control visibility of event markers", async ({ page
   await ccmc.assertEventNotVisible("aet1frm1ei2");
   await ccmc.assertEventNotVisible("bet2frm1ei3");
   await ccmc.assertEventNotVisible("bet2frm2ei1");
+});
 });
