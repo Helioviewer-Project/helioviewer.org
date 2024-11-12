@@ -8,6 +8,7 @@ import { ImageLayer } from "./image_layer";
 import { ScaleIndicator } from "./scale_indicator";
 import { MobileInterface } from "./helioviewer_interface";
 import { MobileURLShare } from "./urlshare";
+import { EventTree } from "./event_tree";
 
 class HvMobile implements MobileInterface {
   /** Helioviewer reference for shared interactions that apply to mobile and desktop */
@@ -20,6 +21,8 @@ class HvMobile implements MobileInterface {
   private _image_drawer: Locator;
   /** [drawersec=accordion-images] - Ref to the button which opens the image drawer */
   private _image_drawer_btn: Locator;
+  /** [drawersec=accordion-images] - Ref to the button which opens the events drawer */
+  private _events_drawer_btn: Locator;
   /** #hv-drawer-left - Ref to the drawer container which contains all the control elements */
   private _drawer: Locator;
   /** #hvmobdrawerclose - Ref to button which closes the control drawer */
@@ -33,6 +36,7 @@ class HvMobile implements MobileInterface {
     this._controls = this.page.locator(".hvbottombar");
     this._image_drawer = this.page.locator("#accordion-images");
     this._image_drawer_btn = this.page.locator('[drawersec="accordion-images"]');
+    this._events_drawer_btn = this.page.getByText('Features & Events');
     this._drawer = this.page.locator("#hv-drawer-left");
     this._drawer_close_btn = this.page.locator("#hvmobdrawerclose");
   }
@@ -114,7 +118,14 @@ class HvMobile implements MobileInterface {
   async OpenImageLayerDrawer() {
     // This logic might be flaky.
     if ((await this._IsDrawerClosed()) || (await this._image_drawer.isHidden())) {
-      await this._image_drawer_btn.click();
+      await this._image_drawer_btn.tap();
+    }
+  }
+
+  async OpenEventsDrawer() {
+    // This logic might be flaky.
+    if ((await this._IsDrawerClosed()) || (await this._image_drawer.isHidden())) {
+      await this._events_drawer_btn.tap();
     }
   }
 
@@ -374,6 +385,15 @@ class HvMobile implements MobileInterface {
    */
   saveScreenshot(filename: string = "", options: PageScreenshotOptions = {}): Promise<string> {
     return this.hv.saveScreenshot(filename, options);
+  }
+
+  /**
+   * Returns a handle to interact with event tree in UI
+   * @param source string, ex: HEK, CCMC, RHESSI
+   * @return EventTree
+   */
+  parseTree(source: string): EventTree {
+    return this.hv.parseTree(source);
   }
 }
 
