@@ -37,7 +37,13 @@ class HvMobile implements MobileInterface {
     this._drawer_close_btn = this.page.locator("#hvmobdrawerclose");
   }
 
-  async ExpectLayer(index: number, name: string, observatory: string, instrument: string, measurement: string): Promise<void> {
+  async ExpectLayer(
+    index: number,
+    name: string,
+    observatory: string,
+    instrument: string,
+    measurement: string
+  ): Promise<void> {
     await this.hv.ExpectLayer(index, name, observatory, instrument, measurement);
   }
 
@@ -128,7 +134,6 @@ class HvMobile implements MobileInterface {
   async RemoveImageLayer(index: number): Promise<void> {
     await this.hv.RemoveImageLayer(index);
   }
-
 
   /**
    * Opens or Closes the sidebar menu
