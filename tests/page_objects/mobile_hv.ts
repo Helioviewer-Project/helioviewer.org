@@ -328,8 +328,13 @@ class HvMobile implements MobileInterface {
     const times = time.split(":");
     // Find the visible flatpickr instance
     const flatpickrs = await this.page.locator(".flatpickr-calendar").all();
-    const timepicker = (await Promise.all(flatpickrs.map(async (locator) => {return {locator: locator, visible: await locator.isVisible()}})))
-      .filter((result) => result.visible)[0].locator;
+    const timepicker = (
+      await Promise.all(
+        flatpickrs.map(async (locator) => {
+          return { locator: locator, visible: await locator.isVisible() };
+        })
+      )
+    ).filter((result) => result.visible)[0].locator;
 
     await timepicker.getByLabel("Hour").click();
     await timepicker.getByLabel("Hour").fill(times[0]);
