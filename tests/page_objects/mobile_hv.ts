@@ -321,18 +321,23 @@ class HvMobile implements MobileInterface {
   }
 
   async SetObservationDateTime(date: string, time: string) {
-    await this._controls.getByLabel("Observation date", { exact: true }).click();
+    await this._controls.getByLabel("Observation date", { exact: true }).tap();
     await this._controls.getByLabel("Observation date", { exact: true }).fill(date);
-    await this._controls.getByLabel("Observation time").click();
+    await this._controls.getByLabel("Observation time").tap();
     // On mobile, the flatpickr controls must be used for times.
     const times = time.split(":");
-    await this.page.locator(".flatpickr-calendar").getByLabel("Hour").click();
-    await this.page.locator(".flatpickr-calendar").getByLabel("Hour").fill(times[0]);
-    await this.page.locator(".flatpickr-calendar").getByLabel("Minute").click();
-    await this.page.locator(".flatpickr-calendar").getByLabel("Minute").fill(times[1]);
-    await this.page.locator(".flatpickr-calendar").getByLabel("Second").click();
-    await this.page.locator(".flatpickr-calendar").getByLabel("Second").fill(times[2]);
-    await this.page.locator(".flatpickr-calendar").getByLabel("Second").press("Enter");
+    // Find the visible flatpickr instance
+    const flatpickrs = await this.page.locator(".flatpickr-calendar").all();
+    const timepicker = (await Promise.all(flatpickrs.map(async (locator) => {return {locator: locator, visible: await locator.isVisible()}})))
+      .filter((result) => result.visible)[0].locator;
+
+    await timepicker.getByLabel("Hour").click();
+    await timepicker.getByLabel("Hour").fill(times[0]);
+    await timepicker.getByLabel("Minute").click();
+    await timepicker.getByLabel("Minute").fill(times[1]);
+    await timepicker.getByLabel("Second").click();
+    await timepicker.getByLabel("Second").fill(times[2]);
+    await timepicker.getByLabel("Second").press("Enter");
   }
 
   async SetObservationDateTimeFromDate(date: Date): Promise<void> {
