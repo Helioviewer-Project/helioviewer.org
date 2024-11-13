@@ -272,7 +272,7 @@ var TimeControls = Class.extend(
             disableMobile: true,
             // onChange: $.proxy(this._onTextFieldChange, this),
             onClose: (a, b, flatpickr) => {
-                delayed_flatpickr_update(flatpickr);
+                this._onTextFieldChange();
             },
             onChange: (a, b, flatpickr) => {
                 delayed_flatpickr_update(flatpickr);
@@ -303,7 +303,9 @@ var TimeControls = Class.extend(
             disableMobile: true,
             position: "above",
             onChange: $.proxy(this._onTextFieldChange, this),
-            onClose: $.proxy(this._onTextFieldChange, this)
+            onClose: (a, b, flatpickr) => {
+                this._onTextFieldChange();
+            },
         });
         this._timeInput.keydown(createCloseFunction(this._timeInput));
     },

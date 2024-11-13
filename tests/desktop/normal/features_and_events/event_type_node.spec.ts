@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 import { Helioviewer } from "../../../page_objects/helioviewer";
 import { mockEvents } from "../../../utils/events";
 
@@ -8,7 +8,7 @@ import { mockEvents } from "../../../utils/events";
  * then asserts all of the childnodes of event_tree , should be checked,
  * also asserts all of the other nodes, should be unchecked
  */
-test("Checked event type should check all of its child frms and event_instances", async ({ page, browser }, info) => {
+test("Checked event type should check all of its child frms and event_instances", async ({ page }, info) => {
   // mocked event data
   const events = {
     CCMC: {

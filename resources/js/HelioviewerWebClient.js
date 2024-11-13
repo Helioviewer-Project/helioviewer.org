@@ -656,7 +656,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         //Fix Scroll
         $('#hv-drawer-data').on( 'scroll', function(){
-            $('.periodpicker_timepicker_dialog').removeClass('visible');
             $('#vso-start-time, #vso-end-time, #sdo-start-time, #sdo-end-time').blur() ;
 
             $('#vso-start-date')[0]._flatpickr.close();
@@ -665,9 +664,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             $('#sdo-end-date')[0]._flatpickr.close();
         });
         $('#hv-drawer-left').on( 'scroll', function(){
-            $('.periodpicker_timepicker_dialog').removeClass('visible');
             $('#time').blur() ;
-            $('#date')[0]._flatpickr.close();
+            const date_flatpickr = $('#date')[0]._flatpickr;
+            if (date_flatpickr.isOpen) {
+                date_flatpickr.close();
+            }
         });
 
 
@@ -1227,8 +1228,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                  + '</a>';
 
             Helioviewer.messageConsole.success(body, {
-                sticky: true, 
-                header: 'Just now' 
+                sticky: true,
+                header: 'Just now'
             });
         });
 
@@ -1256,8 +1257,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                  + '</a>';
 
             Helioviewer.messageConsole.success(body, {
-                sticky: true, 
-                header: 'Just now' 
+                sticky: true,
+                header: 'Just now'
             });
 
         });
