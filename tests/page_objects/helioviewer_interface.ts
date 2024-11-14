@@ -4,6 +4,7 @@ import { HelioviewerEmbed } from "./helioviewer_embed";
 import { HelioviewerMinimal } from "./helioviewer_minimal";
 import { HvMobile } from "./mobile_hv";
 import { ImageLayer } from "./image_layer";
+import { URLShare, MobileURLShare } from "./urlshare";
 
 /**
  * Represents the common functions that should be available in the Embed view
@@ -53,6 +54,8 @@ interface MinimalInterface extends EmbedInterface {}
  * Supports all functions in Minimal and Embed
  */
 interface MobileInterface extends MinimalInterface {
+  urlshare: URLShare | MobileURLShare;
+
   /**
    * Opens the section of the UI which contains image layer information
    */
@@ -107,6 +110,27 @@ interface MobileInterface extends MinimalInterface {
    * @returns {void}
    */
   JumpBackwardsDateWithSelection(seconds: number): Promise<void>;
+
+  /**
+   * Add a new image layer to the viewport.
+   */
+  AddImageLayer(): Promise<void>;
+
+  /**
+   * Remove an image layer from the viewport by its
+   * order in the UI.
+   * @param {number} index Layer to remove (0 is first, 1 is second, ...)
+   */
+  RemoveImageLayer(index: number): Promise<void>;
+
+  /**
+   * Expects that the given image layer index matches the given values
+   * @param index Image layer index
+   * @param observatory
+   * @param instrument
+   * @param measurement
+   */
+  ExpectLayer(index: number, name: string, observatory: string, instrument: string, measurement: string);
 }
 
 /**

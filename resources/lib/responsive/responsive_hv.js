@@ -45,11 +45,6 @@ $(function() {
 	// Discard Safari since it also matches Chrome
 	if ((chromeAgent) && (safariAgent)) safariAgent = false;
 
-	// position the time picker differently in Safari
-	if(safariAgent) {
-		$('.periodpicker_timepicker_dialog.visible').css('bottom','72px');
-	}
-
 	// force-close right drawers (add drawers as necessary)
 	function closeallHVwindows() {
 		$('#hv-drawer-left').css('display','none');
@@ -578,7 +573,6 @@ $(document.body).on('click','.toggle_empty',function(){
 
 	// on orientation change [portait / landscape]
 	$(window).on('orientationchange resize', function () {
-		$(".periodpicker_timepicker_dialog").removeClass("visible");
 		$("#time").blur();
 	});
 
