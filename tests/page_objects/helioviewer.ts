@@ -33,6 +33,7 @@ class Helioviewer implements DesktopInterface {
   urlshare: URLShare;
   vso_drawer: VSODrawer;
   scale_indicator: ScaleIndicator;
+  youtubeDrawer: YoutubeDrawer;
 
   constructor(page: Page, info: TestInfo | null = null) {
     this.page = page;
