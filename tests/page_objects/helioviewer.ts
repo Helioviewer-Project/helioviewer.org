@@ -516,7 +516,7 @@ class Helioviewer implements DesktopInterface {
    * Click youtube button in top controls to see the shared youtube videos
    * @returns {Promise<void>}
    */
-  async toggleYoutubeVideos(): Promise<void> {
+  async toggleYoutubeVideosDrawer(): Promise<void> {
     await this.page.locator("#youtube-button").click();
   }
 }

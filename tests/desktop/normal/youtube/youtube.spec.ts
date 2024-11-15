@@ -68,7 +68,7 @@ test("Recently shared youtube videos should be rendered correctly with correct l
   await hv.CloseAllNotifications();
 
   // 2. CLICK YOUTUBE BUTTON TO SHOW YOUTUBE VIDOS
-  await hv.toggleYoutubeVideos();
+  await hv.toggleYoutubeVideosDrawer();
   await hv.WaitForLoadingComplete();
 
   // Assert youtube drawer is open and correct number of videos visible in drawer
@@ -116,7 +116,7 @@ test("If there is no youtube movies then there should be a friendly message", as
   await hv.CloseAllNotifications();
 
   // 2. CLICK NEWS BUTTON TO SHOW YOUTUBE VIDOS
-  await hv.toggleYoutubeVideos();
+  await hv.toggleYoutubeVideosDrawer();
   await hv.WaitForLoadingComplete();
 
   // 3) Assert no videos in the drawer
@@ -204,7 +204,7 @@ test("Youtube movies around observation date should be rendered correctly", asyn
   await hv.CloseAllNotifications();
 
   // 2. CLICK YOUTUBE BUTTON TO SHOW YOUTUBE VIDOS
-  await hv.toggleYoutubeVideos();
+  await hv.toggleYoutubeVideosDrawer();
 
   // 3 TOGGLE VISIBILITY FOR OBSERVATION DATE SHARED VIDEOS ACCORDION INSIDE DRAWER
   await hv.youtubeDrawer.toggleObservationDateYoutubeSharedAccordion();
@@ -243,7 +243,7 @@ test("If there is no youtube movies around observation date then there should be
   await hv.CloseAllNotifications();
 
   // 2. CLICK NEWS BUTTON TO SHOW YOUTUBE VIDEOS
-  await hv.toggleYoutubeVideos();
+  await hv.toggleYoutubeVideosDrawer();
 
   // 3.  Toggle visibility for observation date shared videos accordion inside drawer
   await hv.youtubeDrawer.toggleObservationDateYoutubeSharedAccordion();
@@ -333,7 +333,7 @@ test("Youtube movies around observation date should show markers if the 'show in
   await hv.CloseAllNotifications();
 
   // 2. CLICK YOUTUBE BUTTON TO SHOW YOUTUBE VIDOS
-  await hv.toggleYoutubeVideos();
+  await hv.toggleYoutubeVideosDrawer();
   await hv.WaitForLoadingComplete();
   
   // 3 TOGGLE VISIBILITY FOR OBSERVATION DATE SHARED VIDEOS ACCORDION INSIDE DRAWER
@@ -345,7 +345,7 @@ test("Youtube movies around observation date should show markers if the 'show in
 
   // 5 Assert all markers are visible for the mocked videos
   for (const mov of mockedMoviesData) {
-    await hv.youtubeDrawer.assertObservationDateYoutubeSharedVideoMarkersNotVisibleWithTitle(`AIA ${mov.id}`);
+    await hv.youtubeDrawer.assertObservationDateYoutubeSharedVideoMarkersVisibleWithTitle(`AIA ${mov.id}`);
   }
 
   // 6 Check checkbox again for hiding location markers for videos
@@ -378,7 +378,7 @@ test("Youtube observation date videos should be updated with the observation dat
   await hv.OpenImageLayerDrawer();
 
   // 3. Open youtube drawer
-  await hv.toggleYoutubeVideos();
+  await hv.toggleYoutubeVideosDrawer();
   await hv.WaitForLoadingComplete();
 
   // 4. Open observation date videos accordion 
