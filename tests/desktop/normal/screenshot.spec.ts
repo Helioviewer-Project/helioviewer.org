@@ -27,7 +27,7 @@ import { MobileView, DesktopView, HelioviewerFactory, MobileInterface } from "pa
   );
 
   // create multiple screenshots and compare them
-  test.only(
+  test(
     `[${view.name}] Create a new screenshot and view it and close it`,
     { tag: [view.tag] },
     async ({ page, context, browserName }, info) => {
