@@ -344,6 +344,7 @@ var TileLayerAccordion = Layer.extend(
             allowInput: true,
             dateFormat: 'Y/m/d',
             position: 'below',
+            disableMobile: true,
             onChange:function(selected, datestr, instance){
                 let $input = $(instance.input);
                 onDiffDate($input.val()+' '+$('#'+id+' .difftime').val());
@@ -363,6 +364,7 @@ var TileLayerAccordion = Layer.extend(
             time_24hr: true,
             minuteIncrement: 1,
             secondIncrement: 1,
+            disableMobile: true,
             onClose: function (selected, datestr, instance) {
                 if(time != ''){
                     let $input = $(instance.input);

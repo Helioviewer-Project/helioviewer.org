@@ -7,6 +7,7 @@ import { Helioviewer } from "./helioviewer";
 import { ImageLayer } from "./image_layer";
 import { ScaleIndicator } from "./scale_indicator";
 import { MobileInterface } from "./helioviewer_interface";
+import { MobileURLShare } from "./urlshare";
 
 class HvMobile implements MobileInterface {
   /** Helioviewer reference for shared interactions that apply to mobile and desktop */
@@ -23,15 +24,27 @@ class HvMobile implements MobileInterface {
   private _drawer: Locator;
   /** #hvmobdrawerclose - Ref to button which closes the control drawer */
   private _drawer_close_btn: Locator;
+  public urlshare: MobileURLShare;
 
   constructor(page: Page, info: TestInfo | null = null) {
     this.page = page;
     this.hv = new Helioviewer(page, info);
+    this.urlshare = new MobileURLShare(page);
     this._controls = this.page.locator(".hvbottombar");
     this._image_drawer = this.page.locator("#accordion-images");
     this._image_drawer_btn = this.page.locator('[drawersec="accordion-images"]');
     this._drawer = this.page.locator("#hv-drawer-left");
     this._drawer_close_btn = this.page.locator("#hvmobdrawerclose");
+  }
+
+  async ExpectLayer(
+    index: number,
+    name: string,
+    observatory: string,
+    instrument: string,
+    measurement: string
+  ): Promise<void> {
+    await this.hv.ExpectLayer(index, name, observatory, instrument, measurement);
   }
 
   /**
@@ -116,6 +129,10 @@ class HvMobile implements MobileInterface {
    */
   async AddImageLayer() {
     await this.hv.AddImageLayer();
+  }
+
+  async RemoveImageLayer(index: number): Promise<void> {
+    await this.hv.RemoveImageLayer(index);
   }
 
   /**
@@ -304,18 +321,28 @@ class HvMobile implements MobileInterface {
   }
 
   async SetObservationDateTime(date: string, time: string) {
-    await this._controls.getByLabel("Observation date", { exact: true }).click();
+    await this._controls.getByLabel("Observation date", { exact: true }).tap();
     await this._controls.getByLabel("Observation date", { exact: true }).fill(date);
-    await this._controls.getByLabel("Observation time").click();
+    await this._controls.getByLabel("Observation time").tap();
     // On mobile, the flatpickr controls must be used for times.
     const times = time.split(":");
-    await this.page.locator(".flatpickr-calendar").getByLabel("Hour").click();
-    await this.page.locator(".flatpickr-calendar").getByLabel("Hour").fill(times[0]);
-    await this.page.locator(".flatpickr-calendar").getByLabel("Minute").click();
-    await this.page.locator(".flatpickr-calendar").getByLabel("Minute").fill(times[1]);
-    await this.page.locator(".flatpickr-calendar").getByLabel("Second").click();
-    await this.page.locator(".flatpickr-calendar").getByLabel("Second").fill(times[2]);
-    await this.page.locator(".flatpickr-calendar").getByLabel("Second").press("Enter");
+    // Find the visible flatpickr instance
+    const flatpickrs = await this.page.locator(".flatpickr-calendar").all();
+    const timepicker = (
+      await Promise.all(
+        flatpickrs.map(async (locator) => {
+          return { locator: locator, visible: await locator.isVisible() };
+        })
+      )
+    ).filter((result) => result.visible)[0].locator;
+
+    await timepicker.getByLabel("Hour").click();
+    await timepicker.getByLabel("Hour").fill(times[0]);
+    await timepicker.getByLabel("Minute").click();
+    await timepicker.getByLabel("Minute").fill(times[1]);
+    await timepicker.getByLabel("Second").click();
+    await timepicker.getByLabel("Second").fill(times[2]);
+    await timepicker.getByLabel("Second").press("Enter");
   }
 
   async SetObservationDateTimeFromDate(date: Date): Promise<void> {

@@ -76,11 +76,11 @@ class Helioviewer implements DesktopInterface {
   }
 
   /**
-   * Returns a handle to an Image Layer interface which can be used to
-   * semantically access image layer features of helioviewer.
-   * @param index Image layer index
+   * Image layers are assigned a random ID when they are added to the DOM.
+   * This returns the ID of the designated image layer.
+   * @param index
    */
-  async getImageLayer(index: number): Promise<ImageLayer> {
+  async getImageLayerId(index: number): Promise<string> {
     // To create an ImageLayer, we need the layer's unique id which
     // is generated randomly when the page is loaded. To find the id
     // we get the appropriate element by its class name and extract
@@ -92,7 +92,16 @@ class Helioviewer implements DesktopInterface {
     let section_id = await layer.evaluate((e) => e.id);
     // Extract the random id from the section id
     let random_id = section_id.split("-")[2];
-    return new ImageLayer(this.page, random_id);
+    return random_id;
+  }
+
+  /**
+   * Returns a handle to an Image Layer interface which can be used to
+   * semantically access image layer features of helioviewer.
+   * @param index Image layer index
+   */
+  async getImageLayer(index: number): Promise<ImageLayer> {
+    return new ImageLayer(this.page, await this.getImageLayerId(index));
   }
 
   async ExpectLayerEx(index: number, name: string, selections: LayerSelect[]) {
@@ -108,7 +117,6 @@ class Helioviewer implements DesktopInterface {
    * @param index Image layer index
    * @param observatory
    * @param instrument
-   * @param detector
    * @param measurement
    */
   async ExpectLayer(index: number, name: string, observatory: string, instrument: string, measurement: string) {

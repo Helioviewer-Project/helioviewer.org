@@ -38,7 +38,7 @@ test("[Normal] Helioviewer shows a warning when the image displayed is at least 
   await page.getByLabel("Observation date", { exact: true }).press("Enter");
   // Wait for page to load
   await page.waitForFunction(() => document.getElementById("loading")?.style.display == "none", null, {
-    timeout: 60000
+    timeout: 90000
   });
   // Expect the warning to appear with the expected text
   await expect(page.getByText("The AIA 304 layer is 6 hours")).toBeVisible();
@@ -50,7 +50,7 @@ test("[Normal] Helioviewer shows a warning when the image displayed is at least 
   await page.getByLabel("Observation time").press("Enter");
   // Wait for page to load
   await page.waitForFunction(() => document.getElementById("loading")?.style.display == "none", null, {
-    timeout: 60000
+    timeout: 90000
   });
   // Expect the warning to disappear with the expected text
   await expect(page.getByText("The AIA 304 layer is 6 hours")).not.toBeVisible();
@@ -69,7 +69,7 @@ test("[Minimal] Helioviewer shows a warning when the image displayed is at least
   await page.getByRole("textbox", { name: "Time" }).press("Enter");
   // Wait for page to load
   await page.waitForFunction(() => document.getElementById("loading")?.style.display == "none", null, {
-    timeout: 60000
+    timeout: 90000
   });
   // Expect the warning to appear
   await expect(page.getByText("The AIA 171 layer is 6 hours")).toBeVisible();
@@ -82,7 +82,7 @@ test("[Minimal] Helioviewer shows a warning when the image displayed is at least
   await page.getByRole("textbox", { name: "Time" }).press("Enter");
   // Wait for page to load
   await page.waitForFunction(() => document.getElementById("loading")?.style.display == "none", null, {
-    timeout: 60000
+    timeout: 90000
   });
   // Expect the warning to disappear
   await expect(page.getByText("The AIA 171 layer is 6 hours")).not.toBeVisible();

@@ -103,7 +103,7 @@ const time_jump_ranges = [
     test(
       `[${view.name}] Jump forwards with ${jump_label} should go to matching datetime in future, with matching screenshots`,
       { tag: ["@production", view.tag] },
-      async ({ page, context, browser }, info) => {
+      async ({ page }, info) => {
         const hv = HelioviewerFactory.Create(view, page, info) as MobileInterface;
 
         // 1. LOAD HV
