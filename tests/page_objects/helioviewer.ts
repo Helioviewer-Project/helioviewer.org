@@ -9,6 +9,7 @@ import { Movie } from "./movie";
 import { URLShare } from "./urlshare";
 import { EventTree } from "./event_tree";
 import { VSODrawer } from "./vso_drawer";
+import { YoutubeDrawer } from "./youtube_drawer";
 import { ScaleIndicator } from "./scale_indicator";
 import * as fs from "fs";
 import { DesktopInterface } from "./helioviewer_interface";
@@ -42,6 +43,7 @@ class Helioviewer implements DesktopInterface {
     this.vso_drawer = new VSODrawer(this.page);
     this.scale_indicator = new ScaleIndicator(this.page);
     this.sidebar = this.page.locator("#hv-drawer-left");
+    this.youtubeDrawer = new YoutubeDrawer(this.page);
   }
 
   /**
@@ -500,6 +502,14 @@ class Helioviewer implements DesktopInterface {
    */
   async toggleNewsAndAnnouncements(): Promise<void> {
     await this.page.locator("#news-button").click();
+  }
+
+  /**
+   * Click youtube button in top controls to see the shared youtube videos
+   * @returns {Promise<void>}
+   */
+  async toggleYoutubeVideos(): Promise<void> {
+    await this.page.locator("#youtube-button").click();
   }
 }
 
