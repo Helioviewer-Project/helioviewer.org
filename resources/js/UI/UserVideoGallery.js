@@ -20,7 +20,8 @@ var UserVideoGallery = Class.extend(
     init : function (url) {
         this._container   			= $("#user-video-gallery-main");
         this._containerCurrent   	= $("#user-video-gallery-main-current");
-        this._noSharedMoviesFound   = $("#user-video-gallery-current .js-no-movies");
+        this._noSharedMoviesFound   = $("#user-video-gallery .js-no-movies");
+        this._noSharedMoviesFoundForObservationDate   = $("#user-video-gallery-current .js-no-movies");
         this._loader      			= $("#user-video-gallery-spinner");
         this._loaderCurrent      	= $("#user-video-gallery-spinner-current");
 
@@ -262,9 +263,15 @@ var UserVideoGallery = Class.extend(
 	        count++;
         });
 
-		if($('.user-video-thumbnail-container-recent').length == 0){
+        if($('.user-video-thumbnail-container-current').length == 0){
+            this._noSharedMoviesFoundForObservationDate.show();
+        } else {
+            this._noSharedMoviesFoundForObservationDate.hide();
+        }
+
+        if($('.user-video-thumbnail-container-recent').length == 0){
             this._noSharedMoviesFound.show();
-		} else {
+        } else {
             this._noSharedMoviesFound.hide();
         }
 
@@ -370,12 +377,18 @@ var UserVideoGallery = Class.extend(
         }
 
 		if($('.user-video-thumbnail-container-current').length == 0){
-            this._noSharedMoviesFound.show();
+            this._noSharedMoviesFoundForObservationDate.show();
 		} else {
-            this._noSharedMoviesFound.hide();
+            this._noSharedMoviesFoundForObservationDate.hide();
             if(count == this._numVideosCurrent){
                 this._containerCurrent.append('<span class="user-video-current-show-more">SHOW MORE</span>');
             }
+        }
+
+        if($('.user-video-thumbnail-container-recent').length == 0){
+            this._noSharedMoviesFound.show();
+         else {
+            this._noSharedMoviesFound.hide();
         }
 
 	    $('#user-video-gallery-main-current > div').off();
