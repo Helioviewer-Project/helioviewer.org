@@ -509,6 +509,10 @@ class Helioviewer implements DesktopInterface {
   async toggleNewsAndAnnouncements(): Promise<void> {
     await this.page.locator("#news-button").click();
   }
+
+  async OpenScreenshotsDialog(): Promise<void> {
+    return await this.screenshot.toggleScreenshotDrawer();
+  }
 }
 
 export { Helioviewer };

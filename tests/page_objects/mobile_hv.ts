@@ -8,6 +8,7 @@ import { ImageLayer } from "./image_layer";
 import { ScaleIndicator } from "./scale_indicator";
 import { MobileInterface } from "./helioviewer_interface";
 import { MobileURLShare } from "./urlshare";
+import { MobileScreenshot } from "./screenshot";
 
 class HvMobile implements MobileInterface {
   /** Helioviewer reference for shared interactions that apply to mobile and desktop */
@@ -25,11 +26,17 @@ class HvMobile implements MobileInterface {
   /** #hvmobdrawerclose - Ref to button which closes the control drawer */
   private _drawer_close_btn: Locator;
   public urlshare: MobileURLShare;
+  public screenshot: MobileScreenshot;
 
   constructor(page: Page, info: TestInfo | null = null) {
     this.page = page;
     this.hv = new Helioviewer(page, info);
     this.urlshare = new MobileURLShare(page);
+    this.screenshot = new MobileScreenshot(page, {
+      IsScreenshotDialogOpen: () => this.IsScreenshotDialogOpen(),
+      OpenScreenshotDialog: () => this.OpenScreenshotsDialog(),
+      CloseMenu: () => this.CloseScreenshotsDialog()
+    });
     this._controls = this.page.locator(".hvbottombar");
     this._image_drawer = this.page.locator("#accordion-images");
     this._image_drawer_btn = this.page.locator('[drawersec="accordion-images"]');
@@ -202,12 +209,18 @@ class HvMobile implements MobileInterface {
     await this.TapIfVisible(this.page.locator("#hv-drawer-movies .hvmobmenuclose"));
   }
 
+  async IsScreenshotDialogOpen(): Promise<boolean> {
+    return await this.page.getByText("Take a Screenshot").isVisible();
+  }
+
   /**
    * Open the screenshot creation dialog
    */
   async OpenScreenshotsDialog() {
     await this.OpenSidebar();
     await this.TapIfVisible(this.page.getByText("Create a screenshot."));
+    // Wait for animation to complete
+    await this.page.waitForTimeout(500);
   }
 
   async CloseScreenshotsDialog() {

@@ -5,6 +5,7 @@ import { HelioviewerMinimal } from "./helioviewer_minimal";
 import { HvMobile } from "./mobile_hv";
 import { ImageLayer } from "./image_layer";
 import { URLShare, MobileURLShare } from "./urlshare";
+import { Screenshot } from "./screenshot";
 
 /**
  * Represents the common functions that should be available in the Embed view
@@ -55,11 +56,17 @@ interface MinimalInterface extends EmbedInterface {}
  */
 interface MobileInterface extends MinimalInterface {
   urlshare: URLShare | MobileURLShare;
+  screenshot: Screenshot;
 
   /**
    * Opens the section of the UI which contains image layer information
    */
   OpenImageLayerDrawer(): Promise<void>;
+
+  /**
+   * Opens the screenshot UI
+   */
+  OpenScreenshotsDialog(): Promise<void>;
 
   /**
    * Close any open drawer
