@@ -387,7 +387,7 @@ var UserVideoGallery = Class.extend(
 
         if($('.user-video-thumbnail-container-recent').length == 0){
             this._noSharedMoviesFound.show();
-         else {
+        } else {
             this._noSharedMoviesFound.hide();
         }
 
