@@ -8,21 +8,21 @@ import { getRandomInt } from "../../../utils/utils";
  * 2 ) Open youtube drawer
  * 3 ) Assert all videos mocked before are visible in viewport with correct links and titles
  */
-test("Recently shared youtube videos should be rendered correctly with correct link and title", async ({ page }, info) => {
-
+test("Recently shared youtube videos should be rendered correctly with correct link and title", async ({
+  page
+}, info) => {
   let hv = new Helioviewer(page, info);
 
-  const mockedMovies     = [];
+  const mockedMovies = [];
   const mockedMoviesData = [];
-  const moviesLength = getRandomInt(1, 40); 
+  const moviesLength = getRandomInt(1, 40);
 
   // Prepare some mock data for the recently shared youtube videos
   for (let i = 0; i < moviesLength; i++) {
-
     const hoursAgo = getRandomInt(1, 100);
 
     const id = Math.random().toString(36).substring(2, 7); // Generate random id
-    const startDate = new Date(Date.now() - (hoursAgo * 3600000)).toISOString(); // n hours ago for startdate
+    const startDate = new Date(Date.now() - hoursAgo * 3600000).toISOString(); // n hours ago for startdate
     const publishedDate = startDate; // same as startdate
     const endDate = new Date().toISOString(); // now
 
@@ -47,15 +47,14 @@ test("Recently shared youtube videos should be rendered correctly with correct l
       width: "1552",
       height: "760",
       startDate: startDate,
-      endDate: endDate,
+      endDate: endDate
     });
 
     // Remember what we have mocked so we can assert them later
     mockedMoviesData.push({
       id: id,
-      hoursAgo : hoursAgo
+      hoursAgo: hoursAgo
     });
-
   }
 
   // 0. Mock API requests
@@ -72,27 +71,25 @@ test("Recently shared youtube videos should be rendered correctly with correct l
   await hv.WaitForLoadingComplete();
 
   // Assert youtube drawer is open and correct number of videos visible in drawer
-  await hv.youtubeDrawer.assertDrawerOpen(); 
+  await hv.youtubeDrawer.assertDrawerOpen();
   await hv.youtubeDrawer.assertYoutubeSharedVideoCount(mockedMoviesData.length);
 
   // Assert all mocked videos are visibile with correct links and title
   for (const mov of mockedMoviesData) {
-
     let title = `${mov.hoursAgo} hours ago`;
-    let daysAgo = Math.floor(mov.hoursAgo/24);
+    let daysAgo = Math.floor(mov.hoursAgo / 24);
 
     if (mov.hoursAgo >= 24) {
-        title = `${daysAgo} day ago`;
-    } 
+      title = `${daysAgo} day ago`;
+    }
 
     if (mov.hoursAgo >= 48) {
-        title = `${daysAgo} days ago`;
-    } 
+      title = `${daysAgo} days ago`;
+    }
 
     await hv.youtubeDrawer.assertYoutubeSharedVideoVisibleWithTitle(mov.id, title);
     await hv.youtubeDrawer.assertYoutubeSharedVideoGoesToLink(mov.id, `http://foo.com/watch?v=${mov.id}`);
   }
-
 });
 
 /**
@@ -103,7 +100,6 @@ test("Recently shared youtube videos should be rendered correctly with correct l
  * 4 ) Assert the visibility of friendly no video message
  */
 test("If there is no youtube movies then there should be a friendly message", async ({ page }, info) => {
-
   let hv = new Helioviewer(page, info);
 
   // 0. Mock API requests for no videos
@@ -122,9 +118,8 @@ test("If there is no youtube movies then there should be a friendly message", as
   // 3) Assert no videos in the drawer
   await hv.youtubeDrawer.assertYoutubeSharedVideoCount(0);
 
-  // 4) Assert no video message is visible 
+  // 4) Assert no video message is visible
   await hv.youtubeDrawer.assertNoYoutubeSharedVideoMessage();
-
 });
 
 /**
@@ -135,20 +130,18 @@ test("If there is no youtube movies then there should be a friendly message", as
  * 4 ) Assert all videos mocked before are visible in viewport with correct links and titles
  */
 test("Youtube movies around observation date should be rendered correctly", async ({ page }, info) => {
-
   let hv = new Helioviewer(page, info);
 
-  const mockedMovies     = [];
+  const mockedMovies = [];
   const mockedMoviesData = [];
-  const moviesLength = getRandomInt(1, 40); 
+  const moviesLength = getRandomInt(1, 40);
 
   // Prepare some mock data for the recently shared youtube videos
   for (let i = 0; i < moviesLength; i++) {
-
     const hoursAgo = getRandomInt(1, 100);
 
     const id = Math.random().toString(36).substring(2, 7); // Generate random id
-    const startDate = new Date(Date.now() - (hoursAgo * 3600000)).toISOString(); // n hours ago
+    const startDate = new Date(Date.now() - hoursAgo * 3600000).toISOString(); // n hours ago
     const publishedDate = startDate; // n hours ago
     const endDate = new Date().toISOString(); // now
 
@@ -176,22 +169,21 @@ test("Youtube movies around observation date should be rendered correctly", asyn
       endDate: endDate,
       roi: {
         top: Math.floor(Math.random() * (600 - 300 + 1)) + 300, // Random between 300 and 600
-        left: Math.floor(Math.random() * (-700 - (-1000) + 1)) + -1000, // Random between -1000 and -700
+        left: Math.floor(Math.random() * (-700 - -1000 + 1)) + -1000, // Random between -1000 and -700
         bottom: Math.floor(Math.random() * (1400 - 1100 + 1)) + 1100, // Random between 1100 and 1400
         right: Math.floor(Math.random() * (700 - 500 + 1)) + 500, // Random between 500 and 700
         imageScale: parseFloat((Math.random() * (1.5 - 1.0) + 1.0).toFixed(5)), // Random between 1.0 and 1.5
         width: Math.floor(Math.random() * (1600 - 1400 + 1)) + 1400, // Random between 1400 and 1600
         height: Math.floor(Math.random() * (750 - 650 + 1)) + 650 // Random between 650 and 750
-      },
+      }
     });
 
     // Remember what we have mocked so we can assert them later
     mockedMoviesData.push({
       id: id,
       startDate: startDate,
-      endDate: endDate,
+      endDate: endDate
     });
-
   }
 
   // 0. Mock API requests
@@ -215,10 +207,15 @@ test("Youtube movies around observation date should be rendered correctly", asyn
 
   // Assert all mocked videos are visibile with correct links and title
   for (const mov of mockedMoviesData) {
-    await hv.youtubeDrawer.assertObservationDateYoutubeSharedVideoVisibleWithTitle(mov.id, `AIA 131  (${mov.startDate} ${mov.endDate} UTC)`);
-    await hv.youtubeDrawer.assertObservationDateYoutubeSharedVideoGoesToLink(mov.id, `http://anotherfoo.com/watch?v=${mov.id}`);
+    await hv.youtubeDrawer.assertObservationDateYoutubeSharedVideoVisibleWithTitle(
+      mov.id,
+      `AIA 131  (${mov.startDate} ${mov.endDate} UTC)`
+    );
+    await hv.youtubeDrawer.assertObservationDateYoutubeSharedVideoGoesToLink(
+      mov.id,
+      `http://anotherfoo.com/watch?v=${mov.id}`
+    );
   }
-
 });
 
 /**
@@ -229,8 +226,9 @@ test("Youtube movies around observation date should be rendered correctly", asyn
  * 4 ) Assert all no videos should be visible
  * 5 ) Assert the visibility of friendly no video message
  */
-test("If there is no youtube movies around observation date then there should be a friendly message", async ({ page }, info) => {
-
+test("If there is no youtube movies around observation date then there should be a friendly message", async ({
+  page
+}, info) => {
   let hv = new Helioviewer(page, info);
 
   // 0. Mock API requests
@@ -252,7 +250,6 @@ test("If there is no youtube movies around observation date then there should be
 
   // 5.  Assert the visibility of friendly no video message
   await hv.youtubeDrawer.assertNoObservationDateYoutubeSharedVideoMessage();
-
 });
 
 /**
@@ -265,21 +262,21 @@ test("If there is no youtube movies around observation date then there should be
  * 4 ) Uncheck checkbox for showing location markers for videos
  * 5 ) Assert no markers are visible for the mocked videos
  */
-test("Youtube movies around observation date should show markers if the 'show in viewport' checkbox is checked", async ({ page }, info) => {
-
+test("Youtube movies around observation date should show markers if the 'show in viewport' checkbox is checked", async ({
+  page
+}, info) => {
   let hv = new Helioviewer(page, info);
 
-  const mockedMovies     = [];
+  const mockedMovies = [];
   const mockedMoviesData = [];
-  const moviesLength = getRandomInt(1, 40); 
+  const moviesLength = getRandomInt(1, 40);
 
   // Mock some data for shared videos
   for (let i = 0; i < moviesLength; i++) {
-
     const hoursAgo = getRandomInt(1, 100);
 
     const id = Math.random().toString(36).substring(2, 7); // Generate random id
-    const startDate = new Date(Date.now() - (hoursAgo * 3600000)).toISOString(); // n hours ago
+    const startDate = new Date(Date.now() - hoursAgo * 3600000).toISOString(); // n hours ago
     const publishedDate = startDate; // n hours ago
     const endDate = new Date().toISOString(); // now
 
@@ -307,21 +304,20 @@ test("Youtube movies around observation date should show markers if the 'show in
       endDate: endDate,
       roi: {
         top: Math.floor(Math.random() * (600 - 300 + 1)) + 300, // Random between 300 and 600
-        left: Math.floor(Math.random() * (-700 - (-1000) + 1)) + -1000, // Random between -1000 and -700
+        left: Math.floor(Math.random() * (-700 - -1000 + 1)) + -1000, // Random between -1000 and -700
         bottom: Math.floor(Math.random() * (1400 - 1100 + 1)) + 1100, // Random between 1100 and 1400
         right: Math.floor(Math.random() * (700 - 500 + 1)) + 500, // Random between 500 and 700
         imageScale: parseFloat((Math.random() * (1.5 - 1.0) + 1.0).toFixed(5)), // Random between 1.0 and 1.5
         width: Math.floor(Math.random() * (1600 - 1400 + 1)) + 1400, // Random between 1400 and 1600
         height: Math.floor(Math.random() * (750 - 650 + 1)) + 650 // Random between 650 and 750
-      },
+      }
     });
 
     mockedMoviesData.push({
       id: id,
       startDate: startDate,
-      endDate: endDate,
+      endDate: endDate
     });
-
   }
 
   await page.route("*/**/?action=getObservationDateVideos*", async (route) => {
@@ -335,7 +331,7 @@ test("Youtube movies around observation date should show markers if the 'show in
   // 2. CLICK YOUTUBE BUTTON TO SHOW YOUTUBE VIDOS
   await hv.toggleYoutubeVideosDrawer();
   await hv.WaitForLoadingComplete();
-  
+
   // 3 TOGGLE VISIBILITY FOR OBSERVATION DATE SHARED VIDEOS ACCORDION INSIDE DRAWER
   await hv.youtubeDrawer.toggleObservationDateYoutubeSharedAccordion();
   await hv.WaitForLoadingComplete();
@@ -355,11 +351,10 @@ test("Youtube movies around observation date should show markers if the 'show in
   for (const mov of mockedMoviesData) {
     await hv.youtubeDrawer.assertObservationDateYoutubeSharedVideoMarkersNotVisibleWithTitle(`AIA ${mov.id}`);
   }
-
 });
 
 /**
- * Test Steps for checking observation date shared videos are updated when the observation date changes 
+ * Test Steps for checking observation date shared videos are updated when the observation date changes
  * 1) Load hv
  * 2) Open youtube drawer
  * 3) Toggle visibility for observation date shared videos accordion inside drawer
@@ -367,13 +362,12 @@ test("Youtube movies around observation date should show markers if the 'show in
  * 5) Expect a request to be made to fetch new videos for observation date
  */
 test("Youtube observation date videos should be updated with the observation date change ", async ({ page }, info) => {
-
   let hv = new Helioviewer(page, info);
 
   // 1. LOAD HV
   await hv.Load();
   await hv.CloseAllNotifications();
-  
+
   // 2. Open Sidebar to control date
   await hv.OpenImageLayerDrawer();
 
@@ -381,21 +375,22 @@ test("Youtube observation date videos should be updated with the observation dat
   await hv.toggleYoutubeVideosDrawer();
   await hv.WaitForLoadingComplete();
 
-  // 4. Open observation date videos accordion 
+  // 4. Open observation date videos accordion
   await hv.youtubeDrawer.toggleObservationDateYoutubeSharedAccordion();
- 
+
   // Calculate observation date to one week before the current date
   const initialDate = await hv.GetLoadedDate();
   const oneWeekOfSeconds = 604800;
-  const oneWeekBeforeDate = new Date(initialDate.getTime() - oneWeekOfSeconds * 1000)
-  const oneWeekBeforeDateURLEncoded = encodeURIComponent(oneWeekBeforeDate.toISOString().slice(0,19));
+  const oneWeekBeforeDate = new Date(initialDate.getTime() - oneWeekOfSeconds * 1000);
+  const oneWeekBeforeDateURLEncoded = encodeURIComponent(oneWeekBeforeDate.toISOString().slice(0, 19));
 
   // 5. Expect a request to be made to fetch new youtube videos around new observation date
-  const fetchNewObservationDateYoutubeRequestPromise = page.waitForRequest(new RegExp(`\\?action=getObservationDateVideos\\&date=${oneWeekBeforeDateURLEncoded}`));
+  const fetchNewObservationDateYoutubeRequestPromise = page.waitForRequest(
+    new RegExp(`\\?action=getObservationDateVideos\\&date=${oneWeekBeforeDateURLEncoded}`)
+  );
 
-  // 6. Set the observation date one week back , 
+  // 6. Set the observation date one week back ,
   await hv.JumpBackwardsDateWithSelection(oneWeekOfSeconds); // Go one week backwards
 
   await fetchNewObservationDateYoutubeRequestPromise;
-
 });
