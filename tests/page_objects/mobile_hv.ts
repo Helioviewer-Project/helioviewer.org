@@ -36,7 +36,7 @@ class HvMobile implements MobileInterface {
     this._controls = this.page.locator(".hvbottombar");
     this._image_drawer = this.page.locator("#accordion-images");
     this._image_drawer_btn = this.page.locator('[drawersec="accordion-images"]');
-    this._events_drawer_btn = this.page.getByText('Features & Events');
+    this._events_drawer_btn = this.page.getByText("Features & Events");
     this._drawer = this.page.locator("#hv-drawer-left");
     this._drawer_close_btn = this.page.locator("#hvmobdrawerclose");
   }
