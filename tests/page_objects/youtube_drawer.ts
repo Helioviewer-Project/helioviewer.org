@@ -53,8 +53,8 @@ class YoutubeDrawer {
 
   /**
    * Assert visibility of video and its title for shared youtube videos
-   * @param {id} string video youtube id
-   * @param {title} string title for the video
+   * @param {string} id of video
+   * @param {string} title for the video
    * @returns {Promise<void>}
    */
   async assertYoutubeSharedVideoVisibleWithTitle(id: string, title: string): Promise<void> {
@@ -64,8 +64,8 @@ class YoutubeDrawer {
 
   /**
    * Assert visibility of video and its title for observation date shared youtube videos
-   * @param {id} string video youtube id
-   * @param {title} string title for the video
+   * @param {string} id of video
+   * @param {string} title for the video
    * @returns {Promise<void>}
    */
   async assertObservationDateYoutubeSharedVideoVisibleWithTitle(id: string, title: string): Promise<void> {
@@ -75,8 +75,8 @@ class YoutubeDrawer {
 
   /**
    * Assert the video link for given shared youtube video
-   * @param {id} string video youtube id
-   * @param {link} string URL for the video
+   * @param {string} id of video
+   * @param {string} link for the video
    * @returns {Promise<void>}
    */
   async assertYoutubeSharedVideoGoesToLink(id: string, link: string): Promise<void> {
@@ -86,8 +86,8 @@ class YoutubeDrawer {
 
   /**
    * Assert the video link for given shared observation date youtube video
-   * @param {id} string video youtube id
-   * @param {link} string URL for the video
+   * @param {string} id of video
+   * @param {string} link for the video
    * @returns {Promise<void>}
    */
   async assertObservationDateYoutubeSharedVideoGoesToLink(id: string, link: string): Promise<void> {
@@ -141,6 +141,24 @@ class YoutubeDrawer {
    */
   async hideSunLocationMarkersForForObservationDateVideos(): Promise<void> {
     await this.accordionObservationDate.locator('#movies-show-in-viewport').uncheck();
+  }
+
+  /**
+   * Assert visibility for observation date  youtube video markers are visible
+   * @param {string} markerTitle of the marker
+   * @returns {Promise<void>}
+   */
+  async assertObservationDateYoutubeSharedVideoMarkersVisibleWithTitle(markerTitle: string): Promise<void> {
+    await expect(this.page.getByRole('link', { name: markerTitle})).toBeVisible();
+  }
+
+  /**
+   * Assert no-visibility for observation date  youtube video markers are visible
+   * @param {string} markerTitle of the marker
+   * @returns {Promise<void>}
+   */
+  async assertObservationDateYoutubeSharedVideoMarkersNotVisibleWithTitle(markerTitle: string): Promise<void> {
+    await expect(this.page.getByRole('link', { name: markerTitle})).not.toBeVisible();
   }
 }
 
