@@ -13,7 +13,11 @@ import { MobileView, DesktopView, HelioviewerFactory, MobileInterface } from "pa
       await hv.Load();
       await hv.CloseAllNotifications();
       const screenshotMask: PageScreenshotOptions = {
-        mask: [page.locator("#screenshot-manager-container .status"), page.locator("#hvmobtime_td #time")]
+        mask: [
+          page.locator("#screenshot-manager-container .status"),
+          page.locator("#hvmobtime_td #time"),
+          page.locator("#hvmobtime_td #date")
+        ]
       };
 
       await hv.screenshot.toggleScreenshotDrawer();
@@ -41,7 +45,11 @@ import { MobileView, DesktopView, HelioviewerFactory, MobileInterface } from "pa
       // The screenshot may expect "1 second ago"
       // but the actual result may be "2 seconds ago". causing the test to fail.
       const screenshotMask: PageScreenshotOptions = {
-        mask: [page.locator("#screenshot-manager-container .status"), page.locator("#hvmobtime_td #time")]
+        mask: [
+          page.locator("#screenshot-manager-container .status"),
+          page.locator("#hvmobtime_td #time"),
+          page.locator("#hvmobtime_td #date")
+        ]
       };
 
       // load helioviewer
