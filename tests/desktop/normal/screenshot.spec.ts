@@ -16,7 +16,7 @@ import { MobileView, DesktopView, HelioviewerFactory, MobileInterface } from "pa
         mask: [
           page.locator("#screenshot-manager-container .status"),
           page.locator("#hvmobtime_td #time"),
-          page.locator("#hvmobtime_td #date")
+          page.locator("#hvmobdate_td #date")
         ]
       };
 
@@ -48,7 +48,7 @@ import { MobileView, DesktopView, HelioviewerFactory, MobileInterface } from "pa
         mask: [
           page.locator("#screenshot-manager-container .status"),
           page.locator("#hvmobtime_td #time"),
-          page.locator("#hvmobtime_td #date")
+          page.locator("#hvmobdate_td #date")
         ]
       };
 
