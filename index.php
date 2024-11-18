@@ -722,7 +722,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 								<div id="user-video-gallery-main-current">
 									<span id="user-video-gallery-spinner-current"></span>
 								</div>
-								<p class="js-no-movies" style="display: none;">No shared movies found.</p>
+								<p class="js-no-movies" style="display: none;">No movies found around the observation date.</p>
 							</div>
 						</div>
 					</div>
@@ -741,6 +741,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 								<div id="user-video-gallery-main">
 									<span id="user-video-gallery-spinner"></span>
 								</div>
+								<p class="js-no-movies" style="display: none;">No shared movies found.</p>
 							</div>
 						</div>
 					</div>
