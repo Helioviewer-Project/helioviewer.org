@@ -68,7 +68,7 @@ interface MobileInterface extends MinimalInterface {
    * Opens the screenshot UI
    */
   OpenScreenshotsDialog(): Promise<void>;
-  
+
   /**
    * Opens the drawer which contains featres & events selections
    */
