@@ -6,6 +6,7 @@ import { HvMobile } from "./mobile_hv";
 import { ImageLayer } from "./image_layer";
 import { URLShare, MobileURLShare } from "./urlshare";
 import { Screenshot } from "./screenshot";
+import { EventTree } from "./event_tree";
 
 /**
  * Represents the common functions that should be available in the Embed view
@@ -59,7 +60,7 @@ interface MobileInterface extends MinimalInterface {
   screenshot: Screenshot;
 
   /**
-   * Opens the section of the UI which contains image layer information
+   * Opens the drawer which contains image layer information
    */
   OpenImageLayerDrawer(): Promise<void>;
 
@@ -67,6 +68,11 @@ interface MobileInterface extends MinimalInterface {
    * Opens the screenshot UI
    */
   OpenScreenshotsDialog(): Promise<void>;
+  
+  /**
+   * Opens the drawer which contains featres & events selections
+   */
+  OpenEventsDrawer(): Promise<void>;
 
   /**
    * Close any open drawer
@@ -138,6 +144,13 @@ interface MobileInterface extends MinimalInterface {
    * @param measurement
    */
   ExpectLayer(index: number, name: string, observatory: string, instrument: string, measurement: string);
+
+  /**
+   * Returns a handle to interact with event tree in UI
+   * @param source string, ex: HEK, CCMC, RHESSI
+   * @return EventTree
+   */
+  parseTree(source: string): EventTree;
 }
 
 /**

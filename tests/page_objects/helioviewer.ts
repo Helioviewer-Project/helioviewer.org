@@ -62,6 +62,10 @@ class Helioviewer implements DesktopInterface {
     return this.OpenSidebar();
   }
 
+  OpenEventsDrawer(): Promise<void> {
+    return this.OpenSidebar();
+  }
+
   /**
    * Returns a handle to interact with event tree in UI
    * @param source string, ex: HEK, CCMC, RHESSI
