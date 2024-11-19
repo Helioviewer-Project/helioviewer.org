@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from "@playwright/test";
+import { Page, expect } from "@playwright/test";
 
 /**
  * Interface for interacting with elements related to a specific
@@ -6,7 +6,7 @@ import { Page, Locator, expect } from "@playwright/test";
  */
 class Screenshot {
   /** Playwright page instance */
-  private page: Page;
+  protected page: Page;
 
   constructor(page: Page) {
     this.page = page;
@@ -77,7 +77,7 @@ class Screenshot {
    * Downloads screenshot from jgrowl notification
    * @return string base64 version of the downloaded screenshot
    */
-  async downloadScreenshotFromNotification() {
+  async downloadScreenshotFromNotification(): Promise<string> {
     const downloadButton = this.page.getByRole("link", {
       name: "Your AIA 304 screenshot is ready! Click here to download."
     });
@@ -143,4 +143,51 @@ class Screenshot {
   }
 }
 
-export { Screenshot };
+type AsyncFn = () => Promise<void>;
+/**
+ * Mobile specific implementation of screenshot features
+ */
+class MobileScreenshot extends Screenshot {
+  /** Checks if the screenshot dialog is already open. */
+  private IsScreenshotDialogOpen: () => Promise<boolean>;
+  /** This function should open the screenshot menu to allow users to take screenshots. */
+  public OpenScreenshotDialog: AsyncFn;
+  /** This function should close the menu to view the main viewport. */
+  private CloseMenu: AsyncFn;
+  constructor(page: Page, { IsScreenshotDialogOpen, OpenScreenshotDialog, CloseMenu }) {
+    super(page);
+    this.IsScreenshotDialogOpen = IsScreenshotDialogOpen;
+    this.OpenScreenshotDialog = OpenScreenshotDialog;
+    this.CloseMenu = CloseMenu;
+  }
+
+  async toggleScreenshotDrawer() {
+    if (await this.IsScreenshotDialogOpen()) {
+      await this.CloseMenu();
+    } else {
+      await this.OpenScreenshotDialog();
+    }
+  }
+
+  async downloadScreenshotFromNotification(): Promise<string> {
+    await this.CloseMenu();
+    return await super.downloadScreenshotFromNotification();
+  }
+
+  async viewScreenshotFromScreenshotHistory(index: number, wait: boolean = false) {
+    await this.OpenScreenshotDialog();
+    return await super.viewScreenshotFromScreenshotHistory(index, wait);
+  }
+
+  async waitForScreenshotCompleteNotifitication() {
+    await this.CloseMenu();
+    await super.waitForScreenshotCompleteNotifitication();
+  }
+
+  async assertScreenshotCountFromDrawer(count: number) {
+    await this.OpenScreenshotDialog();
+    super.assertScreenshotCountFromDrawer(count);
+  }
+}
+
+export { Screenshot, MobileScreenshot };

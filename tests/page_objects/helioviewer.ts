@@ -517,6 +517,10 @@ class Helioviewer implements DesktopInterface {
     await this.page.locator("#news-button").click();
   }
 
+  async OpenScreenshotsDialog(): Promise<void> {
+    return await this.screenshot.toggleScreenshotDrawer();
+  }
+
   /**
    * Click youtube button in top controls to see the shared youtube videos
    * @returns {Promise<void>}

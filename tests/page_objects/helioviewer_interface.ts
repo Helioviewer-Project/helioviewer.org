@@ -5,6 +5,7 @@ import { HelioviewerMinimal } from "./helioviewer_minimal";
 import { HvMobile } from "./mobile_hv";
 import { ImageLayer } from "./image_layer";
 import { URLShare, MobileURLShare } from "./urlshare";
+import { Screenshot } from "./screenshot";
 import { EventTree } from "./event_tree";
 
 /**
@@ -56,11 +57,17 @@ interface MinimalInterface extends EmbedInterface {}
  */
 interface MobileInterface extends MinimalInterface {
   urlshare: URLShare | MobileURLShare;
+  screenshot: Screenshot;
 
   /**
    * Opens the drawer which contains image layer information
    */
   OpenImageLayerDrawer(): Promise<void>;
+
+  /**
+   * Opens the screenshot UI
+   */
+  OpenScreenshotsDialog(): Promise<void>;
 
   /**
    * Opens the drawer which contains featres & events selections
