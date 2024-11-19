@@ -87,11 +87,11 @@ const YOUTUBE_VIDEO_JSON = [
     id: "TvlW5",
     url: "http://www.youtube.com/watch?v=wvMXYeot2uk",
     thumbnails: {
-      icon: "https://api.helioviewer.org/cache/movies/2024/08/19/TvlW5/preview-icon.png",
-      small: "https://api.helioviewer.org/cache/movies/2024/08/19/TvlW5/preview-small.png",
-      medium: "https://api.helioviewer.org/cache/movies/2024/08/19/TvlW5/preview-medium.png",
-      large: "https://api.helioviewer.org/cache/movies/2024/08/19/TvlW5/preview-large.png",
-      full: "https://api.helioviewer.org/cache/movies/2024/08/19/TvlW5/preview-full.png"
+      icon: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png",
+      small: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png",
+      medium: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png",
+      large: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png",
+      full: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png"
     },
     published: "2024-08-19 15:35:15",
     title: "LASCO C2/C3 (2024-08-17 11:00:07 - 2024-08-19 10:36:07 UTC)",
@@ -112,11 +112,11 @@ const YOUTUBE_VIDEO_JSON = [
     id: "qvlW5",
     url: "http://www.youtube.com/watch?v=Je_DraAKq34",
     thumbnails: {
-      icon: "https://api.helioviewer.org/cache/movies/2024/08/19/qvlW5/preview-icon.png",
-      small: "https://api.helioviewer.org/cache/movies/2024/08/19/qvlW5/preview-small.png",
-      medium: "https://api.helioviewer.org/cache/movies/2024/08/19/qvlW5/preview-medium.png",
-      large: "https://api.helioviewer.org/cache/movies/2024/08/19/qvlW5/preview-large.png",
-      full: "https://api.helioviewer.org/cache/movies/2024/08/19/qvlW5/preview-full.png"
+      icon: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png",
+      small: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png",
+      medium: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png",
+      large: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png",
+      full: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png"
     },
     published: "2024-08-19 15:20:32",
     title: "AIA 304 (2024-08-18 22:09:41 - 2024-08-19 01:09:29 UTC)",
@@ -136,11 +136,11 @@ const YOUTUBE_VIDEO_JSON = [
     id: "FvlW5",
     url: "http://www.youtube.com/watch?v=W5AC7bFEcVM",
     thumbnails: {
-      icon: "https://api.helioviewer.org/cache/movies/2024/08/19/FvlW5/preview-icon.png",
-      small: "https://api.helioviewer.org/cache/movies/2024/08/19/FvlW5/preview-small.png",
-      medium: "https://api.helioviewer.org/cache/movies/2024/08/19/FvlW5/preview-medium.png",
-      large: "https://api.helioviewer.org/cache/movies/2024/08/19/FvlW5/preview-large.png",
-      full: "https://api.helioviewer.org/cache/movies/2024/08/19/FvlW5/preview-full.png"
+      icon: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png",
+      small: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png",
+      medium: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png",
+      large: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png",
+      full: "https://helioviewer.org/resources/images/viewyoutube_icon_transp.png"
     },
     published: "2024-08-19 15:18:47",
     title: "AIA 304 (2024-08-18 23:37:05 - 2024-08-19 05:35:53 UTC)",
