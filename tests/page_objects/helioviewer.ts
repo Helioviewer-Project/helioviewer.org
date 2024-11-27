@@ -528,6 +528,19 @@ class Helioviewer implements DesktopInterface {
   async toggleYoutubeVideosDrawer(): Promise<void> {
     await this.page.locator("#youtube-button").click();
   }
+
+  /**
+   * Moves earth scale indicator to given x,y coordinates
+   * @param {number} x Horizontal coordinate
+   * @param {number} y Vertical coordinate
+   * @returns {Promise<void>}
+   */
+  async moveEarthScaleIndicator(x: number, y: number): Promise<void> {
+    await this.page.locator('#earth-container').hover();
+    await this.page.mouse.down();
+    await this.page.mouse.move(x,y);
+    await this.page.mouse.up();
+  }
 }
 
 export { Helioviewer };
