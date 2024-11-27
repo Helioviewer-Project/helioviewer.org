@@ -77,6 +77,11 @@ test("Recently shared youtube videos should be rendered correctly with correct l
   // Assert all mocked videos are visibile with correct links and title
   for (const mov of mockedMoviesData) {
     let title = `${mov.hoursAgo} hours ago`;
+
+    if (mov.hoursAgo == 1) {
+        title = "1 hour ago";
+    }
+
     let daysAgo = Math.floor(mov.hoursAgo / 24);
 
     if (mov.hoursAgo >= 24) {
