@@ -14,19 +14,27 @@ class Movie {
 
   /**
    * Clicks the button for toggling movie drawer
-   * @return void
+   * @returns {Promise<void>}
    */
-  async toggleMovieDrawer() {
+  async toggleMovieDrawer(): Promise<void> {
     await this.page.locator("#movies-button").click();
     await this.page.mouse.move(200, 200);
     await this.page.mouse.up();
   }
 
   /**
-   * Create screenshot with pressing fullscreen button
-   * @return void
+   * See advanced controls for movie making
+   * @returns {Promise<void>}
    */
-  async selectFullScreenMovie() {
+  async getAdvancedControls(): Promise<void> {
+    await this.page.getByRole('link', { name: 'Advanced Settings' }).click();
+  }
+
+  /**
+   * Create screenshot with pressing fullscreen button
+   * @returns {Promise<void>}
+   */
+  async selectFullScreenMovie(): Promise<void> {
     await this.page.locator("#movie-manager-full-viewport").getByText("Full Viewport").click();
     await this.page.mouse.move(200, 200);
     await this.page.mouse.up();
@@ -34,9 +42,9 @@ class Movie {
 
   /**
    * Create screenshot with pressing fullscreen button
-   * @return void
+   * @returns {Promise<void>}
    */
-  async selectPartialScreenMovie() {
+  async selectPartialScreenMovie(): Promise<void> {
     await this.page.locator("#movie-manager-select-area").getByText("Select Area").click();
     await this.page.mouse.move(200, 200);
     await this.page.mouse.up();
@@ -44,9 +52,9 @@ class Movie {
 
   /**
    * Execute actions to create fullscreen movie
-   * @return void
+   * @returns {Promise<void>}
    */
-  async makeFullScreenmovie() {
+  async makeFullScreenmovie(): Promise<void> {
     await this.toggleMovieDrawer();
     await this.selectFullScreenMovie();
     await this.page.getByLabel("Submit").click();
