@@ -79,6 +79,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             currentLayers.push(layer.image.getLayerName());
         });
 
+
         // Remove existing layers from queue
         if (!!currentLayers.length) {
             // STEREO A
@@ -104,10 +105,11 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         // Pull off the next layer on the queue
         while (!queueChoiceIsValid) {
             next = queue[i] || defaultLayer;
-            var date = new Date(+new Date());
-            var dateDiffObj = new Date($('#date').val() +' '+$('#time').val());
+            var dateDiffObj = new Date($('#date').val() +' '+$('#time').val()+' UTC');
             var dateDiff = new Date(dateDiffObj - 60*60*1000);
-            params = parseLayerString(next + ',1,100,0,60,1,'+dateDiff.toDateString()+'T'+dateDiff.toTimeString());
+
+            let generatedLayerString = next + ',1,100,0,60,1,'+dateDiff.toISOString();
+            params = parseLayerString(generatedLayerString);
 
             if (this.checkDataSource(params.uiLabels)) {
                 queueChoiceIsValid = true;
