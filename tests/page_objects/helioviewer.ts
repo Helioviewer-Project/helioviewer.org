@@ -536,9 +536,9 @@ class Helioviewer implements DesktopInterface {
    * @returns {Promise<void>}
    */
   async moveEarthScaleIndicator(x: number, y: number): Promise<void> {
-    await this.page.locator('#earth-container').hover();
+    await this.page.locator("#earth-container").hover();
     await this.page.mouse.down();
-    await this.page.mouse.move(x,y);
+    await this.page.mouse.move(x, y);
     await this.page.mouse.up();
   }
 }

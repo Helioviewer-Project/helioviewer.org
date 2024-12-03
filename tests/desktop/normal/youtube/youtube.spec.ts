@@ -79,7 +79,7 @@ test("Recently shared youtube videos should be rendered correctly with correct l
     let title = `${mov.hoursAgo} hours ago`;
 
     if (mov.hoursAgo == 1) {
-        title = "1 hour ago";
+      title = "1 hour ago";
     }
 
     let daysAgo = Math.floor(mov.hoursAgo / 24);

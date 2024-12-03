@@ -27,7 +27,7 @@ class Movie {
    * @returns {Promise<void>}
    */
   async getAdvancedControls(): Promise<void> {
-    await this.page.getByRole('link', { name: 'Advanced Settings' }).click();
+    await this.page.getByRole("link", { name: "Advanced Settings" }).click();
   }
 
   /**
