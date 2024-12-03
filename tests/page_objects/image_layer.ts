@@ -136,6 +136,16 @@ class ImageLayer {
   }
 
   /**
+   * @description Get the layer's base difference date as a Date object with correct timezone UTC.
+   * @return {Date} date , base difference date 
+   */
+  async getBaseDifferenceDateObject(): Promise<Date> {
+      let differenceDate = await this.getBaseDifferenceDate();
+      let differenceTime = await this.getBaseDifferenceTime();
+      return  new Date(differenceDate+ " " +differenceTime+" UTC");
+  }
+
+  /**
    * Returns the given image tile (img tag)
    */
   getTile(index: number): Locator {
