@@ -176,7 +176,7 @@ test("Test cartesian coordinates at sun edges after partial zoom", async ({ page
  * 5. Check coordinates
  * 6. Repeat steps 2 and 3 for the right, bottom, and left of the sun.
  */
-test.only("Test radial coordinates at sun edges after partial zoom", async ({ page }, info) => {
+test("Test radial coordinates at sun edges after partial zoom", async ({ page }, info) => {
   let hv = new Helioviewer(page, info);
   // 1. Go to preset image
   await hv.Load();
