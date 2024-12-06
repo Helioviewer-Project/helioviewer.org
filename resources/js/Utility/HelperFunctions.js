@@ -691,12 +691,27 @@ function carringtons_to_timestamps(carringtons){
 	return timestamps;
 }
 
+/*
+ * @description Function for testing if a given string is ISO8601 datetime string
+ * @param {string} dateTimeStr , datetime string to check
+ * @return {boolean} true if string is ISO8601 datetime string
+ */
+function isISODateTimeString(dateTimeStr) {
+    const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/;
+    return isoDateRegex.test(dateTimeStr);
+}
+
+
 
 
 // Formatting of timestamps to remove excessive .000z
 function formatLyrDateString(tmpLayerDateStr) {
 
-   let frmtTmpDateStr= tmpLayerDateStr.replace(' ', 'T').replace(/\//g, '-').replace(/.000Z/g, '') + '.000Z';
+   if (isISODateTimeString(tmpLayerDateStr)) {
+       return tmpLayerDateStr;
+   }
+
+   let frmtTmpDateStr = tmpLayerDateStr.replace(' ', 'T').replace(/\//g, '-').replace(/.000Z/g, '') + '.000Z';
 
    return frmtTmpDateStr;
 
