@@ -20,6 +20,16 @@
 		$debug = true;
 	}
 
+    if (isset($_GET['clearStorage'])) {
+?>
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                localStorage.clear();
+            });
+        </script>
+<?php
+    }
+
 	$debugTime = 0;
 	if($debug){
 		$debugTime = time();

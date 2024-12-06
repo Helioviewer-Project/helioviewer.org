@@ -252,7 +252,7 @@ var SettingsLoader = (
                     "difference" : 0,//0 - normal, 1 - running difference, 2 - base difference
                     "diffCount"  : 60,
                     "diffTime"   : 1,// 0-seconds, 1-minutes, 2-hours, 3-days, 4-weeks, 5-month, 6-years
-                    "baseDiffTime" : dateDiff.toDateString()+' '+dateDiff.toTimeString(),
+                    "baseDiffTime" : dateDiff.toUTCDateString()+' '+dateDiff.toUTCTimeString(),
                     "uiLabels"   : [ {'label':'Observatory',
                                     'name' :'SDO'},
                                    {'label':'Instrument',
