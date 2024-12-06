@@ -13,6 +13,7 @@ import { YoutubeDrawer } from "./youtube_drawer";
 import { ScaleIndicator } from "./scale_indicator";
 import * as fs from "fs";
 import { DesktopInterface } from "./helioviewer_interface";
+import { MouseCoordinates } from "./mouse_coordinates";
 
 /**
  * Matches an image layer selection
@@ -34,6 +35,7 @@ class Helioviewer implements DesktopInterface {
   vso_drawer: VSODrawer;
   scale_indicator: ScaleIndicator;
   youtubeDrawer: YoutubeDrawer;
+  coordinates: MouseCoordinates;
 
   constructor(page: Page, info: TestInfo | null = null) {
     this.page = page;
@@ -45,6 +47,7 @@ class Helioviewer implements DesktopInterface {
     this.scale_indicator = new ScaleIndicator(this.page);
     this.sidebar = this.page.locator("#hv-drawer-left");
     this.youtubeDrawer = new YoutubeDrawer(this.page);
+    this.coordinates = new MouseCoordinates(this.page);
   }
 
   /**

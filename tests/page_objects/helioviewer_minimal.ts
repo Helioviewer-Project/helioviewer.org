@@ -18,6 +18,12 @@ class HelioviewerMinimal implements MinimalInterface {
     this.info = info;
     this.hv = new Helioviewer(page, info);
   }
+  /**
+   * In minimal view, there's nothing to do since the controls are always visible.
+   */
+  async OpenImageLayerDrawer(): Promise<void> {
+    return;
+  }
 
   async Load(url: string = "/"): Promise<void> {
     // Try to add "output=embed" to the given url string.
