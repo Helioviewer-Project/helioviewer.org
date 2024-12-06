@@ -49,7 +49,12 @@ interface EmbedInterface {
  * Minimal view functionality.
  * Supports all functions in EmbedView.
  */
-interface MinimalInterface extends EmbedInterface {}
+interface MinimalInterface extends EmbedInterface {
+  /**
+   * Opens the drawer which contains image layer information
+   */
+  OpenImageLayerDrawer(): Promise<void>;
+}
 
 /**
  * Mobile specific functionality
