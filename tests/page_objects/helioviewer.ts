@@ -348,12 +348,10 @@ class Helioviewer implements DesktopInterface {
 
   /**
    * Assert NO notification is visible to the application user
-   * @return Promise<void> 
+   * @return Promise<void>
    */
   async assertNoNotification(): Promise<void> {
-    await expect(
-      this.page.locator("#message-console")
-    ).not.toBeVisible();
+    await expect(this.page.locator("#message-console")).not.toBeVisible();
   }
 
   /**
