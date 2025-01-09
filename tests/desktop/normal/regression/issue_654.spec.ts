@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { Helioviewer } from "../../../page_objects/helioviewer";
 import * as fs from "fs";
 
-import https from "https";
+import * as https from "https";
 
 /**
  * This test is a regression test for proving issue 654 is fixed for the given helioviewer
