@@ -54,12 +54,15 @@ jobs:
     - name: Run js unit tests
       run: npm run test
   playwright-e2e-tests:
+    # strategy:
+    #   matrix:
+    #     shardIndex: [1, 2, 3, 4, 5]
+    #     shardTotal: [5]
+    #   # If one of the shards fails, continue running the remaining tests
+    #   fail-fast: false
     strategy:
       matrix:
-        shardIndex: [1, 2, 3, 4, 5]
-        shardTotal: [5]
-      # If one of the shards fails, continue running the remaining tests
-      fail-fast: false
+        node-version: ['18.x']
 
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -114,10 +117,10 @@ jobs:
     - name: Run Playwright tests
       run: |
         cd helioviewer.org
-        npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}} tests/desktop/normal/movie/form_controls.spec.ts 
+        npx playwright test
     - uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: playwright-report-${{matrix.shardIndex}}
+        name: playwright-report
         path: helioviewer.org/playwright-report/
         retention-days: 7
