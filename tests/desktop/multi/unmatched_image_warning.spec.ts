@@ -93,7 +93,7 @@ test("[Embed] Helioviewer shows a warning when the image displayed is at least 6
 }) => {
   await page.goto("?output=embed&date=2024-01-01T00:00:00Z");
   // Expect the warning to appear with the expected text
-  await expect(page.getByText("The AIA 304 layer is 151 days")).toBeVisible();
+  await expect(page.getByText("The AIA 304 layer is 364 days")).toBeVisible();
   // Load a date approximately 6 hours away
   await page.goto("?output=embed&date=2021-06-01T06:10:00Z");
   await expect(page.getByText("The AIA 304 layer is 6 hours")).toBeVisible();
