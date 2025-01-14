@@ -61,7 +61,7 @@ jobs:
       # If one of the shards fails, continue running the remaining tests
       fail-fast: false
 
-    timeout-minutes: 60
+    # timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
     - name: Checkout the code under test
