@@ -114,7 +114,7 @@ jobs:
     - name: Run Playwright tests
       run: |
         cd helioviewer.org
-        npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}} desktop/normal/hello_helioviewer.spec.ts 
+        npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}} desktop/normal/image_layers/previous_next_image.spec.ts desktop/normal/image_layers/show_image_header.spec.ts 
     - uses: actions/upload-artifact@v4
       if: always()
       with:
