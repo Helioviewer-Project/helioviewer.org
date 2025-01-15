@@ -1,0 +1,10 @@
+tests/desktop/normal/screenshot.spec.ts-snapshots/screenshot-drawer-enabled-chromium-linux.png;http://ec2-44-219-199-246.compute-1.amazonaws.com:8084/data/3433177eed93c820437b9792619e236c84daf790.png
+tests/desktop/normal/screenshot.spec.ts-snapshots/first-screenshot-created-chromium-linux.png;http://ec2-44-219-199-246.compute-1.amazonaws.com:8084/data/8cf552b502e5e9172157d20bb46847fa59c00a08.png
+tests/desktop/normal/screenshot.spec.ts-snapshots/screenshot-drawer-enabled-firefox-linux.png;http://ec2-44-219-199-246.compute-1.amazonaws.com:8084/data/1269f3c0123f1ae08a053e5355ebc2cf45fd13d4.png                
+tests/desktop/normal/screenshot.spec.ts-snapshots/first-screenshot-created-firefox-linux.png;http://ec2-44-219-199-246.compute-1.amazonaws.com:8084/data/a3a4ed5e6d8b6d99c99f090e095cb83797483dbe.png
+tests/desktop/normal/screenshot.spec.ts-snapshots/screenshot-drawer-enabled-webkit-linux.png;http://ec2-44-219-199-246.compute-1.amazonaws.com:8084/data/60f8aa22263daa4e5c1d7c18b68a074cc664802f.png
+tests/desktop/normal/screenshot.spec.ts-snapshots/screenshot-drawer-enabled-edge-linux.png;http://ec2-44-219-199-246.compute-1.amazonaws.com:8084/data/3433177eed93c820437b9792619e236c84daf790.png
+tests/desktop/normal/screenshot.spec.ts-snapshots/first-screenshot-created-edge-linux.png;http://ec2-44-219-199-246.compute-1.amazonaws.com:8084/data/8cf552b502e5e9172157d20bb46847fa59c00a08.png
+tests/desktop/normal/screenshot.spec.ts-snapshots/screenshot-drawer-enabled-Mobile-Chrome-linux.png;http://ec2-44-219-199-246.compute-1.amazonaws.com:8084/data/acda31683425b6f18c17a02560268affc5e9f233.png
+tests/desktop/normal/screenshot.spec.ts-snapshots/first-screenshot-created-Mobile-Chrome-linux.png;http://ec2-44-219-199-246.compute-1.amazonaws.com:8084/data/d515708c491cb1329b67d11e05ddcb1bffa3088c.png
+tests/desktop/normal/screenshot.spec.ts-snapshots/screenshot-drawer-enabled-Mobile-Safari-linux.png;http://ec2-44-219-199-246.compute-1.amazonaws.com:8084/data/1ef0da91808598d52f86afecf74ade38653d348e.png
