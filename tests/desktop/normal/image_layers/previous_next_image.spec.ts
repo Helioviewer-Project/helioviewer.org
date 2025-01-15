@@ -2,16 +2,15 @@ import { expect, test } from "@playwright/test";
 import { Helioviewer } from "../../../page_objects/helioviewer";
 
 /*
- * Go to the image just before the last available image 
+ * Go to the image just before the last available image
  * It should have previous image button green and available
- * Then go to previous image, 
+ * Then go to previous image,
  * This time it should have previous image button red and not-available
  * Also loaded date should match the last images date
  */
 test.only("Going back to layer's last available image should disable previous image button with correct colors and availability.", async ({
   page
 }, info) => {
-
   let hv = new Helioviewer(page, info);
 
   const firstBeforeLastImage = new Date("2024/12/30 20:00:05Z");
