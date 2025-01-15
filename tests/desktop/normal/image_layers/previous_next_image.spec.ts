@@ -8,7 +8,7 @@ import { Helioviewer } from "../../../page_objects/helioviewer";
  * This time it should have previous image button red and not-available
  * Also loaded date should match the last images date
  */
-test.only("Going back to layer's last available image should disable previous image button with correct colors and availability.", async ({
+test("Going back to layer's last available image should disable previous image button with correct colors and availability.", async ({
   page
 }, info) => {
   let hv = new Helioviewer(page, info);
