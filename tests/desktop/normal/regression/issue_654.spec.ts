@@ -9,7 +9,6 @@ import * as https from "https";
  * @see https://github.com/Helioviewer-Project/helioviewer.org/issues/654
  */
 test("Issue 654, Hinode XRT selection creates notification can not be closed", async ({ page, browser }, info) => {
-
   // load helioviewer
   let hv = new Helioviewer(page, info);
 
