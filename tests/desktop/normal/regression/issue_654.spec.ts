@@ -25,6 +25,8 @@ test("Issue 654, Hinode XRT selection creates notification can not be closed", a
   await layer.set("Observatory:", "Hinode");
   await hv.WaitForLoadingComplete();
 
+  await page.waitForTimeout(1000);
+
   // Observation time should be is far , notification should be visible
   await hv.assertNotification("warn", /The XRT Al_poly\/Open layer is \d+ days away from your observation time./);
 
