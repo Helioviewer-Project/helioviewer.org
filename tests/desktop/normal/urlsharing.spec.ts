@@ -43,6 +43,8 @@ test("Shared URLs should produce pages, exactly like they shared", async ({ page
     browserName === "webkit",
     "We couldn't be able to trigger download event for webkit, skipping this test now"
   );
+
+  test.fixme(browserName === "firefox", "Need to be fixed later base64 screenshots are problem for this one.");
   let hv = new Helioviewer(page);
 
   await hv.Load();
