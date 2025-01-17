@@ -56,11 +56,12 @@ jobs:
   playwright-e2e-tests:
     strategy:
       matrix:
-        shardIndex: [1]
+        shardIndex: [1, 2, 3, 4, 5]
         shardTotal: [1]
+      # If one of the shards fails, continue running the remaining tests
       fail-fast: false
 
-    # timeout-minutes: 60
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
     - name: Checkout the code under test
@@ -113,7 +114,7 @@ jobs:
     - name: Run Playwright tests
       run: |
         cd helioviewer.org
-        npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}} desktop/normal/zoom/zoom_state.spec.ts
+        npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}}
     - uses: actions/upload-artifact@v4
       if: always()
       with:
