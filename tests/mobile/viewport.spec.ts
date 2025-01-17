@@ -54,15 +54,30 @@ test("[Mobile] Center viewport with AIA 304 and LASCO C2/C3", async ({ page }, i
   // 1b. Adds LASCO C3
   await mobile.AddImageLayer();
   await mobile.CloseDrawer();
+  await mobile.CloseAllNotifications();
+
   // 2. Zoom out to be able to see all layers
-  await mobile.ZoomOut(4);
+  await mobile.ZoomOut(1);
+  await mobile.WaitForLoad();
+
+  await mobile.ZoomOut(1);
+  await mobile.WaitForLoad();
+
+  await mobile.ZoomOut(1);
+  await mobile.WaitForLoad();
+
+  await mobile.ZoomOut(1);
+
   // Wait for the tiles to load after zooming out.
   await mobile.WaitForLoad();
   // The date in the notification will change over time, so close it so it's
   // not in the screenshot.
-  await mobile.CloseAllNotifications();
+
   // 3. Center the viewport
   await mobile.CenterViewport();
+  await mobile.WaitForLoad();
+
+  // await mobile.WaitForLoad();
   // 4. Expect the screenshot to match. Referencing by name so we can re-use it later.
   const centered_image = "sdo_soho_centered.png";
   // Rendering seems a bit flaky but not significantly flaky.
