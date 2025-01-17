@@ -57,7 +57,7 @@ jobs:
     strategy:
       matrix:
         shardIndex: [1, 2, 3, 4, 5]
-        shardTotal: [1]
+        shardTotal: [5]
       # If one of the shards fails, continue running the remaining tests
       fail-fast: false
 
