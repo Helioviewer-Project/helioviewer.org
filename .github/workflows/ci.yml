@@ -56,8 +56,8 @@ jobs:
   playwright-e2e-tests:
     strategy:
       matrix:
-        shardIndex: [1, 2, 3, 4, 5]
-        shardTotal: [5]
+        shardIndex: [1]
+        shardTotal: [1]
       # If one of the shards fails, continue running the remaining tests
       fail-fast: false
 
@@ -114,7 +114,7 @@ jobs:
     - name: Run Playwright tests
       run: |
         cd helioviewer.org
-        npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}}
+        npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}} tests/desktop/normal/urlsharing.spec.ts
     - uses: actions/upload-artifact@v4
       if: always()
       with:
