@@ -12,7 +12,7 @@ test("Non-Existing Shared URLs Should Be Reported To User", async ({ page, conte
 });
 
 /**
- * This test checks if shortURLs are correctly being overwritten by .htacces  
+ * This test checks if shortURLs are correctly being overwritten by .htacces
  */
 test("Shared URLs redirection should be done correctly", async ({ page }, info) => {
   let hv = new Helioviewer(page);
@@ -85,6 +85,7 @@ test("Shared URLs should produce pages, exactly like they shared", async ({ page
 
   const afterScreenshot = (await page.screenshot()).toString("base64");
 
-  expect(Buffer.from(afterScreenshot, "base64")).toMatchSnapshot("before-url-sharing-screenshot.png",{ maxDiffPixelRatio: 0.01 } );
-
+  expect(Buffer.from(afterScreenshot, "base64")).toMatchSnapshot("before-url-sharing-screenshot.png", {
+    maxDiffPixelRatio: 0.01
+  });
 });
