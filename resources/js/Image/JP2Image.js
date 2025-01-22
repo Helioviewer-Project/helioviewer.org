@@ -179,7 +179,7 @@ var JP2Image = Class.extend(
                         // Return the notification instance
                         afterOpen: function (msg) {
                             // Remove any other duplicate notifications
-                            $("." + group).not(msg).remove();
+                            $($.escapeSelector("." + group)).not(msg).remove();
                             resolve(msg);
                         },
                         click: (e, m, o) => {

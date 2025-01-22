@@ -53,7 +53,7 @@ test("Image headers dialog box should show layer image headers, also it should s
     ["ACS_MODE", "SCIENCE"],
     ["ACS_SAFE", "NO"],
     ["ACS_SUNP", "YES"],
-    ["AECDELAY", "1534"],
+    ["AECDELAY", "1537"],
     ["AECMODE", "ON"]
   ]);
 
@@ -78,7 +78,7 @@ test("Image headers dialog box should show layer image headers, also it should s
     ["HV_HVS_DETAILS_FILENAME_VERSION", "5.0"],
     [
       "HV_COMMENT",
-      "JP2 file created locally at Lockheed LMSAL using hv_aia_list2jp2_gs2 at Tue Jun 1 14:07:45 2021. Contact Helioviewer LMSAL Franchise (slater@lmsal.com) for more details/questions/comments regarding this JP2 file. HVS (Helioviewer setup) file used to create this JP2 file: hvs_version5.pro (version 5.0). FITS to JP2 source code provided by ESA/NASA Helioviewer Project [contact the Helioviewer Project at webmaster@helioviewer.org][NASA-GSFC] and is available for download at https://launchpad.net/jp2gen. Please contact the source code providers if you suspect an error in the source code. Full source code for the entire Helioviewer Project can be found at https://launchpad.net/helioviewer."
+      "JP2 file created locally at Lockheed LMSAL using hv_aia_list2jp2_gs2 at Wed Jan  1 14:36:54 2025. Contact Helioviewer LMSAL Franchise (slater@lmsal.com) for more details/questions/comments regarding this JP2 file. HVS (Helioviewer setup) file used to create this JP2 file: hvs_version5.pro (version 5.0). FITS to JP2 source code provided by ESA/NASA Helioviewer Project [contact the Helioviewer Project at webmaster@helioviewer.org][NASA-GSFC] and is available for download at https://launchpad.net/jp2gen. Please contact the source code providers if you suspect an error in the source code. Full source code for the entire Helioviewer Project can be found at https://launchpad.net/helioviewer."
     ]
   ]);
 
@@ -89,7 +89,7 @@ test("Image headers dialog box should show layer image headers, also it should s
   await imageHeaderDialog.assertImageHeaders([
     [
       "HV_COMMENT",
-      "JP2 file created locally at Lockheed LMSAL using hv_aia_list2jp2_gs2 at Tue Jun 1 14:07:45 2021. Contact Helioviewer LMSAL Franchise (slater@lmsal.com) for more details/questions/comments regarding this JP2 file. HVS (Helioviewer setup) file used to create this JP2 file: hvs_version5.pro (version 5.0). FITS to JP2 source code provided by ESA/NASA Helioviewer Project [contact the Helioviewer Project at webmaster@helioviewer.org][NASA-GSFC] and is available for download at https://launchpad.net/jp2gen. Please contact the source code providers if you suspect an error in the source code. Full source code for the entire Helioviewer Project can be found at https://launchpad.net/helioviewer."
+      "JP2 file created locally at Lockheed LMSAL using hv_aia_list2jp2_gs2 at Wed Jan  1 14:36:54 2025. Contact Helioviewer LMSAL Franchise (slater@lmsal.com) for more details/questions/comments regarding this JP2 file. HVS (Helioviewer setup) file used to create this JP2 file: hvs_version5.pro (version 5.0). FITS to JP2 source code provided by ESA/NASA Helioviewer Project [contact the Helioviewer Project at webmaster@helioviewer.org][NASA-GSFC] and is available for download at https://launchpad.net/jp2gen. Please contact the source code providers if you suspect an error in the source code. Full source code for the entire Helioviewer Project can be found at https://launchpad.net/helioviewer."
     ],
     ["HV_HVS_DETAILS_FILENAME", "hvs_version5.pro"],
     ["HV_HVS_DETAILS_FILENAME_VERSION", "5.0"]

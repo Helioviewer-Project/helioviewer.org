@@ -35,8 +35,14 @@ const time_jump_ranges = [
         const layer = await hv.getImageLayer(0);
         await layer.set("Observatory:", "SOHO");
         await hv.CloseDrawer();
-        await hv.ZoomOut(3);
+
+        await hv.ZoomOut(1);
         await hv.WaitForLoadingComplete();
+        await hv.ZoomOut(1);
+        await hv.WaitForLoadingComplete();
+        await hv.ZoomOut(1);
+        await hv.WaitForLoadingComplete();
+
         await hv.CloseAllNotifications();
 
         // 3. USE NEWEST SOHO
@@ -73,7 +79,13 @@ const time_jump_ranges = [
         const new_page_layer = await hv.getImageLayer(0);
         await new_page_layer.set("Observatory:", "SOHO");
         await hv.CloseDrawer();
-        await hv.ZoomOut(3);
+
+        await hv.ZoomOut(1);
+        await hv.WaitForLoadingComplete();
+        await hv.ZoomOut(1);
+        await hv.WaitForLoadingComplete();
+        await hv.ZoomOut(1);
+        await hv.WaitForLoadingComplete();
 
         // 11. USE NEWEST SOHO
         await hv.UseNewestImage();
@@ -115,7 +127,11 @@ const time_jump_ranges = [
         const layer = await hv.getImageLayer(0);
         await layer.set("Observatory:", "SOHO");
         await hv.CloseDrawer();
-        await hv.ZoomOut(3);
+        await hv.ZoomOut(1);
+        await hv.WaitForLoadingComplete();
+        await hv.ZoomOut(1);
+        await hv.WaitForLoadingComplete();
+        await hv.ZoomOut(1);
         await hv.WaitForLoadingComplete();
         await hv.CloseAllNotifications();
 
@@ -158,7 +174,11 @@ const time_jump_ranges = [
         const layer_2 = await hv.getImageLayer(0);
         await layer_2.set("Observatory:", "SOHO");
         await hv.CloseDrawer();
-        await hv.ZoomOut(3);
+        await hv.ZoomOut(1);
+        await hv.WaitForLoadingComplete();
+        await hv.ZoomOut(1);
+        await hv.WaitForLoadingComplete();
+        await hv.ZoomOut(1);
         await hv.WaitForLoadingComplete();
         await hv.CloseAllNotifications();
 

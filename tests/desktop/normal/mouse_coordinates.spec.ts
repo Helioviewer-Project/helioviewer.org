@@ -31,7 +31,7 @@ test("Test mouse coordinates at sun center", async ({ page }, info) => {
   let coordinate: Point | RadialPoint = await hv.coordinates.getXY();
   expect(coordinate.x).toBe(0);
   // Technically this should be 0, but ends up as -1 from rounding errors.
-  expect(coordinate.y).toBe(-1);
+  expect(coordinate.y).toBe(1);
 
   // 4. Verify that radial coordinates display approximately 0R.
   await hv.coordinates.useRadialCoordinates();
@@ -75,7 +75,7 @@ test("Test cartesian coordinates at sun edges", async ({ page }, info) => {
 
   // 3. Check coordinates
   let coordinate: Point = await hv.coordinates.getXY();
-  expect(coordinate).toStrictEqual({ x: 0, y: 944 });
+  expect(coordinate).toStrictEqual({ x: 0, y: 976 });
 
   // 2b. Do the same for the bottom of the sun
   await hv.coordinates.moveMouse(640, 360 + 198);
@@ -83,7 +83,7 @@ test("Test cartesian coordinates at sun edges", async ({ page }, info) => {
 
   // 3b. Check coordinates
   coordinate = await hv.coordinates.getXY();
-  expect(coordinate).toStrictEqual({ x: 0, y: -947 });
+  expect(coordinate).toStrictEqual({ x: 0, y: -974 });
 
   // 2b. Do the same for the left of the sun
   await hv.coordinates.moveMouse(640 - 198, 360);
@@ -91,7 +91,7 @@ test("Test cartesian coordinates at sun edges", async ({ page }, info) => {
 
   // 3b. Check coordinates
   coordinate = await hv.coordinates.getXY();
-  expect(coordinate).toStrictEqual({ x: -945, y: -1 });
+  expect(coordinate).toStrictEqual({ x: -975, y: 1 });
 
   // 2b. Do the same for the left of the sun
   await hv.coordinates.moveMouse(640 + 198, 360);
@@ -99,7 +99,7 @@ test("Test cartesian coordinates at sun edges", async ({ page }, info) => {
 
   // 3b. Check coordinates
   coordinate = await hv.coordinates.getXY();
-  expect(coordinate).toStrictEqual({ x: 945, y: -1 });
+  expect(coordinate).toStrictEqual({ x: 975, y: 1 });
 });
 
 /**
@@ -136,32 +136,32 @@ test("Test cartesian coordinates at sun edges after partial zoom", async ({ page
 
   // 4. Check coordinates
   let coordinate: Point = await hv.coordinates.getXY();
-  expect(coordinate).toStrictEqual({ x: 0, y: 916 });
+  expect(coordinate).toStrictEqual({ x: 0, y: 946 });
 
   await hv.coordinates.moveMouse(640, 360 + 240);
   await hv.saveScreenshot();
   coordinate = await hv.coordinates.getXY();
-  expect(coordinate).toStrictEqual({ x: 0, y: -917 });
+  expect(coordinate).toStrictEqual({ x: 0, y: -944 });
 
   await hv.coordinates.moveMouse(640 + 240, 360);
   await hv.saveScreenshot();
   coordinate = await hv.coordinates.getXY();
-  expect(coordinate).toStrictEqual({ x: 917, y: -1 });
+  expect(coordinate).toStrictEqual({ x: 945, y: 1 });
 
   await hv.coordinates.moveMouse(640 - 240, 360);
   await hv.saveScreenshot();
   coordinate = await hv.coordinates.getXY();
-  expect(coordinate).toStrictEqual({ x: -917, y: -1 });
+  expect(coordinate).toStrictEqual({ x: -945, y: 1 });
 
   await hv.coordinates.moveMouse(640 - 240, 360 + 240);
   await hv.saveScreenshot();
   coordinate = await hv.coordinates.getXY();
-  expect(coordinate).toStrictEqual({ x: -917, y: -917 });
+  expect(coordinate).toStrictEqual({ x: -945, y: -944 });
 
   await hv.coordinates.moveMouse(640 + 240, 360 - 240);
   await hv.saveScreenshot();
   coordinate = await hv.coordinates.getXY();
-  expect(coordinate).toStrictEqual({ x: 917, y: 916 });
+  expect(coordinate).toStrictEqual({ x: 945, y: 946 });
 });
 
 /**
@@ -202,30 +202,30 @@ test("Test radial coordinates at sun edges after partial zoom", async ({ page },
 
   // 5. Check coordinates
   let coordinate: RadialPoint = await hv.coordinates.getRadial();
-  expect(coordinate).toStrictEqual({ angle: 360, r: 0.954 });
+  expect(coordinate).toStrictEqual({ angle: 360, r: 0.985 });
 
   await hv.coordinates.moveMouse(640, 360 + 240);
   await hv.saveScreenshot();
   coordinate = await hv.coordinates.getRadial();
-  expect(coordinate).toStrictEqual({ angle: 180, r: 0.955 });
+  expect(coordinate).toStrictEqual({ angle: 180, r: 0.983 });
 
   await hv.coordinates.moveMouse(640 + 240, 360);
   await hv.saveScreenshot();
   coordinate = await hv.coordinates.getRadial();
-  expect(coordinate).toStrictEqual({ angle: 270, r: 0.955 });
+  expect(coordinate).toStrictEqual({ angle: 270, r: 0.984 });
 
   await hv.coordinates.moveMouse(640 - 240, 360);
   await hv.saveScreenshot();
   coordinate = await hv.coordinates.getRadial();
-  expect(coordinate).toStrictEqual({ angle: 90, r: 0.955 });
+  expect(coordinate).toStrictEqual({ angle: 90, r: 0.984 });
 
   await hv.coordinates.moveMouse(640 - 240, 360 + 240);
   await hv.saveScreenshot();
   coordinate = await hv.coordinates.getRadial();
-  expect(coordinate).toStrictEqual({ angle: 135, r: 1.351 });
+  expect(coordinate).toStrictEqual({ angle: 135, r: 1.391 });
 
   await hv.coordinates.moveMouse(640 + 240, 360 - 240);
   await hv.saveScreenshot();
   coordinate = await hv.coordinates.getRadial();
-  expect(coordinate).toStrictEqual({ angle: 315, r: 1.35 });
+  expect(coordinate).toStrictEqual({ angle: 315, r: 1.393 });
 });

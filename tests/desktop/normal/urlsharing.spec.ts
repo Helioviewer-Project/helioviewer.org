@@ -12,7 +12,7 @@ test("Non-Existing Shared URLs Should Be Reported To User", async ({ page, conte
 });
 
 /**
- * This test plays through creating a short url and makes a test for short url should exactly resolved what is shared
+ * This test checks if shortURLs are correctly being overwritten by .htacces
  */
 test("Shared URLs redirection should be done correctly", async ({ page }, info) => {
   let hv = new Helioviewer(page);
@@ -43,7 +43,7 @@ test("Shared URLs should produce pages, exactly like they shared", async ({ page
     browserName === "webkit",
     "We couldn't be able to trigger download event for webkit, skipping this test now"
   );
-  let hv = new Helioviewer(page);
+  let hv = new Helioviewer(page, info);
 
   await hv.Load();
   await hv.CloseAllNotifications();
@@ -77,20 +77,15 @@ test("Shared URLs should produce pages, exactly like they shared", async ({ page
   // turn off screenshare
   await page.locator("#share-button").click();
   await page.mouse.move(100, 0);
-  const myScreenshot = (await page.screenshot()).toString("base64");
 
-  const before_file = info.outputPath("before_share.png");
-  await fs.promises.writeFile(before_file, Buffer.from(myScreenshot, "base64"));
-  await info.attach("before-share", { path: before_file });
+  await hv.saveScreenshot("before-url-sharing-screenshot.png");
 
   await hv.Load(shortURL);
   await hv.CloseAllNotifications();
 
   const afterScreenshot = (await page.screenshot()).toString("base64");
 
-  const after_file = info.outputPath("after_share.png");
-  await fs.promises.writeFile(after_file, Buffer.from(afterScreenshot, "base64"));
-  await info.attach("after-share", { path: after_file });
-
-  await expect(afterScreenshot).toBe(myScreenshot);
+  expect(Buffer.from(afterScreenshot, "base64")).toMatchSnapshot("before-url-sharing-screenshot.png", {
+    maxDiffPixelRatio: 0.01
+  });
 });

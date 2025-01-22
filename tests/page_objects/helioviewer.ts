@@ -337,13 +337,21 @@ class Helioviewer implements DesktopInterface {
   /**
    * Assert some certain notification is visible to the application user
    * @param {string} type this can be one of the "warn", "error", "info", "success"
-   * @param {string} message this is the notification message you want to assert
-   * @return void
+   * @param {string | RegExp} message , string or regexp to match the notification
+   * @return Promise<void>
    */
-  async assertNotification(type: string, message: string) {
+  async assertNotification(type: string, message: string | RegExp): Promise<void> {
     await expect(
       this.page.locator("div.jGrowl-notification." + type + " > div.jGrowl-message").getByText(message)
     ).toBeVisible();
+  }
+
+  /**
+   * Assert NO notification is visible to the application user
+   * @return Promise<void>
+   */
+  async assertNoNotification(): Promise<void> {
+    await expect(this.page.locator("#message-console")).not.toBeVisible();
   }
 
   /**

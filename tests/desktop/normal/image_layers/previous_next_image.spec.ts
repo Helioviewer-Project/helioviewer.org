@@ -1,6 +1,55 @@
 import { expect, test } from "@playwright/test";
 import { Helioviewer } from "../../../page_objects/helioviewer";
 
+/*
+ * Go to the image just before the last available image
+ * It should have previous image button green and available
+ * Then go to previous image,
+ * This time it should have previous image button red and not-available
+ * Also loaded date should match the last images date
+ */
+test("Going back to layer's last available image should disable previous image button with correct colors and availability.", async ({
+  page
+}, info) => {
+  let hv = new Helioviewer(page, info);
+
+  const firstBeforeLastImage = new Date("2024/12/30 20:00:05Z");
+  const lastImage = new Date("2021/06/01 00:01:29Z");
+
+  // 1. LOAD HV
+  await hv.Load();
+  await hv.CloseAllNotifications();
+  await hv.OpenSidebar();
+
+  // 2. SET OBSERVATION DATE TO FIRST IMAGE BEFORE LAST IMAGE
+  await hv.SetObservationDateTimeFromDate(firstBeforeLastImage);
+  await hv.WaitForLoadingComplete();
+  await hv.CloseAllNotifications();
+
+  const layer = await hv.getImageLayer(0);
+
+  // 3. Assert : Image date should be  2024/12/30 20:00:05Z,
+  await layer.assertImageDate(firstBeforeLastImage);
+
+  // 3. Assert : Previous image button should be be green ( and clickable )
+  await layer.assertHasPreviousImage();
+
+  // 4. Action : Go to previous image
+  await layer.gotoPreviousImage();
+  await hv.WaitForLoadingComplete();
+  await hv.CloseAllNotifications();
+
+  // 5. Assert : observation date should be 2021/06/01 00:01:29 ,
+  const loadedDate = await hv.GetLoadedDate();
+  await expect(loadedDate.getTime()).toBe(lastImage.getTime());
+
+  // 6. Assert : Layer date should change to green
+  await layer.assertImageDateAvailable();
+
+  // 7. Assert : Previous image button should be be red ( and not-clickable )
+  await layer.assertHasNoPreviousImage();
+});
+
 /**
  * Going previous available image should bring earliest available image,
  * and should correctly load previous available image,
@@ -11,7 +60,7 @@ test("Go back button should first bring observation date to available image date
 }, info) => {
   let hv = new Helioviewer(page, info);
 
-  const previousImageDate = new Date("2021/06/01 00:01:29Z");
+  const previousImageDate = new Date("2024/12/31 00:04:53Z");
 
   // 1. LOAD HV
   await hv.Load();
@@ -21,7 +70,7 @@ test("Go back button should first bring observation date to available image date
   // Layer to check controls
   const layer = await hv.getImageLayer(0);
 
-  // 2. Assert : Image date should be  2021/06/01 00:01:29 ,
+  // 2. Assert : Image date should be  2024/12/31 00:04:53,
   await layer.assertImageDate(previousImageDate);
 
   // 3. Assert : Go back should be green ( and clickable )
@@ -43,7 +92,7 @@ test("Go back button should first bring observation date to available image date
   await layer.assertImageDateAvailable();
 
   // 8. Assert : Go back go forward should be all red ( not clickable )
-  await layer.assertHasNoPreviousImage();
+  await layer.assertHasPreviousImage();
   await layer.assertHasNoNextImage();
 
   // 9. Register: Sunscreenshot from 2021/06/01 00:01:29 ,
