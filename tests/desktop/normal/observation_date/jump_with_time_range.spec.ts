@@ -122,6 +122,10 @@ const time_jump_ranges = [
         await hv.WaitForLoadingComplete();
         await hv.CloseAllNotifications();
 
+        await hv.saveScreenshot(`before move viewport`);
+        await hv.moveViewport(0,0);
+        await hv.saveScreenshot(`after move viewport`);
+
         // 13. GET CURRENT SCREENSHOT TO COMPARE PREVIOUS SCREENSHOT
         const directDateScreenshot = await hv.saveScreenshot("direct_date_screenshot", {
           style: "#helioviewer-viewport-container-outer {z-index:200000}"
