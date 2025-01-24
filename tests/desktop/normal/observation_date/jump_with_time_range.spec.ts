@@ -125,7 +125,7 @@ const time_jump_ranges = [
         await hv.CloseAllNotifications();
 
         await hv.saveScreenshot(`before move viewport`);
-        await hv.moveViewport(0,500);
+        await hv.moveViewport(0,-500);
         await hv.saveScreenshot(`after move viewport`);
 
         // 13. GET CURRENT SCREENSHOT TO COMPARE PREVIOUS SCREENSHOT
