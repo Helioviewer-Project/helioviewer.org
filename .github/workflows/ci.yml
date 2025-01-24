@@ -114,7 +114,7 @@ jobs:
     - name: Run Playwright tests
       run: |
         cd helioviewer.org
-        npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}} --retries=0 --repeat-each=4 tests/desktop/normal/observation_date/jump_with_time_range.spec.ts
+        npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}} --trace=on --retries=0 --repeat-each=4 tests/desktop/normal/observation_date/jump_with_time_range.spec.ts
     - uses: actions/upload-artifact@v4
       if: always()
       with:
