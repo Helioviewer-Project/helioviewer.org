@@ -27,7 +27,10 @@ test("Issue 654, Hinode XRT selection creates notification can not be closed", a
   await page.waitForTimeout(3000);
 
   // Observation time should be is far , notification should be visible
-  await hv.assertNotification("warn", /The XRT Al_poly\/Open layer is \d+ days away from your observation time./);
+  await hv.assertNotification(
+    "warn",
+    /The XRT (Al_poly|Be_thin|Be_med)\/Open layer is \d+ days away from your observation time./
+  );
 
   // Action 5: Close notification if you can achive
   await page.locator(".jGrowl-close").first().click();
