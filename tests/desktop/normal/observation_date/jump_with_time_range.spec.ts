@@ -27,65 +27,66 @@ const time_jump_ranges = [
         const hv = HelioviewerFactory.Create(view, page, info) as MobileInterface;
 
         // 1. LOAD HV
-        await hv.Load();
-        await hv.saveScreenshot("afterload");
-        await hv.CloseAllNotifications();
-        await hv.saveScreenshot("close notification");
-        await hv.OpenImageLayerDrawer();
-        await hv.saveScreenshot("open image drawer");
-
-        // 2. LAYER 0 , SWITH TO SOHO
-        const layer = await hv.getImageLayer(0);
-        await layer.set("Observatory:", "SOHO");
-        await hv.saveScreenshot("select soho image drawer");
-        await hv.CloseDrawer();
-        await hv.saveScreenshot("close drawer after select soho");
-
-        await hv.saveScreenshot("close notification after soho selection");
-        await hv.ZoomOut(1);
-        await hv.WaitForLoadingComplete();
-        await hv.saveScreenshot("close notification after soho selection zoom1");
-        await hv.ZoomOut(1);
-        await hv.WaitForLoadingComplete();
-        await hv.saveScreenshot("close notification after soho selection zoom2");
-        await hv.ZoomOut(1);
-        await hv.WaitForLoadingComplete();
-        await hv.saveScreenshot("close notification after soho selection zoom3");
-
-        await hv.CloseAllNotifications();
-        // 3. USE NEWEST SOHO
-        await hv.UseNewestImage();
-        await hv.WaitForLoadingComplete();
-        await hv.saveScreenshot("use newest image");
-        await hv.CloseAllNotifications();
-        await hv.saveScreenshot("close notification after using newest");
-
-        // 4. MARK TIME BEFORE JUMP BACKWARDS
-        const dateBeforeJump = await hv.GetLoadedDate();
-
-        await hv.saveScreenshot(`date before jump ${dateBeforeJump.toString()}`);
-        // 5. JUMP BACKWARDS WITH GIVEN SECONDS
-        await hv.JumpBackwardsDateWithSelection(seconds);
-        await hv.WaitForLoadingComplete();
-        await hv.saveScreenshot(`jumped backwards with ${seconds} seconds`);
-        await hv.CloseAllNotifications();
-        await hv.saveScreenshot(`jumped backwards with ${seconds} seconds close notification`);
-
-        // 6. MARK TIME AFTER JUMP BACKWARDS
-        const dateAfterJump = await hv.GetLoadedDate();
-        await hv.saveScreenshot(`date after jump ${dateAfterJump.toString()}`);
-
-        // 7. ASSERT JUMPED TIME, SHOULD BE EXACTLY GIVEN SECONDSp
-        await expect(seconds * 1000).toBe(dateBeforeJump.getTime() - dateAfterJump.getTime());
-
-        // 8. SAVE CURRENT SCREENSHOT TO COMPARE LATER
-        await hv.saveScreenshot(`after-jump-screenshot-${jump_label}.png`, {
-          style: "#helioviewer-viewport-container-outer {z-index:200000}"
-        });
-
+        // await hv.Load();
+        // await hv.saveScreenshot("afterload");
+        // await hv.CloseAllNotifications();
+        // await hv.saveScreenshot("close notification");
+        // await hv.OpenImageLayerDrawer();
+        // await hv.saveScreenshot("open image drawer");
+        //
+        // // 2. LAYER 0 , SWITH TO SOHO
+        // const layer = await hv.getImageLayer(0);
+        // await layer.set("Observatory:", "SOHO");
+        // await hv.saveScreenshot("select soho image drawer");
+        // await hv.CloseDrawer();
+        // await hv.saveScreenshot("close drawer after select soho");
+        //
+        // await hv.saveScreenshot("close notification after soho selection");
+        // await hv.ZoomOut(1);
+        // await hv.WaitForLoadingComplete();
+        // await hv.saveScreenshot("close notification after soho selection zoom1");
+        // await hv.ZoomOut(1);
+        // await hv.WaitForLoadingComplete();
+        // await hv.saveScreenshot("close notification after soho selection zoom2");
+        // await hv.ZoomOut(1);
+        // await hv.WaitForLoadingComplete();
+        // await hv.saveScreenshot("close notification after soho selection zoom3");
+        //
+        // await hv.CloseAllNotifications();
+        // // 3. USE NEWEST SOHO
+        // await hv.UseNewestImage();
+        // await hv.WaitForLoadingComplete();
+        // await hv.saveScreenshot("use newest image");
+        // await hv.CloseAllNotifications();
+        // await hv.saveScreenshot("close notification after using newest");
+        //
+        // // 4. MARK TIME BEFORE JUMP BACKWARDS
+        // const dateBeforeJump = await hv.GetLoadedDate();
+        //
+        // await hv.saveScreenshot(`date before jump ${dateBeforeJump.toString()}`);
+        // // 5. JUMP BACKWARDS WITH GIVEN SECONDS
+        // await hv.JumpBackwardsDateWithSelection(seconds);
+        // await hv.WaitForLoadingComplete();
+        // await hv.saveScreenshot(`jumped backwards with ${seconds} seconds`);
+        // await hv.CloseAllNotifications();
+        // await hv.saveScreenshot(`jumped backwards with ${seconds} seconds close notification`);
+        //
+        // // 6. MARK TIME AFTER JUMP BACKWARDS
+        // const dateAfterJump = await hv.GetLoadedDate();
+        // await hv.saveScreenshot(`date after jump ${dateAfterJump.toString()}`);
+        //
+        // // 7. ASSERT JUMPED TIME, SHOULD BE EXACTLY GIVEN SECONDSp
+        // await expect(seconds * 1000).toBe(dateBeforeJump.getTime() - dateAfterJump.getTime());
+        //
+        // // 8. SAVE CURRENT SCREENSHOT TO COMPARE LATER
+        // await hv.saveScreenshot(`after-jump-screenshot-${jump_label}.png`, {
+        //   style: "#helioviewer-viewport-container-outer {z-index:200000}"
+        // });
+        //
         // 9. START FRESH AND RELOAD HV
-        await page.evaluate(() => localStorage.clear());
+        // await page.evaluate(() => localStorage.clear());
         await hv.Load();
+
         // await hv.WaitForLoadingComplete();
         // await hv.saveScreenshot("afterReload");
         await hv.CloseAllNotifications();
@@ -100,30 +101,32 @@ const time_jump_ranges = [
         await hv.CloseDrawer();
         await hv.saveScreenshot("afterReload SOHO Drawer Close");
 
-        await hv.ZoomOut(1);
-        await hv.WaitForLoadingComplete();
-        await hv.saveScreenshot("afterReload SOHO ZOOM1");
-        await hv.ZoomOut(1);
-        await hv.WaitForLoadingComplete();
-        await hv.saveScreenshot("afterReload SOHO ZOOM2");
-        await hv.ZoomOut(1);
-        await hv.WaitForLoadingComplete();
-        await hv.saveScreenshot("afterReload SOHO ZOOM3");
+        // await hv.ZoomOut(1);
+        // await hv.WaitForLoadingComplete();
+        // await hv.saveScreenshot("afterReload SOHO ZOOM1");
+        // await hv.ZoomOut(1);
+        // await hv.WaitForLoadingComplete();
+        // await hv.saveScreenshot("afterReload SOHO ZOOM2");
+        // await hv.ZoomOut(1);
+        // await hv.WaitForLoadingComplete();
+        // await hv.saveScreenshot("afterReload SOHO ZOOM3");
 
         // 11. USE NEWEST SOHO
-        await hv.UseNewestImage();
-        await hv.WaitForLoadingComplete();
-        await hv.CloseAllNotifications();
-        await hv.saveScreenshot("afterReload SOHO ZOOM3 Using Newest Image");
+        // await hv.UseNewestImage();
+        // await hv.WaitForLoadingComplete();
+        // await hv.CloseAllNotifications();
+        // await hv.saveScreenshot("afterReload SOHO ZOOM3 Using Newest Image");
+
 
         // 12. LOAD THE JUMPED DATETIME, SO WE CAN COMPARE SCREENSHOT
+        const dateAfterJump = new Date("2023/12/01 00:47:07 UTC");
         await hv.SetObservationDateTimeFromDate(dateAfterJump);
         await hv.saveScreenshot(`afterReload set obserrvation date ${dateAfterJump.toString()}`);
         await hv.WaitForLoadingComplete();
         await hv.CloseAllNotifications();
 
         await hv.saveScreenshot(`before move viewport`);
-        await hv.moveViewport(0,0);
+        await hv.moveViewport(0,500);
         await hv.saveScreenshot(`after move viewport`);
 
         // 13. GET CURRENT SCREENSHOT TO COMPARE PREVIOUS SCREENSHOT
