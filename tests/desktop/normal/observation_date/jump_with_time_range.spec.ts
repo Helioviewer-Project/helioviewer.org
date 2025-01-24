@@ -78,6 +78,8 @@ const time_jump_ranges = [
         // 7. ASSERT JUMPED TIME, SHOULD BE EXACTLY GIVEN SECONDSp
         await expect(seconds * 1000).toBe(dateBeforeJump.getTime() - dateAfterJump.getTime());
 
+        await hv.CenterViewport();
+
         // 8. SAVE CURRENT SCREENSHOT TO COMPARE LATER
         await hv.saveScreenshot(`after-jump-screenshot-${jump_label}.png`, {
           style: "#helioviewer-viewport-container-outer {z-index:200000}"
@@ -124,9 +126,9 @@ const time_jump_ranges = [
         await hv.WaitForLoadingComplete();
         await hv.CloseAllNotifications();
 
-        await hv.saveScreenshot(`before move viewport`);
-        await hv.moveViewport(0,-500);
-        await hv.saveScreenshot(`after move viewport`);
+        await hv.saveScreenshot("before center");
+        await hv.CenterViewport();
+        await hv.saveScreenshot("after center");
 
         // 13. GET CURRENT SCREENSHOT TO COMPARE PREVIOUS SCREENSHOT
         const directDateScreenshot = await hv.saveScreenshot("direct_date_screenshot", {
