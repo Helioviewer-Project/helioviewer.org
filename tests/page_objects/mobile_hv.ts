@@ -347,7 +347,7 @@ class HvMobile implements MobileInterface {
   async SetObservationDateTime(date: string, time: string) {
     await this._controls.getByLabel("Observation date", { exact: true }).tap();
     await this._controls.getByLabel("Observation date", { exact: true }).fill(date);
-    await this._controls.getByLabel("Observation time").tap();
+    await this.page.locator("#time").locator("visible=true").tap();
     // On mobile, the flatpickr controls must be used for times.
     const times = time.split(":");
     // Find the visible flatpickr instance
