@@ -8,7 +8,7 @@ const time_jump_ranges = [
   // { jump_label: "1Year", seconds: 31556926 }
 ];
 
-[MobileView].forEach((view) => {
+[MobileView,DesktopView].forEach((view) => {
   time_jump_ranges.forEach(({ jump_label, seconds }) => {
     /**
      * This test is testing jumping backwards functionality with given label for range select-box
