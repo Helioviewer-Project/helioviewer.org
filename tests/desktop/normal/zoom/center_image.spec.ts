@@ -67,7 +67,7 @@ test("Pressing sun center button should center sun", async ({ page }, info) => {
   await hv.moveViewport(300, 30);
 
   // 5. CENTER VIEWPORT WITH PRESSING SUN CENTER BuTTON
-  await hv.centerViewport();
+  await hv.CenterViewport();
 
   // 6. TAKE ANOTHER SCREENSHOT
   const centeredWithButton = await hv.sunScreenshot();
