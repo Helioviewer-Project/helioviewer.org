@@ -353,7 +353,7 @@ class HvMobile implements MobileInterface {
 
     await this.page.waitForSelector("#hvmobtime_td > #time");
 
-    await this.page.evaluate(`document.querySelector("#hvmobtime_td > #time")._flatpickr.setDate("${time}")`);
+    await this.page.evaluate(`document.querySelector("#hvmobtime_td > #time")._flatpickr.setDate("${time}",true)`);
   }
 
   async SetObservationDateTimeFromDate(date: Date): Promise<void> {

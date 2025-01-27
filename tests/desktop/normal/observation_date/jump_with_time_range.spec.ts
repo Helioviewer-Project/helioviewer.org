@@ -144,7 +144,8 @@ const time_jump_ranges = [
         const initialDate = await hv.GetLoadedDate();
 
         // 3. TO TEST GO FORWARD WE ARE GOING BACK GIVEN SECONDS + SOME RANDOM TIME
-        const randomMilliseconds = Math.floor(Math.random() * 90) * (24 * 60 * 60 * 1000);
+        const randomDaysBack = Math.floor(Math.random() * 90);
+        const randomMilliseconds = randomDaysBack * (24 * 60 * 60 * 1000);
         const wayBackInTime = new Date();
         wayBackInTime.setTime(initialDate.getTime() - seconds * 1000 - randomMilliseconds);
 
