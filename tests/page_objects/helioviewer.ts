@@ -552,7 +552,6 @@ class Helioviewer implements DesktopInterface {
     await this.page.mouse.move(x, y);
     await this.page.mouse.up();
   }
-
 }
 
 export { Helioviewer };

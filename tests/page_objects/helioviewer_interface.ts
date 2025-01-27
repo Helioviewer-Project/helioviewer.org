@@ -156,6 +156,12 @@ interface MobileInterface extends MinimalInterface {
    * @return EventTree
    */
   parseTree(source: string): EventTree;
+
+  /**
+   * Center the viewport
+   * @returns {Promise<void>}
+   */
+  CenterViewport(): Promise<void>;
 }
 
 /**
