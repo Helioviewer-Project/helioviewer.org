@@ -53,6 +53,6 @@ test("Issue 647, Movie making,  'Earth Scale Indicator' is off location if the r
 
   // 11. SCREENSHOT SHOULD MATCH
   await expect(page.locator(".movie-player-dialog")).toHaveScreenshot("movie_player_screenshot.png", {
-      maxDiffPixelRatio: 0.01
+    maxDiffPixelRatio: 0.01
   });
 });
