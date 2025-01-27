@@ -330,9 +330,10 @@ class HvMobile implements MobileInterface {
   }
 
   /**
-   * Center the viewport
+   * Center the viewport for the sun
+   * @returns {Promise<void>}
    */
-  async CenterViewport() {
+  async CenterViewport(): Promise<void> {
     await this.page.locator("#hvmobscale_div #center-button").tap();
   }
 
@@ -347,26 +348,10 @@ class HvMobile implements MobileInterface {
   async SetObservationDateTime(date: string, time: string) {
     await this._controls.getByLabel("Observation date", { exact: true }).tap();
     await this._controls.getByLabel("Observation date", { exact: true }).fill(date);
-    await this._controls.getByLabel("Observation time").tap();
-    // On mobile, the flatpickr controls must be used for times.
-    const times = time.split(":");
-    // Find the visible flatpickr instance
-    const flatpickrs = await this.page.locator(".flatpickr-calendar").all();
-    const timepicker = (
-      await Promise.all(
-        flatpickrs.map(async (locator) => {
-          return { locator: locator, visible: await locator.isVisible() };
-        })
-      )
-    ).filter((result) => result.visible)[0].locator;
 
-    await timepicker.getByLabel("Hour").click();
-    await timepicker.getByLabel("Hour").fill(times[0]);
-    await timepicker.getByLabel("Minute").click();
-    await timepicker.getByLabel("Minute").fill(times[1]);
-    await timepicker.getByLabel("Second").click();
-    await timepicker.getByLabel("Second").fill(times[2]);
-    await timepicker.getByLabel("Second").press("Enter");
+    await this.page.waitForSelector("#hvmobtime_td > #time");
+
+    await this.page.evaluate(`document.querySelector("#hvmobtime_td > #time")._flatpickr.setDate("${time}",true)`);
   }
 
   async SetObservationDateTimeFromDate(date: Date): Promise<void> {
@@ -398,6 +383,17 @@ class HvMobile implements MobileInterface {
    */
   saveScreenshot(filename: string = "", options: PageScreenshotOptions = {}): Promise<string> {
     return this.hv.saveScreenshot(filename, options);
+  }
+
+  /**
+   * Attach base64 screnshot with a given filename to trace report
+   * and  exit afterwards with false assertion
+   * @param {string} filename name of file in trace report
+   * @param {PageScreenshotOptions} options pass options to playwright screenshot function
+   * @returns {void}
+   */
+  async saveScreenshotAndExit(filename: string = "", options: PageScreenshotOptions = {}): Promise<void> {
+    return this.hv.saveScreenshotAndExit(filename, options);
   }
 
   /**

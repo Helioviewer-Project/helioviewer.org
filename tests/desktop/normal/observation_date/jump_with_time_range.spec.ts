@@ -42,7 +42,6 @@ const time_jump_ranges = [
         await hv.WaitForLoadingComplete();
         await hv.ZoomOut(1);
         await hv.WaitForLoadingComplete();
-
         await hv.CloseAllNotifications();
 
         // 3. USE NEWEST SOHO
@@ -64,6 +63,9 @@ const time_jump_ranges = [
         // 7. ASSERT JUMPED TIME, SHOULD BE EXACTLY GIVEN SECONDSp
         await expect(seconds * 1000).toBe(dateBeforeJump.getTime() - dateAfterJump.getTime());
 
+        // FIX: CenterViewport for consistent screenshots
+        await hv.CenterViewport();
+
         // 8. SAVE CURRENT SCREENSHOT TO COMPARE LATER
         await hv.saveScreenshot(`after-jump-screenshot-${jump_label}.png`, {
           style: "#helioviewer-viewport-container-outer {z-index:200000}"
@@ -72,6 +74,7 @@ const time_jump_ranges = [
         // 9. START FRESH AND RELOAD HV
         await page.evaluate(() => localStorage.clear());
         await hv.Load();
+
         await hv.CloseAllNotifications();
         await hv.OpenImageLayerDrawer();
 
@@ -97,13 +100,15 @@ const time_jump_ranges = [
         await hv.WaitForLoadingComplete();
         await hv.CloseAllNotifications();
 
+        // FIX: CenterViewport for consistent screenshots
+        await hv.CenterViewport();
+
         // 13. GET CURRENT SCREENSHOT TO COMPARE PREVIOUS SCREENSHOT
         const directDateScreenshot = await hv.saveScreenshot("direct_date_screenshot", {
           style: "#helioviewer-viewport-container-outer {z-index:200000}"
         });
 
         // 14, 2 SCREENSHOTS ARE FROM SAME DATE, AND SHOULD MATCH
-        // await expect(directDateScreenshot).toBe(afterJumpScreenshot);
         const ss1 = Buffer.from(directDateScreenshot, "base64");
         expect(ss1).toMatchSnapshot(`after-jump-screenshot-${jump_label}.png`);
       }
@@ -139,7 +144,8 @@ const time_jump_ranges = [
         const initialDate = await hv.GetLoadedDate();
 
         // 3. TO TEST GO FORWARD WE ARE GOING BACK GIVEN SECONDS + SOME RANDOM TIME
-        const randomMilliseconds = Math.floor(Math.random() * 90) * (24 * 60 * 60 * 1000);
+        const randomDaysBack = Math.floor(Math.random() * 90);
+        const randomMilliseconds = randomDaysBack * (24 * 60 * 60 * 1000);
         const wayBackInTime = new Date();
         wayBackInTime.setTime(initialDate.getTime() - seconds * 1000 - randomMilliseconds);
 
@@ -158,6 +164,9 @@ const time_jump_ranges = [
 
         // 7, ASSERT WE STILL NEED TO GO RANDOM TIME TO GO WHERE WE STARTED
         await expect(randomMilliseconds).toBe(initialDate.getTime() - dateAfterJumpForward.getTime());
+
+        // FIX: CenterViewport for consistent screenshots
+        await hv.CenterViewport();
 
         // 8. TAKE A PICTURE , WE WILL COMPARE LATER
         await hv.saveScreenshot(`navigated-date-screenshot-${jump_label}.png`, {
@@ -190,6 +199,9 @@ const time_jump_ranges = [
         await hv.SetObservationDateTimeFromDate(navigatedDate);
         await hv.WaitForLoadingComplete();
         await hv.CloseAllNotifications();
+
+        // FIX: CenterViewport for consistent screenshots
+        await hv.CenterViewport();
 
         // 13. TAKE A SCREENSHOT AND COMPARE
         const directDateScreenshot = await hv.saveScreenshot("direct_date_screenshot", {

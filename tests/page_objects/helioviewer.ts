@@ -516,7 +516,7 @@ class Helioviewer implements DesktopInterface {
    * Center the viewport for the sun
    * @returns {Promise<void>}
    */
-  async centerViewport(): Promise<void> {
+  async CenterViewport(): Promise<void> {
     await this.page.locator("#center-button").click();
   }
 

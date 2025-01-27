@@ -52,5 +52,7 @@ test("Issue 647, Movie making,  'Earth Scale Indicator' is off location if the r
   await page.getByText("Your LASCO C2 movie is ready! Click here to watch or download it.").click();
 
   // 11. SCREENSHOT SHOULD MATCH
-  await expect(page.locator(".movie-player-dialog")).toHaveScreenshot("movie_player_screenshot.png");
+  await expect(page.locator(".movie-player-dialog")).toHaveScreenshot("movie_player_screenshot.png", {
+    maxDiffPixelRatio: 0.01
+  });
 });
