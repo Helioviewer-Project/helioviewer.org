@@ -349,8 +349,6 @@ class HvMobile implements MobileInterface {
     await this._controls.getByLabel("Observation date", { exact: true }).tap();
     await this._controls.getByLabel("Observation date", { exact: true }).fill(date);
 
-    await this.page.locator("#earth-container").tap();
-
     await this.page.waitForSelector("#hvmobtime_td > #time");
 
     await this.page.evaluate(`document.querySelector("#hvmobtime_td > #time")._flatpickr.setDate("${time}",true)`);
