@@ -53,72 +53,20 @@ jobs:
 
     - name: Run js unit tests
       run: npm run test
-  playwright-e2e-tests:
-    strategy:
-      matrix:
-        shardIndex: [1,2,3,4,5]
-        shardTotal: [5]
-      # If one of the shards fails, continue running the remaining tests
-      fail-fast: false
-
-    timeout-minutes: 60
+  trigger-playwright-tests:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout the code under test
-      uses: actions/checkout@v4
-      with:
-        submodules: true
-        path: 'helioviewer.org'
-    - name: Checkout the latest Helioviewer API
-      uses: actions/checkout@v4
-      with:
-        repository: 'Helioviewer-Project/api'
-        path: 'api'
-    # See https://github.com/actions/checkout?tab=readme-ov-file#fetch-only-a-single-file
-    - name: Checkout the Dockerfile for local Helioviewer
-      uses: actions/checkout@v4
-      with:
-        repository: 'Helioviewer-Project/helioviewer.org-docker'
-        path: 'compose'
-        sparse-checkout: |
-          compose.yaml
-          .env.example
-        sparse-checkout-cone-mode: false
-    - name: Print current directory
-      run: |
-        echo $(pwd)
-        echo $(ls)
-    - name: Setup environment file
-      run: mv compose/.env.example .env
-    - name: Start local Helioviewer environment
-      id: docker
-      run: |
-        mv compose/compose.yaml .
-        docker compose up -d --wait
-    - name: Show docker compose logs
-      if: always()
-      run: |
-        docker compose logs
-        cat compose.yaml
-    - name: Fix cache directory permissions
-      if: always()
-      run: |
-        docker compose exec web chown 33:33 cache
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install Playwright Browsers
-      run: |
-        cd helioviewer.org
-        npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: |
-        cd helioviewer.org
-        npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}}
-
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-report-${{matrix.shardIndex}}
-        path: helioviewer.org/playwright-report/
-        retention-days: 7
+      - name: Trigger workflow_dispatch on test repository
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.BOT_TOKEN}}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: 'helioviewer-project',
+              repo: 'helioviewer.org-tests',
+              workflow_id: 'ci.yml',
+              ref: 'main',
+              inputs: {
+                test_pr: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || '''''' }}
+              }
+            })
