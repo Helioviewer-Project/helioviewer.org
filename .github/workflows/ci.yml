@@ -69,11 +69,19 @@ jobs:
       with:
         submodules: true
         path: 'helioviewer.org'
+
     - name: Checkout the latest Helioviewer API
       uses: actions/checkout@v4
       with:
         repository: 'Helioviewer-Project/api'
         path: 'api'
+
+    - name: Checkout test code
+      uses: actions/checkout@v4
+      with:
+        repository: 'Helioviewer-Project/helioviewer.org-tests'
+        path: 'tests'
+
     # See https://github.com/actions/checkout?tab=readme-ov-file#fetch-only-a-single-file
     - name: Checkout the Dockerfile for local Helioviewer
       uses: actions/checkout@v4
@@ -88,32 +96,40 @@ jobs:
       run: |
         echo $(pwd)
         echo $(ls)
+
     - name: Setup environment file
       run: mv compose/.env.example .env
+
     - name: Start local Helioviewer environment
       id: docker
       run: |
         mv compose/compose.yaml .
         docker compose up -d --wait
+
     - name: Show docker compose logs
       if: always()
       run: |
         docker compose logs
         cat compose.yaml
+
     - name: Fix cache directory permissions
       if: always()
       run: |
         docker compose exec web chown 33:33 cache
+
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+
     - name: Install Playwright Browsers
       run: |
-        cd helioviewer.org
+        cd tests
+        npm ci
         npx playwright install --with-deps
+
     - name: Run Playwright tests
       run: |
-        cd helioviewer.org
+        cd tests
         npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}}
 
     - uses: actions/upload-artifact@v4
