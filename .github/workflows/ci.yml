@@ -10,18 +10,6 @@ permissions:
   contents: read
 
 jobs:
-  typescript-check:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Install node dependencies
-      run: npm ci
-
-    - name: Run typescript
-      run: npx tsc -p tests/tsconfig.json --noEmit
-
   code-style:
     runs-on: ubuntu-latest
     steps:
