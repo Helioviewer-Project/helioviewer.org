@@ -142,19 +142,6 @@
 	} else {
 	?>
 		<link rel="stylesheet" href="/resources/compressed/helioviewer.min.css?v=<?=filemtime('resources/compressed/helioviewer.min.css')?>" />
-		<!-- Google Analytics -->
-		<script type="text/javascript">
-			var _gaq = _gaq || [];
-			_gaq.push(['_setAccount', 'UA-20263053-1']);
-			_gaq.push(['_trackPageview']);
-			_gaq.push(['_trackPageLoadTime']);
-
-			(function() {
-				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-			}) ();
-		</script>
 	<?php
 	}
 	?>
@@ -535,7 +522,11 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 				<div id="zoom-out-button" class="viewport-action fa fa-search-minus" title="Zoom Out"></div>
 
 				<div id="zoom-in-button" class="viewport-action fa fa-search-plus" title="Zoom In"></div>
-
+				<div id="js-3d-toggle" class="viewport-action">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+						<path d="M12.378 1.602a.75.75 0 0 0-.756 0L3 6.632l9 5.25 9-5.25-8.622-5.03ZM21.75 7.93l-9 5.25v9l8.628-5.032a.75.75 0 0 0 .372-.648V7.93ZM11.25 22.18v-9l-9-5.25v8.57a.75.75 0 0 0 .372.648l8.628 5.033Z" />
+					</svg>
+				</div>
 			</div>
 
 			<div id="menus">
@@ -1830,19 +1821,23 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 	<!-- Viewport -->
 	<div id="helioviewer-viewport-container-outer" class="user-select-none">
-		<div id="helioviewer-viewport-container-inner">
-			<div id="helioviewer-viewport">
+		<div id="helioviewer-viewport-container-inner" style="z-index: 0;">
+			<!-- Message console -->
+			<div id="message-console"></div>
+
+			<!-- 3D Viewport -->
+			<div id="view-3d" style="z-index: -10;"></div>
+
+			<!-- 2D Viewport -->
+			<div id="helioviewer-viewport" style="z-index: -5;">
                 <!-- START mobile touchscreen viewport div -->
-                <div id="toptouchlayer" style=""></div>
+                <div id="toptouchlayer"></div>
                  <!-- END mobile touchscreen viewport div -->
 
 				<!-- Movement sandbox -->
 				<div id="sandbox" style="position: absolute;">
 					<div id="moving-container"></div>
 				</div>
-
-				<!-- Message console -->
-				<div id="message-console"></div>
 
 				<!-- Image area select boundary container -->
 				<div id="image-area-select-container"></div>
@@ -1948,6 +1943,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	}
 	?>
 
+	<script src="/resources/js/dist/hv3d.js?v=<?=filemtime('resources/js/dist/hv3d.js')?>" type="text/javascript"></script>
 <?php
 if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {

@@ -1,0 +1,105 @@
+{
+  "asset": {
+    "generator": "Khronos glTF Blender I/O v3.2.43",
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Scene",
+      "nodes": [0]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "sun model",
+      "translation": [50, -50, 0]
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "Material.001",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.800000011920929, 0.800000011920929, 0.800000011920929, 1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.5
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "sun model",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 5808,
+      "max": [49.99998474121094, 50, 2],
+      "min": [-50, -50.000038146972656, -24.935867309570312],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 5808,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 5808,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5123,
+      "count": 6024,
+      "type": "SCALAR"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 69696,
+      "byteOffset": 0
+    },
+    {
+      "buffer": 0,
+      "byteLength": 69696,
+      "byteOffset": 69696
+    },
+    {
+      "buffer": 0,
+      "byteLength": 46464,
+      "byteOffset": 139392
+    },
+    {
+      "buffer": 0,
+      "byteLength": 12048,
+      "byteOffset": 185856
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 197904,
+      "uri": "sun_model.bin"
+    }
+  ]
+}

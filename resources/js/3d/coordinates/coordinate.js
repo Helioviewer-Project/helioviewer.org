@@ -1,0 +1,170 @@
+import { Vector3 } from "three";
+
+/**
+ * Represents a coordinate in 3D space with a timestamp.
+ */
+class Coordinate {
+  /**
+   * Creates a new Coordinate instance.
+   * @param {number} x - The x-coordinate.
+   * @param {number} y - The y-coordinate.
+   * @param {number} z - The z-coordinate.
+   * @param {Date} time - The timestamp associated with this coordinate.
+   */
+  constructor(x, y, z, time) {
+    /**
+     * The x-coordinate.
+     * @type {number}
+     */
+    this.x = x;
+
+    /**
+     * The y-coordinate.
+     * @type {number}
+     */
+    this.y = y;
+
+    /**
+     * The z-coordinate.
+     * @type {number}
+     */
+    this.z = z;
+
+    /**
+     * The timestamp associated with this coordinate.
+     * @type {Date}
+     */
+    this.time = time;
+  }
+
+  /**
+   * Converts the coordinate to a Vector3 object.
+   * @returns {Vector3} A Vector3 representation of the coordinate.
+   */
+  toVec() {
+    return new Vector3(this.x, this.y, this.z);
+  }
+}
+
+/**
+ * Manages searching for coordinates within a list
+ */
+class CoordinateList {
+  /**
+   * Creates a new CoordinateList instance.
+   * @param {Coordinate[]} data - An array of Coordinate objects.
+   */
+  constructor(data) {
+    data.sort((a, b) => a.time.getTime() - b.time.getTime());
+
+    /**
+     * @type {Coordinate[]}
+     */
+    this.data = data;
+  }
+
+  /**
+   * Returns the coordinate from the list which is nearest to the given date.
+   * @param {Date} date - The date to compare against.
+   * @returns {Coordinate} The coordinate nearest to the given date.
+   */
+  Nearest(date) {
+    const deltas = this.data.map((entry) => {
+      return {
+        dt: Math.abs(date.getTime() - entry.time.getTime()),
+        entry: entry
+      };
+    });
+    const min = deltas.reduce((a, b) => (a.dt < b.dt ? a : b)).entry;
+    return min;
+  }
+
+  /**
+   * Returns a coordinate computed by linear interpolation of stored coordinates.
+   * @param {Date} date - The date for which to compute the interpolated coordinate.
+   * @returns {Coordinate} The interpolated coordinate for the given date.
+   */
+  Get(date) {
+    const [before, after] = this._get_coord_before_and_after(date);
+    // Progress value of 0 to 1 for the date.
+    // 0 means date == before, 1 means date == after, 0.5 means date is halfway between.
+    const progress = this._clamp(
+      (date.getTime() - before.time.getTime()) / (after.time.getTime() - before.time.getTime()),
+      0,
+      1
+    );
+    return this._lerp_coordinates(before, after, progress, date);
+  }
+
+  /**
+   * Returns an array containing two coordinates: the one immediately before and after the given date.
+   * @param {Date} date - The date to compare against.
+   * @returns {Coordinate[]} An array containing two Coordinate objects: [beforeCoordinate, afterCoordinate].
+   *                         If the date is before the first coordinate or after the last coordinate in the list,
+   *                         both elements in the array will be the same (either the first or last coordinate).
+   */
+  _get_coord_before_and_after(date) {
+    // Case where date < the first element
+    if (date < this.data[0].time) {
+      return [this.data[0], this.data[0]];
+    }
+
+    // Find the before and after
+    let previous = this.data[0];
+    for (const c of this.data) {
+      if (date < c.time) {
+        return [previous, c];
+      }
+      previous = c;
+    }
+
+    // This indicates that the date is beyond the last value
+    const final = this.data[this.data.length - 1];
+    return [final, final];
+  }
+
+  /**
+   * Clamps a value between a minimum and maximum range.
+   * @param {number} val - The value to clamp.
+   * @param {number} start - The minimum value of the range.
+   * @param {number} end - The maximum value of the range.
+   * @returns {number} The clamped value.
+   * @private
+   */
+  _clamp(val, start, end) {
+    // obfuscation!
+    return val < start ? start : end < val ? end : val;
+  }
+
+  /**
+   * Performs linear interpolation between two coordinates.
+   * @param {Coordinate} a - The starting coordinate.
+   * @param {Coordinate} b - The ending coordinate.
+   * @param {number} progress - The interpolation progress, between 0 and 1.
+   * @param {Date} date - The date for the interpolated coordinate.
+   * @returns {Coordinate} The interpolated coordinate.
+   * @private
+   */
+  _lerp_coordinates(a, b, progress, date) {
+    return new Coordinate(
+      this._lerp_value(a.x, b.x, progress),
+      this._lerp_value(a.y, b.y, progress),
+      this._lerp_value(a.z, b.z, progress),
+      date
+    );
+  }
+
+  /**
+   * Linear interpolate (lerp) between start and end.
+   * @param {number} start - Start Value
+   * @param {number} end - End Value
+   * @param {number} progress - Progress between 0 and 1.
+   * @returns {number} The interpolated value
+   * @private
+   */
+  _lerp_value(start, end, progress) {
+    return (end - start) * progress + start;
+  }
+}
+
+export { CoordinateList, Coordinate };
