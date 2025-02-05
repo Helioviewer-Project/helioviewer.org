@@ -53,6 +53,7 @@ var MessageConsole = Class.extend(
         options = Object.assign({}, this._defaults, options);
         // Set warning class on the message
         options.group = options.group ? options.group + " warn" : "warn";
+        options.header = options.header ?? "Warn";
         $("#message-console").jGrowl(msg, options);
     },
 

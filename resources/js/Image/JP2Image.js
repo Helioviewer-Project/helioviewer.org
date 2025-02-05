@@ -13,12 +13,13 @@ var JP2Image = Class.extend(
     /**
      * @constructs
      */
-    init: function (hierarchy, sourceId, date, difference, onChange) {
-        this.hierarchy   = hierarchy;
-        this.sourceId    = sourceId;
-        this.requestDate = date;
-        this.difference  = difference;
-        this._onChange   = onChange;
+    init: function (hierarchy, sourceId, date, difference, onChange, onNoImageFound) {
+        this.hierarchy         = hierarchy;
+        this.sourceId          = sourceId;
+        this.requestDate       = date;
+        this.difference        = difference;
+        this._onChange         = onChange;
+        this._onNoImageFound   = onNoImageFound;
 
         this._requestImage();
     },
@@ -42,7 +43,28 @@ var JP2Image = Class.extend(
             difference:this.difference,
             switchSources:switchSources
         };
-        this._last_request = $.get(Helioviewer.api, params, $.proxy(this._onImageLoad, this), Helioviewer.dataType);
+
+        // Plug onSuccess and onFailure handler functions
+        this._last_request = $.get(Helioviewer.api, params, Helioviewer.dataType)
+            .done( $.proxy(this._onImageLoad, this))
+            .fail( (jqxhr, statusCode, errorThrown) => {
+
+                if(jqxhr.statusText == "abort") {
+                    console.log("aborted");
+                    return;
+                }
+
+                const is500 = jqxhr.status == 500;
+                const hasContentType = jqxhr.getResponseHeader("content-type") != null;
+                const hasJSON = jqxhr.getResponseHeader("content-type").trim().startsWith('application/json')
+                const hasErrorJSON = jqxhr.responseJSON.hasOwnProperty("errno") && jqxhr.responseJSON.hasOwnProperty("error");
+                const hasNoImageFoundForLayerError = jqxhr.responseJSON.errno == 10;
+
+                if (is500 && hasContentType && hasJSON && hasErrorJSON & hasNoImageFoundForLayerError) {
+                    this._onNoImageFound(jqxhr.responseJSON.error);
+                }
+
+            });
     },
 
     /**

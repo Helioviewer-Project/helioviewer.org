@@ -51,7 +51,42 @@ var HelioviewerTileLayer = TileLayer.extend(
 
         this.tileLoader = new TileLoader(this.domNode, tileSize, tileVisibilityRange);
 
-        this.image = new JP2Image(hierarchy, sourceId, date, difference, () => {this.onLoadImage(layerAccordionLoaded)});
+        this.image = new JP2Image(hierarchy, sourceId, date, difference, () => {this.onLoadImage(layerAccordionLoaded)}, this.onNoImageFound(id, sourceId) );
+    },
+
+    /**
+     * Generate an error handler function if there is no image for this layer
+     *
+     * @param {String} id of the image source layer
+     * @param {Number} sourceId is from backend may have some value for which source has no data
+     */
+    onNoImageFound: function (id, sourceId) {
+        return (errorMessage) => {
+
+            // Parse error messages like "No data of the requested type (XRT C_poly/Any) are currently available."
+            // to extract "XRT C_Poly/Any"
+            const layerMatch = errorMessage.match(/\((.*?)\)/);
+
+            let name = "Layer";
+
+            if (layerMatch) {
+                name = layerMatch[1];
+            }
+
+            // Warn user this layer has no image
+            // Keep lifetime short since this
+            Helioviewer.messageConsole.warn(errorMessage, {
+                "life": 4000,
+            });
+
+            // Let's update our leftside tilelayer accordion to reflect there is no image
+            helioviewerWebClient._tileLayerAccordion._updateForNoImageForLayer(id, errorMessage, sourceId, name);
+
+            // if (this.visible) {
+            //     // $('#noimage-container').show();
+            //     // $('#moving-container').hide();
+            // }
+        };
     },
 
     /**
