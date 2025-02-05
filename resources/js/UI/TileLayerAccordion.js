@@ -799,12 +799,88 @@ var TileLayerAccordion = Layer.extend(
     },
 
     /**
+     * Update this layer accordion controls in case of no image found
+     *
+     * @param {String} id of the image source layer
+     * @param {String} errorMessage is from backend may have some value for which source has no data
+     * @param {Number} sourceId is from backend may have some value for which source has no data
+     * @param {String} layerTitle is the title of the not-found layer
+     */
+    _updateForNoImageForLayer: function (id, errorMessage, sourceId, layerTitle ) {
+
+        const entry=$("#"+id);
+
+        // Set timestamp to No Image
+        entry.find('.timestamp').html("<span>No Image For This Layer</span>").css("color", "yellow");
+
+        // Set proper titles and source ids , in case of no image failures
+        entry.find(".tile-accordion-header-left").html(layerTitle);
+        entry.find(".tile-accordion-header-left").attr('title', layerTitle);
+        entry.find(".tile-accordion-header-left").attr('data-sourceid', sourceId);
+
+        // No Prev and Next Button Controls
+        entry.find('.prev-image-btn').each(function() {
+            $(this).css('color', "red");
+            $(this).attr('title', "No Prev Image");
+            $(this).css('cursor', "default");
+            $(this).data('sourceId', sourceId);
+        });
+        entry.find('.next-image-btn').each(function() {
+            $(this).css('color', "red");
+            $(this).attr('title', "No Next Image");
+            $(this).css('cursor', "default");
+            $(this).data('sourceId', sourceId);
+        });
+        entry.find('.next-image-btn').each(function() {
+            $(this).css('color', "red");
+            $(this).attr('title', "No Next Image");
+            $(this).css('cursor', "default");
+            $(this).data('sourceId', sourceId);
+        });
+
+        // No Image Download and Image Info buttons
+        entry.find('.image-info-dialog-btn').each(function() {
+            $(this).css('color', "red");
+            $(this).css('cursor', "not-allowed");
+            $(this).unbind('click');
+        });
+        entry.find('.image-download-btn').each(function() {
+            $(this).css('color', "red");
+            $(this).css('cursor', "not-allowed");
+            $(this).unbind('click');
+        });
+
+        // We don't need any image if there is no difference block
+        entry.find('.difference-block').each(function() {
+            $(this).hide();
+        });
+    },
+
+
+    /**
      *
      */
     _updateAccordionEntry: function (event, id, name, sourceId, opacity, date, imageId, hierarchy, imageName, difference, diffCount, diffTime, baseDiffTime) {
 
         var entry=$("#"+id), self=this, letters=['a','b','c','d','e'],
             label, select;
+
+        // Restore dialog buttons in case they are disabled,
+        entry.find('.image-info-dialog-btn').each(function() {
+            $(this).css('color', "#fff");
+            $(this).css('cursor', "default");
+            $(this).bind('click');
+        });
+        entry.find('.image-download-btn').each(function() {
+            $(this).css('color', "#fff");
+            $(this).css('cursor', "default");
+            $(this).bind('click');
+        });
+
+        // Restore difference block in case if it is disabled by layer controls automatically
+        entry.find('.difference-block').each(function() {
+            $(this).show();
+        });
 
         this._updateTimeStamp(id, date);
 
