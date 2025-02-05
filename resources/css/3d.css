@@ -16,3 +16,11 @@
 .masked {
     display: none !important;
 }
+
+#js-3d-toggle {
+    margin-top: calc(4pt - 1px) !important;
+}
+
+#js-3d-toggle.active {
+    margin-left: 106px;
+}
