@@ -65,7 +65,6 @@ var TileLayerAccordion = Layer.extend(
         this.closestImages = new ClosestImages();
     },
 
-
     /**
      * Adds a new entry to the tile layer accordion
      *
@@ -135,7 +134,7 @@ var TileLayerAccordion = Layer.extend(
         let nextQtip = imgDates.hasNextImage() ? 'Next Image' : 'No Next Image';
         let nextCursor = imgDates.hasNextImage() ? 'pointer' : 'default';
 
-        let nextImage = '<div class="next-image-btn source-accordion-button fa fa-forward fa-fw" data-source-id="'+sourceId+'" '
+        let nextImage = '<div class="next-image-btn fa fa-forward fa-fw" data-source-id="'+sourceId+'" '
             +       'title="'+nextQtip+'"'
             +       'style="margin-left:0px; color:'+nextColor+'; cursor:'+nextCursor+';">'
             + '</div>';
@@ -144,26 +143,29 @@ var TileLayerAccordion = Layer.extend(
         let prevQtip = imgDates.hasPrevImage() ? 'Previous Image' : 'No Previous Image';
         let prevCursor = imgDates.hasPrevImage() ? 'pointer' : 'default';
 
-        let prevImage = '<div class="prev-image-btn source-accordion-button fa fa-backward fa-fw" data-source-id="'+sourceId+'" '
+        let prevImage = '<div class="prev-image-btn fa fa-backward fa-fw" data-source-id="'+sourceId+'" '
             +       'title="'+prevQtip+'"'
             +       'style="margin-left:0px; color:'+prevColor+'; cursor:'+prevCursor+';">'
             + '</div>';
 
-        head = '<div class="layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all">'
-             +     '<div class="left">'
-             +     '<div class="tile-accordion-header-left" '
-             +           'title="' + name + '" data-sourceid="'+sourceId+'">'
-             +         name
+        head = '<div class="layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all image-layer-accordion">'
+             +     '<div class="image-layer-accordion-left">'
+             +         '<div class="tile-accordion-header-left" title="' + name + '" data-sourceid="'+sourceId+'">'
+             +             name
+             +         '</div>'
+             +         '<div class="image-layer-accordion-previous-next-image">'
+             +             prevImage
+             +             nextImage
+             +         '</div>'
              +     '</div>'
-             +     '<div>'
-             +         prevImage
-             +         nextImage
-             +     '</div>'
-             +     '</div>'
-             +     '<div class="right">'
-             +         '<span class="timestamp"></span>'
-             +         visibilityBtn
-             +         removeBtn
+             +     '<div class="image-layer-accordion-right">'
+             +         '<div>'
+             +             '<span class="timestamp"></span>'
+             +         '</div>'
+             +         '<div>'
+             +             visibilityBtn
+             +             removeBtn
+             +         '</div>'
              +     '</div>'
              + '</div>';
 

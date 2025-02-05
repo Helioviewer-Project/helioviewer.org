@@ -47,10 +47,6 @@
 
 .ui-dialog-buttonpane {border: none;}
 
-.tile-accordion-header-left {
-   color: #ffffff;
-}
-
 .ui-widget-content {
     color: #ffffff;
 }
@@ -59,3 +55,47 @@
     color: #ffffff;
 }
 
+.tile-accordion-header-left {
+   color: #ffffff;
+   text-overflow: ellipsis;
+   overflow:hidden;
+   white-space: nowrap;
+   max-width:115px;
+}
+
+#TileLayerAccordion-Container .ui-accordion-header {
+    width: auto;
+}
+
+.image-layer-accordion {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.image-layer-accordion-left {
+    display: flex;
+    justify-content:flex-start;
+    align-items: baseline;
+    flex-wrap: nowrap;
+}
+
+.image-layer-accordion-right {
+    display: flex;
+    padding-right:15px;
+    justify-content:flex-end;
+    align-items: center;
+    flex-grow: 1;
+    flex-shrink:0;
+}
+
+.image-layer-accordion-right span.timestamp {
+    font-size: 10.5px;
+    float: none;
+    cursor: text;
+}
+
+.image-layer-accordion-left .image-layer-accordion-previous-next-image {
+    flex-shrink:0;
+    padding-right:2px;
+}
