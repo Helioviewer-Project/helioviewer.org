@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import Hv3D from "./helioviewer3d";
 import { CameraControls } from "@react-three/drei";
 
@@ -25,18 +25,29 @@ function Viewport3D() {
 
   useEffect(() => {
     if (controls.current != null) {
-      controls.current.zoomTo(400);
+      controls.current.zoomTo(350);
     }
   }, [controls.current]);
 
+  /**
+   * Move the camera to the given position
+   * @param {Vector3} position
+   */
+  const setCameraPosition = (position) => {
+    controls.current.setLookAt(position.x, position.y, position.z, 0, 0, 0, false);
+  }
+
   /** Render the 3D canvas */
   return (
-    <Canvas orthographic={true}>
-      {/* Set up the camera controls */}
-      <CameraControls ref={controls} />
-      {/* Render the 3D viewport from the current state */}
-      <Hv3D state={hvState} />
-    </Canvas>
+    <>
+      <div className="solid-bg"></div>
+      <Canvas orthographic={true}>
+        {/* Set up the camera controls */}
+        <CameraControls ref={controls} />
+        {/* Render the 3D viewport from the current state */}
+        <Hv3D state={hvState} setCameraPosition={setCameraPosition} />
+      </Canvas>
+    </>
   );
 }
 

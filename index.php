@@ -138,6 +138,7 @@
 		<link rel="stylesheet" href="/resources/css/youtube.css" />
 		<link rel="stylesheet" href="/resources/css/font-awesome.min.css" />
 		<link rel="stylesheet" href="/resources/css/helioviewer-views.css" />
+		<link rel="stylesheet" href="/resources/css/3d.css" />
 	<?php
 	} else {
 	?>
@@ -395,7 +396,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 				<br><span>Images &amp;<span class="hvmobbs_br"><br></span> Layers</span>
 			</a>
 		</td>
-		<td class="hvmobds_td">
+		<td class="hvmobds_td toggle3d">
 			<a class="hvmobdstabs" drawersec="accordion-events">
 				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/events_icon1.png" alt="Events icon">
 				<br><span>Features &amp;<span class="hvmobbs_br"><br></span> Events</span>
@@ -506,8 +507,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 				</h1>
 			</div>
 
-			<div id="zoom">
-
+			<div id="zoom" class="toggle3d">
 				<!--  Zoom Controls -->
 				<div id="zoomControls" style="display: none;">
 					<div id="zoomControlZoomIn" title="Zoom in." style="display: none;">+</div>
@@ -522,12 +522,13 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 				<div id="zoom-out-button" class="viewport-action fa fa-search-minus" title="Zoom Out"></div>
 
 				<div id="zoom-in-button" class="viewport-action fa fa-search-plus" title="Zoom In"></div>
-				<div id="js-3d-toggle" class="viewport-action">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-						<path d="M12.378 1.602a.75.75 0 0 0-.756 0L3 6.632l9 5.25 9-5.25-8.622-5.03ZM21.75 7.93l-9 5.25v9l8.628-5.032a.75.75 0 0 0 .372-.648V7.93ZM11.25 22.18v-9l-9-5.25v8.57a.75.75 0 0 0 .372.648l8.628 5.033Z" />
-					</svg>
-				</div>
 			</div>
+			<div id="js-3d-toggle" class="viewport-action">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+					<path d="M12.378 1.602a.75.75 0 0 0-.756 0L3 6.632l9 5.25 9-5.25-8.622-5.03ZM21.75 7.93l-9 5.25v9l8.628-5.032a.75.75 0 0 0 .372-.648V7.93ZM11.25 22.18v-9l-9-5.25v8.57a.75.75 0 0 0 .372.648l8.628 5.033Z" />
+				</svg>
+			</div>
+
 
 			<div id="menus">
 
@@ -537,9 +538,9 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 					<div id="youtube-button" class="fa fa-fw qtip-left" title="View Helioviewer Movies Shared to YouTube."></div>
 
-					<div id="movies-button" class="fa fa-file-video-o fa-fw qtip-left social-button" title="Create a Helioviewer Movie."></div>
+					<div id="movies-button" class="toggle3d fa fa-file-video-o fa-fw qtip-left social-button" title="Create a Helioviewer Movie."></div>
 
-					<a id="screenshots-button" class="fa fa-file-picture-o fa-fw qtip-left social-button" title="Download a screenshot of the current Helioviewer Viewport."></a>
+					<a id="screenshots-button" class="toggle3d fa fa-file-picture-o fa-fw qtip-left social-button" title="Download a screenshot of the current Helioviewer Viewport."></a>
 
 					<a id="data-button" class="fa fa-file-code-o fa-fw qtip-left social-button" title="Request Science Data Download from External Partners."></a>
 
@@ -555,14 +556,14 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			</div>
 
 
-			<div id="scale">
+			<div id="scale" class="toggle3d">
 
 				<div id="earth-button" class="viewport-action segmented-left fa fa-globe" title="Toggle Earth-Scale Indicator."></div><div id="scalebar-button" class="viewport-action segmented-right fa fa-arrows-h" style="border-left: 0;" title="Toggle Length scale indicator."></div>
 
 			</div>
 
 			<!-- Mouse coordinates display -->
-			<div id="mouse-coords-box">
+			<div id="mouse-coords-box" class="toggle3d">
 				<div id="mouse-coords">
 					<div id="js-coord-help" class="coord-notice" rel="/dialogs/mouse_coordinates.html"><span class="fa fa-info"></span></div>
 					<div class="mouse-coordinate-labels">
@@ -574,7 +575,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 						<span><span id="mouse-coords-y"></span><span class="mouse-unit" id="js-unit-2"></span></span>
 					</div>
 				</div>
-				<div id="mouse-cartesian" style="margin-top:4px;" class="viewport-action segmented-left fa fa-cube" title="Toggle Mouse Coordinates (Cartesian)"></div><div id="mouse-polar" class="viewport-action segmented-right fa fa-dot-circle-o" style="border-left: 0;margin-top:4px;" title="Toggle Mouse Coordinates (Polar)"></div>
+				<div id="mouse-cartesian" style="margin-top:4px;" class="toggle3d viewport-action segmented-left fa fa-cube" title="Toggle Mouse Coordinates (Cartesian)"></div><div id="mouse-polar" class="viewport-action segmented-right fa fa-dot-circle-o" style="border-left: 0;margin-top:4px;" title="Toggle Mouse Coordinates (Polar)"></div>
 			</div>
 
 		</div>
@@ -657,7 +658,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 					</div>
 				</div>
 
-				<div id="accordion-events" class="accordion">
+				<div id="accordion-events" class="accordion toggle3d">
 					<div class="header">
 						<div class="disclosure-triangle closed">►</div>
 						<h1>Features and Events</h1>
@@ -669,7 +670,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 						</div>
 					</div>
 				</div>
-				<div id="accordion-bodies" class="accordion">
+				<div id="accordion-bodies" class="accordion toggle3d">
 					<div class="header">
 						<div class="disclosure-triangle closed">►</div>
 						<h1>Celestial Bodies</h1>
@@ -1204,7 +1205,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 								<div class='social-btns'>
 									<div style="font-size: 1.5em;">
-										<div id='help-links-tutorial' onclick="startTutorial();" class='text-btn qtip-left' style="width: 90%;border:none;" title="Interactive Tutorial" rel="/dialogs/about.php">
+										<div id='help-links-tutorial' onclick="startTutorial();" class='toggle3d text-btn qtip-left' style="width: 90%;border:none;" title="Interactive Tutorial" rel="/dialogs/about.php">
 											<span class='fa fa-compass fa-fw'></span>
 											<span style='line-height: 1.6em'>Interactive Tutorial</span>
 										</div>
@@ -1375,7 +1376,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		<div id='about-dialog'></div>
 
 		<!-- Mouse coordinates dialog -->
-		<div id='mouse-coords-dialog' class="dialog"></div>
+		<div id='mouse-coords-dialog' class="dialog toggle3d"></div>
 
 		<!-- Layer choice dialog -->
 		<div id='layer-choice-dialog'></div>
@@ -1522,13 +1523,13 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 					<div>
 			<!--<div id="youtube-button" class="fa fa-youtube fa-fw qtip-left social-button" title="View Helioviewer Movies Shared to YouTube."></div>-->
-			<div id="movies-button" class="fa fa-file-video-o fa-fw qtip-left social-button" title="Create a Helioviewer Movie."></div>
-			<div id="screenshots-button" class="fa fa-file-picture-o fa-fw qtip-left social-button" title="Download a screenshot of the current Helioviewer Viewport."></div>
+			<div id="movies-button" class="toggle3d fa fa-file-video-o fa-fw qtip-left social-button" title="Create a Helioviewer Movie."></div>
+			<div id="screenshots-button" class="toggle3d fa fa-file-picture-o fa-fw qtip-left social-button" title="Download a screenshot of the current Helioviewer Viewport."></div>
 						<a id= "help-anchor" target="_blank" href="https://helioviewer.org"><div id="help-button" class="fa fa-question fa-fw qtip-left social-button" title="Get Help with Helioviewer."></div></a>
 					</div>
 			</div>
 
-			<div id="zoom">
+			<div id="zoom" class="toggle3d">
 				<!--  Zoom Controls -->
 				<div id="zoomControls">
 					<div id="center-button" class="viewport-action fa fa-crosshairs" title="Center the Sun in the Viewport"></div>
@@ -1802,7 +1803,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 
 		<?php } else { ?>
-			<div id="zoom" style="width:70px;height:400px;">
+			<div id="zoom" style="width:70px;height:400px;" class="toggle3d">
 				<!--  Zoom Controls -->
 				<div id="zoomControls">
 					<div id="center-button" class="viewport-action fa fa-crosshairs" title="Center the Sun in the Viewport"></div>

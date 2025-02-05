@@ -1,0 +1,18 @@
+/**
+ * Solid black background for the 3D viewport.
+ */
+.solid-bg {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+}
+
+/**
+ * Grays out all elements which are not supported in 3D mode.
+ */
+.masked {
+    display: none !important;
+}

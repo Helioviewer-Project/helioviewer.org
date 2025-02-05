@@ -16,10 +16,15 @@ const coolViewport = document.getElementById("view-3d");
  */
 toggleBtn.onclick = () => {
   toggleBtn.classList.toggle("active");
+  document.querySelectorAll('.toggle3d').forEach((element) => {
+    element.classList.toggle('masked');
+  })
   coolViewport.style.zIndex = coolViewport.style.zIndex == "-10" ? "0" : "-10";
   // TODO: Update the remainder of the UI to hide things we don't currently
   //       support
 };
+
+window.is3dViewActive = () => toggleBtn.classList.contains("active")
 
 /** Render the 3D view. */
 createRoot(document.getElementById("view-3d")).render(<Viewport3D />);
