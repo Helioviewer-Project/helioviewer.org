@@ -316,6 +316,8 @@ var TileLayer = Layer.extend(
      * Reloads tiles if visibility is being set to true.
      * This method is almost identical to onLoadImage, except that reloadTiles
      * needs to be called with true instead of false.
+     * @param {Boolean} visible, if true show if false hide
+     * @return {void}
      */
     setVisibility: function (visible) {
         this._super(visible);
@@ -326,6 +328,26 @@ var TileLayer = Layer.extend(
             // Update viewport sandbox if necessary
             $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
         }
+    },
+
+    /**
+     * Block this layer and restrict it from showing images,
+     * Used in situations where there is no image coming from backend;
+     * We are using this function to maskover if there is any left over image inside the layer .
+     * @return {void}
+     */
+    blockLayer: function() {
+        this.domNode.addClass("blocked-layer");
+    },
+
+    /**
+     * Unblock this layer and let it show images,
+     * Used in situations where there is no image coming from backend;
+     * @see blockLayer function
+     * @return {void}
+     */
+    unblockLayer: function() {
+        this.domNode.removeClass("blocked-layer");
     },
 
     /**

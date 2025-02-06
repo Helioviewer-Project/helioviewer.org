@@ -584,6 +584,8 @@ var TileLayerAccordion = Layer.extend(
                 if(imgDates.hasPrevImage()) {
                     helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(imgDates.prevImageDate));
                 }
+            }, (err) => {
+                console.log(err);
             })
         });
 
@@ -808,6 +810,10 @@ var TileLayerAccordion = Layer.extend(
      */
     _updateForNoImageForLayer: function (id, errorMessage, sourceId, layerTitle ) {
 
+        // Ignore this source from now on
+        // always return no next or prev images
+        this.closestImages.ignoreSource(sourceId);
+
         const entry=$("#"+id);
 
         // Set timestamp to No Image
@@ -822,12 +828,6 @@ var TileLayerAccordion = Layer.extend(
         entry.find('.prev-image-btn').each(function() {
             $(this).css('color', "red");
             $(this).attr('title', "No Prev Image");
-            $(this).css('cursor', "default");
-            $(this).data('sourceId', sourceId);
-        });
-        entry.find('.next-image-btn').each(function() {
-            $(this).css('color', "red");
-            $(this).attr('title', "No Next Image");
             $(this).css('cursor', "default");
             $(this).data('sourceId', sourceId);
         });

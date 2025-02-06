@@ -58,6 +58,10 @@ a.light:hover {
     position: absolute;
 }
 
+.blocked-layer {
+    display:none !important;
+}
+
 .tile
 {
     border: 0px;
