@@ -16,10 +16,8 @@ class SSCWSException extends Error {
   constructor(message, error) {
     super();
     this.message = message;
-    this.error = error
+    this.error = error;
   }
-
-
 }
 
 /**
@@ -122,13 +120,13 @@ class SSCWS {
   static observatoryName(name) {
     const lower = name.toLowerCase().replace(/(-)/g, "");
     const mapping = {
-      "goesr": "goes16",
-      "solo": "solarorbiter"
-    }
+      goesr: "goes16",
+      solo: "solarorbiter"
+    };
     if (mapping.hasOwnProperty(lower)) {
-      return mapping[lower]
+      return mapping[lower];
     }
-    return lower
+    return lower;
   }
 
   /**

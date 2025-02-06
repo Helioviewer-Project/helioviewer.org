@@ -25,7 +25,7 @@ function Viewport3D() {
 
   useEffect(() => {
     if (controls.current != null) {
-      controls.current.zoomTo(350);
+      controls.current.zoomTo(150);
     }
   }, [controls.current]);
 
@@ -35,7 +35,7 @@ function Viewport3D() {
    */
   const setCameraPosition = (position) => {
     controls.current.setLookAt(position.x, position.y, position.z, 0, 0, 0, false);
-  }
+  };
 
   /** Render the 3D canvas */
   return (

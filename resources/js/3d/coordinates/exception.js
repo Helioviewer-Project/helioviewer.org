@@ -1,8 +1,8 @@
 class AppException extends Error {
-    constructor(message) {
-      super();
-      this.message = message;
-    }
+  constructor(message) {
+    super();
+    this.message = message;
   }
+}
 
-  export { AppException };
+export { AppException };

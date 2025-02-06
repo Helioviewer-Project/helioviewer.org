@@ -16,8 +16,8 @@ import Background from "./background";
  */
 function getRenderPriority(source, index) {
   // add 1 as 0 is reserved.
-  let priority = index += 1;
-  if ([4,5].indexOf(source) != -1) {
+  let priority = (index += 1);
+  if ([4, 5].indexOf(source) != -1) {
     return -priority;
   }
   return priority + 1;
@@ -35,7 +35,7 @@ function Hv3D({ state, setCameraPosition }) {
     gl.setClearColor("#000000");
   }, [gl]);
 
-  const priorities = Object.values(state.state.tileLayers).map((layer, idx) => getRenderPriority(layer.sourceId, idx))
+  const priorities = Object.values(state.state.tileLayers).map((layer, idx) => getRenderPriority(layer.sourceId, idx));
   console.log(priorities, Math.min(...priorities));
 
   /** Render each layer. Plus a sphere that holds as a background for the sun. */

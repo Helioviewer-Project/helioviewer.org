@@ -5,21 +5,20 @@ import { SSCWS } from "./coordinates/sscws";
 import { Coordinator } from "./coordinates/coordinator";
 extend({ Sun });
 
-
 function Sun3D({ renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition }) {
   const sunObj = useRef();
   const [ready, setReady] = useState(false);
   useEffect(() => {
     const fn = async () => {
-      if (typeof(sunObj.current) !== "undefined") {
+      if (typeof sunObj.current !== "undefined") {
         setReady(false);
         // Wait for the sun to be ready
-        await sunObj.current.ready
+        await sunObj.current.ready;
         // The minimum time interval varies for different observatories.
         // We find the minimum time interval that HV supports by testing all
         // our available sources.
         const endRange = new Date(sunObj.current.time);
-        endRange.setMinutes(endRange.getMinutes() + 24)
+        endRange.setMinutes(endRange.getMinutes() + 24);
         // Get the position of the sun from SSCWS
         const coords = await SSCWS.GetLocations(observatory, sunObj.current.time, endRange);
         // Convert the SSCWS coordinates to our 3D frame
@@ -37,26 +36,28 @@ function Sun3D({ renderPriority, isPrimaryLayer, source, date, opacity, observat
           sunObj.current._model.children.forEach((m) => {
             m.material.polygonOffset = true;
             m.material.polygonOffsetFactor = -1;
-          })
+          });
         }
         setReady(true);
       }
-    }
-    fn()
+    };
+    fn();
   }, [sunObj.current, renderPriority]);
 
-  const scene = useRef()
-  const { camera } = useThree()
-  useFrame(({gl}) => {
-    if ([4,5].indexOf(source) == -1) {
+  const scene = useRef();
+  const { camera } = useThree();
+  useFrame(({ gl }) => {
+    if ([4, 5].indexOf(source) == -1) {
       gl.clearDepth();
     }
-    gl.render(scene.current, camera)
-  }, renderPriority)
+    gl.render(scene.current, camera);
+  }, renderPriority);
 
-  return <scene ref={scene}>
-    <sun ref={sunObj} args={[source, date, date, 1, Quality.High]} opacity={ready ? opacity / 100 : 0} />;
-  </scene>
+  return (
+    <scene ref={scene}>
+      <sun ref={sunObj} args={[source, date, date, 1, Quality.High]} opacity={ready ? opacity / 100 : 0} />;
+    </scene>
+  );
 }
 
 export default Sun3D;
