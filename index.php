@@ -230,7 +230,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		</li>
 
 
-		<li>
+		<li class="toggle3d">
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-movies">
@@ -243,7 +243,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			</table>
 		</li>
 
-		<li>
+		<li class="toggle3d">
 			<table class="hvmobmenu_table" cellpadding="0" cellspacing="0" border="0">
 				<td class="hvmobmenu_left_td">
 					<span class="hvmobmenuitems" drawersec="hv-drawer-screenshots">
@@ -371,12 +371,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 <!-- END mobile menu -->
 
 
-<!-- START Mobile toolbar -->
-
-<div id="hvmobscale_div"></div>
-
-<!-- END Mobile toolbar -->
-
 
 <!-- START Mobile Drawer Tabs -->
 <div class="hvmobdstab_wrap">
@@ -402,7 +396,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 				<br><span>Features &amp;<span class="hvmobbs_br"><br></span> Events</span>
 			</a>
 		</td>
-		<td class="hvmobds_td">
+		<td class="hvmobds_td toggle3d">
 			<a class="hvmobdstabs" drawersec="accordion-bodies">
 				<img class="hvmobds_icon" src="https://develop.helioviewer.org/resources/images/mobile/celestial_icon2.png" alt="Celestial Bodies icon">
 				<br><span>Celestial<span class="hvmobbs_br"><br></span> Bodies</span>
@@ -517,13 +511,13 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 					<div id="zoomControlZoomOut" title="Zoom out." style="display: none;">-</div>
 				</div>
 
-				<div id="center-button" class="viewport-action fa fa-crosshairs" title="Center the Sun in the Viewport"></div>
+				<div id="center-button" class="toggle3d viewport-action fa fa-crosshairs" title="Center the Sun in the Viewport"></div>
 
 				<div id="zoom-out-button" class="viewport-action fa fa-search-minus" title="Zoom Out"></div>
 
 				<div id="zoom-in-button" class="viewport-action fa fa-search-plus" title="Zoom In"></div>
 			</div>
-			<div id="js-3d-toggle" class="viewport-action">
+			<div class="viewport-action js-3d-toggle desktop js-mobile-3d">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
 					<path d="M12.378 1.602a.75.75 0 0 0-.756 0L3 6.632l9 5.25 9-5.25-8.622-5.03ZM21.75 7.93l-9 5.25v9l8.628-5.032a.75.75 0 0 0 .372-.648V7.93ZM11.25 22.18v-9l-9-5.25v8.57a.75.75 0 0 0 .372.648l8.628 5.033Z" />
 				</svg>
@@ -556,10 +550,8 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			</div>
 
 
-			<div id="scale" class="toggle3d">
-
-				<div id="earth-button" class="viewport-action segmented-left fa fa-globe" title="Toggle Earth-Scale Indicator."></div><div id="scalebar-button" class="viewport-action segmented-right fa fa-arrows-h" style="border-left: 0;" title="Toggle Length scale indicator."></div>
-
+			<div id="scale">
+				<div id="earth-button" class="toggle3d viewport-action segmented-left fa fa-globe" title="Toggle Earth-Scale Indicator."></div><div id="scalebar-button" class="toggle3d viewport-action segmented-right fa fa-arrows-h" style="border-left: 0;" title="Toggle Length scale indicator."></div>
 			</div>
 
 			<!-- Mouse coordinates display -->
@@ -1823,6 +1815,10 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<!-- Viewport -->
 	<div id="helioviewer-viewport-container-outer" class="user-select-none">
 		<div id="helioviewer-viewport-container-inner" style="z-index: 0;">
+			<!-- START Mobile toolbar -->
+			<div id="hvmobscale_div"></div>
+			<!-- END Mobile toolbar -->
+
 			<!-- Message console -->
 			<div id="message-console"></div>
 
