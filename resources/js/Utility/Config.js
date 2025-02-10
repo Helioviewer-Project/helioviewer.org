@@ -30,6 +30,7 @@ var Config = Class.extend(
         'regenerate_movie_threshold': 90,
         'enable_helios_backlinks'   : false,
         'jhelioviewer_host'         : 'GSFC', // Mirrors should set this to their server code.
+        'coordinator_url'           : 'https://api.helioviewer.org/coordinate',
         /**
          * The maximum time difference in seconds between an image and
          * the chosen observation time. If the time delta exceeds this

@@ -1,5 +1,5 @@
 import { Coordinate, CoordinateList } from "./coordinate";
-import { Config } from "../env";
+import { Config } from "../../Utility/Config";
 
 /**
  * Helper class to deal with coordinate transformations between a given
@@ -9,7 +9,7 @@ class Coordinator {
   /**
    * URL for coordinator API service.
    */
-  static BASE_URL = Config.coordinator_url;
+  static BASE_URL = (new Config()).params.coordinator_url;
 
   /**
    * Transform GSE coordinates to the rendering coordinate system

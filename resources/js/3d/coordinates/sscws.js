@@ -1,5 +1,4 @@
 import { Coordinate } from "./coordinate";
-import { AppException } from "./exception";
 
 /**
  * Represents a satellite in the SSC Web Services.

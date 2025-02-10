@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import React, { useEffect } from "react";
+import { useThree } from "@react-three/fiber";
 import Sun3D from "./sun";
 import Background from "./background";
 
@@ -36,7 +36,6 @@ function Hv3D({ state, setCameraPosition }) {
   }, [gl]);
 
   const priorities = Object.values(state.state.tileLayers).map((layer, idx) => getRenderPriority(layer.sourceId, idx));
-  console.log(priorities, Math.min(...priorities));
 
   /** Render each layer. Plus a sphere that holds as a background for the sun. */
   return (
