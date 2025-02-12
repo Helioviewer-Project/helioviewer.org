@@ -51,13 +51,56 @@ var HelioviewerTileLayer = TileLayer.extend(
 
         this.tileLoader = new TileLoader(this.domNode, tileSize, tileVisibilityRange);
 
-        this.image = new JP2Image(hierarchy, sourceId, date, difference, () => {this.onLoadImage(layerAccordionLoaded)});
+        this.image = new JP2Image(hierarchy, sourceId, date, difference, () => {this.onLoadImage(layerAccordionLoaded)}, this.onNoImageFound(layerAccordionLoaded) );
+    },
+
+    /**
+     * Generate an error handler function if there is no image for this layer
+     *
+     * @param {Number} sourceId is from backend may have some value for which source has no data
+     * @param {Promise} layerAccordionLoaded promise to wait for layer to load, the go for no image updates
+     */
+    onNoImageFound: function (layerAccordionLoaded) {
+
+        return (errorMessage) => {
+
+            // wait for layer to load fully
+            layerAccordionLoaded.then(() => {
+
+                // Parse error messages like "No data of the requested type (XRT C_poly/Any) are currently available."
+                // to extract "XRT C_Poly/Any"
+                const layerMatch = errorMessage.match(/\((.*?)\)/);
+
+                let name = "Layer";
+
+                if (layerMatch && layerMatch.length > 1) {
+                    name = layerMatch[1];
+                }
+
+                // Warn user this layer has no image
+                // Keep lifetime short since this can stack up
+                Helioviewer.messageConsole.warn(errorMessage, {
+                    "life": 4000,
+                });
+
+                // Let's update our leftside tilelayer accordion to reflect there is no image
+                helioviewerWebClient._tileLayerAccordion._updateForNoImageForLayer(this.id, errorMessage,this.image.sourceId, name);
+
+                // Block this layer do not show its image no matter what
+                this.blockLayer();
+
+                $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
+            });
+        };
     },
 
     /**
      * onLoadImage
      */
     onLoadImage: function (layerAccordionLoaded) {
+
+        // Release this layer to show images, in case it is blocked before
+        this.unblockLayer();
 
         this.loaded = true;
         this.layeringOrder = this.image.layeringOrder;

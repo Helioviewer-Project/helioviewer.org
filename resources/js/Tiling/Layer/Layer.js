@@ -8,9 +8,9 @@
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class */
 "use strict";
-var Layer = Class.extend(
+var Layer = Class.extend({
+
     /** @lends Layer.prototype */
-    {
     visible: true,
 
     /**
