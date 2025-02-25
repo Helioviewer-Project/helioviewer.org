@@ -11,6 +11,7 @@
   KeyboardManager, SettingsLoader, TimeControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers,
   TileLayerAccordion, VisualGlossary, _gaq */
 "use strict";
+
 var HelioviewerWebClient = HelioviewerClient.extend(
     /** @lends HelioviewerWebClient.prototype */
     {
@@ -205,12 +206,27 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * @description Sets up a simple AJAX-request loading indicator
      */
     _initLoadingIndicator: function () {
-        $(document).ajaxStart(function () {
+        this._loadCount = 0;
+        $(document).ajaxStart(this.startLoading.bind(this))
+                   .ajaxStop(this.stopLoading.bind(this));
+    },
+
+    startLoading: function () {
+        this._loadCount++;
+        console.log("startLoading");
+        if (this._loadCount === 1) {
             $('#loading').show();
-        })
-        .ajaxStop(function () {
+        }
+    },
+
+    stopLoading: function () {
+        if (this._loadCount > 0) {
+            this._loadCount--;
+        }
+        console.log("stopLoading");
+        if (this._loadCount === 0) {
             $('#loading').hide();
-        });
+        }
     },
 
     /**

@@ -1940,7 +1940,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	}
 	?>
 
-	<script src="/resources/js/dist/hv3d.js?v=<?=filemtime('resources/js/dist/hv3d.js')?>" type="text/javascript"></script>
 <?php
 if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
@@ -2091,5 +2090,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			echo '<a href="'.$link.'" target="_blank"><div id="watermark" style="width: 140px; height: 35px; display: block;"></div></a>';
 		}
 	?>
+	<script src="/resources/js/dist/hv3d.js?v=<?=filemtime('resources/js/dist/hv3d.js')?>" type="text/javascript"></script>
 </body>
 </html>

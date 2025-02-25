@@ -12,6 +12,7 @@ function Sun3D({ renderPriority, isPrimaryLayer, source, date, opacity, observat
     const fn = async () => {
       if (typeof sunObj.current !== "undefined") {
         setReady(false);
+        helioviewerWebClient.startLoading();
         // Wait for the sun to be ready
         await sunObj.current.ready;
         // The minimum time interval varies for different observatories.
@@ -38,6 +39,7 @@ function Sun3D({ renderPriority, isPrimaryLayer, source, date, opacity, observat
             m.material.polygonOffsetFactor = -1;
           });
         }
+        helioviewerWebClient.stopLoading();
         setReady(true);
       }
     };
