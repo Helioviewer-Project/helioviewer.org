@@ -213,7 +213,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
     startLoading: function () {
         this._loadCount++;
-        console.log("startLoading");
         if (this._loadCount === 1) {
             $('#loading').show();
         }
@@ -223,7 +222,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         if (this._loadCount > 0) {
             this._loadCount--;
         }
-        console.log("stopLoading");
         if (this._loadCount === 0) {
             $('#loading').hide();
         }
