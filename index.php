@@ -138,7 +138,6 @@
 		<link rel="stylesheet" href="/resources/css/youtube.css" />
 		<link rel="stylesheet" href="/resources/css/font-awesome.min.css" />
 		<link rel="stylesheet" href="/resources/css/helioviewer-views.css" />
-		<link rel="stylesheet" href="/resources/css/3d.css" />
 	<?php
 	} else {
 	?>
@@ -147,7 +146,10 @@
 	}
 	?>
 	<script type="text/javascript">var outputType = <?php if($outputType){ echo "'".$outputType."'"; } else { echo 'false'; }?>;</script>
-
+	<?php /* 3d.css is not in the bundler because our current bundler doesn't */ ?>
+	<?php /* guarantee any particular order... which is pretty bad for the    */ ?>
+	<?php /* "cascading" part of CSS. Which is needed for this 3d.css         */ ?>
+	<link rel="stylesheet" href="/resources/css/3d.css" />
 <?php
 if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
