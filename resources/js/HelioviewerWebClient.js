@@ -221,8 +221,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     stopLoading: function () {
         if (this._loadCount > 0) {
             this._loadCount--;
+        } else {
+            console.warn("This call to stopLoading would bring the counter below 0.");
         }
-        if (this._loadCount === 0) {
+        if (this._loadCount <= 0) {
             $('#loading').hide();
         }
     },
