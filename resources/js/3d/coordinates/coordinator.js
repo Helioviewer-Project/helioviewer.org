@@ -1,5 +1,4 @@
 import { Coordinate, CoordinateList } from "./coordinate";
-import { Config } from "../../Utility/Config";
 
 /**
  * Helper class to deal with coordinate transformations between a given
@@ -7,16 +6,19 @@ import { Config } from "../../Utility/Config";
  */
 class Coordinator {
   /**
-   * URL for coordinator API service.
+   * Construct a coordinator which uses the given endpoint for the service.
+   * @param {string} url Coordinator URL
    */
-  static BASE_URL = (new Config()).params.coordinator_url;
+  constructor(url = "https://api.helioviewer.org/coordinate") {
+    this.BASE_URL = url
+  }
 
   /**
    * Transform GSE coordinates to the rendering coordinate system
    * @param {Array<Coordinate>} coordinates Transform a list of GSE coordinates to the system coordinate frame.
    * @return {Promise<CoordinateList>} A promise that resolves to a CoordinateList.
    */
-  static async GSE(coordinates) {
+  async GSE(coordinates) {
     const response = await fetch(this.BASE_URL + "/gse2frame", {
       method: "post",
       headers: { "Content-Type": "application/json" },

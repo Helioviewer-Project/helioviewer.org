@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { extend, render, useFrame, useThree } from "@react-three/fiber";
+import { extend, useFrame, useThree } from "@react-three/fiber";
 import { Quality, Sun } from "@helioviewer/sun";
 import { SSCWS } from "./coordinates/sscws";
-import { Coordinator } from "./coordinates/coordinator";
 extend({ Sun });
 
-function Sun3D({ renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition }) {
+function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition }) {
   const sunObj = useRef();
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -23,7 +22,7 @@ function Sun3D({ renderPriority, isPrimaryLayer, source, date, opacity, observat
         // Get the position of the sun from SSCWS
         const coords = await SSCWS.GetLocations(observatory, sunObj.current.time, endRange);
         // Convert the SSCWS coordinates to our 3D frame
-        const localCoords = await Coordinator.GSE(coords);
+        const localCoords = await coordinator.GSE(coords);
         // LERP the coordinate of the object at the given time.
         const observatoryLocation = localCoords.Get(sunObj.current.time).toVec();
         sunObj.current.lookAt(observatoryLocation);

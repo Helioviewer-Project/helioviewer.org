@@ -26,7 +26,7 @@ function getRenderPriority(source, index) {
 /**
  * Renders the current helioviewer state
  */
-function Hv3D({ state, setCameraPosition }) {
+function Hv3D({coordinator, state, setCameraPosition }) {
   /** Get a handle to the WebGLRenderer */
   const { gl } = useThree();
 
@@ -44,6 +44,7 @@ function Hv3D({ state, setCameraPosition }) {
       {Object.values(state.state.tileLayers).map((layer, idx) => (
         <Sun3D
           key={idx}
+          coordinator={coordinator}
           isPrimaryLayer={idx == 0}
           renderPriority={priorities[idx]}
           source={layer.sourceId}

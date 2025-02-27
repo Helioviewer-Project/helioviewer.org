@@ -11,7 +11,7 @@ function getHvState() {
   return JSON.parse(localStorage.getItem("settings"));
 }
 
-function Viewport3D() {
+function Viewport3D({coordinator}) {
   /** Tracks the current state of Helioviewer */
   const [hvState, setHvState] = useState(getHvState());
   /** Tracks if the 3D view is currently enabled and visible */
@@ -77,7 +77,7 @@ function Viewport3D() {
         {/* Set up the camera controls */}
         <CameraControls ref={controls} />
         {/* Render the 3D viewport from the current state */}
-        {enabled ? <Hv3D state={hvState} setCameraPosition={setCameraPosition} /> : <></> }
+        {enabled ? <Hv3D coordinator={coordinator} state={hvState} setCameraPosition={setCameraPosition} /> : <></> }
       </Canvas>
     </>;
 }

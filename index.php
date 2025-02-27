@@ -1873,7 +1873,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<?php
 	if ($debug){
 	?>
-		<script src="/resources/js/Utility/Config.js?v=<?=$debugTime?>" type="module"></script>
+		<script src="/resources/js/Utility/Config.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Utility/HelperFunctions.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Utility/LayerImgDates.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Utility/ClosestImages.js?v=<?=$debugTime?>" type="text/javascript"></script>
@@ -2046,6 +2046,9 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			settingsJSON = {};
 
 			serverSettings = new Config(settingsJSON).toArray();
+
+			// Defined in hv3d.js, initialize the 3D viewport
+			Init3D(serverSettings.coordinator_url);
 
 			zoomLevels = [0.30255511, 0.60511022,1.21022044,2.42044088,4.84088176,9.68176352,19.36352704,38.72705408,77.45410816,154.90821632];
 
