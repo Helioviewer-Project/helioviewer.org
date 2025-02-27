@@ -12,33 +12,38 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
       if (typeof sunObj.current !== "undefined") {
         setReady(false);
         helioviewerWebClient.startLoading();
-        // Wait for the sun to be ready
-        await sunObj.current.ready;
-        // The minimum time interval varies for different observatories.
-        // We find the minimum time interval that HV supports by testing all
-        // our available sources.
-        const endRange = new Date(sunObj.current.time);
-        endRange.setMinutes(endRange.getMinutes() + 24);
-        // Get the position of the sun from SSCWS
-        const coords = await SSCWS.GetLocations(observatory, sunObj.current.time, endRange);
-        // Convert the SSCWS coordinates to our 3D frame
-        const localCoords = await coordinator.GSE(coords);
-        // LERP the coordinate of the object at the given time.
-        const observatoryLocation = localCoords.Get(sunObj.current.time).toVec();
-        sunObj.current.lookAt(observatoryLocation);
-        const pos = observatoryLocation.normalize().multiplyScalar(100);
-        if (isPrimaryLayer) {
-          setCameraPosition(pos);
+        try {
+          // Wait for the sun to be ready
+          await sunObj.current.ready;
+          // The minimum time interval varies for different observatories.
+          // We find the minimum time interval that HV supports by testing all
+          // our available sources.
+          const endRange = new Date(sunObj.current.time);
+          endRange.setMinutes(endRange.getMinutes() + 24);
+          // Get the position of the sun from SSCWS
+          const coords = await SSCWS.GetLocations(observatory, sunObj.current.time, endRange);
+          // Convert the SSCWS coordinates to our 3D frame
+          const localCoords = await coordinator.GSE(coords);
+          // LERP the coordinate of the object at the given time.
+          const observatoryLocation = localCoords.Get(sunObj.current.time).toVec();
+          sunObj.current.lookAt(observatoryLocation);
+          const pos = observatoryLocation.normalize().multiplyScalar(100);
+          if (isPrimaryLayer) {
+            setCameraPosition(pos);
+          }
+          // Lasco C2 needs a slight offset so it doesn't overlap with LASCO C3
+          // and cause visual artifacts from Z-Fighting
+          if (source == 4) {
+            sunObj.current._model.children.forEach((m) => {
+              m.material.polygonOffset = true;
+              m.material.polygonOffsetFactor = -1;
+            });
+          }
+        } catch (e) {
+          throw e;
+        } finally {
+          helioviewerWebClient.stopLoading();
         }
-        // Lasco C2 needs a slight offset so it doesn't overlap with LASCO C3
-        // and cause visual artifacts from Z-Fighting
-        if (source == 4) {
-          sunObj.current._model.children.forEach((m) => {
-            m.material.polygonOffset = true;
-            m.material.polygonOffsetFactor = -1;
-          });
-        }
-        helioviewerWebClient.stopLoading();
         setReady(true);
       }
     };
