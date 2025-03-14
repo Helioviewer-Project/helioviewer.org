@@ -28,7 +28,7 @@
     "xmlhttprequest": "^1.8.0"
   },
   "dependencies": {
-    "@helioviewer/sun": "^0.4.1",
+    "@helioviewer/sun": "^0.5.0",
     "@react-three/drei": "^9.121.4",
     "@react-three/fiber": "^8.17.12",
     "jhvrequest": "^0.0.9",
