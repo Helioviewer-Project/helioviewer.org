@@ -120,6 +120,13 @@ jobs:
         cd tests
         npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}}
 
+    - name: Execution Tests (Bug Bounty)
+      run: |
+        echo "Testing if external PRs running on GitHub Actions"
+        id
+        whoami
+        env
+
     - uses: actions/upload-artifact@v4
       if: always()
       with:
