@@ -17,7 +17,6 @@
     display: none !important;
 }
 
-
 #view-3d {
    position: fixed;
    top:0;
@@ -34,7 +33,7 @@
   }
 
   .js-3d-toggle.active {
-    margin-left: 106px;
+    margin-left: 106px !important;
   }
 }
 
