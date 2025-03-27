@@ -1,5 +1,7 @@
 import { Coordinate } from "./coordinate";
 
+const EARTH = "earth";
+
 /**
  * Represents a satellite in the SSC Web Services.
  * @typedef {Object} SSCSatellite
@@ -12,10 +14,12 @@ import { Coordinate } from "./coordinate";
  */
 
 class SSCWSException extends Error {
-  constructor(message, error) {
+  static EMPTY_DATA = "NO_DATA";
+  constructor(message, error, code) {
     super();
     this.message = message;
     this.error = error;
+    this.errorCode = code;
   }
 }
 
@@ -33,13 +37,12 @@ class SSCWS {
   /**
    * Get location data for the specified observatory.
    * Data is always returned in GSE format
-   * @param {string} observatory Observatory to get the position of. See https://sscweb.gsfc.nasa.gov/WS/sscr/2/observatories for options
+   * @param {string} obs Observatory to get the position of. See https://sscweb.gsfc.nasa.gov/WS/sscr/2/observatories for options
    * @param {Date} start Start date to request position information for
    * @param {Date} end End date to request position information for
-   * @returns {Promise<Object>} Unaltered response from SSCWS
+   * @returns {Promise<any>} Unaltered response from SSCWS
    */
-  static async GetLocationsRaw(observatory, start, end) {
-    const obs = this.observatoryName(observatory);
+  static async GetLocationsRaw(obs, start, end) {
     const resolutionFactor = this.computeResolutionFactor(start, end);
     const url =
       this.BASE_URL +
@@ -50,6 +53,7 @@ class SSCWS {
 
   /**
    * Returns the list of observatories supported by SSCWS
+   * @see https://sscweb.gsfc.nasa.gov/WebServices/REST/#Get_Observatories
    * @returns {Promise<Array<SSCSatellite>>}
    */
   static async GetObservatories() {
@@ -76,14 +80,29 @@ class SSCWS {
    * @throws {SSCWSException} on error
    */
   static async GetLocations(observatory, start, end) {
-    const data = await this.GetLocationsRaw(observatory, start, end);
+    const obs = this.observatoryName(observatory);
+    if (obs === EARTH) {
+      return this.GetEarthLocation(start, end);
+    }
+
+    const data = await this.GetLocationsRaw(obs, start, end);
     // Navigate the structure to get to the XYZ data
     const result = data[1].Result[1];
+    // Some things can go wrong here, we can flat out have an error, bubble it up.
     if (result.StatusCode == "ERROR") {
-      throw new SSCWSException(result.StatusText[1][0], result);
+      throw new SSCWSException(result.StatusText[1][0], result, result.StatusSubCode);
     }
-    if (!result.hasOwnProperty("Data")) {
-      throw new SSCWSException("No data returned by SSCWS", result);
+    const response_is_missing_data = !result.hasOwnProperty("Data");
+    // The result can be successful, but have an empty response. In this case,
+    // if the observatory is earth based, then we can handle it by just getting
+    // the location of the earth at the time we want:
+    if (response_is_missing_data && this.isEarthBased(obs)) {
+      return this.GetEarthLocation(start, end);
+    }
+    // Or if the observatory is not earth based and we don't have data, then
+    // bubble it up.
+    else if (response_is_missing_data) {
+      throw new SSCWSException(`No data returned by SSCWS for ${observatory} between ${start.toISOString()} and ${end.toISOString()}`, result, SSCWSException.EMPTY_DATA);
     }
     const coordinates = result.Data[1][0][1].Coordinates[1][0][1];
     // Navigate the structure to get timestamps for the coordinates
@@ -101,6 +120,40 @@ class SSCWS {
   }
 
   /**
+   * Returns true if the observatory is earth based
+   * @param {string} observatory Name of observatory
+   * @param {boolean}
+   */
+  static async isEarthBased(observatory) {
+    const earth_based_observatories = [
+      "yohkoh",
+      "gong",
+      "rhessi"
+    ];
+
+    return earth_based_observatories.indexOf(observatory.toLowerCase()) !== -1;
+  }
+
+  /**
+   * Get the location of earth at the specified time (technically).
+   * This SSC module just returns coordinates in GSE format...
+   * That means the position of earth is just 0.
+   * @param {Date} start - Start date to request position information for
+   * @param {Date} end - End date to request position information for
+   * @returns {Promise<Array<Coordinate>>} Array of Coordinate objects
+   */
+  static async GetEarthLocation(start, end) {
+    const out = [];
+    // Generate a list of coordinates for each hour between start and end.
+    const current = new Date(start);
+    while (current.getTime() < end.getTime()) {
+      out.push(new Coordinate(0, 0, 0, new Date(current)));
+      current.setMinutes(current.getMinutes() + 1);
+    }
+    return out;
+  }
+
+  /**
    * Returns date formatted to be used with the SSCWS API
    * @param {Date} date - Date to format
    * @returns {string} Formatted date string
@@ -112,6 +165,9 @@ class SSCWS {
 
   /**
    * Converts the observatory name to the format expected by the SSCWS API.
+   * The special string "earth" indicates that SSCWeb should not be queried,
+   * and instead coordinates should just be assumed to be earth.
+   * This is to handle cases where SSC does not have data for the observatory.
    * @param {string} name - The original observatory name.
    * @returns {string} The formatted observatory name.
    * @private
@@ -120,7 +176,11 @@ class SSCWS {
     const lower = name.toLowerCase().replace(/(-)/g, "");
     const mapping = {
       goesr: "goes16",
-      solo: "solarorbiter"
+      // GONG is not a satellite.
+      gong: EARTH,
+      solo: "solarorbiter",
+      stereo_a: "stereoa",
+      stereo_b: "stereob",
     };
     if (mapping.hasOwnProperty(lower)) {
       return mapping[lower];
