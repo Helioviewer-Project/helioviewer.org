@@ -128,7 +128,8 @@ class SSCWS {
     const earth_based_observatories = [
       "yohkoh",
       "gong",
-      "rhessi"
+      "rhessi",
+      "mlso"
     ];
 
     return earth_based_observatories.indexOf(observatory.toLowerCase()) !== -1;
@@ -178,6 +179,7 @@ class SSCWS {
       goesr: "goes16",
       // GONG is not a satellite.
       gong: EARTH,
+      mlso: EARTH,
       solo: "solarorbiter",
       stereo_a: "stereoa",
       stereo_b: "stereob",

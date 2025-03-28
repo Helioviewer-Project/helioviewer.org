@@ -6,13 +6,14 @@ function Background() {
   const { camera } = useThree();
   useFrame(({ gl }) => {
     gl.autoClear = false;
+    gl.clearDepth();
     gl.render(scene.current, camera);
   }, 0);
   return (
     <scene ref={scene}>
       <mesh>
         <sphereGeometry args={[1, 32, 32]} />
-        <meshBasicMaterial color={0x000000} />
+        <meshBasicMaterial colorWrite={false} color={0x000000} />
       </mesh>
     </scene>
   );

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 import Sun3D from "./sun";
 import Background from "./background";
+import { PLANE_SOURCES } from "@helioviewer/sun";
 
 /**
  * Returns the computed render priority for this instance based on the observatory and index.
@@ -17,7 +18,7 @@ import Background from "./background";
 function getRenderPriority(source, index) {
   // add 1 as 0 is reserved.
   let priority = (index += 1);
-  if ([4, 5].indexOf(source) != -1) {
+  if (PLANE_SOURCES.indexOf(source) != -1) {
     return -priority;
   }
   return priority + 1;
@@ -36,11 +37,16 @@ function Hv3D({coordinator, state, setCameraPosition }) {
   }, [gl]);
 
   const priorities = Object.values(state.state.tileLayers).map((layer, idx) => getRenderPriority(layer.sourceId, idx));
+  // Returns true if the sourceId must be rendered in a plane.
+  const isPlane = (sourceId) => PLANE_SOURCES.indexOf(sourceId) !== -1;
+  // Check if there are any non-plane models of the solar sphere to be rendered.
+  // We need to know this to add the occluder to the plane models so that the
+  // spheres don't blend with the planes.
+  const sceneHasSphereModels = Object.values(state.state.tileLayers).some((layer) => PLANE_SOURCES.indexOf(layer.sourceId) === -1);
 
   /** Render each layer. Plus a sphere that holds as a background for the sun. */
   return (
     <>
-      <Background />
       {Object.values(state.state.tileLayers).map((layer, idx) => (
         <Sun3D
           key={idx}
@@ -52,6 +58,7 @@ function Hv3D({coordinator, state, setCameraPosition }) {
           opacity={layer.visible ? layer.opacity : 0}
           observatory={layer.uiLabels[0].name}
           setCameraPosition={setCameraPosition}
+          useSphereOcclusion={sceneHasSphereModels && isPlane(layer.sourceId)}
         />
       ))}
     </>
