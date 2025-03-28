@@ -112,9 +112,3 @@ var Config = Class.extend(
         };
     }
 });
-
-// Put Config in the window to support legacy code.
-window.Config = Config
-// Use more modern export so we're not using the global space in modules.
-// This way we can see where config is coming from via the import statement.
-export { Config }
