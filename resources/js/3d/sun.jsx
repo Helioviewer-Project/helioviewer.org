@@ -56,7 +56,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
   }, [sunObj.current]);
 
   // Reset ready back to false whenever the sourceId changes
-  useEffect(() => setReady(false), [source]);
+  useEffect(() => setReady(false), [source, date]);
 
   const scene = useRef();
   const { camera } = useThree();
