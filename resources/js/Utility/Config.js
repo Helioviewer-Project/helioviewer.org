@@ -108,7 +108,8 @@ var Config = Class.extend(
             'regenerateMovieThreshold': this.params["regenerate_movie_threshold"],
             'enableHelios'            : this.params["enable_helios_backlinks"],
             'jhelioviewerHost'        : this.params["jhelioviewer_host"],
-            'obstime_alert_dt'        : this.params["obstime_alert_dt"]
+            'obstime_alert_dt'        : this.params["obstime_alert_dt"],
+            'coordinator_url'         : this.params["coordinator_url"],
         };
     }
 });
