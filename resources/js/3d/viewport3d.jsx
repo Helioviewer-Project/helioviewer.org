@@ -14,7 +14,13 @@ function getHvState() {
 function Viewport3D({coordinator}) {
   /** Tracks the current state of Helioviewer */
   const [hvState, setHvState] = useState(getHvState());
-  /** Tracks if the 3D view is currently enabled and visible */
+  /** Tracks if the 3D view is currently enabled */
+  // This is needed to make switching between 2D and 3D more fluid.
+  // The first time a user enters 3D mode, this will turn on and start loading
+  // data required for 3D rendering. It will stay on for the remainder of the
+  // session, but the user may still switch between 2D and 3D.
+  const [on, turnOn] = useState(false);
+  /** Tracks if the 3D view is currently visible */
   const [enabled, setEnabled] = useState(false);
   const controls = useRef(null);
 
@@ -34,6 +40,11 @@ function Viewport3D({coordinator}) {
        */
       toggleButtons.forEach((btn) => {
         btn.onclick = () => {
+          // Turn on once.
+          // This enables loading all 3D data whenever the observation date changes.
+          if (!on) {
+            turnOn(true);
+          }
           setEnabled(!enabled);
           btn.classList.toggle("active");
           document.querySelectorAll(".toggle3d").forEach((element) => {
@@ -73,11 +84,13 @@ function Viewport3D({coordinator}) {
   /** Render the 3D canvas */
   return <>
       <div className="solid-bg"></div>
-      <Canvas orthographic={true}>
+      {/* If enabled, show the 3D viewport. This can be turned on and off anytime. */}
+      <Canvas style={{visibility: enabled ? "visible" : "hidden"}} orthographic={true}>
         {/* Set up the camera controls */}
         <CameraControls ref={controls} />
         {/* Render the 3D viewport from the current state */}
-        {enabled ? <Hv3D coordinator={coordinator} state={hvState} setCameraPosition={setCameraPosition} /> : <></> }
+        {/* This is only done if 3D mode is turned on, which happens once per session and cannot be turned off. */}
+        {on ? <Hv3D coordinator={coordinator} state={hvState} setCameraPosition={setCameraPosition} /> : <></> }
       </Canvas>
     </>;
 }

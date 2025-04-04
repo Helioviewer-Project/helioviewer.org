@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { extend, useFrame, useThree } from "@react-three/fiber";
-import { Quality, Sun } from "@helioviewer/sun";
+import { Quality, StaticSun } from "@helioviewer/sun";
 import { SSCWS } from "./coordinates/sscws";
 import Background from "./background";
-extend({ Sun });
+extend({ StaticSun });
 
 // Track polygon offsets to deal with overlapping planes.
 function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition, useSphereOcclusion}) {
   const sunObj = useRef();
   const [ready, setReady] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date(date));
   useEffect(() => {
     const fn = async () => {
       if (typeof sunObj.current !== "undefined" && !ready) {
@@ -56,7 +57,10 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
   }, [sunObj.current]);
 
   // Reset ready back to false whenever the sourceId changes
-  useEffect(() => setReady(false), [source, date]);
+  useEffect(() => {
+    setReady(false);
+    setCurrentDate(new Date(date));
+  }, [source, date]);
 
   const scene = useRef();
   const { camera } = useThree();
@@ -69,7 +73,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
   return (
     <scene ref={scene}>
       {useSphereOcclusion ? <Background /> : <></>}
-      <sun ref={sunObj} args={[source, date, date, 1, Quality.High]} opacity={ready ? opacity / 100 : 0} />;
+      <staticSun ref={sunObj} args={[source, currentDate, Quality.High]} opacity={ready ? opacity / 100 : 0} />;
     </scene>
   );
 }

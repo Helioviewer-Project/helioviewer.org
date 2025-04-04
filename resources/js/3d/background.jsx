@@ -8,7 +8,7 @@ function Background() {
     gl.autoClear = false;
     gl.clearDepth();
     gl.render(scene.current, camera);
-  }, 0);
+  }, 1);
   return (
     <scene ref={scene}>
       <mesh>

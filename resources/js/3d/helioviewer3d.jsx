@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import Sun3D from "./sun";
-import Background from "./background";
 import { PLANE_SOURCES } from "@helioviewer/sun";
 
 /**
@@ -16,18 +15,20 @@ import { PLANE_SOURCES } from "@helioviewer/sun";
  * @returns {number} The computed render priority
  */
 function getRenderPriority(source, index) {
-  // add 1 as 0 is reserved.
-  let priority = (index += 1);
   if (PLANE_SOURCES.indexOf(source) != -1) {
-    return -priority;
+    return -index;
   }
-  return priority + 1;
+  return index;
 }
 
 /**
  * Renders the current helioviewer state
  */
 function Hv3D({coordinator, state, setCameraPosition }) {
+  // Disable react 3 fiber automatic rendering by executing useFrame with a
+  // non-zero value.
+  useFrame(() => {}, 1);
+
   /** Get a handle to the WebGLRenderer */
   const { gl } = useThree();
 
