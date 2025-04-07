@@ -372,6 +372,11 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 <!-- END mobile menu -->
 
+<!-- START Mobile toolbar -->
+
+<div id="hvmobscale_div"></div>
+
+<!-- END Mobile toolbar -->
 
 
 <!-- START Mobile Drawer Tabs -->
@@ -1817,9 +1822,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<!-- Viewport -->
 	<div id="helioviewer-viewport-container-outer" class="user-select-none">
 		<div id="helioviewer-viewport-container-inner" style="z-index: 0;">
-			<!-- START Mobile toolbar -->
-			<div id="hvmobscale_div"></div>
-			<!-- END Mobile toolbar -->
 
 			<!-- Message console -->
 			<div id="message-console"></div>

@@ -340,7 +340,6 @@ $(function() {
 
 	// 3D button
 	$(".js-mobile-3d").clone().removeClass('desktop').appendTo(scaleDiv);
-	init3DButtons();
 
 	// close mobile menu when earth/scale buttons pressed
 	$("#earth-button, #scalebar-button, #center-button").click(function(){
