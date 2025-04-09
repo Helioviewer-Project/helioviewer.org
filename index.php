@@ -546,14 +546,11 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 					<a id="data-button" class="fa fa-file-code-o fa-fw qtip-left social-button" title="Request Science Data Download from External Partners."></a>
 
 					<div id="share-button" class="fa fa-share-square-o fa-fw qtip-left social-button" title="Share the current viewport on social media."></div>
-				</div>
 
-				<div class="right" style="margin-right: 0.5em;">
 					<div id="help-button" class="fa fa-question fa-fw qtip-left" href="" style="margin-left: 0.5em;" title="Get Help with Helioviewer."></div>
 
 					<div id="settings-button" class="fa fa-cog fa-fw qtip-left" title="Edit Settings &amp; Defaults."></div>
 				</div>
-
 			</div>
 
 
