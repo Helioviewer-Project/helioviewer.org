@@ -532,9 +532,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 
 			<div id="menus">
-
-				<div class="left">
-
+				<div>
 					<div id="news-button" class="fa fa-rss fa-fw qtip-left social-button" title="Helioviewer Project Announcements."></div>
 
 					<div id="youtube-button" class="fa fa-fw qtip-left" title="View Helioviewer Movies Shared to YouTube."></div>

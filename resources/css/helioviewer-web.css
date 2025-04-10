@@ -277,7 +277,7 @@ html, body {
 #hv-header #menus {
            position: relative;
               float: right;
-              width: 12.5em;
+       margin-right: 0.25em;
              height: 100%;
    background-color: #000;
         border-left: 2pt solid black;
