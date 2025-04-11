@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { extend, useFrame, useThree } from "@react-three/fiber";
 import { Quality, StaticSun } from "@helioviewer/sun";
 import { SSCWS } from "./coordinates/sscws";
+import { Vector3 } from "three";
 import Background from "./background";
 extend({ StaticSun });
 
@@ -40,8 +41,11 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
           const observatoryLocation = localCoords.Get(startDate).toVec();
           sunObj.current.lookAt(observatoryLocation);
           sunObj.current.rotation.y += rotationAngle;
+          const objectDirection = new Vector3();
+          sunObj.current.getWorldDirection(objectDirection);
 
-          const pos = observatoryLocation.normalize().multiplyScalar(100);
+
+          const pos = objectDirection.multiplyScalar(100);
           if (isPrimaryLayer) {
             setCameraPosition(pos);
           }
