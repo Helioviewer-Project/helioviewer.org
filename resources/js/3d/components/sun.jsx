@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { extend, useFrame, useThree } from "@react-three/fiber";
 import { Quality, StaticSun } from "@helioviewer/sun";
-import { SSCWS } from "./coordinates/sscws";
+import { SSCWS } from "../coordinates/sscws";
 import { Vector3, Matrix4 } from "three";
-import Background from "./background";
+import Background from "../background";
 extend({ StaticSun });
 
 // Track polygon offsets to deal with overlapping planes.
-function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition, useSphereOcclusion}) {
+function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition, useSphereOcclusion, onLoad}) {
   const sunObj = useRef();
   const [ready, setReady] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date(date));
@@ -64,6 +64,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
           helioviewerWebClient.stopLoading();
         }
         setReady(true);
+        onLoad();
       }
     };
     fn();
