@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { extend, useFrame, useThree } from "@react-three/fiber";
 import { Quality, StaticSun } from "@helioviewer/sun";
 import { SSCWS } from "./coordinates/sscws";
-import { Quaternion, Vector3 } from "three";
+import { Vector3, Quaternion } from "three";
 import Background from "./background";
 extend({ StaticSun });
 
@@ -11,7 +11,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
   const sunObj = useRef();
   const [ready, setReady] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date(date));
-  const [lastPosition, setLastPosition] = useState(new Vector3());
+  const [originalSunDirection, setOriginalSunDirection] = useState(null);
   const [firstLook, setFirstLook] = useState(true);
   const { camera } = useThree();
   useEffect(() => {
@@ -48,20 +48,16 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
           if (isPrimaryLayer) {
             const objectDirection = new Vector3();
             sunObj.current.getWorldDirection(objectDirection);
-            const pos = objectDirection.multiplyScalar(100);
             // On first look, set the camera to be right in front of the sun.
             if (firstLook) {
-              setCameraPosition(pos);
+              setCameraPosition(objectDirection.clone().multiplyScalar(2));
               setFirstLook(false);
-              setLastPosition(pos);
             } else {
-              // Otherwise, adjust the camera to appear to keep its current position.
-              const rotation = new Quaternion();
-              rotation.setFromUnitVectors(lastPosition.clone().normalize(), camera.position.clone().normalize());
-              const finalPosition = pos.clone().applyQuaternion(rotation);
-              setCameraPosition(finalPosition);
-              setLastPosition(pos);
+              // Compute where the camera needs to be so we're looking at the new
+              // sun from the same perspective.
+              setCameraPosition(computeCameraPosition(originalSunDirection, objectDirection, camera.position));
             }
+            setOriginalSunDirection(objectDirection.clone());
           }
         } catch (e) {
           throw e;
@@ -93,6 +89,21 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
       <staticSun ref={sunObj} args={[source, currentDate, Quality.High]} opacity={ready ? opacity / 100 : 0} />;
     </scene>
   );
+}
+
+function computeCameraPosition(originalDirection, newDirection, currentCameraPosition) {
+  // Normalize the direction vectors
+  const origDir = originalDirection.clone().normalize();
+  const newDir = newDirection.clone().normalize();
+
+  // Create a quaternion that represents the rotation from the original to the new direction
+  const rotationQuaternion = new Quaternion();
+  rotationQuaternion.setFromUnitVectors(origDir, newDir);
+
+  // Apply the rotation to the camera position
+  const newCameraPosition = currentCameraPosition.clone().applyQuaternion(rotationQuaternion);
+
+  return newCameraPosition;
 }
 
 export default Sun3D;

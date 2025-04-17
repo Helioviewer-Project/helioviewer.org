@@ -78,7 +78,7 @@ function Viewport3D({coordinator}) {
    * @param {Vector3} position
    */
   const setCameraPosition = (position) => {
-    controls.current.setLookAt(position.x, position.y, position.z, 0, 0, 0, false);
+    controls.current.setLookAt(position.x, position.y, position.z, 0, 0, 0);
   };
 
   /** Render the 3D canvas */
