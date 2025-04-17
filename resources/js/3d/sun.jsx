@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { extend, useFrame, useThree } from "@react-three/fiber";
 import { Quality, StaticSun } from "@helioviewer/sun";
 import { SSCWS } from "./coordinates/sscws";
-import { Vector3, Quaternion } from "three";
+import { Vector3, Matrix4 } from "three";
 import Background from "./background";
 extend({ StaticSun });
 
@@ -17,7 +17,6 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
   useEffect(() => {
     const fn = async () => {
       if (typeof sunObj.current !== "undefined" && !ready) {
-        setReady(false);
         helioviewerWebClient.startLoading();
         try {
           // Wait for the sun to be ready
@@ -92,16 +91,22 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
 }
 
 function computeCameraPosition(originalDirection, newDirection, currentCameraPosition) {
-  // Normalize the direction vectors
+  // Normalize the direction vectors to ensure they are unit vectors
   const origDir = originalDirection.clone().normalize();
   const newDir = newDirection.clone().normalize();
 
-  // Create a quaternion that represents the rotation from the original to the new direction
-  const rotationQuaternion = new Quaternion();
-  rotationQuaternion.setFromUnitVectors(origDir, newDir);
+  // Use the current camera position directly
+  const relativePosition = currentCameraPosition.clone();
 
-  // Apply the rotation to the camera position
-  const newCameraPosition = currentCameraPosition.clone().applyQuaternion(rotationQuaternion);
+  // Create rotation matrices for both directions
+  const originalMatrix = new Matrix4().lookAt(origDir, new Vector3(), new Vector3(0, 1, 0));
+  const newMatrix = new Matrix4().lookAt(newDir, new Vector3(), new Vector3(0, 1, 0));
+
+  // Calculate the rotation from original to new direction
+  const rotationMatrix = new Matrix4().multiplyMatrices(newMatrix, originalMatrix.invert());
+
+  // Apply the rotation to the relative camera position
+  const newCameraPosition = relativePosition.applyMatrix4(rotationMatrix);
 
   return newCameraPosition;
 }
