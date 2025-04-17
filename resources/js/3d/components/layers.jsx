@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { PLANE_SOURCES } from "@helioviewer/sun";
 import Sun3D from "./sun";
 
@@ -20,7 +20,7 @@ function getRenderPriority(source, index) {
   return index;
 }
 
-function Layers({date, layers, coordinator, setCameraPosition, dim, onReady}) {
+function Layers({date, layers, coordinator, setCameraPosition}) {
   const priorities = layers.map((layer, idx) => getRenderPriority(layer.sourceId, idx));
   // Returns true if the sourceId must be rendered in a plane.
   const isPlane = (sourceId) => PLANE_SOURCES.indexOf(sourceId) !== -1;
@@ -28,18 +28,6 @@ function Layers({date, layers, coordinator, setCameraPosition, dim, onReady}) {
   // We need to know this to add the occluder to the plane models so that the
   // spheres don't blend with the planes.
   const sceneHasSphereModels = layers.some((layer) => PLANE_SOURCES.indexOf(layer.sourceId) === -1);
-  const [loadedCount, setLoadedCount] = useState(0);
-  // When a layer is loaded, update the counter.
-  // When all layers are loaded, notify parent.
-  const onLoadLayer = () => {
-    setLoadedCount(n => {
-        const count = n + 1;
-        if (count == layers.length) {
-            onReady();
-        }
-        return count;
-    });
-  }
 
   /** Render each layer. Plus a sphere that holds as a background for the sun. */
   return (
@@ -52,13 +40,11 @@ function Layers({date, layers, coordinator, setCameraPosition, dim, onReady}) {
           renderPriority={priorities[idx]}
           source={layer.sourceId}
           date={date}
-          // If the layer is visible, opacity should be set to something.
-          // If dim is set, then opacity should be half the normal opacity.
-          opacity={layer.visible ? (dim ? layer.opacity * 0.5 : layer.opacity) : 0}
+          opacity={layer.visible ? layer.opacity : 0}
           observatory={layer.uiLabels[0].name}
           setCameraPosition={setCameraPosition}
           useSphereOcclusion={sceneHasSphereModels && isPlane(layer.sourceId)}
-          onLoad={onLoadLayer}
+          onLoad={() => {}}
         />
       ))}
     </>
