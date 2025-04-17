@@ -81,8 +81,6 @@ function Viewport3D({coordinator}) {
     controls.current.setLookAt(position.x, position.y, position.z, 0, 0, 0);
   };
 
-  console.log("Running viewport?");
-
   /** Render the 3D canvas */
   return <>
       <div className="solid-bg"></div>
