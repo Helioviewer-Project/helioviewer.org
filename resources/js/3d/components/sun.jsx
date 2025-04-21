@@ -9,8 +9,13 @@ extend({ StaticSun });
 // Track polygon offsets to deal with overlapping planes.
 function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition, useSphereOcclusion, onLoad}) {
   const sunObj = useRef();
+  // Shadow is used to render a copy of the model while loading.
+  const shadowObj = useRef();
+  const [shadow, setShadow] = useState(null);
   const [ready, setReady] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date(date));
+  const [lastObservatoryLocation, setLastObservatoryLocation] = useState(new Vector3(0, 0, 1));
+  const [lastRotationAngle, setLastRotationAngle] = useState(0);
   const [originalSunDirection, setOriginalSunDirection] = useState(null);
   const [firstLook, setFirstLook] = useState(true);
   const { camera } = useThree();
@@ -41,6 +46,8 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
           const localCoords = await coordinator.GSE(coords);
           // LERP the coordinate of the object at the given time.
           const observatoryLocation = localCoords.Get(startDate).toVec();
+          setLastObservatoryLocation(observatoryLocation);
+          setLastRotationAngle(rotationAngle);
           sunObj.current.lookAt(observatoryLocation);
           sunObj.current.rotation.y += rotationAngle;
 
@@ -49,7 +56,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
             sunObj.current.getWorldDirection(objectDirection);
             // On first look, set the camera to be right in front of the sun.
             if (firstLook) {
-              setCameraPosition(objectDirection.clone().multiplyScalar(2));
+              setCameraPosition(objectDirection.clone().multiplyScalar(100));
               setFirstLook(false);
             } else {
               // Compute where the camera needs to be so we're looking at the new
@@ -72,22 +79,47 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
 
   // Reset ready back to false whenever the sourceId changes
   useEffect(() => {
+    // If this isn't the first load, then make the shadow visible
+    // This gives the user the loading indication by providing visual
+    // feedback that something is happening.
+    if (ready && shadowObj.current != null) {
+      shadowObj.current.lookAt(lastObservatoryLocation);
+      shadowObj.current.rotation.y += lastRotationAngle;
+      shadowObj.current.opacity = (opacity * 0.5 / 100);
+    }
     setReady(false);
     setCurrentDate(new Date(date));
   }, [source, date]);
 
+  useEffect(() => {
+    // When the model finishes loading, prepare a copy of it so we can perform
+    // a transition during load.
+    if (ready) {
+      setShadow(<staticSun ref={shadowObj} args={[source, currentDate, Quality.High]} opacity={0} />);
+    }
+  }, [ready]);
+
+  const shadowScene = useRef();
   const scene = useRef();
   useFrame(({ gl }) => {
     gl.autoClear = false;
+    gl.clearDepth();
+    gl.render(shadowScene.current, camera);
     gl.clearDepth();
     gl.render(scene.current, camera);
   }, renderPriority);
 
   return (
-    <scene ref={scene}>
-      {useSphereOcclusion ? <Background /> : <></>}
-      <staticSun ref={sunObj} args={[source, currentDate, Quality.High]} opacity={ready ? opacity / 100 : 0} />;
-    </scene>
+    <>
+      <scene ref={shadowScene}>
+        {useSphereOcclusion ? <Background /> : <></>}
+        {shadow}
+      </scene>
+      <scene ref={scene}>
+        {useSphereOcclusion ? <Background /> : <></>}
+        <staticSun ref={sunObj} args={[source, currentDate, Quality.High]} opacity={ready ? opacity / 100 : 0} />;
+      </scene>
+    </>
   );
 }
 
