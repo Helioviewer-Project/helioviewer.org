@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
 import { PLANE_SOURCES } from "@helioviewer/sun";
 import Sun3D from "./sun";
+import { Vector3 } from "three";
 
 /**
  * Returns the computed render priority for this instance based on the observatory and index.
@@ -21,6 +23,7 @@ function getRenderPriority(source, index) {
 }
 
 function Layers({date, layers, coordinator, setCameraPosition}) {
+  const getSourceList = () => layers.map(l => l.sourceId);
   const priorities = layers.map((layer, idx) => getRenderPriority(layer.sourceId, idx));
   // Returns true if the sourceId must be rendered in a plane.
   const isPlane = (sourceId) => PLANE_SOURCES.indexOf(sourceId) !== -1;
@@ -28,6 +31,15 @@ function Layers({date, layers, coordinator, setCameraPosition}) {
   // We need to know this to add the occluder to the plane models so that the
   // spheres don't blend with the planes.
   const sceneHasSphereModels = layers.some((layer) => PLANE_SOURCES.indexOf(layer.sourceId) === -1);
+
+  const [targetCameraPosition, setTargetCameraPosition] = useState(new Vector3(0, 0, 100));
+  const [loadCount, setLoadCount] = useState(0);
+
+  useEffect(() => {
+    if (loadCount === 0) {
+      setCameraPosition(targetCameraPosition);
+    }
+  }, [loadCount]);
 
   /** Render each layer. Plus a sphere that holds as a background for the sun. */
   return (
@@ -42,9 +54,11 @@ function Layers({date, layers, coordinator, setCameraPosition}) {
           date={date}
           opacity={layer.visible ? layer.opacity : 0}
           observatory={layer.uiLabels[0].name}
-          setCameraPosition={setCameraPosition}
+          setCameraPosition={setTargetCameraPosition}
           useSphereOcclusion={sceneHasSphereModels && isPlane(layer.sourceId)}
-          onLoad={() => {}}
+          onStartLoad={() => setLoadCount(n => n - 1)}
+          onEndLoad={() => setLoadCount(n => n + 1)}
+          parentReady={loadCount == 0}
         />
       ))}
     </>

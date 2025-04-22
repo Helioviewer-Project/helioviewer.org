@@ -7,7 +7,7 @@ import Background from "../background";
 extend({ StaticSun });
 
 // Track polygon offsets to deal with overlapping planes.
-function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition, useSphereOcclusion, onLoad}) {
+function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition, useSphereOcclusion, parentReady, onStartLoad, onEndLoad}) {
   const sunObj = useRef();
   // Shadow is used to render a copy of the model while loading.
   const shadowObj = useRef();
@@ -20,8 +20,14 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
   const [firstLook, setFirstLook] = useState(true);
   const { camera } = useThree();
   useEffect(() => {
+    const abortController = new AbortController();
+    const abort = () => {
+      helioviewerWebClient.stopLoading();
+      onEndLoad();
+    }
     const fn = async () => {
       if (typeof sunObj.current !== "undefined" && !ready) {
+        onStartLoad();
         helioviewerWebClient.startLoading();
         try {
           // Wait for the sun to be ready
@@ -40,12 +46,21 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
           // const startDate = sunObj.current.time;
           const endRange = new Date(startDate);
           endRange.setMinutes(endRange.getMinutes() + 24);
+          if (abortController.signal.aborted) return abort();
           // Get the position of the sun from SSCWS
           const coords = await SSCWS.GetLocations(observatory, startDate, endRange);
+          if (abortController.signal.aborted) return abort();
           // Convert the SSCWS coordinates to our 3D frame
           const localCoords = await coordinator.GSE(coords);
+          if (abortController.signal.aborted) return abort();
           // LERP the coordinate of the object at the given time.
           const observatoryLocation = localCoords.Get(startDate).toVec();
+
+          // If state has changed at this point during the async function,
+          // then this execution thread is stale and should not proceed to update
+          // the state or camera position.
+          if (abortController.signal.aborted) return abort();
+
           setLastObservatoryLocation(observatoryLocation);
           setLastRotationAngle(rotationAngle);
           sunObj.current.lookAt(observatoryLocation);
@@ -71,10 +86,15 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
           helioviewerWebClient.stopLoading();
         }
         setReady(true);
-        onLoad();
+        onEndLoad();
       }
     };
     fn();
+
+    // This function is executed whenever the useEffect state is called again.
+    return () => {
+      abortController.abort();
+    }
   }, [sunObj.current]);
 
   // Reset ready back to false whenever the sourceId changes
@@ -92,12 +112,22 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
   }, [source, date]);
 
   useEffect(() => {
-    // When the model finishes loading, prepare a copy of it so we can perform
+    if (ready && !parentReady && shadowObj.current != null) {
+      shadowObj.current.lookAt(lastObservatoryLocation);
+      shadowObj.current.rotation.y += lastRotationAngle;
+      shadowObj.current.opacity = (opacity * 0.5 / 100);
+    } else if (parentReady && shadowObj.current != null) {
+      shadowObj.current.opacity = 0;
+    }
+  }, [parentReady]);
+
+  useEffect(() => {
+    // When everything finishes loading, prepare a copy of it so we can perform
     // a transition during load.
-    if (ready) {
+    if (parentReady) {
       setShadow(<staticSun ref={shadowObj} args={[source, currentDate, Quality.High]} opacity={0} />);
     }
-  }, [ready]);
+  }, [parentReady]);
 
   const shadowScene = useRef();
   const scene = useRef();
@@ -117,7 +147,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
       </scene>
       <scene ref={scene}>
         {useSphereOcclusion ? <Background /> : <></>}
-        <staticSun ref={sunObj} args={[source, currentDate, Quality.High]} opacity={ready ? opacity / 100 : 0} />;
+        <staticSun ref={sunObj} args={[source, currentDate, Quality.High]} opacity={parentReady ? opacity / 100 : 0} />;
       </scene>
     </>
   );
