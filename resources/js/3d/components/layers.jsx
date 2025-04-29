@@ -22,8 +22,7 @@ function getRenderPriority(source, index) {
   return index;
 }
 
-function Layers({date, layers, coordinator, setCameraPosition}) {
-  const getSourceList = () => layers.map(l => l.sourceId);
+function Layers({date, layers, coordinator, setCameraPosition, onFail}) {
   const priorities = layers.map((layer, idx) => getRenderPriority(layer.sourceId, idx));
   // Returns true if the sourceId must be rendered in a plane.
   const isPlane = (sourceId) => PLANE_SOURCES.indexOf(sourceId) !== -1;
@@ -59,6 +58,7 @@ function Layers({date, layers, coordinator, setCameraPosition}) {
           onStartLoad={() => setLoadCount(n => n - 1)}
           onEndLoad={() => setLoadCount(n => n + 1)}
           parentReady={loadCount == 0}
+          onFail={onFail}
         />
       ))}
     </>

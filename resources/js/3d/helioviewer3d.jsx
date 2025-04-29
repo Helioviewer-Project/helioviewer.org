@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Layers } from "./components/layers";
 
@@ -6,7 +6,7 @@ import { Layers } from "./components/layers";
 /**
  * Renders the current helioviewer state
  */
-function Hv3D({coordinator, state, setCameraPosition }) {
+function Hv3D({coordinator, state, setCameraPosition, onFail }) {
   // Disable react 3 fiber automatic rendering by executing useFrame with a
   // non-zero value.
   useFrame(() => {}, 1);
@@ -19,7 +19,7 @@ function Hv3D({coordinator, state, setCameraPosition }) {
     gl.setClearColor("#000000");
   }, [gl]);
 
-  return <Layers date={state.state.date} layers={Object.values(state.state.tileLayers)} coordinator={coordinator} setCameraPosition={setCameraPosition} />;
+  return <Layers date={state.state.date} layers={Object.values(state.state.tileLayers)} coordinator={coordinator} setCameraPosition={setCameraPosition} onFail={onFail} />;
 }
 
 export default Hv3D;
