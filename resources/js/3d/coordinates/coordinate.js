@@ -64,6 +64,48 @@ class CoordinateList {
   }
 
   /**
+   * Creates an instance of CoordinateList using the typical response
+   * from the Coordinator API.
+   *
+   * @typedef {Object} CoordinateData
+   * @property {number} x - The x-coordinate.
+   * @property {number} y - The y-coordinate.
+   * @property {number} z - The z-coordinate.
+   * @property {string} time - The timestamp associated with this coordinate.
+   *
+   * @typedef {Object} CoordinatorResponse
+   * @property {CoordinateData[]} coordinates - An array of coordinate data objects.
+   *
+   * @param {CoordinatorResponse} data
+   */
+  static fromCoordinatorResponse(data) {
+    /**
+     * (y, z, x) below is the correct mapping of solar coordinates to the
+     * threejs axes. The threejs axes are:
+     * x -> to the right
+     * y -> up
+     * z -> towards the screen.
+     *
+     * In solar coordinates
+     * x -> towards the screen/earth
+     * y -> to the right / towards the sun's west limb as seen from earth
+     * z -> up / towards the solar north pole
+     *
+     * let xt, yt, zt denote x, y, z from standard threejs axes.
+     * let xs, ys, zs denote x, y, z from solar axes
+     * The response from coordinator is using the solar axes.
+     * So to map to our 3D scene axes, we need to assign the values to the appropriate
+     * axis.
+     * ys -> xt
+     * zs -> yt
+     * xs -> zt
+     */
+    return new CoordinateList(
+      data.coordinates.map((coord) => new Coordinate(coord.y, coord.z, coord.x, new Date(coord.time + "Z")))
+    );
+  }
+
+  /**
    * Returns the coordinate from the list which is nearest to the given date.
    * @param {Date} date - The date to compare against.
    * @returns {Coordinate} The coordinate nearest to the given date.
@@ -88,8 +130,11 @@ class CoordinateList {
     const [before, after] = this._get_coord_before_and_after(date);
     // Progress value of 0 to 1 for the date.
     // 0 means date == before, 1 means date == after, 0.5 means date is halfway between.
+    const percentage_complete = (date.getTime() - before.time.getTime()) / (after.time.getTime() - before.time.getTime());
+    // percentage_complete may be undefied if before and after are the same.
+    // This can happen if the data array only contains 1 coordinate.
     const progress = this._clamp(
-      (date.getTime() - before.time.getTime()) / (after.time.getTime() - before.time.getTime()),
+      isNaN(percentage_complete) ? 1 : percentage_complete,
       0,
       1
     );
