@@ -4,10 +4,11 @@ import { Quality, StaticSun } from "@helioviewer/sun";
 import { SSCWS } from "../coordinates/sscws";
 import { Vector3, Matrix4 } from "three";
 import Background from "../background";
+import { Horizons } from "../coordinates/horizons";
 extend({ StaticSun });
 
 // Track polygon offsets to deal with overlapping planes.
-function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition, useSphereOcclusion, parentReady, onStartLoad, onEndLoad}) {
+function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition, useSphereOcclusion, parentReady, onStartLoad, onEndLoad, onFail}) {
   const sunObj = useRef();
   // Shadow is used to render a copy of the model while loading.
   const shadowObj = useRef();
@@ -47,11 +48,19 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
           const endRange = new Date(startDate);
           endRange.setMinutes(endRange.getMinutes() + 24);
           if (abortController.signal.aborted) return abort();
-          // Get the position of the sun from SSCWS
-          const coords = await SSCWS.GetLocations(observatory, startDate, endRange);
-          if (abortController.signal.aborted) return abort();
-          // Convert the SSCWS coordinates to our 3D frame
-          const localCoords = await coordinator.GSE(coords);
+
+          let localCoords = null;
+          try {
+            // Get the position of the sun from SSCWS
+            const coords = await SSCWS.GetLocations(observatory, startDate, endRange);
+            if (abortController.signal.aborted) return abort();
+            // Convert the SSCWS coordinates to our 3D frame
+            localCoords = await coordinator.GSE(coords);
+          } catch (e) {
+            console.warn("Unable to get data from SSC, trying JPL Horizons");
+            localCoords = await (new Horizons(coordinator)).GetLocations(observatory, startDate, endRange);
+          }
+
           if (abortController.signal.aborted) return abort();
           // LERP the coordinate of the object at the given time.
           const observatoryLocation = localCoords.Get(startDate).toVec();
@@ -81,6 +90,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
             setOriginalSunDirection(objectDirection.clone());
           }
         } catch (e) {
+          onFail(e);
           throw e;
         } finally {
           helioviewerWebClient.stopLoading();
