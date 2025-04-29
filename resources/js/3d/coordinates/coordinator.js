@@ -25,24 +25,20 @@ class Coordinator {
       body: JSON.stringify({ coordinates: coordinates })
     });
     const data = await response.json();
-    /**
-     * (y, z, x) below is the correct mapping of solar coordinates to the
-     * threejs axes. The threejs axes are:
-     * x -> to the right
-     * y -> up
-     * z -> towards the screen.
-     *
-     * In solar coordinates
-     * x -> towards the screen/earth
-     * y -> to the right / towards the sun's west limb as seen from earth
-     * z -> up / towards the solar north pole
-     *
-     * So to align with this, we need to map the coordinates to this y, z, x
-     * pattern.
-     */
-    return new CoordinateList(
-      data.coordinates.map((coord) => new Coordinate(coord.y, coord.z, coord.x, new Date(coord.time + "Z")))
-    );
+    return CoordinateList.fromCoordinatorResponse(data);
+  }
+
+  /**
+   * Queries the location of the given observatory
+   * @param {string} observatory
+   * @param {Date} start
+   * @param {Date} end
+   * @returns {Promise<CoordinateList>}
+   */
+  async Position(observatory, start, end) {
+      const response = await fetch(`${this.BASE_URL}/position/${observatory}?start=${start}&stop=${end}`);
+      const result = await response.json();
+      return CoordinateList.fromCoordinatorResponse(result);
   }
 }
 
