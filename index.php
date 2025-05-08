@@ -524,9 +524,16 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 				<div id="zoom-in-button" class="viewport-action fa fa-search-plus" title="Zoom In"></div>
 			</div>
-			<div class="viewport-action js-3d-toggle desktop js-mobile-3d">
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-					<path d="M12.378 1.602a.75.75 0 0 0-.756 0L3 6.632l9 5.25 9-5.25-8.622-5.03ZM21.75 7.93l-9 5.25v9l8.628-5.032a.75.75 0 0 0 .372-.648V7.93ZM11.25 22.18v-9l-9-5.25v8.57a.75.75 0 0 0 .372.648l8.628 5.033Z" />
+			<div class="viewport-action js-3d-toggle desktop js-mobile-3d" style="position: relative">
+				<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="position: absolute;left: 0px;top: 0;">
+					<!-- Plain circle with transparent background - no stroke -->
+					<circle cx="50" cy="50" r="45" fill="transparent"></circle>
+
+					<!-- Centered 3D Text - Simple version with perfect centering -->
+					<g transform="translate(47,50)">
+					<!-- Main text in black with perfect centering -->
+					<text x="0" y="0" stroke-width="0.3" font-family="Arial Black, Impact, sans-serif" font-size="55" font-weight="bold" text-anchor="middle" dominant-baseline="central" transform="skewX(-10) translate(3,0)" fill="currentColor" stroke="currentColor">3D</text>
+					</g>
 				</svg>
 			</div>
 
