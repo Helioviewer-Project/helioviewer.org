@@ -114,14 +114,11 @@ class CoordinateList {
     const [before, after] = this._get_coord_before_and_after(date);
     // Progress value of 0 to 1 for the date.
     // 0 means date == before, 1 means date == after, 0.5 means date is halfway between.
-    const percentage_complete = (date.getTime() - before.time.getTime()) / (after.time.getTime() - before.time.getTime());
+    const percentage_complete =
+      (date.getTime() - before.time.getTime()) / (after.time.getTime() - before.time.getTime());
     // percentage_complete may be undefied if before and after are the same.
     // This can happen if the data array only contains 1 coordinate.
-    const progress = this._clamp(
-      isNaN(percentage_complete) ? 1 : percentage_complete,
-      0,
-      1
-    );
+    const progress = this._clamp(isNaN(percentage_complete) ? 1 : percentage_complete, 0, 1);
     return this._lerp_coordinates(before, after, progress, date);
   }
 

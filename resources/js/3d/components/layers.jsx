@@ -22,7 +22,7 @@ function getRenderPriority(source, index) {
   return index;
 }
 
-function Layers({date, layers, coordinator, setCameraPosition, onFail, onLoadStart, onLoadFinish}) {
+function Layers({ date, layers, coordinator, setCameraPosition, onFail, onLoadStart, onLoadFinish }) {
   const priorities = layers.map((layer, idx) => getRenderPriority(layer.sourceId, idx));
   // Returns true if the sourceId must be rendered in a plane.
   const isPlane = (sourceId) => PLANE_SOURCES.indexOf(sourceId) !== -1;
@@ -57,11 +57,11 @@ function Layers({date, layers, coordinator, setCameraPosition, onFail, onLoadSta
           useSphereOcclusion={sceneHasSphereModels && isPlane(layer.sourceId)}
           onStartLoad={() => {
             onLoadStart();
-            setLoadCount(n => n - 1);
+            setLoadCount((n) => n - 1);
           }}
           onEndLoad={() => {
             onLoadFinish();
-            setLoadCount(n => n + 1);
+            setLoadCount((n) => n + 1);
           }}
           parentReady={loadCount == 0}
           onFail={onFail}
@@ -71,4 +71,4 @@ function Layers({date, layers, coordinator, setCameraPosition, onFail, onLoadSta
   );
 }
 
-export { Layers }
+export { Layers };

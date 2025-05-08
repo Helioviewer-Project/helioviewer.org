@@ -10,7 +10,7 @@ class Coordinator {
    * @param {string} url Coordinator URL
    */
   constructor(url = "https://api.helioviewer.org/coordinate") {
-    this.BASE_URL = url
+    this.BASE_URL = url;
   }
 
   /**
@@ -36,9 +36,9 @@ class Coordinator {
    * @returns {Promise<CoordinateList>}
    */
   async Position(observatory, start, end) {
-      const response = await fetch(`${this.BASE_URL}/position/${observatory}?start=${start}&stop=${end}`);
-      const result = await response.json();
-      return CoordinateList.fromCoordinatorResponse(result);
+    const response = await fetch(`${this.BASE_URL}/position/${observatory}?start=${start}&stop=${end}`);
+    const result = await response.json();
+    return CoordinateList.fromCoordinatorResponse(result);
   }
 }
 

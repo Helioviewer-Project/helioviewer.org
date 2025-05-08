@@ -4,7 +4,6 @@ import { Coordinator } from "./coordinates/coordinator";
 import { SetHelioviewerApiUrl } from "@helioviewer/sun";
 import Viewport3D from "./viewport3d";
 
-
 // Tracks if 3D mode is active.
 // This is toggled when the 3D button is clicked
 let is3dEnabled = false;
@@ -20,12 +19,11 @@ let is3dLaunched = false;
 // 3D mode is currently visible.
 window.is3dViewActive = () => is3dEnabled;
 
-
 /** Handles what to do if 3D rendering fails */
 const onFail = (error) => {
   console.error(error);
   Helioviewer.messageConsole.error("3D rendering is currently unavailable. Check back later.");
-}
+};
 
 /**
  * Reads the state of the HV application from localStorage
@@ -40,8 +38,8 @@ function getHvState() {
       observatory: hvLayer.uiLabels[0].name,
       visible: hvLayer.visible,
       opacity: hvLayer.opacity
-    }
-  })
+    };
+  });
   return [layers, date];
 }
 
@@ -57,10 +55,18 @@ function render(root, visible, coordinator_url) {
   // Extract parameters for the 3D viewport from the HV State
   const [layers, observationTime] = getHvState();
   root.render(
-    <Viewport3D active={is3dLaunched} layers={layers} date={observationTime} visible={visible} coordinator={new Coordinator(coordinator_url)} onFail={onFail} onLoadStart={() => helioviewerWebClient.startLoading()} onLoadFinish={() => helioviewerWebClient.stopLoading()} />
+    <Viewport3D
+      active={is3dLaunched}
+      layers={layers}
+      date={observationTime}
+      visible={visible}
+      coordinator={new Coordinator(coordinator_url)}
+      onFail={onFail}
+      onLoadStart={() => helioviewerWebClient.startLoading()}
+      onLoadFinish={() => helioviewerWebClient.stopLoading()}
+    />
   );
 }
-
 
 /** Handle to HTML element which shows the 3D view */
 const viewport3dRoot = document.getElementById("view-3d");
@@ -92,7 +98,7 @@ function init3DButtons(rerender_func) {
       rerender_func(is3dEnabled);
     };
   });
-};
+}
 
 /** Render the 3D view. */
 window.Init3D = (coordinator_url, apiUrl) => {
@@ -112,4 +118,4 @@ window.Init3D = (coordinator_url, apiUrl) => {
   $(document).on("update-external-datasource-integration", () => {
     render(root, is3dEnabled, coordinator_url);
   });
-}
+};

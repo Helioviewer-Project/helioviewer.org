@@ -8,7 +8,21 @@ import { Horizons } from "../coordinates/horizons";
 extend({ StaticSun });
 
 // Track polygon offsets to deal with overlapping planes.
-function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition, useSphereOcclusion, parentReady, onStartLoad, onEndLoad, onFail}) {
+function Sun3D({
+  coordinator,
+  renderPriority,
+  isPrimaryLayer,
+  source,
+  date,
+  opacity,
+  observatory,
+  setCameraPosition,
+  useSphereOcclusion,
+  parentReady,
+  onStartLoad,
+  onEndLoad,
+  onFail
+}) {
   // Main sun instance
   const sunObj = useRef();
   // Shadow is used to render a copy of the model while loading.
@@ -30,7 +44,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
     const abort = () => {
       helioviewerWebClient.stopLoading();
       onEndLoad();
-    }
+    };
     const fn = async () => {
       if (typeof sunObj.current !== "undefined" && !ready) {
         onStartLoad();
@@ -64,7 +78,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
             localCoords = await coordinator.GSE(coords);
           } catch (e) {
             console.warn("Unable to get data from SSC, trying JPL Horizons");
-            localCoords = await (new Horizons(coordinator)).GetLocations(observatory, startDate, endRange);
+            localCoords = await new Horizons(coordinator).GetLocations(observatory, startDate, endRange);
           }
 
           if (abortController.signal.aborted) return abort();
@@ -110,7 +124,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
     // This function is executed whenever the useEffect state is called again.
     return () => {
       abortController.abort();
-    }
+    };
   }, [sunObj.current]);
 
   // Reset ready back to false whenever the sourceId changes
@@ -121,7 +135,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
     if (ready && shadowObj.current != null) {
       shadowObj.current.lookAt(lastObservatoryLocation);
       shadowObj.current.rotation.y += lastRotationAngle;
-      shadowObj.current.opacity = (opacity * 0.5 / 100);
+      shadowObj.current.opacity = (opacity * 0.5) / 100;
     }
     setReady(false);
     setCurrentDate(new Date(date));
@@ -131,7 +145,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
     if (ready && !parentReady && shadowObj.current != null) {
       shadowObj.current.lookAt(lastObservatoryLocation);
       shadowObj.current.rotation.y += lastRotationAngle;
-      shadowObj.current.opacity = (opacity * 0.5 / 100);
+      shadowObj.current.opacity = (opacity * 0.5) / 100;
     } else if (parentReady && shadowObj.current != null) {
       shadowObj.current.opacity = 0;
     }

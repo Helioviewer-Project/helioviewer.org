@@ -102,7 +102,11 @@ class SSCWS {
     // Or if the observatory is not earth based and we don't have data, then
     // bubble it up.
     else if (response_is_missing_data) {
-      throw new SSCWSException(`No data returned by SSCWS for ${observatory} between ${start.toISOString()} and ${end.toISOString()}`, result, SSCWSException.EMPTY_DATA);
+      throw new SSCWSException(
+        `No data returned by SSCWS for ${observatory} between ${start.toISOString()} and ${end.toISOString()}`,
+        result,
+        SSCWSException.EMPTY_DATA
+      );
     }
     const coordinates = result.Data[1][0][1].Coordinates[1][0][1];
     // Navigate the structure to get timestamps for the coordinates
@@ -125,13 +129,7 @@ class SSCWS {
    * @param {boolean}
    */
   static async isEarthBased(observatory) {
-    const earth_based_observatories = [
-      "yohkoh",
-      "gong",
-      "rhessi",
-      "mlso",
-      "proba2"
-    ];
+    const earth_based_observatories = ["yohkoh", "gong", "rhessi", "mlso", "proba2"];
 
     return earth_based_observatories.indexOf(observatory.toLowerCase()) !== -1;
   }
@@ -184,7 +182,7 @@ class SSCWS {
       proba2: EARTH,
       solo: "solarorbiter",
       stereo_a: "stereoa",
-      stereo_b: "stereob",
+      stereo_b: "stereob"
     };
     if (mapping.hasOwnProperty(lower)) {
       return mapping[lower];
