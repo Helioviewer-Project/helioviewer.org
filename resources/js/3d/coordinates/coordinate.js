@@ -106,22 +106,6 @@ class CoordinateList {
   }
 
   /**
-   * Returns the coordinate from the list which is nearest to the given date.
-   * @param {Date} date - The date to compare against.
-   * @returns {Coordinate} The coordinate nearest to the given date.
-   */
-  Nearest(date) {
-    const deltas = this.data.map((entry) => {
-      return {
-        dt: Math.abs(date.getTime() - entry.time.getTime()),
-        entry: entry
-      };
-    });
-    const min = deltas.reduce((a, b) => (a.dt < b.dt ? a : b)).entry;
-    return min;
-  }
-
-  /**
    * Returns a coordinate computed by linear interpolation of stored coordinates.
    * @param {Date} date - The date for which to compute the interpolated coordinate.
    * @returns {Coordinate} The interpolated coordinate for the given date.

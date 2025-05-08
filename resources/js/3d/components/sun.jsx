@@ -9,15 +9,20 @@ extend({ StaticSun });
 
 // Track polygon offsets to deal with overlapping planes.
 function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opacity, observatory, setCameraPosition, useSphereOcclusion, parentReady, onStartLoad, onEndLoad, onFail}) {
+  // Main sun instance
   const sunObj = useRef();
   // Shadow is used to render a copy of the model while loading.
   const shadowObj = useRef();
   const [shadow, setShadow] = useState(null);
+  // Ready is set when component is done loading.
   const [ready, setReady] = useState(false);
+  // Current date being rendered.
   const [currentDate, setCurrentDate] = useState(new Date(date));
+  // Used to compute camera location
   const [lastObservatoryLocation, setLastObservatoryLocation] = useState(new Vector3(0, 0, 1));
   const [lastRotationAngle, setLastRotationAngle] = useState(0);
   const [originalSunDirection, setOriginalSunDirection] = useState(null);
+  // First time component loads.
   const [firstLook, setFirstLook] = useState(true);
   const { camera } = useThree();
   useEffect(() => {
@@ -40,6 +45,7 @@ function Sun3D({coordinator, renderPriority, isPrimaryLayer, source, date, opaci
           const timeDifferenceInHours = dt / (1000 * 60 * 60);
           // Computation assumes a full solar rotation of 27 days.
           const rotationAngle = (timeDifferenceInHours / (27 * 24)) * 2 * Math.PI;
+
           // The minimum time interval varies for different observatories.
           // We find the minimum time interval that HV supports by testing all
           // our available sources.

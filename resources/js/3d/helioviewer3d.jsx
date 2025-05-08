@@ -12,7 +12,7 @@ function Hv3D({coordinator, state, setCameraPosition, onFail }) {
   useFrame(() => {}, 1);
 
   /** Get a handle to the WebGLRenderer */
-  const { gl, camera } = useThree();
+  const { gl } = useThree();
 
   /** Set the background color to black. */
   useEffect(() => {

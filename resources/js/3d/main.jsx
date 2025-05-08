@@ -6,6 +6,7 @@ import Viewport3D from "./viewport3d";
 
 /** Handles what to do if 3D rendering fails */
 const onFail = (error) => {
+  console.error(error);
   Helioviewer.messageConsole.error("3D rendering is currently unavailable. Check back later.");
 }
 
