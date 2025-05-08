@@ -5,7 +5,7 @@ import { CameraControls } from "@react-three/drei";
 
 
 
-function Viewport3D({active, visible, state, coordinator, onFail}) {
+function Viewport3D({active, visible, layers, date, coordinator, onFail, onLoadStart, onLoadFinish}) {
   const controls = useRef(null);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ function Viewport3D({active, visible, state, coordinator, onFail}) {
         <CameraControls ref={controls} />
         {/* Render the 3D viewport from the current state */}
         {/* This is only done if 3D mode is turned on, which happens once per session and cannot be turned off. */}
-        {active ? <Hv3D coordinator={coordinator} state={state} setCameraPosition={setCameraPosition} onFail={onFail} />: <></>}
+        {active ? <Hv3D onLoadStart={onLoadStart} onLoadFinish={onLoadFinish} coordinator={coordinator} layers={layers} date={date} setCameraPosition={setCameraPosition} onFail={onFail} />: <></>}
       </Canvas>
     </>;
 }

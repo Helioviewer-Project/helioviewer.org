@@ -46,7 +46,7 @@
         <echo>concatenating CSS...</echo>
         <concat destfile="resources/compressed/helioviewer.css" encoding="UTF-8" eol="crlf">
             <filelist dir="resources/css" files="helioviewer-base.css, helioviewer-web.css"/>
-            <fileset dir="resources/css" includes="*.css" excludes="helioviewer-base.css, helioviewer-web.css, helioviewer-embed.css, api.css, 3d.css"/>
+            <fileset dir="resources/css" includes="*.css" excludes="helioviewer-base.css, helioviewer-web.css, helioviewer-embed.css, api.css"/>
         </concat>
 
         <echo>minimizing JavaScript...</echo>

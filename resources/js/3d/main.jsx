@@ -4,22 +4,6 @@ import { Coordinator } from "./coordinates/coordinator";
 import { SetHelioviewerApiUrl } from "@helioviewer/sun";
 import Viewport3D from "./viewport3d";
 
-/** Handles what to do if 3D rendering fails */
-const onFail = (error) => {
-  console.error(error);
-  Helioviewer.messageConsole.error("3D rendering is currently unavailable. Check back later.");
-}
-
-/** Reads the state of the HV application from localStorage */
-function getHvState() {
-  return JSON.parse(localStorage.getItem("settings"));
-}
-
-function render(root, visible, coordinator_url) {
-  root.render(
-    <Viewport3D active={is3dLaunched} visible={visible} state={getHvState()} coordinator={new Coordinator(coordinator_url)} onFail={onFail} />
-  );
-}
 
 // Tracks if 3D mode is active.
 // This is toggled when the 3D button is clicked
@@ -35,6 +19,48 @@ let is3dLaunched = false;
 // This function can be used by the main HV application to check if
 // 3D mode is currently visible.
 window.is3dViewActive = () => is3dEnabled;
+
+
+/** Handles what to do if 3D rendering fails */
+const onFail = (error) => {
+  console.error(error);
+  Helioviewer.messageConsole.error("3D rendering is currently unavailable. Check back later.");
+}
+
+/**
+ * Reads the state of the HV application from localStorage
+ * and parses it into the required parameters for the 3D viewport module.
+ */
+function getHvState() {
+  const state = JSON.parse(localStorage.getItem("settings"));
+  const date = state.state.date;
+  const layers = Object.values(state.state.tileLayers).map((hvLayer) => {
+    return {
+      sourceId: hvLayer.sourceId,
+      observatory: hvLayer.uiLabels[0].name,
+      visible: hvLayer.visible,
+      opacity: hvLayer.opacity
+    }
+  })
+  return [layers, date];
+}
+
+/**
+/**
+ * @typedef {Object} LayerObject
+ * @property {string} sourceId - The ID of the source
+ * @property {number} opacity - The opacity of the layer
+ * @property {boolean} visible - The visibility of the layer
+ * @property {string} observatory - The name of the observatory
+ */
+function render(root, visible, coordinator_url) {
+  // Extract parameters for the 3D viewport from the HV State
+  const [layers, observationTime] = getHvState();
+  root.render(
+    <Viewport3D active={is3dLaunched} layers={layers} date={observationTime} visible={visible} coordinator={new Coordinator(coordinator_url)} onFail={onFail} onLoadStart={() => helioviewerWebClient.startLoading()} onLoadFinish={() => helioviewerWebClient.stopLoading()} />
+  );
+}
+
 
 /** Handle to HTML element which shows the 3D view */
 const viewport3dRoot = document.getElementById("view-3d");
