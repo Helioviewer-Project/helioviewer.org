@@ -524,7 +524,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 				<div id="zoom-in-button" class="viewport-action fa fa-search-plus" title="Zoom In"></div>
 			</div>
-			<div class="viewport-action js-3d-toggle desktop js-mobile-3d" style="position: relative">
+			<div class="viewport-action js-3d-toggle desktop js-mobile-3d">
 				<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="position: absolute;left: 0px;top: 0;">
 					<!-- Plain circle with transparent background - no stroke -->
 					<circle cx="50" cy="50" r="45" fill="transparent"></circle>

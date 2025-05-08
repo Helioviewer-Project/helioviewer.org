@@ -34,6 +34,7 @@
 
   .js-3d-toggle.active {
     margin-left: 106px !important;
+    position: relative;
   }
 }
 
