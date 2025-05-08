@@ -124,5 +124,5 @@ jobs:
       if: always()
       with:
         name: playwright-report-${{matrix.shardIndex}}
-        path: helioviewer.org/playwright-report/
-        retention-days: 7
+        path: tests/playwright-report/
+        retention-days: 1
