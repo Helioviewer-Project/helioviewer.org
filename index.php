@@ -2051,9 +2051,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 			serverSettings = new Config(settingsJSON).toArray();
 
-			// Defined in hv3d.js, initialize the 3D viewport
-			Init3D(serverSettings.coordinator_url, serverSettings.apiURL);
-
 			zoomLevels = [0.30255511, 0.60511022,1.21022044,2.42044088,4.84088176,9.68176352,19.36352704,38.72705408,77.45410816,154.90821632];
 
 			urlSettings = getUrlParameters();
@@ -2081,8 +2078,10 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 					helioviewerWebClient.loadMovie(urlSettings.movieId);
 				}
 
-				$(document).trigger("helioviewer-ready", [true]);
+			    // Defined in hv3d.js, initialize the 3D viewport
+			    Init3D(serverSettings.coordinator_url, serverSettings.apiURL);
 
+				$(document).trigger("helioviewer-ready", [true]);
 			};
 
 			// Either load state from backend or use regular flow to load it
