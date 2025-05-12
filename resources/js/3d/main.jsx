@@ -71,7 +71,7 @@ function render(root, visible, coordinator_url) {
 /** Handle to HTML element which shows the 3D view */
 const viewport3dRoot = document.getElementById("view-3d");
 
-function init3DButtons(rerender_func) {
+function init3DButtons(rerender_func, api_url) {
   /** Button to toggle between 3D and 2D views */
   const toggleButtons = document.querySelectorAll(".js-3d-toggle");
 
@@ -88,6 +88,8 @@ function init3DButtons(rerender_func) {
       // This enables loading all 3D data whenever the observation date changes.
       if (!is3dLaunched) {
         is3dLaunched = true;
+        // count activations
+        fetch(api_url + "?action=enable3D");
       }
       is3dEnabled = !is3dEnabled;
       btn.classList.toggle("active");
@@ -108,7 +110,7 @@ window.Init3D = (coordinator_url, apiUrl) => {
   render(root, false, coordinator_url);
 
   // Initialize the event listeners on the buttons that enable/disable 3D mode.
-  init3DButtons((visible) => render(root, visible, coordinator_url));
+  init3DButtons((visible) => render(root, visible, coordinator_url), apiUrl);
 
   /**
    * Listen for changes to state.
