@@ -431,7 +431,8 @@ var TileLayerAccordion = Layer.extend(
         layer = hierarchy = Helioviewer.userSettings._defaults.state.tileLayers[0];
         var diffStr = layer.baseDiffTime;
         var diffDate = diffStr.split(" ");
-        diffHTML = '<div class="difference-block">'
+        const masked = is3dViewActive() ? "masked" : "";
+        diffHTML = '<div class="difference-block toggle3d ' + masked + '">'
                    +  '<div id="difference-label" class="layer-select-label">Difference</div> '
                    +      '<select aria-labelledby="difference-label" name="layer-select-difference" class="layer-select layer-select-difference">'
                    +      '<option value="0" '+(parseInt(layer.difference) == 0 || typeof layer.difference == 'undefined' ? 'selected="selected"' : '')+'>No difference image</option>'

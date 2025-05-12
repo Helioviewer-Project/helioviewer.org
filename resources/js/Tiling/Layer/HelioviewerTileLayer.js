@@ -206,6 +206,7 @@ var HelioviewerTileLayer = TileLayer.extend(
         return_array['diffCount'] = this.diffCount;
         return_array['diffTime']  = this.diffTime;
         return_array['baseDiffTime']  = this.baseDiffTime;
+        return_array['sourceId']  = this.image.sourceId;
 
         return return_array;
     },

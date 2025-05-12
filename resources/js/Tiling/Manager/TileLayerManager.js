@@ -70,7 +70,7 @@ var TileLayerManager = LayerManager.extend(
 
         $.each( $("#TileLayerAccordion-Container .dynaccordion-section"),
             function (i, accordion) {
-                var idBase = $(accordion).attr('id'), label, name, layer = [];
+                var idBase = $(accordion).attr('id'), label, name = [];
 
 				idOrder[i] = idBase;
 
@@ -82,6 +82,7 @@ var TileLayerManager = LayerManager.extend(
                 layerHierarchy[i]['diffCount'] = parseInt($('#'+idBase+' .layer-select-difference-period-count').val());
                 layerHierarchy[i]['diffTime'] = parseInt($('#'+idBase+' .layer-select-difference-period').val());
                 layerHierarchy[i]['baseDiffTime'] = formatLyrDateString($('#'+idBase+' .diffdate').val()+' '+$('#'+idBase+' .difftime').val());
+                layerHierarchy[i]['sourceId'] = self._layers[i].image.sourceId;
 
                 if ( $(accordion).find('.visible').hasClass('hidden') ) {
                     layerHierarchy[i]['visible'] = false;

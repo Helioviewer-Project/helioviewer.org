@@ -332,11 +332,14 @@ $(function() {
 	});
 
 	// clone #scale element into the mobile menu
-	$("#scale").clone().appendTo("#hvmobscale_div");
+	let scaleDiv = $("#scale").clone().appendTo("#hvmobscale_div");
 
 	// clone #center-button element into the mobile menu
-	$("#center-button").clone().appendTo("#scale");
+	$("#center-button").clone().appendTo(scaleDiv);
 	$("#center-button").css('display','inline-block');
+
+	// 3D button
+	$(".js-mobile-3d").clone().removeClass('desktop').appendTo(scaleDiv);
 
 	// close mobile menu when earth/scale buttons pressed
 	$("#earth-button, #scalebar-button, #center-button").click(function(){
