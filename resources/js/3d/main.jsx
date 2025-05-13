@@ -65,8 +65,8 @@ window.Init3D = (coordinator_url, apiUrl) => {
   // Create root and begin executing the component via the render call
   const root = createRoot(document.getElementById("view-3d"));
 
-  const toggleButton = document.querySelector('.js-3d-toggle');
-  toggleButton.addEventListener('click', () => {
+  const toggleButton = document.querySelector(".js-3d-toggle");
+  toggleButton.addEventListener("click", () => {
     Helioviewer.userSettings.set("state.enable3d", !Helioviewer.userSettings.get("state.enable3d"));
     $(document).trigger("update-external-datasource-integration");
   });
@@ -94,11 +94,11 @@ window.Init3D = (coordinator_url, apiUrl) => {
  * @param {boolean} enable3d 3D enabled/disabled
  */
 function update3DButtonCss(enable3d) {
-  document.querySelectorAll('.js-3d-toggle').forEach(btn => {
+  document.querySelectorAll(".js-3d-toggle").forEach((btn) => {
     if (enable3d) {
-      btn.classList.add('active');
+      btn.classList.add("active");
     } else {
-      btn.classList.remove('active');
+      btn.classList.remove("active");
     }
   });
 }
@@ -108,11 +108,11 @@ function update3DButtonCss(enable3d) {
  * @param {boolean} enable3d  3D enabled/disabled
  */
 function hideDisabledElements(enable3d) {
-  document.querySelectorAll('.toggle3d').forEach(element => {
+  document.querySelectorAll(".toggle3d").forEach((element) => {
     if (enable3d) {
-      element.classList.add('masked');
+      element.classList.add("masked");
     } else {
-      element.classList.remove('masked');
+      element.classList.remove("masked");
     }
   });
 }
