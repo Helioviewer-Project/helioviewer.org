@@ -27,7 +27,7 @@ function Viewport3D({ active, visible, layers, date, coordinator, onFail, onLoad
       {/* If enabled, show the 3D viewport. This can be turned on and off anytime. */}
       <Canvas style={{ visibility: visible ? "visible" : "hidden" }} orthographic={true}>
         {/* Set up the camera controls */}
-        <CameraControls ref={controls} />
+        <CameraControls ref={controls} dollySpeed={20} />
         {/* Render the 3D viewport from the current state */}
         {/* This is only done if 3D mode is turned on, which happens once per session and cannot be turned off. */}
         {active ? (
