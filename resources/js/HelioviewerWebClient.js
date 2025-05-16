@@ -1611,6 +1611,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 "imageLayers"       : Helioviewer.userSettings.get("state.tileLayers"),
                 "eventLayers"       : Helioviewer.userSettings.get("state.events_v2"),
                 "celestialBodies"   : Helioviewer.userSettings.get("state.celestialBodiesChecked"),
+                "enable3d"          : Helioviewer.userSettings.get("state.enable3d"),
             };
 
             return $.ajax({
