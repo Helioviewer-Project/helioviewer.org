@@ -2077,7 +2077,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 					helioviewerWebClient.loadMovie(urlSettings.movieId);
 				}
 
-			    // Defined in hv3d.js, initialize the 3D viewport
+				// Defined in hv3d.js, initialize the 3D viewport
 				if (Helioviewer.outputType === "normal") {
 					Init3D(serverSettings.coordinator_url, serverSettings.apiURL);
 				}
