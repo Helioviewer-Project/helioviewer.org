@@ -2062,9 +2062,8 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			Helioviewer.dataType = "json";
 			Helioviewer.root = serverSettings['rootURL'];
 			Helioviewer.messageConsole = new MessageConsole();
-			Helioviewer.outputType = "<?php echo $outputType; ?>";
+			Helioviewer.outputType = "<?php echo $outputType ? $outputType : "normal"; ?>";
 			Helioviewer.debug = <?php echo $debug ? 'true' : 'false'; ?>;
-
 
 			const loadHelioviewer = (userSettings) => {
 
@@ -2079,7 +2078,9 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 				}
 
 			    // Defined in hv3d.js, initialize the 3D viewport
-			    Init3D(serverSettings.coordinator_url, serverSettings.apiURL);
+				if (Helioviewer.outputType === "normal") {
+					Init3D(serverSettings.coordinator_url, serverSettings.apiURL);
+				}
 
 				$(document).trigger("helioviewer-ready", [true]);
 			};
