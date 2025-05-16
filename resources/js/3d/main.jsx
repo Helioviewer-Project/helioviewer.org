@@ -39,10 +39,10 @@ function getHvState() {
       opacity: hvLayer.opacity
     };
   });
-  return [layers, date, enabled];
+  return [layers, date, enabled, Helioviewer.mobile];
 }
 
-function render(root, launched, enabled, layers, date, coordinator_url) {
+function render(root, launched, enabled, layers, date, dollySpeed, coordinator_url) {
   root.render(
     <Viewport3D
       active={launched}
@@ -51,6 +51,7 @@ function render(root, launched, enabled, layers, date, coordinator_url) {
       visible={enabled}
       coordinator={new Coordinator(coordinator_url)}
       onFail={onFail}
+      dollySpeed={dollySpeed}
       onLoadStart={() => helioviewerWebClient.startLoading()}
       onLoadFinish={() => helioviewerWebClient.stopLoading()}
     />
@@ -77,7 +78,7 @@ window.Init3D = (coordinator_url, apiUrl) => {
    * re-render whenever state is updated
    */
   $(document).on("update-external-datasource-integration", () => {
-    const [layers, date, enabled] = getHvState();
+    const [layers, date, enabled, isMobile] = getHvState();
     update3DButtonCss(enabled);
     hideDisabledElements(enabled);
     update3dViewport(enabled);
@@ -85,7 +86,8 @@ window.Init3D = (coordinator_url, apiUrl) => {
       is3dLaunched = true;
       fetch(apiUrl + "?action=enable3D");
     }
-    render(root, is3dLaunched, enabled, layers, date, coordinator_url);
+    const dollySpeed = isMobile ? 20 : 1;
+    render(root, is3dLaunched, enabled, layers, date, dollySpeed, coordinator_url);
   });
 };
 

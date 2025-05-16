@@ -2064,6 +2064,8 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			Helioviewer.messageConsole = new MessageConsole();
 			Helioviewer.outputType = "<?php echo $outputType ? $outputType : "normal"; ?>";
 			Helioviewer.debug = <?php echo $debug ? 'true' : 'false'; ?>;
+			Helioviewer.mobile = <?php echo isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) ? 'true' : 'false'; ?>
+
 
 			const loadHelioviewer = (userSettings) => {
 
