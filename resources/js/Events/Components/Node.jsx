@@ -1,96 +1,99 @@
-import { useEffect, useRef } from 'react'
-import React from 'react';
+import { useEffect, useRef, useState } from "react";
+import React from "react";
+import Checkbox from "./Checkbox.jsx";
+import NodeLabel from "./NodeLabel.jsx";
+import { EnabledTriangle, DisabledTriangle  } from './Icons.jsx';
 
-const rightEnabled = '\u25B8';
-const rightDisabled = '\u25B7';
-const downEnabled = '\u25BC';
-const downDisabled = '\u25BD';
 
-import {getEventsCount} from './functions.jsx'
-import { useEventTree, useEventTreeDispatch, useEventTreeShowEmptyBranchContext } from './EventTreeContext.jsx'
-import Checkbox from './Checkbox.jsx'
+export default function Node({ id, toggleCheckbox, toggleExpand, onHover, offHover, eventTree, showEmptyBranches}) {
 
-export default function Node({id}) {
+  const isEvent = eventTree[id].hasOwnProperty("data");
+  const isBranch = !isEvent;
+  const hasEvents = eventTree.getEventCount(id) > 0;
+  const branchWithNoEvents = isBranch && !hasEvents;
 
-    const eventTree = useEventTree();
-    const showEmptyBranches = useEventTreeShowEmptyBranchContext();
-    const dispatch = useEventTreeDispatch();
+  if (branchWithNoEvents && !showEmptyBranches) {
+    return;
+  }
 
-    const handleExpandChange = () => {dispatch({type: 'toggleExpand', id: id})}
-    const handleStateChange = () => {dispatch({type: 'toggleCheck', id: id})}
-    const handleOnHover = () => {}//dispatch({type: 'setHover', id: id})}
-    const handleOffHover = () => {}//dispatch({type: 'setOffHover', id: id})}
+  let nodeContainerStyle = {
+      paddingTop: 3,
+  };
 
-    let expandControlTriangle = rightDisabled;
+  if (isEvent) {
+      nodeContainerStyle.paddingTop = 1
+  }
 
-    if (getEventsCount(eventTree, id) > 0) {
-        
-        if (eventTree[id].expand) {
-            expandControlTriangle = downEnabled;
-        } else {
-            expandControlTriangle = rightEnabled;
-        }
-    }
+  if (branchWithNoEvents) {
+    nodeContainerStyle = {
+      opacity: 0.5
+    };
+  }
 
-    const isEvent = eventTree[id].hasOwnProperty('data');
-    const isBranch = !isEvent;
-	const hasEvents = getEventsCount(eventTree, id) > 0;
-    const branchWithNoEvents = isBranch && !hasEvents
+  const nodeHeaderStyle = {
+    display: "flex",
+    alignItems: "center",
+    gap: 4
+  };
 
-	if (branchWithNoEvents && !showEmptyBranches) {
-		return;
-	}
+  const nodeChildrensStyle = {
+    paddingLeft: 18
+  };
 
-    let nodeContainerStyle = {};
-    if (branchWithNoEvents) {
-        nodeContainerStyle = {
-            opacity: 0.5,
-        }
-    }
+  if (!eventTree[id].expand) {
+    nodeChildrensStyle["display"] = "none";
+  }
 
-    const nodeHeaderStyle = {
-        display: "flex",
-        alignItems: "center",
-    } 
-    
-    const controlTriangleStyle = {
-        paddingBottom:3,
-        fontSize:10,
-        minWidth: 13,
-        cursor: "pointer",
-    }
+  if (eventTree.isEventBranch(id)) {
+    nodeChildrensStyle["paddingLeft"] = 30;
+    nodeChildrensStyle["paddingTop"] = 4;
+    nodeChildrensStyle["paddingBottom"] = 4;
+  }
 
-    const nodeChildrensStyle = {
-        paddingLeft: 18
-    }
+  let nodeLabel = eventTree[id].label + (isEvent ? "" : "(" + eventTree.getEventCount(id) + ")");
 
-    if (!(eventTree[id].expand)) {
-        nodeChildrensStyle['display'] = 'none';
-    }
+  return (
+    <div style={nodeContainerStyle}>
+      <div
+        style={nodeHeaderStyle}
+      >
+        {isEvent ? null : (
+          <a style={{cursor: 'pointer', minWidth:11}} onClick={() => {toggleExpand(id)}}>
+            {eventTree[id].expand ? <DisabledTriangle /> : <EnabledTriangle />} 
+          </a>
+        )}
+        <Checkbox
+          state={eventTree[id].state}
+          onChange={() => {
+            toggleCheckbox(id);
+          }}
+        />
+        <NodeLabel
+            onLabelHover={()=>{onHover(id)}}
+            offLabelHover={offHover}
+            onLabelClick={()=>{toggleCheckbox(id)}}
 
-    return (
-        <div style={nodeContainerStyle}>
-            <div 
-                style={nodeHeaderStyle}
-				onMouseEnter={handleOnHover}
-				onMouseLeave={handleOffHover}
-			>
-                { isEvent ? null : <a style={controlTriangleStyle} onClick={handleExpandChange}>{expandControlTriangle}</a> }
-                <div style={nodeHeaderStyle}>
-                    <div>
-                        <Checkbox state={eventTree[id].state} onChange={handleStateChange} />
-                        <span>{eventTree[id].label} {isEvent ? null : '('+getEventsCount(eventTree, id)+')'} </span>
-                    </div>
-                </div>
-            </div>
-            { isEvent ? null : (
-                <div style={nodeChildrensStyle}>
-                    {eventTree[id].children.map(cid => {
-                        return <Node key={cid} id={cid} />
-                    })}
-                </div>
-            )}
+            label={nodeLabel}
+        />
+      </div>
+      {isEvent ? null : (
+        <div style={nodeChildrensStyle}>
+          {eventTree[id].children.map((cid) => {
+            return (
+              <Node
+                key={cid + "_" +  Math.random()}
+                id={cid}
+                toggleCheckbox={toggleCheckbox}
+                toggleExpand={toggleExpand}
+                onHover={onHover}
+                offHover={offHover}
+                eventTree={eventTree}
+                showEmptyBranches={showEmptyBranches}
+              />
+            );
+          })}
         </div>
-    );
+      )}
+    </div>
+  );
 }
-
