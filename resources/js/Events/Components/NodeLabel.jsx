@@ -20,9 +20,6 @@ export default function NodeLabel({onLabelHover, offLabelHover, onLabelClick, la
 
     let labelStyle = {};
 
-    
-    const fixTitle = 
-
     if(hovered) {
       labelStyle = {
           background:"#a8c0ca", 
