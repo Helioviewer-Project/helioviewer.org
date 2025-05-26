@@ -52,7 +52,6 @@ var HelioviewerViewport = Class.extend(
         this.touchMover = new TouchMover(document.getElementById('toptouchlayer'), this.pinchDetector, $.proxy(this.movementHelper.moveViewport, this.movementHelper));
 // toptouchlayer
         this.loadDataSources();
-        this.loadEventTypes();
 
         this._initEventHandlers();
     },
@@ -78,22 +77,6 @@ var HelioviewerViewport = Class.extend(
             };
             $.get(Helioviewer.api, {action: "getDataSources"}, callback, Helioviewer.dataType);
         });
-    },
-
-    /**
-     * Gets datasources and initializes the tileLayerAccordion and the tileLayerManager/eventLayerManager,
-     * and resizes when done.
-     */
-    loadEventTypes: function () {
-
-        $(document).trigger("event-types-initialized", [this.eventTypes, this.requestDate]);
-
-        // Initialize event layers
-
-        this._eventLayerManager = new HelioviewerEventLayerManager(this.requestDate, this.eventTypes,
-                                  this.imageScale);
-
-        //$(document).trigger("update-viewport");
     },
 
     /**

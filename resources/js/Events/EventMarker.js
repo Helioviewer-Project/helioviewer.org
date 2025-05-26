@@ -1,7 +1,7 @@
 /**
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
- * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
+ * @author <a href="mailto:kasim.n.percinel@nasa.gov">Kasim Necdet Percinel</a>
  * @fileoverview Contains the class definition for an EventMarker class.
  * @see EventLayer
  */
@@ -33,8 +33,6 @@ var EventMarker = Class.extend(
         this.event = event;
         this.behindSun = false;
         this.parentFRM  = parentFRM;
-        this._labelVisible = labelVisible;
-        this._markerVisible = markerVisible;
         this._popupVisible = false;
         this._zIndex = zIndex;
         this._eventGlossary = eventGlossary;
@@ -48,8 +46,8 @@ var EventMarker = Class.extend(
         this.createMarker(zIndex);
 
         // Create the DOM of this marker, and set the visibility
-        this.setVisibility(this._markerVisible);
-        this.setLabelVisibility(this._labelVisible);
+        this.setVisibility(markerVisible);
+        this.setLabelVisibility(labelVisible);
 
         $(document).bind("replot-event-markers",   $.proxy(this.refresh, this));
     },
@@ -111,8 +109,6 @@ var EventMarker = Class.extend(
 	        };
         }
 
-
-
         markerURL = serverSettings['rootURL']+'/resources/images/eventMarkers/'+this.type.toUpperCase()+'@2x'+'.png';
         this.eventMarkerDomNode.css({
                          'left' :  this.pos.x + 'px',
@@ -126,7 +122,7 @@ var EventMarker = Class.extend(
             //if ( this.parentFRM._visible == false ) {
                 //this.eventMarkerDomNode.hide();
             //}
-            this.parentFRM.domNode.append(this.eventMarkerDomNode);
+            this.parentFRM.append(this.eventMarkerDomNode);
         }
         else {
             //console.warn('this.parentFRM does not exist!');
@@ -183,7 +179,7 @@ var EventMarker = Class.extend(
                 // Additional styles found in events.css
             });
             if ( typeof this.parentFRM != 'undefined' ) {
-                this.parentFRM.domNode.append(this.eventRegionDomNode);
+                this.parentFRM.append(this.eventRegionDomNode);
             }
         }
     },
@@ -995,18 +991,21 @@ var EventMarker = Class.extend(
         });
         this.eventPopupDomNode.find("h1, .param-label, .param-value").enableSelection();
 
-        this.parentFRM.domNode.append(this.eventPopupDomNode);
+        this.parentFRM.append(this.eventPopupDomNode);
         helioviewerWebClient._timeSelector = new TimeSelector();
     },
 
     fixTitles: function(s){
-	    s = s.replace(/u03b1/g, "α");
+        if (!s) {
+            return ""
+        }
+        s = s.replace(/u03b1/g, "α");
         s = s.replace(/u03b2/g, "β");
         s = s.replace(/u03b3/g, "γ");
-		s = s.replace(/u00b1/g, "±");
-		s = s.replace(/u00b2/g, "²");
+        s = s.replace(/u00b1/g, "±");
+        s = s.replace(/u00b2/g, "²");
 
-		return s;
+        return s;
     },
 
     /**

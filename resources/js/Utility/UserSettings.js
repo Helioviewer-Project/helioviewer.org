@@ -7,6 +7,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, InputValidator, CookieJar, $, localStorage, parseLayerString, getUTCTimestamp */
+
 "use strict";
 var UserSettings = Class.extend(
     /** @lends UserSettings.prototype */
@@ -79,7 +80,7 @@ var UserSettings = Class.extend(
     /**
      * Gets a specified setting
      *
-       @param {String} key The setting to retrieve
+     * @param {String} key The setting to retrieve
      *
      * @returns {Object} The value of the desired setting
      */
@@ -375,9 +376,13 @@ var UserSettings = Class.extend(
                 this.set("state.events_v2." + section + ".layers", [])
             });
         } else if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
-            Object.keys(this.get("state.events_v2")).forEach((section) => {
-                this.set("state.events_v2." + section + ".layers", this._parseURLStringEvents(urlSettings.eventLayers));
-            });
+
+            const legacyEventString = "["+urlSettings.eventLayers.join("],[")+"]";
+            const legacyEventLayers = FullEventLoader.translateLegacyEventURLsToLegacyEventLayers(legacyEventString);
+
+            for(const layerSource in legacyEventLayers) {
+                this.set("state.events_v2.tree_"+layerSource+".layers", legacyEventLayers[layerSource]);
+            }
         }
 
         // If any historical shared url turns off event labels, we also respect that
@@ -469,6 +474,7 @@ var UserSettings = Class.extend(
      * converts them into JavaScript objects
      */
     _parseURLStringEvents: function (urlEventLayers) {
+
         var events = [], self = this;
 
         $.each(urlEventLayers, function (i, eventLayerString) {
@@ -484,8 +490,8 @@ var UserSettings = Class.extend(
     parseEventsURLString: function (eventLayerArray) {
 
         if ( typeof eventLayerArray == "undefined" ) {
-            eventLayerArray = [];
             let events = this.get("state.events_v2");
+            eventLayerArray = [];
             Object.keys(events).forEach((section) => {
                 if (events[section].hasOwnProperty('layers')) {
                     eventLayerArray = eventLayerArray.concat(events[section].layers)
@@ -496,6 +502,7 @@ var UserSettings = Class.extend(
         var eventLayerString = '';
 
         $.each(eventLayerArray, function (i, eventLayerObj) {
+
             eventLayerString += "[" + eventLayerObj.event_type     + ","
                                     + eventLayerObj.frms.join(';') + ","
                                     + eventLayerObj.open           + "],";
