@@ -2,11 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import React from "react";
 import Checkbox from "./Checkbox.jsx";
 import NodeLabel from "./NodeLabel.jsx";
-import { EnabledTriangle, DisabledTriangle  } from './Icons.jsx';
+import { EnabledTriangle, DisabledTriangle } from "./Icons.jsx";
 
-
-export default function Node({ id, toggleCheckbox, toggleExpand, onHover, offHover, eventTree, showEmptyBranches}) {
-
+export default function Node({ id, toggleCheckbox, toggleExpand, onHover, offHover, eventTree, showEmptyBranches }) {
   const isEvent = eventTree[id].hasOwnProperty("data");
   const isBranch = !isEvent;
   const hasEvents = eventTree.getEventCount(id) > 0;
@@ -17,11 +15,11 @@ export default function Node({ id, toggleCheckbox, toggleExpand, onHover, offHov
   }
 
   let nodeContainerStyle = {
-      paddingTop: 3,
+    paddingTop: 3
   };
 
   if (isEvent) {
-      nodeContainerStyle.paddingTop = 1
+    nodeContainerStyle.paddingTop = 1;
   }
 
   if (branchWithNoEvents) {
@@ -54,12 +52,15 @@ export default function Node({ id, toggleCheckbox, toggleExpand, onHover, offHov
 
   return (
     <div style={nodeContainerStyle}>
-      <div
-        style={nodeHeaderStyle}
-      >
+      <div style={nodeHeaderStyle}>
         {isEvent ? null : (
-          <a style={{cursor: 'pointer', minWidth:11}} onClick={() => {toggleExpand(id)}}>
-            {eventTree[id].expand ? <DisabledTriangle /> : <EnabledTriangle />} 
+          <a
+            style={{ cursor: "pointer", minWidth: 11 }}
+            onClick={() => {
+              toggleExpand(id);
+            }}
+          >
+            {eventTree[id].expand ? <DisabledTriangle /> : <EnabledTriangle />}
           </a>
         )}
         <Checkbox
@@ -69,11 +70,14 @@ export default function Node({ id, toggleCheckbox, toggleExpand, onHover, offHov
           }}
         />
         <NodeLabel
-            onLabelHover={()=>{onHover(id)}}
-            offLabelHover={offHover}
-            onLabelClick={()=>{toggleCheckbox(id)}}
-
-            label={nodeLabel}
+          onLabelHover={() => {
+            onHover(id);
+          }}
+          offLabelHover={offHover}
+          onLabelClick={() => {
+            toggleCheckbox(id);
+          }}
+          label={nodeLabel}
         />
       </div>
       {isEvent ? null : (
@@ -81,7 +85,7 @@ export default function Node({ id, toggleCheckbox, toggleExpand, onHover, offHov
           {eventTree[id].children.map((cid) => {
             return (
               <Node
-                key={cid + "_" +  Math.random()}
+                key={cid + "_" + Math.random()}
                 id={cid}
                 toggleCheckbox={toggleCheckbox}
                 toggleExpand={toggleExpand}

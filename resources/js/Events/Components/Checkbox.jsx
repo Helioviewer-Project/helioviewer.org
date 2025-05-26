@@ -9,8 +9,16 @@ function Checkbox({ state, onChange, style }) {
       checkboxRef.current.indeterminate = state === "indecided";
     }
   }, [state]);
-  
-  return <input style={{cursor: "pointer", ...style}} type="checkbox" ref={checkboxRef} checked={state === "checked"} onChange={onChange} />;
+
+  return (
+    <input
+      style={{ cursor: "pointer", ...style }}
+      type="checkbox"
+      ref={checkboxRef}
+      checked={state === "checked"}
+      onChange={onChange}
+    />
+  );
 }
 
 export default Checkbox;

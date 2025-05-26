@@ -9,7 +9,7 @@ export default class Cache {
   }
 
   static make(source) {
-	return new Cache(source)
+    return new Cache(source);
   }
 
   // Retrieve selections from localStorage or initialize default
@@ -62,4 +62,3 @@ export default class Cache {
     }
   }
 }
-
