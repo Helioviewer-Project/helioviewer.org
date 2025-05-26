@@ -1,0 +1,63 @@
+/**
+ * Solid black background for the 3D viewport.
+ */
+.solid-bg {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+}
+
+/**
+ * Grays out all elements which are not supported in 3D mode.
+ */
+.masked {
+    display: none !important;
+}
+
+#view-3d {
+   position: fixed;
+   top:0;
+   left: 0;
+   display: block;
+   width:100vw;
+   height:100vh;
+}
+
+/** Desktop view */
+@media screen and (min-width: 1000px) {
+ .js-3d-toggle {
+    margin-top: calc(4pt - 1px) !important;
+  }
+
+  .js-3d-toggle.active {
+    margin-left: 106px !important;
+    position: relative;
+  }
+}
+
+/** Mobile view */
+@media screen and (max-width: 999px) {
+    .desktop {
+        display: none !important;
+    }
+
+    .js-3d-toggle {
+		  margin-left: 5px;
+		  padding: 3px;
+		  background-color: rgba(17, 17, 17, 0.5);
+		  border: 1px solid rgb(136, 136, 136);
+		  box-shadow: black 0px 0px 5px;
+      color: rgba(255, 255, 255, 0.8);
+      position: fixed;
+      width: 13.3667px;
+      height: 15.6px;
+      text-align: center;
+      line-height: 0;
+      display: inline-flex;
+      align-items: center;
+      margin-left: 10px;
+    }
+}

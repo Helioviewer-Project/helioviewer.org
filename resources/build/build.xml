@@ -23,13 +23,6 @@
     <target name="web">
         <echo>### Web Client ###</echo>
 
-        <echo>removing old build files...</echo>
-        <mkdir dir="resources/compressed"/>
-        <delete quiet='false'>
-            <fileset dir="resources/compressed" includes="helioviewer.js, helioviewer.min.js" />
-            <fileset dir="resources/compressed" includes="helioviewer.css, helioviewer.min.css" />
-        </delete>
-
         <echo>Installing npm packages</echo>
         <exec executable="npm">
             <arg value="install" />
@@ -38,6 +31,11 @@
         <echo>Running webpack</echo>
         <exec failonerror="true" dir="resources/build" executable="npx">
             <arg line="webpack --mode=production" />
+        </exec>
+
+        <echo>Entering the 3rd dimension</echo>
+        <exec failonerror="true" dir="resources/build" executable="npx">
+            <arg line="webpack -c webpack3d.config.js --mode=production" />
         </exec>
 
         <echo>concatenating JavaScript...</echo>

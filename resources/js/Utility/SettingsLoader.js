@@ -69,6 +69,7 @@ var SettingsLoader = (
             userSettings.set("state.events_v2", clientState.data.eventLayers);
             userSettings.set("state.celestialBodiesChecked", clientState.data.celestialBodies);
             userSettings.set("state.date", parseInt(clientState.data.date));
+            userSettings.set("state.enable3d", clientState.data.hasOwnProperty("enable3d") ? clientState.data.enable3d : false);
 
             return Promise.resolve(userSettings);
 
@@ -270,7 +271,8 @@ var SettingsLoader = (
                 "celestialBodiesAccordionOpen" : {},
                 "celestialBodiesAvailableVisible" : {},
                 "celestialBodiesLabelsVisible" : {},
-                "celestialBodiesTrajectoriesVisible" : {}
+                "celestialBodiesTrajectoriesVisible" : {},
+                "enable3d": false
             },
             zoom: {
                 type: 'continuous',
