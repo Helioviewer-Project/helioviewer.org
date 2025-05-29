@@ -28,7 +28,9 @@ function HelioviewerEventTree({
   onToggleVisibility = null,
   onToggleLabelVisibility = null,
   forcedSelections = null,
-  apiURL = "https://api.helioviewer.org"
+  apiURL = "https://api.helioviewer.org",
+  onLoad = null,
+  onError = (err) => {console.error(err)}
 }) {
   const isMount = useIsMount();
   const eventTimestamp = eventsDate.getTime();
@@ -39,22 +41,32 @@ function HelioviewerEventTree({
   useEffect(() => {
     async function fetchEvents() {
       // @TODO implement abort logic
-      const cache = Cache.make(source);
-      const api = new API(apiURL);
+      try {
+          const cache = Cache.make(source);
+          const api = new API(apiURL);
 
-      const events = await api.getEvents(eventsDate, source);
-      const eventTree = EventTree.make(events, source);
+          const events = await api.getEvents(eventsDate, source);
+          const eventTree = EventTree.make(events, source);
 
-      // if hv already pass state
-      if (forcedSelections != null || forcedSelections != undefined) {
-        cache.saveSelections(forcedSelections);
+          // if hv already pass state
+          if (forcedSelections != null || forcedSelections != undefined) {
+            cache.saveSelections(forcedSelections);
+          }
+
+          // APPLY CACHE
+          const selectedTree = eventTree.applySelections(cache.getSelections());
+
+          if (onLoad != null) {
+              onLoad();
+          }
+
+          setShowEmptyBranches(cache.getShowEmptyBranches());
+          setEventTree(selectedTree);
+
+      } catch (error) {
+          onError(error);
       }
 
-      // APPLY CACHE
-      const selectedTree = eventTree.applySelections(cache.getSelections());
-
-      setShowEmptyBranches(cache.getShowEmptyBranches());
-      setEventTree(selectedTree);
     }
 
     fetchEvents();

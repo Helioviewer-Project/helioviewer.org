@@ -2115,18 +2115,16 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			Helioviewer.debug = <?php echo $debug ? 'true' : 'false'; ?>;
 			Helioviewer.mobile = <?php echo isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) ? 'true' : 'false'; ?>
 
+
+
 			const loadHelioviewer = (userSettings) => {
 
 				Helioviewer.userSettings = userSettings;
 
-				if (Helioviewer.outputType == "minimal" || Helioviewer.outputType=="embed") {
-					Helioviewer.eventLoader = new MinimalEventLoader(Helioviewer.debug);
-				} else {
-					Helioviewer.eventLoader = new FullEventLoader(Helioviewer.debug);
-				}
+                Helioviewer.eventLoader = FullEventLoader.make(Helioviewer.outputType, Helioviewer.debug)
 
 				Helioviewer.eventLoader.ready(el => {
-					if(el.error) {
+					if(el.error != null) {
 						console.error(el.error)
 						Helioviewer.messageConsole.warn("We couldn't load Helioviewer Events");
 					}
@@ -2144,6 +2142,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 				if (Helioviewer.outputType === "normal") {
 					Init3D(serverSettings.coordinator_url, serverSettings.apiURL);
 				}
+
 				$(document).trigger("helioviewer-ready", [true]);
 			};
 

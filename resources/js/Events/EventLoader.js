@@ -1,4 +1,5 @@
-// Shared interface
+import EventGlossary from './EventGlossary'
+
 export default class EventLoader {
 
   static sources = ["HEK", "CCMC", "RHESSI"];
@@ -40,9 +41,18 @@ export default class EventLoader {
       'F2' : { name:'Solar Flares', source:'RHESSI' },
   };
 
+  static make(outputType="normal", debug) {
+    if (outputType == "minimal" || outputType=="embed") {
+        return new MinimalEventLoader(debug);
+    } else {
+        return new FullEventLoader(debug);
+    }
+  }
+
   constructor() {
-    this.eventGlossaryCache = null;
+    this.eventGlossary = EventGlossary;
     this._isReady = false;
+    this.error = null;
   }
 
   ready(callback) {
@@ -54,7 +64,7 @@ export default class EventLoader {
     }
   }
 
-  _markReady() {
+  markReady() {
     this._isReady = true;
     if (this._readyQueue) {
       this._readyQueue.forEach(cb => cb(this));
@@ -62,25 +72,9 @@ export default class EventLoader {
     }
   }
 
-  _markNotReady() {
+  markNotReady() {
     this._isReady = false;
   }
-
-  getEventGlossary() {
-
-      if (this.eventGlossaryCache) {
-        return Promise.resolve(this.eventGlossaryCache);
-      }
-
-      return fetch(`${Helioviewer.api}?action=getEventGlossary`)
-        .then(res => {
-          if (!res.ok) throw new Error('Could not fetch event glossary ' + res.status);
-          return res.json();
-        }).then(glossary => {
-            this.eventGlossaryCache = glossary;
-            return glossary
-        });
-    }
 
     static translateLegacyEventURLsToLegacyEventLayers(legacyEventString) {
 
@@ -139,6 +133,7 @@ export default class EventLoader {
     static translateSelectionsToLegacyEventLayers(selections, source, selectedEvents) {
 
         console.log(selectedEvents);
+        console.log(selections);
 
         const transformEventLabelsMap = (elm) => {
 

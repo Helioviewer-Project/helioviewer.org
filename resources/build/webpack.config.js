@@ -51,6 +51,11 @@ module.exports = {
                           override: true
                         },
                         {
+                            globalName: "EventLoader",
+                            moduleLocalName: "EventLoader",
+                            override: true
+                        },
+                        {
                             globalName: "FullEventLoader",
                             moduleLocalName: "FullEventLoader",
                             override: true
@@ -59,7 +64,7 @@ module.exports = {
                             globalName: "MinimalEventLoader",
                             moduleLocalName: "MinimalEventLoader",
                             override: true
-                        }
+                        },
                       ]
                     }
                 },

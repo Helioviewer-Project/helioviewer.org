@@ -1819,7 +1819,7 @@ var TimelineEvents = Class.extend({
 
 		var formatted, tag, tags = [], lookup, attr, domClass, icon, list= {}, self=this;
 
-		let _eventGlossary = Helioviewer.eventLoader.eventGlossaryCache;
+		let _eventGlossary = Helioviewer.eventLoader.eventGlossary;
 
 		if ( tab == 'obs' ) {
 			$.each( event, function (key, value) {

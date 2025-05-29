@@ -11,33 +11,30 @@ import EventLoader from './EventLoader'
 
 class MinimalEventLoader extends EventLoader {
 
-    source = "HEK";
-    selections = [];
-    events = [];
-    error = "";
-
-    setEvents() {}
+    eventsCache = {};
 
     getEvents(source) {
 
         const eventsDate = new Date(Helioviewer.userSettings.get("state.date"));
         const cacheKey = `${source}>>${eventsDate.toISOString()}`
            
-        if (this.events.hasOwnProperty(cacheKey)) {
-            return Promise.resolve(this.events[cacheKey]);
+        if (this.eventsCache.hasOwnProperty(cacheKey)) {
+            return Promise.resolve(this.eventsCache[cacheKey]);
         }
 
         const sourceParam = `sources=${source}`;
 
-        return fetch(`${Helioviewer.api}?startTime=${encodeURIComponent(eventsDate.toISOString())}&action=events&${sourceParam}`)
+        const apiURL = Helioviewer.api;
+
+        return fetch(`${apiURL}?startTime=${encodeURIComponent(eventsDate.toISOString())}&action=events&${sourceParam}`)
             .then(res => {
                 if (!res.ok) {
                     throw new Error(`Could not fetch events information for ${source}. Status: ${res.status}`);
                 }
                 return res.json();
             }).then(events => {
-                this.events[cacheKey] = this.parseEvents(events);
-                return this.events[cacheKey] 
+                this.eventsCache[cacheKey] = this.parseEvents(events);
+                return this.eventsCache[cacheKey] 
             });
     }
 
@@ -47,20 +44,18 @@ class MinimalEventLoader extends EventLoader {
 
         const eventPromises = EventLoader.sources.map(s => this.getEvents(s));
 
-        eventPromises.push(this.getEventGlossary());
-
         Promise.all(eventPromises).then(() => {
-            this._markReady()
+            this.markReady()
         }).catch(err => {
             this.error = err
-            this._markReady()
+            this.markReady()
         });
 
-        $(document).on('observation-time-changed', (e) => {
-            this.ready(eventLoader => {
-                eventLoader.draw();
-            });
-        });
+		$(document).on('observation-time-changed', async (e) => {
+            this.markNotReady();
+			await this.draw()
+            this.markReady();
+		});
 
         $("#k12-events-visibility-btn").click((e) => {
 
@@ -115,32 +110,30 @@ class MinimalEventLoader extends EventLoader {
 
         let i = 0;
 
-        this.getEventGlossary().then(glossary => {
-            Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(l => {
-                this.getEvents(l.id).then((events) => {
-                    l.layers_v2.forEach(selection => {
-                          
-                        let [selectionSource, selectionEventType, selectionFrm] = selection.split(">>")
+        Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(l => {
+            this.getEvents(l.id).then((events) => {
+                l.layers_v2.forEach(selection => {
+                      
+                    let [selectionSource, selectionEventType, selectionFrm] = selection.split(">>")
 
-                        if(selectionFrm) {
+                    if(selectionFrm) {
 
-                            if(events.hasOwnProperty(selection)) {
-                                events[selection].forEach(e => new EventMarker(glossary,eventContainer, e, i++, true, true));
-                            }
-
-                        } else {
-
-                            let prefix = selectionSource + '>>' + selectionEventType + '>>';
-                            for (let key in events) {
-                                if(key.startsWith(prefix)) {
-                                    events[key].forEach(e => new EventMarker(glossary,eventContainer, e, i++, true, true));
-                                }
-                            }
-
+                        if(events.hasOwnProperty(selection)) {
+                            events[selection].forEach(e => new EventMarker(this.eventGlossary, eventContainer, e, i++, true, true));
                         }
-                    });
-                })
-            });
+
+                    } else {
+
+                        let prefix = selectionSource + '>>' + selectionEventType + '>>';
+                        for (let key in events) {
+                            if(key.startsWith(prefix)) {
+                                events[key].forEach(e => new EventMarker(this.eventGlossary, eventContainer, e, i++, true, true));
+                            }
+                        }
+
+                    }
+                });
+            })
         });
     }
 

@@ -10,11 +10,11 @@ import HelioviewerEventTree from './Components/HelioviewerEventTree'
 import EventLoader from './EventLoader'
 
 class FullEventLoader extends EventLoader {
-
-    _eventMarkers = {};
-    _eventSelections = {};
-    _eventLegacySelections = {};
-	_reactRoots = {};
+    
+    markers = {};
+    selections = {};
+    legacySelections = {};
+	reactRoots = {};
 
     constructor(debug) {
 
@@ -23,15 +23,13 @@ class FullEventLoader extends EventLoader {
         this.container = $('#EventLayerAccordion-Container');
         this.debug = debug;
 
-		this._eventMarkers = Object.fromEntries(EventLoader.sources.map(s => [s, []]));
-		this._eventSelections = Object.fromEntries(EventLoader.sources.map(s => [s, []]));
-		this._eventLegacySelections = Object.fromEntries(EventLoader.sources.map(s => [s, []]));
-
-		const selections = Object.fromEntries(EventLoader.sources.map(s => [s, null]));
+		this.markers = Object.fromEntries(EventLoader.sources.map(s => [s, []]));
+		this.legacySelections = Object.fromEntries(EventLoader.sources.map(s => [s, []]));
+		this.selections = Object.fromEntries(EventLoader.sources.map(s => [s, null]));
 
 		if (Helioviewer.urlSettings.loadState) {
 			EventLoader.sources.forEach(s => {
-				selections[s] = Helioviewer.userSettings.get("state.events_v2.tree_" + s + ".layers_v2")	
+				this.selections[s] = Helioviewer.userSettings.get("state.events_v2.tree_" + s + ".layers_v2")	
 			});
 		}
 
@@ -41,47 +39,45 @@ class FullEventLoader extends EventLoader {
             const legacyEventLayers = FullEventLoader.translateLegacyEventURLsToSelections(legacyEventString);
 
             for(const layerSource in legacyEventLayers) {
-				selections[layerSource] = legacyEventLayers[layerSource]	
+				this.selections[layerSource] = legacyEventLayers[layerSource]	
             }
 
         } 
 
-        this.draw(selections).then(() => {
-            this._markReady()
-        }).catch(err => {
-            this.error = err
-            this._markReady()
-        });
-
-		$(document).on('observation-time-changed', (e) => {
-            this._markNotReady();
-			this.ready(el => {
-				el.draw()
-			});
-            this._markReady();
+		$(document).on('observation-time-changed', async (e) => {
+            this.markNotReady();
+			await this.draw()
+            this.markReady();
 		});
 		
+        this.draw().then(() => {
+            this.markReady();
+        }).catch((error) => {
+            this.error = error;
+            this.markReady();
+        });
+
     }
 
 	getSelections(source=null) {
 		if (source === null) {
-			return Object.values(this._eventSelections).flat();
+			return Object.values(this.selections).flat().filter(s => s != null);
 		} else {
-			return this._eventSelections[source];
+			return this.selections[source] ? null : [];
 		}
 	}
 
 	getLegacySelections(source=null) {
 		if (source === null) {
-			return Object.values(this._eventLegacySelections).flat();
+			return Object.values(this.legacySelections).flat();
 		} else {
-			return this._eventLegacySelections[source];
+			return this.legacySelections[source];
 		}
 	}
 
     makeHoveredEventsUpdate(source) {
         return (hoveredEvents) => {
-            this._eventMarkers[source].forEach(em => {
+            this.markers[source].forEach(em => {
                 if(hoveredEvents.includes(em.id)) {
                     em.marker.emphasize();
                 } else {
@@ -98,7 +94,7 @@ class FullEventLoader extends EventLoader {
      * @param {String} containerId ID for the outermost continer where the layer
      *                 manager user interface should be constructed
      */
-    makeEventsUpdate(source, eventGlossary) {
+    makeEventsUpdate(source) {
 
         return (events, selections) => {
 
@@ -110,12 +106,12 @@ class FullEventLoader extends EventLoader {
 
             let allEventMarkers = [];
 
-            this._eventMarkers[source] = [];
+            this.markers[source] = [];
 
             events.forEach(e => {
 
                 let eventMarker = new EventMarker(
-                    eventGlossary, 
+                    this.eventGlossary, 
                     eventContainer, 
                     e.event_data, 
                     i+1, 
@@ -131,14 +127,11 @@ class FullEventLoader extends EventLoader {
                 i = i + 1;
             })
 
-			console.log(selections);
-			console.log(source);
-			console.log(events);
 			let legacySelections = EventLoader.translateSelectionsToLegacyEventLayers(selections, source, events);
 
-            this._eventMarkers[source] = allEventMarkers;
-            this._eventLegacySelections[source] = legacySelections;
-            this._eventSelections[source] = selections;
+            this.markers[source] = allEventMarkers;
+            this.legacySelections[source] = legacySelections;
+            this.selections[source] = selections;
 
             let legacyKey = "state.events_v2.tree_" + source + ".layers";
             let newKey = "state.events_v2.tree_" + source + ".layers_v2";
@@ -153,7 +146,7 @@ class FullEventLoader extends EventLoader {
 
     makeToggleVisibility(source) {
         return (newVisibility) => {
-            this._eventMarkers[source].forEach(em => {
+            this.markers[source].forEach(em => {
                 em.marker.setVisibility(newVisibility);
             })
             Helioviewer.userSettings.set("state.events_v2.tree_" + source + ".markers_visible", newVisibility);
@@ -162,62 +155,59 @@ class FullEventLoader extends EventLoader {
 
     makeToggleLabelVisibility(source) {
         return (newVisibility) => {
-            this._eventMarkers[source].forEach(em => {
+            this.markers[source].forEach(em => {
                 em.marker.setLabelVisibility(newVisibility);
             })
             Helioviewer.userSettings.set("state.events_v2.tree_" + source + ".labels_visible", newVisibility);
         }
     }
 
-	draw(selections) {
+	draw() {
 
-        return this.getEventGlossary().then(glossary => {
+        const promises = [];
 
-            Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings(l => {
+        for (const source of EventLoader.sources) {
 
-				let source = l.id;
+            if(!this.reactRoots.hasOwnProperty(source)) {
+                this.reactRoots[source] = createRoot($('#event-tree-container-'+source)[0]);
+            }
 
-				if(!this._reactRoots.hasOwnProperty(source)) {
-					this._reactRoots[source] = createRoot($('#event-tree-container-'+source)[0]);
-				}
+            promises.push(new Promise((resolve, reject) => {
+                this.reactRoots[source].render(<HelioviewerEventTree 
 
-				let forcedSelections = null
-				if (selections != undefined) {
-					forcedSelections = selections[source]
-				}
-//
-				console.log("draw", l.id, forcedSelections);
+                    source={source}  
+                    apiURL={Helioviewer.api}
+                    eventsDate={new Date(Helioviewer.userSettings.get("state.date"))} 
 
-				this._reactRoots[source].render(<HelioviewerEventTree 
+                    onEventsUpdate={this.makeEventsUpdate(source)} 
+                    onHoveredEventsUpdate = {this.makeHoveredEventsUpdate(source)}
 
-					source={source}  
-					apiURL={Helioviewer.api}
-					eventsDate={new Date(Helioviewer.userSettings.get("state.date"))} 
+                    onToggleVisibility={this.makeToggleVisibility(source)} 
+                    onToggleLabelVisibility={this.makeToggleLabelVisibility(source)} 
 
-					onEventsUpdate={this.makeEventsUpdate(source, glossary)} 
-					onHoveredEventsUpdate = {this.makeHoveredEventsUpdate(source)}
+                    visibility={Helioviewer.userSettings.get("state.events_v2.tree_" + source + ".markers_visible")}
+                    labelVisibility={Helioviewer.userSettings.get("state.events_v2.tree_" + source + ".labels_visible")}
 
-					onToggleVisibility={this.makeToggleVisibility(source)} 
-					onToggleLabelVisibility={this.makeToggleLabelVisibility(source)} 
+                    forcedSelections={this.selections[source]} 
 
-					visibility={Helioviewer.userSettings.get("state.events_v2.tree_" + source + ".markers_visible")}
-					labelVisibility={Helioviewer.userSettings.get("state.events_v2.tree_" + source + ".labels_visible")}
-					forcedSelections={forcedSelections} 
+                    onLoad={resolve}
+                    onError={(err)=> reject(err)}
 
-				/>);
-			})
-		});
+                />);
+            }));
+        }
 
+        return Promise.all(promises);
 	}
 
     setFromSourceLegacyEventString(legacyEventString) {
-        const selections = EventLoader.translateLegacyEventURLsToSelections(legacyEventString);
-        return this.draw(selections);
+        this.selections = EventLoader.translateLegacyEventURLsToSelections(legacyEventString);
+        return this.draw();
     }
 
     setFromSelections(selections) {
-		const selectionsBySources = Object.fromEntries(EventLoader.sources.map(s => [s, selections.filter(sl => sl.startsWith(s))]));
-        return this.draw(selectionsBySources);
+		this.selections = Object.fromEntries(EventLoader.sources.map(s => [s, selections.filter(sl => sl.startsWith(s))]));
+        return this.draw();
 	}
 
 	getLegacyShallowEventLayerString() {
@@ -265,7 +255,7 @@ class FullEventLoader extends EventLoader {
 
     highlightEventsFromEventTypePin(eventPin) {
 
-		const markers = Object.values(this._eventMarkers).flat();
+		const markers = Object.values(this.markers).flat();
 
 		for(const m of markers) {
 			m.marker.setVisibility(m.marker.event_type == eventPin);
@@ -274,7 +264,7 @@ class FullEventLoader extends EventLoader {
 
     highlightEventsFromEventID(id) {
 
-		const markers = Object.values(this._eventMarkers).flat();
+		const markers = Object.values(this.markers).flat();
 
 		for(const m of markers) {
 			m.marker.setVisibility(m.marker.id == id);
@@ -282,8 +272,8 @@ class FullEventLoader extends EventLoader {
 	}
 
 	removeHighlight() {
-		for(const s in this._eventMarkers) {
-			for(const m of this._eventMarkers[s]) {
+		for(const s in this.markers) {
+			for(const m of this.markers[s]) {
 				m.marker.setVisibility(Helioviewer.userSettings.get("state.events_v2.tree_" + s + ".markers_visible"));
 			}
 		}
