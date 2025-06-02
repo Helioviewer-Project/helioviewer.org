@@ -64,6 +64,7 @@ function SourceHeader({
           </span>
           {hasEvents ? (
             <Checkbox
+              dataTestId={`event-tree-checkbox-${source}`}
               style={{ width: 9 }}
               state={checked}
               onChange={(event) => {
@@ -81,6 +82,7 @@ function SourceHeader({
           </span>
           <a onClick={() => handleShowEmptyBranches(!showEmptyBranches)}>
             <HideEmptyResourcesIcon
+              data-testid={`event-tree-empty-resource-visibility-button-${source}`}
               width="14"
               height="14"
               style={{ color: showEmptyBranches ? "green" : "red", cursor: "pointer" }}
@@ -88,6 +90,7 @@ function SourceHeader({
           </a>
           <a onClick={() => handleInternalVisibility(!visibilityState)}>
             <ShowMarkersIcon
+              data-testid={`event-tree-event-visibility-button-${source}`}
               width="14"
               height="14"
               style={{ color: visibilityState ? "green" : "red", cursor: "pointer" }}
@@ -95,6 +98,7 @@ function SourceHeader({
           </a>
           <a onClick={() => handleInternalLabelVisibility(!labelVisibilityState)}>
             <ShowLabelsIcon
+              data-testid={`event-tree-event-label-visibility-button-${source}`}
               width="14"
               height="14"
               style={{ color: labelVisibilityState ? "green" : "red", cursor: "pointer" }}

@@ -56,6 +56,7 @@ export default function Node({ id, toggleCheckbox, toggleExpand, onHover, offHov
         {isEvent ? null : (
           <a
             style={{ cursor: "pointer", minWidth: 11 }}
+            data-testid={`event-tree-expand-triangle-${id}`} 
             onClick={() => {
               toggleExpand(id);
             }}
@@ -64,6 +65,7 @@ export default function Node({ id, toggleCheckbox, toggleExpand, onHover, offHov
           </a>
         )}
         <Checkbox
+          dataTestId={`event-tree-checkbox-${id}`}
           state={eventTree[id].state}
           onChange={() => {
             toggleCheckbox(id);

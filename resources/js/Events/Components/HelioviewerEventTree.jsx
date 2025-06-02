@@ -7,6 +7,7 @@ import API from "./Core/API.jsx";
 import Checkbox from "./Checkbox.jsx";
 import Node from "./Node.jsx";
 import SourceHeader from "./SourceHeader.jsx";
+import {LoadingIcon} from "./Icons.jsx";
 
 const useIsMount = () => {
   const isMountRef = useRef(false);
@@ -23,6 +24,7 @@ function HelioviewerEventTree({
   eventsDate,
   onEventsUpdate,
   onHoveredEventsUpdate,
+  onSelectionsUpdate=null,
   visibility = true,
   labelVisibility = true,
   onToggleVisibility = null,
@@ -32,40 +34,52 @@ function HelioviewerEventTree({
   onLoad = null,
   onError = (err) => {console.error(err)}
 }) {
+
   const isMount = useIsMount();
   const eventTimestamp = eventsDate.getTime();
+  const cache = Cache.make(source);
 
-  const [showEmptyBranches, setShowEmptyBranches] = useState(true);
+  let defaultSelections = cache.getSelections();
+
+  if (forcedSelections != null) {
+      defaultSelections = forcedSelections;
+  }
+
+  const [selections, setSelections] = useState(defaultSelections);
+  const [loading, setLoading] = useState(false);
+  const [showEmptyBranches, setShowEmptyBranches] = useState(cache.getShowEmptyBranches());
   const [eventTree, setEventTree] = useState(new EventTree({}));
+  const [events, setEvents] = useState([]);
 
+  
   useEffect(() => {
+      
     async function fetchEvents() {
       // @TODO implement abort logic
       try {
-          const cache = Cache.make(source);
+          setLoading(true);
+
           const api = new API(apiURL);
 
-          const events = await api.getEvents(eventsDate, source);
-          const eventTree = EventTree.make(events, source);
+          const apiEvents = await api.getEvents(eventsDate, source);
+          const eventTree = EventTree.make(apiEvents, source);
+          const selectedTree = eventTree.applySelections(selections);
 
-          // if hv already pass state
-          if (forcedSelections != null || forcedSelections != undefined) {
-            cache.saveSelections(forcedSelections);
-          }
-
-          // APPLY CACHE
-          const selectedTree = eventTree.applySelections(cache.getSelections());
+          setEventTree(selectedTree);
+          setEvents(selectedTree.selectedEvents());
 
           if (onLoad != null) {
               onLoad();
           }
 
-          setShowEmptyBranches(cache.getShowEmptyBranches());
-          setEventTree(selectedTree);
-
       } catch (error) {
           onError(error);
+      } finally {
+          setLoading(false);
       }
+
+
+      console.log(`useEffect ${source} eventsDate ${eventsDate}`);
 
     }
 
@@ -73,22 +87,38 @@ function HelioviewerEventTree({
   }, [eventsDate]);
 
   useEffect(() => {
+
     if (!isMount) {
       return;
     }
 
-    const selectedEvents = eventTree.selectedEvents();
-    const cache = Cache.make(source);
+    onEventsUpdate(events);
 
-    onEventsUpdate(selectedEvents, cache.getSelections());
-  }, [eventTree.selectedEvents()]);
+      console.log(`useEffect ${source} eventsUpdate ${events.length} many events`);
+  }, [events]);
+
+  if (onSelectionsUpdate != null) {
+      useEffect(() => {
+
+        if (!isMount) {
+          return;
+        }
+
+        onSelectionsUpdate(selections, eventTree.selectedEvents());
+
+      console.log(`useEffect ${source} selectionsUpdate ${selections}`);
+      }, [selections]);
+  }
 
   const toggleCheckbox = function (id) {
     const newTree = eventTree.toggleCheckbox(id);
     const newSelections = newTree.extractSelections();
 
     Cache.make(source).saveSelections(newSelections);
+
     setEventTree(newTree);
+    setSelections(newSelections);
+    setEvents(newTree.selectedEvents());
   };
 
   const toggleExpand = function (id) {
@@ -126,10 +156,9 @@ function HelioviewerEventTree({
     WebkitBackgroundImage: "-webkit-linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0))"
   };
 
-  let hasEvents = true;
+  let hasEvents = eventTree.getEventCount(source) > 0;
 
-  if (eventTree.getEventCount(source) <= 0) {
-    hasEvents = false;
+  if (!hasEvents) {
     nodeContainerStyle = {
       opacity: 0.5,
       ...nodeContainerStyle
@@ -144,6 +173,7 @@ function HelioviewerEventTree({
   };
 
   if (!eventTree[source].expand) {
+	console.log(eventTree);
     nodeChildrensStyle["display"] = "none";
   }
 
@@ -190,8 +220,7 @@ function HelioviewerEventTree({
           labelVisibility={labelVisibility}
           handleLabelVisibility={onToggleLabelVisibility}
         />
-
-        <div style={nodeChildrensStyle}>{eventTreeRender}</div>
+        <div style={nodeChildrensStyle}>{loading ? <><LoadingIcon /><span>&nbsp;Loading</span></> : eventTreeRender }</div>
       </div>
     </>
   );

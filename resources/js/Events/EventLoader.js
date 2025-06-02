@@ -132,9 +132,6 @@ export default class EventLoader {
 
     static translateSelectionsToLegacyEventLayers(selections, source, selectedEvents) {
 
-        console.log(selectedEvents);
-        console.log(selections);
-
         const transformEventLabelsMap = (elm) => {
 
             let transformedMap = {};
@@ -225,7 +222,6 @@ export default class EventLoader {
 
             if(parts.length == 4) {
 
-
                 let makeLegacyEventId = (eventPin, frmName, eventID) => {
 
                     let escapedFrmName = frmName.replace(/ /g, "_").replace(/=/g, "_").replace(/([\+\.\(\)])/g, '\\$1');
@@ -234,9 +230,9 @@ export default class EventLoader {
                     return `${eventPin}--${escapedFrmName}--${encodedEventID}`;
 
                 };
-        
 
                 let [selectedSource, selectedEventTypeLabel, selectedFRM, selectedEventLabel] = parts;
+                console.log(parts);
                 let selectedEventTypePin = transformedELP[selectedSource][selectedEventTypeLabel];
 
                 let legacyEventID;

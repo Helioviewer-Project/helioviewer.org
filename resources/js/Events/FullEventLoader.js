@@ -96,7 +96,7 @@ class FullEventLoader extends EventLoader {
      */
     makeEventsUpdate(source) {
 
-        return (events, selections) => {
+        return (events) => {
 
             $('#'+source+'-event-container').remove()
 
@@ -127,17 +127,29 @@ class FullEventLoader extends EventLoader {
                 i = i + 1;
             })
 
-			let legacySelections = EventLoader.translateSelectionsToLegacyEventLayers(selections, source, events);
-
             this.markers[source] = allEventMarkers;
-            this.legacySelections[source] = legacySelections;
+
+            console.log(`Client ${source} eventsUpdate ${events.length} many events`);
+        };
+
+    }
+
+    makeSelectionsUpdate(source) {
+
+        return (selections, events) => {
+
+			let legacySelection = EventLoader.translateSelectionsToLegacyEventLayers(selections, source, events);
+
+            this.legacySelections[source] = legacySelection;
             this.selections[source] = selections;
 
             let legacyKey = "state.events_v2.tree_" + source + ".layers";
             let newKey = "state.events_v2.tree_" + source + ".layers_v2";
 
-            Helioviewer.userSettings.set(legacyKey, legacySelections);
+            Helioviewer.userSettings.set(legacyKey, legacySelection);
             Helioviewer.userSettings.set(newKey, selections);
+
+            console.log(`Client ${source} selectionsUpdate ${selections}`);
 
             $(document).trigger("change-feature-events-state");
         };
@@ -181,6 +193,7 @@ class FullEventLoader extends EventLoader {
 
                     onEventsUpdate={this.makeEventsUpdate(source)} 
                     onHoveredEventsUpdate = {this.makeHoveredEventsUpdate(source)}
+                    onSelectionsUpdate={this.makeSelectionsUpdate(source)}
 
                     onToggleVisibility={this.makeToggleVisibility(source)} 
                     onToggleLabelVisibility={this.makeToggleLabelVisibility(source)} 

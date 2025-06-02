@@ -174,7 +174,7 @@ class EventTree {
           }
 
           this[parentId].state = parentState;
-          this[parentId].expand = parentState == "indecided";
+          this[parentId].expand = (parentState == "indecided") || this.isRoot(parentId) || this.isFirstLevel(parentId);
 
           parentId = this[parentId].parent_id;
         }
@@ -261,6 +261,22 @@ class EventTree {
 
     return this[firstChildrenId].hasOwnProperty("data");
   }
+
+  getLevel(id) {
+    // trigger exception , if it is not in tree, we handle all exceptions
+    const nodeID = this[id].id;
+
+    return nodeID.split(">>").length;
+  }
+
+  isRoot(id) {
+    return this.getLevel(id) == 1;
+  }
+
+  isFirstLevel(id) {
+    return this.getLevel(id) == 2;
+  }
+
 }
 
 export default EventTree;

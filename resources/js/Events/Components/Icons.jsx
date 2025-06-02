@@ -94,3 +94,51 @@ export const DisabledTriangle = ({ width = "6", height = "6", fill = "#999", vie
     </svg>
   );
 };
+
+export const LoadingIcon = ({
+  size = 13,
+  strokeWidth = 2,
+  color = "#666",
+  className = "",
+  ...props
+}) => {
+  // The radius of the circle: (size - strokeWidth) / 2
+  const radius = (size - strokeWidth) / 2;
+  const center = size / 2;
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      className={className}
+      {...props}
+    >
+      <circle
+        cx={center}
+        cy={center}
+        r={radius}
+        fill="none"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeDasharray={`${Math.PI * 2 * radius * 0.75} ${
+          Math.PI * 2 * radius
+        }`}
+        transform={`rotate(-90 ${center} ${center})`}
+      >
+        <animateTransform
+          attributeName="transform"
+          type="rotate"
+          from={`0 ${center} ${center}`}
+          to={`360 ${center} ${center}`}
+          dur="1s"
+          repeatCount="indefinite"
+        />
+      </circle>
+    </svg>
+  );
+};
+
+
+
