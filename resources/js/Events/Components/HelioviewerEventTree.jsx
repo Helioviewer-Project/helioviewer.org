@@ -7,7 +7,7 @@ import API from "./Core/API.jsx";
 import Checkbox from "./Checkbox.jsx";
 import Node from "./Node.jsx";
 import SourceHeader from "./SourceHeader.jsx";
-import {LoadingIcon} from "./Icons.jsx";
+import { LoadingIcon } from "./Icons.jsx";
 
 const useIsMount = () => {
   const isMountRef = useRef(false);
@@ -24,7 +24,7 @@ function HelioviewerEventTree({
   eventsDate,
   onEventsUpdate,
   onHoveredEventsUpdate,
-  onSelectionsUpdate=null,
+  onSelectionsUpdate = null,
   visibility = true,
   labelVisibility = true,
   onToggleVisibility = null,
@@ -32,9 +32,10 @@ function HelioviewerEventTree({
   forcedSelections = null,
   apiURL = "https://api.helioviewer.org",
   onLoad = null,
-  onError = (err) => {console.error(err)}
+  onError = (err) => {
+    console.error(err);
+  }
 }) {
-
   const isMount = useIsMount();
   const eventTimestamp = eventsDate.getTime();
   const cache = Cache.make(source);
@@ -42,7 +43,7 @@ function HelioviewerEventTree({
   let defaultSelections = cache.getSelections();
 
   if (forcedSelections != null) {
-      defaultSelections = forcedSelections;
+    defaultSelections = forcedSelections;
   }
 
   const [selections, setSelections] = useState(defaultSelections);
@@ -51,63 +52,56 @@ function HelioviewerEventTree({
   const [eventTree, setEventTree] = useState(new EventTree({}));
   const [events, setEvents] = useState([]);
 
-  
   useEffect(() => {
-      
     async function fetchEvents() {
       // @TODO implement abort logic
       try {
-          setLoading(true);
+        setLoading(true);
 
-          const api = new API(apiURL);
+        const api = new API(apiURL);
 
-          const apiEvents = await api.getEvents(eventsDate, source);
-          const eventTree = EventTree.make(apiEvents, source);
-          const selectedTree = eventTree.applySelections(selections);
+        const apiEvents = await api.getEvents(eventsDate, source);
+        const eventTree = EventTree.make(apiEvents, source);
+        const selectedTree = eventTree.applySelections(selections);
 
-          setEventTree(selectedTree);
-          setEvents(selectedTree.selectedEvents());
+        setEventTree(selectedTree);
+        setEvents(selectedTree.selectedEvents());
 
-          if (onLoad != null) {
-              onLoad();
-          }
-
+        if (onLoad != null) {
+          onLoad();
+        }
       } catch (error) {
-          onError(error);
+        onError(error);
       } finally {
-          setLoading(false);
+        setLoading(false);
       }
 
-
       console.log(`useEffect ${source} eventsDate ${eventsDate}`);
-
     }
 
     fetchEvents();
   }, [eventsDate]);
 
   useEffect(() => {
-
     if (!isMount) {
       return;
     }
 
     onEventsUpdate(events);
 
-      console.log(`useEffect ${source} eventsUpdate ${events.length} many events`);
+    console.log(`useEffect ${source} eventsUpdate ${events.length} many events`);
   }, [events]);
 
   if (onSelectionsUpdate != null) {
-      useEffect(() => {
+    useEffect(() => {
+      if (!isMount) {
+        return;
+      }
 
-        if (!isMount) {
-          return;
-        }
-
-        onSelectionsUpdate(selections, eventTree.selectedEvents());
+      onSelectionsUpdate(selections, eventTree.selectedEvents());
 
       console.log(`useEffect ${source} selectionsUpdate ${selections}`);
-      }, [selections]);
+    }, [selections]);
   }
 
   const toggleCheckbox = function (id) {
@@ -173,7 +167,7 @@ function HelioviewerEventTree({
   };
 
   if (!eventTree[source].expand) {
-	console.log(eventTree);
+    console.log(eventTree);
     nodeChildrensStyle["display"] = "none";
   }
 
@@ -220,7 +214,16 @@ function HelioviewerEventTree({
           labelVisibility={labelVisibility}
           handleLabelVisibility={onToggleLabelVisibility}
         />
-        <div style={nodeChildrensStyle}>{loading ? <><LoadingIcon /><span>&nbsp;Loading</span></> : eventTreeRender }</div>
+        <div style={nodeChildrensStyle}>
+          {loading ? (
+            <>
+              <LoadingIcon />
+              <span>&nbsp;Loading</span>
+            </>
+          ) : (
+            eventTreeRender
+          )}
+        </div>
       </div>
     </>
   );

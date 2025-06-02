@@ -56,7 +56,7 @@ export default function Node({ id, toggleCheckbox, toggleExpand, onHover, offHov
         {isEvent ? null : (
           <a
             style={{ cursor: "pointer", minWidth: 11 }}
-            data-testid={`event-tree-expand-triangle-${id}`} 
+            data-testid={`event-tree-expand-triangle-${id}`}
             onClick={() => {
               toggleExpand(id);
             }}

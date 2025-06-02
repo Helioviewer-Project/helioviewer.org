@@ -174,7 +174,7 @@ class EventTree {
           }
 
           this[parentId].state = parentState;
-          this[parentId].expand = (parentState == "indecided") || this.isRoot(parentId) || this.isFirstLevel(parentId);
+          this[parentId].expand = parentState == "indecided" || this.isRoot(parentId) || this.isFirstLevel(parentId);
 
           parentId = this[parentId].parent_id;
         }
@@ -276,7 +276,6 @@ class EventTree {
   isFirstLevel(id) {
     return this.getLevel(id) == 2;
   }
-
 }
 
 export default EventTree;
