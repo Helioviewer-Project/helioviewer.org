@@ -59,7 +59,7 @@ function SourceHeader({
               <CaretRight style={{ color: "#444", cursor: "pointer" }} />
             )}
           </a>
-          <span onMouseEnter={onHeaderHover} onMouseLeave={offHeaderHover}>
+          <span onMouseEnter={onHeaderHover} onMouseLeave={offHeaderHover} data-testid={`event-tree-label-${source}`}>
             {source}
           </span>
           {hasEvents ? (

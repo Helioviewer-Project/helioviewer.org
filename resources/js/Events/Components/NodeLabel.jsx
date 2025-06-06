@@ -13,7 +13,7 @@ const fixTitle = (title) => {
   return title;
 };
 
-export default function NodeLabel({ onLabelHover, offLabelHover, onLabelClick, label }) {
+export default function NodeLabel({ onLabelHover, offLabelHover, onLabelClick, label, dataTestId }) {
   const [hovered, setHovered] = useState(false);
 
   let labelStyle = {};
@@ -29,6 +29,7 @@ export default function NodeLabel({ onLabelHover, offLabelHover, onLabelClick, l
 
   return (
     <span
+      data-testid={dataTestId}
       style={labelStyle}
       onMouseEnter={() => {
         setHovered(true);

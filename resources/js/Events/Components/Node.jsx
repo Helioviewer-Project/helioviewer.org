@@ -80,6 +80,7 @@ export default function Node({ id, toggleCheckbox, toggleExpand, onHover, offHov
             toggleCheckbox(id);
           }}
           label={nodeLabel}
+          dataTestId={`event-tree-label-${id}`}
         />
       </div>
       {isEvent ? null : (
