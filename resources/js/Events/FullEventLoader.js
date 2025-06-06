@@ -45,9 +45,7 @@ class FullEventLoader extends EventLoader {
         } 
 
 		$(document).on('observation-time-changed', async (e) => {
-            this.markNotReady();
 			await this.draw()
-            this.markReady();
 		});
 		
         this.draw().then(() => {
@@ -149,9 +147,9 @@ class FullEventLoader extends EventLoader {
             Helioviewer.userSettings.set(legacyKey, legacySelection);
             Helioviewer.userSettings.set(newKey, selections);
 
-            console.log(`Client ${source} selectionsUpdate ${selections}`);
-
             $(document).trigger("change-feature-events-state");
+
+            console.log(`Client ${source} selectionsUpdate ${selections}`);
         };
 
     }
@@ -180,9 +178,12 @@ class FullEventLoader extends EventLoader {
 
         for (const source of EventLoader.sources) {
 
+            console.log(`${source} | redraw with forcedSelections:${this.selections[source]}`);
+
             if(!this.reactRoots.hasOwnProperty(source)) {
                 this.reactRoots[source] = createRoot($('#event-tree-container-'+source)[0]);
             }
+
 
             promises.push(new Promise((resolve, reject) => {
                 this.reactRoots[source].render(<HelioviewerEventTree 
@@ -213,14 +214,14 @@ class FullEventLoader extends EventLoader {
         return Promise.all(promises);
 	}
 
-    setFromSourceLegacyEventString(legacyEventString) {
+    async setFromSourceLegacyEventString(legacyEventString) {
         this.selections = EventLoader.translateLegacyEventURLsToSelections(legacyEventString);
-        return this.draw();
+        await this.draw()
     }
 
-    setFromSelections(selections) {
+    async setFromSelections(selections) {
 		this.selections = Object.fromEntries(EventLoader.sources.map(s => [s, selections.filter(sl => sl.startsWith(s))]));
-        return this.draw();
+        await this.draw()
 	}
 
 	getLegacyShallowEventLayerString() {

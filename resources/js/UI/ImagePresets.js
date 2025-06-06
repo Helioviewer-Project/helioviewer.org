@@ -225,11 +225,6 @@ var UserLayersPresets = Class.extend({
 	        Helioviewer.userSettings.set('state.dropdownLayerSelectID', selectValue);
         }
 
-		if(typeof date != 'undefined' && date != ''){
-			helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(date), true);
-        }else{
-	        helioviewerWebClient.timeControls._onDateChange();
-        }
 
         if(typeof layers != 'undefined' && layers != ''){
 
@@ -251,6 +246,8 @@ var UserLayersPresets = Class.extend({
 		    Helioviewer.userSettings._processURLSettings(settings);
 
 		    helioviewerWebClient.viewport.tileLayers = Helioviewer.userSettings.get('state.tileLayers');
+
+
 		    //$('#TileLayerAccordion-Container').dynaccordion();
 		    //helioviewerWebClient.viewport._tileLayerManager._layers = [];
 		    //helioviewerWebClient.viewport._tileLayerManager._loadStartingLayers(helioviewerWebClient.viewport.tileLayers);
@@ -265,10 +262,10 @@ var UserLayersPresets = Class.extend({
 		    	Helioviewer.userSettings.get('state.tileLayers')
 		    );
 
-		    $(document).trigger("save-tile-layers");
-		    if(outputType != 'minimal'){
-			    $(document).trigger("save-tile-layers-from-accordion");
-		    }
+		    // $(document).trigger("save-tile-layers");
+		    // if(outputType != 'minimal'){
+			//     $(document).trigger("save-tile-layers-from-accordion");
+		    // }
 		    //_updateTimeStamp(id, date);
 		    //console.log(helioviewerWebClient.timeControls.getDate());
 		    //helioviewerWebClient._initViewport(helioviewerWebClient.timeControls.getDate(), 0, 0);
@@ -278,9 +275,8 @@ var UserLayersPresets = Class.extend({
         }
 
         if(typeof date != 'undefined' && date != ''){
-            helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(date), true);
-        }else{
-            helioviewerWebClient.timeControls._onDateChange();
+            // this will trigger everything about time change
+            helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(date));
         }
 
         if (typeof events_v2 != 'undefined' && events_v2 != '') {
@@ -292,8 +288,6 @@ var UserLayersPresets = Class.extend({
                 el.setFromSourceLegacyEventString(events);
             });
         }
-
-		//$(document).trigger("observation-time-changed", [new Date(Helioviewer.userSettings.get("state.date"))]);
 
         if($(el).qtip('api')){
 	        $(el).qtip('api').toggle(false);
