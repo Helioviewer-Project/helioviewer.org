@@ -149,7 +149,15 @@ class EventTree {
     return allNodes;
   }
 
+  removeSelections() {
+    for (const n in this) {
+      this[n].state = "unchecked";
+    }
+    return new EventTree({ ...this });
+  }
+
   applySelections(selections) {
+
     selections.forEach((s) => {
       if (this.hasOwnProperty(s)) {
         const nodes = this.getNodes(s);
