@@ -836,7 +836,7 @@ var EventMarker = Class.extend(
     _populatePopup: function () {
         var content = '', headingText = '', self = this;
 
-        const eventTypeLabel = FullEventLoader.eventLabelsMap[this.event_type]['name']
+        const eventTypeLabel = FullEventLoader.eventLabelsMap[this.type]['name']
 
         if ( this.hasOwnProperty('label') && this.label.length > 0 ) {
             headingText = eventTypeLabel+': ' + this.fixTitles(this.label.split("\n")[0]);
