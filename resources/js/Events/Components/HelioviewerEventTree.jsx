@@ -37,35 +37,34 @@ function HelioviewerEventTree({
   }
 }) {
   const isMount = useIsMount();
-  const eventTimestamp = eventsDate.getTime();
   const cache = Cache.make(source);
 
-  let defaultSelections = cache.getSelections();
-
-  if (forcedSelections != null) {
-    defaultSelections = forcedSelections;
-  }
-
-  const [selections, setSelections] = useState(defaultSelections);
-  const [loading, setLoading] = useState(false);
+  const [selections, setSelections] = useState(forcedSelections != null ? forcedSelections : cache.getSelections());
+  const [loading, setLoading] = useState(true);
   const [showEmptyBranches, setShowEmptyBranches] = useState(cache.getShowEmptyBranches());
-  const [eventTree, setEventTree] = useState(new EventTree({}));
+  const [eventTree, setEventTree] = useState(null);
   const [events, setEvents] = useState([]);
 
+  // Run initially first
   useEffect(() => {
     async function fetchEvents() {
       // @TODO implement abort logic
       try {
-        setLoading(true);
 
         const api = new API(apiURL);
-
         const apiEvents = await api.getEvents(eventsDate, source);
         const eventTree = EventTree.make(apiEvents, source);
         const selectedTree = eventTree.applySelections(selections);
 
+        Cache.make(source).saveSelections(selections);
+
+        if (onSelectionsUpdate != null) {
+            onSelectionsUpdate(selections, selectedTree.selectedEvents());
+        }
+
+        onEventsUpdate(selectedTree.selectedEvents());
+
         setEventTree(selectedTree);
-        setEvents(selectedTree.selectedEvents());
 
         if (onLoad != null) {
           onLoad();
@@ -80,39 +79,47 @@ function HelioviewerEventTree({
     }
 
     fetchEvents();
-  }, [eventsDate]);
+  }, [eventsDate.getTime()]);
 
   useEffect(() => {
+
+    // This is only for after mount
     if (!isMount) {
+        return;
+    }
+
+    Cache.make(source).saveSelections(selections);
+
+    const selectedTree = eventTree.removeSelections().applySelections(selections);
+
+    if (onSelectionsUpdate != null) {
+        onSelectionsUpdate(selections, selectedTree.selectedEvents());
+    }
+
+    onEventsUpdate(selectedTree.selectedEvents());
+
+    setEventTree(selectedTree);
+
+    console.log(`useEffect ${source} selectionsUpdate ${selections}`);
+  }, [selections]);
+
+  useEffect(() => {
+
+    // Only update if it is updated from outside
+    if (!isMount || forcedSelections == null) {
       return;
     }
 
-    onEventsUpdate(events);
+    setSelections(forcedSelections);
 
-    console.log(`useEffect ${source} eventsUpdate ${events.length} many events`);
-  }, [events]);
-
-  if (onSelectionsUpdate != null) {
-    useEffect(() => {
-      if (!isMount) {
-        return;
-      }
-
-      onSelectionsUpdate(selections, eventTree.selectedEvents());
-
-      console.log(`useEffect ${source} selectionsUpdate ${selections}`);
-    }, [selections]);
-  }
+    console.log(`useEffect ${source} forcedSelections ${forcedSelections}`);
+  }, [forcedSelections]);
 
   const toggleCheckbox = function (id) {
-    const newTree = eventTree.toggleCheckbox(id);
-    const newSelections = newTree.extractSelections();
 
-    Cache.make(source).saveSelections(newSelections);
+    const newSelections = eventTree.toggleCheckbox(id).extractSelections();
 
-    setEventTree(newTree);
     setSelections(newSelections);
-    setEvents(newTree.selectedEvents());
   };
 
   const toggleExpand = function (id) {
@@ -137,7 +144,7 @@ function HelioviewerEventTree({
     setShowEmptyBranches(newShowEmptyBranchesValue);
   };
 
-  if (Object.keys(eventTree).length <= 0) {
+  if (eventTree == null) {
     return;
   }
 
