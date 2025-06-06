@@ -2121,7 +2121,22 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 
 				Helioviewer.userSettings = userSettings;
 
-                Helioviewer.eventLoader = FullEventLoader.make(Helioviewer.outputType, Helioviewer.debug)
+				// Initialize Helioviewer.org
+				helioviewerWebClient = new HelioviewerWebClient(zoomLevels);
+
+				Helioviewer.webClient = helioviewerWebClient;
+
+				// Play movie if id is specified
+				if (urlSettings.movieId) {
+					Helioviewer.webClient.loadMovie(urlSettings.movieId);
+				}
+
+				// Defined in hv3d.js, initialize the 3D viewport
+				if (Helioviewer.outputType === "normal") {
+					Init3D(serverSettings.coordinator_url, serverSettings.apiURL);
+				}
+
+				Helioviewer.eventLoader = FullEventLoader.make(Helioviewer.outputType, Helioviewer.debug)
 
 				Helioviewer.eventLoader.ready(el => {
 					if(el.error != null) {
@@ -2129,19 +2144,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 						Helioviewer.messageConsole.warn("We couldn't load Helioviewer Events");
 					}
 				})
-
-				// Initialize Helioviewer.org
-				helioviewerWebClient = new HelioviewerWebClient(zoomLevels);
-
-				// Play movie if id is specified
-				if (urlSettings.movieId) {
-					helioviewerWebClient.loadMovie(urlSettings.movieId);
-				}
-
-				// Defined in hv3d.js, initialize the 3D viewport
-				if (Helioviewer.outputType === "normal") {
-					Init3D(serverSettings.coordinator_url, serverSettings.apiURL);
-				}
 
 				$(document).trigger("helioviewer-ready", [true]);
 			};

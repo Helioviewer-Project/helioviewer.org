@@ -48,6 +48,8 @@ function HelioviewerEventTree({
   // Run initially first
   useEffect(() => {
     async function fetchEvents() {
+
+      setLoading(true);
       // @TODO implement abort logic
       try {
 

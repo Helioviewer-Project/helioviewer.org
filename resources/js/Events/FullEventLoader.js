@@ -48,11 +48,13 @@ class FullEventLoader extends EventLoader {
 			await this.draw()
 		});
 		
+        Helioviewer.webClient.startLoading();
         this.draw().then(() => {
-            this.markReady();
         }).catch((error) => {
             this.error = error;
+        }).finally(() => {
             this.markReady();
+            Helioviewer.webClient.stopLoading();
         });
 
     }
