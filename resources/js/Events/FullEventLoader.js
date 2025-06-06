@@ -14,7 +14,7 @@ class FullEventLoader extends EventLoader {
     markers = {};
     selections = {};
     legacySelections = {};
-	reactRoots = {};
+    reactRoots = {};
 
     constructor(debug) {
 
@@ -23,31 +23,33 @@ class FullEventLoader extends EventLoader {
         this.container = $('#EventLayerAccordion-Container');
         this.debug = debug;
 
-		this.markers = Object.fromEntries(EventLoader.sources.map(s => [s, []]));
-		this.legacySelections = Object.fromEntries(EventLoader.sources.map(s => [s, []]));
-		this.selections = Object.fromEntries(EventLoader.sources.map(s => [s, null]));
+        this.markers = Object.fromEntries(EventLoader.sources.map(s => [s, []]));
+        this.legacySelections = Object.fromEntries(EventLoader.sources.map(s => [s, []]));
+        this.selections = Object.fromEntries(EventLoader.sources.map(s => [s, null]));
 
-		if (Helioviewer.urlSettings.loadState) {
-			EventLoader.sources.forEach(s => {
-				this.selections[s] = Helioviewer.userSettings.get("state.events_v2.tree_" + s + ".layers_v2")	
-			});
-		}
+        if (Helioviewer.urlSettings.loadState) {
+            EventLoader.sources.forEach(s => {
+                this.selections[s] = Helioviewer.userSettings.get("state.events_v2.tree_" + s + ".layers_v2")   
+            });
+        }
 
-		if (typeof Helioviewer.urlSettings.eventLayers != 'undefined' && Helioviewer.urlSettings.eventLayers != "" && Helioviewer.urlSettings.eventLayers.length > 0) {
+        if (typeof Helioviewer.urlSettings.eventLayers != 'undefined' && Helioviewer.urlSettings.eventLayers != "" && Helioviewer.urlSettings.eventLayers.length > 0) {
 
             const legacyEventString = "["+Helioviewer.urlSettings.eventLayers.join("],[")+"]";
             const legacyEventLayers = FullEventLoader.translateLegacyEventURLsToSelections(legacyEventString);
 
             for(const layerSource in legacyEventLayers) {
-				this.selections[layerSource] = legacyEventLayers[layerSource]	
+                this.selections[layerSource] = legacyEventLayers[layerSource]   
             }
 
         } 
 
-		$(document).on('observation-time-changed', async (e) => {
-			await this.draw()
-		});
-		
+        $(document).on('observation-time-changed', async (e) => {
+            Helioviewer.webClient.startLoading();
+            await this.draw()
+            Helioviewer.webClient.stopLoading();
+        });
+        
         Helioviewer.webClient.startLoading();
         this.draw().then(() => {
         }).catch((error) => {
@@ -59,21 +61,21 @@ class FullEventLoader extends EventLoader {
 
     }
 
-	getSelections(source=null) {
-		if (source === null) {
-			return Object.values(this.selections).flat().filter(s => s != null);
-		} else {
-			return this.selections[source] ? null : [];
-		}
-	}
+    getSelections(source=null) {
+        if (source === null) {
+            return Object.values(this.selections).flat().filter(s => s != null);
+        } else {
+            return this.selections[source] ? null : [];
+        }
+    }
 
-	getLegacySelections(source=null) {
-		if (source === null) {
-			return Object.values(this.legacySelections).flat();
-		} else {
-			return this.legacySelections[source];
-		}
-	}
+    getLegacySelections(source=null) {
+        if (source === null) {
+            return Object.values(this.legacySelections).flat();
+        } else {
+            return this.legacySelections[source];
+        }
+    }
 
     makeHoveredEventsUpdate(source) {
         return (hoveredEvents) => {
@@ -138,7 +140,7 @@ class FullEventLoader extends EventLoader {
 
         return (selections, events) => {
 
-			let legacySelection = EventLoader.translateSelectionsToLegacyEventLayers(selections, source, events);
+            let legacySelection = EventLoader.translateSelectionsToLegacyEventLayers(selections, source, events);
 
             this.legacySelections[source] = legacySelection;
             this.selections[source] = selections;
@@ -174,7 +176,7 @@ class FullEventLoader extends EventLoader {
         }
     }
 
-	draw() {
+    draw() {
 
         const promises = [];
 
@@ -214,7 +216,7 @@ class FullEventLoader extends EventLoader {
         }
 
         return Promise.all(promises);
-	}
+    }
 
     async setFromSourceLegacyEventString(legacyEventString) {
         this.selections = EventLoader.translateLegacyEventURLsToSelections(legacyEventString);
@@ -222,78 +224,78 @@ class FullEventLoader extends EventLoader {
     }
 
     async setFromSelections(selections) {
-		this.selections = Object.fromEntries(EventLoader.sources.map(s => [s, selections.filter(sl => sl.startsWith(s))]));
+        this.selections = Object.fromEntries(EventLoader.sources.map(s => [s, selections.filter(sl => sl.startsWith(s))]));
         await this.draw()
-	}
+    }
 
-	getLegacyShallowEventLayerString() {
+    getLegacyShallowEventLayerString() {
 
-		const selections = this.getSelections();	
+        const selections = this.getSelections();    
 
-		const findEventTypePin = (eventTypeStr) => {
-		  for (const key in EventLoader.eventLabelsMap) {
-			if (EventLoader.eventLabelsMap[key].name === eventTypeStr) {
-				return key;
-			}
-		  }
-		}
+        const findEventTypePin = (eventTypeStr) => {
+          for (const key in EventLoader.eventLabelsMap) {
+            if (EventLoader.eventLabelsMap[key].name === eventTypeStr) {
+                return key;
+            }
+          }
+        }
 
-		const eventPinsWithFrms = {};
-	
-		for(const s of selections) {
+        const eventPinsWithFrms = {};
+    
+        for(const s of selections) {
 
-			let [source, eventType, frm, eventId] = s.split(">>");
-			let eventPin = findEventTypePin(eventType);
+            let [source, eventType, frm, eventId] = s.split(">>");
+            let eventPin = findEventTypePin(eventType);
 
-			if(!eventPinsWithFrms.hasOwnProperty(eventPin)) {
-				eventPinsWithFrms[eventPin] = new Set();
-			}
+            if(!eventPinsWithFrms.hasOwnProperty(eventPin)) {
+                eventPinsWithFrms[eventPin] = new Set();
+            }
 
-			if(frm != undefined) {
-				eventPinsWithFrms[eventPin].add(frm);
-			}
+            if(frm != undefined) {
+                eventPinsWithFrms[eventPin].add(frm);
+            }
 
-		}
+        }
 
-		const layerStringPortions = [];
+        const layerStringPortions = [];
 
-		for(const ep in eventPinsWithFrms) {
+        for(const ep in eventPinsWithFrms) {
 
-			if(eventPinsWithFrms[ep].size <= 0 || eventPinsWithFrms[ep].has("all")) {
-				layerStringPortions.push("[" + ep + ",all,1]");
-			} else {
-				layerStringPortions.push("[" + ep + ","+[...eventPinsWithFrms[ep]].join(";")+",1]");
-			}
-		}
+            if(eventPinsWithFrms[ep].size <= 0 || eventPinsWithFrms[ep].has("all")) {
+                layerStringPortions.push("[" + ep + ",all,1]");
+            } else {
+                layerStringPortions.push("[" + ep + ","+[...eventPinsWithFrms[ep]].join(";")+",1]");
+            }
+        }
 
-		return layerStringPortions.join(",");
-	}
+        return layerStringPortions.join(",");
+    }
 
     highlightEventsFromEventTypePin(eventPin) {
 
-		const markers = Object.values(this.markers).flat();
+        const markers = Object.values(this.markers).flat();
 
-		for(const m of markers) {
-			m.marker.setVisibility(m.marker.event_type == eventPin);
-		}
-	}
+        for(const m of markers) {
+            m.marker.setVisibility(m.marker.event_type == eventPin);
+        }
+    }
 
     highlightEventsFromEventID(id) {
 
-		const markers = Object.values(this.markers).flat();
+        const markers = Object.values(this.markers).flat();
 
-		for(const m of markers) {
-			m.marker.setVisibility(m.marker.id == id);
-		}
-	}
+        for(const m of markers) {
+            m.marker.setVisibility(m.marker.id == id);
+        }
+    }
 
-	removeHighlight() {
-		for(const s in this.markers) {
-			for(const m of this.markers[s]) {
-				m.marker.setVisibility(Helioviewer.userSettings.get("state.events_v2.tree_" + s + ".markers_visible"));
-			}
-		}
-	}
+    removeHighlight() {
+        for(const s in this.markers) {
+            for(const m of this.markers[s]) {
+                m.marker.setVisibility(Helioviewer.userSettings.get("state.events_v2.tree_" + s + ".markers_visible"));
+            }
+        }
+    }
 }
 
 export { FullEventLoader }
