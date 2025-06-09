@@ -91,7 +91,7 @@ class EventTree {
     const stateCycle = {
       checked: "unchecked",
       unchecked: "checked",
-      indecided: "checked"
+      undecided: "checked"
     };
 
     const newState = stateCycle[this[id]["state"]];
@@ -107,7 +107,7 @@ class EventTree {
     while (parentId != null) {
       let siblingsStates = this[parentId].children.map((cid) => this[cid].state);
 
-      let parentState = "indecided";
+      let parentState = "undecided";
 
       if (siblingsStates.every((ss) => ss == "checked")) {
         parentState = "checked";
@@ -171,7 +171,7 @@ class EventTree {
         while (parentId != null) {
           let siblingsStates = this[parentId].children.map((cid) => this[cid].state);
 
-          let parentState = "indecided";
+          let parentState = "undecided";
 
           if (siblingsStates.every((ss) => ss == "checked")) {
             parentState = "checked";
@@ -182,7 +182,7 @@ class EventTree {
           }
 
           this[parentId].state = parentState;
-          this[parentId].expand = parentState == "indecided" || this.isRoot(parentId) || this.isFirstLevel(parentId);
+          this[parentId].expand = parentState == "undecided" || this.isRoot(parentId) || this.isFirstLevel(parentId);
 
           parentId = this[parentId].parent_id;
         }

@@ -136,8 +136,6 @@ class FullEventLoader extends EventLoader {
             })
 
             this.markers[source] = allEventMarkers;
-
-            console.log(`Client ${source} eventsUpdate ${events.length} many events`);
         };
 
     }
@@ -158,8 +156,6 @@ class FullEventLoader extends EventLoader {
             Helioviewer.userSettings.set(newKey, selections);
 
             $(document).trigger("change-feature-events-state");
-
-            console.log(`Client ${source} selectionsUpdate ${selections}`);
         };
 
     }
@@ -187,8 +183,6 @@ class FullEventLoader extends EventLoader {
         const promises = [];
 
         for (const source of EventLoader.sources) {
-
-            console.log(`${source} | redraw with forcedSelections:${this.selections[source]}`);
 
             if(!this.reactRoots.hasOwnProperty(source)) {
                 this.reactRoots[source] = createRoot($('#event-tree-container-'+source)[0]);

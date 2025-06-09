@@ -78,8 +78,6 @@ function HelioviewerEventTree({
       } finally {
         setLoading(false);
       }
-
-      console.log(`useEffect ${source} eventsDate ${eventsDate}`);
     }
 
     fetchEvents();
@@ -103,8 +101,6 @@ function HelioviewerEventTree({
     onEventsUpdate(selectedTree.selectedEvents());
 
     setEventTree(selectedTree);
-
-    console.log(`useEffect ${source} selectionsUpdate ${selections}`);
   }, [selections]);
 
   useEffect(() => {
@@ -115,8 +111,6 @@ function HelioviewerEventTree({
     }
 
     setSelections(forcedSelections);
-
-    console.log(`useEffect ${source} forcedSelections ${forcedSelections}`);
   }, [forcedSelections]);
 
   useEffect(() => {
@@ -124,7 +118,6 @@ function HelioviewerEventTree({
     setLabelVisibilityState(labelVisibility);
     onToggleLabelVisibility(labelVisibility);
 
-    console.log(`useEffect ${source} labelVisibility ${labelVisibility}`);
   }, [labelVisibility]);
 
   const toggleCheckbox = function (id) {
@@ -186,7 +179,6 @@ function HelioviewerEventTree({
   };
 
   if (!eventTree[source].expand) {
-    console.log(eventTree);
     nodeChildrensStyle["display"] = "none";
   }
 

@@ -232,7 +232,6 @@ export default class EventLoader {
                 };
 
                 let [selectedSource, selectedEventTypeLabel, selectedFRM, selectedEventLabel] = parts;
-                console.log(parts);
                 let selectedEventTypePin = transformedELP[selectedSource][selectedEventTypeLabel];
 
                 let legacyEventID;

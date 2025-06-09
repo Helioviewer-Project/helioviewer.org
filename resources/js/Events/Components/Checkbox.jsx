@@ -6,7 +6,7 @@ function Checkbox({ state, onChange, style, dataTestId = null }) {
 
   useEffect(() => {
     if (checkboxRef.current) {
-      checkboxRef.current.indeterminate = state === "indecided";
+      checkboxRef.current.indeterminate = state === "undecided";
     }
   }, [state]);
 
