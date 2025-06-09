@@ -1,9 +1,30 @@
+/**
+ * Stores event information in an accessible way.
+ * IDs are generated for each event and are accessible on this event tree via
+ * EventTree[event_id]
+ * Each event contains the ID of its parent and a list of child events.
+ */
 class EventTree {
   constructor(props) {
     Object.assign(this, props);
   }
 
+  /**
+   * @param {Object} events Event Data object
+   * @param {string} source Top level event group (HEK, CCMC, RHESSI, etc)
+   */
   static make(events, source) {
+
+    /**
+     * Given a set of events like:
+     *   - top level
+     *      - groups: second level
+     *          - groups: third level
+     *              - data: [event 1, event 2, event 3]
+     *  This will return a structure like:
+     *  [{top level}, {second level}, {third level}, {event 1}, {event 2}, {event 3}].
+     *  Each object in the list will have references to their children and an ID for their parent.
+     */
     const makeFlatTreeInner = (eventData, parentPath, level = 0) => {
       if (eventData.hasOwnProperty("groups")) {
         const root = {
@@ -105,19 +126,13 @@ class EventTree {
     let parentId = this[id].parent_id;
 
     while (parentId != null) {
+
       let siblingsStates = this[parentId].children.map((cid) => this[cid].state);
 
-      let parentState = "undecided";
-
-      if (siblingsStates.every((ss) => ss == "checked")) {
-        parentState = "checked";
-      }
-
-      if (siblingsStates.every((ss) => ss == "unchecked")) {
-        parentState = "unchecked";
-      }
-
-      this[parentId].state = parentState;
+      this[parentId].state = siblingStates.reduce(
+          (finalState, eventState) => finalState != eventState ? "undecided" : finalState,
+          siblingStates[0],
+      )
 
       parentId = this[parentId].parent_id;
     }
@@ -158,36 +173,31 @@ class EventTree {
 
   applySelections(selections) {
 
-    selections.forEach((s) => {
-      if (this.hasOwnProperty(s)) {
-        const nodes = this.getNodes(s);
+    selections.forEach((id) => {
+      if (this.hasOwnProperty(id)) {
+        const nodes = this.getNodes(id);
 
         for (const n of nodes) {
           this[n].state = "checked";
         }
 
-        let parentId = this[s].parent_id;
+        let parentId = this[id].parent_id;
 
         while (parentId != null) {
+
           let siblingsStates = this[parentId].children.map((cid) => this[cid].state);
 
-          let parentState = "undecided";
+          this[parentId].state = siblingStates.reduce(
+              (finalState, eventState) => finalState != eventState ? "undecided" : finalState,
+              siblingStates[0],
+          )
 
-          if (siblingsStates.every((ss) => ss == "checked")) {
-            parentState = "checked";
-          }
-
-          if (siblingsStates.every((ss) => ss == "unchecked")) {
-            parentState = "unchecked";
-          }
-
-          this[parentId].state = parentState;
-          this[parentId].expand = parentState == "undecided" || this.isRoot(parentId) || this.isFirstLevel(parentId);
+          this[parentId].expand = this[parentId].state == "undecided" || this.isRoot(parentId) || this.isFirstLevel(parentId);
 
           parentId = this[parentId].parent_id;
         }
       } else {
-        console.warn(s, " selection problem , it is not in tree!");
+        console.warn(id, " selection problem , it is not in tree!");
       }
     });
 
@@ -254,6 +264,11 @@ class EventTree {
     return this.getEventsOfNode(id).length;
   }
 
+
+  /**
+   * An event branch a branch which contains an event data array.
+   * Branches containing groups are not event branches.
+   */
   isEventBranch(id) {
     const isEvent = this[id].hasOwnProperty("data");
 
