@@ -49,7 +49,7 @@ class FullEventLoader extends EventLoader {
             await this.draw()
             Helioviewer.webClient.stopLoading();
         });
-        
+
         Helioviewer.webClient.startLoading();
         this.draw().then(() => {
         }).catch((error) => {
@@ -58,6 +58,12 @@ class FullEventLoader extends EventLoader {
             this.markReady();
             Helioviewer.webClient.stopLoading();
         });
+
+        // Keyboard button to toggle event labels (witk key "d")
+        $(document).on('toggle-event-labels', (e) => {
+            this.toggleEventLabels();
+        });
+
 
     }
 
@@ -227,6 +233,24 @@ class FullEventLoader extends EventLoader {
         this.selections = Object.fromEntries(EventLoader.sources.map(s => [s, selections.filter(sl => sl.startsWith(s))]));
         await this.draw()
     }
+
+    async toggleEventLabels() {
+
+        let weHaveAtLeastOneEvLabelsOn = false;
+
+        for (const source of EventLoader.sources) {
+            weHaveAtLeastOneEvLabelsOn = weHaveAtLeastOneEvLabelsOn || Helioviewer.userSettings.get("state.events_v2.tree_" + source + ".labels_visible");
+        }
+
+        const newLabelVisibility = !weHaveAtLeastOneEvLabelsOn;
+
+        for (const source of EventLoader.sources) {
+            Helioviewer.userSettings.set("state.events_v2.tree_" + source + ".labels_visible", newLabelVisibility);
+        }
+
+        await this.draw()
+    }
+
 
     getLegacyShallowEventLayerString() {
 

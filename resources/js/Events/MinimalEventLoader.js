@@ -51,11 +51,11 @@ class MinimalEventLoader extends EventLoader {
             this.markReady()
         });
 
-		$(document).on('observation-time-changed', async (e) => {
+        $(document).on('observation-time-changed', async (e) => {
             this.markNotReady();
-			await this.draw()
+            await this.draw()
             this.markReady();
-		});
+        });
 
         $("#k12-events-visibility-btn").click((e) => {
 

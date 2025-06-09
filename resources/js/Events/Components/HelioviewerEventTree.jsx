@@ -40,10 +40,12 @@ function HelioviewerEventTree({
   const cache = Cache.make(source);
 
   const [selections, setSelections] = useState(forcedSelections != null ? forcedSelections : cache.getSelections());
+  const [labelVisibilityState, setLabelVisibilityState] = useState(labelVisibility);
   const [loading, setLoading] = useState(true);
   const [showEmptyBranches, setShowEmptyBranches] = useState(cache.getShowEmptyBranches());
   const [eventTree, setEventTree] = useState(null);
   const [events, setEvents] = useState([]);
+
 
   // Run initially first
   useEffect(() => {
@@ -116,6 +118,14 @@ function HelioviewerEventTree({
 
     console.log(`useEffect ${source} forcedSelections ${forcedSelections}`);
   }, [forcedSelections]);
+
+  useEffect(() => {
+
+    setLabelVisibilityState(labelVisibility);
+    onToggleLabelVisibility(labelVisibility);
+
+    console.log(`useEffect ${source} labelVisibility ${labelVisibility}`);
+  }, [labelVisibility]);
 
   const toggleCheckbox = function (id) {
 
@@ -220,8 +230,11 @@ function HelioviewerEventTree({
           handleShowEmptyBranches={handleShowEmptyBranches}
           visibility={visibility}
           handleVisibility={onToggleVisibility}
-          labelVisibility={labelVisibility}
-          handleLabelVisibility={onToggleLabelVisibility}
+          labelVisibility={labelVisibilityState}
+          handleLabelVisibility={(newVisibility) => {
+            onToggleLabelVisibility(newVisibility);
+            setLabelVisibilityState(newVisibility);
+          }}
         />
         <div style={nodeChildrensStyle}>
           {loading ? (

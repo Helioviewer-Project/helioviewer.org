@@ -29,15 +29,10 @@ function SourceHeader({
   handleLabelVisibility
 }) {
   const [visibilityState, setVisibilityState] = useState(visibility);
-  const [labelVisibilityState, setLabelVisibilityState] = useState(labelVisibility);
 
   const handleInternalVisibility = (newVisibilityState) => {
     handleVisibility(newVisibilityState);
     setVisibilityState(newVisibilityState);
-  };
-  const handleInternalLabelVisibility = (newLabelVisibilityState) => {
-    handleLabelVisibility(newLabelVisibilityState);
-    setLabelVisibilityState(newLabelVisibilityState);
   };
 
   return (
@@ -96,12 +91,12 @@ function SourceHeader({
               style={{ color: visibilityState ? "green" : "red", cursor: "pointer" }}
             />
           </a>
-          <a onClick={() => handleInternalLabelVisibility(!labelVisibilityState)}>
+          <a onClick={() => handleLabelVisibility(!labelVisibility)}>
             <ShowLabelsIcon
               data-testid={`event-tree-event-label-visibility-button-${source}`}
               width="14"
               height="14"
-              style={{ color: labelVisibilityState ? "green" : "red", cursor: "pointer" }}
+              style={{ color: labelVisibility ? "green" : "red", cursor: "pointer" }}
             />
           </a>
         </div>
