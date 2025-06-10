@@ -209,7 +209,7 @@ class FullEventLoader extends EventLoader {
                     forcedSelections={this.selections[source]} 
 
                     onLoad={resolve}
-                    onError={(err)=> reject(err)}
+                    onError={(err) => reject(err)}
 
                 />);
             }));
@@ -219,13 +219,17 @@ class FullEventLoader extends EventLoader {
     }
 
     async setFromSourceLegacyEventString(legacyEventString) {
+        Helioviewer.webClient.startLoading();
         this.selections = EventLoader.translateLegacyEventURLsToSelections(legacyEventString);
         await this.draw()
+        Helioviewer.webClient.stopLoading();
     }
 
     async setFromSelections(selections) {
+        Helioviewer.webClient.startLoading();
         this.selections = Object.fromEntries(EventLoader.sources.map(s => [s, selections.filter(sl => sl.startsWith(s))]));
         await this.draw()
+        Helioviewer.webClient.stopLoading();
     }
 
     async toggleEventLabels() {

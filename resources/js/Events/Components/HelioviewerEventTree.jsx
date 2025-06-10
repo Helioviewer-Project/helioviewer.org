@@ -41,7 +41,7 @@ function HelioviewerEventTree({
 
   const [selections, setSelections] = useState(forcedSelections != null ? forcedSelections : cache.getSelections());
   const [labelVisibilityState, setLabelVisibilityState] = useState(labelVisibility);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showEmptyBranches, setShowEmptyBranches] = useState(cache.getShowEmptyBranches());
   const [eventTree, setEventTree] = useState(null);
   const [events, setEvents] = useState([]);
@@ -73,6 +73,7 @@ function HelioviewerEventTree({
         if (onLoad != null) {
           onLoad();
         }
+
       } catch (error) {
         onError(error);
       } finally {
@@ -119,6 +120,20 @@ function HelioviewerEventTree({
     onToggleLabelVisibility(labelVisibility);
 
   }, [labelVisibility]);
+
+
+  useEffect(() => {
+
+    // This is only for after mount
+    if (!isMount) {
+        return;
+    }
+
+    if(onLoad) {
+        onLoad();
+    }
+
+  });
 
   const toggleCheckbox = function (id) {
 
