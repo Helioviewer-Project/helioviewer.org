@@ -187,9 +187,9 @@ class EventTree {
 
           let siblingsStates = this[parentId].children.map((cid) => this[cid].state);
 
-          this[parentId].state = siblingStates.reduce(
+          this[parentId].state = siblingsStates.reduce(
               (finalState, eventState) => finalState != eventState ? "undecided" : finalState,
-              siblingStates[0],
+              siblingsStates[0],
           )
 
           this[parentId].expand = this[parentId].state == "undecided" || this.isRoot(parentId) || this.isFirstLevel(parentId);
