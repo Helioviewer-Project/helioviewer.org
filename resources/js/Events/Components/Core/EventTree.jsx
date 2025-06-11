@@ -129,9 +129,9 @@ class EventTree {
 
       let siblingsStates = this[parentId].children.map((cid) => this[cid].state);
 
-      this[parentId].state = siblingStates.reduce(
+      this[parentId].state = siblingsStates.reduce(
           (finalState, eventState) => finalState != eventState ? "undecided" : finalState,
-          siblingStates[0],
+          siblingsStates[0],
       )
 
       parentId = this[parentId].parent_id;
