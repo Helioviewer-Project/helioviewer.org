@@ -70,10 +70,6 @@ function HelioviewerEventTree({
 
         setEventTree(selectedTree);
 
-        if (onLoad != null) {
-          onLoad();
-        }
-
       } catch (error) {
         onError(error);
       } finally {
@@ -123,11 +119,6 @@ function HelioviewerEventTree({
 
 
   useEffect(() => {
-
-    // This is only for after mount
-    if (!isMount) {
-        return;
-    }
 
     if(onLoad) {
         onLoad();
