@@ -236,10 +236,10 @@ function HelioviewerEventTree({
         />
         <div style={nodeChildrensStyle}>
           {loading ? (
-            <>
-              <LoadingIcon />
-              <span>&nbsp;Loading</span>
-            </>
+              <div className="event-tree-container-loader">
+                  <LoadingIcon />
+                  <span>&nbsp;Loading</span>
+              </div>
           ) : (
             eventTreeRender
           )}
