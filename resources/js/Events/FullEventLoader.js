@@ -45,18 +45,14 @@ class FullEventLoader extends EventLoader {
         } 
 
         $(document).on('observation-time-changed', async (e) => {
-            Helioviewer.webClient.startLoading();
             await this.draw()
-            Helioviewer.webClient.stopLoading();
         });
 
-        Helioviewer.webClient.startLoading();
         this.draw().then(() => {
         }).catch((error) => {
             this.error = error;
         }).finally(() => {
             this.markReady();
-            Helioviewer.webClient.stopLoading();
         });
 
         // Keyboard button to toggle event labels (witk key "d")
