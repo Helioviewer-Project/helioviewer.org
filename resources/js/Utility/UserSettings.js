@@ -378,7 +378,7 @@ var UserSettings = Class.extend(
         } else if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
 
             const legacyEventString = "["+urlSettings.eventLayers.join("],[")+"]";
-            const legacyEventLayers = FullEventLoader.translateLegacyEventURLsToLegacyEventLayers(legacyEventString);
+            const legacyEventLayers = EventLoader.translateLegacyEventURLsToLegacyEventLayers(legacyEventString);
 
             for(const layerSource in legacyEventLayers) {
                 this.set("state.events_v2.tree_"+layerSource+".layers", legacyEventLayers[layerSource]);

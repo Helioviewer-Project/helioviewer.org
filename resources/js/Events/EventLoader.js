@@ -76,7 +76,7 @@ export default class EventLoader {
     this._isReady = false;
   }
 
-    static translateLegacyEventURLsToLegacyEventLayers(legacyEventString) {
+  static translateLegacyEventURLsToLegacyEventLayers(legacyEventString) {
 
         let eventTypeStrings = [];
         
@@ -276,3 +276,5 @@ export default class EventLoader {
     }
 
 }
+
+export {EventLoader}
