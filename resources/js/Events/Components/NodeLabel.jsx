@@ -3,14 +3,16 @@ import React from "react";
 import Checkbox from "./Checkbox.jsx";
 import { EnabledTriangle, DisabledTriangle } from "./Icons.jsx";
 
+/*
+* Uses a regex to find proper JavaScript Unicode escape sequences like \u03b1 (note the backslash)
+* Captures the 4-digit hex code in a group and converts it to an actual Unicode character
+* Can handle any Unicode character in the Basic Multilingual Plane (U+0000 to U+FFFF)
+* Properly checks for the backslash prefix
+*/
 const fixTitle = (title) => {
-  title = title.replace(/u03b1/g, "α");
-  title = title.replace(/u03b2/g, "β");
-  title = title.replace(/u03b3/g, "γ");
-  title = title.replace(/u00b1/g, "±");
-  title = title.replace(/u00b2/g, "²");
-
-  return title;
+  return title.replace(/\\u([\da-fA-F]{4})/g, function (m, $1) {
+    return String.fromCharCode(parseInt($1, 16));
+  });
 };
 
 export default function NodeLabel({ onLabelHover, offLabelHover, onLabelClick, label, dataTestId }) {

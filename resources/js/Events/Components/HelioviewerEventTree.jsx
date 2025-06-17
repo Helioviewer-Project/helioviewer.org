@@ -39,7 +39,7 @@ function HelioviewerEventTree({
   const isMount = useIsMount();
   const cache = Cache.make(source);
 
-  const [selections, setSelections] = useState(forcedSelections != null ? forcedSelections : cache.getSelections());
+  const [selections, setSelections] = useState(forcedSelections ?? cache.getSelections());
   const [labelVisibilityState, setLabelVisibilityState] = useState(labelVisibility);
   const [loading, setLoading] = useState(false);
   const [showEmptyBranches, setShowEmptyBranches] = useState(cache.getShowEmptyBranches());
