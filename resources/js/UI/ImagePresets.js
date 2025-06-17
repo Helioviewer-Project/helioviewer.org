@@ -236,22 +236,11 @@ var UserLayersPresets = Class.extend({
 					$(document).trigger("remove-tile-layer", [this.id]);
 					$("#" + this.id + " *[oldtitle]").qtip("destroy");
 					$('#TileLayerAccordion-Container').dynaccordion('removeSection', {id: this.id});
-
-					//$(document).trigger("save-tile-layers");
-					//$(document).trigger("save-tile-layers-from-accordion");
-					//e.stopPropagation();
 				});
 			}
-		    //$(document).trigger("save-tile-layers-from-accordion");
 		    Helioviewer.userSettings._processURLSettings(settings);
 
 		    helioviewerWebClient.viewport.tileLayers = Helioviewer.userSettings.get('state.tileLayers');
-
-
-		    //$('#TileLayerAccordion-Container').dynaccordion();
-		    //helioviewerWebClient.viewport._tileLayerManager._layers = [];
-		    //helioviewerWebClient.viewport._tileLayerManager._loadStartingLayers(helioviewerWebClient.viewport.tileLayers);
-		    //helioviewerWebClient.viewport.loadDataSources();
 
 		    helioviewerWebClient.viewport._tileLayerManager = new HelioviewerTileLayerManager(
 		    	helioviewerWebClient.viewport.requestDate,
@@ -262,16 +251,8 @@ var UserLayersPresets = Class.extend({
 		    	Helioviewer.userSettings.get('state.tileLayers')
 		    );
 
-		    // $(document).trigger("save-tile-layers");
-		    // if(outputType != 'minimal'){
-			//     $(document).trigger("save-tile-layers-from-accordion");
-		    // }
-		    //_updateTimeStamp(id, date);
-		    //console.log(helioviewerWebClient.timeControls.getDate());
-		    //helioviewerWebClient._initViewport(helioviewerWebClient.timeControls.getDate(), 0, 0);
 
 		    $(document).trigger("update-viewport");
-		    //helioviewerWebClient._tileLayerAccordion._initTreeSelect(id, hierarchy);
         }
 
         if(typeof date != 'undefined' && date != ''){
