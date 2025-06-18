@@ -21,7 +21,7 @@ export default class API {
    * @param {string} source - The source of the events.
    * @returns {Promise} A promise that resolves to the event data.
    */
-  async getEvents(date, source) {
+  async getEvents(date, source, { signal } = {}) {
     // Convert the date to ISO string format
     const startTime = date.toISOString();
 
@@ -31,7 +31,7 @@ export default class API {
     )}`;
 
     // Fetch data from the API
-    const response = await fetch(url);
+    const response = await fetch(url, { signal });
 
     // Handle error responses
     if (!response.ok) {

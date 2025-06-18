@@ -2115,8 +2115,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			Helioviewer.debug = <?php echo $debug ? 'true' : 'false'; ?>;
 			Helioviewer.mobile = <?php echo isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) ? 'true' : 'false'; ?>
 
-
-
 			const loadHelioviewer = (userSettings) => {
 
 				Helioviewer.userSettings = userSettings;
@@ -2136,7 +2134,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 					Init3D(serverSettings.coordinator_url, serverSettings.apiURL);
 				}
 
-				Helioviewer.eventLoader = FullEventLoader.make(Helioviewer.outputType, Helioviewer.debug)
+				Helioviewer.eventLoader = EventLoader.make(Helioviewer.outputType, Helioviewer.debug)
 
 				Helioviewer.eventLoader.ready(el => {
 					if(el.error != null) {

@@ -46,17 +46,20 @@ function HelioviewerEventTree({
   const [eventTree, setEventTree] = useState(null);
   const [events, setEvents] = useState([]);
 
-
   // Run initially first
   useEffect(() => {
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     async function fetchEvents() {
 
       setLoading(true);
-      // @TODO implement abort logic
+
       try {
 
         const api = new API(apiURL);
-        const apiEvents = await api.getEvents(eventsDate, source);
+        const apiEvents = await api.getEvents(eventsDate, source, {signal});
         const eventTree = EventTree.make(apiEvents, source);
         const selectedTree = eventTree.applySelections(selections);
 
@@ -71,13 +74,20 @@ function HelioviewerEventTree({
         setEventTree(selectedTree);
 
       } catch (error) {
-        onError(error);
+        if(error.name != 'AbortError') {
+            onError(error);
+        }
       } finally {
         setLoading(false);
       }
     }
 
     fetchEvents();
+
+    return () => {
+      controller.abort(); // Abort on cleanup
+    };
+
   }, [eventsDate.getTime()]);
 
   useEffect(() => {
