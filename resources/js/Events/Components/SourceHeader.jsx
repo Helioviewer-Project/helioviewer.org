@@ -60,7 +60,6 @@ function SourceHeader({
           {hasEvents ? (
             <Checkbox
               dataTestId={`event-tree-checkbox-${source}`}
-              style={{ width: 9 }}
               state={checked}
               onChange={(event) => {
                 onCheckedUpdate();
