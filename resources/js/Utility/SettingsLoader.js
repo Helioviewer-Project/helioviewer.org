@@ -17,7 +17,7 @@ var SettingsLoader = (
      *
      * @returns {Object} A UserSettings object
      */
-    loadSettings: function (urlSettings, serverSettings) {
+    loadSettings: async function (urlSettings, serverSettings) {
 
         let defaults    = this._getDefaultSettings(serverSettings);
 
@@ -33,11 +33,31 @@ var SettingsLoader = (
         // If State is seeded from api, with an shared url
         // we load with making
         if (urlSettings.loadState) {
-            return this._fetchStateFromApiAndApply(urlSettings.loadState, userSettings);
+            var settings = await this._fetchStateFromApiAndApply(urlSettings.loadState, userSettings);
         } else {
-            return Promise.resolve(userSettings);
+            var settings = userSettings;
         }
 
+        return this._migrate(settings);
+    },
+
+    /**
+     * Performs steps to migrate from old states to newer states as-needed.
+     */
+    _migrate: function (userSettings) {
+        // GOES-R was renamed to GOES. Any setting with GOES-R must be
+        // renamed to GOES.
+        return this._patch_goes_r(userSettings);
+    },
+
+    _patch_goes_r: function(userSettings) {
+        for (const layer of userSettings.settings.state.tileLayers) {
+            if (layer["Observatory"] === "GOES-R") {
+                layer["Observatory"] = "GOES";
+                layer["uiLabels"][0]["name"] = "GOES";
+            }
+        };
+        return userSettings;
     },
 
 
