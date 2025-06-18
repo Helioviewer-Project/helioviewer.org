@@ -162,6 +162,7 @@ class FullEventLoader extends EventLoader {
                 em.marker.setVisibility(newVisibility);
             })
             Helioviewer.userSettings.set("state.events_v2.tree_" + source + ".markers_visible", newVisibility);
+            this.draw();
         }
     }
 
@@ -171,6 +172,7 @@ class FullEventLoader extends EventLoader {
                 em.marker.setLabelVisibility(newVisibility);
             })
             Helioviewer.userSettings.set("state.events_v2.tree_" + source + ".labels_visible", newVisibility);
+            this.draw();
         }
     }
 

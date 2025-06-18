@@ -40,7 +40,6 @@ function HelioviewerEventTree({
   const cache = Cache.make(source);
 
   const [selections, setSelections] = useState(forcedSelections ?? cache.getSelections());
-  const [labelVisibilityState, setLabelVisibilityState] = useState(labelVisibility);
   const [loading, setLoading] = useState(false);
   const [showEmptyBranches, setShowEmptyBranches] = useState(cache.getShowEmptyBranches());
   const [eventTree, setEventTree] = useState(null);
@@ -119,14 +118,6 @@ function HelioviewerEventTree({
 
     setSelections(forcedSelections);
   }, [forcedSelections]);
-
-  useEffect(() => {
-
-    setLabelVisibilityState(labelVisibility);
-    onToggleLabelVisibility(labelVisibility);
-
-  }, [labelVisibility]);
-
 
   useEffect(() => {
 
@@ -238,11 +229,8 @@ function HelioviewerEventTree({
           handleShowEmptyBranches={handleShowEmptyBranches}
           visibility={visibility}
           handleVisibility={onToggleVisibility}
-          labelVisibility={labelVisibilityState}
-          handleLabelVisibility={(newVisibility) => {
-            onToggleLabelVisibility(newVisibility);
-            setLabelVisibilityState(newVisibility);
-          }}
+          labelVisibility={labelVisibility}
+          handleLabelVisibility={onToggleLabelVisibility}
         />
         <div style={nodeChildrensStyle}>
           {loading ? (

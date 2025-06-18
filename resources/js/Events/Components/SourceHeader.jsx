@@ -28,12 +28,6 @@ function SourceHeader({
   labelVisibility,
   handleLabelVisibility
 }) {
-  const [visibilityState, setVisibilityState] = useState(visibility);
-
-  const handleInternalVisibility = (newVisibilityState) => {
-    handleVisibility(newVisibilityState);
-    setVisibilityState(newVisibilityState);
-  };
 
   return (
     <>
@@ -82,12 +76,12 @@ function SourceHeader({
               style={{ color: showEmptyBranches ? "green" : "red", cursor: "pointer" }}
             />
           </a>
-          <a onClick={() => handleInternalVisibility(!visibilityState)}>
+          <a onClick={() => handleVisibility(!visibility)}>
             <ShowMarkersIcon
               data-testid={`event-tree-event-visibility-button-${source}`}
               width="14"
               height="14"
-              style={{ color: visibilityState ? "green" : "red", cursor: "pointer" }}
+              style={{ color: visibility ? "green" : "red", cursor: "pointer" }}
             />
           </a>
           <a onClick={() => handleLabelVisibility(!labelVisibility)}>
