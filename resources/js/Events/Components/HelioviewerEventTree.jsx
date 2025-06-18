@@ -47,34 +47,30 @@ function HelioviewerEventTree({
 
   // Run initially first
   useEffect(() => {
-
     const controller = new AbortController();
     const signal = controller.signal;
 
     async function fetchEvents() {
-
       setLoading(true);
 
       try {
-
         const api = new API(apiURL);
-        const apiEvents = await api.getEvents(eventsDate, source, {signal});
+        const apiEvents = await api.getEvents(eventsDate, source, { signal });
         const eventTree = EventTree.make(apiEvents, source);
         const selectedTree = eventTree.applySelections(selections);
 
         Cache.make(source).saveSelections(selections);
 
         if (onSelectionsUpdate != null) {
-            onSelectionsUpdate(selections, selectedTree.selectedEvents());
+          onSelectionsUpdate(selections, selectedTree.selectedEvents());
         }
 
         onEventsUpdate(selectedTree.selectedEvents());
 
         setEventTree(selectedTree);
-
       } catch (error) {
-        if(error.name != 'AbortError') {
-            onError(error);
+        if (error.name != "AbortError") {
+          onError(error);
         }
       } finally {
         setLoading(false);
@@ -86,14 +82,12 @@ function HelioviewerEventTree({
     return () => {
       controller.abort(); // Abort on cleanup
     };
-
   }, [eventsDate.getTime()]);
 
   useEffect(() => {
-
     // This is only for after mount
     if (!isMount) {
-        return;
+      return;
     }
 
     Cache.make(source).saveSelections(selections);
@@ -101,7 +95,7 @@ function HelioviewerEventTree({
     const selectedTree = eventTree.removeSelections().applySelections(selections);
 
     if (onSelectionsUpdate != null) {
-        onSelectionsUpdate(selections, selectedTree.selectedEvents());
+      onSelectionsUpdate(selections, selectedTree.selectedEvents());
     }
 
     onEventsUpdate(selectedTree.selectedEvents());
@@ -110,7 +104,6 @@ function HelioviewerEventTree({
   }, [selections]);
 
   useEffect(() => {
-
     // Only update if it is updated from outside
     if (!isMount || forcedSelections == null) {
       return;
@@ -120,15 +113,12 @@ function HelioviewerEventTree({
   }, [forcedSelections]);
 
   useEffect(() => {
-
-    if(onLoad) {
-        onLoad();
+    if (onLoad) {
+      onLoad();
     }
-
   });
 
   const toggleCheckbox = function (id) {
-
     const newSelections = eventTree.toggleCheckbox(id).extractSelections();
 
     setSelections(newSelections);
@@ -234,10 +224,10 @@ function HelioviewerEventTree({
         />
         <div style={nodeChildrensStyle}>
           {loading ? (
-              <div className="event-tree-container-loader">
-                  <LoadingIcon />
-                  <span>&nbsp;Loading</span>
-              </div>
+            <div className="event-tree-container-loader">
+              <LoadingIcon />
+              <span>&nbsp;Loading</span>
+            </div>
           ) : (
             eventTreeRender
           )}

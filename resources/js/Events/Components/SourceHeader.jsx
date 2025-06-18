@@ -28,7 +28,6 @@ function SourceHeader({
   labelVisibility,
   handleLabelVisibility
 }) {
-
   return (
     <>
       <div

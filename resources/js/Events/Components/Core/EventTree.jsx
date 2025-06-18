@@ -14,7 +14,6 @@ class EventTree {
    * @param {string} source Top level event group (HEK, CCMC, RHESSI, etc)
    */
   static make(events, source) {
-
     /**
      * Given a set of events like:
      *   - top level
@@ -126,13 +125,12 @@ class EventTree {
     let parentId = this[id].parent_id;
 
     while (parentId != null) {
-
       let siblingsStates = this[parentId].children.map((cid) => this[cid].state);
 
       this[parentId].state = siblingsStates.reduce(
-          (finalState, eventState) => finalState != eventState ? "undecided" : finalState,
-          siblingsStates[0],
-      )
+        (finalState, eventState) => (finalState != eventState ? "undecided" : finalState),
+        siblingsStates[0]
+      );
 
       parentId = this[parentId].parent_id;
     }
@@ -156,7 +154,6 @@ class EventTree {
   }
 
   applySelections(selections) {
-
     selections.forEach((id) => {
       if (this.hasOwnProperty(id)) {
         const nodes = this.getNodes(id);
@@ -168,15 +165,15 @@ class EventTree {
         let parentId = this[id].parent_id;
 
         while (parentId != null) {
-
           let siblingsStates = this[parentId].children.map((cid) => this[cid].state);
 
           this[parentId].state = siblingsStates.reduce(
-              (finalState, eventState) => finalState != eventState ? "undecided" : finalState,
-              siblingsStates[0],
-          )
+            (finalState, eventState) => (finalState != eventState ? "undecided" : finalState),
+            siblingsStates[0]
+          );
 
-          this[parentId].expand = this[parentId].state == "undecided" || this.isRoot(parentId) || this.isFirstLevel(parentId);
+          this[parentId].expand =
+            this[parentId].state == "undecided" || this.isRoot(parentId) || this.isFirstLevel(parentId);
 
           parentId = this[parentId].parent_id;
         }
@@ -244,7 +241,6 @@ class EventTree {
     return allNodes;
   }
 
-
   getEventsOfNode(id) {
     const isEvent = this[id].hasOwnProperty("data");
 
@@ -264,7 +260,6 @@ class EventTree {
   getEventCount(id) {
     return this.getEventsOfNode(id).length;
   }
-
 
   /**
    * An event branch a branch which contains an event data array.

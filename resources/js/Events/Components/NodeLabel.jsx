@@ -4,11 +4,11 @@ import Checkbox from "./Checkbox.jsx";
 import { EnabledTriangle, DisabledTriangle } from "./Icons.jsx";
 
 /*
-* Uses a regex to find proper JavaScript Unicode escape sequences like \u03b1 (note the backslash)
-* Captures the 4-digit hex code in a group and converts it to an actual Unicode character
-* Can handle any Unicode character in the Basic Multilingual Plane (U+0000 to U+FFFF)
-* Properly checks for the backslash prefix
-*/
+ * Uses a regex to find proper JavaScript Unicode escape sequences like \u03b1 (note the backslash)
+ * Captures the 4-digit hex code in a group and converts it to an actual Unicode character
+ * Can handle any Unicode character in the Basic Multilingual Plane (U+0000 to U+FFFF)
+ * Properly checks for the backslash prefix
+ */
 const fixTitle = (title) => {
   return title.replace(/\\u([\da-fA-F]{4})/g, function (m, $1) {
     return String.fromCharCode(parseInt($1, 16));
