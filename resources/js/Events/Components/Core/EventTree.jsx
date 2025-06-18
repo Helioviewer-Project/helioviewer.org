@@ -148,22 +148,6 @@ class EventTree {
     return new EventTree({ ...this });
   }
 
-  getNodes(id) {
-    const isEvent = this[id].hasOwnProperty("data");
-
-    if (isEvent) {
-      return [id];
-    }
-
-    const allNodes = [id];
-
-    this[id].children.forEach((cid) => {
-      allNodes.push(...this.getNodes(cid));
-    });
-
-    return allNodes;
-  }
-
   removeSelections() {
     for (const n in this) {
       this[n].state = "unchecked";
@@ -243,6 +227,23 @@ class EventTree {
 
     return res;
   }
+
+  getNodes(id) {
+    const isEvent = this[id].hasOwnProperty("data");
+
+    if (isEvent) {
+      return [id];
+    }
+
+    const allNodes = [id];
+
+    this[id].children.forEach((cid) => {
+      allNodes.push(...this.getNodes(cid));
+    });
+
+    return allNodes;
+  }
+
 
   getEventsOfNode(id) {
     const isEvent = this[id].hasOwnProperty("data");
