@@ -470,24 +470,26 @@ var EventMarker = Class.extend(
     _buildEventInfoDialog: function () {
         var dialog, sortBtn, tabs, html='', tag, json, headingText, self=this;
 
-
         // Format results
         dialog =  $("<div id='event-info-dialog' class='event-info-dialog' />");
 
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
+            // This means it is HEK 
             headingText = this.concept+': ' + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
         }
         else if (this.hasOwnProperty('title')) {
             headingText = this.title;
         }
         else {
-            headingText = this.category + ' ' + this.fixTitles(this.name) + ' ' + this.fixTitles(this.version);
+            const eventTypeLabel = EventLoader.eventLabelsMap[this.type]['name']
+            headingText = eventTypeLabel + ' ' + this.fixTitles(this.name) + ' ' + this.fixTitles(this.version);
         }
 
         // Header Tabs
         if (this._IsHekEvent()) {
+
             html += '<div class="event-info-dialog-menu">'
-            +     '<a class="show-tags-btn event-type selected">'+this.category+'</a>'
+            +     '<a class="show-tags-btn event-type selected">'+this.concept+'</a>'
             +     '<a class="show-tags-btn obs">Observation</a>'
             +     '<a class="show-tags-btn frm">Recognition Method</a>'
             +     '<a class="show-tags-btn ref">Ref<span class="hek_ref_txt1">erences</span></a>'
@@ -521,6 +523,7 @@ var EventMarker = Class.extend(
                 }
             });
         }
+
         dialog.append(html).appendTo("body").dialog({
             autoOpen : true,
             title    : headingText,
