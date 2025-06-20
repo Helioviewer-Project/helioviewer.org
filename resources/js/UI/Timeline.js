@@ -57,13 +57,15 @@ $(function () {
                 });
 
                 if(itemToShow != false){
-                    $(".event-container > div").css({'opacity':'0'});
-					$(".event-container > div[id^='"+itemToShow+"__']").css({'z-index':'1000'});
-					$(".event-container > div[id^='"+itemToShow+"__']").css({'opacity':'1'});
-					$('.movie-viewport-icon').hide();
+                    Helioviewer.eventLoader.ready(el => {
+                        el.highlightEventsFromEventTypePin(itemToShow);
+                    })
+                    $('.movie-viewport-icon').hide();
                 }
+
                 //chart.redraw();
             }
+
             element.onmouseout = function () {
                each(collection, function (seriesItem) {
                     if (seriesItem !== item) {
@@ -79,8 +81,11 @@ $(function () {
                         });
 
                         if(typeof seriesItem.options.data_type != 'undefined'){
-	                        var dataType = seriesItem.options.data_type;
-						 	$(".event-container > div").css({'opacity':'1.0', 'z-index':'997'});
+
+                            Helioviewer.eventLoader.ready(el => {
+                                el.removeHighlight();
+                            })
+
 						 	$('.movie-viewport-icon').show();
                         }
 

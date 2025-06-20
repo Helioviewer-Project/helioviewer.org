@@ -388,7 +388,7 @@ html, body {
 #hv-drawer-tab-timeline-events{
 	position: absolute;
     bottom: 0;
-    width: 8em;
+    width: 10em;
     border-top: 1px solid white;
     border-left: 1px solid white;
     border-right: 1px solid white;

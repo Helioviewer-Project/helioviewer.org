@@ -667,7 +667,11 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 					</div>
 					<div class="content">
 						<div id="eventLayerAccordion">
-							<div id="EventLayerAccordion-Container"></div>
+							<div id="EventLayerAccordion-Container">
+								<div id="event-tree-container-HEK"></div>
+								<div id="event-tree-container-CCMC"></div>
+								<div id="event-tree-container-RHESSI"></div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -1355,7 +1359,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			</div>
 		</div>
 
-		<div id="hv-drawer-tab-timeline-events" class="drawer-tab drawer-tab-bottom">Events Timeline</div>
+		<div id="hv-drawer-tab-timeline-events" class="drawer-tab drawer-tab-bottom">HEK Events Timeline</div>
 		<div id="hv-drawer-timeline-events" class="helioviewer-drawer-bottom">
 			<div class="drawer-contents" style="height:350px;">
 				<div id="hv-drawer-timeline-events-logarithmic-holder" style="display:none;position:absolute;top:10px;left:10px;z-index:5;"><input aria-labelledby="hv-drawer-timeline-events-logarithmic-holder" type="checkbox" id="hv-drawer-timeline-events-logarithmic"> Logarithmic View</div>
@@ -1583,16 +1587,71 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 										</div>
 									</div>
 									<div class="row">
+
+
 										<div id="observation-label" class="label" style="margin-top:0.4em;">Make an Observation</div>
 										<div id="image-layer-select-container" class="field" style="margin-top:0.95em; padding-bottom:0.5em;">
 											<select aria-labelledby="observation-label" id="image-layer-select" name="image-select-layers" style="width:18.5em;">
-												<option value="0" class="image-layer-switch" data-id="0" data-name="NOAA flares and active regions" data-date="" data-layers="[SDO,AIA,171,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[AR,NOAA_SWPC_Observer,1],[FL,SWPC,1]">Flares and Active Regions</option>
-												<option value="1" class="image-layer-switch" data-id="1" data-name="Eruption Monitor" data-date="" data-layers="[SDO,AIA,304,1,100,0,60,1,2017-11-16T09:02:20.000Z],[SOHO,LASCO,C2,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z],[SOHO,LASCO,C3,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z]" data-events="[CE,all,1],[ER,all,1],[FI,all,1],[FA,all,1],[FE,all,1]">Eruptions and CMEs</option>
-												<option value="2" class="image-layer-switch" data-id="2" data-name="Magnetic flux Monitor" data-date="" data-layers="[SDO,HMI,magnetogram,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[EF,all,1]">Magnetic Field</option>
-												<option value="3" class="image-layer-switch" data-id="3" data-name="Coronal hole Monitor" data-date="" data-layers="[SDO,AIA,211,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[CH,all,1]">Coronal Holes</option>
-												<option value="4" class="image-layer-switch" data-id="4" data-name="Sunspots" data-date="" data-layers="[SDO,HMI,continuum,1,100,0,60,1,2017-11-16T09:02:20.000Z]" data-events="[SS,all,1]">Sunspots</option>
+												<option value="0" class="image-layer-switch"
+													data-id="0"
+													data-name="NOAA flares and active regions"
+													data-date=""
+													data-layers="[SDO,AIA,171,1,100,0,60,1,2017-11-16T09:02:20.000Z]"
+													data-events="[AR,NOAA_SWPC_Observer,1],[FL,SWPC,1]"
+												>
+													Flares and Active Regions
+												</option>
+												<option value="1" class="image-layer-switch"
+													data-id="1"
+													data-name="Eruption Monitor"
+													data-date=""
+													data-layers="[SDO,AIA,304,1,100,0,60,1,2017-11-16T09:02:20.000Z],[SOHO,LASCO,C2,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z],[SOHO,LASCO,C3,white-light,1,100,0,60,1,2017-05-18T15:35:00.000Z]"
+													data-events="[CE,all,1],[ER,all,1],[FI,all,1],[FA,all,1],[FE,all,1]"
+												>
+													Eruptions and CMEs
+												</option>
+												<option value="2" class="image-layer-switch"
+													data-id="2"
+													data-name="Magnetic flux Monitor"
+													data-date=""
+													data-layers="[SDO,HMI,magnetogram,1,100,0,60,1,2017-11-16T09:02:20.000Z]"
+													data-events="[EF,all,1]"
+												>
+													Magnetic Field
+												</option>
+												<option value="3" class="image-layer-switch"
+													data-id="3"
+													data-name="Coronal hole Monitor"
+													data-date=""
+													data-layers="[SDO,AIA,211,1,100,0,60,1,2017-11-16T09:02:20.000Z]"
+													data-events="[CH,all,1]"
+												>
+													Coronal Holes
+												</option>
+												<option value="4" class="image-layer-switch"
+													data-id="4"
+													data-name="Sunspots"
+													data-date=""
+													data-layers="[SDO,HMI,continuum,1,100,0,60,1,2017-11-16T09:02:20.000Z]"
+													data-events="[SS,all,1]"
+												>
+													Sunspots
+												</option>
+												<option value="5" class="image-layer-switch"
+													data-id="5"
+													data-name="Solar Flare Predictions"
+													data-date=""
+													data-layers="[SDO,AIA,171,1,100,0,60,1,2017-11-16T09:02:20.000Z]"
+													data-events="[FP,all,1]"
+												>
+													Solar Flare Predictions
+												</option>
 											</select>
+											<div  data-events-visible="true" id="k12-events-visibility-btn" class="k12-eventsVisBtn" title="Toggle visibility of event marker pins" style="display: flex;cursor: pointer;">
+												<span class="fa fa-eye fa-fw layerManagerBtn visible" id="visibilityBtn" title="Toggle visibility of event marker pins" style="margin-top:0.5em;"></span>
+												<p id="k12-events-btn-text" style="margin-left:0.3em;">EVENTS ARE ON<p>
 											</div>
+										</div>
 										<div class="clear clearfix" style="display:block;clear:both;"></div>
 									</div>
 								</div>
@@ -1910,22 +1969,12 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		<script src="/resources/js/Utility/UserSettings.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Utility/Tutorial.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Tiling/Manager/LayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Events/SelectedEventsCache.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Events/EventManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Events/EventType.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Events/EventTree.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Events/EventFeatureRecognitionMethod.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Events/EventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Events/HelioviewerEventLayer.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/Events/HelioviewerEventLayerManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/TreeSelect.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/ImageSelectTool.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Media/MediaManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Media/MovieManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Media/ScreenshotManager.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/TileLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
-		<script src="/resources/js/UI/EventLayerAccordion.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/MessageConsole.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/UI/TimeControls.js?v=<?=$debugTime?>" type="text/javascript"></script>
 		<script src="/resources/js/Utility/FullscreenControl.js?v=<?=$debugTime?>" type="text/javascript"></script>
@@ -2066,7 +2115,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			Helioviewer.debug = <?php echo $debug ? 'true' : 'false'; ?>;
 			Helioviewer.mobile = <?php echo isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) ? 'true' : 'false'; ?>
 
-
 			const loadHelioviewer = (userSettings) => {
 
 				Helioviewer.userSettings = userSettings;
@@ -2074,15 +2122,26 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 				// Initialize Helioviewer.org
 				helioviewerWebClient = new HelioviewerWebClient(zoomLevels);
 
+				Helioviewer.webClient = helioviewerWebClient;
+
 				// Play movie if id is specified
 				if (urlSettings.movieId) {
-					helioviewerWebClient.loadMovie(urlSettings.movieId);
+					Helioviewer.webClient.loadMovie(urlSettings.movieId);
 				}
 
 				// Defined in hv3d.js, initialize the 3D viewport
 				if (Helioviewer.outputType === "normal") {
 					Init3D(serverSettings.coordinator_url, serverSettings.apiURL);
 				}
+
+				Helioviewer.eventLoader = EventLoader.make(Helioviewer.outputType, Helioviewer.debug)
+
+				Helioviewer.eventLoader.ready(el => {
+					if(el.error != null) {
+						console.error(el.error)
+						Helioviewer.messageConsole.warn("We couldn't load Helioviewer Events");
+					}
+				})
 
 				$(document).trigger("helioviewer-ready", [true]);
 			};

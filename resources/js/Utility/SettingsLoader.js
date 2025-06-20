@@ -74,22 +74,22 @@ var SettingsLoader = (
 
             type: "GET",
             url: Helioviewer.api,
-            dataType: Helioviewer.dataType,
+            dataType: 'json',
             data: {
                 "action": "getWebClientState",
                 "state_id": stateId
             },
 
-        }).then((resp) => {
+        }).then(function(clientState) {
 
-            userSettings.set("state.imageScale", parseFloat(resp.data.imageScale));
-            userSettings.set("state.centerX", parseFloat(resp.data.centerX));
-            userSettings.set("state.centerY", parseFloat(resp.data.centerY));
-            userSettings.set("state.tileLayers", resp.data.imageLayers);
-            userSettings.set("state.events_v2", resp.data.eventLayers);
-            userSettings.set("state.celestialBodiesChecked", resp.data.celestialBodies);
-            userSettings.set("state.date", parseInt(resp.data.date));
-            userSettings.set("state.enable3d", resp.data.hasOwnProperty("enable3d") ? resp.data.enable3d : false);
+            userSettings.set("state.imageScale", parseFloat(clientState.data.imageScale));
+            userSettings.set("state.centerX", parseFloat(clientState.data.centerX));
+            userSettings.set("state.centerY", parseFloat(clientState.data.centerY));
+            userSettings.set("state.tileLayers", clientState.data.imageLayers);
+            userSettings.set("state.events_v2", clientState.data.eventLayers);
+            userSettings.set("state.celestialBodiesChecked", clientState.data.celestialBodies);
+            userSettings.set("state.date", parseInt(clientState.data.date));
+            userSettings.set("state.enable3d", clientState.data.hasOwnProperty("enable3d") ? clientState.data.enable3d : false);
 
             return Promise.resolve(userSettings);
 
@@ -113,7 +113,7 @@ var SettingsLoader = (
     _getDefaultSettings: function (serverSettings) {
         // Use current date (UTC) for default observation time
         var date = new Date(+new Date());
-		var dateDiff = new Date(+new Date() - 60*60*1000);
+        var dateDiff = new Date(+new Date() - 60*60*1000);
 
         return {
             // Default settings
@@ -242,6 +242,7 @@ var SettingsLoader = (
                         "labels_visible":true,
                         "layer_available_visible":true,
                         "layers": [],
+                        "layers_v2": [],
                     },
                     "tree_CCMC": {
                         "id": "CCMC",
@@ -250,6 +251,7 @@ var SettingsLoader = (
                         "labels_visible":true,
                         "layer_available_visible":true,
                         "layers": [],
+                        "layers_v2": [],
                     },
                     "tree_RHESSI": {
                         "id": "RHESSI",
@@ -258,6 +260,7 @@ var SettingsLoader = (
                         "labels_visible":true,
                         "layer_available_visible":true,
                         "layers": [],
+                        "layers_v2": [],
                     },
                 },
                 "eventLabels": true,

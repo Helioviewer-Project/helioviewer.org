@@ -369,11 +369,11 @@ var TimelineEvents = Class.extend({
 									var id = this.kb_archivid;
 									id = id.replace(/\(|\)|\.|\+|\:/g, "");
 									if($("#marker_" + id).length != 0) {
-										$(".event-container .event-layer > div[id!='marker_"+id+"']").css({'opacity':'0'});
-										$(".event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'0'});
-										$(".event-container .event-layer > div[id='marker_"+id+"']").parent().css({'opacity':'1'});
-										$(".event-container .event-layer > div[id='marker_"+id+"']").css({'z-index':'1000'});
-										$(".event-container .event-layer > div[id='region_"+id+"']").css({'opacity':'1'});
+										$(".event-container > div[id!='marker_"+id+"']").css({'opacity':'0'});
+										$(".event-container > div[id!='marker_"+id+"']").parent().css({'opacity':'0'});
+										$(".event-container > div[id='marker_"+id+"']").parent().css({'opacity':'1'});
+										$(".event-container > div[id='marker_"+id+"']").css({'z-index':'1000'});
+										$(".event-container > div[id='region_"+id+"']").css({'opacity':'1'});
 										$('.movie-viewport-icon').hide();
 									}
 								}
@@ -387,8 +387,8 @@ var TimelineEvents = Class.extend({
 									if(typeof this.kb_archivid != 'undefined'){
 										var id = this.kb_archivid;
 										id = id.replace(/\(|\)|\.|\+|\:/g, "");
-										$(".event-container .event-layer > div[id!='marker_"+id+"']").parent().css({'opacity':'1'});
-									 	$(".event-container .event-layer > div").css({'opacity':'1.0', 'z-index':'997'});
+										$(".event-container > div[id!='marker_"+id+"']").parent().css({'opacity':'1'});
+										$(".event-container > div").css({'opacity':'1.0', 'z-index':'997'});
 									 	$('.movie-viewport-icon').show();
 								 	}
 								}
@@ -1071,8 +1071,8 @@ var TimelineEvents = Class.extend({
 		this.afterSetExtremes({min:newMin, max:newMax});
 	},
 
-	render: function(){
-		var _url, eventLayersStr = '', layers = [], eventLayers=[], date, startDate, endDate, self, chartTypeX = 'xrange', isShared = false;
+	render: async function(){
+		var _url, layers = [], eventLayers=[], date, startDate, endDate, self, chartTypeX = 'xrange', isShared = false;
 
 		self = this;
 
@@ -1085,9 +1085,6 @@ var TimelineEvents = Class.extend({
 		endDate = date + (10 * 60 * 60 * 1000);//7 DAYS
 
 		zoomTickTime = date;
-
-		//Build instruments string for url
-		eventLayersStr = helioviewerWebClient.getEvents();
 
 		if(startDate < 0 || endDate < 0 || startDate > endDate){
 			return false;
@@ -1395,7 +1392,7 @@ var TimelineEvents = Class.extend({
 	/**
 	 * Load new data depending on the selected min and max
 	 */
-	afterSetExtremes: function(e) {
+	afterSetExtremes: async function(e) {
 		var self = this;
 
 		var chart = $('#data-coverage-timeline-events').highcharts();
@@ -1406,14 +1403,18 @@ var TimelineEvents = Class.extend({
 			chartTypeY = 'logarithmic';
 		}
 
-		var eventLayersStr = helioviewerWebClient.getEvents();
+		const eventLayersStr = await Helioviewer.eventLoader.getLegacyShallowEventLayerString();
 
 		if(eventLayersStr == ''){
+
 			chart.showLoading('No event types selected.<br/>Use the Feature and Event selector to choose event types.');
+
 			while(chart.series.length > 0) {
 				chart.series[0].remove(false);
 			}
+
 			return;
+
 		}else{
 		   	chart.showLoading('Loading data from server...');
 		}
@@ -1815,9 +1816,10 @@ var TimelineEvents = Class.extend({
 
 
 	_generateEventKeywordsSection: function (tab, event) {
+
 		var formatted, tag, tags = [], lookup, attr, domClass, icon, list= {}, self=this;
 
-		var _eventGlossary = helioviewerWebClient._eventLayerAccordion._eventManager._eventGlossary;
+		let _eventGlossary = Helioviewer.eventLoader.eventGlossary;
 
 		if ( tab == 'obs' ) {
 			$.each( event, function (key, value) {

@@ -1,7 +1,7 @@
 /**
  * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
- * @author Kasim Necdet Percinel <kasim.n.percinel@nasa.gov>
+ * @author <a href="mailto:kasim.n.percinel@nasa.gov">Kasim Necdet Percinel</a>
  * @fileoverview Contains the class definition for an EventMarker class.
  * @see EventLayer
  */
@@ -33,8 +33,6 @@ var EventMarker = Class.extend(
         this.event = event;
         this.behindSun = false;
         this.parentFRM  = parentFRM;
-        this._labelVisible = labelVisible;
-        this._markerVisible = markerVisible;
         this._popupVisible = false;
         this._zIndex = zIndex;
         this._eventGlossary = eventGlossary;
@@ -48,8 +46,8 @@ var EventMarker = Class.extend(
         this.createMarker(zIndex);
 
         // Create the DOM of this marker, and set the visibility
-        this.setVisibility(this._markerVisible);
-        this.setLabelVisibility(this._labelVisible);
+        this.setVisibility(markerVisible);
+        this.setLabelVisibility(labelVisible);
 
         $(document).bind("replot-event-markers",   $.proxy(this.refresh, this));
     },
@@ -111,8 +109,6 @@ var EventMarker = Class.extend(
 	        };
         }
 
-
-
         markerURL = serverSettings['rootURL']+'/resources/images/eventMarkers/'+this.type.toUpperCase()+'@2x'+'.png';
         this.eventMarkerDomNode.css({
                          'left' :  this.pos.x + 'px',
@@ -126,7 +122,7 @@ var EventMarker = Class.extend(
             //if ( this.parentFRM._visible == false ) {
                 //this.eventMarkerDomNode.hide();
             //}
-            this.parentFRM.domNode.append(this.eventMarkerDomNode);
+            this.parentFRM.append(this.eventMarkerDomNode);
         }
         else {
             //console.warn('this.parentFRM does not exist!');
@@ -183,7 +179,7 @@ var EventMarker = Class.extend(
                 // Additional styles found in events.css
             });
             if ( typeof this.parentFRM != 'undefined' ) {
-                this.parentFRM.domNode.append(this.eventRegionDomNode);
+                this.parentFRM.append(this.eventRegionDomNode);
             }
         }
     },
@@ -474,24 +470,26 @@ var EventMarker = Class.extend(
     _buildEventInfoDialog: function () {
         var dialog, sortBtn, tabs, html='', tag, json, headingText, self=this;
 
-
         // Format results
         dialog =  $("<div id='event-info-dialog' class='event-info-dialog' />");
 
         if ( this.hasOwnProperty('hv_labels_formatted') && Object.keys(this.hv_labels_formatted).length > 0 ) {
+            // This means it is HEK 
             headingText = this.concept+': ' + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
         }
         else if (this.hasOwnProperty('title')) {
             headingText = this.title;
         }
         else {
-            headingText = this.category + ' ' + this.fixTitles(this.name) + ' ' + this.fixTitles(this.version);
+            const eventTypeLabel = EventLoader.eventLabelsMap[this.type]['name']
+            headingText = eventTypeLabel + ' ' + this.fixTitles(this.name) + ' ' + this.fixTitles(this.version);
         }
 
         // Header Tabs
         if (this._IsHekEvent()) {
+
             html += '<div class="event-info-dialog-menu">'
-            +     '<a class="show-tags-btn event-type selected">'+this.category+'</a>'
+            +     '<a class="show-tags-btn event-type selected">'+this.concept+'</a>'
             +     '<a class="show-tags-btn obs">Observation</a>'
             +     '<a class="show-tags-btn frm">Recognition Method</a>'
             +     '<a class="show-tags-btn ref">Ref<span class="hek_ref_txt1">erences</span></a>'
@@ -525,6 +523,7 @@ var EventMarker = Class.extend(
                 }
             });
         }
+
         dialog.append(html).appendTo("body").dialog({
             autoOpen : true,
             title    : headingText,
@@ -840,11 +839,13 @@ var EventMarker = Class.extend(
     _populatePopup: function () {
         var content = '', headingText = '', self = this;
 
+        const eventTypeLabel = EventLoader.eventLabelsMap[this.type]['name']
+
         if ( this.hasOwnProperty('label') && this.label.length > 0 ) {
-            headingText = this.category+': ' + this.fixTitles(this.label.split("\n")[0]);
+            headingText = eventTypeLabel+': ' + this.fixTitles(this.label.split("\n")[0]);
         }
         else {
-            headingText = this.category + ': ' + this.fixTitles(this.name) + ' ' + this.fixTitles(this.version);
+            headingText = eventTypeLabel + ': ' + this.fixTitles(this.name) + ' ' + this.fixTitles(this.version);
         }
 
         content     += '<div class="close-button ui-icon ui-icon-closethick" title="Close PopUp Window"></div>'+"\n"
@@ -995,18 +996,21 @@ var EventMarker = Class.extend(
         });
         this.eventPopupDomNode.find("h1, .param-label, .param-value").enableSelection();
 
-        this.parentFRM.domNode.append(this.eventPopupDomNode);
+        this.parentFRM.append(this.eventPopupDomNode);
         helioviewerWebClient._timeSelector = new TimeSelector();
     },
 
     fixTitles: function(s){
-	    s = s.replace(/u03b1/g, "α");
+        if (!s) {
+            return ""
+        }
+        s = s.replace(/u03b1/g, "α");
         s = s.replace(/u03b2/g, "β");
         s = s.replace(/u03b3/g, "γ");
-		s = s.replace(/u00b1/g, "±");
-		s = s.replace(/u00b2/g, "²");
+        s = s.replace(/u00b1/g, "±");
+        s = s.replace(/u00b2/g, "²");
 
-		return s;
+        return s;
     },
 
     /**

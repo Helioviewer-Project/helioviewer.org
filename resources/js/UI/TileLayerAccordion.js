@@ -570,7 +570,7 @@ var TileLayerAccordion = Layer.extend(
             e.stopPropagation();
         });
 
-        $(".next-image-btn").on("click", function() {
+        $(".next-image-btn").unbind().on("click", function(ev) {
             self.closestImages.fetchClosestImageDates($(this).data('sourceId'), self._observationDate).then((imgDates) => {
                 if(imgDates.hasNextImage()) {
                     helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(imgDates.nextImageDate));
@@ -580,7 +580,7 @@ var TileLayerAccordion = Layer.extend(
             })
         });
 
-        $(".prev-image-btn").on("click", function() {
+        $(".prev-image-btn").unbind().on("click", function(ev) {
             self.closestImages.fetchClosestImageDates($(this).data('sourceId'), self._observationDate).then((imgDates) => {
                 if(imgDates.hasPrevImage()) {
                     helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(imgDates.prevImageDate));

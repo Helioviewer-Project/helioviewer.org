@@ -49,7 +49,22 @@ module.exports = {
                           globalName: "MediaManagerUI",
                           moduleLocalName: "MediaManagerUI",
                           override: true
-                        }
+                        },
+                        {
+                            globalName: "EventLoader",
+                            moduleLocalName: "EventLoader",
+                            override: true
+                        },
+                        {
+                            globalName: "FullEventLoader",
+                            moduleLocalName: "FullEventLoader",
+                            override: true
+                        },
+                        {
+                            globalName: "MinimalEventLoader",
+                            moduleLocalName: "MinimalEventLoader",
+                            override: true
+                        },
                       ]
                     }
                 },

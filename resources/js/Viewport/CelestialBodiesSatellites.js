@@ -45,7 +45,7 @@ var CelestialBodiesSatellites = Class.extend(
         var serializedString = '';
         var observers = Object.keys(savedState);
         for(var observer of observers){
-            var bodies = savedState[observer];
+            var bodies = savedState[observer] == null ? [] : savedState[observer];
             for(var body of bodies){
                 var indexOfLabel = body.indexOf('-tree-label');
                 var indexOfBranch = body.indexOf('-tree-branch');
@@ -73,7 +73,7 @@ var CelestialBodiesSatellites = Class.extend(
         var serializedString = '';
         var observers = Object.keys(savedState);
         for(var observer of observers){
-            var bodies = savedState[observer];
+            var bodies = savedState[observer] == null ? [] : savedState[observer];
             for(var body of bodies){
                 var indexOfLabel = body.indexOf('-tree-trajectory');
                 var indexOfBranch = body.indexOf('-tree-branch');
@@ -164,8 +164,7 @@ var CelestialBodiesSatellites = Class.extend(
         }else{
             for( var observer of observers ){
                 var setting = "state.celestialBodiesChecked."+observer;
-                Helioviewer.userSettings.get(setting);
-                if(setting === undefined){
+                if(Helioviewer.userSettings.get(setting) === undefined){
                     Helioviewer.userSettings.set(setting,null);
                 }
             }
