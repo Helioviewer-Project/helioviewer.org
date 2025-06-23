@@ -37,6 +37,7 @@ class Horizons {
   static getObservatoryByName(observatory) {
     const mapping = {
       "goes-r": "goes-18",
+      "goes": "goes-18",
       // I could not find IRIS in the Horizons database
       // https://ssd.jpl.nasa.gov/horizons/time_spans.html
       // 399 maps to earth.
