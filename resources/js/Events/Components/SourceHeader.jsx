@@ -40,7 +40,7 @@ function SourceHeader({
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <a onClick={toggleExpand}>
+          <a onClick={toggleExpand} data-testid={`event-tree-expand-triangle-${source}`}>
             {expand ? (
               <CaretDown style={{ color: "#444", cursor: "pointer" }} />
             ) : (
