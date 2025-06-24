@@ -51,7 +51,7 @@ var SettingsLoader = (
     },
 
     _patch_goes_r: function(userSettings) {
-        for (const layer of userSettings.settings.state.tileLayers) {
+        for (const layer of Object.values(userSettings.settings.state.tileLayers)) {
             if (layer["Observatory"] === "GOES-R") {
                 layer["Observatory"] = "GOES";
                 layer["uiLabels"][0]["name"] = "GOES";
