@@ -2,8 +2,8 @@
   "name": "helioviewer.org",
   "scripts": {
     "test": "jest resources/js/test",
-    "prettier": "npx prettier -w resources/js/test resources/js/Media/VideoPlayer.jsx resources/js/3d",
-    "prettier-check": "npx prettier -c resources/js/test resources/js/Media/VideoPlayer.jsx resources/js/3d"
+    "prettier": "npx prettier -w resources/js/test resources/js/Media/VideoPlayer.jsx resources/js/3d resources/js/Events",
+    "prettier-check": "npx prettier -c resources/js/test resources/js/Media/VideoPlayer.jsx resources/js/3d resources/js/Events"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.4",
@@ -27,6 +27,7 @@
     "xmlhttprequest": "^1.8.0"
   },
   "dependencies": {
+    "@helioviewer/event-tree": "^0.0.1",
     "@helioviewer/sun": "^0.8.0",
     "@react-three/drei": "^9.121.4",
     "@react-three/fiber": "^8.17.12",
