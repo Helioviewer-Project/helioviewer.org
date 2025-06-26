@@ -6,7 +6,6 @@
 "use strict";
 import { createRoot } from "react-dom/client";
 import React from "react";
-import HelioviewerEventTree from "./Components/HelioviewerEventTree";
 import EventLoader from "./EventLoader";
 
 class MinimalEventLoader extends EventLoader {
