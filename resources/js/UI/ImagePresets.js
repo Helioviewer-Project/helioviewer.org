@@ -22,7 +22,6 @@ var UserLayersPresets = Class.extend({
 
     initEvents: function(){
 		var self = this;
-		var firstInitMinimalLayerSelection = true;
 
 		$(document).click(
             function(event){
@@ -77,6 +76,7 @@ var UserLayersPresets = Class.extend({
 				'name':$('.item-name').val(),
 				'observationDate':'',
 				'events':'',
+				'events_v2':'',
 				'layers':''
 			};
 
@@ -97,7 +97,12 @@ var UserLayersPresets = Class.extend({
 		        }else{
 			        item.events = 'None';
 		        }
+	        }
 
+	        if($('input.item-events').is(':checked')){
+	            Helioviewer.eventLoader.ready((el) => {
+	                item.events_v2 = el.getSelections();
+	            });
 	        }
 
 	        var currentList = Helioviewer.userSettings.get("state.userTileLayers");
@@ -186,9 +191,12 @@ var UserLayersPresets = Class.extend({
 			}
 		);
 
-		if(outputType == 'minimal'){
+
+		// Select default one if minimal
+		var firstInitMinimalLayerSelection = true;
+		if(Helioviewer.outputType == 'minimal'){
 	        var selectValue = Helioviewer.userSettings.get('state.dropdownLayerSelectID');
-	        if(typeof selectValue == 'undefined' || $('#image-layer-select').length < selectValue){
+	        if(typeof selectValue == 'undefined' || $('#image-layer-select option').length < selectValue){
 		        selectValue = 0;
 				Helioviewer.userSettings.set('state.dropdownLayerSelectID', 0);
 	        }
@@ -209,6 +217,7 @@ var UserLayersPresets = Class.extend({
         var date = $(el).data('date');
         var layers = $(el).data('layers');
         var events = $(el).data('events');
+        var events_v2 = $(el).data('events_v2');
         var settings = {};
 
         if(outputType == 'minimal'){
@@ -216,13 +225,9 @@ var UserLayersPresets = Class.extend({
 	        Helioviewer.userSettings.set('state.dropdownLayerSelectID', selectValue);
         }
 
-		if(typeof date != 'undefined' && date != ''){
-			helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(date), true);
-        }else{
-	        helioviewerWebClient.timeControls._onDateChange();
-        }
 
         if(typeof layers != 'undefined' && layers != ''){
+
 	        layers = layers.slice(1, -1);
 			settings['imageLayers'] = layers.split("],[");
 
@@ -231,20 +236,11 @@ var UserLayersPresets = Class.extend({
 					$(document).trigger("remove-tile-layer", [this.id]);
 					$("#" + this.id + " *[oldtitle]").qtip("destroy");
 					$('#TileLayerAccordion-Container').dynaccordion('removeSection', {id: this.id});
-
-					//$(document).trigger("save-tile-layers");
-					//$(document).trigger("save-tile-layers-from-accordion");
-					//e.stopPropagation();
 				});
 			}
-		    //$(document).trigger("save-tile-layers-from-accordion");
-
 		    Helioviewer.userSettings._processURLSettings(settings);
+
 		    helioviewerWebClient.viewport.tileLayers = Helioviewer.userSettings.get('state.tileLayers');
-		    //$('#TileLayerAccordion-Container').dynaccordion();
-		    //helioviewerWebClient.viewport._tileLayerManager._layers = [];
-		    //helioviewerWebClient.viewport._tileLayerManager._loadStartingLayers(helioviewerWebClient.viewport.tileLayers);
-		    //helioviewerWebClient.viewport.loadDataSources();
 
 		    helioviewerWebClient.viewport._tileLayerManager = new HelioviewerTileLayerManager(
 		    	helioviewerWebClient.viewport.requestDate,
@@ -255,39 +251,24 @@ var UserLayersPresets = Class.extend({
 		    	Helioviewer.userSettings.get('state.tileLayers')
 		    );
 
-		    $(document).trigger("save-tile-layers");
-		    if(outputType != 'minimal'){
-			    $(document).trigger("save-tile-layers-from-accordion");
-		    }
-		    //_updateTimeStamp(id, date);
-		    //console.log(helioviewerWebClient.timeControls.getDate());
-		    //helioviewerWebClient._initViewport(helioviewerWebClient.timeControls.getDate(), 0, 0);
 
 		    $(document).trigger("update-viewport");
-		    //helioviewerWebClient._tileLayerAccordion._initTreeSelect(id, hierarchy);
-        }
-
-
-        if(typeof events != 'undefined' && events != ''){
-
-			if(events == 'None'){
-				settings['eventLayers'] = 'None';
-			}else{
-				events = events.slice(1, -1);
-				settings['eventLayers'] = events.split("],[");
-			}
-
-			Helioviewer.userSettings._processURLSettings(settings);
-			$(document).trigger("reinit-events-list", [helioviewerWebClient.timeControls.getDate()]);
         }
 
         if(typeof date != 'undefined' && date != ''){
-			helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(date), true);
-        }else{
-	        helioviewerWebClient.timeControls._onDateChange();
+            // this will trigger everything about time change
+            helioviewerWebClient.timeControls.setDate(Date.parseUTCDate(date));
         }
 
-		//$(document).trigger("observation-time-changed", [new Date(Helioviewer.userSettings.get("state.date"))]);
+        if (typeof events_v2 != 'undefined' && events_v2 != '') {
+            Helioviewer.eventLoader.ready((el) => {
+                el.setFromSelections(events_v2.split(","));
+            });
+        } else if (typeof events != 'undefined' && events != '') {
+            Helioviewer.eventLoader.ready((el) => {
+                el.setFromSourceLegacyEventString(events);
+            });
+        }
 
         if($(el).qtip('api')){
 	        $(el).qtip('api').toggle(false);
@@ -362,12 +343,21 @@ var UserLayersPresets = Class.extend({
 	},
 
 	listItem: function(k,v, user){
-		return '<li class="item-list-'+k+' item-list" data-id="'+k+'" data-name="'+v.name+'" data-date="'+v.observationDate+'" data-layers="'+v.layers+'" data-events="'+v.events+'">\
-			<a href="#" class="" >\
-				'+(typeof user != 'undefined' && user == true ? '<span class="fa fa-trash-o item-list-remove" data-id="'+k+'"></span>' : '')+'\
-				'+v.name+'\
-			</a>\
-		</li>';
+		let html = '<li class="item-list-'+k+' item-list" data-id="'+k+'" data-name="'+v.name+'" data-date="'+v.observationDate+'" data-layers="'+v.layers+'" data-events="'+v.events+'" ';
+
+		if (v.hasOwnProperty('events_v2')) {
+			html = html + 'data-events_v2="'+v.events_v2+'"';
+		}
+
+		html = html + '>';
+		html = html + '<a href="#" class="" >';
+		html = html + ((typeof user != 'undefined' && user == true) ? '<span class="fa fa-trash-o item-list-remove" data-id="'+k+'"></span>' : ''); 
+		html = html + v.name;
+		html = html + '</a>';
+		html = html + '</li>';
+
+
+		return html
 	},
 
 	buildList: function(obj){
@@ -378,6 +368,7 @@ var UserLayersPresets = Class.extend({
 		$.each(obj, function(k, v){
 
 			if(typeof v.submenu != 'undefined'){
+
 				listHTML += '<li class="dropdown"><a href="#">'+v.name+' <i class="arrow arrow-right"></i></a><ul class="sub-menu">';
 
 				if(v.submenu.length > 0){
@@ -395,7 +386,7 @@ var UserLayersPresets = Class.extend({
 					});
 				}
 
-			}else{
+			} else {
 				listHTML += self.listItem(k,v);
 			}
 
@@ -414,6 +405,7 @@ var UserLayersPresets = Class.extend({
 	},
 
 	buildUserList: function(obj){
+
 		var self = this;
 		var listHTML = '';
 
@@ -549,67 +541,8 @@ var UserLayersPresets = Class.extend({
 
 });
 
+
 var SystemLayersPresets = [
-	/*{
-		'name': 'Datasources',
-		'submenu': [
-			{
-				'name': 'SDO',
-				'submenu': [
-					{
-						'name':'SDO AIA 193',
-						'observationDate':'',
-						'events':'',
-						'layers':''
-					},{
-						'name':'SDO AIA 211',
-						'observationDate':'',
-						'events':'',
-						'layers':''
-					},{
-						'name':'SDO AIA 93',
-						'observationDate':'',
-						'events':'',
-						'layers':''
-					}
-				]
-			},
-			{
-				'name': 'SOHO',
-				'submenu': [
-					{
-						'name':'LASCO C2',
-						'observationDate':'',
-						'events':'',
-						'layers':''
-					}
-				]
-			},
-			{
-				'name': 'XRT',
-				'submenu': []
-			}
-		]
-	},
-	{
-		'name': 'Events',
-		'submenu': [
-			{
-				'name':'AR, CH',
-				'observationDate':'',
-				'events':'',
-				'layers':''
-			}
-		],
-		'items':[
-			{
-				'name':'AIA 193, AR, 10/12/2012',
-				'observationDate':'',
-				'events':'',
-				'layers':''
-			}
-		]
-	},*/
 	{
 		'name':'NOAA flares and active regions',
 		'observationDate':'',
@@ -640,4 +573,12 @@ var SystemLayersPresets = [
 		'events':'[SS,all,1]',
 		'layers':'[SDO,HMI,continuum,1,100,0,60,1,2017-11-16T09:02:20.000Z]'
 	},
+	{
+		'name':'Solar Flare Predictions',
+		'observationDate':'',
+		'events':'[FP,all,1]',
+		'layers':'[SDO,AIA,171,1,100,0,60,1,2017-11-16T09:02:20.000Z]'
+	},
+
+
 ];

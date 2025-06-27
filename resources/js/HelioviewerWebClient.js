@@ -10,6 +10,7 @@
   MovieHistory, UserVideoGallery, MessageConsole, Helioviewer,
   KeyboardManager, SettingsLoader, TimeControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers,
   TileLayerAccordion, VisualGlossary, _gaq */
+
 "use strict";
 
 var HelioviewerWebClient = HelioviewerClient.extend(
@@ -156,7 +157,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
                 }
                 break;
             case "#hv-drawer-timeline-events":
-                if ( drawerObj.open ) {
+                // Only output normal makes sense for timeline events
+                if ( drawerObj.open && Helioviewer.outputType == "normal" ) {
                     self.drawerTimelineEventsClick(true);
                 }
                 break;
@@ -278,10 +280,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         $(document).bind("datasources-initialized", function (e, dataSources) {
             self._tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, date);
-        });
-
-        $(document).bind("event-types-initialized", function (e, eventTypes, date) {
-            self._eventLayerAccordion = new EventLayerAccordion('#eventLayerAccordion', eventTypes, date);
         });
 
         this._super("#helioviewer-viewport-container-outer", date, marginTop, marginBottom);
