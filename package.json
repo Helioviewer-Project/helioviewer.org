@@ -27,7 +27,7 @@
     "xmlhttprequest": "^1.8.0"
   },
   "dependencies": {
-    "@helioviewer/event-tree": "^0.0.1",
+    "@helioviewer/event-tree": "^1.0.1",
     "@helioviewer/sun": "^0.8.0",
     "@react-three/drei": "^9.121.4",
     "@react-three/fiber": "^8.17.12",
