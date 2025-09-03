@@ -1,5 +1,5 @@
 {
-  "name": "helioviewer.org",
+  "name": "helioviewer",
   "scripts": {
     "test": "jest resources/js/test",
     "prettier": "npx prettier -w resources/js/test resources/js/Media/VideoPlayer.jsx resources/js/3d resources/js/Events",
