@@ -295,9 +295,11 @@ var MovieManagerUI = MediaManagerUI.extend(
 		};
 
 		let failCallback = function (errResp) {
+			// 12 - No images found in requested time range
+			// 16 - Insufficient data found in requested time range
 			const showErrorMessageWhitelist = [12, 16];
 			if (showErrorMessageWhitelist.indexOf(errResp.responseJSON.errno) != -1) {
-				Helioviewer.messageConsole.error(errResp.responseJSON.error);
+				Helioviewer.messageConsole.warn(errResp.responseJSON.error);
 			} else {
 				Helioviewer.messageConsole.error("Unable to create movie, please try again later");
 			}
