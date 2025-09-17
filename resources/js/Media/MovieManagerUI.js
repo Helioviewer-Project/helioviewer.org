@@ -295,14 +295,15 @@ var MovieManagerUI = MediaManagerUI.extend(
 		};
 
 		let failCallback = function (errResp) {
-
-			if (errResp.responseJSON.errno == 12) {
-				Helioviewer.messageConsole.error(errResp.responseJSON.error);
+			// 12 - No images found in requested time range
+			// 16 - Insufficient data found in requested time range
+			const showErrorMessageWhitelist = [12, 16];
+			if (showErrorMessageWhitelist.indexOf(errResp.responseJSON.errno) != -1) {
+				Helioviewer.messageConsole.warn(errResp.responseJSON.error);
 			} else {
 				Helioviewer.messageConsole.error("Unable to create movie, please try again later");
 			}
 			console.error(errResp.responseJSON);
-
 		}
 
 		return postJSON("postMovie", params).then(successCallback, failCallback);
@@ -629,7 +630,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 		dateRequested = Date.parseUTCDate(movie.dateRequested);
 
 		if (movie.status === 2 && (new Date) - dateRequested <= 180 * 24 * 60 * 60 * 1000) {
-		
+
 			thumbnail = movie.thumbnail;
 
 			html += "<div style='text-align: center;'>" +
