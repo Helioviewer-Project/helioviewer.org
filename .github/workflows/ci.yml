@@ -120,9 +120,13 @@ jobs:
         cd tests
         npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}}
 
+    - name: List Directories
+      if: always()
+      run: ls *
+
     - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: playwright-report-${{matrix.shardIndex}}
-        path: tests/playwright-report/
+        path: ../tests/playwright-report/
         retention-days: 1
