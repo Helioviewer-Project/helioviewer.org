@@ -630,7 +630,6 @@ var MovieManagerUI = MediaManagerUI.extend(
 		dateRequested = Date.parseUTCDate(movie.dateRequested);
 
 		if (movie.status === 2 && (new Date) - dateRequested <= 180 * 24 * 60 * 60 * 1000) {
-
 			thumbnail = movie.thumbnail;
 
 			html += "<div style='text-align: center;'>" +
