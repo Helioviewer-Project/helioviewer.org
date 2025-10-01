@@ -196,6 +196,11 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 </head>
 <body <?php echo ($outputType ? 'class="helioviewer-view-type-'.$outputType.'"' : '')?>>
 
+<!-- Banner Area -->
+<div id="shutdown-banner" style="background-color: #0b3d91; color: white; padding: 12px 20px; box-sizing: border-box; width: 100%; display: flex; align-items: center; justify-content: center; position: relative; z-index: 99999; font-size: 16px;">
+	<span>Due to the lapse in federal government funding, NASA is not updating this website. We sincerely regret this inconvenience.</span>
+</div>
+
 <!-- Previously dynamic-made elements, created for selecting purposes -->
 <a class="text-btn" style="display:none;"></a>
 

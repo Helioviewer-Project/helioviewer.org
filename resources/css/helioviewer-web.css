@@ -309,7 +309,7 @@ html, body {
                  display: none;
                  z-index: 2;
                 position: absolute;
-                     top: 3em;
+                     top: 6.75em;
               max-height: 95%;
                  padding: 0;
               overflow-x: visible;
@@ -456,7 +456,7 @@ html, body {
 }
 #hv-drawer-tab-left {
            position: absolute;
-               top: 6.75em;
+               top: 10.5em;
               left: -2.7em;
     -webkit-transform: rotate(90deg);
           transform: rotate(90deg);
@@ -788,7 +788,7 @@ span.ui-icon-hover, div.ui-icon-hover {
 /* jGrowl */
 #message-console {
    position: absolute;
-   top: 3em;
+   top: 6.75em;
    left: 0;
    right: 0;
    margin: auto;
