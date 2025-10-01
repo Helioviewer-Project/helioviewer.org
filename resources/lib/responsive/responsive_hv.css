@@ -783,11 +783,21 @@
 		width:0px !important;
 		height:0px !important;
 	}
+	#hv-header {
+		/*position: absolute;*/
+		position: fixed;
+		top: 80px;
+		height: 40px;
+		min-width: 300px !important;
+		max-height: 40px;
+		background-image: url(../../images/mobile/backmobilemenubg3.png);
+		z-index: 10;
+	}
 
 	#hvmobscale_div {
 		height: 35px;
 		position: absolute;
-		top: 60px;
+		top: 120px;
 		width: 110px;
 		border: 0px silver solid;
 		z-index: 1;
@@ -855,16 +865,6 @@
 		background-color: none !important;
 	}
 
-	#hv-header {
-		/*position: absolute;*/
-		position: fixed;
-		top: 0px;
-		height: 40px;
-		min-width: 300px !important;
-		max-height: 40px;
-		background-image: url(../../images/mobile/backmobilemenubg3.png);
-		z-index: 10;
-	}
 
 
 	#hv-header #menus {
@@ -1503,3 +1503,15 @@
 .helios-link {
     display: inline !important;
 }
+
+#message-console {
+   position: absolute;
+   top: 12.75em;
+   left: 0;
+   right: 0;
+   margin: auto;
+   min-width: 20em;
+   max-width: 30em;
+   text-align: center;
+}
+
