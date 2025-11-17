@@ -126,7 +126,6 @@ export default class EventLoader {
   }
 
   static translateSelectionsToLegacyEventLayers(selections, source, selectedEvents) {
-
     const transformEventLabelsMap = (elm) => {
       let transformedMap = {};
 
@@ -211,7 +210,6 @@ export default class EventLoader {
       }
 
       if (parts.length == 4) {
-
         let makeLegacyEventId = (eventPin, frmName, eventID) => {
           let escapedFrmName = frmName
             .replace(/ /g, "_")
@@ -238,33 +236,32 @@ export default class EventLoader {
 
         // If legacyEventID couldn't be found, skip this item
         if (legacyEventID) {
-            let isFound = false;
+          let isFound = false;
 
-            legacySelections = legacySelections.map((s) => {
-              if (s.event_type == selectedEventTypePin) {
-                isFound = true;
+          legacySelections = legacySelections.map((s) => {
+            if (s.event_type == selectedEventTypePin) {
+              isFound = true;
 
-                return {
-                  event_instances: [...s.event_instances, legacyEventID],
-                  event_type: selectedEventTypePin,
-                  frms: s.frms,
-                  open: 1
-                };
-              }
-
-              return s;
-            });
-
-            if (!isFound) {
-              legacySelections.push({
-                event_instances: [legacyEventID],
+              return {
+                event_instances: [...s.event_instances, legacyEventID],
                 event_type: selectedEventTypePin,
-                frms: [],
+                frms: s.frms,
                 open: 1
-              });
+              };
             }
-        }
 
+            return s;
+          });
+
+          if (!isFound) {
+            legacySelections.push({
+              event_instances: [legacyEventID],
+              event_type: selectedEventTypePin,
+              frms: [],
+              open: 1
+            });
+          }
+        }
       }
     }
 
