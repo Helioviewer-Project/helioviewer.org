@@ -234,30 +234,33 @@ export default class EventLoader {
           }
         }
 
-        let isFound = false;
+        // If legacyEventID couldn't be found, skip this item
+        if (legacyEventID) {
+          let isFound = false;
 
-        legacySelections = legacySelections.map((s) => {
-          if (s.event_type == selectedEventTypePin) {
-            isFound = true;
+          legacySelections = legacySelections.map((s) => {
+            if (s.event_type == selectedEventTypePin) {
+              isFound = true;
 
-            return {
-              event_instances: [...s.event_instances, legacyEventID],
-              event_type: selectedEventTypePin,
-              frms: s.frms,
-              open: 1
-            };
-          }
+              return {
+                event_instances: [...s.event_instances, legacyEventID],
+                event_type: selectedEventTypePin,
+                frms: s.frms,
+                open: 1
+              };
+            }
 
-          return s;
-        });
-
-        if (!isFound) {
-          legacySelections.push({
-            event_instances: [legacyEventID],
-            event_type: selectedEventTypePin,
-            frms: [],
-            open: 1
+            return s;
           });
+
+          if (!isFound) {
+            legacySelections.push({
+              event_instances: [legacyEventID],
+              event_type: selectedEventTypePin,
+              frms: [],
+              open: 1
+            });
+          }
         }
       }
     }
