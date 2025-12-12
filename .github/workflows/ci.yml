@@ -44,7 +44,7 @@ jobs:
   playwright-e2e-tests:
     strategy:
       matrix:
-        shardIndex: [1,2,3,4,5]
+        shardIndex: [1, 2, 3, 4, 5]
         shardTotal: [5]
       # If one of the shards fails, continue running the remaining tests
       fail-fast: false
@@ -52,81 +52,12 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout the code under test
-      uses: actions/checkout@v4
-      with:
-        submodules: true
-        path: 'helioviewer.org'
-
-    - name: Checkout the latest Helioviewer API
-      uses: actions/checkout@v4
-      with:
-        repository: 'Helioviewer-Project/api'
-        path: 'api'
-
-    - name: Checkout test code
-      uses: actions/checkout@v4
-      with:
-        repository: 'Helioviewer-Project/helioviewer.org-tests'
-        path: 'tests'
-
-    # See https://github.com/actions/checkout?tab=readme-ov-file#fetch-only-a-single-file
-    - name: Checkout the Dockerfile for local Helioviewer
-      uses: actions/checkout@v4
-      with:
-        repository: 'Helioviewer-Project/helioviewer.org-docker'
-        path: 'compose'
-        sparse-checkout: |
-          compose.yaml
-          .env.example
-        sparse-checkout-cone-mode: false
-    - name: Print current directory
-      run: |
-        echo $(pwd)
-        echo $(ls)
-
-    - name: Setup environment file
-      run: mv compose/.env.example .env
-
-    - name: Start local Helioviewer environment
-      id: docker
-      run: |
-        mv compose/compose.yaml .
-        docker compose up -d --wait
-
-    - name: Show docker compose logs
-      if: always()
-      run: |
-        docker compose logs
-        cat compose.yaml
-
-    - name: Fix cache directory permissions
-      if: always()
-      run: |
-        docker compose exec web chown 33:33 cache
-
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-
-    - name: Install Playwright Browsers
-      run: |
-        cd tests
-        npm ci
-        npx playwright install --with-deps
-
     - name: Run Playwright tests
-      run: |
-        cd tests
-        npx playwright test --shard=${{matrix.shardIndex}}/${{matrix.shardTotal}}
-
-    - uses: actions/upload-artifact@v4
-      if: always()
+      uses: Helioviewer-Project/helioviewer.org-tests/.github/actions/playwright-test@main
       with:
-        name: blob-report-${{matrix.shardIndex}}
-        path: tests/blob-report/
-        retention-days: 1
-
+        api-ref: ${{ github.sha }}
+        shard-index: ${{ matrix.shardIndex }}
+        shard-total: ${{ matrix.shardTotal }}
   merge-reports:
     # Merge reports after playwright-tests, even if some shards have failed
     if: ${{ !cancelled() }}
@@ -138,24 +69,9 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: 'Helioviewer-Project/helioviewer.org-tests'
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Download blob reports from GitHub Actions Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: all-blob-reports
-        pattern: blob-report-*
-        merge-multiple: true
+        path: 'helioviewer.org-tests'
 
-    - name: Merge into HTML Report
-      run: npx playwright merge-reports --reporter html ./all-blob-reports
-
-    - name: Upload HTML report
-      uses: actions/upload-artifact@v4
+    - name: Merge Playwright reports
+      uses: Helioviewer-Project/helioviewer.org-tests/.github/actions/playwright-merge-reports@main
       with:
-        name: html-report--attempt-${{ github.run_attempt }}
-        path: playwright-report
-        retention-days: 5
+        test-repo-path: 'helioviewer.org-tests'
