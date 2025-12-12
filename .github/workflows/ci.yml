@@ -55,7 +55,7 @@ jobs:
     - name: Run Playwright tests
       uses: Helioviewer-Project/helioviewer.org-tests/.github/actions/playwright-test@main
       with:
-        api-ref: ${{ github.sha }}
+        helioviewer-org-ref: ${{ github.sha }}
         shard-index: ${{ matrix.shardIndex }}
         shard-total: ${{ matrix.shardTotal }}
   merge-reports:
