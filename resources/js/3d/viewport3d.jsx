@@ -26,10 +26,7 @@ function Viewport3D({ active, visible, layers, date, coordinator, onFail, onLoad
     <>
       <div className="solid-bg"></div>
       {/* If enabled, show the 3D viewport. This can be turned on and off anytime. */}
-      <Canvas
-        style={{ visibility: visible ? "visible" : "hidden" }}
-        orthographic={true}
-        fallback={<CanvasFallback />}>
+      <Canvas style={{ visibility: visible ? "visible" : "hidden" }} orthographic={true} fallback={<CanvasFallback />}>
         {/* Set up the camera controls */}
         <CameraControls ref={controls} dollySpeed={dollySpeed} />
         {/* Render the 3D viewport from the current state */}

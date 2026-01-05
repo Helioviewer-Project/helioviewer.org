@@ -3,10 +3,9 @@ import React, { useEffect } from "react";
 // Check if WebGL is actually supported
 function isWebGLSupported() {
   try {
-    const canvas = document.createElement('canvas');
-    return !!(window.WebGLRenderingContext &&
-      (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-  } catch(e) {
+    const canvas = document.createElement("canvas");
+    return !!(window.WebGLRenderingContext && (canvas.getContext("webgl") || canvas.getContext("experimental-webgl")));
+  } catch (e) {
     return false;
   }
 }
