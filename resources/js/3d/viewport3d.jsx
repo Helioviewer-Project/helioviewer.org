@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import Hv3D from "./helioviewer3d";
 import { CameraControls } from "@react-three/drei";
+import CanvasFallback from "./fallback";
 
 function Viewport3D({ active, visible, layers, date, coordinator, onFail, onLoadStart, onLoadFinish, dollySpeed }) {
   const controls = useRef(null);
@@ -25,7 +26,10 @@ function Viewport3D({ active, visible, layers, date, coordinator, onFail, onLoad
     <>
       <div className="solid-bg"></div>
       {/* If enabled, show the 3D viewport. This can be turned on and off anytime. */}
-      <Canvas style={{ visibility: visible ? "visible" : "hidden" }} orthographic={true}>
+      <Canvas
+        style={{ visibility: visible ? "visible" : "hidden" }}
+        orthographic={true}
+        fallback={<CanvasFallback />}>
         {/* Set up the camera controls */}
         <CameraControls ref={controls} dollySpeed={dollySpeed} />
         {/* Render the 3D viewport from the current state */}

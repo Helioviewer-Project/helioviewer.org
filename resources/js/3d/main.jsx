@@ -58,6 +58,11 @@ function render(root, launched, enabled, layers, date, dollySpeed, coordinator_u
   );
 }
 
+window.Set3DMode = (enabled) => {
+  Helioviewer.userSettings.set("state.enable3d", enabled);
+  $(document).trigger("update-external-datasource-integration");
+}
+
 /**
  * Render the 3D view.
  */
