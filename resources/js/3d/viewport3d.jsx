@@ -3,6 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import Hv3D from "./helioviewer3d";
 import { CameraControls } from "@react-three/drei";
 import CanvasFallback from "./fallback";
+import * as THREE from "three";
 
 function Viewport3D({ active, visible, layers, date, coordinator, onFail, onLoadStart, onLoadFinish, dollySpeed }) {
   const controls = useRef(null);
@@ -10,6 +11,20 @@ function Viewport3D({ active, visible, layers, date, coordinator, onFail, onLoad
   useEffect(() => {
     if (controls.current != null) {
       controls.current.zoomTo(150);
+
+      // After any pan/rotation, reset target to (0,0,0) while maintaining the view
+      const onControlEnd = () => {
+        // Set both position and target
+        controls.current.setOrbitPoint(0, 0, 0);
+      };
+
+      controls.current.addEventListener('controlend', onControlEnd);
+
+      return () => {
+        if (controls.current) {
+          controls.current.removeEventListener('controlend', onControlEnd);
+        }
+      };
     }
   }, [controls.current]);
 
