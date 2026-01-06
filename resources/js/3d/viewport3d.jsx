@@ -17,8 +17,8 @@ function Viewport3D({ active, visible, layers, date, coordinator, onFail, onLoad
    * Move the camera to the given position
    * @param {Vector3} position
    */
-  const setCameraPosition = (position) => {
-    controls.current.setLookAt(position.x, position.y, position.z, 0, 0, 0);
+  const setCameraPosition = ({position, target}) => {
+    controls.current.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   };
 
   /** Render the 3D canvas */
@@ -39,6 +39,7 @@ function Viewport3D({ active, visible, layers, date, coordinator, onFail, onLoad
             layers={layers}
             date={date}
             setCameraPosition={setCameraPosition}
+            getCameraTarget={() => controls.current.getTarget()}
             onFail={onFail}
           />
         ) : (

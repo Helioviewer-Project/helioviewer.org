@@ -5,7 +5,7 @@ import { Layers } from "./components/layers";
 /**
  * Renders the current helioviewer state
  */
-function Hv3D({ coordinator, layers, date, setCameraPosition, onFail, onLoadStart, onLoadFinish }) {
+function Hv3D({ coordinator, layers, date, setCameraPosition, getCameraTarget, onFail, onLoadStart, onLoadFinish }) {
   // Disable react 3 fiber automatic rendering by executing useFrame with a
   // non-zero value.
   useFrame(() => {}, 1);
@@ -26,6 +26,7 @@ function Hv3D({ coordinator, layers, date, setCameraPosition, onFail, onLoadStar
       layers={layers}
       coordinator={coordinator}
       setCameraPosition={setCameraPosition}
+      getCameraTarget={getCameraTarget}
       onFail={onFail}
     />
   );

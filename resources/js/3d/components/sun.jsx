@@ -17,6 +17,7 @@ function Sun3D({
   opacity,
   observatory,
   setCameraPosition,
+  getCameraTarget,
   useSphereOcclusion,
   parentReady,
   onStartLoad,
@@ -100,12 +101,15 @@ function Sun3D({
             sunObj.current.getWorldDirection(objectDirection);
             // On first look, set the camera to be right in front of the sun.
             if (firstLook) {
-              setCameraPosition(objectDirection.clone().multiplyScalar(100));
+              setCameraPosition({
+                position: objectDirection.clone().multiplyScalar(100),
+                target: new Vector3(0, 0, 0)
+              });
               setFirstLook(false);
             } else {
               // Compute where the camera needs to be so we're looking at the new
               // sun from the same perspective.
-              setCameraPosition(computeCameraPosition(originalSunDirection, objectDirection, camera.position));
+              setCameraPosition(computeCameraPosition(originalSunDirection, objectDirection, camera.position, getCameraTarget()));
             }
             setOriginalSunDirection(objectDirection.clone());
           }
@@ -183,7 +187,7 @@ function Sun3D({
   );
 }
 
-function computeCameraPosition(originalDirection, newDirection, currentCameraPosition) {
+function computeCameraPosition(originalDirection, newDirection, currentCameraPosition, currentCameraTarget) {
   // Normalize the direction vectors to ensure they are unit vectors
   const origDir = originalDirection.clone().normalize();
   const newDir = newDirection.clone().normalize();
@@ -200,8 +204,9 @@ function computeCameraPosition(originalDirection, newDirection, currentCameraPos
 
   // Apply the rotation to the relative camera position
   const newCameraPosition = relativePosition.applyMatrix4(rotationMatrix);
+  const newCameraTarget = currentCameraTarget.applyMatrix4(rotationMatrix);
 
-  return newCameraPosition;
+  return {position: newCameraPosition, target: newCameraTarget};
 }
 
 export default Sun3D;
