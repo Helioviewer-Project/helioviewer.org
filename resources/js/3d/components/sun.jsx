@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { extend, useFrame, useThree } from "@react-three/fiber";
 import { Quality, StaticSun } from "@helioviewer/sun";
 import { SSCWS } from "../coordinates/sscws";
-import { Vector3, Matrix4 } from "three";
+import { Vector3, Matrix4, Quaternion } from "three";
+import * as THREE from "three";
 import Background from "../background";
 import { Horizons } from "../coordinates/horizons";
 extend({ StaticSun });
@@ -108,8 +109,9 @@ function Sun3D({
               setFirstLook(false);
             } else {
               // Compute where the camera needs to be so we're looking at the new
-              // sun from the same perspective.
-              setCameraPosition(computeCameraPosition(originalSunDirection, objectDirection, camera.position, getCameraTarget()));
+              // sun from the same perspective, preserving any pan offset.
+              const currentTarget = getCameraTarget ? getCameraTarget() : new Vector3(0, 0, 0);
+              setCameraPosition(computeCameraPosition(originalSunDirection, objectDirection, camera.position, currentTarget));
             }
             setOriginalSunDirection(objectDirection.clone());
           }
@@ -192,19 +194,16 @@ function computeCameraPosition(originalDirection, newDirection, currentCameraPos
   const origDir = originalDirection.clone().normalize();
   const newDir = newDirection.clone().normalize();
 
-  // Use the current camera position directly
-  const relativePosition = currentCameraPosition.clone();
+  // Calculate the rotation quaternion from original to new direction
+  const quaternion = new Quaternion();
+  quaternion.setFromUnitVectors(origDir, newDir);
 
-  // Create rotation matrices for both directions
-  const originalMatrix = new Matrix4().lookAt(origDir, new Vector3(), new Vector3(0, 1, 0));
-  const newMatrix = new Matrix4().lookAt(newDir, new Vector3(), new Vector3(0, 1, 0));
+  // Create rotation matrix from quaternion
+  const rotationMatrix = new Matrix4().makeRotationFromQuaternion(quaternion);
 
-  // Calculate the rotation from original to new direction
-  const rotationMatrix = new Matrix4().multiplyMatrices(newMatrix, originalMatrix.invert());
-
-  // Apply the rotation to the relative camera position
-  const newCameraPosition = relativePosition.applyMatrix4(rotationMatrix);
-  const newCameraTarget = currentCameraTarget.applyMatrix4(rotationMatrix);
+  // Apply the rotation to both camera position and target
+  const newCameraPosition = currentCameraPosition.clone().applyMatrix4(rotationMatrix);
+  const newCameraTarget = currentCameraTarget.clone().applyMatrix4(rotationMatrix);
 
   return {position: newCameraPosition, target: newCameraTarget};
 }
