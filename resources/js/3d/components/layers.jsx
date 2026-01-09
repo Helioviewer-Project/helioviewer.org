@@ -22,7 +22,7 @@ function getRenderPriority(source, index) {
   return index;
 }
 
-function Layers({ date, layers, coordinator, setCameraPosition, onFail, onLoadStart, onLoadFinish }) {
+function Layers({ date, layers, coordinator, setCameraPosition, getCameraTarget, onFail, onLoadStart, onLoadFinish }) {
   const priorities = layers.map((layer, idx) => getRenderPriority(layer.sourceId, idx));
   // Returns true if the sourceId must be rendered in a plane.
   const isPlane = (sourceId) => PLANE_SOURCES.indexOf(sourceId) !== -1;
@@ -31,14 +31,17 @@ function Layers({ date, layers, coordinator, setCameraPosition, onFail, onLoadSt
   // spheres don't blend with the planes.
   const sceneHasSphereModels = layers.some((layer) => PLANE_SOURCES.indexOf(layer.sourceId) === -1);
 
-  const [targetCameraPosition, setTargetCameraPosition] = useState(new Vector3(0, 0, 100));
+  const [targetCameraPosition, setTargetCameraPosition] = useState({
+    position: new Vector3(0, 0, 100),
+    target: new Vector3(0, 0, 0)
+  });
   const [loadCount, setLoadCount] = useState(0);
 
   useEffect(() => {
     if (loadCount === 0) {
       setCameraPosition(targetCameraPosition);
     }
-  }, [loadCount]);
+  }, [loadCount, targetCameraPosition]);
 
   /** Render each layer. Plus a sphere that holds as a background for the sun. */
   return (
@@ -54,6 +57,7 @@ function Layers({ date, layers, coordinator, setCameraPosition, onFail, onLoadSt
           opacity={layer.visible ? layer.opacity : 0}
           observatory={layer.observatory}
           setCameraPosition={setTargetCameraPosition}
+          getCameraTarget={getCameraTarget}
           useSphereOcclusion={sceneHasSphereModels && isPlane(layer.sourceId)}
           onStartLoad={() => {
             onLoadStart();
