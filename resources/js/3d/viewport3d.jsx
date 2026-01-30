@@ -18,11 +18,11 @@ function Viewport3D({ active, visible, layers, date, coordinator, onFail, onLoad
         controls.current.setOrbitPoint(0, 0, 0);
       };
 
-      controls.current.addEventListener('controlend', onControlEnd);
+      controls.current.addEventListener("controlend", onControlEnd);
 
       return () => {
         if (controls.current) {
-          controls.current.removeEventListener('controlend', onControlEnd);
+          controls.current.removeEventListener("controlend", onControlEnd);
         }
       };
     }
@@ -32,7 +32,7 @@ function Viewport3D({ active, visible, layers, date, coordinator, onFail, onLoad
    * Move the camera to the given position
    * @param {Vector3} position
    */
-  const setCameraPosition = ({position, target}) => {
+  const setCameraPosition = ({ position, target }) => {
     controls.current.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   };
 

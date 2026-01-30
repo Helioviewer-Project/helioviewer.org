@@ -111,7 +111,9 @@ function Sun3D({
               // Compute where the camera needs to be so we're looking at the new
               // sun from the same perspective, preserving any pan offset.
               const currentTarget = getCameraTarget ? getCameraTarget() : new Vector3(0, 0, 0);
-              setCameraPosition(computeCameraPosition(originalSunDirection, objectDirection, camera.position, currentTarget));
+              setCameraPosition(
+                computeCameraPosition(originalSunDirection, objectDirection, camera.position, currentTarget)
+              );
             }
             setOriginalSunDirection(objectDirection.clone());
           }
@@ -205,7 +207,7 @@ function computeCameraPosition(originalDirection, newDirection, currentCameraPos
   const newCameraPosition = currentCameraPosition.clone().applyMatrix4(rotationMatrix);
   const newCameraTarget = currentCameraTarget.clone().applyMatrix4(rotationMatrix);
 
-  return {position: newCameraPosition, target: newCameraTarget};
+  return { position: newCameraPosition, target: newCameraTarget };
 }
 
 export default Sun3D;

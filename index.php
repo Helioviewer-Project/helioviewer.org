@@ -109,7 +109,6 @@
 	<link rel="stylesheet" href="/resources/lib/jquery.jgrowl/jquery.jgrowl.min.css" />
 	<link rel="stylesheet" href="/resources/lib/jquery.qTip3/jquery.qtip.min.css" />
 	<link rel="stylesheet" href="/resources/lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
-	<link rel="stylesheet" href="/resources/lib/DatetimePicker/jquery.datetimepicker.css" />
 	<link rel="stylesheet" <?=attr('href', "resources/lib/flatpickr/flatpickr.min.css");?> />
 	<link rel="stylesheet" <?=attr('href', "resources/lib/flatpickr/flatpickr.style.css");?> type="text/css" />
 	<link rel="stylesheet" href="/resources/lib/boneVojage/bonevojage.css">
@@ -1926,7 +1925,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<script src="/resources/lib/jquery.imgareaselect-0.9.8/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
 	<script src="/resources/lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
 	<script src="/resources/lib/jquery.jsTree-1.0rc/jquery.jstree.js"></script>
-	<script src="/resources/lib/DatetimePicker/build/jquery.datetimepicker.full.js" type="text/javascript" language="javascript"></script>
 	<script <?=attr('src', "resources/lib/flatpickr/flatpickr.min.js");?> type="text/javascript" language="javascript"></script>
 	<script src="/resources/lib/boneVojage/jquery.bonevojage.js" type="text/javascript" language="javascript"></script>
 	<script src="/resources/lib/mediaelement/build/mediaelement-and-player.min.js" type="text/javascript" language="javascript"></script>
