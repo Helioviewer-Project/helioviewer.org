@@ -1,0 +1,59 @@
+@media screen and (max-width: 1024px) {
+    .helioviewer-view-type-minimal {
+        min-width: 100vw;
+        max-width: 100vw;
+    }
+
+    .hv-drawer-right.user-select-none.hv-drawer-date {
+        left: 5%;
+        width: 90%;
+    }
+
+    #hv-drawer-screenshots {
+        /** TODO: Revisit this */
+        display: none !important;
+    }
+
+    #helioviewer-viewport-container-outer {
+        min-width: 100vw;
+        width: 100vw;
+    }
+
+    #message-console {
+        margin-top: 11em;
+    }
+
+    #k12-scale {
+        min-width: 100vw;
+        width: 100vw;
+    }
+}
+
+@media screen and (max-width: 391px) {
+    #time-step-label {
+        margin-right: 0px;
+    }
+
+    #k12-accordion-date .row .field {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .k12-timeNowBtn {
+        margin-top: 0;
+    }
+
+    #image-layer-select-container {
+        transform: translateY(5px);
+    }
+
+    #image-layer-select {
+        margin-bottom: -8px;
+    }
+
+    #observation-label {
+        margin-top: 0 !important;
+    }
+}

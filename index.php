@@ -41,6 +41,7 @@
         }else if(isset($_GET['output']) && ($_GET['output'] == 'embed' || $_GET['output'] == 'minimal')){
                 $outputType = $_GET['output'];
         }
+	    $is_mobile = !$outputType && isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad');
 
         if($outputType){ // minimal and embed statistic
                 //Load Config
@@ -138,6 +139,7 @@
 		<link rel="stylesheet" href="/resources/css/youtube.css" />
 		<link rel="stylesheet" href="/resources/css/font-awesome.min.css" />
 		<link rel="stylesheet" href="/resources/css/helioviewer-views.css" />
+		<link rel="stylesheet" href="/resources/css/mobile_minimal_embed.css" />
 	<?php
 	} else {
 	?>
@@ -151,8 +153,7 @@
 	<?php /* "cascading" part of CSS. Which is needed for this 3d.css         */ ?>
 	<link rel="stylesheet" href="/resources/css/3d.css" />
 <?php
-if(isset($_SERVER['HTTP_USER_AGENT'])) {
-	if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
+if($is_mobile) {
 		$mtime = filemtime('resources/lib/responsive/responsive_hv.css');
 		$hvmobcssfiles= <<<MCF
 			<!-- START responsive CSS files -->
@@ -189,7 +190,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			</style>
 	DCH;
 		echo $hvdesktopcsshides;
-	}
 }
 ?>
 	<style id="js-styles"></style>
@@ -1996,8 +1996,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	?>
 
 <?php
-if(isset($_SERVER['HTTP_USER_AGENT'])) {
-	if(strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) {
+if($is_mobile) {
 	$hvmobjsfiles= <<<MJF
 	<!-- START responsive JS files -->
 	<script src='/resources/lib/responsive/zeynep1.js'></script>
@@ -2006,7 +2005,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<!-- END responsive JS files -->
 	MJF;
 	echo $hvmobjsfiles;
-	}
 }
 ?>
 
@@ -2113,7 +2111,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			Helioviewer.messageConsole = new MessageConsole();
 			Helioviewer.outputType = "<?php echo $outputType ? $outputType : "normal"; ?>";
 			Helioviewer.debug = <?php echo $debug ? 'true' : 'false'; ?>;
-			Helioviewer.mobile = <?php echo isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'],'Phone')|strpos($_SERVER['HTTP_USER_AGENT'],'Android')|strpos($_SERVER['HTTP_USER_AGENT'],'iPad')) ? 'true' : 'false'; ?>
+			Helioviewer.mobile = <?php echo $is_mobile ? 'true' : 'false'; ?>
 
 			const loadHelioviewer = (userSettings) => {
 
