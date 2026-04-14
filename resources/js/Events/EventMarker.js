@@ -53,25 +53,45 @@ var EventMarker = Class.extend(
     },
 
     /**
-     * Returns true if this event data contains polygon information
+     * Returns true if this event data contains footprint polygon information
+     * footprint is an array of polygons, where each polygon is an array of [x, y] HPC coordinates
      */
-    hasBoundingBox: function () {
-      return this.hasOwnProperty("hpc_boundcc") && this.hpc_boundcc != "";
+    hasFootprint: function () {
+      return this.hasOwnProperty("footprint") && Array.isArray(this.footprint) && this.footprint.length > 0;
     },
 
     /**
-     * @description Creates the marker and adds it to the viewport
-     * @param {integer} zIndex, zIndex as you know , visibility hierarchy of this marker in html
+     * @description Creates the marker pin icon and adds it to the viewport.
+     *              The marker is positioned differently depending on whether
+     *              the event has a polygon region (bounding box) or not.
+     *
+     * @param {integer} zIndex - CSS z-index for layering markers in the DOM
+     *
+     * COORDINATE SYSTEM:
+     * - hv_hpc_x, hv_hpc_y: Helioprojective Cartesian coordinates (arcseconds from Sun center)
+     * - hv_poly_hpc_x_final, hv_poly_hpc_y_final: Pre-calculated polygon position
+     * - imageScale: Current zoom level (arcseconds per pixel)
+     * - refScale: Reference scale at which polygon pixel dimensions were computed (max zoom)
+     *
+     * SCALING FORMULA:
+     * - scaleFactor = refScale / imageScale
+     * - When zoomed in (imageScale < refScale): scaleFactor > 1, things appear larger
+     * - When zoomed out (imageScale > refScale): scaleFactor < 1, things appear smaller
+     *
+     * MARKER OFFSET:
+     * - The -12 and -38 pixel offsets position the marker pin's tip at the event location
+     * - The marker icon is 24x38 pixels, so offset centers the tip at bottom-center
      */
     createMarker: function (zIndex) {
       var markerURL;
 
-      // Create event marker DOM node
+      // Create event marker DOM node (the pin icon)
       this.eventMarkerDomNode = $("<div/>");
       this.eventMarkerDomNode.attr({
         class: "event-marker constant-size"
       });
 
+      // Sanitize the event ID for use in DOM (remove special characters)
       var id = this.id;
       id = id.replace(/ivo:\/\/helio-informatics.org\//g, "");
       id = id.replace(/\(|\)|\.|\:/g, "");
@@ -84,35 +104,57 @@ var EventMarker = Class.extend(
         "data-testid": eventMarkerTestId.replaceAll("\n", "")
       });
 
-      if (this.hasBoundingBox()) {
-        let refScale = Helioviewer.userSettings.get("state.refScale");
-        var polygonCenterX =
-          (this.hv_poly_width_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale)) / 2;
-        var polygonCenterY =
-          (this.hv_poly_height_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale)) / 2;
+      // Calculate marker position based on whether event has a footprint polygon
+      if (this.hasFootprint()) {
+        // EVENT HAS FOOTPRINT POLYGON
+        // Position marker at the centroid (center) of the footprint
 
-        var scaledMarkerX = this.hv_marker_offset_x * (refScale / Helioviewer.userSettings.settings.state.imageScale);
-        var scaledMarkerY = this.hv_marker_offset_y * (refScale / Helioviewer.userSettings.settings.state.imageScale);
+        // imageScale: Current view's image scale (arcsec/pixel)
+        let imageScale = Helioviewer.userSettings.settings.state.imageScale;
 
-        var polygonPosX = this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale;
-        var polygonPosY = this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale;
+        // Calculate centroid of all footprint points
+        // Centroid = average of all polygon vertices in HPC coordinates
+        // footprint is an array of {x, y} point objects
+        let totalX = 0, totalY = 0;
 
-        var markerX = Math.round(polygonPosX + polygonCenterX + scaledMarkerX);
-        var markerY = Math.round(polygonPosY + polygonCenterY + scaledMarkerY);
+        this.footprint.forEach((point) => {
+          // point.x = x in arcseconds, point.y = y in arcseconds
+          totalX += point.x;
+          totalY += point.y;
+        });
 
+        // Calculate centroid in HPC arcseconds
+        let centroidX = totalX / this.footprint.length;
+        let centroidY = totalY / this.footprint.length;
+
+        // Convert centroid to screen pixels
+        // Negate Y because screen Y is inverted (positive down)
+        var markerX = Math.round(centroidX / imageScale);
+        var markerY = Math.round(-centroidY / imageScale);
+
+        // Apply pin icon offset (-12, -38) to position tip at centroid
+        // Marker icon is 24x38px, so this centers the tip at bottom-center of icon
         this.pos = {
           x: markerX - 12,
           y: markerY - 38
         };
       } else {
+        // EVENT WITHOUT FOOTPRINT - Simple point marker
+        // Position directly at hv_hpc_x, hv_hpc_y coordinates
+
+        // hv_hpc_x: X position in arcseconds (positive = West/right)
+        // hv_hpc_y: Y position in arcseconds (positive = North/up, hence negated for screen coords)
         this.pos = {
           x: Math.round(this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale) - 12,
           y: Math.round(-this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale) - 38
         };
       }
 
+      // Set marker icon based on event type (AR, FL, CH, etc.)
       markerURL =
         serverSettings["rootURL"] + "/resources/images/eventMarkers/" + this.type.toUpperCase() + "@2x" + ".png";
+
+      // Apply position and styling to marker DOM node
       this.eventMarkerDomNode.css({
         left: this.pos.x + "px",
         top: this.pos.y + "px",
@@ -121,63 +163,128 @@ var EventMarker = Class.extend(
         // Additional styles found in events.css
       });
 
+      // Append marker to parent FRM (Feature Recognition Method) container
       if (typeof this.parentFRM != "undefined") {
-        //if ( this.parentFRM._visible == false ) {
-        //this.eventMarkerDomNode.hide();
-        //}
         this.parentFRM.append(this.eventMarkerDomNode);
       } else {
-        //console.warn('this.parentFRM does not exist!');
-        //console.warn([this.event_type, this.frm_name]);
         return;
       }
 
+      // Bind event handlers for marker interaction
       this.eventMarkerDomNode.bind("click", $.proxy(this.toggleEventPopUp, this));
       this.eventMarkerDomNode.mouseenter($.proxy(this.toggleEventLabel, this));
       this.eventMarkerDomNode.mouseleave($.proxy(this.toggleEventLabel, this));
     },
 
     /**
-     * @description Creates the marker and adds it to the viewport
+     * @description Creates the polygon region overlay for events that have footprint data.
+     *              The region is rendered as an SVG polygon directly from HPC coordinates.
+     *
+     * @param {integer} zIndex - CSS z-index for layering regions in the DOM
+     *
+     * HOW SVG FOOTPRINT RENDERING WORKS:
+     * 1. The API provides footprint as an array of polygons
+     * 2. Each polygon is an array of [x, y] points in HPC coordinates (arcseconds)
+     * 3. We convert HPC coordinates to screen pixels and render as SVG polygons
+     *
+     * DATA STRUCTURE:
+     * event.footprint = [
+     *   [                           // First polygon
+     *     [x1, y1],                 // Point 1: HPC coordinates in arcseconds
+     *     [x2, y2],                 // Point 2
+     *     [x3, y3],                 // Point 3
+     *     ...
+     *   ],
+     *   [                           // Second polygon (if any)
+     *     [x1, y1],
+     *     ...
+     *   ]
+     * ]
+     *
+     * COORDINATE CONVERSION:
+     * - HPC X (arcseconds) -> Screen X (pixels): x / imageScale
+     * - HPC Y (arcseconds) -> Screen Y (pixels): -y / imageScale (negated because screen Y is inverted)
+     *
+     * ADVANTAGE OVER PNG:
+     * - No pre-rendered images needed
+     * - Can be updated dynamically for differential rotation
+     * - Smaller data transfer (coordinates vs image)
+     * - Scalable without quality loss
      */
     createRegion: function (zIndex) {
-      if (this.hasBoundingBox()) {
-        var regionURL;
+      // Only create region if event has footprint polygon data
+      if (this.hasFootprint()) {
+        // imageScale: Current view's zoom level (arcsec/pixel)
+        // Used to convert HPC arcseconds to screen pixels
+        let imageScale = Helioviewer.userSettings.settings.state.imageScale;
 
-        // Create event region DOM node
-        this.eventRegionDomNode = $("<div/>");
-        this.eventRegionDomNode.attr({
-          class: "event-region"
-        });
-
+        // Sanitize the event ID for use in DOM (remove special characters)
         var id = this.id;
         id = id.replace(/ivo:\/\/helio-informatics.org\//g, "");
         id = id.replace(/\(|\)|\.|\:/g, "");
-        this.eventRegionDomNode.attr({
-          rel: id,
-          id: "region_" + id
+
+        // Create SVG namespace element for proper SVG rendering
+        const svgNS = "http://www.w3.org/2000/svg";
+        let svg = document.createElementNS(svgNS, "svg");
+
+        // Set SVG attributes
+        svg.setAttribute("class", "event-region");
+        svg.setAttribute("id", "region_" + id);
+        svg.setAttribute("rel", id);
+        svg.style.position = "absolute";
+        svg.style.overflow = "visible";
+        svg.style.zIndex = zIndex;
+        svg.style.pointerEvents = "none"; // Allow clicks to pass through to markers
+
+        // Calculate bounding box from all footprint points to position the SVG
+        // footprint is an array of {x, y} point objects
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+        this.footprint.forEach((point) => {
+          // Convert HPC coordinates to screen pixels
+          // point.x = x in arcseconds, point.y = y in arcseconds
+          let screenX = point.x / imageScale;
+          let screenY = -point.y / imageScale; // Negate Y for screen coordinates
+
+          minX = Math.min(minX, screenX);
+          minY = Math.min(minY, screenY);
+          maxX = Math.max(maxX, screenX);
+          maxY = Math.max(maxY, screenY);
         });
 
-        let refScale = Helioviewer.userSettings.get("state.refScale");
+        // Position SVG at the bounding box origin
+        svg.style.left = minX + "px";
+        svg.style.top = minY + "px";
+        svg.style.width = (maxX - minX) + "px";
+        svg.style.height = (maxY - minY) + "px";
 
-        this.region_scaled = {
-          width: this.hv_poly_width_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale),
-          height: this.hv_poly_height_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale)
-        };
-        this.region_pos = {
-          x: this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale,
-          y: this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale
-        };
-        this.eventRegionDomNode.css({
-          left: this.region_pos.x + "px",
-          top: this.region_pos.y + "px",
-          "z-index": zIndex,
-          "background-image": "url('" + serverSettings["rootURL"] + "/" + this.hv_poly_url + "')",
-          "background-size": this.region_scaled.width + "px " + this.region_scaled.height + "px",
-          width: this.region_scaled.width + "px",
-          height: this.region_scaled.height + "px"
-          // Additional styles found in events.css
-        });
+        // Store region position for refresh calculations
+        this.region_pos = { x: minX, y: minY };
+
+        // Convert footprint points to SVG points string
+        // Points are relative to SVG origin (minX, minY)
+        let pointsStr = this.footprint.map((point) => {
+          let screenX = point.x / imageScale - minX;
+          let screenY = -point.y / imageScale - minY;
+          return `${screenX},${screenY}`;
+        }).join(" ");
+
+        // Create SVG polygon element
+        let svgPolygon = document.createElementNS(svgNS, "polygon");
+        svgPolygon.setAttribute("points", pointsStr);
+        svgPolygon.setAttribute("class", "event-region-polygon");
+
+        // Default styling (can be overridden in CSS)
+        svgPolygon.style.fill = "rgba(255, 255, 0, 0.3)";
+        svgPolygon.style.stroke = "rgba(255, 255, 0, 0.8)";
+        svgPolygon.style.strokeWidth = "1px";
+
+        svg.appendChild(svgPolygon);
+
+        // Store reference to SVG element
+        this.eventRegionDomNode = $(svg);
+
+        // Append region to parent FRM (Feature Recognition Method) container
         if (typeof this.parentFRM != "undefined") {
           this.parentFRM.append(this.eventRegionDomNode);
         }
@@ -209,7 +316,7 @@ var EventMarker = Class.extend(
       this.eventMarkerDomNode.unbind();
       this.eventMarkerDomNode.remove();
 
-      if (this.hasBoundingBox()) {
+      if (this.hasFootprint()) {
         this.eventRegionDomNode.qtip("destroy");
         this.eventRegionDomNode.unbind();
         this.eventRegionDomNode.remove();
@@ -217,35 +324,38 @@ var EventMarker = Class.extend(
     },
 
     /**
-     * @description Re-positions event markers/regions, re-scales event regions
+     * @description Re-positions event markers/regions when zoom level changes.
+     *              Recalculates positions from HPC coordinates using new imageScale.
      */
     refresh: function () {
+      let imageScale = Helioviewer.userSettings.settings.state.imageScale;
+
       // Re-position Event Marker pin
-      if (this.hasBoundingBox()) {
-        let refScale = Helioviewer.userSettings.get("state.refScale");
+      if (this.hasFootprint()) {
+        // Recalculate centroid from footprint coordinates
+        // footprint is an array of {x, y} point objects
+        let totalX = 0, totalY = 0;
 
-        var polygonCenterX =
-          (this.hv_poly_width_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale)) / 2;
-        var polygonCenterY =
-          (this.hv_poly_height_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale)) / 2;
+        this.footprint.forEach((point) => {
+          totalX += point.x;
+          totalY += point.y;
+        });
 
-        var scaledMarkerX = this.hv_marker_offset_x * (refScale / Helioviewer.userSettings.settings.state.imageScale);
-        var scaledMarkerY = this.hv_marker_offset_y * (refScale / Helioviewer.userSettings.settings.state.imageScale);
+        let centroidX = totalX / this.footprint.length;
+        let centroidY = totalY / this.footprint.length;
 
-        var polygonPosX = this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale;
-        var polygonPosY = this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale;
-
-        var markerX = Math.round(polygonPosX + polygonCenterX + scaledMarkerX);
-        var markerY = Math.round(polygonPosY + polygonCenterY + scaledMarkerY);
+        var markerX = Math.round(centroidX / imageScale);
+        var markerY = Math.round(-centroidY / imageScale);
 
         this.pos = {
           x: markerX - 12,
           y: markerY - 38
         };
       } else {
+        // Simple point marker without footprint
         this.pos = {
-          x: Math.round(this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale) - 12,
-          y: Math.round(-this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale) - 38
+          x: Math.round(this.hv_hpc_x / imageScale) - 12,
+          y: Math.round(-this.hv_hpc_y / imageScale) - 38
         };
       }
 
@@ -254,35 +364,49 @@ var EventMarker = Class.extend(
         top: this.pos.y + "px"
       });
 
-      // Re-position and re-scale Event Region polygon
-      if (this.hasBoundingBox()) {
-        let refScale = Helioviewer.userSettings.get("state.refScale");
+      // Re-position and re-render SVG footprint region
+      if (this.hasFootprint() && this.eventRegionDomNode) {
+        // Calculate new bounding box for current zoom level
+        // footprint is an array of {x, y} point objects
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 
-        this.region_scaled = {
-          width: this.hv_poly_width_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale),
-          height: this.hv_poly_height_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale)
-        };
-        this.region_pos = {
-          x: this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale,
-          y: this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale
-        };
-        this.eventRegionDomNode.css({
-          left: this.region_pos.x + "px",
-          top: this.region_pos.y + "px"
+        this.footprint.forEach((point) => {
+          let screenX = point.x / imageScale;
+          let screenY = -point.y / imageScale;
+
+          minX = Math.min(minX, screenX);
+          minY = Math.min(minY, screenY);
+          maxX = Math.max(maxX, screenX);
+          maxY = Math.max(maxY, screenY);
         });
+
+        // Update SVG position and size
+        this.region_pos = { x: minX, y: minY };
         this.eventRegionDomNode.css({
-          width: this.region_scaled.width,
-          height: this.region_scaled.height,
-          "background-size": this.region_scaled.width + "px " + this.region_scaled.height + "px"
-          // Additional styles found in events.css
+          left: minX + "px",
+          top: minY + "px",
+          width: (maxX - minX) + "px",
+          height: (maxY - minY) + "px"
         });
+
+        // Update polygon points in SVG
+        let svgPolygon = this.eventRegionDomNode.find("polygon")[0];
+        if (svgPolygon) {
+          let pointsStr = this.footprint.map((point) => {
+            let screenX = point.x / imageScale - minX;
+            let screenY = -point.y / imageScale - minY;
+            return `${screenX},${screenY}`;
+          }).join(" ");
+
+          svgPolygon.setAttribute("points", pointsStr);
+        }
       }
 
       // Re-position Event Popup
       if (this._popupVisible) {
         this.popup_pos = {
-          x: this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale + 12,
-          y: -this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale - 38
+          x: this.hv_hpc_x / imageScale + 12,
+          y: -this.hv_hpc_y / imageScale - 38
         };
         if (this.hv_hpc_x > 400) {
           this.popup_pos.x -= this.eventPopupDomNode.width() + 38;
@@ -791,19 +915,35 @@ var EventMarker = Class.extend(
     },
 
     /**
-     * Emphasize label of the marker,
+     * Emphasize label of the marker and highlight the footprint region,
      */
     emphasize: function () {
       this.eventMarkerDomNode.css("zIndex", "997");
       this._label.addClass("event-label-hover");
+
+      if (this.hasFootprint() && this.eventRegionDomNode) {
+        this.eventRegionDomNode.find("polygon").css({
+          fill: "rgba(255, 255, 0, 0.6)",
+          stroke: "rgba(255, 255, 0, 1)",
+          strokeWidth: "2px"
+        });
+      }
     },
 
     /**
-     * deEmphasize label of the marker,
+     * deEmphasize label of the marker and restore the footprint region,
      */
     deEmphasize: function () {
       this.eventMarkerDomNode.css("zIndex", this._zIndex);
       this._label.removeClass("event-label-hover");
+
+      if (this.hasFootprint() && this.eventRegionDomNode) {
+        this.eventRegionDomNode.find("polygon").css({
+          fill: "rgba(255, 255, 0, 0.3)",
+          stroke: "rgba(255, 255, 0, 0.8)",
+          strokeWidth: "1px"
+        });
+      }
     },
 
     /**
