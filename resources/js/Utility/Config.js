@@ -21,7 +21,7 @@ var Config = Class.extend(
         'default_image_scale'       : 4.8408817,
         'ref_image_scale'           : 0.60511022,
         'min_image_scale'           : 0.30255511,
-        'max_image_scale'           : 154.90822,
+        'max_image_scale'           : 620,
         'max_tile_layers'           : 5,
         'prefetch_size'             : 0,
         'news_url'                  : "https://helioviewer-project.github.io/",
