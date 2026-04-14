@@ -252,19 +252,53 @@ class FullEventLoader extends EventLoader {
       }
     };
 
+    const getAllEventPinsForSource = (source) => {
+      const pins = [];
+      for (const key in EventLoader.eventLabelsMap) {
+        if (EventLoader.eventLabelsMap[key].source === source) {
+          pins.push(key);
+        }
+      }
+      return pins;
+    };
+
     const eventPinsWithFrms = {};
 
     for (const s of selections) {
+
       let [source, eventType, frm, eventId] = s.split(">>");
-      let eventPin = findEventTypePin(eventType);
 
-      if (!eventPinsWithFrms.hasOwnProperty(eventPin)) {
-        eventPinsWithFrms[eventPin] = new Set();
+      if ( source != undefined && eventType != undefined) {
+
+          let eventPin = findEventTypePin(eventType);
+
+          if(eventPin == undefined) {
+              continue;
+          }
+
+          if (!eventPinsWithFrms.hasOwnProperty(eventPin)) {
+            eventPinsWithFrms[eventPin] = new Set();
+          }
+
+          if (frm != undefined) {
+            eventPinsWithFrms[eventPin].add(frm);
+          }
+
+          continue;
       }
 
-      if (frm != undefined) {
-        eventPinsWithFrms[eventPin].add(frm);
+      if ( source != undefined ) {
+
+        getAllEventPinsForSource(source).forEach(p => {
+          if (!eventPinsWithFrms.hasOwnProperty(p)) {
+            eventPinsWithFrms[p] = new Set();
+          }
+        });
+
+        continue;
+
       }
+
     }
 
     const layerStringPortions = [];
