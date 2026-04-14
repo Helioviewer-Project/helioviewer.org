@@ -392,19 +392,19 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 	<tr class="hvmobds_tr">
 		<td class="hvmobds_td">
 			<a class="hvmobdstabs" drawersec="accordion-images">
-				<img class="hvmobds_icon" src="https://helioviewer.org/resources/images/mobile/images_icon1.png" alt="Layers icon">
+				<img class="hvmobds_icon" src="resources/images/mobile/images_icon1.png" alt="Layers icon">
 				<br><span>Images &amp;<span class="hvmobbs_br"><br></span> Layers</span>
 			</a>
 		</td>
 		<td class="hvmobds_td toggle3d">
 			<a class="hvmobdstabs" drawersec="accordion-events">
-				<img class="hvmobds_icon" src="https://helioviewer.org/resources/images/mobile/events_icon1.png" alt="Events icon">
+				<img class="hvmobds_icon" src="resources/images/mobile/events_icon1.png" alt="Events icon">
 				<br><span>Features &amp;<span class="hvmobbs_br"><br></span> Events</span>
 			</a>
 		</td>
 		<td class="hvmobds_td toggle3d">
 			<a class="hvmobdstabs" drawersec="accordion-bodies">
-				<img class="hvmobds_icon" src="https://helioviewer.org/resources/images/mobile/celestial_icon2.png" alt="Celestial Bodies icon">
+				<img class="hvmobds_icon" src="resources/images/mobile/celestial_icon2.png" alt="Celestial Bodies icon">
 				<br><span>Celestial<span class="hvmobbs_br"><br></span> Bodies</span>
 			</a>
 		</td>
