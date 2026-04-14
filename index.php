@@ -1358,7 +1358,7 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 			</div>
 		</div>
 
-		<div id="hv-drawer-tab-timeline-events" class="drawer-tab drawer-tab-bottom">HEK Events Timeline</div>
+		<div id="hv-drawer-tab-timeline-events" class="drawer-tab drawer-tab-bottom">Events Timeline</div>
 		<div id="hv-drawer-timeline-events" class="helioviewer-drawer-bottom">
 			<div class="drawer-contents" style="height:350px;">
 				<div id="hv-drawer-timeline-events-logarithmic-holder" style="display:none;position:absolute;top:10px;left:10px;z-index:5;"><input aria-labelledby="hv-drawer-timeline-events-logarithmic-holder" type="checkbox" id="hv-drawer-timeline-events-logarithmic"> Logarithmic View</div>

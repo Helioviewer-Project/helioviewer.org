@@ -68,7 +68,7 @@ $(function () {
 					var barWidth = xAxis.translate(H.pick(point.x2, point.x + (point.len || 0))) - point.plotX;
 					point.shapeArgs = {
 						x: point.plotX,
-						y: point.plotY, // + metrics.offset,
+						y: point.plotY,
 						width: barWidth,
 						height: metrics.width
 					};
