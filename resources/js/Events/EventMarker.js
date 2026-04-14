@@ -383,7 +383,8 @@ var EventMarker = Class.extend(
           timelineRes == "m"
         ) {
           var eventID = $(event.currentTarget).attr("rel");
-          $(".highcharts-series > rect:not(.point_" + eventID + ")").hide();
+          $(".highcharts-series > rect").hide();
+          $(".highcharts-series > rect[data-eventid='" + eventID + "']").show();
         }
       }
 

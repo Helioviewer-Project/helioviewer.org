@@ -75,6 +75,10 @@ export default class EventLoader {
     this._isReady = false;
   }
 
+  showEventInfoDialog(eventId) {
+    // No-op in base class, implemented in FullEventLoader
+  }
+
   static translateLegacyEventURLsToLegacyEventLayers(legacyEventString) {
     let eventTypeStrings = [];
 

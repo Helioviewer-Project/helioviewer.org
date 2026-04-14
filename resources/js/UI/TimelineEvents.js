@@ -365,17 +365,12 @@ var TimelineEvents = Class.extend({
 								this.selected = true;
 								this.graphic.attr('fill', '#fff');
 
-								if(typeof this.kb_archivid != 'undefined'){
-									var id = this.kb_archivid;
-									id = id.replace(/\(|\)|\.|\+|\:/g, "");
-									if($("#marker_" + id).length != 0) {
-										$(".event-container > div[id!='marker_"+id+"']").css({'opacity':'0'});
-										$(".event-container > div[id!='marker_"+id+"']").parent().css({'opacity':'0'});
-										$(".event-container > div[id='marker_"+id+"']").parent().css({'opacity':'1'});
-										$(".event-container > div[id='marker_"+id+"']").css({'z-index':'1000'});
-										$(".event-container > div[id='region_"+id+"']").css({'opacity':'1'});
-										$('.movie-viewport-icon').hide();
-									}
+								if(typeof this.id != 'undefined'){
+									var id = this.id;
+                                    $(".event-marker, .event-region").hide();
+                                    $("#marker_" + id).show();
+                                    $("#region_" + id).show();
+                                    $('.movie-viewport-icon').hide();
 								}
 							},
 							mouseOut: function(e){
@@ -384,13 +379,8 @@ var TimelineEvents = Class.extend({
 									this.graphic.attr('fill', this.color);
 
 									setTimeout(function() { point.selected = false; }, 100);
-									if(typeof this.kb_archivid != 'undefined'){
-										var id = this.kb_archivid;
-										id = id.replace(/\(|\)|\.|\+|\:/g, "");
-										$(".event-container > div[id!='marker_"+id+"']").parent().css({'opacity':'1'});
-										$(".event-container > div").css({'opacity':'1.0', 'z-index':'997'});
-									 	$('.movie-viewport-icon').show();
-								 	}
+									$(".event-marker, .event-region").show();
+									$('.movie-viewport-icon').show();
 								}
 							}
 						}
@@ -511,9 +501,9 @@ var TimelineEvents = Class.extend({
 						}
 
 						str	 += '<div class="btn-container">'+"\n"
-									+	   "\t"+'<div class="btn-label btn event-info-event text-btn" style="line-height: 14px;" data-kbarchivid="'+ point.kb_archivid +'"><i class="fa fa-info-circle fa-fw"></i> View source data</div>'+"\n"
+									+	   "\t"+'<div class="btn-label btn event-info-event text-btn" style="line-height: 14px;" data-eventid="'+ point.id +'"><i class="fa fa-info-circle fa-fw"></i> View source data</div>'+"\n"
 									+ 		"<div style=\"clear:both\"></div>\n"
-									+	   "\t"+'<div class="btn-label btn event-create-movie-event text-btn" style="line-height: 14px;" data-start="'+Highcharts.dateFormat('%Y/%m/%dT%H:%M:%S', this.x)+'" data-end="'+Highcharts.dateFormat('%Y/%m/%dT%H:%M:%S', point.x2)+'"><i class="fa fa-video-camera fa-fw"></i> Make movie using event times and current field of view</div>'+"\n"
+									+	   "\t"+'<div class="btn-label btn event-create-movie-event text-btn" style="line-height: 14px;" data-start="'+new Date(this.x).toISOString()+'" data-end="'+new Date(point.x2).toISOString()+'"><i class="fa fa-video-camera fa-fw"></i> Make movie using event times and current field of view</div>'+"\n"
 									+ 		"<div style=\"clear:both\"></div>\n"
 									+		noaaSearch
 									+		"\t"+'<div class="btn-label btn copy-to-data-event text-btn" style="line-height: 14px;" data-start="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', this.x)+'" data-end="'+Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', point.x2)+'"><i class="fa fa-copy fa-fw"></i> Copy start / end times to data download</div>'+"\n"
@@ -558,8 +548,8 @@ var TimelineEvents = Class.extend({
 
 						//Create Movie from event popup
 						$("body").on('click', '.event-create-movie-event', function() {
-							var start = $(this).data('start') + '.000Z';
-							var end = $(this).data('end') + '.000Z';
+							var start = $(this).data('start');
+							var end = $(this).data('end');
 
 							//build an movie settings object
 							var formSettings = [
@@ -569,12 +559,12 @@ var TimelineEvents = Class.extend({
 								{name : 'endTime', value : end},
 							];
 
-							helioviewerWebClient._movieManagerUI._buildMovieRequest(formSettings);
+							helioviewerWebClient._movieManagerUI.requestQueueMovie(formSettings);
 						});
 
 						$("body").on('click', '.event-info-event', function(){
-							var kb_archivid = $(this).data('kbarchivid');
-							self._showEventInfoDialog(kb_archivid);
+							var eventId = $(this).data('eventid');
+							Helioviewer.eventLoader.showEventInfoDialog(eventId);
 						});
 
 						$("body").on('click', '.event-search-external',  function() {
@@ -1110,7 +1100,7 @@ var TimelineEvents = Class.extend({
 			'x': draggbleStart-1,
 			'x2': draggbleStart,
 			'y': 0,
-			'kb_archivid': '',
+			'id': '',
 			'hv_labels_formatted': '',
 			'event_type': '',
 			'frm_name': '',
@@ -1123,7 +1113,7 @@ var TimelineEvents = Class.extend({
 			'x': draggbleEnd,
 			'x2': draggbleEnd+1,
 			'y': 0,
-			'kb_archivid': '',
+			'id': '',
 			'hv_labels_formatted': '',
 			'event_type': '',
 			'frm_name': '',
@@ -1463,7 +1453,7 @@ var TimelineEvents = Class.extend({
 						'x': draggbleStart,
 						'x2': draggbleEnd,
 						'y': 0,
-						'kb_archivid': '',
+						'id': '',
 						'hv_labels_formatted': '',
 						'event_type': '',
 						'frm_name': '',
@@ -1525,21 +1515,24 @@ var TimelineEvents = Class.extend({
 			e = self.setTitle(e);
 			chart.hideLoading();
 
-			//Assign points classes
+			//Assign event IDs and classes to points
 			if(timelineRes == 'm'){
 				$.each(chart.series, function (id, series) {
 					var pointIndex = 0;
 					$.each(series.data, function (idp, point) {
 						if(series.data.hasOwnProperty(idp)){
-							var pointClass= point.kb_archivid.replace(/\(|\)|\.|\+|\:/g, "");
 							var pointClassName= point.frm_name.replace(/ /g,'_');
 							var pointClassType= point.event_type;
-							$( '.highcharts-series-' + id ).find( "rect" ).eq( pointIndex ).addClass( 'point_' + pointClass ).addClass( 'point_name_' + pointClassName ).addClass( 'point_type_' + pointClassType );
+							var rect = $( '.highcharts-series-' + id ).find( "rect" ).eq( pointIndex );
+							rect.attr('data-eventid', point.id);
+							rect.addClass( 'point_name_' + pointClassName ).addClass( 'point_type_' + pointClassType );
 							pointIndex++;
 						}
 					});
 				});
 			}
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			chart.hideLoading();
 		});
 		return true;
 	},
@@ -1629,7 +1622,7 @@ var TimelineEvents = Class.extend({
 	 * @description Displays the Image meta information and properties associated with a given image
 	 *
 	 */
-	_showEventInfoDialog: function (kb_archivid) {
+	_showEventInfoDialog: function (eventId) {
 		var self = this;
 
 		$.ajax({
@@ -1637,7 +1630,7 @@ var TimelineEvents = Class.extend({
 			dataType: Helioviewer.dataType,
 			data: {
 				"action": "getEvent",
-				"kb_archivid": kb_archivid
+				"id": eventId
 			},
 			success: function(data){
 				self._buildEventInfoDialog(data, self);

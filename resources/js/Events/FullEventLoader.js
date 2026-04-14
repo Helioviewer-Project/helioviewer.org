@@ -314,6 +314,14 @@ class FullEventLoader extends EventLoader {
     return layerStringPortions.join(",");
   }
 
+  showEventInfoDialog(eventId) {
+    var markers = Object.values(this.markers).flat();
+    var match = markers.find(function(m) { return m.marker.id === eventId; });
+    if (match) {
+      match.marker._showEventInfoDialog();
+    }
+  }
+
   highlightEventsFromEventTypePin(eventPin) {
     const markers = Object.values(this.markers).flat();
 
