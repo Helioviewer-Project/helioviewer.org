@@ -1464,12 +1464,14 @@ var TimelineEvents = Class.extend({
 					});
 				}
 
+				var baseColor = (typeof _eventsSeries[series.event_type] != 'undefined' ? _eventsSeries[series.event_type].color : '#d4d4d4');
+
 				chart.addSeries({
 					name: (typeof _eventsSeries[series.event_type] == 'undefined' ? series['name']: _eventsSeries[series.event_type].name ),
 					data: series['data'],
 					data_type: series['event_type'],
 					showInLegend: series['showInLegend'],
-					color: _eventsSeries[series.event_type].color
+					color: baseColor
 				}, false, false);
 
 				count++;
@@ -2033,5 +2035,11 @@ var _eventsSeries  = {
 	EE: {color: '#fec00a', name: 'Explosive Event'},
 	PB: {color: '#b3d5e4', name: 'Prominence Bubble'},
 	PT: {color: '#494a37', name: 'Peacock Tail'},
-	UNK: {color: '#d4d4d4', name: 'Unknown'}
+	UNK: {color: '#d4d4d4', name: 'Unknown'},
+	BU: {color: '#ff6347', name: 'UVBurst'},
+	EP: {color: '#e0b040', name: 'SEPs'},
+	IC: {color: '#40b0e0', name: 'ICMEs'},
+	SR: {color: '#70d070', name: 'SIRs'},
+	C3: {color: '#f0c060', name: 'DONKI'},
+	F2: {color: '#ff7070', name: 'Solar Flares'}
 };

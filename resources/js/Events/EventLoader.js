@@ -33,6 +33,9 @@ export default class EventLoader {
     HY: { name: "Hypothesis", source: "HEK" },
     EE: { name: "ExplosiveEvent", source: "HEK" },
     UNK: { name: "Unknown", source: "HEK" },
+    EP: { name: "SEPs", source: "HEK" },
+    IC: { name: "ICMEs", source: "HEK" },
+    SR: { name: "SIRs", source: "HEK" },
 
     C3: { name: "DONKI", source: "CCMC" },
     FP: { name: "Solar Flare Predictions", source: "CCMC" },
