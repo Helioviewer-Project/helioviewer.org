@@ -1446,6 +1446,8 @@ var TimelineEvents = Class.extend({
 			var draggbleStart = Math.round(e.min) - visibleAreaInSeconds;
 			var draggbleEnd = Math.round(e.max) + visibleAreaInSeconds;
 
+			var observationDate = Helioviewer.userSettings.get("state.date");
+
 			var count = 0;
 			$.each(data, function (sourceId, series) {
 				if(series['res'] == 'm' && !series['showInLegend']){
@@ -1465,6 +1467,17 @@ var TimelineEvents = Class.extend({
 				}
 
 				var baseColor = (typeof _eventsSeries[series.event_type] != 'undefined' ? _eventsSeries[series.event_type].color : '#d4d4d4');
+
+				// Highlight data points that intersect the observation date
+				if(series['res'] == 'm'){
+					$.each(series['data'], function(i, point){
+						if(point.x <= observationDate && point.x2 >= observationDate){
+							point.color = _lightenColor(baseColor, 0.15);
+							point.borderColor = '#ffffff';
+							point.borderWidth = 2;
+						}
+					});
+				}
 
 				chart.addSeries({
 					name: (typeof _eventsSeries[series.event_type] == 'undefined' ? series['name']: _eventsSeries[series.event_type].name ),
@@ -2003,6 +2016,17 @@ var TimelineEvents = Class.extend({
 	}
 });
 
+
+function _lightenColor(hex, amount) {
+	hex = hex.replace('#', '');
+	var r = parseInt(hex.substring(0, 2), 16);
+	var g = parseInt(hex.substring(2, 4), 16);
+	var b = parseInt(hex.substring(4, 6), 16);
+	r = Math.min(255, Math.round(r + (255 - r) * amount));
+	g = Math.min(255, Math.round(g + (255 - g) * amount));
+	b = Math.min(255, Math.round(b + (255 - b) * amount));
+	return '#' + r.toString(16).padStart(2, '0') + g.toString(16).padStart(2, '0') + b.toString(16).padStart(2, '0');
+}
 
 var _eventsSeries  = {
 	AR: {color: '#ff8f97', name: 'Active Region'},
