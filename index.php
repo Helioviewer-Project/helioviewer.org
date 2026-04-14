@@ -2159,5 +2159,8 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 		}
 	?>
 	<script src="/resources/js/dist/hv3d.js?v=<?=filemtime('resources/js/dist/hv3d.js')?>" type="text/javascript"></script>
+<?php if ($debug) { ?>
+	<script src="/resources/js/debug/settings-viewer.js?v=<?=$debugTime?>" type="text/javascript"></script>
+<?php } ?>
 </body>
 </html>
