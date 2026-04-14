@@ -198,8 +198,6 @@ var EventMarker = Class.extend(
         labels.forEach((line) => {
           self.labelText += self.fixTitles(line) + "<br/>\n";
         });
-      } else {
-        this.labelText = this.fixTitles(this.name) + " " + this.fixTitles(this.version);
       }
     },
 
@@ -479,51 +477,12 @@ var EventMarker = Class.extend(
       // Format results
       dialog = $("<div id='event-info-dialog' class='event-info-dialog' />");
 
-      if (this.hasOwnProperty("hv_labels_formatted") && Object.keys(this.hv_labels_formatted).length > 0) {
-        // This means it is HEK
-        headingText =
-          this.concept + ": " + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
-      } else if (this.hasOwnProperty("title")) {
-        headingText = this.title;
-      } else {
-        const eventTypeLabel = EventLoader.eventLabelsMap[this.type]["name"];
-        headingText = eventTypeLabel + " " + this.fixTitles(this.name) + " " + this.fixTitles(this.version);
-      }
+      // Generate heading text from label
+      const eventTypeLabel = EventLoader.eventLabelsMap[this.type]["name"];
+      headingText = eventTypeLabel + ": " + this.fixTitles(this.label.split("\n")[0]);
 
-      // Header Tabs
-      if (this._IsHekEvent()) {
-        html +=
-          '<div class="event-info-dialog-menu">' +
-          '<a class="show-tags-btn event-type selected">' +
-          this.concept +
-          "</a>" +
-          '<a class="show-tags-btn obs">Observation</a>' +
-          '<a class="show-tags-btn frm">Recognition Method</a>' +
-          '<a class="show-tags-btn ref">Ref<span class="hek_ref_txt1">erences</span></a>' +
-          '<a class="show-tags-btn all right">All</a>' +
-          "</div>";
-
-        // Tab contents
-        let sections = [this.type, "obs", "frm", "ref", "all"];
-        let self = this;
-        sections.forEach((section, idx) => {
-          let content = this._generateEventKeywordsSection(section, self.event);
-          if (content != "<div></div>") {
-            let class_name = idx == 0 ? "event-type" : section;
-            let hide = idx != 0 ? "display: none;" : "";
-            html +=
-              '<div class="event-header ' +
-              class_name +
-              '" style="' +
-              hide +
-              ' height: 400px; overflow: auto;">' +
-              content +
-              "</div>";
-          }
-        });
-      } else {
-        html += renderToString(<div id={this._uniqueId}></div>);
-      }
+      // Render React EventViewer for all event sources (HEK, CCMC, RHESSI)
+      html += renderToString(<div id={this._uniqueId}></div>);
 
       let hidingEmpty = false;
 
@@ -571,78 +530,7 @@ var EventMarker = Class.extend(
           create: function (event, ui) {
             dialog.css("overflow", "hidden");
 
-            var eventTypeTab = dialog.find(".show-tags-btn.event-type"),
-              obsTab = dialog.find(".show-tags-btn.obs"),
-              frmTab = dialog.find(".show-tags-btn.frm"),
-              refTab = dialog.find(".show-tags-btn.ref"),
-              allTab = dialog.find(".show-tags-btn.all");
-
-            eventTypeTab.click(function () {
-              eventTypeTab.addClass("selected");
-              obsTab.removeClass("selected");
-              frmTab.removeClass("selected");
-              refTab.removeClass("selected");
-              allTab.removeClass("selected");
-              dialog.find(".event-header.event-type").show();
-              dialog.find(".event-header.obs").hide();
-              dialog.find(".event-header.frm").hide();
-              dialog.find(".event-header.ref").hide();
-              dialog.find(".event-header.all").hide();
-            });
-
-            obsTab.click(function () {
-              eventTypeTab.removeClass("selected");
-              obsTab.addClass("selected");
-              frmTab.removeClass("selected");
-              refTab.removeClass("selected");
-              allTab.removeClass("selected");
-              dialog.find(".event-header.event-type").hide();
-              dialog.find(".event-header.obs").show();
-              dialog.find(".event-header.frm").hide();
-              dialog.find(".event-header.ref").hide();
-              dialog.find(".event-header.all").hide();
-            });
-
-            frmTab.click(function () {
-              eventTypeTab.removeClass("selected");
-              obsTab.removeClass("selected");
-              frmTab.addClass("selected");
-              refTab.removeClass("selected");
-              allTab.removeClass("selected");
-              dialog.find(".event-header.event-type").hide();
-              dialog.find(".event-header.obs").hide();
-              dialog.find(".event-header.frm").show();
-              dialog.find(".event-header.ref").hide();
-              dialog.find(".event-header.all").hide();
-            });
-
-            refTab.click(function () {
-              eventTypeTab.removeClass("selected");
-              obsTab.removeClass("selected");
-              frmTab.removeClass("selected");
-              refTab.addClass("selected");
-              allTab.removeClass("selected");
-              dialog.find(".event-header.event-type").hide();
-              dialog.find(".event-header.obs").hide();
-              dialog.find(".event-header.frm").hide();
-              dialog.find(".event-header.ref").show();
-              dialog.find(".event-header.all").hide();
-            });
-
-            allTab.click(function () {
-              eventTypeTab.removeClass("selected");
-              obsTab.removeClass("selected");
-              frmTab.removeClass("selected");
-              refTab.removeClass("selected");
-              allTab.addClass("selected");
-              dialog.find(".event-header.event-type").hide();
-              dialog.find(".event-header.obs").hide();
-              dialog.find(".event-header.frm").hide();
-              dialog.find(".event-header.ref").hide();
-              dialog.find(".event-header.all").show();
-            });
-
-            // This is used to populate the dialog for non-HEK events.
+            // Render React EventViewer for all event sources
             let reactContainer = dialog.find("#" + self._uniqueId);
             if (reactContainer.length == 1) {
               const root = createRoot(reactContainer[0]);
@@ -652,228 +540,6 @@ var EventMarker = Class.extend(
         });
     },
 
-    /**
-     * This is for legacy support and this method shouldn't be used more than this
-     */
-    _IsHekEvent() {
-      return this.hasOwnProperty("hv_labels_formatted");
-    },
-
-    _generateEventKeywordsSection: function (tab, data) {
-      var formatted,
-        tag,
-        tags = [],
-        lookup,
-        attr,
-        domClass,
-        icon,
-        list = {},
-        self = this;
-
-      if (tab == "obs") {
-        $.each(data, function (key, value) {
-          if (key.substring(0, 4) == "obs_") {
-            lookup = self._eventGlossary[key];
-            if (typeof lookup != "undefined") {
-              list[key] = lookup;
-              list[key]["value"] = value;
-            } else {
-              list[key] = { value: value };
-            }
-          }
-        });
-      } else if (tab == "frm") {
-        $.each(data, function (key, value) {
-          if (key.substring(0, 4) == "frm_") {
-            lookup = self._eventGlossary[key];
-            if (typeof lookup != "undefined") {
-              list[key] = lookup;
-              list[key]["value"] = value;
-            } else {
-              list[key] = { value: value };
-            }
-          }
-        });
-      } else if (tab == "ref") {
-        $.each(data["refs"], function (index, obj) {
-          lookup = self._eventGlossary[obj["ref_name"]];
-          if (typeof lookup != "undefined") {
-            list[obj["ref_name"]] = lookup;
-            list[obj["ref_name"]]["value"] = obj["ref_url"];
-          } else {
-            list[obj["ref_name"]] = { value: obj["ref_url"] };
-          }
-        });
-      } else if (tab == "all") {
-        $.each(data, function (key, value) {
-          if (key.substring(0, 3) != "hv_" && key != "refs") {
-            lookup = self._eventGlossary[key];
-            if (typeof lookup != "undefined") {
-              list[key] = lookup;
-              list[key]["value"] = value;
-            } else {
-              list[key] = { value: value };
-            }
-          }
-        });
-      } else if (tab.length == 2) {
-        $.each(data, function (key, value) {
-          if (
-            key.substring(0, 3) == tab.toLowerCase() + "_" ||
-            key.substring(0, 5) == "event" ||
-            key == "concept" ||
-            key.substring(0, 3) == "kb_"
-          ) {
-            lookup = self._eventGlossary[key];
-            if (typeof lookup != "undefined") {
-              list[key] = lookup;
-              list[key]["value"] = value;
-            } else {
-              list[key] = { value: value };
-            }
-          }
-        });
-      } else {
-        console.warn('No logic for unexpected tab "' + tab + '".');
-      }
-
-      // Format the output
-      formatted = "<div>";
-      $.each(list, function (key, obj) {
-        attr = "";
-        domClass = "";
-        icon = "";
-
-        if (tab != "all" && typeof obj["hv_label"] != "undefined" && obj["hv_label"] !== null) {
-          key = obj["hv_label"];
-        }
-
-        if (typeof obj["hek_desc"] != "undefined" && obj["hek_desc"] !== null) {
-          attr += ' title="' + obj["hek_desc"] + '"';
-        }
-
-        if (
-          obj.value != "" &&
-          obj.value != "N/A" &&
-          obj.value != "n/a" &&
-          typeof obj["hv_type"] != "undefined" &&
-          (obj["hv_type"] == "url" || obj["hv_type"] == "image_url")
-        ) {
-          if (obj.value.indexOf("://") == -1) {
-            obj.value = "http://" + obj.value;
-          }
-          obj.value = '<a href="' + obj.value + '" target="_blank">' + obj.value + "</a>";
-        }
-
-        if (
-          obj.value != "" &&
-          obj.value != "N/A" &&
-          obj.value != "n/a" &&
-          typeof obj["hv_type"] != "undefined" &&
-          obj["hv_type"] == "email_or_url"
-        ) {
-          if (
-            obj.value.indexOf("://") == -1 &&
-            obj.value.indexOf("/") !== -1 &&
-            obj.value.indexOf("@") == -1 &&
-            obj.value.indexOf(" at ") == -1
-          ) {
-            obj.value = "http://" + obj.value;
-            obj.value = '<a href="' + obj.value + '" target="_blank">' + obj.value + "</a>";
-          } else if (obj.value.indexOf("://") !== -1) {
-            obj.value = '<a href="' + obj.value + '" target="_blank">' + obj.value + "</a>";
-          } else if (obj.value.indexOf("@") > -1 && obj.value.indexOf(" ") == -1) {
-            obj.value = '<a href="mailto:' + obj.value + '">' + obj.value + "</a>";
-          }
-        }
-
-        if (
-          obj.value != "" &&
-          obj.value != "N/A" &&
-          obj.value != "n/a" &&
-          typeof obj["hv_type"] != "undefined" &&
-          obj["hv_type"] == "thumbnail_url"
-        ) {
-          if (obj.value.indexOf("://") == -1) {
-            obj.value = "http://" + obj.value;
-          }
-          obj.value = '<img src="' + obj.value + '"/>';
-        }
-
-        if (typeof obj["hv_type"] != "undefined" && obj["hv_type"] == "date") {
-          domClass += " date";
-        }
-
-        if (typeof obj["hek_type"] != "undefined" && obj["hek_type"] == "float") {
-          domClass += " float";
-        }
-
-        if (typeof obj["hek_type"] != "undefined" && (obj["hek_type"] == "integer" || obj["hek_type"] == "long")) {
-          domClass += " integer";
-        }
-
-        if (typeof obj["hv_type"] != "undefined" && obj["hv_type"] == "boolean") {
-          domClass += " boolean";
-          if (obj.value.toUpperCase() == "T" || obj.value == 1 || obj.value.toLowerCase() == "true") {
-            domClass += " true";
-          }
-          if (obj.value.toUpperCase() == "F" || obj.value == 0 || obj.value.toLowerCase() == "false") {
-            domClass += " false";
-          }
-        }
-
-        if (
-          typeof obj["hv_type"] != "undefined" &&
-          obj["hv_type"] != "date" &&
-          typeof obj["hek_type"] != "undefined" &&
-          obj["hek_type"] == "string"
-        ) {
-          domClass += " string";
-        }
-
-        if (typeof obj.value === "undefined" || obj.value === null || obj.value === "null" || obj.value === "") {
-          tag =
-            '<div class="empty"><span class="event-header-tag empty"' +
-            attr +
-            ">" +
-            key +
-            "</span>" +
-            '<span class="event-header-value empty">' +
-            obj.value +
-            "</span></div>";
-        } else if (typeof obj.value === "object") {
-          tag =
-            '<div><span class="event-header-tag "' +
-            attr +
-            ">" +
-            key +
-            "</span>" +
-            '<span class="event-header-value' +
-            domClass +
-            '">' +
-            obj.value +
-            "</span></div>";
-        } else {
-          tag =
-            '<div><span class="event-header-tag"' +
-            attr +
-            ">" +
-            key +
-            "</span>" +
-            '<span class="event-header-value' +
-            domClass +
-            '">' +
-            obj.value +
-            "</span></div>";
-        }
-        tags.push(tag);
-        formatted += tag;
-      });
-      formatted += "</div>";
-
-      return formatted;
-    },
-
     _populatePopup: function () {
       var content = "",
         headingText = "",
@@ -881,11 +547,7 @@ var EventMarker = Class.extend(
 
       const eventTypeLabel = EventLoader.eventLabelsMap[this.type]["name"];
 
-      if (this.hasOwnProperty("label") && this.label.length > 0) {
-        headingText = eventTypeLabel + ": " + this.fixTitles(this.label.split("\n")[0]);
-      } else {
-        headingText = eventTypeLabel + ": " + this.fixTitles(this.name) + " " + this.fixTitles(this.version);
-      }
+      headingText = eventTypeLabel + ": " + this.fixTitles(this.label.split("\n")[0]);
 
       content +=
         '<div class="close-button ui-icon ui-icon-closethick" title="Close PopUp Window"></div>' +
@@ -945,36 +607,18 @@ var EventMarker = Class.extend(
         "</div>" +
         "\n";
 
-      if (this.hasOwnProperty("hv_labels_formatted") && Object.keys(this.hv_labels_formatted).length > 0) {
-        $.each(this.hv_labels_formatted, function (param, value) {
-          value = self.fixTitles(value);
-          content +=
-            '<div class="container">' +
-            "\n" +
-            "\t" +
-            '<div class="param-container"><div class="param-label user-selectable">' +
-            param +
-            ": </div></div>" +
-            "\n" +
-            "\t" +
-            '<div class="value-container"><div class="param-value user-selectable">' +
-            value +
-            "</div></div>" +
-            "\n" +
-            "</div>" +
-            "\n";
-        });
-      } else {
+      // Display label in popup
+      if (this.hasOwnProperty("label") && this.label.length > 0) {
         let lines = this.label.replace("\n", " ");
         content +=
           '<div class="container">' +
           "\n" +
           "\t" +
-          '<div class="param-container"><div class="param-label user-selectable">title: </div></div>' +
+          '<div class="param-container"><div class="param-label user-selectable">Label: </div></div>' +
           "\n" +
           "\t" +
           '<div class="value-container"><div class="param-value user-selectable">' +
-          lines +
+          this.fixTitles(lines) +
           "</div></div>" +
           "\n" +
           "</div>" +
@@ -982,8 +626,8 @@ var EventMarker = Class.extend(
       }
 
       var noaaSearch = "";
-      if (this.name == "NOAA SWPC Observer" || this.name == "HMI SHARP") {
-        var eventName = this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
+      if (this.path == "HEK>>Active Region>>NOAA SWPC Observer" || this.path == "HEK>>Active Region>>HMI SHARP") {
+        var eventName = this.fixTitles(this.label.split("\n")[0]);
         noaaSearch =
           '<div class="btn-label btn event-search-external text-btn" data-url=\'https://ui.adsabs.harvard.edu/#search/q="' +
           eventName +
