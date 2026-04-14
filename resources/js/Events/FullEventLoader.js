@@ -284,7 +284,7 @@ class FullEventLoader extends EventLoader {
     const markers = Object.values(this.markers).flat();
 
     for (const m of markers) {
-      m.marker.setVisibility(m.marker.event_type == eventPin);
+      m.marker.setVisibility(m.marker.type == eventPin);
     }
   }
 
