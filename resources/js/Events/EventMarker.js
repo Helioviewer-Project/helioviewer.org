@@ -274,10 +274,13 @@ var EventMarker = Class.extend(
         svgPolygon.setAttribute("points", pointsStr);
         svgPolygon.setAttribute("class", "event-region-polygon");
 
-        // Default styling (can be overridden in CSS)
-        svgPolygon.style.fill = "rgba(255, 255, 0, 0.3)";
-        svgPolygon.style.stroke = "rgba(255, 255, 0, 0.8)";
-        svgPolygon.style.strokeWidth = "1px";
+        // Styling mirrors the legacy backend HEK polygon renderer:
+        // fill: event-type color at 0x66 (0.4) alpha, stroke: black at 0x88 (0.533) alpha, 4px round joins.
+        let baseColor = EventLoader.getEventTypeColor(this.type);
+        svgPolygon.style.fill = hexToRgba(baseColor, 0.4);
+        svgPolygon.style.stroke = "rgba(0, 0, 0, 0.533)";
+        svgPolygon.style.strokeWidth = "1.5px";
+        svgPolygon.style.strokeLinejoin = "round";
 
         svg.appendChild(svgPolygon);
 
@@ -603,7 +606,7 @@ var EventMarker = Class.extend(
       dialog = $("<div id='event-info-dialog' class='event-info-dialog' />");
 
       // Generate heading text from label
-      const eventTypeLabel = EventLoader.eventLabelsMap[this.type]["name"];
+      const eventTypeLabel = EventLoader.getEventTypeName(this.type);
       headingText = eventTypeLabel + ": " + this.fixTitles(this.label.split("\n")[0]);
 
       // Render React EventViewer for all event sources (HEK, CCMC, RHESSI)
@@ -670,7 +673,7 @@ var EventMarker = Class.extend(
         headingText = "",
         self = this;
 
-      const eventTypeLabel = EventLoader.eventLabelsMap[this.type]["name"];
+      const eventTypeLabel = EventLoader.getEventTypeName(this.type);
 
       headingText = eventTypeLabel + ": " + this.fixTitles(this.label.split("\n")[0]);
 
@@ -922,11 +925,14 @@ var EventMarker = Class.extend(
       this._label.addClass("event-label-hover");
 
       if (this.hasFootprint() && this.eventRegionDomNode) {
-        this.eventRegionDomNode.find("polygon").css({
-          fill: "rgba(255, 255, 0, 0.6)",
-          stroke: "rgba(255, 255, 0, 1)",
-          strokeWidth: "2px"
-        });
+        let baseColor = EventLoader.getEventTypeColor(this.type);
+        let polygon = this.eventRegionDomNode.find("polygon")[0];
+        if (polygon) {
+          polygon.style.fill = hexToRgba(baseColor, 0.6);
+          polygon.style.stroke = "rgba(0, 0, 0, 0.8)";
+          polygon.style.strokeWidth = "3px";
+          polygon.style.strokeLinejoin = "round";
+        }
       }
     },
 
@@ -938,11 +944,14 @@ var EventMarker = Class.extend(
       this._label.removeClass("event-label-hover");
 
       if (this.hasFootprint() && this.eventRegionDomNode) {
-        this.eventRegionDomNode.find("polygon").css({
-          fill: "rgba(255, 255, 0, 0.3)",
-          stroke: "rgba(255, 255, 0, 0.8)",
-          strokeWidth: "1px"
-        });
+        let baseColor = EventLoader.getEventTypeColor(this.type);
+        let polygon = this.eventRegionDomNode.find("polygon")[0];
+        if (polygon) {
+          polygon.style.fill = hexToRgba(baseColor, 0.4);
+          polygon.style.stroke = "rgba(0, 0, 0, 0.533)";
+          polygon.style.strokeWidth = "1.5px";
+          polygon.style.strokeLinejoin = "round";
+        }
       }
     },
 

@@ -4,44 +4,66 @@ export default class EventLoader {
   static sources = ["HEK", "CCMC", "RHESSI"];
 
   static eventLabelsMap = {
-    AR: { name: "Active Region", source: "HEK" },
-    CC: { name: "Coronal Cavity", source: "HEK" },
-    CD: { name: "Coronal Dimming", source: "HEK" },
-    CH: { name: "Coronal Hole", source: "HEK" },
-    CJ: { name: "Coronal Jet", source: "HEK" },
-    CE: { name: "CME", source: "HEK" },
-    CR: { name: "Coronal Rain", source: "HEK" },
-    CW: { name: "Coronal Wave", source: "HEK" },
-    EF: { name: "Emerging Flux", source: "HEK" },
-    ER: { name: "Eruption", source: "HEK" },
-    FI: { name: "Filament", source: "HEK" },
-    FA: { name: "Filament Activation", source: "HEK" },
-    FE: { name: "Filament Eruption", source: "HEK" },
-    FL: { name: "Flare", source: "HEK" },
-    LP: { name: "Loop", source: "HEK" },
-    OT: { name: "Other", source: "HEK" },
-    NR: { name: "NothingReported", source: "HEK" },
-    OS: { name: "Oscillation", source: "HEK" },
-    PG: { name: "Plage", source: "HEK" },
-    PT: { name: "PeacockTail", source: "HEK" },
-    PB: { name: "ProminenceBubble", source: "HEK" },
-    SG: { name: "Sigmoid", source: "HEK" },
-    SP: { name: "Spray Surge", source: "HEK" },
-    SS: { name: "Sunspot", source: "HEK" },
-    TO: { name: "Topological Object", source: "HEK" },
-    BU: { name: "UVBurst", source: "HEK" },
-    HY: { name: "Hypothesis", source: "HEK" },
-    EE: { name: "ExplosiveEvent", source: "HEK" },
-    UNK: { name: "Unknown", source: "HEK" },
-    EP: { name: "SEPs", source: "HEK" },
-    IC: { name: "ICMEs", source: "HEK" },
-    SR: { name: "SIRs", source: "HEK" },
+    AR: { name: "Active Region", source: "HEK", color: "#ff8f97" },
+    CC: { name: "Coronal Cavity", source: "HEK", color: "#ff8acc" },
+    CD: { name: "Coronal Dimming", source: "HEK", color: "#ffd391" },
+    CH: { name: "Coronal Hole", source: "HEK", color: "#fef38e" },
+    CJ: { name: "Coronal Jet", source: "HEK", color: "#9da4ff" },
+    CE: { name: "CME", source: "HEK", color: "#ffb294" },
+    CR: { name: "Coronal Rain", source: "HEK", color: "#ff85ff" },
+    CW: { name: "Coronal Wave", source: "HEK", color: "#ebff8c" },
+    EF: { name: "Emerging Flux", source: "HEK", color: "#95c6ff" },
+    ER: { name: "Eruption", source: "HEK", color: "#ff8dad" },
+    FI: { name: "Filament", source: "HEK", color: "#c8ff8d" },
+    FA: { name: "Filament Activation", source: "HEK", color: "#7bff8e" },
+    FE: { name: "Filament Eruption", source: "HEK", color: "#a3ff8d" },
+    FL: { name: "Flare", source: "HEK", color: "#7affae" },
+    LP: { name: "Loop", source: "HEK", color: "#7cffc9" },
+    OT: { name: "Other", source: "HEK", color: "#d4d4d4" },
+    NR: { name: "NothingReported", source: "HEK", color: "#d4d4d4" },
+    OS: { name: "Oscillation", source: "HEK", color: "#81fffc" },
+    PG: { name: "Plage", source: "HEK", color: "#ab8cff" },
+    PT: { name: "PeacockTail", source: "HEK", color: "#494a37" },
+    PB: { name: "ProminenceBubble", source: "HEK", color: "#b3d5e4" },
+    SG: { name: "Sigmoid", source: "HEK", color: "#e986ff" },
+    SP: { name: "Spray Surge", source: "HEK", color: "#ff82ff" },
+    SS: { name: "Sunspot", source: "HEK", color: "#8ce6ff" },
+    TO: { name: "Topological Object", source: "HEK", color: "#ca89ff" },
+    BU: { name: "UVBurst", source: "HEK", color: "#ff6347" },
+    HY: { name: "Hypothesis", source: "HEK", color: "#00ffff" },
+    EE: { name: "ExplosiveEvent", source: "HEK", color: "#fec00a" },
+    UNK: { name: "Unknown", source: "HEK", color: "#d4d4d4" },
+    EP: { name: "SEPs", source: "HEK", color: "#e0b040" },
+    IC: { name: "ICMEs", source: "HEK", color: "#40b0e0" },
+    SR: { name: "SIRs", source: "HEK", color: "#70d070" },
 
-    C3: { name: "DONKI", source: "CCMC" },
-    FP: { name: "Solar Flare Predictions", source: "CCMC" },
+    C3: { name: "DONKI", source: "CCMC", color: "#f0c060" },
+    FP: { name: "Solar Flare Predictions", source: "CCMC", color: "#74b0c5" },
 
-    F2: { name: "Solar Flares", source: "RHESSI" }
+    F2: { name: "Solar Flares", source: "RHESSI", color: "#ff7070" }
   };
+
+  /**
+   * Returns the display color for an event type pin.
+   * @param {string} type   2-letter event type pin (e.g. "AR", "FL")
+   * @param {string} [fallback="#d4d4d4"] color to return if the pin is not in eventLabelsMap
+   * @returns {string} hex color string
+   */
+  static getEventTypeColor(type, fallback = "#d4d4d4") {
+    const entry = EventLoader.eventLabelsMap[type];
+    return (entry && entry.color) ? entry.color : fallback;
+  }
+
+  /**
+   * Returns the human-readable name for an event type pin.
+   * @param {string} type   2-letter event type pin (e.g. "AR", "FL")
+   * @param {string} [fallback="Unknown"] name to return if the pin is not in eventLabelsMap
+   * @returns {string} display name
+   */
+  static getEventTypeName(type, fallback = "Unknown") {
+    const entry = EventLoader.eventLabelsMap[type];
+    return (entry && entry.name) ? entry.name : fallback;
+  }
 
   static make(outputType = "normal", debug) {
     if (outputType == "minimal" || outputType == "embed") {

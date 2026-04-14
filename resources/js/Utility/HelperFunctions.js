@@ -746,7 +746,7 @@ function postJSON(action, params) {
 
 /**
  * Generates a random string of default length.
- * 
+ *
  * @returns {string} A random string consisting of alphanumeric characters.
  *
  * @example
@@ -755,6 +755,22 @@ function postJSON(action, params) {
 function makeRandomString() {
     return (Math.random() + 1).toString(36).substring(2);
 }
+
+/**
+ * Converts a "#rrggbb" hex color string to an rgba() string with the given alpha.
+ *
+ * @param {string} hex   "#rrggbb" color string
+ * @param {number} alpha 0..1 alpha value
+ * @returns {string} "rgba(r, g, b, alpha)" string, or grey (#d4d4d4) fallback if hex is malformed
+ */
+var hexToRgba = function (hex, alpha) {
+    if (!hex || hex[0] !== "#") return "rgba(212, 212, 212, " + alpha + ")";
+    var h = hex.slice(1);
+    var r = parseInt(h.substring(0, 2), 16);
+    var g = parseInt(h.substring(2, 4), 16);
+    var b = parseInt(h.substring(4, 6), 16);
+    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+};
 
 
 

@@ -1466,7 +1466,7 @@ var TimelineEvents = Class.extend({
 					});
 				}
 
-				var baseColor = (typeof _eventsSeries[series.event_type] != 'undefined' ? _eventsSeries[series.event_type].color : '#d4d4d4');
+				var baseColor = EventLoader.getEventTypeColor(series.event_type);
 
 				// Highlight data points that intersect the observation date
 				if(series['res'] == 'm'){
@@ -1480,7 +1480,7 @@ var TimelineEvents = Class.extend({
 				}
 
 				chart.addSeries({
-					name: (typeof _eventsSeries[series.event_type] == 'undefined' ? series['name']: _eventsSeries[series.event_type].name ),
+					name: EventLoader.getEventTypeName(series.event_type, series['name']),
 					data: series['data'],
 					data_type: series['event_type'],
 					showInLegend: series['showInLegend'],
@@ -2028,42 +2028,3 @@ function _lightenColor(hex, amount) {
 	return '#' + r.toString(16).padStart(2, '0') + g.toString(16).padStart(2, '0') + b.toString(16).padStart(2, '0');
 }
 
-var _eventsSeries  = {
-	AR: {color: '#ff8f97', name: 'Active Region'},
-	CE: {color: '#ffb294', name: 'CME'},
-	CME: {color: '#ffb294', name: 'CME'},
-	CD: {color: '#ffd391', name: 'Coronal Dimming'},
-	CH: {color: '#fef38e', name: 'Coronal Hole'},
-	CW: {color: '#ebff8c', name: 'Coronal Wave'},
-	FI: {color: '#c8ff8d', name: 'Filament'},
-	FE: {color: '#a3ff8d', name: 'Filament Eruption'},
-	FA: {color: '#7bff8e', name: 'Filament Activation'},
-	FL: {color: '#7affae', name: 'Flare'},
-	FP: {color: '#74b0c5', name: 'Flare Prediction'},
-	LP: {color: '#7cffc9', name: 'Loop'},
-	OS: {color: '#81fffc', name: 'Oscillation'},
-	SS: {color: '#8ce6ff', name: 'Sunspot'},
-	EF: {color: '#95c6ff', name: 'Emerging Flux'},
-	CJ: {color: '#9da4ff', name: 'Coronal Jet'},
-	PG: {color: '#ab8cff', name: 'Plage'},
-	OT: {color: '#d4d4d4', name: 'Other'},
-	NR: {color: '#d4d4d4', name: 'Nothing Reported'},
-	SG: {color: '#e986ff', name: 'Sigmoid'},
-	SP: {color: '#ff82ff', name: 'Spray Surge'},
-	CR: {color: '#ff85ff', name: 'Coronal Rain'},
-	CC: {color: '#ff8acc', name: 'Coronal Cavity'},
-	ER: {color: '#ff8dad', name: 'Eruption'},
-	TO: {color: '#ca89ff', name: 'Topological Object'},
-	HY: {color: '#00ffff', name: 'Hypothesis'},
-	BO: {color: '#a7e417', name: 'Bomb'},
-	EE: {color: '#fec00a', name: 'Explosive Event'},
-	PB: {color: '#b3d5e4', name: 'Prominence Bubble'},
-	PT: {color: '#494a37', name: 'Peacock Tail'},
-	UNK: {color: '#d4d4d4', name: 'Unknown'},
-	BU: {color: '#ff6347', name: 'UVBurst'},
-	EP: {color: '#e0b040', name: 'SEPs'},
-	IC: {color: '#40b0e0', name: 'ICMEs'},
-	SR: {color: '#70d070', name: 'SIRs'},
-	C3: {color: '#f0c060', name: 'DONKI'},
-	F2: {color: '#ff7070', name: 'Solar Flares'}
-};
