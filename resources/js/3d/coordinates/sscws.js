@@ -182,7 +182,8 @@ class SSCWS {
       proba2: EARTH,
       solo: "solarorbiter",
       stereo_a: "stereoa",
-      stereo_b: "stereob"
+      stereo_b: "stereob",
+      punch: EARTH
     };
     if (mapping.hasOwnProperty(lower)) {
       return mapping[lower];

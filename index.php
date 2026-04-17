@@ -139,12 +139,10 @@
 		<link rel="stylesheet" href="/resources/css/youtube.css" />
 		<link rel="stylesheet" href="/resources/css/font-awesome.min.css" />
 		<link rel="stylesheet" href="/resources/css/helioviewer-views.css" />
-		<link rel="stylesheet" href="/resources/css/mobile_minimal_embed.css" />
 	<?php
 	} else {
 	?>
 		<link rel="stylesheet" href="/resources/compressed/helioviewer.min.css?v=<?=filemtime('resources/compressed/helioviewer.min.css')?>" />
-		<link rel="stylesheet" href="/resources/css/mobile_minimal_embed.css" />
 	<?php
 	}
 	?>
@@ -2098,7 +2096,7 @@ if($is_mobile_view) {
 
 			serverSettings = new Config(settingsJSON).toArray();
 
-			zoomLevels = [0.30255511, 0.60511022,1.21022044,2.42044088,4.84088176,9.68176352,19.36352704,38.72705408,77.45410816,154.90821632];
+			zoomLevels = [0.30255511, 0.60511022,1.21022044,2.42044088,4.84088176,9.68176352,19.36352704,38.72705408,77.45410816,154.90821632,309.81643264,619.63286528];
 
 			urlSettings = getUrlParameters();
 
@@ -2113,6 +2111,13 @@ if($is_mobile_view) {
 			Helioviewer.debug = <?php echo $debug ? 'true' : 'false'; ?>;
 			Helioviewer.mobile = <?php echo $is_mobile_view ? 'true' : 'false'; ?>;
 			Helioviewer.mobile_minimal = <?php echo $is_mobile ? 'true' : 'false'; ?>;
+			// If mobile_minimal view, add specific css
+			if (Helioviewer.mobile_minimal && !Helioviewer.mobile) {
+			    var link = document.createElement('link');
+			    link.rel = 'stylesheet';
+			    link.href = '/resources/css/mobile_minimal_embed.css';
+			    document.head.appendChild(link);
+			}
 
 			const loadHelioviewer = (userSettings) => {
 
