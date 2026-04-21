@@ -53,25 +53,45 @@ var EventMarker = Class.extend(
     },
 
     /**
-     * Returns true if this event data contains polygon information
+     * Returns true if this event data contains footprint polygon information
+     * footprint is an array of polygons, where each polygon is an array of [x, y] HPC coordinates
      */
-    hasBoundingBox: function () {
-      return this.hasOwnProperty("hpc_boundcc") && this.hpc_boundcc != "";
+    hasFootprint: function () {
+      return this.hasOwnProperty("footprint") && Array.isArray(this.footprint) && this.footprint.length > 0;
     },
 
     /**
-     * @description Creates the marker and adds it to the viewport
-     * @param {integer} zIndex, zIndex as you know , visibility hierarchy of this marker in html
+     * @description Creates the marker pin icon and adds it to the viewport.
+     *              The marker is positioned differently depending on whether
+     *              the event has a polygon region (bounding box) or not.
+     *
+     * @param {integer} zIndex - CSS z-index for layering markers in the DOM
+     *
+     * COORDINATE SYSTEM:
+     * - hv_hpc_x, hv_hpc_y: Helioprojective Cartesian coordinates (arcseconds from Sun center)
+     * - hv_poly_hpc_x_final, hv_poly_hpc_y_final: Pre-calculated polygon position
+     * - imageScale: Current zoom level (arcseconds per pixel)
+     * - refScale: Reference scale at which polygon pixel dimensions were computed (max zoom)
+     *
+     * SCALING FORMULA:
+     * - scaleFactor = refScale / imageScale
+     * - When zoomed in (imageScale < refScale): scaleFactor > 1, things appear larger
+     * - When zoomed out (imageScale > refScale): scaleFactor < 1, things appear smaller
+     *
+     * MARKER OFFSET:
+     * - The -12 and -38 pixel offsets position the marker pin's tip at the event location
+     * - The marker icon is 24x38 pixels, so offset centers the tip at bottom-center
      */
     createMarker: function (zIndex) {
       var markerURL;
 
-      // Create event marker DOM node
+      // Create event marker DOM node (the pin icon)
       this.eventMarkerDomNode = $("<div/>");
       this.eventMarkerDomNode.attr({
         class: "event-marker constant-size"
       });
 
+      // Sanitize the event ID for use in DOM (remove special characters)
       var id = this.id;
       id = id.replace(/ivo:\/\/helio-informatics.org\//g, "");
       id = id.replace(/\(|\)|\.|\:/g, "");
@@ -84,35 +104,57 @@ var EventMarker = Class.extend(
         "data-testid": eventMarkerTestId.replaceAll("\n", "")
       });
 
-      if (this.hasBoundingBox()) {
-        let refScale = Helioviewer.userSettings.get("state.refScale");
-        var polygonCenterX =
-          (this.hv_poly_width_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale)) / 2;
-        var polygonCenterY =
-          (this.hv_poly_height_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale)) / 2;
+      // Calculate marker position based on whether event has a footprint polygon
+      if (this.hasFootprint()) {
+        // EVENT HAS FOOTPRINT POLYGON
+        // Position marker at the centroid (center) of the footprint
 
-        var scaledMarkerX = this.hv_marker_offset_x * (refScale / Helioviewer.userSettings.settings.state.imageScale);
-        var scaledMarkerY = this.hv_marker_offset_y * (refScale / Helioviewer.userSettings.settings.state.imageScale);
+        // imageScale: Current view's image scale (arcsec/pixel)
+        let imageScale = Helioviewer.userSettings.settings.state.imageScale;
 
-        var polygonPosX = this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale;
-        var polygonPosY = this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale;
+        // Calculate centroid of all footprint points
+        // Centroid = average of all polygon vertices in HPC coordinates
+        // footprint is an array of {x, y} point objects
+        let totalX = 0, totalY = 0;
 
-        var markerX = Math.round(polygonPosX + polygonCenterX + scaledMarkerX);
-        var markerY = Math.round(polygonPosY + polygonCenterY + scaledMarkerY);
+        this.footprint.forEach((point) => {
+          // point.x = x in arcseconds, point.y = y in arcseconds
+          totalX += point.x;
+          totalY += point.y;
+        });
 
+        // Calculate centroid in HPC arcseconds
+        let centroidX = totalX / this.footprint.length;
+        let centroidY = totalY / this.footprint.length;
+
+        // Convert centroid to screen pixels
+        // Negate Y because screen Y is inverted (positive down)
+        var markerX = Math.round(centroidX / imageScale);
+        var markerY = Math.round(-centroidY / imageScale);
+
+        // Apply pin icon offset (-12, -38) to position tip at centroid
+        // Marker icon is 24x38px, so this centers the tip at bottom-center of icon
         this.pos = {
           x: markerX - 12,
           y: markerY - 38
         };
       } else {
+        // EVENT WITHOUT FOOTPRINT - Simple point marker
+        // Position directly at hv_hpc_x, hv_hpc_y coordinates
+
+        // hv_hpc_x: X position in arcseconds (positive = West/right)
+        // hv_hpc_y: Y position in arcseconds (positive = North/up, hence negated for screen coords)
         this.pos = {
           x: Math.round(this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale) - 12,
           y: Math.round(-this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale) - 38
         };
       }
 
+      // Set marker icon based on event type (AR, FL, CH, etc.)
       markerURL =
         serverSettings["rootURL"] + "/resources/images/eventMarkers/" + this.type.toUpperCase() + "@2x" + ".png";
+
+      // Apply position and styling to marker DOM node
       this.eventMarkerDomNode.css({
         left: this.pos.x + "px",
         top: this.pos.y + "px",
@@ -121,63 +163,131 @@ var EventMarker = Class.extend(
         // Additional styles found in events.css
       });
 
+      // Append marker to parent FRM (Feature Recognition Method) container
       if (typeof this.parentFRM != "undefined") {
-        //if ( this.parentFRM._visible == false ) {
-        //this.eventMarkerDomNode.hide();
-        //}
         this.parentFRM.append(this.eventMarkerDomNode);
       } else {
-        //console.warn('this.parentFRM does not exist!');
-        //console.warn([this.event_type, this.frm_name]);
         return;
       }
 
+      // Bind event handlers for marker interaction
       this.eventMarkerDomNode.bind("click", $.proxy(this.toggleEventPopUp, this));
       this.eventMarkerDomNode.mouseenter($.proxy(this.toggleEventLabel, this));
       this.eventMarkerDomNode.mouseleave($.proxy(this.toggleEventLabel, this));
     },
 
     /**
-     * @description Creates the marker and adds it to the viewport
+     * @description Creates the polygon region overlay for events that have footprint data.
+     *              The region is rendered as an SVG polygon directly from HPC coordinates.
+     *
+     * @param {integer} zIndex - CSS z-index for layering regions in the DOM
+     *
+     * HOW SVG FOOTPRINT RENDERING WORKS:
+     * 1. The API provides footprint as an array of polygons
+     * 2. Each polygon is an array of [x, y] points in HPC coordinates (arcseconds)
+     * 3. We convert HPC coordinates to screen pixels and render as SVG polygons
+     *
+     * DATA STRUCTURE:
+     * event.footprint = [
+     *   [                           // First polygon
+     *     [x1, y1],                 // Point 1: HPC coordinates in arcseconds
+     *     [x2, y2],                 // Point 2
+     *     [x3, y3],                 // Point 3
+     *     ...
+     *   ],
+     *   [                           // Second polygon (if any)
+     *     [x1, y1],
+     *     ...
+     *   ]
+     * ]
+     *
+     * COORDINATE CONVERSION:
+     * - HPC X (arcseconds) -> Screen X (pixels): x / imageScale
+     * - HPC Y (arcseconds) -> Screen Y (pixels): -y / imageScale (negated because screen Y is inverted)
+     *
+     * ADVANTAGE OVER PNG:
+     * - No pre-rendered images needed
+     * - Can be updated dynamically for differential rotation
+     * - Smaller data transfer (coordinates vs image)
+     * - Scalable without quality loss
      */
     createRegion: function (zIndex) {
-      if (this.hasBoundingBox()) {
-        var regionURL;
+      // Only create region if event has footprint polygon data
+      if (this.hasFootprint()) {
+        // imageScale: Current view's zoom level (arcsec/pixel)
+        // Used to convert HPC arcseconds to screen pixels
+        let imageScale = Helioviewer.userSettings.settings.state.imageScale;
 
-        // Create event region DOM node
-        this.eventRegionDomNode = $("<div/>");
-        this.eventRegionDomNode.attr({
-          class: "event-region"
-        });
-
+        // Sanitize the event ID for use in DOM (remove special characters)
         var id = this.id;
         id = id.replace(/ivo:\/\/helio-informatics.org\//g, "");
         id = id.replace(/\(|\)|\.|\:/g, "");
-        this.eventRegionDomNode.attr({
-          rel: id,
-          id: "region_" + id
+
+        // Create SVG namespace element for proper SVG rendering
+        const svgNS = "http://www.w3.org/2000/svg";
+        let svg = document.createElementNS(svgNS, "svg");
+
+        // Set SVG attributes
+        svg.setAttribute("class", "event-region");
+        svg.setAttribute("id", "region_" + id);
+        svg.setAttribute("rel", id);
+        svg.style.position = "absolute";
+        svg.style.overflow = "visible";
+        svg.style.zIndex = zIndex;
+        svg.style.pointerEvents = "none"; // Allow clicks to pass through to markers
+
+        // Calculate bounding box from all footprint points to position the SVG
+        // footprint is an array of {x, y} point objects
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+        this.footprint.forEach((point) => {
+          // Convert HPC coordinates to screen pixels
+          // point.x = x in arcseconds, point.y = y in arcseconds
+          let screenX = point.x / imageScale;
+          let screenY = -point.y / imageScale; // Negate Y for screen coordinates
+
+          minX = Math.min(minX, screenX);
+          minY = Math.min(minY, screenY);
+          maxX = Math.max(maxX, screenX);
+          maxY = Math.max(maxY, screenY);
         });
 
-        let refScale = Helioviewer.userSettings.get("state.refScale");
+        // Position SVG at the bounding box origin
+        svg.style.left = minX + "px";
+        svg.style.top = minY + "px";
+        svg.style.width = (maxX - minX) + "px";
+        svg.style.height = (maxY - minY) + "px";
 
-        this.region_scaled = {
-          width: this.hv_poly_width_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale),
-          height: this.hv_poly_height_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale)
-        };
-        this.region_pos = {
-          x: this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale,
-          y: this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale
-        };
-        this.eventRegionDomNode.css({
-          left: this.region_pos.x + "px",
-          top: this.region_pos.y + "px",
-          "z-index": zIndex,
-          "background-image": "url('" + serverSettings["rootURL"] + "/" + this.hv_poly_url + "')",
-          "background-size": this.region_scaled.width + "px " + this.region_scaled.height + "px",
-          width: this.region_scaled.width + "px",
-          height: this.region_scaled.height + "px"
-          // Additional styles found in events.css
-        });
+        // Store region position for refresh calculations
+        this.region_pos = { x: minX, y: minY };
+
+        // Convert footprint points to SVG points string
+        // Points are relative to SVG origin (minX, minY)
+        let pointsStr = this.footprint.map((point) => {
+          let screenX = point.x / imageScale - minX;
+          let screenY = -point.y / imageScale - minY;
+          return `${screenX},${screenY}`;
+        }).join(" ");
+
+        // Create SVG polygon element
+        let svgPolygon = document.createElementNS(svgNS, "polygon");
+        svgPolygon.setAttribute("points", pointsStr);
+        svgPolygon.setAttribute("class", "event-region-polygon");
+
+        // Styling mirrors the legacy backend HEK polygon renderer:
+        // fill: event-type color at 0x66 (0.4) alpha, stroke: black at 0x88 (0.533) alpha, 4px round joins.
+        let baseColor = EventLoader.getEventTypeColor(this.type);
+        svgPolygon.style.fill = hexToRgba(baseColor, 0.4);
+        svgPolygon.style.stroke = "rgba(0, 0, 0, 0.533)";
+        svgPolygon.style.strokeWidth = "1.5px";
+        svgPolygon.style.strokeLinejoin = "round";
+
+        svg.appendChild(svgPolygon);
+
+        // Store reference to SVG element
+        this.eventRegionDomNode = $(svg);
+
+        // Append region to parent FRM (Feature Recognition Method) container
         if (typeof this.parentFRM != "undefined") {
           this.parentFRM.append(this.eventRegionDomNode);
         }
@@ -198,8 +308,6 @@ var EventMarker = Class.extend(
         labels.forEach((line) => {
           self.labelText += self.fixTitles(line) + "<br/>\n";
         });
-      } else {
-        this.labelText = this.fixTitles(this.name) + " " + this.fixTitles(this.version);
       }
     },
 
@@ -211,7 +319,7 @@ var EventMarker = Class.extend(
       this.eventMarkerDomNode.unbind();
       this.eventMarkerDomNode.remove();
 
-      if (this.hasBoundingBox()) {
+      if (this.hasFootprint()) {
         this.eventRegionDomNode.qtip("destroy");
         this.eventRegionDomNode.unbind();
         this.eventRegionDomNode.remove();
@@ -219,35 +327,38 @@ var EventMarker = Class.extend(
     },
 
     /**
-     * @description Re-positions event markers/regions, re-scales event regions
+     * @description Re-positions event markers/regions when zoom level changes.
+     *              Recalculates positions from HPC coordinates using new imageScale.
      */
     refresh: function () {
+      let imageScale = Helioviewer.userSettings.settings.state.imageScale;
+
       // Re-position Event Marker pin
-      if (this.hasBoundingBox()) {
-        let refScale = Helioviewer.userSettings.get("state.refScale");
+      if (this.hasFootprint()) {
+        // Recalculate centroid from footprint coordinates
+        // footprint is an array of {x, y} point objects
+        let totalX = 0, totalY = 0;
 
-        var polygonCenterX =
-          (this.hv_poly_width_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale)) / 2;
-        var polygonCenterY =
-          (this.hv_poly_height_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale)) / 2;
+        this.footprint.forEach((point) => {
+          totalX += point.x;
+          totalY += point.y;
+        });
 
-        var scaledMarkerX = this.hv_marker_offset_x * (refScale / Helioviewer.userSettings.settings.state.imageScale);
-        var scaledMarkerY = this.hv_marker_offset_y * (refScale / Helioviewer.userSettings.settings.state.imageScale);
+        let centroidX = totalX / this.footprint.length;
+        let centroidY = totalY / this.footprint.length;
 
-        var polygonPosX = this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale;
-        var polygonPosY = this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale;
-
-        var markerX = Math.round(polygonPosX + polygonCenterX + scaledMarkerX);
-        var markerY = Math.round(polygonPosY + polygonCenterY + scaledMarkerY);
+        var markerX = Math.round(centroidX / imageScale);
+        var markerY = Math.round(-centroidY / imageScale);
 
         this.pos = {
           x: markerX - 12,
           y: markerY - 38
         };
       } else {
+        // Simple point marker without footprint
         this.pos = {
-          x: Math.round(this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale) - 12,
-          y: Math.round(-this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale) - 38
+          x: Math.round(this.hv_hpc_x / imageScale) - 12,
+          y: Math.round(-this.hv_hpc_y / imageScale) - 38
         };
       }
 
@@ -256,35 +367,49 @@ var EventMarker = Class.extend(
         top: this.pos.y + "px"
       });
 
-      // Re-position and re-scale Event Region polygon
-      if (this.hasBoundingBox()) {
-        let refScale = Helioviewer.userSettings.get("state.refScale");
+      // Re-position and re-render SVG footprint region
+      if (this.hasFootprint() && this.eventRegionDomNode) {
+        // Calculate new bounding box for current zoom level
+        // footprint is an array of {x, y} point objects
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 
-        this.region_scaled = {
-          width: this.hv_poly_width_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale),
-          height: this.hv_poly_height_max_zoom_pixels * (refScale / Helioviewer.userSettings.settings.state.imageScale)
-        };
-        this.region_pos = {
-          x: this.hv_poly_hpc_x_final / Helioviewer.userSettings.settings.state.imageScale,
-          y: this.hv_poly_hpc_y_final / Helioviewer.userSettings.settings.state.imageScale
-        };
-        this.eventRegionDomNode.css({
-          left: this.region_pos.x + "px",
-          top: this.region_pos.y + "px"
+        this.footprint.forEach((point) => {
+          let screenX = point.x / imageScale;
+          let screenY = -point.y / imageScale;
+
+          minX = Math.min(minX, screenX);
+          minY = Math.min(minY, screenY);
+          maxX = Math.max(maxX, screenX);
+          maxY = Math.max(maxY, screenY);
         });
+
+        // Update SVG position and size
+        this.region_pos = { x: minX, y: minY };
         this.eventRegionDomNode.css({
-          width: this.region_scaled.width,
-          height: this.region_scaled.height,
-          "background-size": this.region_scaled.width + "px " + this.region_scaled.height + "px"
-          // Additional styles found in events.css
+          left: minX + "px",
+          top: minY + "px",
+          width: (maxX - minX) + "px",
+          height: (maxY - minY) + "px"
         });
+
+        // Update polygon points in SVG
+        let svgPolygon = this.eventRegionDomNode.find("polygon")[0];
+        if (svgPolygon) {
+          let pointsStr = this.footprint.map((point) => {
+            let screenX = point.x / imageScale - minX;
+            let screenY = -point.y / imageScale - minY;
+            return `${screenX},${screenY}`;
+          }).join(" ");
+
+          svgPolygon.setAttribute("points", pointsStr);
+        }
       }
 
       // Re-position Event Popup
       if (this._popupVisible) {
         this.popup_pos = {
-          x: this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale + 12,
-          y: -this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale - 38
+          x: this.hv_hpc_x / imageScale + 12,
+          y: -this.hv_hpc_y / imageScale - 38
         };
         if (this.hv_hpc_x > 400) {
           this.popup_pos.x -= this.eventPopupDomNode.width() + 38;
@@ -385,7 +510,8 @@ var EventMarker = Class.extend(
           timelineRes == "m"
         ) {
           var eventID = $(event.currentTarget).attr("rel");
-          $(".highcharts-series > rect:not(.point_" + eventID + ")").hide();
+          $(".highcharts-series > rect").hide();
+          $(".highcharts-series > rect[data-eventid='" + eventID + "']").show();
         }
       }
 
@@ -479,51 +605,12 @@ var EventMarker = Class.extend(
       // Format results
       dialog = $("<div id='event-info-dialog' class='event-info-dialog' />");
 
-      if (this.hasOwnProperty("hv_labels_formatted") && Object.keys(this.hv_labels_formatted).length > 0) {
-        // This means it is HEK
-        headingText =
-          this.concept + ": " + this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
-      } else if (this.hasOwnProperty("title")) {
-        headingText = this.title;
-      } else {
-        const eventTypeLabel = EventLoader.eventLabelsMap[this.type]["name"];
-        headingText = eventTypeLabel + " " + this.fixTitles(this.name) + " " + this.fixTitles(this.version);
-      }
+      // Generate heading text from label
+      const eventTypeLabel = EventLoader.getEventTypeName(this.type);
+      headingText = eventTypeLabel + ": " + this.fixTitles(this.label.split("\n")[0]);
 
-      // Header Tabs
-      if (this._IsHekEvent()) {
-        html +=
-          '<div class="event-info-dialog-menu">' +
-          '<a class="show-tags-btn event-type selected">' +
-          this.concept +
-          "</a>" +
-          '<a class="show-tags-btn obs">Observation</a>' +
-          '<a class="show-tags-btn frm">Recognition Method</a>' +
-          '<a class="show-tags-btn ref">Ref<span class="hek_ref_txt1">erences</span></a>' +
-          '<a class="show-tags-btn all right">All</a>' +
-          "</div>";
-
-        // Tab contents
-        let sections = [this.type, "obs", "frm", "ref", "all"];
-        let self = this;
-        sections.forEach((section, idx) => {
-          let content = this._generateEventKeywordsSection(section, self.event);
-          if (content != "<div></div>") {
-            let class_name = idx == 0 ? "event-type" : section;
-            let hide = idx != 0 ? "display: none;" : "";
-            html +=
-              '<div class="event-header ' +
-              class_name +
-              '" style="' +
-              hide +
-              ' height: 400px; overflow: auto;">' +
-              content +
-              "</div>";
-          }
-        });
-      } else {
-        html += renderToString(<div id={this._uniqueId}></div>);
-      }
+      // Render React EventViewer for all event sources (HEK, CCMC, RHESSI)
+      html += renderToString(<div id={this._uniqueId}></div>);
 
       let hidingEmpty = false;
 
@@ -571,78 +658,7 @@ var EventMarker = Class.extend(
           create: function (event, ui) {
             dialog.css("overflow", "hidden");
 
-            var eventTypeTab = dialog.find(".show-tags-btn.event-type"),
-              obsTab = dialog.find(".show-tags-btn.obs"),
-              frmTab = dialog.find(".show-tags-btn.frm"),
-              refTab = dialog.find(".show-tags-btn.ref"),
-              allTab = dialog.find(".show-tags-btn.all");
-
-            eventTypeTab.click(function () {
-              eventTypeTab.addClass("selected");
-              obsTab.removeClass("selected");
-              frmTab.removeClass("selected");
-              refTab.removeClass("selected");
-              allTab.removeClass("selected");
-              dialog.find(".event-header.event-type").show();
-              dialog.find(".event-header.obs").hide();
-              dialog.find(".event-header.frm").hide();
-              dialog.find(".event-header.ref").hide();
-              dialog.find(".event-header.all").hide();
-            });
-
-            obsTab.click(function () {
-              eventTypeTab.removeClass("selected");
-              obsTab.addClass("selected");
-              frmTab.removeClass("selected");
-              refTab.removeClass("selected");
-              allTab.removeClass("selected");
-              dialog.find(".event-header.event-type").hide();
-              dialog.find(".event-header.obs").show();
-              dialog.find(".event-header.frm").hide();
-              dialog.find(".event-header.ref").hide();
-              dialog.find(".event-header.all").hide();
-            });
-
-            frmTab.click(function () {
-              eventTypeTab.removeClass("selected");
-              obsTab.removeClass("selected");
-              frmTab.addClass("selected");
-              refTab.removeClass("selected");
-              allTab.removeClass("selected");
-              dialog.find(".event-header.event-type").hide();
-              dialog.find(".event-header.obs").hide();
-              dialog.find(".event-header.frm").show();
-              dialog.find(".event-header.ref").hide();
-              dialog.find(".event-header.all").hide();
-            });
-
-            refTab.click(function () {
-              eventTypeTab.removeClass("selected");
-              obsTab.removeClass("selected");
-              frmTab.removeClass("selected");
-              refTab.addClass("selected");
-              allTab.removeClass("selected");
-              dialog.find(".event-header.event-type").hide();
-              dialog.find(".event-header.obs").hide();
-              dialog.find(".event-header.frm").hide();
-              dialog.find(".event-header.ref").show();
-              dialog.find(".event-header.all").hide();
-            });
-
-            allTab.click(function () {
-              eventTypeTab.removeClass("selected");
-              obsTab.removeClass("selected");
-              frmTab.removeClass("selected");
-              refTab.removeClass("selected");
-              allTab.addClass("selected");
-              dialog.find(".event-header.event-type").hide();
-              dialog.find(".event-header.obs").hide();
-              dialog.find(".event-header.frm").hide();
-              dialog.find(".event-header.ref").hide();
-              dialog.find(".event-header.all").show();
-            });
-
-            // This is used to populate the dialog for non-HEK events.
+            // Render React EventViewer for all event sources
             let reactContainer = dialog.find("#" + self._uniqueId);
             if (reactContainer.length == 1) {
               const root = createRoot(reactContainer[0]);
@@ -652,240 +668,14 @@ var EventMarker = Class.extend(
         });
     },
 
-    /**
-     * This is for legacy support and this method shouldn't be used more than this
-     */
-    _IsHekEvent() {
-      return this.hasOwnProperty("hv_labels_formatted");
-    },
-
-    _generateEventKeywordsSection: function (tab, data) {
-      var formatted,
-        tag,
-        tags = [],
-        lookup,
-        attr,
-        domClass,
-        icon,
-        list = {},
-        self = this;
-
-      if (tab == "obs") {
-        $.each(data, function (key, value) {
-          if (key.substring(0, 4) == "obs_") {
-            lookup = self._eventGlossary[key];
-            if (typeof lookup != "undefined") {
-              list[key] = lookup;
-              list[key]["value"] = value;
-            } else {
-              list[key] = { value: value };
-            }
-          }
-        });
-      } else if (tab == "frm") {
-        $.each(data, function (key, value) {
-          if (key.substring(0, 4) == "frm_") {
-            lookup = self._eventGlossary[key];
-            if (typeof lookup != "undefined") {
-              list[key] = lookup;
-              list[key]["value"] = value;
-            } else {
-              list[key] = { value: value };
-            }
-          }
-        });
-      } else if (tab == "ref") {
-        $.each(data["refs"], function (index, obj) {
-          lookup = self._eventGlossary[obj["ref_name"]];
-          if (typeof lookup != "undefined") {
-            list[obj["ref_name"]] = lookup;
-            list[obj["ref_name"]]["value"] = obj["ref_url"];
-          } else {
-            list[obj["ref_name"]] = { value: obj["ref_url"] };
-          }
-        });
-      } else if (tab == "all") {
-        $.each(data, function (key, value) {
-          if (key.substring(0, 3) != "hv_" && key != "refs") {
-            lookup = self._eventGlossary[key];
-            if (typeof lookup != "undefined") {
-              list[key] = lookup;
-              list[key]["value"] = value;
-            } else {
-              list[key] = { value: value };
-            }
-          }
-        });
-      } else if (tab.length == 2) {
-        $.each(data, function (key, value) {
-          if (
-            key.substring(0, 3) == tab.toLowerCase() + "_" ||
-            key.substring(0, 5) == "event" ||
-            key == "concept" ||
-            key.substring(0, 3) == "kb_"
-          ) {
-            lookup = self._eventGlossary[key];
-            if (typeof lookup != "undefined") {
-              list[key] = lookup;
-              list[key]["value"] = value;
-            } else {
-              list[key] = { value: value };
-            }
-          }
-        });
-      } else {
-        console.warn('No logic for unexpected tab "' + tab + '".');
-      }
-
-      // Format the output
-      formatted = "<div>";
-      $.each(list, function (key, obj) {
-        attr = "";
-        domClass = "";
-        icon = "";
-
-        if (tab != "all" && typeof obj["hv_label"] != "undefined" && obj["hv_label"] !== null) {
-          key = obj["hv_label"];
-        }
-
-        if (typeof obj["hek_desc"] != "undefined" && obj["hek_desc"] !== null) {
-          attr += ' title="' + obj["hek_desc"] + '"';
-        }
-
-        if (
-          obj.value != "" &&
-          obj.value != "N/A" &&
-          obj.value != "n/a" &&
-          typeof obj["hv_type"] != "undefined" &&
-          (obj["hv_type"] == "url" || obj["hv_type"] == "image_url")
-        ) {
-          if (obj.value.indexOf("://") == -1) {
-            obj.value = "http://" + obj.value;
-          }
-          obj.value = '<a href="' + obj.value + '" target="_blank">' + obj.value + "</a>";
-        }
-
-        if (
-          obj.value != "" &&
-          obj.value != "N/A" &&
-          obj.value != "n/a" &&
-          typeof obj["hv_type"] != "undefined" &&
-          obj["hv_type"] == "email_or_url"
-        ) {
-          if (
-            obj.value.indexOf("://") == -1 &&
-            obj.value.indexOf("/") !== -1 &&
-            obj.value.indexOf("@") == -1 &&
-            obj.value.indexOf(" at ") == -1
-          ) {
-            obj.value = "http://" + obj.value;
-            obj.value = '<a href="' + obj.value + '" target="_blank">' + obj.value + "</a>";
-          } else if (obj.value.indexOf("://") !== -1) {
-            obj.value = '<a href="' + obj.value + '" target="_blank">' + obj.value + "</a>";
-          } else if (obj.value.indexOf("@") > -1 && obj.value.indexOf(" ") == -1) {
-            obj.value = '<a href="mailto:' + obj.value + '">' + obj.value + "</a>";
-          }
-        }
-
-        if (
-          obj.value != "" &&
-          obj.value != "N/A" &&
-          obj.value != "n/a" &&
-          typeof obj["hv_type"] != "undefined" &&
-          obj["hv_type"] == "thumbnail_url"
-        ) {
-          if (obj.value.indexOf("://") == -1) {
-            obj.value = "http://" + obj.value;
-          }
-          obj.value = '<img src="' + obj.value + '"/>';
-        }
-
-        if (typeof obj["hv_type"] != "undefined" && obj["hv_type"] == "date") {
-          domClass += " date";
-        }
-
-        if (typeof obj["hek_type"] != "undefined" && obj["hek_type"] == "float") {
-          domClass += " float";
-        }
-
-        if (typeof obj["hek_type"] != "undefined" && (obj["hek_type"] == "integer" || obj["hek_type"] == "long")) {
-          domClass += " integer";
-        }
-
-        if (typeof obj["hv_type"] != "undefined" && obj["hv_type"] == "boolean") {
-          domClass += " boolean";
-          if (obj.value.toUpperCase() == "T" || obj.value == 1 || obj.value.toLowerCase() == "true") {
-            domClass += " true";
-          }
-          if (obj.value.toUpperCase() == "F" || obj.value == 0 || obj.value.toLowerCase() == "false") {
-            domClass += " false";
-          }
-        }
-
-        if (
-          typeof obj["hv_type"] != "undefined" &&
-          obj["hv_type"] != "date" &&
-          typeof obj["hek_type"] != "undefined" &&
-          obj["hek_type"] == "string"
-        ) {
-          domClass += " string";
-        }
-
-        if (typeof obj.value === "undefined" || obj.value === null || obj.value === "null" || obj.value === "") {
-          tag =
-            '<div class="empty"><span class="event-header-tag empty"' +
-            attr +
-            ">" +
-            key +
-            "</span>" +
-            '<span class="event-header-value empty">' +
-            obj.value +
-            "</span></div>";
-        } else if (typeof obj.value === "object") {
-          tag =
-            '<div><span class="event-header-tag "' +
-            attr +
-            ">" +
-            key +
-            "</span>" +
-            '<span class="event-header-value' +
-            domClass +
-            '">' +
-            obj.value +
-            "</span></div>";
-        } else {
-          tag =
-            '<div><span class="event-header-tag"' +
-            attr +
-            ">" +
-            key +
-            "</span>" +
-            '<span class="event-header-value' +
-            domClass +
-            '">' +
-            obj.value +
-            "</span></div>";
-        }
-        tags.push(tag);
-        formatted += tag;
-      });
-      formatted += "</div>";
-
-      return formatted;
-    },
-
     _populatePopup: function () {
       var content = "",
         headingText = "",
         self = this;
 
-      const eventTypeLabel = EventLoader.eventLabelsMap[this.type]["name"];
+      const eventTypeLabel = EventLoader.getEventTypeName(this.type);
 
-      if (this.hasOwnProperty("label") && this.label.length > 0) {
-        headingText = eventTypeLabel + ": " + this.fixTitles(this.label.split("\n")[0]);
-      } else {
-        headingText = eventTypeLabel + ": " + this.fixTitles(this.name) + " " + this.fixTitles(this.version);
-      }
+      headingText = eventTypeLabel + ": " + this.fixTitles(this.label.split("\n")[0]);
 
       content +=
         '<div class="close-button ui-icon ui-icon-closethick" title="Close PopUp Window"></div>' +
@@ -945,36 +735,18 @@ var EventMarker = Class.extend(
         "</div>" +
         "\n";
 
-      if (this.hasOwnProperty("hv_labels_formatted") && Object.keys(this.hv_labels_formatted).length > 0) {
-        $.each(this.hv_labels_formatted, function (param, value) {
-          value = self.fixTitles(value);
-          content +=
-            '<div class="container">' +
-            "\n" +
-            "\t" +
-            '<div class="param-container"><div class="param-label user-selectable">' +
-            param +
-            ": </div></div>" +
-            "\n" +
-            "\t" +
-            '<div class="value-container"><div class="param-value user-selectable">' +
-            value +
-            "</div></div>" +
-            "\n" +
-            "</div>" +
-            "\n";
-        });
-      } else {
+      // Display label in popup
+      if (this.hasOwnProperty("label") && this.label.length > 0) {
         let lines = this.label.replace("\n", " ");
         content +=
           '<div class="container">' +
           "\n" +
           "\t" +
-          '<div class="param-container"><div class="param-label user-selectable">title: </div></div>' +
+          '<div class="param-container"><div class="param-label user-selectable">Label: </div></div>' +
           "\n" +
           "\t" +
           '<div class="value-container"><div class="param-value user-selectable">' +
-          lines +
+          this.fixTitles(lines) +
           "</div></div>" +
           "\n" +
           "</div>" +
@@ -982,8 +754,8 @@ var EventMarker = Class.extend(
       }
 
       var noaaSearch = "";
-      if (this.name == "NOAA SWPC Observer" || this.name == "HMI SHARP") {
-        var eventName = this.fixTitles(this.hv_labels_formatted[Object.keys(this.hv_labels_formatted)[0]]);
+      if (this.path == "HEK>>Active Region>>NOAA SWPC Observer" || this.path == "HEK>>Active Region>>HMI SHARP") {
+        var eventName = this.fixTitles(this.label.split("\n")[0]);
         noaaSearch =
           '<div class="btn-label btn event-search-external text-btn" data-url=\'https://ui.adsabs.harvard.edu/#search/q="' +
           eventName +
@@ -1146,19 +918,41 @@ var EventMarker = Class.extend(
     },
 
     /**
-     * Emphasize label of the marker,
+     * Emphasize label of the marker and highlight the footprint region,
      */
     emphasize: function () {
       this.eventMarkerDomNode.css("zIndex", "997");
       this._label.addClass("event-label-hover");
+
+      if (this.hasFootprint() && this.eventRegionDomNode) {
+        let baseColor = EventLoader.getEventTypeColor(this.type);
+        let polygon = this.eventRegionDomNode.find("polygon")[0];
+        if (polygon) {
+          polygon.style.fill = hexToRgba(baseColor, 0.6);
+          polygon.style.stroke = "rgba(0, 0, 0, 0.8)";
+          polygon.style.strokeWidth = "3px";
+          polygon.style.strokeLinejoin = "round";
+        }
+      }
     },
 
     /**
-     * deEmphasize label of the marker,
+     * deEmphasize label of the marker and restore the footprint region,
      */
     deEmphasize: function () {
       this.eventMarkerDomNode.css("zIndex", this._zIndex);
       this._label.removeClass("event-label-hover");
+
+      if (this.hasFootprint() && this.eventRegionDomNode) {
+        let baseColor = EventLoader.getEventTypeColor(this.type);
+        let polygon = this.eventRegionDomNode.find("polygon")[0];
+        if (polygon) {
+          polygon.style.fill = hexToRgba(baseColor, 0.4);
+          polygon.style.stroke = "rgba(0, 0, 0, 0.533)";
+          polygon.style.strokeWidth = "1.5px";
+          polygon.style.strokeLinejoin = "round";
+        }
+      }
     },
 
     /**
