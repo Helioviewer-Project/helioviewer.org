@@ -15,6 +15,11 @@ import React from "react";
 import EventViewer from "./EventViewer";
 import { renderToString } from "react-dom/server";
 
+// Marker pin icon is 24x38 px. Offsets place the tip of the pin at the event point:
+// X = half-width (centers icon horizontally), Y = full height (anchors tip at bottom).
+const MARKER_OFFSET_X = 12;
+const MARKER_OFFSET_Y = 38;
+
 var EventMarker = Class.extend(
   /** @lends EventMarker.prototype */
   {
@@ -77,7 +82,7 @@ var EventMarker = Class.extend(
      * - Re-runs on zoom via refresh(), so positions track imageScale changes
      *
      * MARKER OFFSET:
-     * - The -12 and -38 pixel offsets position the marker pin's tip at the event location
+     * - MARKER_OFFSET_X / MARKER_OFFSET_Y position the marker pin's tip at the event location
      * - The marker icon is 24x38 pixels, so offset centers the tip at bottom-center
      */
     createMarker: function (zIndex) {
@@ -130,11 +135,10 @@ var EventMarker = Class.extend(
         var markerX = Math.round(centroidX / imageScale);
         var markerY = Math.round(-centroidY / imageScale);
 
-        // Apply pin icon offset (-12, -38) to position tip at centroid
-        // Marker icon is 24x38px, so this centers the tip at bottom-center of icon
+        // Apply pin icon offset to position tip at centroid
         this.pos = {
-          x: markerX - 12,
-          y: markerY - 38
+          x: markerX - MARKER_OFFSET_X,
+          y: markerY - MARKER_OFFSET_Y
         };
       } else {
         // EVENT WITHOUT FOOTPRINT - Simple point marker
@@ -143,8 +147,8 @@ var EventMarker = Class.extend(
         // hv_hpc_x: X position in arcseconds (positive = West/right)
         // hv_hpc_y: Y position in arcseconds (positive = North/up, hence negated for screen coords)
         this.pos = {
-          x: Math.round(this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale) - 12,
-          y: Math.round(-this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale) - 38
+          x: Math.round(this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale) - MARKER_OFFSET_X,
+          y: Math.round(-this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale) - MARKER_OFFSET_Y
         };
       }
 
@@ -349,14 +353,14 @@ var EventMarker = Class.extend(
         var markerY = Math.round(-centroidY / imageScale);
 
         this.pos = {
-          x: markerX - 12,
-          y: markerY - 38
+          x: markerX - MARKER_OFFSET_X,
+          y: markerY - MARKER_OFFSET_Y
         };
       } else {
         // Simple point marker without footprint
         this.pos = {
-          x: Math.round(this.hv_hpc_x / imageScale) - 12,
-          y: Math.round(-this.hv_hpc_y / imageScale) - 38
+          x: Math.round(this.hv_hpc_x / imageScale) - MARKER_OFFSET_X,
+          y: Math.round(-this.hv_hpc_y / imageScale) - MARKER_OFFSET_Y
         };
       }
 
@@ -406,11 +410,11 @@ var EventMarker = Class.extend(
       // Re-position Event Popup
       if (this._popupVisible) {
         this.popup_pos = {
-          x: this.hv_hpc_x / imageScale + 12,
-          y: -this.hv_hpc_y / imageScale - 38
+          x: this.hv_hpc_x / imageScale + MARKER_OFFSET_X,
+          y: -this.hv_hpc_y / imageScale - MARKER_OFFSET_Y
         };
         if (this.hv_hpc_x > 400) {
-          this.popup_pos.x -= this.eventPopupDomNode.width() + 38;
+          this.popup_pos.x -= this.eventPopupDomNode.width() + MARKER_OFFSET_Y;
         }
         this.eventPopupDomNode.css({
           left: this.popup_pos.x + "px",
@@ -540,11 +544,11 @@ var EventMarker = Class.extend(
         this.eventMarkerDomNode.css("z-index", this._zIndex);
       } else {
         this.popup_pos = {
-          x: this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale + 12,
-          y: -this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale - 38
+          x: this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale + MARKER_OFFSET_X,
+          y: -this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale - MARKER_OFFSET_Y
         };
         if (this.hv_hpc_x > 400) {
-          this.popup_pos.x -= this.eventPopupDomNode.width() + 38;
+          this.popup_pos.x -= this.eventPopupDomNode.width() + MARKER_OFFSET_Y;
         }
         this.eventPopupDomNode.css({
           left: this.popup_pos.x + "px",
