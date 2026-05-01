@@ -108,49 +108,7 @@ var EventMarker = Class.extend(
       });
 
       // Calculate marker position based on whether event has a footprint polygon
-      if (this.hasFootprint()) {
-        // EVENT HAS FOOTPRINT POLYGON
-        // Position marker at the centroid (center) of the footprint
-
-        // imageScale: Current view's image scale (arcsec/pixel)
-        let imageScale = Helioviewer.userSettings.settings.state.imageScale;
-
-        // Calculate centroid of all footprint points
-        // Centroid = average of all polygon vertices in HPC coordinates
-        // footprint is an array of {x, y} point objects
-        let totalX = 0, totalY = 0;
-
-        this.footprint.forEach((point) => {
-          // point.x = x in arcseconds, point.y = y in arcseconds
-          totalX += point.x;
-          totalY += point.y;
-        });
-
-        // Calculate centroid in HPC arcseconds
-        let centroidX = totalX / this.footprint.length;
-        let centroidY = totalY / this.footprint.length;
-
-        // Convert centroid to screen pixels
-        // Negate Y because screen Y is inverted (positive down)
-        var markerX = Math.round(centroidX / imageScale);
-        var markerY = Math.round(-centroidY / imageScale);
-
-        // Apply pin icon offset to position tip at centroid
-        this.pos = {
-          x: markerX - MARKER_OFFSET_X,
-          y: markerY - MARKER_OFFSET_Y
-        };
-      } else {
-        // EVENT WITHOUT FOOTPRINT - Simple point marker
-        // Position directly at hv_hpc_x, hv_hpc_y coordinates
-
-        // hv_hpc_x: X position in arcseconds (positive = West/right)
-        // hv_hpc_y: Y position in arcseconds (positive = North/up, hence negated for screen coords)
-        this.pos = {
-          x: Math.round(this.hv_hpc_x / Helioviewer.userSettings.settings.state.imageScale) - MARKER_OFFSET_X,
-          y: Math.round(-this.hv_hpc_y / Helioviewer.userSettings.settings.state.imageScale) - MARKER_OFFSET_Y
-        };
-      }
+      this.pos = this._computeMarkerPosition(Helioviewer.userSettings.settings.state.imageScale);
 
       // Set marker icon based on event type (AR, FL, CH, etc.)
       markerURL =
@@ -257,6 +215,37 @@ var EventMarker = Class.extend(
     },
 
     /**
+     * Computes the {x, y} pixel position for the marker pin at the given
+     * imageScale. For events with a footprint, the pin sits at the polygon
+     * centroid; otherwise it sits at hv_hpc_x / hv_hpc_y. The pin icon offset
+     * is applied so its tip lands on the event point.
+     * Shared by createMarker (initial draw) and refresh (re-draw on zoom).
+     */
+    _computeMarkerPosition: function (imageScale) {
+      let hpc_x, hpc_y;
+
+      if (this.hasFootprint()) {
+        // Centroid = average of all polygon vertices in HPC arcseconds
+        let total_x = 0, total_y = 0;
+        this.footprint.forEach((point) => {
+          total_x += point.x;
+          total_y += point.y;
+        });
+        hpc_x = total_x / this.footprint.length;
+        hpc_y = total_y / this.footprint.length;
+      } else {
+        hpc_x = this.hv_hpc_x;
+        hpc_y = this.hv_hpc_y;
+      }
+
+      // Negate Y because screen Y is inverted (positive down)
+      return {
+        x: Math.round(hpc_x / imageScale) - MARKER_OFFSET_X,
+        y: Math.round(-hpc_y / imageScale) - MARKER_OFFSET_Y
+      };
+    },
+
+    /**
      * Computes the footprint bounding box at the given imageScale and applies it
      * to the existing region SVG (position, size, and inner polygon points).
      * Shared by createRegion (initial draw) and refresh (re-draw on zoom).
@@ -338,33 +327,7 @@ var EventMarker = Class.extend(
       let imageScale = Helioviewer.userSettings.settings.state.imageScale;
 
       // Re-position Event Marker pin
-      if (this.hasFootprint()) {
-        // Recalculate centroid from footprint coordinates
-        // footprint is an array of {x, y} point objects
-        let totalX = 0, totalY = 0;
-
-        this.footprint.forEach((point) => {
-          totalX += point.x;
-          totalY += point.y;
-        });
-
-        let centroidX = totalX / this.footprint.length;
-        let centroidY = totalY / this.footprint.length;
-
-        var markerX = Math.round(centroidX / imageScale);
-        var markerY = Math.round(-centroidY / imageScale);
-
-        this.pos = {
-          x: markerX - MARKER_OFFSET_X,
-          y: markerY - MARKER_OFFSET_Y
-        };
-      } else {
-        // Simple point marker without footprint
-        this.pos = {
-          x: Math.round(this.hv_hpc_x / imageScale) - MARKER_OFFSET_X,
-          y: Math.round(-this.hv_hpc_y / imageScale) - MARKER_OFFSET_Y
-        };
-      }
+      this.pos = this._computeMarkerPosition(imageScale);
 
       this.eventMarkerDomNode.css({
         left: this.pos.x + "px",
