@@ -772,5 +772,23 @@ var hexToRgba = function (hex, alpha) {
     return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
 };
 
+/**
+ * Lightens a "#rrggbb" hex color by blending it toward white.
+ *
+ * @param {string} hex    "#rrggbb" color string
+ * @param {number} amount 0..1 — fraction of distance to white (0 = unchanged, 1 = white)
+ * @returns {string} "#rrggbb" lightened color
+ */
+var lightenColor = function (hex, amount) {
+    hex = hex.replace('#', '');
+    var r = parseInt(hex.substring(0, 2), 16);
+    var g = parseInt(hex.substring(2, 4), 16);
+    var b = parseInt(hex.substring(4, 6), 16);
+    r = Math.min(255, Math.round(r + (255 - r) * amount));
+    g = Math.min(255, Math.round(g + (255 - g) * amount));
+    b = Math.min(255, Math.round(b + (255 - b) * amount));
+    return '#' + r.toString(16).padStart(2, '0') + g.toString(16).padStart(2, '0') + b.toString(16).padStart(2, '0');
+};
+
 
 
