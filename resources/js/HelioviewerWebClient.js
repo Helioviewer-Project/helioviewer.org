@@ -2305,11 +2305,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     drawerMoviesClick: function(openNow) {
         var self = this, buttonId = "#movies-button";
 
-        this.closeTabDrawersExcept('#'+this.drawerMovies.attr('id'));
-
         self._movieManagerUI._refresh();
 
-        if ( $(buttonId).hasClass('opened') || openNow === false ) {
+        const openingDrawer = !$(buttonId).hasClass('opened') || openNow === true;
+        const closingDrawer = !openingDrawer || openNow === false;
+        if ( closingDrawer ) {
             self.drawerMovies.css('transition', '');
             $('.drawer-contents', this.drawerMovies).fadeOut(10);
             this.drawerMovies.css('width', 0);
@@ -2318,8 +2318,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerMovies.css({'display':'none'});
             $(buttonId).removeClass('opened');
             Helioviewer.userSettings.set("state.drawers.#hv-drawer-movies.open", false);
+            // On mobile minimal view, toggle the datepicker when screenshot drawer opens.
+            if (Helioviewer.mobile_minimal) {
+                $('#js-minimal-datepicker').show();
+            }
         }
-        else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
+        else if ( openingDrawer ) {
             self.drawerMovies.css('transition', 'height 500ms');
             this.drawerMovies.css('width', this.drawerMoviesOpenedWidth);
             this.drawerMovies.css('height', this.drawerMoviesOpenedHeight);
@@ -2333,17 +2337,18 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.reopenAccordions(this.drawerMovies);
         }
 
+        this.closeTabDrawersExcept('#'+this.drawerMovies.attr('id'), openingDrawer);
         return;
     },
 
     drawerScreenshotsClick: function(openNow) {
         var self = this, buttonId = "#screenshots-button";
 
-        this.closeTabDrawersExcept('#'+this.drawerScreenshots.attr('id'));
-
         self._screenshotManagerUI._refresh();
 
-        if ( $(buttonId).hasClass('opened') || openNow === false ) {
+        const openingDrawer = !$(buttonId).hasClass('opened') || openNow === true;
+        const closingDrawer = !openingDrawer || openNow === false;
+        if ( closingDrawer ) {
 
             self.drawerScreenshots.css('transition', '');
             $('.drawer-contents', this.drawerScreenshots).fadeOut(10);
@@ -2353,8 +2358,12 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.drawerScreenshots.css({'display':'none'});
             $(buttonId).removeClass('opened');
             Helioviewer.userSettings.set("state.drawers.#hv-drawer-screenshots.open", false);
+            // On mobile minimal view, toggle the datepicker when screenshot drawer opens.
+            if (Helioviewer.mobile_minimal) {
+                $('#js-minimal-datepicker').show();
+            }
         }
-        else if ( !$(buttonId).hasClass('opened') || openNow === true ) {
+        else if ( openingDrawer ) {
             self.drawerScreenshots.css('transition', 'height 500ms');
             this.drawerScreenshots.css('width', this.drawerScreenshotsOpenedWidth);
             this.drawerScreenshots.css('height', this.drawerScreenshotsOpenedHeight);
@@ -2368,6 +2377,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             this.reopenAccordions(this.drawerScreenshots);
         }
 
+        this.closeTabDrawersExcept('#'+this.drawerScreenshots.attr('id'), openingDrawer);
         return;
     },
 
@@ -2519,8 +2529,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         return;
     },
 
-    closeTabDrawersExcept: function (drawerId) {
+    closeTabDrawersExcept: function (drawerId, isOpening) {
         var self = this;
+
+        // On mobile minimal view, toggle the datepicker when screenshot drawer opens.
+        if (Helioviewer.mobile_minimal) {
+            isOpening ? $('#js-minimal-datepicker').hide() :
+                        $('#js-minimal-datepicker').show();
+        }
 
         $.each( this.tabbedDrawers, function (i, drawer) {
             if ( drawer != drawerId ) {

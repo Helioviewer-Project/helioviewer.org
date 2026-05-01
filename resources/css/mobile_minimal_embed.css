@@ -1,0 +1,107 @@
+@media screen and (max-width: 1024px) {
+    html, body {
+        min-width: 100vw;
+        max-width: 100vw;
+        min-height: 100vh;
+        max-height: 100vh;
+        width: 100vw;
+        height: 100vh;
+    }
+
+  	#toptouchlayer {
+		touch-action: none;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		z-index: 10;
+	}
+
+    .helioviewer-view-type-minimal #movies-button,
+    .helioviewer-view-type-minimal #screenshots-button,
+    .helioviewer-view-type-minimal #help-button {
+        position: absolute;
+        top: auto;
+        left: auto;
+    }
+
+    .helioviewer-view-type-minimal #movies-button {
+        bottom: 1em;
+        right: 2.5em;
+    }
+
+    .helioviewer-view-type-minimal #screenshots-button {
+        bottom: 1em;
+        right: 1em;
+    }
+
+    .helioviewer-view-type-minimal #help-button {
+        display: none;
+    }
+
+
+    .helioviewer-view-type-minimal {
+        min-width: 100vw;
+        max-width: 100vw;
+    }
+
+    #hv-drawer-movies, #hv-drawer-screenshots {
+        position: fixed;
+        width: 90vw !important;
+        top: 2.5vw;
+    }
+
+    .hv-drawer-right.user-select-none.hv-drawer-date,
+    #hv-drawer-movies,
+    #hv-drawer-screenshots {
+        left: 5vw;
+        width: 90vw;
+    }
+
+    #helioviewer-viewport-container-outer {
+        min-width: 100vw;
+        width: 100vw;
+    }
+
+    #message-console {
+        margin-top: 11em;
+    }
+
+    #k12-scale {
+        min-width: 100vw;
+        width: 100vw;
+    }
+
+    .__react_modal_image__modal_container {
+        width: 100vw !important;
+        height: 100vh !important;
+    }
+}
+
+@media screen and (max-width: 391px) {
+    #time-step-label {
+        margin-right: 0px;
+    }
+
+    #k12-accordion-date .row .field {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .k12-timeNowBtn {
+        margin-top: 0;
+    }
+
+    #image-layer-select-container {
+        transform: translateY(5px);
+    }
+
+    #image-layer-select {
+        margin-bottom: -8px;
+    }
+
+    #observation-label {
+        margin-top: 0 !important;
+    }
+}

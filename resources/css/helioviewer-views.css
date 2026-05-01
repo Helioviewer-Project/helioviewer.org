@@ -269,7 +269,7 @@
 
 
 .helioviewer-view-type-minimal .hv-drawer-date{
-	display:block !important;
+	display:block;
 	left:10px;
 	top:10px;
 	position:absolute;
