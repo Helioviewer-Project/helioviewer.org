@@ -215,84 +215,86 @@ var EventMarker = Class.extend(
      */
     createRegion: function (zIndex) {
       // Only create region if event has footprint polygon data
-      if (this.hasFootprint()) {
-        // imageScale: Current view's zoom level (arcsec/pixel)
-        // Used to convert HPC arcseconds to screen pixels
-        let imageScale = Helioviewer.userSettings.settings.state.imageScale;
+      if (!this.hasFootprint()) {
+        return;
+      }
 
-        // Sanitize the event ID for use in DOM (remove special characters)
-        var id = this.id;
-        id = id.replace(/ivo:\/\/helio-informatics.org\//g, "");
-        id = id.replace(/\(|\)|\.|\:/g, "");
+      // Sanitize the event ID for use in DOM (remove special characters)
+      var id = this.id;
+      id = id.replace(/ivo:\/\/helio-informatics.org\//g, "");
+      id = id.replace(/\(|\)|\.|\:/g, "");
 
-        // Create SVG namespace element for proper SVG rendering
-        const svgNS = "http://www.w3.org/2000/svg";
-        let svg = document.createElementNS(svgNS, "svg");
+      // Create SVG namespace element for proper SVG rendering
+      const svgNS = "http://www.w3.org/2000/svg";
+      let svg = document.createElementNS(svgNS, "svg");
 
-        // Set SVG attributes
-        svg.setAttribute("class", "event-region");
-        svg.setAttribute("id", "region_" + id);
-        svg.setAttribute("rel", id);
-        svg.style.position = "absolute";
-        svg.style.overflow = "visible";
-        svg.style.zIndex = zIndex;
-        svg.style.pointerEvents = "none"; // Allow clicks to pass through to markers
+      svg.setAttribute("class", "event-region");
+      svg.setAttribute("id", "region_" + id);
+      svg.setAttribute("rel", id);
+      svg.style.position = "absolute";
+      svg.style.overflow = "visible";
+      svg.style.zIndex = zIndex;
+      svg.style.pointerEvents = "none"; // Allow clicks to pass through to markers
 
-        // Calculate bounding box from all footprint points to position the SVG
-        // footprint is an array of {x, y} point objects
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      // Styling mirrors the legacy backend HEK polygon renderer:
+      // fill: event-type color at 0x66 (0.4) alpha, stroke: black at 0x88 (0.533) alpha, 4px round joins.
+      let svgPolygon = document.createElementNS(svgNS, "polygon");
+      svgPolygon.setAttribute("class", "event-region-polygon");
+      let baseColor = EventLoader.getEventTypeColor(this.type);
+      svgPolygon.style.fill = hexToRgba(baseColor, 0.4);
+      svgPolygon.style.stroke = "rgba(0, 0, 0, 0.533)";
+      svgPolygon.style.strokeWidth = "1.5px";
+      svgPolygon.style.strokeLinejoin = "round";
 
-        this.footprint.forEach((point) => {
-          // Convert HPC coordinates to screen pixels
-          // point.x = x in arcseconds, point.y = y in arcseconds
-          let screenX = point.x / imageScale;
-          let screenY = -point.y / imageScale; // Negate Y for screen coordinates
+      svg.appendChild(svgPolygon);
+      this.eventRegionDomNode = $(svg);
 
-          minX = Math.min(minX, screenX);
-          minY = Math.min(minY, screenY);
-          maxX = Math.max(maxX, screenX);
-          maxY = Math.max(maxY, screenY);
-        });
+      if (typeof this.parentFRM != "undefined") {
+        this.parentFRM.append(this.eventRegionDomNode);
+      }
 
-        // Position SVG at the bounding box origin
-        svg.style.left = minX + "px";
-        svg.style.top = minY + "px";
-        svg.style.width = (maxX - minX) + "px";
-        svg.style.height = (maxY - minY) + "px";
+      this._updateRegionLayout(Helioviewer.userSettings.settings.state.imageScale);
+    },
 
-        // Store region position for refresh calculations
-        this.region_pos = { x: minX, y: minY };
+    /**
+     * Computes the footprint bounding box at the given imageScale and applies it
+     * to the existing region SVG (position, size, and inner polygon points).
+     * Shared by createRegion (initial draw) and refresh (re-draw on zoom).
+     */
+    _updateRegionLayout: function (imageScale) {
+      if (!this.eventRegionDomNode || !this.hasFootprint()) {
+        return;
+      }
 
-        // Convert footprint points to SVG points string
-        // Points are relative to SVG origin (minX, minY)
-        let pointsStr = this.footprint.map((point) => {
-          let screenX = point.x / imageScale - minX;
-          let screenY = -point.y / imageScale - minY;
-          return `${screenX},${screenY}`;
-        }).join(" ");
+      // Bounding box of all footprint points in screen pixels
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      this.footprint.forEach((point) => {
+        let screenX = point.x / imageScale;
+        let screenY = -point.y / imageScale; // screen Y is inverted
+        minX = Math.min(minX, screenX);
+        minY = Math.min(minY, screenY);
+        maxX = Math.max(maxX, screenX);
+        maxY = Math.max(maxY, screenY);
+      });
 
-        // Create SVG polygon element
-        let svgPolygon = document.createElementNS(svgNS, "polygon");
+      this.region_pos = { x: minX, y: minY };
+      this.eventRegionDomNode.css({
+        left: minX + "px",
+        top: minY + "px",
+        width: (maxX - minX) + "px",
+        height: (maxY - minY) + "px"
+      });
+
+      // Polygon points are relative to the SVG origin (minX, minY)
+      let pointsStr = this.footprint.map((point) => {
+        let screenX = point.x / imageScale - minX;
+        let screenY = -point.y / imageScale - minY;
+        return `${screenX},${screenY}`;
+      }).join(" ");
+
+      let svgPolygon = this.eventRegionDomNode.find("polygon")[0];
+      if (svgPolygon) {
         svgPolygon.setAttribute("points", pointsStr);
-        svgPolygon.setAttribute("class", "event-region-polygon");
-
-        // Styling mirrors the legacy backend HEK polygon renderer:
-        // fill: event-type color at 0x66 (0.4) alpha, stroke: black at 0x88 (0.533) alpha, 4px round joins.
-        let baseColor = EventLoader.getEventTypeColor(this.type);
-        svgPolygon.style.fill = hexToRgba(baseColor, 0.4);
-        svgPolygon.style.stroke = "rgba(0, 0, 0, 0.533)";
-        svgPolygon.style.strokeWidth = "1.5px";
-        svgPolygon.style.strokeLinejoin = "round";
-
-        svg.appendChild(svgPolygon);
-
-        // Store reference to SVG element
-        this.eventRegionDomNode = $(svg);
-
-        // Append region to parent FRM (Feature Recognition Method) container
-        if (typeof this.parentFRM != "undefined") {
-          this.parentFRM.append(this.eventRegionDomNode);
-        }
       }
     },
 
@@ -370,42 +372,7 @@ var EventMarker = Class.extend(
       });
 
       // Re-position and re-render SVG footprint region
-      if (this.hasFootprint() && this.eventRegionDomNode) {
-        // Calculate new bounding box for current zoom level
-        // footprint is an array of {x, y} point objects
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-
-        this.footprint.forEach((point) => {
-          let screenX = point.x / imageScale;
-          let screenY = -point.y / imageScale;
-
-          minX = Math.min(minX, screenX);
-          minY = Math.min(minY, screenY);
-          maxX = Math.max(maxX, screenX);
-          maxY = Math.max(maxY, screenY);
-        });
-
-        // Update SVG position and size
-        this.region_pos = { x: minX, y: minY };
-        this.eventRegionDomNode.css({
-          left: minX + "px",
-          top: minY + "px",
-          width: (maxX - minX) + "px",
-          height: (maxY - minY) + "px"
-        });
-
-        // Update polygon points in SVG
-        let svgPolygon = this.eventRegionDomNode.find("polygon")[0];
-        if (svgPolygon) {
-          let pointsStr = this.footprint.map((point) => {
-            let screenX = point.x / imageScale - minX;
-            let screenY = -point.y / imageScale - minY;
-            return `${screenX},${screenY}`;
-          }).join(" ");
-
-          svgPolygon.setAttribute("points", pointsStr);
-        }
-      }
+      this._updateRegionLayout(imageScale);
 
       // Re-position Event Popup
       if (this._popupVisible) {
