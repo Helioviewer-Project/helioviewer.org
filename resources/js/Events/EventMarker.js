@@ -69,14 +69,12 @@ var EventMarker = Class.extend(
      *
      * COORDINATE SYSTEM:
      * - hv_hpc_x, hv_hpc_y: Helioprojective Cartesian coordinates (arcseconds from Sun center)
-     * - hv_poly_hpc_x_final, hv_poly_hpc_y_final: Pre-calculated polygon position
      * - imageScale: Current zoom level (arcseconds per pixel)
-     * - refScale: Reference scale at which polygon pixel dimensions were computed (max zoom)
      *
      * SCALING FORMULA:
-     * - scaleFactor = refScale / imageScale
-     * - When zoomed in (imageScale < refScale): scaleFactor > 1, things appear larger
-     * - When zoomed out (imageScale > refScale): scaleFactor < 1, things appear smaller
+     * - screenPixels = arcseconds / imageScale
+     * - Y is negated (screen Y grows downward, HPC Y grows upward)
+     * - Re-runs on zoom via refresh(), so positions track imageScale changes
      *
      * MARKER OFFSET:
      * - The -12 and -38 pixel offsets position the marker pin's tip at the event location
