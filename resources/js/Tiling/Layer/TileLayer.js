@@ -57,85 +57,312 @@ var TileLayer = Layer.extend(
         // Mapping of x, y coordinates to HTML img tags
         this._tiles = {}
     },
+    /**
+     * Returns the affine transformation from the canonical tile coordinate
+     * system to browser coordinates.
+     *
+     * The backend CD matrix maps FITS pixel deltas to solar-world deltas.
+     * Browser Y increases downwards, so the off-diagonal Y terms must be
+     * converted accordingly.
+     *
+     * CSS matrix layout:
+     *
+     * x' = a*x + c*y
+     * y' = b*x + d*y
+     */
+    _getWCSTransform: function () {
+        let identity = {
+            a: 1,
+            b: 0,
+            c: 0,
+            d: 1
+        };
 
+        if (
+            !this.image ||
+            !this.image.wcs ||
+            !Array.isArray(this.image.wcs.cd) ||
+            !Array.isArray(this.image.wcs.cd[0]) ||
+            !Array.isArray(this.image.wcs.cd[1])
+        ) {
+            return identity;
+        }
+
+        let canonicalScale = parseFloat(this.image.scale);
+        let cd = this.image.wcs.cd;
+
+        if (
+            !Number.isFinite(canonicalScale) ||
+            Math.abs(canonicalScale) < 1.0e-15
+        ) {
+            return identity;
+        }
+
+        let matrix = {
+            a: parseFloat(cd[0][0]) / canonicalScale,
+            b: -parseFloat(cd[1][0]) / canonicalScale,
+            c: -parseFloat(cd[0][1]) / canonicalScale,
+            d: parseFloat(cd[1][1]) / canonicalScale
+        };
+
+        let determinant =
+            (matrix.a * matrix.d) -
+            (matrix.b * matrix.c);
+
+        if (
+            !Number.isFinite(matrix.a) ||
+            !Number.isFinite(matrix.b) ||
+            !Number.isFinite(matrix.c) ||
+            !Number.isFinite(matrix.d) ||
+            !Number.isFinite(determinant) ||
+            Math.abs(determinant) < 1.0e-15
+        ) {
+            return identity;
+        }
+
+        return matrix;
+    },
+
+    /**
+     * Applies the native WCS transform to one point.
+     */
+    _transformWCSPoint: function (point) {
+        let matrix = this._getWCSTransform();
+
+        return {
+            x:
+                (matrix.a * point.x) +
+                (matrix.c * point.y),
+
+            y:
+                (matrix.b * point.x) +
+                (matrix.d * point.y)
+        };
+    },
+
+    /**
+     * Applies the inverse native WCS transform to one viewport point.
+     */
+    _inverseTransformWCSPoint: function (point) {
+        let matrix = this._getWCSTransform();
+
+        let determinant =
+            (matrix.a * matrix.d) -
+            (matrix.b * matrix.c);
+
+        return {
+            x:
+                (
+                    (matrix.d * point.x) -
+                    (matrix.c * point.y)
+                ) / determinant,
+
+            y:
+                (
+                    (-matrix.b * point.x) +
+                    (matrix.a * point.y)
+                ) / determinant
+        };
+    },
+
+    /**
+     * Converts an axis-aligned viewport rectangle into an axis-aligned
+     * bounding box in the untransformed tile coordinate system.
+     */
+    _inverseTransformViewportBounds: function (vpCoords) {
+        let corners = [
+            {
+                x: vpCoords.left,
+                y: vpCoords.top
+            },
+            {
+                x: vpCoords.right,
+                y: vpCoords.top
+            },
+            {
+                x: vpCoords.right,
+                y: vpCoords.bottom
+            },
+            {
+                x: vpCoords.left,
+                y: vpCoords.bottom
+            }
+        ];
+
+        let transformed = corners.map(
+            point => this._inverseTransformWCSPoint(point)
+        );
+
+        let xValues = transformed.map(point => point.x);
+        let yValues = transformed.map(point => point.y);
+
+        return {
+            left: Math.min.apply(null, xValues),
+            right: Math.max.apply(null, xValues),
+            top: Math.min.apply(null, yValues),
+            bottom: Math.max.apply(null, yValues)
+        };
+    },
+
+    /**
+     * Transforms an axis-aligned rectangle and returns the bounding box of
+     * its four transformed corners.
+     */
+    _transformRectangleBounds: function (rectangle) {
+        let corners = [
+            {
+                x: rectangle.left,
+                y: rectangle.top
+            },
+            {
+                x: rectangle.right,
+                y: rectangle.top
+            },
+            {
+                x: rectangle.right,
+                y: rectangle.bottom
+            },
+            {
+                x: rectangle.left,
+                y: rectangle.bottom
+            }
+        ];
+
+        let transformed = corners.map(
+            point => this._transformWCSPoint(point)
+        );
+
+        let xValues = transformed.map(point => point.x);
+        let yValues = transformed.map(point => point.y);
+
+        return {
+            left: Math.min.apply(null, xValues),
+            right: Math.max.apply(null, xValues),
+            top: Math.min.apply(null, yValues),
+            bottom: Math.max.apply(null, yValues)
+        };
+    },
+    /**
+     * Updates the tile range required by the visible viewport.
+     *
+     * For transformed images the viewport is first mapped through the inverse
+     * WCS matrix. This ensures that tiles in the rotated corners are loaded.
+     */
     updateTileVisibilityRange: function (vpCoords) {
-        // Get the apparent tile size according to zoom scale.
-        // tile size may be x, but if zoomed in or out, it will appear to be x * zoom.
-        let scale = (Helioviewer.userSettings.get('mobileZoomScale') || 1);
-        let ts = this.tileSize * scale;
-        // Get the coordinate of this image relative to the origin
-        // image.offset is this coordinate of the origin relative to the image center.
-        // By changing the sign, it becomes the coordinate of the image center
-        // relative to the origin.
-        // The origin is the center of the sun / moving container.
+        this._lastViewportCoords = {
+            left: vpCoords.left,
+            right: vpCoords.right,
+            top: vpCoords.top,
+            bottom: vpCoords.bottom
+        };
+
+        let layerViewport =
+            this._inverseTransformViewportBounds(vpCoords);
+
+        let mobileScale =
+            Helioviewer.userSettings.get(
+                "mobileZoomScale"
+            ) || 1;
+
+        let tileSize =
+            this.tileSize * mobileScale;
+
         let offset = this.getCurrentOffset();
-        // Computes the coordinates of the nearest tile multiples in each direction.
-        // These coordinates are measured relative to the center of the image (offsetX, offsetY).
-        // vpCoords are measured relative to sun center, the origin of the moving container.
-        // To change the origin to be relative to the image, we have to do the operation vpCoord - (offsetX, offsetY).
-        let vpWidth = (vpCoords.right - vpCoords.left);
-        let vpHeight = (vpCoords.bottom - vpCoords.top);
-        let shiftedVp = {
-            top: vpCoords.top + offset.y,
-            left: vpCoords.left + offset.x,
-            right: vpCoords.left + offset.x + vpWidth,
-            bottom: vpCoords.top + offset.y + vpHeight
-        };
-        let vp = {
-            top:    shiftedVp.top    - ts - (shiftedVp.top    % ts),
-            left:   shiftedVp.left   - ts - (shiftedVp.left   % ts),
-            bottom: shiftedVp.bottom + ts - (shiftedVp.bottom % ts),
-            right:  shiftedVp.right  + ts - (shiftedVp.right  % ts)
+
+        /*
+         * Convert solar-centered layer coordinates into coordinates relative
+         * to the image center.
+         */
+        let shiftedViewport = {
+            left: layerViewport.left + offset.x,
+            right: layerViewport.right + offset.x,
+            top: layerViewport.top + offset.y,
+            bottom: layerViewport.bottom + offset.y
         };
 
-        // Indices to display (one subtracted from ends to account for "0th" tiles).
+        /*
+         * Include one extra tile around every edge. This avoids gaps during
+         * rotation, interpolation and interactive movement.
+         */
         let tileVisibilityRange = {
-            xStart : Math.round(vp.left / ts),
-            yStart : Math.round(vp.top  / ts),
-            xEnd   : Math.round((vp.right  / ts) - 1),
-            yEnd   : Math.round((vp.bottom / ts) - 1)
+            xStart:
+                Math.floor(
+                    shiftedViewport.left / tileSize
+                ) - 1,
+
+            xEnd:
+                Math.ceil(
+                    shiftedViewport.right / tileSize
+                ),
+
+            yStart:
+                Math.floor(
+                    shiftedViewport.top / tileSize
+                ) - 1,
+
+            yEnd:
+                Math.ceil(
+                    shiftedViewport.bottom / tileSize
+                )
         };
 
-        // Only load new tiles if anything has changed
-        if ((this.tileVisibilityRange.xStart != tileVisibilityRange.xStart)
-         || (this.tileVisibilityRange.xEnd   != tileVisibilityRange.xEnd)
-         || (this.tileVisibilityRange.yStart != tileVisibilityRange.yStart)
-         || (this.tileVisibilityRange.yEnd   != tileVisibilityRange.yEnd)) {
-            this.tileLoader.updateTileVisibilityRange(tileVisibilityRange, this.loaded);
-            this.tileVisibilityRange = tileVisibilityRange;
+        if (
+            this.tileVisibilityRange.xStart !==
+                tileVisibilityRange.xStart ||
+
+            this.tileVisibilityRange.xEnd !==
+                tileVisibilityRange.xEnd ||
+
+            this.tileVisibilityRange.yStart !==
+                tileVisibilityRange.yStart ||
+
+            this.tileVisibilityRange.yEnd !==
+                tileVisibilityRange.yEnd
+        ) {
+            this.tileLoader.updateTileVisibilityRange(
+                tileVisibilityRange,
+                this.loaded
+            );
+
+            this.tileVisibilityRange =
+                tileVisibilityRange;
         }
     },
 
     /**
      *
      */
+    /**
+     * Updates the viewport scale and recomputes WCS-aware tile visibility.
+     */
     updateImageScale: function (scale) {
-        let tileVisibilityRange = this.tileVisibilityRange;
         this.viewportScale = scale;
-
-        // The general visibility range doesn't account for any x/y offsets.
-        // Update the start/end values based on the known offset.
-        let offset = this._getOffset(scale);
-        let xTileOffset = this._computeTileOffset(offset.x, this.tileSize);
-        let yTileOffset = this._computeTileOffset(offset.y, this.tileSize);
-        // Don't modify range directly since the object is shared across layers.
-        // Instead, create a new object with the updated fields
-        // With pinch scaling, these can end up being non-whole numbers from rounding
-        // errors. Instead of -1, we get -0.9999999 which results in the whole
-        // range being wrong.
-        // Round everything to whole numbers to make sure this always works.
-        let offsetVisibilityRange = {
-            xStart: Math.round(tileVisibilityRange.xStart) + xTileOffset,
-            xEnd: Math.round(tileVisibilityRange.xEnd) + xTileOffset,
-            yStart: Math.round(tileVisibilityRange.yStart) + yTileOffset,
-            yEnd: Math.round(tileVisibilityRange.yEnd) + yTileOffset
-        }
 
         this._updateDimensions();
 
-        this.tileLoader.setTileVisibilityRange(offsetVisibilityRange);
+        if (this._lastViewportCoords) {
+            /*
+             * Force range recomputation even when the numerical tile indexes
+             * happen to remain unchanged across two zoom levels.
+             */
+            this.tileVisibilityRange = {
+                xStart: null,
+                xEnd: null,
+                yStart: null,
+                yEnd: null
+            };
 
-        if (this.visible) {
+            this.updateTileVisibilityRange(
+                this._lastViewportCoords
+            );
+        }
+
+        /*
+         * A zoom changes the imageScale parameter used by getTile. Existing
+         * tile coordinates may remain numerically identical, but their URLs
+         * and rendered contents are no longer valid for the new scale.
+         */
+        if (this.visible && this.loaded) {
             this.tileLoader.reloadTiles(true);
         }
     },
@@ -186,52 +413,102 @@ var TileLayer = Layer.extend(
         }
     },
 
+    /**
+     * Returns the solar-reference-pixel offset in the canonical tile grid.
+     *
+     * The tile server still uses CDELT1 as its canonical extraction scale.
+     * The WCS matrix subsequently transforms that grid into the physical
+     * X/Y geometry.
+     */
     _getOffset: function (viewportScale) {
-        var scaleFactor, offsetX, offsetY;
+        let scaleFactor =
+            this.image.scale / viewportScale;
 
-        // Ratio of original JP2 image scale to the viewport/desired image scale
-        scaleFactor = this.image.scale / viewportScale;
+        this.width =
+            this.image.width * scaleFactor;
 
-        this.width  = this.image.width  * scaleFactor;
-        this.height = this.image.height * scaleFactor;
+        this.height =
+            this.image.height * scaleFactor;
 
-        // Use Math.floor to avoid unnecessary tile requests when the computed
-        // dimensions are something like 2048.32
-        this.tileLoader.updateDimensions(Math.floor(this.width),
-                                         Math.floor(this.height));
+        this.tileLoader.updateDimensions(
+            Math.floor(this.width),
+            Math.floor(this.height)
+        );
 
-        // Offset image
-        offsetX = parseFloat((this.image.offsetX * scaleFactor).toPrecision(8));
-        offsetY = parseFloat((this.image.offsetY * scaleFactor).toPrecision(8));
+        let offsetX = parseFloat(
+            (
+                this.image.offsetX *
+                scaleFactor
+            ).toPrecision(8)
+        );
+
+        let offsetY = parseFloat(
+            (
+                this.image.offsetY *
+                scaleFactor
+            ).toPrecision(8)
+        );
+
         return {
             x: offsetX,
             y: offsetY
-        }
+        };
     },
 
     /**
-     * Computes layer parameters relative to the current viewport image scale
-     *
-     * The values for offsetX and offsetY reflect the x and y coordinates
-     * of the reference pixel with an origin at the center of the image.
+     * Computes the transformed layer dimensions and positions its solar
+     * origin correctly in the moving container.
      */
     _updateDimensions: function () {
-        let offset = this._getOffset(this.viewportScale);
+        let offset =
+            this._getOffset(this.viewportScale);
 
-        // Update layer dimensions
-        let left = (-this.width  / 2) - offset.x;
-        let top = (-this.height / 2) - offset.y;
-        this.dimensions = {
-            "left"   : left,
-            "top"    : top,
-            "bottom" : top + this.height,
-            "right"  : left + this.width
+        let untransformedBounds = {
+            left:
+                (-this.width / 2) -
+                offset.x,
+
+            right:
+                (this.width / 2) -
+                offset.x,
+
+            top:
+                (-this.height / 2) -
+                offset.y,
+
+            bottom:
+                (this.height / 2) -
+                offset.y
         };
 
-        // Center of the tile layer i.e. center of the overall image.
+        this.dimensions =
+            this._transformRectangleBounds(
+                untransformedBounds
+            );
+
+        let transformedOffset =
+            this._transformWCSPoint(offset);
+
+        let matrix =
+            this._getWCSTransform();
+
+        /*
+         * Tiles are positioned around the image center. Position that center
+         * relative to the solar origin, then transform all tile coordinates.
+         */
         this.domNode.css({
-            "left": - offset.x,
-            "top" : - offset.y
+            left: -transformedOffset.x,
+            top: -transformedOffset.y,
+
+            "transform-origin": "0 0",
+
+            transform:
+                "matrix(" +
+                matrix.a + "," +
+                matrix.b + "," +
+                matrix.c + "," +
+                matrix.d + "," +
+                "0,0)"
         });
     },
 
@@ -241,6 +518,7 @@ var TileLayer = Layer.extend(
     onLoadImage: function () {
         this.loaded = true;
         this._updateDimensions();
+        this._applyLayerCompositing();
 
         this.tileLoader.reloadTiles(false);
 
@@ -259,19 +537,93 @@ var TileLayer = Layer.extend(
      * @description Update the tile layer's opacity
      * @param {int} Percent opacity to use
      */
-    setOpacity: function (opacity) {
-        this.opacity = opacity;
+    /**
+     * Returns true for layers that must use the same additive composition
+     * as the Helioviewer 3D renderer.
+     */
+    _usesAdditiveBlending: function () {
+        let imageName =
+            this.image && this.image.name
+                ? String(this.image.name).toUpperCase()
+                : "";
 
-        // IE
-        if (!$.support.opacity) {
-            $(this.domNode).find(".tile").each(function () {
-                $(this).css("opacity", opacity / 100);
-            });
+        let labels =
+            this.image && Array.isArray(this.image.uiLabels)
+                ? this.image.uiLabels
+                : [];
+
+        let instrumentIsSpice = labels.some(label => {
+            return label &&
+                String(label.name).toUpperCase() === "SPICE";
+        });
+
+        return imageName.includes("SPICE") ||
+            instrumentIsSpice;
+    },
+
+    /**
+     * Applies the closest CSS equivalent of Three.js AdditiveBlending.
+     *
+     * Three.js:
+     *     destination + opacity * source
+     *
+     * CSS:
+     *     mix-blend-mode: plus-lighter
+     *
+     * "screen" is used only as a fallback for browsers that do not support
+     * plus-lighter.
+     */
+    _applyLayerCompositing: function () {
+        let opacity = parseFloat(this.opacity);
+
+        if (!Number.isFinite(opacity)) {
+            opacity = 100;
         }
-        // Everyone else
-        else {
-            $(this.domNode).css("opacity", opacity / 100);
+
+        opacity = Math.max(
+            0,
+            Math.min(100, opacity)
+        );
+
+        let blendMode = "normal";
+
+        if (this._usesAdditiveBlending()) {
+            let supportsPlusLighter =
+                window.CSS &&
+                typeof window.CSS.supports === "function" &&
+                window.CSS.supports(
+                    "mix-blend-mode",
+                    "plus-lighter"
+                );
+
+            blendMode = supportsPlusLighter
+                ? "plus-lighter"
+                : "screen";
         }
+
+        $(this.domNode).css({
+            "opacity": opacity / 100,
+            "filter": "none",
+            "mix-blend-mode": blendMode
+        });
+    },
+
+    /**
+     * Updates layer opacity and reapplies its composition mode.
+     */
+    setOpacity: function (opacity) {
+        opacity = parseFloat(opacity);
+
+        if (!Number.isFinite(opacity)) {
+            return;
+        }
+
+        this.opacity = Math.max(
+            0,
+            Math.min(100, opacity)
+        );
+
+        this._applyLayerCompositing();
     },
 
     /**
@@ -323,6 +675,7 @@ var TileLayer = Layer.extend(
         this._super(visible);
         if (visible) {
             this._updateDimensions();
+            this._applyLayerCompositing();
             this.tileLoader.reloadTiles(true);
 
             // Update viewport sandbox if necessary
@@ -359,10 +712,9 @@ var TileLayer = Layer.extend(
     _loadStaticProperties: function () {
         this.domNode.css("z-index", -10 - parseInt(this.order, 10));//this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
 
-        // opacity
-        if (this.opacity !== 100) {
-            this.setOpacity(this.opacity);
-        }
+        // Apply opacity and the instrument-specific composition mode even
+        // when opacity is 100%. SPICE still needs additive blending at 100%.
+        this._applyLayerCompositing();
 
         // visibility
         if (!this.visible) {

@@ -87,38 +87,118 @@ var JP2Image = Class.extend(
     },
 
     /**
-     * Checks to see if image has been changed and calls event-handler passed in during initialization
-     * if a new image should be displayed.
+     * Checks whether the image has changed and initializes its metadata.
      *
-     * The values for offsetX and offsetY reflect the x and y coordinates with the origin
-     * at the bottom-left corner of the image, not the top-left corner.
+     * New APIs may return a two-dimensional WCS object containing independent
+     * scales and a complete CD matrix. Older APIs remain supported through an
+     * identity-matrix fallback.
      */
     _onImageLoad: function (result) {
         // We load the image closest to the observation time, which may or
         // may not be close to that time.
         this._notifyIfStaleImage(result);
-        // Only load image if it is different form what is currently displayed
-        if(result.error){
+
+        if (result.error) {
             var jGrowlOpts = {
                 sticky: true,
                 header: "Just now"
             };
             return;
         }
-        //if (this.id === result.id && this.difference == 0) {
-        //    return;
-        //}
+
         $.extend(this, result);
 
-        // Reference pixel offset at the original JP2 image scale (with respect to top-left origin)
-        // This formula below computes the coordinate of the reference pixel relative to the center of the image.
-        // This means if we consider X to be the x position of the center of the image.
-        // Then offsetX is the coordinate of the reference pixel in pixels.
-        // Similarly offsetY is the coordinate in pixels. The negative sign is needed to account for the direction change.
-        // in FITS, the value of Y increases upwards. In web coordinates, the value of Y increases downwards.
-        // So the - sign is needed to set the direction to be upwards.
-        this.offsetX =   parseFloat((this.refPixelX - (this.width  / 2)).toPrecision(8));
-        this.offsetY = - parseFloat((this.refPixelY - (this.height / 2)).toPrecision(8));
+        /*
+         * Preserve compatibility with API responses that do not yet contain
+         * native 2D WCS metadata.
+         */
+        if (!this.wcs || typeof this.wcs !== "object") {
+            this.wcs = {};
+        }
+
+        let fallbackScale = parseFloat(this.scale);
+
+        this.wcs.scaleX = parseFloat(
+            this.wcs.scaleX ?? fallbackScale
+        );
+
+        this.wcs.scaleY = parseFloat(
+            this.wcs.scaleY ?? fallbackScale
+        );
+
+        this.wcs.cdeltX = parseFloat(
+            this.wcs.cdeltX ?? this.wcs.scaleX
+        );
+
+        this.wcs.cdeltY = parseFloat(
+            this.wcs.cdeltY ?? this.wcs.scaleY
+        );
+
+        if (
+            !Array.isArray(this.wcs.pc) ||
+            this.wcs.pc.length !== 2 ||
+            !Array.isArray(this.wcs.pc[0]) ||
+            !Array.isArray(this.wcs.pc[1])
+        ) {
+            this.wcs.pc = [
+                [1, 0],
+                [0, 1]
+            ];
+        }
+
+        if (
+            !Array.isArray(this.wcs.cd) ||
+            this.wcs.cd.length !== 2 ||
+            !Array.isArray(this.wcs.cd[0]) ||
+            !Array.isArray(this.wcs.cd[1])
+        ) {
+            this.wcs.cd = [
+                [fallbackScale, 0],
+                [0, fallbackScale]
+            ];
+        }
+
+        this.wcs.pc = [
+            [
+                parseFloat(this.wcs.pc[0][0]),
+                parseFloat(this.wcs.pc[0][1])
+            ],
+            [
+                parseFloat(this.wcs.pc[1][0]),
+                parseFloat(this.wcs.pc[1][1])
+            ]
+        ];
+
+        this.wcs.cd = [
+            [
+                parseFloat(this.wcs.cd[0][0]),
+                parseFloat(this.wcs.cd[0][1])
+            ],
+            [
+                parseFloat(this.wcs.cd[1][0]),
+                parseFloat(this.wcs.cd[1][1])
+            ]
+        ];
+
+        /*
+         * Reference-pixel offset relative to the image center.
+         *
+         * FITS pixel Y increases upwards, whereas browser pixel Y increases
+         * downwards. Therefore the Y offset is inverted.
+         */
+        this.offsetX = parseFloat(
+            (
+                this.refPixelX -
+                (this.width / 2)
+            ).toPrecision(8)
+        );
+
+        this.offsetY = -parseFloat(
+            (
+                this.refPixelY -
+                (this.height / 2)
+            ).toPrecision(8)
+        );
 
         this._onChange();
     },
