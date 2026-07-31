@@ -1,7 +1,7 @@
 import EventGlossary from "./EventGlossary";
 
 export default class EventLoader {
-  static sources = ["HEK", "CCMC", "RHESSI"];
+  static sources = ["WSA", "HEK", "CCMC", "RHESSI"];
 
   static eventLabelsMap = {
     AR: { name: "Active Region", source: "HEK", color: "#ff8f97" },
@@ -40,7 +40,9 @@ export default class EventLoader {
     C3: { name: "DONKI", source: "CCMC", color: "#f0c060" },
     FP: { name: "Solar Flare Predictions", source: "CCMC", color: "#74b0c5" },
 
-    F2: { name: "Solar Flares", source: "RHESSI", color: "#ff7070" }
+    F2: { name: "Solar Flares", source: "RHESSI", color: "#ff7070" },
+
+    MC: { name: "Magnetic Connectivity", source: "WSA", color: "#B0C4FF" }
   };
 
   /**
@@ -152,149 +154,6 @@ export default class EventLoader {
     }
 
     return result;
-  }
-
-  static translateSelectionsToLegacyEventLayers(selections, source, selectedEvents) {
-    const transformEventLabelsMap = (elm) => {
-      let transformedMap = {};
-
-      for (let key in elm) {
-        let eventName = elm[key].name;
-        let eventSource = elm[key].source;
-
-        if (!transformedMap[eventSource]) {
-          transformedMap[eventSource] = {};
-        }
-
-        transformedMap[eventSource][eventName] = key;
-      }
-
-      return transformedMap;
-    };
-
-    let transformedELP = transformEventLabelsMap(EventLoader.eventLabelsMap);
-    let legacySelections = [];
-
-    for (const cs of selections) {
-      let parts = cs.split(">>");
-
-      if (parts.length == 1) {
-        let [selectedSource] = parts;
-
-        for (let eventTypeLabel of Object.keys(transformedELP[selectedSource])) {
-          legacySelections.push({
-            event_instances: [],
-            event_type: transformedELP[selectedSource][eventTypeLabel],
-            frms: ["all"],
-            open: 1
-          });
-        }
-      }
-
-      if (parts.length == 2) {
-        let [selectedSource, selectedEventTypeLabel] = parts;
-
-        legacySelections.push({
-          event_instances: [],
-          event_type: transformedELP[selectedSource][selectedEventTypeLabel],
-          frms: ["all"],
-          open: 1
-        });
-      }
-
-      if (parts.length == 3) {
-        let isFound = false;
-
-        let [selectedSource, selectedEventTypeLabel, selectedFRM] = parts;
-
-        // Check if this event type is already added to legacy selections
-        let selectedEventTypePin = transformedELP[selectedSource][selectedEventTypeLabel];
-        let escapedSelectedFRM = selectedFRM
-          .replace(/ /g, "_")
-          .replace(/=/g, "_")
-          .replace(/([\+\.\(\)])/g, "\\$1");
-
-        legacySelections = legacySelections.map((s) => {
-          if (s.event_type == selectedEventTypePin) {
-            isFound = true;
-            return {
-              event_instances: s.event_instances,
-              event_type: selectedEventTypePin,
-              frms: [...s.frms, escapedSelectedFRM],
-              open: 1
-            };
-          }
-
-          return s;
-        });
-
-        if (!isFound) {
-          legacySelections.push({
-            event_instances: [],
-            event_type: selectedEventTypePin,
-            frms: [escapedSelectedFRM],
-            open: 1
-          });
-        }
-      }
-
-      if (parts.length == 4) {
-        let makeLegacyEventId = (eventPin, frmName, eventID) => {
-          let escapedFrmName = frmName
-            .replace(/ /g, "_")
-            .replace(/=/g, "_")
-            .replace(/([\+\.\(\)])/g, "\\$1");
-          let encodedEventID = btoa(eventID)
-            .replace(/ /g, "_")
-            .replace(/=/g, "_")
-            .replace(/([\+\.\(\)])/g, "\\$1");
-
-          return `${eventPin}--${escapedFrmName}--${encodedEventID}`;
-        };
-
-        let [selectedSource, selectedEventTypeLabel, selectedFRM, selectedEventLabel] = parts;
-        let selectedEventTypePin = transformedELP[selectedSource][selectedEventTypeLabel];
-
-        let legacyEventID;
-
-        for (let se of selectedEvents) {
-          if (se.id == cs) {
-            legacyEventID = makeLegacyEventId(selectedEventTypePin, selectedFRM, se.event_data.id);
-          }
-        }
-
-        // If legacyEventID couldn't be found, skip this item
-        if (legacyEventID) {
-          let isFound = false;
-
-          legacySelections = legacySelections.map((s) => {
-            if (s.event_type == selectedEventTypePin) {
-              isFound = true;
-
-              return {
-                event_instances: [...s.event_instances, legacyEventID],
-                event_type: selectedEventTypePin,
-                frms: s.frms,
-                open: 1
-              };
-            }
-
-            return s;
-          });
-
-          if (!isFound) {
-            legacySelections.push({
-              event_instances: [legacyEventID],
-              event_type: selectedEventTypePin,
-              frms: [],
-              open: 1
-            });
-          }
-        }
-      }
-    }
-
-    return legacySelections;
   }
 }
 

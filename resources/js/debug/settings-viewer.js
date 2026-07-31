@@ -99,6 +99,19 @@
         return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
+    // Returns a new object with the requested keys placed first, then everything else.
+    function reorderKeysFirst(obj, priorityKeys) {
+        if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return obj;
+        var out = {};
+        priorityKeys.forEach(function(k) {
+            if (k in obj) out[k] = obj[k];
+        });
+        Object.keys(obj).forEach(function(k) {
+            if (priorityKeys.indexOf(k) === -1) out[k] = obj[k];
+        });
+        return out;
+    }
+
     function renderTree(obj, filter, path) {
         if (!obj || typeof obj !== 'object') return renderValue(obj);
         var html = '';
@@ -161,8 +174,10 @@
         var parsed = null;
         try { parsed = JSON.parse(raw); } catch(e) { parsed = null; }
 
-        // For "settings" key, show "state" sub-key first
+        // For "settings" key, show "state" sub-key first, and inside "state" show
+        // event_selections, then event_visibility_selections, then events_v2.
         if (storageKey === 'settings' && parsed && typeof parsed === 'object' && parsed.state) {
+            parsed.state = reorderKeysFirst(parsed.state, ['event_selections', 'event_visibility_selections', 'events_v2']);
             var reordered = { state: parsed.state };
             Object.keys(parsed).forEach(function(k) {
                 if (k !== 'state') reordered[k] = parsed[k];
@@ -200,6 +215,10 @@
     function refresh(filter) {
         var tree = document.getElementById('debug-settings-tree');
         if (!tree) return;
+
+        // Preserve scroll position across re-renders so auto-refresh doesn't jump.
+        var prevScroll = tree.scrollTop;
+
         var html = '';
         var count = localStorage.length;
 
@@ -221,6 +240,8 @@
         }
 
         tree.innerHTML = html || '<div style="color:#888;padding:10px;">No matches</div>';
+
+        tree.scrollTop = prevScroll;
     }
 
     // Toggle collapse/expand nodes
@@ -265,4 +286,13 @@
 
     // Initial render after a short delay to let settings load
     setTimeout(function() { refresh(''); }, 1000);
+
+    // Auto-refresh every 2s so changes from the running app appear without
+    // manually clicking Refresh. Skipped while panel is minimized to save cycles.
+    var AUTO_REFRESH_MS = 2000;
+    setInterval(function() {
+        if (state === 'minimized' || !document.body.contains(panel)) return;
+        var filter = document.getElementById('debug-settings-search').value.toLowerCase();
+        refresh(filter);
+    }, AUTO_REFRESH_MS);
 })();

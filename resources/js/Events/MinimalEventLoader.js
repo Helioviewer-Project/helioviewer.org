@@ -90,6 +90,7 @@ class MinimalEventLoader extends EventLoader {
       Helioviewer.userSettings.set("state.events_v2.tree_" + l.id + ".layers_v2", selections[l.id]);
     });
 
+    // draw() syncs state.event_selections from the layers_v2 it renders.
     this.draw();
   }
 
@@ -105,6 +106,19 @@ class MinimalEventLoader extends EventLoader {
     if (!visibility) {
       $("#minimal-event-container").hide();
     }
+
+    // Keep state.event_selections in sync with what minimal/embed mode renders (from
+    // events_v2.layers_v2), so screenshots/movies — which read the flat field — include
+    // these events. This mode has no React tree firing makeSelectionsUpdate.
+    const eventSelectionsUnion = [];
+    Helioviewer.userSettings.iterateOnHelioViewerEventLayerSettings((l) => {
+      (l.layers_v2 || []).forEach((s) => {
+        if (s != null && !eventSelectionsUnion.includes(s)) {
+          eventSelectionsUnion.push(s);
+        }
+      });
+    });
+    Helioviewer.userSettings.set("state.event_selections", eventSelectionsUnion);
 
     let i = 0;
 

@@ -1393,9 +1393,9 @@ var TimelineEvents = Class.extend({
 			chartTypeY = 'logarithmic';
 		}
 
-		const eventLayersStr = await Helioviewer.eventLoader.getLegacyShallowEventLayerString();
+		const event_selections = Helioviewer.userSettings.get("state.event_selections");
 
-		if(eventLayersStr == ''){
+		if(event_selections.length == 0){
 
 			chart.showLoading('No event types selected.<br/>Use the Feature and Event selector to choose event types.');
 
@@ -1423,8 +1423,16 @@ var TimelineEvents = Class.extend({
 		timelineEndDate = Math.round(e.max);
 		var date = parseInt(Helioviewer.userSettings.get("state.date"));
 
-		var _url = Helioviewer.api+'?action=getDataCoverage&eventLayers='+ eventLayersStr +'&currentDate='+ date +'&startDate='+ Math.round(e.min) +'&endDate='+ Math.round(e.max) +'&callback=?';
-		$.getJSON(_url, function(data) {
+		var _url = Helioviewer.api+'?action=eventsDataCoverage&currentDate='+ date +'&startDate='+ Math.round(e.min) +'&endDate='+ Math.round(e.max);
+		$.ajax({
+			url: _url,
+			type: 'POST',
+			contentType: 'application/json',
+			dataType: 'json',
+			data: JSON.stringify({
+				event_selections: event_selections
+			}),
+			success: function(data) {
 
 			//Remove previosly generated plot lines
 			chart.xAxis[0].removePlotBand();
@@ -1547,6 +1555,7 @@ var TimelineEvents = Class.extend({
 						}
 					});
 				});
+			}
 			}
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			chart.hideLoading();

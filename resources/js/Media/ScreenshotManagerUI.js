@@ -175,7 +175,8 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         params = $.extend({
             imageScale    : imageScale,
             layers        : layers,
-            eventsState   : Helioviewer.userSettings.get("state.events_v2"),
+            event_selections : Helioviewer.userSettings.get("state.event_selections"),
+            event_visibility_selections : Helioviewer.userSettings.get("state.event_visibility_selections"),
             scale         : Helioviewer.userSettings.get("state.scale"),
             scaleType     : Helioviewer.userSettings.get("state.scaleType"),
             scaleX        : Helioviewer.userSettings.get("state.scaleX"),

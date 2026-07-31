@@ -58,12 +58,26 @@ var EventMarker = Class.extend(
     },
 
     /**
-     * Returns true if this event data contains footprint polygon information.
-     * footprint is a flat array of {x, y} HPC-arcsecond points forming a single
-     * closed polygon (SVG <polygon> auto-closes the path).
+     * Returns true if this event data contains footprint region information.
+     * footprint is a list of contours (a list of regions): an array of polygons,
+     * where each polygon is an array of {x, y} HPC-arcsecond points.
+     * footprint = [ [ {x,y}, ... ], [ {x,y}, ... ], ... ]
      */
     hasFootprint: function () {
-      return this.hasOwnProperty("footprint") && Array.isArray(this.footprint) && this.footprint.length > 0;
+      return (
+        this.hasOwnProperty("footprint") &&
+        Array.isArray(this.footprint) &&
+        this.footprint.length > 0 &&
+        Array.isArray(this.footprint[0])
+      );
+    },
+
+    /**
+     * Returns every {x, y} point across all footprint contours as one flat array.
+     * Used for centroid and bounding-box math that spans all regions.
+     */
+    _allFootprintPoints: function () {
+      return this.footprint.flat();
     },
 
     /**
@@ -144,15 +158,15 @@ var EventMarker = Class.extend(
      * @param {integer} zIndex - CSS z-index for layering regions in the DOM
      *
      * HOW SVG FOOTPRINT RENDERING WORKS:
-     * 1. The API provides footprint as a flat array of {x, y} HPC-arcsec points
-     *    forming a single closed polygon
-     * 2. We convert HPC coordinates to screen pixels and render as one SVG polygon
+     * 1. The API provides footprint as a list of contours (a list of regions):
+     *    an array of polygons, each polygon an array of {x, y} HPC-arcsec points
+     * 2. We convert HPC coordinates to screen pixels and render one SVG <polygon>
+     *    per contour, all inside a single region SVG
      *
      * DATA STRUCTURE:
      * event.footprint = [
-     *   { x: x1, y: y1 },   // HPC arcseconds, single polygon
-     *   { x: x2, y: y2 },
-     *   { x: x3, y: y3 },
+     *   [ { x: x1, y: y1 }, { x: x2, y: y2 }, ... ],   // contour / region 1
+     *   [ { x: x1, y: y1 }, ... ],                     // contour / region 2
      *   ...
      * ]
      *
@@ -189,17 +203,20 @@ var EventMarker = Class.extend(
       svg.style.zIndex = zIndex;
       svg.style.pointerEvents = "none"; // Allow clicks to pass through to markers
 
+      // One <polygon> per contour, all sharing the same region SVG.
       // Styling mirrors the legacy backend HEK polygon renderer:
-      // fill: event-type color at 0x66 (0.4) alpha, stroke: black at 0x88 (0.533) alpha, 4px round joins.
-      let svgPolygon = document.createElementNS(svgNS, "polygon");
-      svgPolygon.setAttribute("class", "event-region-polygon");
+      // fill: event-type color at 0.4 alpha, stroke: black at 0.533 alpha, 1.5px round joins.
       let baseColor = EventLoader.getEventTypeColor(this.type);
-      svgPolygon.style.fill = hexToRgba(baseColor, 0.4);
-      svgPolygon.style.stroke = "rgba(0, 0, 0, 0.533)";
-      svgPolygon.style.strokeWidth = "1.5px";
-      svgPolygon.style.strokeLinejoin = "round";
+      this.footprint.forEach(() => {
+        let svgPolygon = document.createElementNS(svgNS, "polygon");
+        svgPolygon.setAttribute("class", "event-region-polygon");
+        svgPolygon.style.fill = hexToRgba(baseColor, 0.4);
+        svgPolygon.style.stroke = "rgba(0, 0, 0, 0.533)";
+        svgPolygon.style.strokeWidth = "1.5px";
+        svgPolygon.style.strokeLinejoin = "round";
+        svg.appendChild(svgPolygon);
+      });
 
-      svg.appendChild(svgPolygon);
       this.eventRegionDomNode = $(svg);
 
       if (typeof this.parentFRM != "undefined") {
@@ -211,33 +228,15 @@ var EventMarker = Class.extend(
 
     /**
      * Computes the {x, y} pixel position for the marker pin at the given
-     * imageScale. For events with a footprint, the pin sits at the polygon
-     * centroid; otherwise it sits at hv_hpc_x / hv_hpc_y. The pin icon offset
-     * is applied so its tip lands on the event point.
-     * Shared by createMarker (initial draw) and refresh (re-draw on zoom).
+     * imageScale. The pin sits at the event's hv_hpc_x / hv_hpc_y (provided by
+     * the backend), with the pin icon offset applied so its tip lands on the
+     * event point. Shared by createMarker (initial draw) and refresh (zoom).
      */
     _computeMarkerPosition: function (imageScale) {
-      let hpc_x, hpc_y;
-
-      if (this.hasFootprint()) {
-        // Centroid = average of all polygon vertices in HPC arcseconds
-        let total_x = 0,
-          total_y = 0;
-        this.footprint.forEach((point) => {
-          total_x += point.x;
-          total_y += point.y;
-        });
-        hpc_x = total_x / this.footprint.length;
-        hpc_y = total_y / this.footprint.length;
-      } else {
-        hpc_x = this.hv_hpc_x;
-        hpc_y = this.hv_hpc_y;
-      }
-
       // Negate Y because screen Y is inverted (positive down)
       return {
-        x: Math.round(hpc_x / imageScale) - MARKER_OFFSET_X,
-        y: Math.round(-hpc_y / imageScale) - MARKER_OFFSET_Y
+        x: Math.round(this.hv_hpc_x / imageScale) - MARKER_OFFSET_X,
+        y: Math.round(-this.hv_hpc_y / imageScale) - MARKER_OFFSET_Y
       };
     },
 
@@ -251,12 +250,12 @@ var EventMarker = Class.extend(
         return;
       }
 
-      // Bounding box of all footprint points in screen pixels
+      // Bounding box across every point in every contour, in screen pixels
       let minX = Infinity,
         minY = Infinity,
         maxX = -Infinity,
         maxY = -Infinity;
-      this.footprint.forEach((point) => {
+      this._allFootprintPoints().forEach((point) => {
         let screenX = point.x / imageScale;
         let screenY = -point.y / imageScale; // screen Y is inverted
         minX = Math.min(minX, screenX);
@@ -273,19 +272,22 @@ var EventMarker = Class.extend(
         height: maxY - minY + "px"
       });
 
-      // Polygon points are relative to the SVG origin (minX, minY)
-      let pointsStr = this.footprint
-        .map((point) => {
-          let screenX = point.x / imageScale - minX;
-          let screenY = -point.y / imageScale - minY;
-          return `${screenX},${screenY}`;
-        })
-        .join(" ");
+      // Each contour's points are relative to the SVG origin (minX, minY).
+      // Polygons are in creation order = contour order, so match by index.
+      let svgPolygons = this.eventRegionDomNode.find("polygon");
+      this.footprint.forEach((contour, i) => {
+        let pointsStr = contour
+          .map((point) => {
+            let screenX = point.x / imageScale - minX;
+            let screenY = -point.y / imageScale - minY;
+            return `${screenX},${screenY}`;
+          })
+          .join(" ");
 
-      let svgPolygon = this.eventRegionDomNode.find("polygon")[0];
-      if (svgPolygon) {
-        svgPolygon.setAttribute("points", pointsStr);
-      }
+        if (svgPolygons[i]) {
+          svgPolygons[i].setAttribute("points", pointsStr);
+        }
+      });
     },
 
     /**
@@ -859,13 +861,12 @@ var EventMarker = Class.extend(
 
       if (this.hasFootprint() && this.eventRegionDomNode) {
         let baseColor = EventLoader.getEventTypeColor(this.type);
-        let polygon = this.eventRegionDomNode.find("polygon")[0];
-        if (polygon) {
-          polygon.style.fill = hexToRgba(baseColor, 0.6);
-          polygon.style.stroke = "rgba(0, 0, 0, 0.8)";
-          polygon.style.strokeWidth = "3px";
-          polygon.style.strokeLinejoin = "round";
-        }
+        this.eventRegionDomNode.find("polygon").each(function () {
+          this.style.fill = hexToRgba(baseColor, 0.6);
+          this.style.stroke = "rgba(0, 0, 0, 0.8)";
+          this.style.strokeWidth = "3px";
+          this.style.strokeLinejoin = "round";
+        });
       }
     },
 
@@ -878,13 +879,12 @@ var EventMarker = Class.extend(
 
       if (this.hasFootprint() && this.eventRegionDomNode) {
         let baseColor = EventLoader.getEventTypeColor(this.type);
-        let polygon = this.eventRegionDomNode.find("polygon")[0];
-        if (polygon) {
-          polygon.style.fill = hexToRgba(baseColor, 0.4);
-          polygon.style.stroke = "rgba(0, 0, 0, 0.533)";
-          polygon.style.strokeWidth = "1.5px";
-          polygon.style.strokeLinejoin = "round";
-        }
+        this.eventRegionDomNode.find("polygon").each(function () {
+          this.style.fill = hexToRgba(baseColor, 0.4);
+          this.style.stroke = "rgba(0, 0, 0, 0.533)";
+          this.style.strokeWidth = "1.5px";
+          this.style.strokeLinejoin = "round";
+        });
       }
     },
 

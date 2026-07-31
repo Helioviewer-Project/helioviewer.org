@@ -100,7 +100,8 @@ var MovieManagerUI = MediaManagerUI.extend(
 		baseParams = {
 			imageScale   : this._movieScale,
 			layers	 : this._movieLayers,
-			eventsState : Helioviewer.userSettings.get("state.events_v2"),
+			event_selections : Helioviewer.userSettings.get("state.event_selections"),
+			event_visibility_selections : Helioviewer.userSettings.get("state.event_visibility_selections"),
 			scale	   : Helioviewer.userSettings.get("state.scale"),
 			scaleType   : Helioviewer.userSettings.get("state.scaleType"),
 			scaleX	 : Helioviewer.userSettings.get("state.scaleX"),
@@ -280,7 +281,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 
 			movie = self._manager.queue(
 				response.id, response.eta, response.token,
-				params.imageScale, params.layers, params.eventsState,
+				params.imageScale, params.layers, params.event_selections,
 				params.scale, params.scaleType,
 				params.scaleX, params.scaleY, new Date().toISOString(),
 				params.startTime, params.endTime, params.x1, params.x2,
