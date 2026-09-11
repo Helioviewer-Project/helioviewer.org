@@ -36,7 +36,8 @@ var EventMarker = Class.extend(
     init: function (eventGlossary, parentFRM, event, zIndex, labelVisible, markerVisible) {
       $.extend(this, event);
       this.event = event;
-      this.behindSun = false;
+      // Fed by the API's event-level visible flag (false = behind the sun); absent/true = near side.
+      this.behindSun = this.visible === false;
       this.parentFRM = parentFRM;
       this._popupVisible = false;
       this._zIndex = zIndex;
@@ -78,6 +79,32 @@ var EventMarker = Class.extend(
      */
     _allFootprintPoints: function () {
       return this.footprint.flat();
+    },
+
+    /**
+     * True when a footprint point is behind the sun. The API sends visible:false for
+     * far-side points and omits the key for near-side ones, so the test is "=== false".
+     * (Unrelated to the marker/label visibility buttons.)
+     */
+    _isPointBehindSun: function (point) {
+      return point.visible === false;
+    },
+
+    /**
+     * How much of one contour is behind the sun:
+     *   'none'    - every point on the near side
+     *   'full'    - every point behind the sun
+     *   'partial' - straddles the limb (some of each)
+     */
+    _contourBehindSun: function (contour) {
+      const behind = contour.filter((p) => this._isPointBehindSun(p)).length;
+      if (behind === 0) {
+        return "none";
+      }
+      if (behind === contour.length) {
+        return "full";
+      }
+      return "partial";
     },
 
     /**
@@ -137,6 +164,11 @@ var EventMarker = Class.extend(
         "background-image": "url('" + markerURL + "')"
         // Additional styles found in events.css
       });
+
+      // Far-side event: dim the pin (and its label) so it reads as "behind the sun" but stays clickable
+      if (this.behindSun) {
+        this.eventMarkerDomNode.addClass("behind-sun");
+      }
 
       // Append marker to parent FRM (Feature Recognition Method) container
       if (typeof this.parentFRM != "undefined") {
@@ -207,12 +239,24 @@ var EventMarker = Class.extend(
       // Styling mirrors the legacy backend HEK polygon renderer:
       // fill: event-type color at 0.4 alpha, stroke: black at 0.533 alpha, 1.5px round joins.
       let baseColor = EventLoader.getEventTypeColor(this.type);
-      this.footprint.forEach(() => {
+      this.footprint.forEach((contour) => {
+        // 'none' | 'partial' | 'full' of the contour is behind the sun (from the API's per-point flags).
+        // Step 1: a partial (limb-straddling) contour is ghosted whole; step 2 splits it at the limb.
+        const behindSun = this._contourBehindSun(contour);
         let svgPolygon = document.createElementNS(svgNS, "polygon");
-        svgPolygon.setAttribute("class", "event-region-polygon");
-        svgPolygon.style.fill = hexToRgba(baseColor, 0.4);
-        svgPolygon.style.stroke = "rgba(0, 0, 0, 0.533)";
-        svgPolygon.style.strokeWidth = "1.5px";
+        svgPolygon.setAttribute("class", "event-region-polygon behind-sun-" + behindSun);
+        if (behindSun === "none") {
+          svgPolygon.style.fill = hexToRgba(baseColor, 0.4);
+          svgPolygon.style.stroke = "rgba(0, 0, 0, 0.533)";
+          svgPolygon.style.strokeWidth = "1.5px";
+        } else {
+          // Ghost: behind the sun (or straddling the limb) - no fill, dashed, dimmed event colour,
+          // so far-side geometry is hinted at rather than painted over the near side.
+          svgPolygon.style.fill = "none";
+          svgPolygon.style.stroke = hexToRgba(baseColor, 0.55);
+          svgPolygon.style.strokeWidth = "1.5px";
+          svgPolygon.style.strokeDasharray = "5,4";
+        }
         svgPolygon.style.strokeLinejoin = "round";
         svg.appendChild(svgPolygon);
       });
@@ -861,11 +905,17 @@ var EventMarker = Class.extend(
 
       if (this.hasFootprint() && this.eventRegionDomNode) {
         let baseColor = EventLoader.getEventTypeColor(this.type);
-        this.eventRegionDomNode.find("polygon").each(function () {
+        // Near-side fills get the solid highlight; behind-sun ghosts get a brighter, thicker dashed
+        // stroke (still no fill, still dashed, so they keep reading as "behind the sun").
+        this.eventRegionDomNode.find("polygon.behind-sun-none").each(function () {
           this.style.fill = hexToRgba(baseColor, 0.6);
           this.style.stroke = "rgba(0, 0, 0, 0.8)";
           this.style.strokeWidth = "3px";
           this.style.strokeLinejoin = "round";
+        });
+        this.eventRegionDomNode.find("polygon.behind-sun-partial, polygon.behind-sun-full").each(function () {
+          this.style.stroke = hexToRgba(baseColor, 0.9);
+          this.style.strokeWidth = "3px";
         });
       }
     },
@@ -879,11 +929,16 @@ var EventMarker = Class.extend(
 
       if (this.hasFootprint() && this.eventRegionDomNode) {
         let baseColor = EventLoader.getEventTypeColor(this.type);
-        this.eventRegionDomNode.find("polygon").each(function () {
+        this.eventRegionDomNode.find("polygon.behind-sun-none").each(function () {
           this.style.fill = hexToRgba(baseColor, 0.4);
           this.style.stroke = "rgba(0, 0, 0, 0.533)";
           this.style.strokeWidth = "1.5px";
           this.style.strokeLinejoin = "round";
+        });
+        // Restore ghosts to their idle style (values must match createRegion)
+        this.eventRegionDomNode.find("polygon.behind-sun-partial, polygon.behind-sun-full").each(function () {
+          this.style.stroke = hexToRgba(baseColor, 0.55);
+          this.style.strokeWidth = "1.5px";
         });
       }
     },

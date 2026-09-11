@@ -28,6 +28,12 @@
     transform-origin: bottom;
 }
 
+/* Far-side event (API visible:false): dim pin + label so it reads as "behind the sun" */
+.event-marker.behind-sun {
+    opacity: 0.6;
+    filter: grayscale(0.3);
+}
+
 .event-label, .event-label-hover {
     color: white;
     font-family: Arial, Helvetica, sans-serif;
