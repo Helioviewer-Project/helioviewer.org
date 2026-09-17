@@ -20,6 +20,419 @@ import { renderToString } from "react-dom/server";
 const MARKER_OFFSET_X = 12;
 const MARKER_OFFSET_Y = 38;
 
+const TWO_PI = 2 * Math.PI;
+
+/**
+ * Points along the solar limb from point a to point b, sweeping the given signed angle
+ * (positive = counter-clockwise in the image, y up; negative = clockwise). Used to close a
+ * near-side fill along the limb instead of with a straight chord. The radius is
+ * interpolated from |a| to |b|, so no solar-radius constant is needed: the arc simply hugs
+ * the limb through the two crossing points. About one point every 2 degrees.
+ * @returns [{x, y}, ...] intermediate points only (a and b themselves are not repeated)
+ */
+function limbArc(a, b, sweep) {
+  if (Math.abs(sweep) < 1e-6) {
+    return [];
+  }
+  const thA = Math.atan2(a.y, a.x);
+  const rA = Math.hypot(a.x, a.y);
+  const rB = Math.hypot(b.x, b.y);
+  const steps = Math.max(1, Math.round(Math.abs(sweep) / (Math.PI / 90)));
+  const points = [];
+  for (let i = 1; i < steps; i++) {
+    const t = i / steps;
+    const th = thA + sweep * t;
+    const r = rA + (rB - rA) * t;
+    points.push({ x: r * Math.cos(th), y: r * Math.sin(th) });
+  }
+  return points;
+}
+
+/**
+ * One footprint contour: a closed polygon of HPC points (arcsec), each point possibly flagged
+ * behind the sun by the API. Everything that can be said about a contour on its own lives here
+ * and is computed ONCE, on first use: which side of the sun it is on (isFront / isBehind /
+ * isPartial), its runs, which side of the walk the region lies on, and the shapes to draw for
+ * it (near-side fills, far-side tint, dashed far-side lines). EventMarker only concatenates the
+ * shapes of its contours and puts them on screen.
+ */
+class FootprintContour {
+  constructor(points) {
+    this.points = points;
+    this._behindCount = points.filter((p) => FootprintContour.isPointBehindSun(p)).length;
+    this._runs = null;
+    this._side = null;
+    this._shapes = null;
+  }
+
+  /**
+   * True when a footprint point is behind the sun. The API sends visible:false for far-side
+   * points and omits the key for near-side ones, so the test is "=== false". (Unrelated to the
+   * marker/label visibility buttons.)
+   */
+  static isPointBehindSun(point) {
+    return point.visible === false;
+  }
+
+  get length() {
+    return this.points.length;
+  }
+
+  /** Every point on the near side: drawn as one plain fill. */
+  isFront() {
+    return this._behindCount === 0;
+  }
+
+  /** Every point behind the sun: drawn as a tint under a closed dashed outline. */
+  isBehind() {
+    return this._behindCount === this.points.length;
+  }
+
+  /** Straddles the limb: cut into runs; fills closed along the limb, far side ghosted and tinted. */
+  isPartial() {
+    return !this.isFront() && !this.isBehind();
+  }
+
+  /**
+   * The contour's RUNS, computed once.
+   *
+   * A run is a stretch of consecutive points that are all on the same side of the sun: all in
+   * front, or all behind. Walking the contour point by point, a new run starts every time the
+   * behind-sun flag flips. A run is not a shape yet; shapes() decides what to draw for each run
+   * (in-front run -> filled polygon, behind run -> dashed polyline).
+   *
+   * Example: a 10-point contour, in the order the API lists it (F = in front, B = behind):
+   *
+   *     index   0 1 2 3 4 5 6 7 8 9
+   *     flag    F F B B B B F F F F
+   *
+   *     first pass, left to right:   [F F] [B B B B] [F F F F]      -> 3 runs
+   *
+   * The contour is closed, so point 9 is followed by point 0 again. The last run (6..9) and
+   * the first run (0,1) are therefore ONE in-front arc that only looks like two because the
+   * API happened to start its list in the middle of it. The wrap step below merges them,
+   * tail first then head, so the points stay in walking order along the contour:
+   *
+   *     after the wrap merge:        [F F F F F F] [B B B B]         -> 2 runs, one arc each
+   *                                   (6,7,8,9,0,1)  (2,3,4,5)
+   *
+   * Without the merge the near-side arc would be drawn as two fills with a seam at index 0.
+   * Only partial contours are cut into runs; front and behind ones are drawn whole.
+   *
+   * Each run also remembers the index of its first and last point (first > last for the
+   * wrapped run: 6 and 1 above), so shapes() can find the neighbours just outside the run:
+   * points[first - 1] and points[last + 1], cyclically.
+   *
+   * @returns [{ behindSun: boolean, points: [{x,y,...}], first: int, last: int }, ...] in contour order
+   */
+  runs() {
+    if (this._runs === null) {
+      const runs = [];
+      this.points.forEach((point, index) => {
+        const behind = FootprintContour.isPointBehindSun(point);
+        const last = runs[runs.length - 1];
+        if (last && last.behindSun === behind) {
+          // same side as the previous point: extend the current run
+          last.points.push(point);
+          last.last = index;
+        } else {
+          // the flag flipped (or this is the first point): start a new run
+          runs.push({ behindSun: behind, points: [point], first: index, last: index });
+        }
+      });
+      // Wrap-around: if the list started in the middle of an arc, the first and last runs are
+      // the same arc. Merge them, tail before head, to keep walking order (...8,9,0,1...).
+      if (runs.length > 1 && runs[0].behindSun === runs[runs.length - 1].behindSun) {
+        const tail = runs.pop();
+        runs[0].points = tail.points.concat(runs[0].points);
+        runs[0].first = tail.first; // the merged arc now starts where the tail run started (e.g. 6)
+      }
+      this._runs = runs;
+    }
+    return this._runs;
+  }
+
+  /**
+   * Which side of the walk the region is on, computed once. A closed curve on a sphere bounds
+   * two complementary areas; the region is taken to be the SMALLER one (coronal holes and
+   * connectivity footprints never cover half the sun). The contour is rebuilt in 3D
+   * (z = +sqrt(R²-r²) in front, -sqrt(R²-r²) behind; R = the contour's largest radius, which
+   * is the limb because the API puts the crossing points on it), and the signed solid angle of
+   * the fan of spherical triangles from a reference direction is summed (Van Oosterom &
+   * Strackee). Positive means the walk is counter-clockwise seen from outside the sun, i.e.
+   * the enclosed area is on the LEFT of the walk. Reduced to [0, 4π) this is the area on the
+   * left; if that is the smaller half the region is on the left, otherwise on the right.
+   * @returns +1 region on the left of the walking direction, -1 on the right
+   */
+  regionSide() {
+    if (this._side === null) {
+      const R = Math.max(...this.points.map((p) => Math.hypot(p.x, p.y))) || 1;
+      const u = this.points.map((p) => {
+        const x = p.x / R;
+        const y = p.y / R;
+        const z = Math.sqrt(Math.max(0, 1 - x * x - y * y));
+        return [x, y, FootprintContour.isPointBehindSun(p) ? -z : z];
+      });
+      // reference direction: the mean of the points (never on the curve in practice), else Earth
+      let ref = u.reduce((acc, v) => [acc[0] + v[0], acc[1] + v[1], acc[2] + v[2]], [0, 0, 0]);
+      const norm = Math.hypot(ref[0], ref[1], ref[2]);
+      ref = norm > 1e-6 ? ref.map((c) => c / norm) : [0, 0, 1];
+      const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+      const triple = (a, b, c) =>
+        a[0] * (b[1] * c[2] - b[2] * c[1]) - a[1] * (b[0] * c[2] - b[2] * c[0]) + a[2] * (b[0] * c[1] - b[1] * c[0]);
+      let omega = 0;
+      for (let i = 0; i < u.length; i++) {
+        const b = u[i];
+        const c = u[(i + 1) % u.length];
+        omega += 2 * Math.atan2(triple(ref, b, c), 1 + dot(ref, b) + dot(b, c) + dot(c, ref));
+      }
+      const FOUR_PI = 4 * Math.PI;
+      const leftArea = ((omega % FOUR_PI) + FOUR_PI) % FOUR_PI;
+      this._side = leftArea <= 2 * Math.PI ? 1 : -1;
+    }
+    return this._side;
+  }
+
+  /**
+   * The SHAPES to draw for this contour, computed once: which points are behind the sun never changes with zoom, only where they land
+   * on screen (_updateRegionLayout re-projects the same list on every zoom).
+   *
+   * Two kinds of entry:
+   *   fill  - in-front geometry: a filled <polygon> (event colour, black outline). A whole
+   *           near-side contour as is; for a limb-straddler ONE polygon made of its in-front
+   *           runs joined by arcs along the limb (see limbArc)
+   *   ghost - behind-sun geometry: dashed outline, no fill; a closed <polygon> when a whole
+   *           contour is behind, an open <polyline> for each behind run of a straddler
+   *
+   * What one contour turns into (F = point in front, B = point behind):
+   *
+   *     contour flags            runs (_cyclicRuns)              shapes pushed
+   *     ----------------------   -----------------------------   ------------------------------
+   *     F F F F F F              (not split)                     1 fill, the whole contour
+   *     B B B B B B              (not split)                     1 closed ghost, whole contour
+   *     F F B B B B F F F F      [F x6] [B x4]                   1 fill: the 6 F points, then a
+   *                                                              limb arc from point 1 back
+   *                                                              round to point 6
+   *                                                              + 1 open ghost: the 4 B points
+   *                                                              plus the F neighbour at each
+   *                                                              end -> 1,2,3,4,5,6
+   *     F B B F F F B B F F      [F x3] [B x2] [F x3] [B x2]     crosses the limb twice:
+   *                                                              1 fill: run, limb arc, run,
+   *                                                              limb arc (the second run is
+   *                                                              a notch in the same polygon)
+   *                                                              + 2 open ghosts
+   *     F F B B B B B B B B      [F x2] [B x8]                   1 fill: the 2 F points plus
+   *                                                              the limb arc between them (a
+   *                                                              thin sliver along the limb)
+   *
+   * Closing along the limb: where the contour goes behind the sun, the visible region does
+   * not stop at a straight line between the two crossing points, it stops at the limb. The
+   * visible part of the region is the region clipped to the near hemisphere; its boundary is
+   * the in-front runs plus the limb segments the region straddles. Those segments are found
+   * by walking the limb: regionSide() says on which side of the walk the region is, so from
+   * the point where a run leaves the disk (its last point) the boundary continues along the
+   * limb in the direction that keeps the region on that side (clockwise if it is on the
+   * right, counter-clockwise if on the left) to the NEAREST crossing point in that direction,
+   * which is where some in-front run (maybe the same one) re-enters the disk. Following
+   * run -> limb arc -> run -> ... until the start run comes back gives one closed polygon;
+   * runs not reached that way start another. So one contour can yield several fills (two
+   * separate slivers where the contour skims the limb), or one fill with a notch (a run
+   * between two far-side excursions). No guess about where the far-side points are is
+   * needed. If the nearest crossing is not a re-entry (an open, seam-cut contour) the run
+   * simply closes on itself the short way. Ghost polylines are left open on purpose (no
+   * closing edge across the far side) but are extended by one in-front point at each end,
+   * so the dashed line starts and stops on the fill's edge and the two limb-crossing edges
+   * of the contour are not lost.
+   *
+   * Order: tints, then ghosts, then fills, and EventMarker.createRegion paints in that order, so within an
+   * event the far-side tint sits under the far-side lines, and both sit UNDER the event's
+   * near-side fills, idle or hovered. Far-side points are projected back inside the disk, so
+   * ghosts often cross their own fills; they show through the translucent fill rather than
+   * lying on top of it.
+   *
+   *   tint  - the far-side area: the region clipped to the far hemisphere, a stroke-less
+   *           <polygon> in the event colour at 0.18 (see the far-side block at the end)
+   *
+   * @returns { tints: [...], ghosts: [...], fills: [...] }, each entry { kind, closed, points }
+   */
+  shapes() {
+    if (this._shapes === null) {
+      this._shapes = this._computeShapes();
+    }
+    return this._shapes;
+  }
+
+  _computeShapes() {
+    const fills = [];
+    const ghosts = [];
+    const tints = [];
+    if (this.isFront()) {
+      // whole contour on the near side: one filled polygon, exactly as before this feature
+      fills.push({ kind: "fill", closed: true, points: this.points });
+      return { tints, ghosts, fills };
+    }
+    if (this.isBehind()) {
+      // whole contour behind the sun: one dashed closed outline, tinted inside
+      ghosts.push({ kind: "ghost", closed: true, points: this.points });
+      tints.push({ kind: "tint", closed: true, points: this.points });
+      return { tints, ghosts, fills };
+    }
+    // Straddler: split into runs. Each behind run becomes its own ghost; the in-front runs
+    // become fills closed along the limb (see "Closing along the limb" above).
+    const n = this.points.length;
+    const runs = this.runs(); // alternates in-front / behind, even length
+    const angle = (p) => Math.atan2(p.y, p.x);
+    const ccw = (from, to) => (((to - from) % TWO_PI) + TWO_PI) % TWO_PI;
+    const side = this.regionSide();
+    // signed sweep from angle `from` to angle `to` going the region's way round the limb
+    const sweepTo = (from, to) => (side > 0 ? ccw(from, to) : -(TWO_PI - ccw(from, to)));
+    // every place an in-front run enters or leaves the disk, with its angle on the limb
+    const crossings = [];
+    runs.forEach((run, idx) => {
+      if (!run.behindSun) {
+        crossings.push({ th: angle(run.points[0]), entry: true, run: idx });
+        crossings.push({ th: angle(run.points[run.points.length - 1]), entry: false, run: idx });
+      }
+    });
+    const nextRun = {}; // in-front run index -> the run its limb arc leads to
+    const arcAfter = {}; // in-front run index -> limb arc points after its last point
+    const extended = {}; // behind run index -> { before, after, points } (run + its two neighbours)
+    runs.forEach((run, idx) => {
+      if (run.behindSun) {
+        // Behind arc: dashed open line, EXTENDED by the in-front neighbour at each end (the
+        // point just before run.first and just after run.last, cyclically). Those two
+        // neighbours are limb points that also belong to the adjacent fill(s), so the dashed
+        // line starts and ends exactly on the fill's edge: the this.points edges that cross the
+        // limb (1->2 and 5->6 in the example) are drawn as part of the ghost, no gap.
+        // A single behind point becomes a 3-point dip: neighbour, point, neighbour.
+        const before = this.points[(run.first - 1 + n) % n];
+        const after = this.points[(run.last + 1) % n];
+        extended[idx] = { before, after, points: [before].concat(run.points, [after]) };
+        ghosts.push({ kind: "ghost", closed: false, points: extended[idx].points });
+        return;
+      }
+      // In-front run: from its last point, walk the limb the region's way round to the
+      // nearest crossing; that is where the visible boundary continues.
+      const last = run.points[run.points.length - 1];
+      const thLast = angle(last);
+      let best = null;
+      crossings.forEach((c) => {
+        if (c.run === idx && !c.entry) {
+          return; // the point we are leaving from
+        }
+        const s = Math.abs(sweepTo(thLast, c.th));
+        if (!best || s < best.s) {
+          best = { s, c };
+        }
+      });
+      let target = idx;
+      let sweep;
+      if (best && best.c.entry) {
+        target = best.c.run;
+        sweep = sweepTo(thLast, best.c.th);
+        if (Math.abs(sweep) >= TWO_PI - 1e-6) {
+          sweep = 0; // a single-point run: leaving and entering at the same angle
+        }
+      } else {
+        // not a re-entry (open, seam-cut this.points): close this run on itself the short way
+        const s = ccw(thLast, angle(run.points[0]));
+        sweep = s <= Math.PI ? s : -(TWO_PI - s);
+      }
+      nextRun[idx] = target;
+      arcAfter[idx] = limbArc(last, runs[target].points[0], sweep);
+    });
+    // Chain run -> arc -> next run -> ... into closed polygons; each unreached run starts one.
+    const done = {};
+    runs.forEach((run, idx) => {
+      if (run.behindSun || done[idx]) {
+        return;
+      }
+      let points = [];
+      let i = idx;
+      let guard = 0;
+      do {
+        done[i] = true;
+        points = points.concat(runs[i].points, arcAfter[i]);
+        i = nextRun[i];
+        guard++;
+      } while (i !== idx && !done[i] && guard < runs.length);
+      if (points.length >= 3) {
+        fills.push({ kind: "fill", closed: true, points });
+      }
+      // (fewer than 3 points, e.g. a this.points that only touches the near side at one point,
+      // has no area to fill; its ghosts are still drawn)
+    });
+
+    // Far-side tint: the region clipped to the FAR hemisphere, built exactly like the fills
+    // but mirrored. Its boundary is the behind runs plus the same straddled limb segments.
+    // From the point where a behind run comes back in front (its `after`) the boundary follows
+    // the limb the OTHER way round (at a re-entry, "region on the right" points the other way
+    // along the limb than at an exit) to the nearest crossing, which is where some behind run
+    // leaves the disk (its `before`). Chain behind run -> arc -> behind run ... into polygons.
+    // A limb-hugging far-side hole therefore becomes one band along the limb, not a disk-sized
+    // blob (a per-run chord from `after` back to `before` drew the whole disk for such cases).
+    const sweepBack = (from, to) => (side > 0 ? -(TWO_PI - ccw(from, to)) : ccw(from, to));
+    const farCrossings = [];
+    Object.keys(extended).forEach((k) => {
+      const idx = Number(k);
+      farCrossings.push({ th: angle(extended[idx].before), exit: true, run: idx });
+      farCrossings.push({ th: angle(extended[idx].after), exit: false, run: idx });
+    });
+    const nextBehind = {};
+    const arcBehind = {};
+    Object.keys(extended).forEach((k) => {
+      const idx = Number(k);
+      const after = extended[idx].after;
+      const thAfter = angle(after);
+      let best = null;
+      farCrossings.forEach((c) => {
+        if (c.run === idx && !c.exit) {
+          return; // the point we are leaving from
+        }
+        const s = Math.abs(sweepBack(thAfter, c.th));
+        if (!best || s < best.s) {
+          best = { s, c };
+        }
+      });
+      let target = idx;
+      let sweep;
+      if (best && best.c.exit) {
+        target = best.c.run;
+        sweep = sweepBack(thAfter, best.c.th);
+        if (Math.abs(sweep) >= TWO_PI - 1e-6) {
+          sweep = 0;
+        }
+      } else {
+        // not an exit (open, seam-cut this.points): close this run's tint on itself the short way
+        const s = ccw(thAfter, angle(extended[idx].before));
+        sweep = s <= Math.PI ? s : -(TWO_PI - s);
+      }
+      nextBehind[idx] = target;
+      arcBehind[idx] = limbArc(after, extended[target].before, sweep);
+    });
+    const doneBehind = {};
+    Object.keys(extended).forEach((k) => {
+      const idx = Number(k);
+      if (doneBehind[idx]) {
+        return;
+      }
+      let points = [];
+      let i = idx;
+      let guard = 0;
+      do {
+        doneBehind[i] = true;
+        points = points.concat(extended[i].points, arcBehind[i]);
+        i = nextBehind[i];
+        guard++;
+      } while (i !== idx && !doneBehind[i] && guard < runs.length);
+      if (points.length >= 3) {
+        tints.push({ kind: "tint", closed: true, points });
+      }
+    });
+    return { tints, ghosts, fills };
+  }
+}
+
 var EventMarker = Class.extend(
   /** @lends EventMarker.prototype */
   {
@@ -82,385 +495,24 @@ var EventMarker = Class.extend(
     },
 
     /**
-     * True when a footprint point is behind the sun. The API sends visible:false for
-     * far-side points and omits the key for near-side ones, so the test is "=== false".
-     * (Unrelated to the marker/label visibility buttons.)
-     */
-    _isPointBehindSun: function (point) {
-      return point.visible === false;
-    },
-
-    /**
-     * How much of one contour is behind the sun:
-     *   'none'    - every point on the near side
-     *   'full'    - every point behind the sun
-     *   'partial' - straddles the limb (some of each)
-     */
-    _contourBehindSun: function (contour) {
-      const behind = contour.filter((p) => this._isPointBehindSun(p)).length;
-      if (behind === 0) {
-        return "none";
-      }
-      if (behind === contour.length) {
-        return "full";
-      }
-      return "partial";
-    },
-
-    /**
-     * Splits one contour into "runs".
-     *
-     * A RUN is a stretch of consecutive contour points that are all on the same side of the
-     * sun: all in front, or all behind. Walking the contour point by point, a new run starts
-     * every time the behind-sun flag flips. A run is not a shape yet; _buildRenderList decides
-     * what to draw for each run (in-front run -> filled polygon, behind run -> dashed polyline).
-     *
-     * Example: a 10-point contour, in the order the API lists it (F = in front, B = behind):
-     *
-     *     index   0 1 2 3 4 5 6 7 8 9
-     *     flag    F F B B B B F F F F
-     *
-     *     first pass, left to right:   [F F] [B B B B] [F F F F]      -> 3 runs
-     *
-     * The contour is closed, so point 9 is followed by point 0 again. The last run (6..9) and
-     * the first run (0,1) are therefore ONE in-front arc that only looks like two because the
-     * API happened to start its list in the middle of it. The wrap step below merges them,
-     * tail first then head, so the points stay in walking order along the contour:
-     *
-     *     after the wrap merge:        [F F F F F F] [B B B B]         -> 2 runs, one arc each
-     *                                   (6,7,8,9,0,1)  (2,3,4,5)
-     *
-     * Without the merge the near-side arc would be drawn as two fills with a seam at index 0.
-     * Contours that never flip (all F or all B) do not come here; _buildRenderList draws them
-     * whole.
-     *
-     * Each run also remembers the contour index of its first and last point (first > last for
-     * the wrapped run: 6 and 1 above), so _buildRenderList can find the neighbours just outside
-     * the run: contour[first - 1] and contour[last + 1], cyclically.
-     *
-     * @returns [{ behindSun: boolean, points: [{x,y,...}], first: int, last: int }, ...] in contour order
-     */
-    _cyclicRuns: function (contour) {
-      const runs = [];
-      contour.forEach((point, index) => {
-        const behind = this._isPointBehindSun(point);
-        const last = runs[runs.length - 1];
-        if (last && last.behindSun === behind) {
-          // same side as the previous point: extend the current run
-          last.points.push(point);
-          last.last = index;
-        } else {
-          // the flag flipped (or this is the first point): start a new run
-          runs.push({ behindSun: behind, points: [point], first: index, last: index });
-        }
-      });
-      // Wrap-around: if the list started in the middle of an arc, the first and last runs are
-      // the same arc. Merge them, tail before head, to keep walking order (...8,9,0,1...).
-      if (runs.length > 1 && runs[0].behindSun === runs[runs.length - 1].behindSun) {
-        const tail = runs.pop();
-        runs[0].points = tail.points.concat(runs[0].points);
-        runs[0].first = tail.first; // the merged arc now starts where the tail run started (e.g. 6)
-      }
-      return runs;
-    },
-
-    /**
-     * Which side of a limb-straddling contour is the region on? A closed curve on a sphere
-     * bounds two complementary areas; the region is taken to be the SMALLER one (coronal holes
-     * and connectivity footprints never cover half the sun). The contour is rebuilt in 3D
-     * (z = +sqrt(R²-r²) in front, -sqrt(R²-r²) behind; R = the contour's largest radius, which
-     * is the limb because the API puts the crossing points on it), and the signed solid angle of
-     * the fan of spherical triangles from a reference direction is summed (Van Oosterom &
-     * Strackee). Positive means the walk is counter-clockwise seen from outside the sun, i.e.
-     * the enclosed area is on the LEFT of the walk. Reduced to [0, 4π) this is the area on the
-     * left; if that is the smaller half the region is on the left, otherwise on the right.
-     * @returns +1 region on the left of the walking direction, -1 on the right
-     */
-    _regionSide: function (contour) {
-      const R = Math.max(...contour.map((p) => Math.hypot(p.x, p.y))) || 1;
-      const u = contour.map((p) => {
-        const x = p.x / R;
-        const y = p.y / R;
-        const z = Math.sqrt(Math.max(0, 1 - x * x - y * y));
-        return [x, y, this._isPointBehindSun(p) ? -z : z];
-      });
-      // reference direction: the mean of the points (never on the curve in practice), else Earth
-      let ref = u.reduce((acc, v) => [acc[0] + v[0], acc[1] + v[1], acc[2] + v[2]], [0, 0, 0]);
-      const norm = Math.hypot(ref[0], ref[1], ref[2]);
-      ref = norm > 1e-6 ? ref.map((c) => c / norm) : [0, 0, 1];
-      const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-      const triple = (a, b, c) =>
-        a[0] * (b[1] * c[2] - b[2] * c[1]) - a[1] * (b[0] * c[2] - b[2] * c[0]) + a[2] * (b[0] * c[1] - b[1] * c[0]);
-      let omega = 0;
-      for (let i = 0; i < u.length; i++) {
-        const b = u[i];
-        const c = u[(i + 1) % u.length];
-        omega += 2 * Math.atan2(triple(ref, b, c), 1 + dot(ref, b) + dot(b, c) + dot(c, ref));
-      }
-      const FOUR_PI = 4 * Math.PI;
-      const leftArea = ((omega % FOUR_PI) + FOUR_PI) % FOUR_PI;
-      return leftArea <= 2 * Math.PI ? 1 : -1;
-    },
-
-    /**
-     * Points along the solar limb from point a to point b, sweeping the given signed angle
-     * (positive = counter-clockwise in the image, y up; negative = clockwise). Used to close a
-     * near-side fill along the limb instead of with a straight chord. The radius is
-     * interpolated from |a| to |b|, so no solar-radius constant is needed: the arc simply hugs
-     * the limb through the two crossing points. About one point every 2 degrees.
-     * @returns [{x, y}, ...] intermediate points only (a and b themselves are not repeated)
-     */
-    _limbArc: function (a, b, sweep) {
-      if (Math.abs(sweep) < 1e-6) {
-        return [];
-      }
-      const thA = Math.atan2(a.y, a.x);
-      const rA = Math.hypot(a.x, a.y);
-      const rB = Math.hypot(b.x, b.y);
-      const steps = Math.max(1, Math.round(Math.abs(sweep) / (Math.PI / 90)));
-      const points = [];
-      for (let i = 1; i < steps; i++) {
-        const t = i / steps;
-        const th = thA + sweep * t;
-        const r = rA + (rB - rA) * t;
-        points.push({ x: r * Math.cos(th), y: r * Math.sin(th) });
-      }
-      return points;
-    },
-
-    /**
-     * Turns the footprint into a flat list of SHAPES to draw. Computed once when the region is
-     * created: which points are behind the sun never changes with zoom, only where they land
+     * The flat list of shapes to draw for the whole footprint: every contour's shapes
+     * (see FootprintContour.shapes), ordered tints, then ghosts, then fills. createRegion paints
+     * in that order, so within an event the far-side tint sits under the far-side lines, and
+     * both sit UNDER the event's near-side fills, idle or hovered. Computed once when the region
+     * is created; which points are behind the sun never changes with zoom, only where they land
      * on screen (_updateRegionLayout re-projects the same list on every zoom).
-     *
-     * Two kinds of entry:
-     *   fill  - in-front geometry: a filled <polygon> (event colour, black outline). A whole
-     *           near-side contour as is; for a limb-straddler ONE polygon made of its in-front
-     *           runs joined by arcs along the limb (see _limbArc)
-     *   ghost - behind-sun geometry: dashed outline, no fill; a closed <polygon> when a whole
-     *           contour is behind, an open <polyline> for each behind run of a straddler
-     *
-     * What one contour turns into (F = point in front, B = point behind):
-     *
-     *     contour flags            runs (_cyclicRuns)              shapes pushed
-     *     ----------------------   -----------------------------   ------------------------------
-     *     F F F F F F              (not split)                     1 fill, the whole contour
-     *     B B B B B B              (not split)                     1 closed ghost, whole contour
-     *     F F B B B B F F F F      [F x6] [B x4]                   1 fill: the 6 F points, then a
-     *                                                              limb arc from point 1 back
-     *                                                              round to point 6
-     *                                                              + 1 open ghost: the 4 B points
-     *                                                              plus the F neighbour at each
-     *                                                              end -> 1,2,3,4,5,6
-     *     F B B F F F B B F F      [F x3] [B x2] [F x3] [B x2]     crosses the limb twice:
-     *                                                              1 fill: run, limb arc, run,
-     *                                                              limb arc (the second run is
-     *                                                              a notch in the same polygon)
-     *                                                              + 2 open ghosts
-     *     F F B B B B B B B B      [F x2] [B x8]                   1 fill: the 2 F points plus
-     *                                                              the limb arc between them (a
-     *                                                              thin sliver along the limb)
-     *
-     * Closing along the limb: where the contour goes behind the sun, the visible region does
-     * not stop at a straight line between the two crossing points, it stops at the limb. The
-     * visible part of the region is the region clipped to the near hemisphere; its boundary is
-     * the in-front runs plus the limb segments the region straddles. Those segments are found
-     * by walking the limb: _regionSide says on which side of the walk the region is, so from
-     * the point where a run leaves the disk (its last point) the boundary continues along the
-     * limb in the direction that keeps the region on that side (clockwise if it is on the
-     * right, counter-clockwise if on the left) to the NEAREST crossing point in that direction,
-     * which is where some in-front run (maybe the same one) re-enters the disk. Following
-     * run -> limb arc -> run -> ... until the start run comes back gives one closed polygon;
-     * runs not reached that way start another. So one contour can yield several fills (two
-     * separate slivers where the contour skims the limb), or one fill with a notch (a run
-     * between two far-side excursions). No guess about where the far-side points are is
-     * needed. If the nearest crossing is not a re-entry (an open, seam-cut contour) the run
-     * simply closes on itself the short way. Ghost polylines are left open on purpose (no
-     * closing edge across the far side) but are extended by one in-front point at each end,
-     * so the dashed line starts and stops on the fill's edge and the two limb-crossing edges
-     * of the contour are not lost.
-     *
-     * Order: tints, then ghosts, then fills, and createRegion paints in that order, so within an
-     * event the far-side tint sits under the far-side lines, and both sit UNDER the event's
-     * near-side fills, idle or hovered. Far-side points are projected back inside the disk, so
-     * ghosts often cross their own fills; they show through the translucent fill rather than
-     * lying on top of it.
-     *
-     *   tint  - the far-side area: the region clipped to the far hemisphere, a stroke-less
-     *           <polygon> in the event colour at 0.18 (see the far-side block at the end)
-     *
-     * @returns [{ kind: "tint"|"ghost"|"fill", closed: boolean, points: [...] }, ...] tints, ghosts, fills
+     * @returns [{ kind: "tint"|"ghost"|"fill", closed: boolean, points: [...] }, ...]
      */
     _buildRenderList: function () {
-      const fills = [];
-      const ghosts = [];
+      this._contours = this.footprint.map((points) => new FootprintContour(points));
       const tints = [];
-      this.footprint.forEach((contour) => {
-        const state = this._contourBehindSun(contour);
-        if (state === "none") {
-          // whole contour on the near side: one filled polygon, exactly as before this feature
-          fills.push({ kind: "fill", closed: true, points: contour });
-          return;
-        }
-        if (state === "full") {
-          // whole contour behind the sun: one dashed closed outline, tinted inside
-          ghosts.push({ kind: "ghost", closed: true, points: contour });
-          tints.push({ kind: "tint", closed: true, points: contour });
-          return;
-        }
-        // Straddler: split into runs. Each behind run becomes its own ghost; the in-front runs
-        // become fills closed along the limb (see "Closing along the limb" above).
-        const n = contour.length;
-        const runs = this._cyclicRuns(contour); // alternates in-front / behind, even length
-        const TWO_PI = 2 * Math.PI;
-        const angle = (p) => Math.atan2(p.y, p.x);
-        const ccw = (from, to) => (((to - from) % TWO_PI) + TWO_PI) % TWO_PI;
-        const side = this._regionSide(contour);
-        // signed sweep from angle `from` to angle `to` going the region's way round the limb
-        const sweepTo = (from, to) => (side > 0 ? ccw(from, to) : -(TWO_PI - ccw(from, to)));
-        // every place an in-front run enters or leaves the disk, with its angle on the limb
-        const crossings = [];
-        runs.forEach((run, idx) => {
-          if (!run.behindSun) {
-            crossings.push({ th: angle(run.points[0]), entry: true, run: idx });
-            crossings.push({ th: angle(run.points[run.points.length - 1]), entry: false, run: idx });
-          }
-        });
-        const nextRun = {}; // in-front run index -> the run its limb arc leads to
-        const arcAfter = {}; // in-front run index -> limb arc points after its last point
-        const extended = {}; // behind run index -> { before, after, points } (run + its two neighbours)
-        runs.forEach((run, idx) => {
-          if (run.behindSun) {
-            // Behind arc: dashed open line, EXTENDED by the in-front neighbour at each end (the
-            // point just before run.first and just after run.last, cyclically). Those two
-            // neighbours are limb points that also belong to the adjacent fill(s), so the dashed
-            // line starts and ends exactly on the fill's edge: the contour edges that cross the
-            // limb (1->2 and 5->6 in the example) are drawn as part of the ghost, no gap.
-            // A single behind point becomes a 3-point dip: neighbour, point, neighbour.
-            const before = contour[(run.first - 1 + n) % n];
-            const after = contour[(run.last + 1) % n];
-            extended[idx] = { before, after, points: [before].concat(run.points, [after]) };
-            ghosts.push({ kind: "ghost", closed: false, points: extended[idx].points });
-            return;
-          }
-          // In-front run: from its last point, walk the limb the region's way round to the
-          // nearest crossing; that is where the visible boundary continues.
-          const last = run.points[run.points.length - 1];
-          const thLast = angle(last);
-          let best = null;
-          crossings.forEach((c) => {
-            if (c.run === idx && !c.entry) {
-              return; // the point we are leaving from
-            }
-            const s = Math.abs(sweepTo(thLast, c.th));
-            if (!best || s < best.s) {
-              best = { s, c };
-            }
-          });
-          let target = idx;
-          let sweep;
-          if (best && best.c.entry) {
-            target = best.c.run;
-            sweep = sweepTo(thLast, best.c.th);
-            if (Math.abs(sweep) >= TWO_PI - 1e-6) {
-              sweep = 0; // a single-point run: leaving and entering at the same angle
-            }
-          } else {
-            // not a re-entry (open, seam-cut contour): close this run on itself the short way
-            const s = ccw(thLast, angle(run.points[0]));
-            sweep = s <= Math.PI ? s : -(TWO_PI - s);
-          }
-          nextRun[idx] = target;
-          arcAfter[idx] = this._limbArc(last, runs[target].points[0], sweep);
-        });
-        // Chain run -> arc -> next run -> ... into closed polygons; each unreached run starts one.
-        const done = {};
-        runs.forEach((run, idx) => {
-          if (run.behindSun || done[idx]) {
-            return;
-          }
-          let points = [];
-          let i = idx;
-          let guard = 0;
-          do {
-            done[i] = true;
-            points = points.concat(runs[i].points, arcAfter[i]);
-            i = nextRun[i];
-            guard++;
-          } while (i !== idx && !done[i] && guard < runs.length);
-          if (points.length >= 3) {
-            fills.push({ kind: "fill", closed: true, points });
-          }
-          // (fewer than 3 points, e.g. a contour that only touches the near side at one point,
-          // has no area to fill; its ghosts are still drawn)
-        });
-
-        // Far-side tint: the region clipped to the FAR hemisphere, built exactly like the fills
-        // but mirrored. Its boundary is the behind runs plus the same straddled limb segments.
-        // From the point where a behind run comes back in front (its `after`) the boundary follows
-        // the limb the OTHER way round (at a re-entry, "region on the right" points the other way
-        // along the limb than at an exit) to the nearest crossing, which is where some behind run
-        // leaves the disk (its `before`). Chain behind run -> arc -> behind run ... into polygons.
-        // A limb-hugging far-side hole therefore becomes one band along the limb, not a disk-sized
-        // blob (a per-run chord from `after` back to `before` drew the whole disk for such cases).
-        const sweepBack = (from, to) => (side > 0 ? -(TWO_PI - ccw(from, to)) : ccw(from, to));
-        const farCrossings = [];
-        Object.keys(extended).forEach((k) => {
-          const idx = Number(k);
-          farCrossings.push({ th: angle(extended[idx].before), exit: true, run: idx });
-          farCrossings.push({ th: angle(extended[idx].after), exit: false, run: idx });
-        });
-        const nextBehind = {};
-        const arcBehind = {};
-        Object.keys(extended).forEach((k) => {
-          const idx = Number(k);
-          const after = extended[idx].after;
-          const thAfter = angle(after);
-          let best = null;
-          farCrossings.forEach((c) => {
-            if (c.run === idx && !c.exit) {
-              return; // the point we are leaving from
-            }
-            const s = Math.abs(sweepBack(thAfter, c.th));
-            if (!best || s < best.s) {
-              best = { s, c };
-            }
-          });
-          let target = idx;
-          let sweep;
-          if (best && best.c.exit) {
-            target = best.c.run;
-            sweep = sweepBack(thAfter, best.c.th);
-            if (Math.abs(sweep) >= TWO_PI - 1e-6) {
-              sweep = 0;
-            }
-          } else {
-            // not an exit (open, seam-cut contour): close this run's tint on itself the short way
-            const s = ccw(thAfter, angle(extended[idx].before));
-            sweep = s <= Math.PI ? s : -(TWO_PI - s);
-          }
-          nextBehind[idx] = target;
-          arcBehind[idx] = this._limbArc(after, extended[target].before, sweep);
-        });
-        const doneBehind = {};
-        Object.keys(extended).forEach((k) => {
-          const idx = Number(k);
-          if (doneBehind[idx]) {
-            return;
-          }
-          let points = [];
-          let i = idx;
-          let guard = 0;
-          do {
-            doneBehind[i] = true;
-            points = points.concat(extended[i].points, arcBehind[i]);
-            i = nextBehind[i];
-            guard++;
-          } while (i !== idx && !doneBehind[i] && guard < runs.length);
-          if (points.length >= 3) {
-            tints.push({ kind: "tint", closed: true, points });
-          }
-        });
+      const ghosts = [];
+      const fills = [];
+      this._contours.forEach((contour) => {
+        const shapes = contour.shapes();
+        tints.push(...shapes.tints);
+        ghosts.push(...shapes.ghosts);
+        fills.push(...shapes.fills);
       });
       return tints.concat(ghosts, fills);
     },
