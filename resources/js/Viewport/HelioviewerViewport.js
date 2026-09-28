@@ -65,8 +65,9 @@ var HelioviewerViewport = Class.extend(
 
         this.dataSources = new Promise((resolve) => {
             callback = function (dataSources) {
-                // CCOR1 is only available on JHelioviewer at this time.
+                // CCOR1 & SoloHI are only available on JHelioviewer at this time.
                 try { delete dataSources["GOES"]["CCOR-1"]; } catch (e) {}
+                try { delete dataSources["SOLO"]["SoloHI"]; } catch (e) {}
 
                 resolve(dataSources);
                 $(document).trigger("datasources-initialized", [dataSources]);
