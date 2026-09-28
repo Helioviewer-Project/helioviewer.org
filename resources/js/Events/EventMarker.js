@@ -262,6 +262,44 @@ class FootprintContour {
     return this._shapes;
   }
 
+  /**
+   * Nearest crossing from angle `from`, walking the limb in the direction given by `sweepFn`
+   * (a signed sweep function), with one safety rule: if nothing is found within a half turn
+   * that way, the limb is walked the OTHER way and the nearest crossing there is taken. No
+   * visible region straddles more than half the limb, so a first hit beyond 180 degrees is
+   * always wrong. It happens with open, seam-cut contours: their fake closing edge (a jump of
+   * 1000 arcsec and more) can flip the computed region side, and the GONGZ hole of 2026-02-27
+   * 16:14 then closed a 26-point sliver the long way round and filled 90% of the disk. It also
+   * covers two crossings a hair apart in the wrong angular order through coordinate noise
+   * (the GONGZ hole of 2026-07-10 23:58), where the wanted way measured 360 degrees minus a hair.
+   * @returns { crossing, sweep } or null when there is no other crossing
+   */
+  static nearestCrossing(from, crossings, sweepFn, skip) {
+    const search = (fn) => {
+      let best = null;
+      crossings.forEach((c) => {
+        if (skip(c)) {
+          return;
+        }
+        const sweep = fn(from, c.th);
+        if (!best || Math.abs(sweep) < Math.abs(best.sweep)) {
+          best = { crossing: c, sweep };
+        }
+      });
+      return best;
+    };
+    let best = search(sweepFn);
+    if (best && Math.abs(best.sweep) > Math.PI) {
+      // the same walk, the other way round the limb
+      const otherWay = (a, b) => {
+        const s = sweepFn(a, b);
+        return -Math.sign(s || 1) * (TWO_PI - Math.abs(s));
+      };
+      best = search(otherWay);
+    }
+    return best;
+  }
+
   _computeShapes() {
     const fills = [];
     const ghosts = [];
@@ -315,24 +353,13 @@ class FootprintContour {
       // nearest crossing; that is where the visible boundary continues.
       const last = run.points[run.points.length - 1];
       const thLast = angle(last);
-      let best = null;
-      crossings.forEach((c) => {
-        if (c.run === idx && !c.entry) {
-          return; // the point we are leaving from
-        }
-        const s = Math.abs(sweepTo(thLast, c.th));
-        if (!best || s < best.s) {
-          best = { s, c };
-        }
-      });
+      // skip the point we are leaving from
+      const best = FootprintContour.nearestCrossing(thLast, crossings, sweepTo, (c) => c.run === idx && !c.entry);
       let target = idx;
       let sweep;
-      if (best && best.c.entry) {
-        target = best.c.run;
-        sweep = sweepTo(thLast, best.c.th);
-        if (Math.abs(sweep) >= TWO_PI - 1e-6) {
-          sweep = 0; // a single-point run: leaving and entering at the same angle
-        }
+      if (best && best.crossing.entry) {
+        target = best.crossing.run;
+        sweep = best.sweep;
       } else {
         // not a re-entry (open, seam-cut this.points): close this run on itself the short way
         const s = ccw(thLast, angle(run.points[0]));
@@ -384,24 +411,13 @@ class FootprintContour {
       const idx = Number(k);
       const after = extended[idx].after;
       const thAfter = angle(after);
-      let best = null;
-      farCrossings.forEach((c) => {
-        if (c.run === idx && !c.exit) {
-          return; // the point we are leaving from
-        }
-        const s = Math.abs(sweepBack(thAfter, c.th));
-        if (!best || s < best.s) {
-          best = { s, c };
-        }
-      });
+      // skip the point we are leaving from
+      const best = FootprintContour.nearestCrossing(thAfter, farCrossings, sweepBack, (c) => c.run === idx && !c.exit);
       let target = idx;
       let sweep;
-      if (best && best.c.exit) {
-        target = best.c.run;
-        sweep = sweepBack(thAfter, best.c.th);
-        if (Math.abs(sweep) >= TWO_PI - 1e-6) {
-          sweep = 0;
-        }
+      if (best && best.crossing.exit) {
+        target = best.crossing.run;
+        sweep = best.sweep;
       } else {
         // not an exit (open, seam-cut this.points): close this run's tint on itself the short way
         const s = ccw(thAfter, angle(extended[idx].before));
@@ -643,19 +659,118 @@ var EventMarker = Class.extend(
       svg.setAttribute("id", "region_" + id);
       svg.setAttribute("rel", id);
       svg.style.position = "absolute";
+      svg.style.left = "0px"; // both region SVGs sit at the container origin; all points are absolute px
+      svg.style.top = "0px";
+      svg.style.width = "1px";
+      svg.style.height = "1px";
       svg.style.overflow = "visible";
       svg.style.zIndex = zIndex;
       this._regionZIndex = zIndex; // restored by deEmphasize after a hover raised it
       svg.style.pointerEvents = "none"; // Allow clicks to pass through to markers
 
-      // One SVG child per render-list entry, all sharing the same region SVG (see _buildRenderList).
+      // Two SVGs per event. This one (region_<id>) holds the near-side fills. A second one
+      // (region_<id>_far) holds everything far-side: the tint, the dashed lines and their hover
+      // halos. It sits one z-index below, so every far-side line of every event paints under
+      // every near-side fill of every event: a dashed line crossing a fill is seen through the
+      // fill, never on top of it. Within one SVG that only held for the event's own fills, and a
+      // dashed line over another event's fill was as strong as on the bare sun.
+      let far = document.createElementNS(svgNS, "svg");
+      far.setAttribute("class", "event-region event-region-far");
+      far.setAttribute("id", "region_" + id + "_far");
+      far.setAttribute("rel", id);
+      far.style.position = "absolute";
+      far.style.left = "0px";
+      far.style.top = "0px";
+      far.style.width = "1px";
+      far.style.height = "1px";
+      far.style.overflow = "visible";
+      far.style.zIndex = zIndex - 1;
+      far.style.pointerEvents = "none";
+
+      // Two luminance masks, both built from this event's fill polygons and kept in step with
+      // them on every zoom (_updateRegionLayout); their region is made huge so nothing is
+      // clipped whatever the bounding box.
+      //  - tintmask: fills in BLACK. The far-side tint must not show where this event has a
+      //    near-side fill; two translucent layers would stack darker than the fill itself.
+      //  - ghostmask: fills in GREY (45% luminance). A far-side dashed line that crosses its
+      //    own event's fill is drawn at 45% strength there, so it stays a hint under the region
+      //    rather than competing with it.
+      const BIG = 100000;
+      const defs = document.createElementNS(svgNS, "defs");
+      const makeMask = (maskId) => {
+        const mask = document.createElementNS(svgNS, "mask");
+        mask.setAttribute("id", maskId);
+        mask.setAttribute("maskUnits", "userSpaceOnUse");
+        mask.setAttribute("x", -BIG);
+        mask.setAttribute("y", -BIG);
+        mask.setAttribute("width", 2 * BIG);
+        mask.setAttribute("height", 2 * BIG);
+        const base = document.createElementNS(svgNS, "rect");
+        base.setAttribute("x", -BIG);
+        base.setAttribute("y", -BIG);
+        base.setAttribute("width", 2 * BIG);
+        base.setAttribute("height", 2 * BIG);
+        base.setAttribute("fill", "white");
+        mask.appendChild(base);
+        defs.appendChild(mask);
+        return mask;
+      };
+      const tintMask = makeMask("tintmask_" + id);
+      const ghostMask = makeMask("ghostmask_" + id);
+      far.appendChild(defs);
+      // All far-side tints of the container (one container per source) live in ONE shared SVG,
+      // inside a single group with opacity 0.18. Group opacity composites the group as a whole,
+      // so where two events' tints overlap (twelve AGONG realisations of the same hole, say) the
+      // union is still 0.18 and never adds up to something that reads as a near-side fill. The
+      // layer is created by the first marker of the container and removed with the container.
+      let tintLayerGroup = null;
+      if (typeof this.parentFRM != "undefined") {
+        let tintLayer = this.parentFRM.children("svg.event-far-tints")[0];
+        if (!tintLayer) {
+          tintLayer = document.createElementNS(svgNS, "svg");
+          tintLayer.setAttribute("class", "event-far-tints");
+          tintLayer.style.position = "absolute";
+          tintLayer.style.left = "0px";
+          tintLayer.style.top = "0px";
+          tintLayer.style.width = "1px";
+          tintLayer.style.height = "1px";
+          tintLayer.style.overflow = "visible";
+          tintLayer.style.zIndex = zIndex - 1; // same level as the far-side SVGs, earlier in the DOM: under them
+          tintLayer.style.pointerEvents = "none";
+          const layerGroup = document.createElementNS(svgNS, "g");
+          layerGroup.setAttribute("class", "event-far-tints-group");
+          layerGroup.style.opacity = "0.18";
+          tintLayer.appendChild(layerGroup);
+          this.parentFRM.prepend(tintLayer);
+        }
+        tintLayerGroup = tintLayer.querySelector("g.event-far-tints-group");
+      }
+      const tintGroup = document.createElementNS(svgNS, "g");
+      tintGroup.setAttribute("id", "tint_" + id);
+      tintGroup.setAttribute("class", "event-region event-region-tint behind-sun-tints"); // event-region: hidden/shown with the regions
+      tintGroup.setAttribute("mask", "url(#tintmask_" + id + ")"); // the mask lives in this event's far-side SVG; ids are document-wide
+      this._tintGroup = tintGroup;
+      this._tintLayerGroup = tintLayerGroup;
+      if (tintLayerGroup) {
+        tintLayerGroup.appendChild(tintGroup);
+      } else {
+        tintGroup.style.opacity = "0.18"; // no container: keep the tint in the far-side SVG
+        far.appendChild(tintGroup);
+      }
+      const ghostGroup = document.createElementNS(svgNS, "g");
+      ghostGroup.setAttribute("class", "behind-sun-ghosts");
+      ghostGroup.setAttribute("mask", "url(#ghostmask_" + id + ")");
+      far.appendChild(ghostGroup);
+
+      // One SVG child per render-list entry (see _buildRenderList): tints and ghosts in the
+      // far-side SVG, fills in the near-side one.
       // Fill styling mirrors the legacy backend HEK polygon renderer:
       // fill: event-type color at 0.4 alpha, stroke: black at 0.533 alpha, 1.5px round joins.
       let baseColor = EventLoader.getEventTypeColor(this.type);
       this._renderList = this._buildRenderList();
-      // Paint order within the event: tints, then ghosts, then fills. Far-side points are
-      // projected back inside the disk, so a ghost often crosses its own event's near-side fill;
-      // it must show through the translucent fill, never lie on top of it, idle or hovered.
+      // Paint order: tints, then ghosts (both in the far-side SVG), then fills (near-side SVG,
+      // one z-index above). Far-side points are projected back inside the disk, so a ghost often
+      // crosses a near-side fill; it must show through the translucent fill, never lie on top.
       const paintOrder = this._renderList
         .filter((e) => e.kind === "tint")
         .concat(this._renderList.filter((e) => e.kind === "ghost"), this._renderList.filter((e) => e.kind === "fill"));
@@ -664,11 +779,27 @@ var EventMarker = Class.extend(
         const tag = entry.closed ? "polygon" : "polyline";
         let shape = document.createElementNS(svgNS, tag);
         if (entry.kind === "tint") {
-          // Far-side area: a faint, stroke-less fill under everything else of the event
+          // Far-side area: a faint, stroke-less fill under everything else of the event, masked
+          // out wherever a near-side fill of this event is (see tintMask above)
           shape.setAttribute("class", "event-region-shape behind-sun-ghost-fill");
-          shape.style.fill = hexToRgba(baseColor, 0.18);
+          shape.style.fill = hexToRgba(baseColor, 1); // the 0.18 comes from the group that holds it
           shape.style.stroke = "none";
-        } else if (entry.kind === "fill") {
+          entry.node = shape;
+          tintGroup.appendChild(shape);
+          return;
+        }
+        if (entry.kind === "fill") {
+          // the same polygon punches this fill out of the tint mask (black = hidden) and dims
+          // the dashed lines under it in the ghost mask (grey = 45% strength)
+          const cutout = document.createElementNS(svgNS, "polygon");
+          cutout.setAttribute("fill", "black");
+          entry.maskNode = cutout;
+          tintMask.appendChild(cutout);
+          const dimmer = document.createElementNS(svgNS, "polygon");
+          dimmer.setAttribute("fill", "rgb(115, 115, 115)");
+          entry.ghostMaskNode = dimmer;
+          ghostMask.appendChild(dimmer);
+
           shape.setAttribute("class", "event-region-shape behind-sun-none");
           shape.style.fill = hexToRgba(baseColor, 0.4);
           shape.style.stroke = "rgba(0, 0, 0, 0.533)";
@@ -695,7 +826,7 @@ var EventMarker = Class.extend(
           halo.style.strokeLinejoin = "round";
           halo.style.display = "none";
           entry.haloNode = halo;
-          svg.appendChild(halo); // appended first = painted under the coloured ghost
+          ghostGroup.appendChild(halo); // appended first = painted under the coloured ghost
 
           shape.setAttribute("class", "event-region-shape behind-sun-ghost");
           shape.style.fill = "none"; // the far-side area is the separate "tint" entry
@@ -705,12 +836,14 @@ var EventMarker = Class.extend(
         }
         shape.style.strokeLinejoin = "round";
         entry.node = shape;
-        svg.appendChild(shape);
+        (entry.kind === "ghost" ? ghostGroup : svg).appendChild(shape);
       });
 
       this.eventRegionDomNode = $(svg);
+      this.eventFarRegionDomNode = $(far);
 
       if (typeof this.parentFRM != "undefined") {
+        this.parentFRM.append(this.eventFarRegionDomNode);
         this.parentFRM.append(this.eventRegionDomNode);
       }
 
@@ -741,35 +874,14 @@ var EventMarker = Class.extend(
         return;
       }
 
-      // Bounding box across every point in every contour, in screen pixels
-      let minX = Infinity,
-        minY = Infinity,
-        maxX = -Infinity,
-        maxY = -Infinity;
-      this._allFootprintPoints().forEach((point) => {
-        let screenX = point.x / imageScale;
-        let screenY = -point.y / imageScale; // screen Y is inverted
-        minX = Math.min(minX, screenX);
-        minY = Math.min(minY, screenY);
-        maxX = Math.max(maxX, screenX);
-        maxY = Math.max(maxY, screenY);
-      });
-
-      this.region_pos = { x: minX, y: minY };
-      this.eventRegionDomNode.css({
-        left: minX + "px",
-        top: minY + "px",
-        width: maxX - minX + "px",
-        height: maxY - minY + "px"
-      });
-
-      // Project each render-list entry's points relative to the SVG origin (minX, minY).
-      // Each entry holds its own SVG node, so no index matching is needed.
+      // Project each render-list entry's points to container pixels (the SVGs sit at the
+      // container origin, overflow visible, so no bounding box is needed; screen Y is inverted).
+      // Each entry holds its own SVG node(s), so no index matching is needed.
       this._renderList.forEach((entry) => {
         let pointsStr = entry.points
           .map((point) => {
-            let screenX = point.x / imageScale - minX;
-            let screenY = -point.y / imageScale - minY;
+            let screenX = point.x / imageScale;
+            let screenY = -point.y / imageScale;
             return `${screenX},${screenY}`;
           })
           .join(" ");
@@ -777,6 +889,10 @@ var EventMarker = Class.extend(
         entry.node.setAttribute("points", pointsStr);
         if (entry.haloNode) {
           entry.haloNode.setAttribute("points", pointsStr);
+        }
+        if (entry.maskNode) {
+          entry.maskNode.setAttribute("points", pointsStr); // keep the tint cut-out under this fill
+          entry.ghostMaskNode.setAttribute("points", pointsStr); // and the dashed-line dimmer
         }
       });
     },
@@ -810,6 +926,8 @@ var EventMarker = Class.extend(
         this.eventRegionDomNode.qtip("destroy");
         this.eventRegionDomNode.unbind();
         this.eventRegionDomNode.remove();
+        this.eventFarRegionDomNode.remove();
+        $(this._tintGroup).remove();
       }
     },
 
@@ -906,12 +1024,16 @@ var EventMarker = Class.extend(
       if (markerVisible) {
         if (this.eventRegionDomNode) {
           this.eventRegionDomNode.show();
+          this.eventFarRegionDomNode.show();
+          $(this._tintGroup).show();
         }
         this.eventMarkerDomNode.show();
         this._markerVisible = markerVisible;
       } else {
         if (this.eventRegionDomNode) {
           this.eventRegionDomNode.hide();
+          this.eventFarRegionDomNode.hide();
+          $(this._tintGroup).hide();
         }
         this.eventMarkerDomNode.hide();
         this._markerVisible = markerVisible;
@@ -1360,6 +1482,7 @@ var EventMarker = Class.extend(
         // pins that end up under the translucent fill stay clickable. deEmphasize restores the
         // value createRegion set.
         this.eventRegionDomNode.css("zIndex", "996");
+        this.eventFarRegionDomNode.css("zIndex", "995"); // above other events' fills, below our own
 
         let baseColor = EventLoader.getEventTypeColor(this.type);
         // Near-side fills get the solid highlight; behind-sun ghosts get a slightly brighter,
@@ -1376,14 +1499,20 @@ var EventMarker = Class.extend(
         });
         // Ghost highlight is deliberately mild: a little brighter and a little wider, same dash
         // pattern, plus the soft black underlay. Solid colour at 3px read as a glowing rope.
-        this.eventRegionDomNode.find(".behind-sun-ghost").each(function () {
+        this.eventFarRegionDomNode.find(".behind-sun-ghost").each(function () {
           this.style.stroke = hexToRgba(baseColor, 0.85);
           this.style.strokeWidth = "2px";
         });
-        this.eventRegionDomNode.find(".behind-sun-ghost-fill").each(function () {
-          this.style.fill = hexToRgba(baseColor, 0.28);
-        });
-        this.eventRegionDomNode.find(".behind-sun-ghost-halo").each(function () {
+        // The tint leaves the shared 0.18 layer for the hover and joins this event's far-side
+        // SVG (z-index 995) at 0.28, under the dashed lines, so it rises with them
+        if (this._tintGroup) {
+          this._tintGroup.style.opacity = "0.28";
+          if (this._tintLayerGroup) {
+            const far = this.eventFarRegionDomNode[0];
+            far.insertBefore(this._tintGroup, far.querySelector("g.behind-sun-ghosts"));
+          }
+        }
+        this.eventFarRegionDomNode.find(".behind-sun-ghost-halo").each(function () {
           this.style.display = ""; // the black underlay gives the dashed line its halo
         });
       }
@@ -1399,6 +1528,7 @@ var EventMarker = Class.extend(
       if (this.hasFootprint() && this.eventRegionDomNode) {
         // Back to the idle stacking level createRegion gave it
         this.eventRegionDomNode.css("zIndex", this._regionZIndex);
+        this.eventFarRegionDomNode.css("zIndex", this._regionZIndex - 1);
 
         let baseColor = EventLoader.getEventTypeColor(this.type);
         this.eventRegionDomNode.find(".behind-sun-none").each(function () {
@@ -1408,14 +1538,19 @@ var EventMarker = Class.extend(
           this.style.strokeLinejoin = "round";
         });
         // Restore ghosts to their idle style (values must match createRegion)
-        this.eventRegionDomNode.find(".behind-sun-ghost").each(function () {
+        this.eventFarRegionDomNode.find(".behind-sun-ghost").each(function () {
           this.style.stroke = hexToRgba(baseColor, 0.55);
           this.style.strokeWidth = "1.5px";
         });
-        this.eventRegionDomNode.find(".behind-sun-ghost-fill").each(function () {
-          this.style.fill = hexToRgba(baseColor, 0.18);
-        });
-        this.eventRegionDomNode.find(".behind-sun-ghost-halo").each(function () {
+        if (this._tintGroup) {
+          if (this._tintLayerGroup) {
+            this._tintGroup.style.opacity = "";
+            this._tintLayerGroup.appendChild(this._tintGroup); // back into the shared 0.18 layer
+          } else {
+            this._tintGroup.style.opacity = "0.18";
+          }
+        }
+        this.eventFarRegionDomNode.find(".behind-sun-ghost-halo").each(function () {
           this.style.display = "none";
         });
       }

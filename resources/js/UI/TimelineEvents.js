@@ -369,7 +369,7 @@ var TimelineEvents = Class.extend({
 									var id = this.id;
                                     $(".event-marker, .event-region").hide();
                                     $("#marker_" + id).show();
-                                    $("#region_" + id).show();
+                                    $("#region_" + id + ", #region_" + id + "_far, #tint_" + id).show(); // near-side SVG, far-side SVG and tint group of the event
                                     $('.movie-viewport-icon').hide();
 								}
 							},
