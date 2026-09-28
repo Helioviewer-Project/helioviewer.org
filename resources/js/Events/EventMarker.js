@@ -773,7 +773,10 @@ var EventMarker = Class.extend(
       // crosses a near-side fill; it must show through the translucent fill, never lie on top.
       const paintOrder = this._renderList
         .filter((e) => e.kind === "tint")
-        .concat(this._renderList.filter((e) => e.kind === "ghost"), this._renderList.filter((e) => e.kind === "fill"));
+        .concat(
+          this._renderList.filter((e) => e.kind === "ghost"),
+          this._renderList.filter((e) => e.kind === "fill")
+        );
       paintOrder.forEach((entry) => {
         // closed shapes are <polygon>; an open behind-sun run is a <polyline> (no closing chord)
         const tag = entry.closed ? "polygon" : "polyline";
