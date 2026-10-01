@@ -667,6 +667,7 @@ if($is_mobile_view) {
 					<div class="content">
 						<div id="eventLayerAccordion">
 							<div id="EventLayerAccordion-Container">
+								<div id="event-tree-container-WSA"></div>
 								<div id="event-tree-container-HEK"></div>
 								<div id="event-tree-container-CCMC"></div>
 								<div id="event-tree-container-RHESSI"></div>

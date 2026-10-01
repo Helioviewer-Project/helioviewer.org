@@ -100,9 +100,7 @@ var UserLayersPresets = Class.extend({
 	        }
 
 	        if($('input.item-events').is(':checked')){
-	            Helioviewer.eventLoader.ready((el) => {
-	                item.events_v2 = el.getSelections();
-	            });
+	            item.events_v2 = Helioviewer.userSettings.get("state.event_selections");
 	        }
 
 	        var currentList = Helioviewer.userSettings.get("state.userTileLayers");
@@ -160,6 +158,7 @@ var UserLayersPresets = Class.extend({
 		        var date = $(this).data('date');
 		        var layers = $(this).data('layers');
 		        var events = $(this).data('events');
+		        var events_v2 = $(this).data('events_v2');
 
 		        if(typeof id != 'undefined' && parseInt(id) >= 0){
 			        if(typeof $(this).qtip('api') == 'undefined'){
@@ -168,7 +167,7 @@ var UserLayersPresets = Class.extend({
 				                title: {
 				                    text: name
 				                },
-				                text: self._buildPreviewTooltipHTML(id, name, date, layers, events)
+				                text: self._buildPreviewTooltipHTML(id, name, date, layers, events, events_v2)
 				            },
 				            position: {
 				                adjust: {
@@ -311,21 +310,8 @@ var UserLayersPresets = Class.extend({
 
         //Add events
         if($('input.item-events').is(':checked')){
-			var eventLayerArray = [];
-			let events = Helioviewer.userSettings.get("state.events_v2");
-	        Object.keys(events).forEach((section) => {
-				eventLayerArray = eventLayerArray.concat(events[section].layers)
-			});
-	        if(eventLayerArray.length == 20){
-		        eventsString += 'All';
-	        }else{
-		        $.each(eventLayerArray, function (i, eventLayerObj) {
-			        if(parseInt(eventLayerObj.open) == 1){
-				        eventsString += eventLayerObj.event_type+', '; //eventLayerObj.frms.join(';');
-			        }
-		        });
-		        eventsString = eventsString.trim().replace(/,\s*$/, "");
-	        }
+			var sels = Helioviewer.userSettings.get("state.event_selections");
+			eventsString += [...new Set(sels.map((p) => p.split(">>").slice(0, 2).join(">>")))].join(', ');
 
         }
 
@@ -443,7 +429,7 @@ var UserLayersPresets = Class.extend({
 		return listHTML;
 	},
 
-	_buildPreviewTooltipHTML: function (id, name, date, layers, events) {
+	_buildPreviewTooltipHTML: function (id, name, date, layers, events, events_v2) {
 		var dateFormated = '', layersFormated = '', eventsFormated = '', urlDate = '', urlLayers = '', urlEvents = '';
         var eventLabels = 'false';
 
@@ -505,17 +491,22 @@ var UserLayersPresets = Class.extend({
 		        urlEvents = '';
 		        eventString = 'None';
 	        }else{
-		        urlEvents = events;
+		        if(typeof events_v2 != 'undefined' && events_v2 != ''){
+			        urlEvents = encodeURIComponent(events_v2.split(",").join(";"));
+		        }else{
+			        urlEvents = encodeURIComponent(Object.values(EventLoader.translateLegacyEventURLsToSelections(events)).flat().join(";"));
+		        }
 
-		        var eventLayersString = events.slice(1, -1);
-		        var eventLayersArr = eventLayersString.split("],[");
 		        var eventString = '';
-		        $.each(eventLayersArr, function(k, v){
-			        var layerArr = v.split(",");
-			        eventString += ' '+layerArr[0]+',';
-		        });
-
-		        eventString = eventString.trim().replace(/,\s*$/, "");
+		        if(typeof events_v2 != 'undefined' && events_v2 != ''){
+			        eventString = [...new Set(events_v2.split(",").map((p) => p.split(">>").slice(0, 2).join(">>")))].join(', ');
+		        }else{
+			        $.each(events.slice(1, -1).split("],["), function(k, v){
+				        var pin = v.split(",")[0];
+				        if(pin && pin != 'undefined'){ eventString += ' '+pin+','; }
+			        });
+			        eventString = eventString.trim().replace(/,\s*$/, "");
+		        }
 	        }
 
 	        eventsFormated = '<tr>\
@@ -523,12 +514,12 @@ var UserLayersPresets = Class.extend({
 						<td>'+eventString+'</td>\
 					</tr>';
         }else{
-	        urlEvents = vport.events;
+	        urlEvents = encodeURIComponent(Helioviewer.userSettings.get("state.event_selections").join(";"));
         }
 
 
 
-        var screenshotUrl = Helioviewer.api+'?action=takeScreenshot&imageScale='+imageScale+'&layers='+urlLayers+'&events='+urlEvents+'&eventLabels='+eventLabels+'&scale=false&scaleType=earth&scaleX=0&scaleY=0&date='+urlDate+'&x1='+x1+'&x2='+x2+'&y1='+y1+'&y2='+y2+'&display=true&watermark=false&switchSources=true';
+        var screenshotUrl = Helioviewer.api+'?action=takeScreenshot&imageScale='+imageScale+'&layers='+urlLayers+'&event_selections='+urlEvents+'&eventLabels='+eventLabels+'&scale=false&scaleType=earth&scaleX=0&scaleY=0&date='+urlDate+'&x1='+x1+'&x2='+x2+'&y1='+y1+'&y2='+y2+'&display=true&watermark=false&switchSources=true';
         var html = '<div style="text-align: center;">\
             		<img style="width:200px;" src="'+screenshotUrl+'" alt="preview thumbnail" class="screenshot-preview" />\
             	</div>\
