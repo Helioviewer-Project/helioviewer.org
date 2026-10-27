@@ -313,7 +313,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         // About dialog
         this._setupDialog("#help-links-about", "#about-dialog", {
             "title"  : "Helioviewer - About",
-            "height" : 520
+            "height" : 540
         });
 
         // Keyboard shortcuts dialog
@@ -812,6 +812,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         //Github
         $('#help-links-github').on('click', function(){
             window.open('https://github.com/Helioviewer-Project/helioviewer.org/issues','_blank');
+        });
+
+        //Privacy Policy
+        $('#help-links-privacy').on('click', function(){
+            window.open('https://www.nasa.gov/privacy/#privacy-policy','_blank');
         });
 
         $('#mouse-cartesian').click( function (event) {

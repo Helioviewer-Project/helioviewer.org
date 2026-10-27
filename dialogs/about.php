@@ -40,7 +40,9 @@ function print_version_info() {
 }
 ?>
 
-<img src="resources/images/logos/about_white.png" alt="Helioviewer.org Logo"><br>
+<div style="width:100%; text-align: center;">
+    <img src="resources/images/logos/about_white.png" alt="Helioviewer.org Logo">
+</div>
 <div style="width:100%; text-align: center;">
     <span style="margin-left: auto; margin-right: auto; font-size:small;">Last Updated: <?php print_version_info()?></span>
 </div>
@@ -90,3 +92,8 @@ The Helioviewer Project is funded by <acronym title="European Space Agency">ESA<
 
     </span>
 </div>
+<br />
+<div style="width:100%; text-align: center;">
+    <span style="margin-left: auto; margin-right: auto;">Responsible NASA Official: Jack Ireland</span>
+</div>
+<br />

@@ -1333,6 +1333,15 @@ if($is_mobile_view) {
 									</div>
 								</div>
 
+								<div class='social-btns'>
+									<div style="font-size: 1.5em;">
+										<div id='help-links-privacy' class='text-btn qtip-left' style="width: 90%;border:none;" title='Privacy Policy'>
+											<span class='fa fa-lock fa-fw'></span>
+											<span style='line-height: 1.6em'>Privacy Policy</span>
+										</div>
+									</div>
+								</div>
+
 								<br />
 
 
