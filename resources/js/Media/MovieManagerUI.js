@@ -1064,7 +1064,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 			var msg, waitTime;
 
 			self._manager.update( movie.id, {'status':0, 'dateRequested':new Date().toISOString(), 'token': response.token});
-			self._manager._monitorQueuedMovie(movie.id, new Date().toISOString(), response.token, 5);
+			self._manager._monitorQueuedMovie(movie.id, new Date().toISOString(), response.token);
 
 			waitTime = humanReadableNumSeconds(response.eta);
 			msg = "Your video is processing and will be available in " +

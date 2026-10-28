@@ -146,7 +146,7 @@ var MovieManager = MediaManager.extend(
             this._history = this._history.slice(0, this._historyLimit);
         }
 
-        this._monitorQueuedMovie(id, Date.parseUTCDate(dateRequested), token, 5);
+        this._monitorQueuedMovie(id, Date.parseUTCDate(dateRequested), token);
 
         this._save();
         return movie;
@@ -222,9 +222,10 @@ var MovieManager = MediaManager.extend(
     },
 
     /**
-     * Monitors a queued movie and notifies the user when it becomes available
+     * Monitors a queued movie and notifies the user when it becomes available.
+     * The status is checked every `movie_status_poll_sec` seconds (Config.js).
      */
-    _monitorQueuedMovie: function (id, dateRequested, token, eta)
+    _monitorQueuedMovie: function (id, dateRequested, token)
     {
         var queryMovieStatus, self = this;
 
@@ -243,6 +244,7 @@ var MovieManager = MediaManager.extend(
                     // If more than 24 hours has elapsed, set status to ERROR
                     if ((Date.now() - dateRequested) / 1000 > (24 * 60 * 60)) {
                         self._abort(id);
+                        return;
                     }
                     
                     var status = '';
@@ -260,7 +262,7 @@ var MovieManager = MediaManager.extend(
                     }
                     
                     // Otherwise continue to monitor
-                    self._monitorQueuedMovie(id, dateRequested, token, 60);
+                    self._monitorQueuedMovie(id, dateRequested, token);
                     
                     $('#movie-'+id+' .status').html(status);
                 } else if (response.error) {
@@ -295,10 +297,25 @@ var MovieManager = MediaManager.extend(
             };
 
             $.get(Helioviewer.api, params, callback, Helioviewer.dataType).fail((resp) => {
-                self._abort(id);
+                if (!self.has(id)) {
+                    return;
+                }
+
+                // A real problem comes back as a JSON {error, errno} body
+                // (e.g. errno 24 "Unable to find the requested movie").
+                // Anything else (network drop, timeout, API restart) is
+                // temporary: the server is still building the movie, retry.
+                var realError = resp.responseJSON && resp.responseJSON.error;
+                var expired   = (Date.now() - dateRequested) / 1000 > (24 * 60 * 60);
+
+                if (realError || expired) {
+                    self._abort(id);
+                } else {
+                    self._monitorQueuedMovie(id, dateRequested, token);
+                }
             });
         };
-        setTimeout(queryMovieStatus, Math.max(eta, 5) * 1000);
+        setTimeout(queryMovieStatus, Helioviewer.serverSettings.movieStatusPollSec * 1000);
     },
 
     /**
