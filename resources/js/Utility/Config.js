@@ -31,6 +31,7 @@ var Config = Class.extend(
         'enable_helios_backlinks'   : false,
         'jhelioviewer_host'         : 'GSFC', // Mirrors should set this to their server code.
         'coordinator_url'           : 'https://api.helioviewer.org/coordinate',
+        'quackback_domain'          : "",
         /**
          * The maximum time difference in seconds between an image and
          * the chosen observation time. If the time delta exceeds this
@@ -110,6 +111,7 @@ var Config = Class.extend(
             'jhelioviewerHost'        : this.params["jhelioviewer_host"],
             'obstime_alert_dt'        : this.params["obstime_alert_dt"],
             'coordinator_url'         : this.params["coordinator_url"],
+            'quackbackDomain'         : this.params["quackback_domain"],
         };
     }
 });
