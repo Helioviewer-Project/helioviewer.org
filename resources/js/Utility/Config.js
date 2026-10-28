@@ -15,8 +15,8 @@ var Config = Class.extend(
      * Default parameters
      */
      params: {
-        'back_end'                  : "http://127.0.0.1:8081/",
-        'web_root_url'              : "http://127.0.0.1:8080",
+        'back_end'                  : "https://api.helioviewer.org/",
+        'web_root_url'              : "https://helioviewer.org",
         'build_num'                 : 700,
         'default_image_scale'       : 4.8408817,
         'ref_image_scale'           : 0.60511022,
@@ -25,12 +25,12 @@ var Config = Class.extend(
         'max_tile_layers'           : 5,
         'prefetch_size'             : 0,
         'news_url'                  : "https://helioviewer-project.github.io/",
-        'user_video_feed'           : "http://127.0.0.1:8081/",
+        'user_video_feed'           : "https://api.helioviewer.org/",
         'contact_email'             : "HelioViewerDevelopment@nasa.onmicrosoft.com",
         'regenerate_movie_threshold': 90,
         'enable_helios_backlinks'   : false,
         'jhelioviewer_host'         : 'GSFC', // Mirrors should set this to their server code.
-        'coordinator_url'           : 'http://127.0.0.1:8000',
+        'coordinator_url'           : 'https://api.helioviewer.org/coordinate',
         'quackback_domain'          : "",
         /**
          * The maximum time difference in seconds between an image and
