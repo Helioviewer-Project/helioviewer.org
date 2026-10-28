@@ -15,8 +15,8 @@ var Config = Class.extend(
      * Default parameters
      */
      params: {
-        'back_end'                  : "https://api.helioviewer.org/",
-        'web_root_url'              : "https://helioviewer.org",
+        'back_end'                  : "http://127.0.0.1:8081/",
+        'web_root_url'              : "http://127.0.0.1:8080",
         'build_num'                 : 700,
         'default_image_scale'       : 4.8408817,
         'ref_image_scale'           : 0.60511022,
@@ -25,12 +25,13 @@ var Config = Class.extend(
         'max_tile_layers'           : 5,
         'prefetch_size'             : 0,
         'news_url'                  : "https://helioviewer-project.github.io/",
-        'user_video_feed'           : "https://api.helioviewer.org/",
+        'user_video_feed'           : "http://127.0.0.1:8081/",
         'contact_email'             : "HelioViewerDevelopment@nasa.onmicrosoft.com",
         'regenerate_movie_threshold': 90,
         'enable_helios_backlinks'   : false,
         'jhelioviewer_host'         : 'GSFC', // Mirrors should set this to their server code.
-        'coordinator_url'           : 'https://api.helioviewer.org/coordinate',
+        'coordinator_url'           : 'http://127.0.0.1:8000',
+        'quackback_domain'          : "",
         /**
          * The maximum time difference in seconds between an image and
          * the chosen observation time. If the time delta exceeds this
@@ -110,6 +111,7 @@ var Config = Class.extend(
             'jhelioviewerHost'        : this.params["jhelioviewer_host"],
             'obstime_alert_dt'        : this.params["obstime_alert_dt"],
             'coordinator_url'         : this.params["coordinator_url"],
+            'quackbackDomain'         : this.params["quackback_domain"],
         };
     }
 });
