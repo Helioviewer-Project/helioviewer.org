@@ -29,7 +29,7 @@ var Config = Class.extend(
         'contact_email'             : "HelioViewerDevelopment@nasa.onmicrosoft.com",
         'regenerate_movie_threshold': 90,
         // Seconds between two "is my movie ready?" checks for a queued movie
-        'movie_status_poll_sec'     : 3,
+        'movie_status_poll_sec'     : 30,
         'enable_helios_backlinks'   : false,
         'jhelioviewer_host'         : 'GSFC', // Mirrors should set this to their server code.
         'coordinator_url'           : 'https://api.helioviewer.org/coordinate',
