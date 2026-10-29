@@ -28,6 +28,8 @@ var Config = Class.extend(
         'user_video_feed'           : "https://api.helioviewer.org/",
         'contact_email'             : "HelioViewerDevelopment@nasa.onmicrosoft.com",
         'regenerate_movie_threshold': 90,
+        // Seconds between two "is my movie ready?" checks for a queued movie
+        'movie_status_poll_sec'     : 30,
         'enable_helios_backlinks'   : false,
         'jhelioviewer_host'         : 'GSFC', // Mirrors should set this to their server code.
         'coordinator_url'           : 'https://api.helioviewer.org/coordinate',
@@ -52,7 +54,7 @@ var Config = Class.extend(
         });
 
         this.bools  = [];
-        this.ints   = ["build_num", "prefetch_size", "max_movie_frames", "max_tile_layers"];
+        this.ints   = ["build_num", "prefetch_size", "max_movie_frames", "max_tile_layers", "movie_status_poll_sec"];
         this.floats = ["default_image_scale", "min_image_scale", "max_image_scale"];
 
         this.fixTypes();
@@ -106,6 +108,7 @@ var Config = Class.extend(
             'contactEmail'            : this.params["contact_email"],
             'apiURL'                  : this.params["back_end"],
             'regenerateMovieThreshold': this.params["regenerate_movie_threshold"],
+            'movieStatusPollSec'      : this.params["movie_status_poll_sec"],
             'enableHelios'            : this.params["enable_helios_backlinks"],
             'jhelioviewerHost'        : this.params["jhelioviewer_host"],
             'obstime_alert_dt'        : this.params["obstime_alert_dt"],
