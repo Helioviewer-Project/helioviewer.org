@@ -2178,5 +2178,38 @@ if($is_mobile_view) {
 <?php if ($debug) { ?>
 	<script src="/resources/js/debug/settings-viewer.js?v=<?=$debugTime?>" type="text/javascript"></script>
 <?php } ?>
+
+<?php /** Start Feedback Widget **/ ?>
+<script>
+  jQuery(document).ready(function(){
+    (function(w,d){
+      var domain = w.Helioviewer && w.Helioviewer.serverSettings && w.Helioviewer.serverSettings.quackbackDomain;
+      if (!domain) { return; }
+
+      var style = d.createElement('style');
+      style.textContent =
+        'button[aria-label="Open feedback widget"],' +
+        'button[aria-label="Close feedback widget"] {' +
+        '  background-color: #a1a1a1 !important;' +
+        '  color: #000 !important;' +
+        '}' +
+        'button[aria-label="Open feedback widget"]:hover,' +
+        'button[aria-label="Close feedback widget"]:hover {' +
+        '  background-color: #b5b5b5 !important;' +
+        '}';
+      d.head.appendChild(style);
+
+      if (w.Quackback) return;
+      w.Quackback = function(){
+        (w.Quackback.q=w.Quackback.q||[]).push(arguments)};
+      var s = d.createElement("script");
+      s.async = true;
+      s.src = domain + "/api/widget/sdk.js";
+      d.head.appendChild(s);
+      Quackback("init");
+    })(window,document);
+  });
+</script>
+<?php /** End Feedback Widget **/ ?>
 </body>
 </html>
