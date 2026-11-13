@@ -185,6 +185,10 @@ a.show-tags-btn {
 .event-header-value.string {
     /*color: #F0E68C;*/
 }
+/* Notice next to a value Helioviewer derived itself (e.g. NOAA region of a flare prediction) */
+.event-header-value .derived {
+    color: #fff9c4;
+}
 .event-header-value.boolean.true {
     /*color: #7FFF00;*/
 }
