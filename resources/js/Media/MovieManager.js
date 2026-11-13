@@ -27,7 +27,7 @@ var MovieManager = MediaManager.extend(
      */
     init: function (movies) {
         this._super(movies);
-        this.format   = $.support.vp8 ? "webm" : "mp4";
+        this.format   = "mp4";
 
         // Check status of any previously unfinished movie requests
         var self = this;

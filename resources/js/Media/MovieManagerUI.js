@@ -985,14 +985,13 @@ var MovieManagerUI = MediaManagerUI.extend(
 			"<img style='width:93px; height:32px;' class='video-download-icon' " +
 			"src='resources/images/download_93x32.png' /></a></div>";
 
-		// HTML5 Video (H.264 or WebM)
+		// HTML5 Video (H.264)
 		//if ($.support.vp8 || $.support.h264) {
 			// Work-around: use relative paths to simplify debugging
 			var url = movie.url.substr(movie.url.search("cache"));
 			var fileNameIndex = url.lastIndexOf("/") + 1;
 			var filename = url.substr(fileNameIndex);
 			var filenameHQ = filename.replace('.mp4', '-hq.mp4');
-			var filenameWebM = filename.replace('.mp4', '-.webm');
 			var filePath = url.substring(0, url.lastIndexOf("/"));
 			var autoplay = (Helioviewer.userSettings.get("options.movieautoplay") ? 'autoplay="autoplay"' : '');
 
@@ -1000,7 +999,6 @@ var MovieManagerUI = MediaManagerUI.extend(
 					<div>\
 						<video id="movie-player-' + movie.id + '" width="'+(width - 15)+'" height="'+(height - 20)+'" poster="'+Helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png" controls="controls" preload="none" '+autoplay+'>\
 							<source type="video/mp4" src="'+Helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameHQ+'" />\
-							<source type="video/webm" src="'+Helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filenameWebM+'" />\
 							<object width="'+width+'" height="'+(height - 20)+'" type="application/x-shockwave-flash" data="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf">\
 								<param name="movie" value="/resources/lib/mediaelement-2.22.0/build/flashmediaelement.swf" />\
 								<param name="flashvars" value="controls=true&amp;poster='+Helioviewer.serverSettings.rootURL+'/'+filePath+'/preview-full.png&amp;file='+Helioviewer.serverSettings.rootURL+'/'+filePath+'/'+filename+'" />\
