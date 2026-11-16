@@ -564,7 +564,7 @@ var TimelineEvents = Class.extend({
 
 						$("body").on('click', '.event-info-event', function(){
 							var eventId = $(this).data('eventid');
-							Helioviewer.eventLoader.showEventInfoDialog(eventId);
+							self._showEventInfoDialog(eventId);
 						});
 
 						$("body").on('click', '.event-search-external',  function() {
@@ -1651,15 +1651,38 @@ var TimelineEvents = Class.extend({
 	_showEventInfoDialog: function (eventId) {
 		var self = this;
 
+		// Event is drawn on the viewport right now: reuse its marker dialog
+		var markers = Object.values((Helioviewer.eventLoader && Helioviewer.eventLoader.markers) || {}).flat();
+		var drawn = markers.find(function (m) {
+			return m.marker.id === eventId;
+		});
+		if (drawn) {
+			drawn.marker._showEventInfoDialog();
+			return;
+		}
+
+		// Not drawn (e.g. picked from the timeline for another time): ask the API
 		$.ajax({
 			url: Helioviewer.api,
 			dataType: Helioviewer.dataType,
 			data: {
 				"action": "getEvent",
-				"id": eventId
+				"uuid": eventId
 			},
-			success: function(data){
+			success: function(event){
+				// The record itself sits under `source`. HEK sources carry the
+				// columns the dialog expects; others (WSA, CCMC, ...) do not,
+				// so fill them from the event-level fields.
+				var data = $.extend({}, event.source);
+				if ( !data.event_type ) { data.event_type = event.type; }
+				if ( !data.concept )    { data.concept    = event.concept; }
+				if ( !data.hv_labels_formatted && event.label ) {
+					data.hv_labels_formatted = { "label" : event.label.split("\n")[0] };
+				}
 				self._buildEventInfoDialog(data, self);
+			},
+			error: function(){
+				Helioviewer.messageConsole.warn("Could not load the event details, please try again later");
 			}
 		});
 	},
@@ -1871,7 +1894,7 @@ var TimelineEvents = Class.extend({
 				});
 		}
 		else if ( tab == 'ref' ) {
-				$.each( event['refs'], function (index, obj) {
+				$.each( event['refs'] || [], function (index, obj) {
 					lookup = _eventGlossary[obj['ref_name']];
 					if ( typeof lookup != 'undefined' ) {
 						list[obj['ref_name']] = lookup;

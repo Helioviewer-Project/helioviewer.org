@@ -1140,6 +1140,50 @@ var EventMarker = Class.extend(
     },
 
     /**
+     * CCMC Solar Flare Predictions: the model may leave NOAARegionId empty
+     * while Helioviewer has matched the prediction to a NOAA active region
+     * (event.regions). In that case show the matched region number with a
+     * notice that it is derived, not reported by the model.
+     * Returns copies of views/source, the event itself is left untouched.
+     *
+     * @param {Array} views
+     * @param {Object} source
+     * @returns {{views: Array, source: Object}}
+     */
+    _fillFlarePredictionRegion: function (views, source) {
+      const isFlarePrediction = (this.path || "").startsWith("CCMC>>Solar Flare Predictions");
+      const region = Array.isArray(this.regions) && this.regions.length === 1 ? this.regions[0] : null;
+      const hasKey = source && typeof source === "object" && "NOAARegionId" in source;
+      if (!isFlarePrediction || !region || region.organization !== "NOAA" || !hasKey) {
+        return { views: views, source: source };
+      }
+
+      const regionId = String(region.external_id);
+      const current = source.NOAARegionId;
+      const isEmpty = current === null || current === undefined || String(current).trim() === "";
+      // Model already reports this region, or reports a different one: leave it alone
+      if (!isEmpty) {
+        return { views: views, source: source };
+      }
+
+      const derived =
+        regionId +
+        " (WARNING: not reported by the model; Helioviewer derived it from the" +
+        " prediction location's proximity to NOAA active region " +
+        regionId +
+        ")";
+
+      const newSource = $.extend({}, source, { NOAARegionId: derived });
+      const newViews = (views || []).map(function (view) {
+        if (view.content && "NOAARegionId" in view.content) {
+          return $.extend({}, view, { content: $.extend({}, view.content, { NOAARegionId: derived }) });
+        }
+        return view;
+      });
+      return { views: newViews, source: newSource };
+    },
+
+    /**
      * @description
      *
      */
@@ -1173,6 +1217,20 @@ var EventMarker = Class.extend(
             $(node).css("display", "block");
           }
         });
+        // Highlight the notice of values Helioviewer derived itself
+        // (see _fillFlarePredictionRegion): only the "(WARNING: ...)" part
+        $(dialog)
+          .find(".event-header-value")
+          .each(function () {
+            const span = $(this);
+            const text = span.text();
+            const at = text.indexOf("(WARNING:");
+            if (at === -1 || span.children(".derived").length > 0) {
+              return;
+            }
+            span.empty().append(document.createTextNode(text.substring(0, at)));
+            span.append($("<span class='derived' />").text(text.substring(at)));
+          });
       }
 
       dialog
@@ -1213,7 +1271,8 @@ var EventMarker = Class.extend(
             let reactContainer = dialog.find("#" + self._uniqueId);
             if (reactContainer.length == 1) {
               const root = createRoot(reactContainer[0]);
-              root.render(<EventViewer views={self.views} source={self.source} onChange={updateHiddenClasses} />);
+              const data = self._fillFlarePredictionRegion(self.views, self.source);
+              root.render(<EventViewer views={data.views} source={data.source} onChange={updateHiddenClasses} />);
             }
           }
         });
