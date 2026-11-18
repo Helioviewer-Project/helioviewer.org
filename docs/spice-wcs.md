@@ -53,6 +53,5 @@ these images do not demonstrate scientific co-registration.
 
 Front/profile 3D screenshots show a SPICE patch but the AIA disk is nearly
 black. The 3D projection, EUI comparisons and off-limb behavior remain
-unvalidated. Frame constructor/compositor tests passed; an encoded movie and
-the asynchronous Fast Movies worker have not been exercised end to end.
+unvalidated. Frame constructor/compositor tests passed. On the local 8082 setup, the Fast Movies worker produced a four-frame MP4 that was downloaded and decoded after local export-contract adaptation. This does not validate the unchanged API PR #513.
 No local endpoint configuration or generated bundles belong in this PR.
