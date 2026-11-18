@@ -5,6 +5,25 @@ import Sun3D from "./sun";
 import { Vector3 } from "three";
 
 /**
+ * SPICE provides on-disk raster observations. These sources use planar WCS
+ * geometry, but unlike coronagraph planes they must remain visible over the
+ * front of the solar sphere.
+ */
+const SPICE_SOURCES = [
+  601,
+  602,
+  603,
+  604,
+  605,
+  606,
+  607,
+  608
+];
+
+const isSpiceSource = (sourceId) =>
+  SPICE_SOURCES.indexOf(sourceId) !== -1;
+
+/**
  * Returns the computed render priority for this instance based on the observatory and index.
  *
  * There's a trick to getting this to render correctly, and it's controlling the
@@ -58,7 +77,7 @@ function Layers({ date, layers, coordinator, setCameraPosition, getCameraTarget,
           observatory={layer.observatory}
           setCameraPosition={setTargetCameraPosition}
           getCameraTarget={getCameraTarget}
-          useSphereOcclusion={sceneHasSphereModels && isPlane(layer.sourceId)}
+          useSphereOcclusion={sceneHasSphereModels && isPlane(layer.sourceId) && !isSpiceSource(layer.sourceId)}
           onStartLoad={() => {
             onLoadStart();
             setLoadCount((n) => n - 1);
