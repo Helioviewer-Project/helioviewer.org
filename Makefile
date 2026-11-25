@@ -1,4 +1,4 @@
-.PHONY: help build watch ant pretty pretty-check shell
+.PHONY: help build watch ant test pretty pretty-check shell
 
 NODE_BIN = /root/.nvm/versions/node/v18.16.0/bin
 .DEFAULT_GOAL := help
@@ -8,6 +8,7 @@ help:
 	@echo "  build         Build webpack modules in development mode (resources/js/dist/HelioviewerModules.js)"
 	@echo "  watch         Same as build, but watches for changes"
 	@echo "  ant           Run legacy ant build (regenerates resources/compressed/helioviewer.min.js)"
+	@echo "  test          Run the jest tests (npm test)"
 	@echo "  pretty        Format JS with prettier (write mode)"
 	@echo "  pretty-check  Check JS formatting with prettier (no write — same as CI)"
 	@echo "  shell         Open an interactive bash shell inside the 'web' container (as your host user, node/npm on PATH)"
@@ -25,6 +26,9 @@ watch:
 
 ant:
 	cd .. && docker compose exec web bash -c "export PATH=$(NODE_BIN):$$PATH && cd /var/www/html && ant -f resources/build/build.xml build"
+
+test:
+	cd .. && docker compose exec web bash -c "export PATH=$(NODE_BIN):$$PATH && cd /var/www/html && npm test"
 
 pretty:
 	cd .. && docker compose exec web bash -c "export PATH=$(NODE_BIN):$$PATH && cd /var/www/html && npm run prettier"
