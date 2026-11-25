@@ -47,3 +47,6 @@ node_modules
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Local-only HTML reports / endpoint docs (served at /reports/, never committed)
+/reports/
