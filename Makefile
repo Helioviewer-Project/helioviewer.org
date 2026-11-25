@@ -15,7 +15,7 @@ help:
 	@echo "All targets run inside the 'web' docker container."
 
 shell:
-	cd .. && docker compose exec -u $$(id -u):$$(id -g) -e HOME=/var/www/html -e PATH=$(NODE_BIN):/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin -w /var/www/html web bash
+	cd .. && docker compose exec -u $$(id -u):$$(id -g) -e HOME=/tmp -e PATH=$(NODE_BIN):/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin -w /var/www/html web bash
 
 build:
 	cd .. && docker compose exec web bash -c "export PATH=$(NODE_BIN):$$PATH && cd /var/www/html/resources/build && npx webpack --mode=development"
